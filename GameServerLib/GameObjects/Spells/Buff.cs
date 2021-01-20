@@ -4,7 +4,6 @@ using GameServerCore;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
 using LeagueSandbox.GameServer.API;
-using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using LeagueSandbox.GameServer.GameObjects.Other;
 
@@ -12,22 +11,56 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
 {
     public class Buff : Stackable, IBuff
     {
-        public BuffAddType BuffAddType { get; private set; }
-        public BuffType BuffType { get; private set; }
-        public float Duration { get; private set; }
-        private IBuffGameScript _buffGameScript { get; }
-        public bool IsHidden { get; private set; }
-        public string Name { get; private set; }
-        public ISpell OriginSpell { get; private set; }
-        public byte Slot { get; private set; }
-        public IObjAiBase SourceUnit { get; private set; } // who added this buff to the unit it's attached to
-        public IObjAiBase TargetUnit { get; private set; }
-        public float TimeElapsed { get; private set; }
-
-        protected bool _infiniteDuration;
+        // Crucial Vars.
         protected Game _game;
-        protected bool _remove;
+        private IBuffGameScript _buffGameScript;
         protected CSharpScriptEngine _scriptEngine;
+
+        // Function Vars.
+        protected bool _infiniteDuration;
+        protected bool _remove;
+
+        /// <summary>
+        /// How this buff should be added and treated when adding new buffs of the same name.
+        /// </summary>
+        public BuffAddType BuffAddType { get; private set; }
+        /// <summary>
+        /// Type of buff to add. Determines how this buff interacts with mechanics of the game. Refer to BuffType.
+        /// </summary>
+        /// TODO: Add comments to BuffType enum.
+        public BuffType BuffType { get; private set; }
+        /// <summary>
+        /// Total time this buff should be applied to its target.
+        /// </summary>
+        public float Duration { get; private set; }
+        /// <summary>
+        /// Whether or not this buff should be shown on clients' buff bar (HUD).
+        /// </summary>
+        public bool IsHidden { get; private set; }
+        /// <summary>
+        /// Internal name of this buff.
+        /// </summary>
+        public string Name { get; private set; }
+        /// <summary>
+        /// Spell which caused this buff to be applied.
+        /// </summary>
+        public ISpell OriginSpell { get; private set; }
+        /// <summary>
+        /// Slot of this buff instance. Maximum allowed is 255 due to packets.
+        /// </summary>
+        public byte Slot { get; private set; }
+        /// <summary>
+        /// Unit which applied this buff to its target.
+        /// </summary>
+        public IAttackableUnit SourceUnit { get; private set; }
+        /// <summary>
+        /// Unit which has this buff applied to it.
+        /// </summary>
+        public IAttackableUnit TargetUnit { get; private set; }
+        /// <summary>
+        /// Time since this buff's timer started.
+        /// </summary>
+        public float TimeElapsed { get; private set; }
 
         public Buff(Game game, string buffName, float duration, int stacks, ISpell originspell, IObjAiBase onto, IObjAiBase from, bool infiniteDuration = false)
         {
@@ -83,9 +116,12 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
             _buffGameScript.OnActivate(TargetUnit, this, OriginSpell);
             if (!OriginSpell.SpellData.CantCancelWhileChanneling)
             {
-                ApiEventManager.OnChampionDamageTaken.AddListener(this, (IChampion) TargetUnit, DeactivateBuff);
-                ApiEventManager.OnChampionMove.AddListener(this, (IChampion) TargetUnit, DeactivateBuff);
-                ApiEventManager.OnChampionCrowdControlled.AddListener(this, (IChampion) TargetUnit, DeactivateBuff);
+                if (TargetUnit is IChampion c)
+                {
+                    ApiEventManager.OnChampionDamageTaken.AddListener(this, c, DeactivateBuff);
+                    ApiEventManager.OnChampionMove.AddListener(this, c, DeactivateBuff);
+                    ApiEventManager.OnChampionCrowdControlled.AddListener(this, c, DeactivateBuff);
+                }
             }
 
             _remove = false;

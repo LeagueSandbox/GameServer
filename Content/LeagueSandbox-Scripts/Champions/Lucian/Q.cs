@@ -19,14 +19,14 @@ namespace Spells
 
         public void OnStartCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
         {
-            var current = new Vector2(owner.X, owner.Y);
+            var current = new Vector2(owner.Position.X, owner.Position.Y);
             var to = Vector2.Normalize(new Vector2(spell.X, spell.Y) - current);
             var range = to * 1100;
             var trueCoords = current + range;
 
-            spell.AddLaser("LucianQ", trueCoords.X, trueCoords.Y);
+            spell.AddLaser("LucianQ", trueCoords);
             spell.SpellAnimation("SPELL1", owner);
-            AddParticle(owner, "Lucian_Q_laser.troy", trueCoords.X, trueCoords.Y);
+            AddParticle(owner, "Lucian_Q_laser.troy", trueCoords);
             AddParticleTarget(owner, "Lucian_Q_cas.troy", owner);
         }
 

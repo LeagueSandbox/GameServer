@@ -23,11 +23,11 @@ namespace Spells
 
         public void OnFinishCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
         {
-            var current = new Vector2(owner.X, owner.Y);
-            var to = Vector2.Normalize(new Vector2(target.X, target.Y) - current);
+            var current = new Vector2(owner.Position.X, owner.Position.Y);
+            var to = Vector2.Normalize(new Vector2(target.Position.X, target.Position.Y) - current);
             var range = to * 1150;
             var trueCoords = current + range;
-            spell.AddProjectile("AkaliMota", owner.X, owner.Y, trueCoords.X, trueCoords.Y);
+            spell.AddProjectile("AkaliMota", current, trueCoords);
         }
 
         public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, IProjectile projectile)

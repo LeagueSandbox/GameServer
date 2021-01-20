@@ -35,7 +35,7 @@ namespace Spells
 
         private void ApplySpinDamage(IObjAiBase owner, ISpell spell, IAttackableUnit target)
         {
-            var units = GetUnitsInRange(owner, 500, true);
+            var units = GetUnitsInRange(owner.Position, 500, true);
             foreach (var unit in units)
             {
                 if (unit.Team != owner.Team)

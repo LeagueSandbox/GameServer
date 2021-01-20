@@ -18,13 +18,13 @@ namespace YasuoEBlock
         private readonly IChampion owner = Spells.YasuoDashWrapper._owner;
         private IBuff _visualBuff;
 
-        public void OnActivate(IObjAiBase unit, IBuff buff, ISpell ownerSpell)
+        public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
             var time = 11f - ownerSpell.Level * 1f;
-            AddParticleTarget(owner, "Yasuo_base_E_timer1.troy", unit);
+            AddParticleTarget(ownerSpell.Owner, "Yasuo_base_E_timer1.troy", unit);
         }
 
-        public void OnDeactivate(IObjAiBase unit)
+        public void OnDeactivate(IAttackableUnit unit)
         {
         }
 

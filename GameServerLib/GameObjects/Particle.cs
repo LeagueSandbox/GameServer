@@ -54,6 +54,7 @@ namespace LeagueSandbox.GameServer.GameObjects
 
         /// <summary>
         /// Prepares the Particle, setting up the information required for networking it to clients.
+        /// This particle will spawn and stay on the specified GameObject target.
         /// </summary>
         /// <param name="game">Game instance.</param>
         /// <param name="owner">Owner of this Particle instance.</param>
@@ -67,11 +68,11 @@ namespace LeagueSandbox.GameServer.GameObjects
         /// <param name="reqVision">Whether or not the Particle is affected by vision checks.</param>
         /// <param name="autoSend">Whether or not to automatically send the Particle packet to clients.</param>
         public Particle(Game game, IGameObject owner, IGameObject t, string particleName, float scale = 1.0f, string boneName = "", uint netId = 0, Vector3 direction = new Vector3(), float lifetime = 0, bool reqVision = true, bool autoSend = true)
-               : base(game, t.X, t.Y, 0, 0, netId)
+               : base(game, t.Position, 0, 0, netId)
         {
             Owner = owner;
             TargetObject = t;
-            TargetPosition = TargetObject.GetPosition();
+            TargetPosition = TargetObject.Position;
             Name = particleName;
             BoneName = boneName;
             Scale = scale;
@@ -89,6 +90,7 @@ namespace LeagueSandbox.GameServer.GameObjects
 
         /// <summary>
         /// Prepares the Particle, setting up the information required for networking it to clients.
+        /// This particle will spawn and stay as the specified position.
         /// </summary>
         /// <param name="game">Game instance.</param>
         /// <param name="owner">Owner of this Particle instance.</param>
@@ -102,7 +104,7 @@ namespace LeagueSandbox.GameServer.GameObjects
         /// <param name="reqVision">Whether or not the Particle is affected by vision checks.</param>
         /// <param name="autoSend">Whether or not to automatically send the Particle packet to clients.</param>
         public Particle(Game game, IGameObject owner, Vector2 targetPos, string particleName, float scale = 1.0f, string boneName = "", uint netId = 0, Vector3 direction = new Vector3(), float lifetime = 0, bool reqVision = true, bool autoSend = true)
-               : base(game, targetPos.X, targetPos.Y, 0, 0, netId)
+               : base(game, targetPos, 0, 0, netId)
         {
             Owner = owner;
             TargetObject = null;

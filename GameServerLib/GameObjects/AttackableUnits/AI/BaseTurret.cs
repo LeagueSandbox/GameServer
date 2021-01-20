@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using Force.Crc32;
 using GameServerCore.Domain.GameObjects;
@@ -37,12 +38,11 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             Game game,
             string name,
             string model,
-            float x = 0,
-            float y = 0,
+            Vector2 position,
             TeamId team = TeamId.TEAM_BLUE,
             uint netId = 0,
             LaneID lane = LaneID.NONE
-        ) : base(game, model, new Stats.Stats(), 88, x, y, 1200, netId, team)
+        ) : base(game, model, new Stats.Stats(), 88, position, 1200, netId, team)
         {
             ParentNetId = Crc32Algorithm.Compute(Encoding.UTF8.GetBytes(name)) | 0xFF000000;
             Name = name;
@@ -58,7 +58,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         /// TODO: Verify if this needs a rewrite or additions to account for special cases.
         public void CheckForTargets()
         {
-            var units = _game.ObjectManager.GetUnitsInRange(X, Y, Stats.Range.Total, true); ;
+            var units = _game.ObjectManager.GetUnitsInRange(Position, Stats.Range.Total, true); ;
             IAttackableUnit nextTarget = null;
             var nextTargetPriority = ClassifyUnit.DEFAULT;
 
@@ -93,8 +93,8 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                         continue;
                     }
                     if (!(enemyChamp.TargetUnit is IChampion enemyChampTarget) ||
-                        enemyChamp.GetDistanceTo(enemyChampTarget) > enemyChamp.Stats.Range.Total ||
-                        GetDistanceTo(enemyChampTarget) > Stats.Range.Total)
+                        Vector2.DistanceSquared(enemyChamp.Position, enemyChampTarget.Position) > enemyChamp.Stats.Range.Total * enemyChamp.Stats.Range.Total ||
+                        Vector2.DistanceSquared(Position, enemyChampTarget.Position) > Stats.Range.Total * Stats.Range.Total)
                     {
                         continue;
                     }
@@ -123,7 +123,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 var goldEarn = _globalGold;
 
                 // Champions in Range within TURRET_RANGE * 1.5f will gain 150% more (obviously)
-                if (player.GetDistanceTo(this) <= Stats.Range.Total * 1.5f && !player.IsDead)
+                if (Vector2.DistanceSquared(player.Position, Position) <= (Stats.Range.Total * 1.5f) * (Stats.Range.Total * 1.5f) && !player.IsDead)
                 {
                     goldEarn = _globalGold * 2.5f;
                     if (_globalExp > 0)
@@ -139,16 +139,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
             _game.PacketNotifier.NotifyUnitAnnounceEvent(UnitAnnounces.TURRET_DESTROYED, this, killer);
             base.Die(killer);
-        }
-
-        /// <summary>
-        /// Movespeed of this turret.
-        /// Unused.
-        /// </summary>
-        /// <returns>Current movespeed. Units travelled per second while moving.</returns>
-        public override float GetMoveSpeed()
-        {
-            return 0;
         }
 
         /// <summary>
@@ -201,7 +191,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             }
 
             // Lose focus of the unit target if the target is out of range
-            if (TargetUnit != null && GetDistanceTo(TargetUnit) > Stats.Range.Total)
+            if (TargetUnit != null && Vector2.DistanceSquared(Position, TargetUnit.Position) > Stats.Range.Total * Stats.Range.Total)
             {
                 TargetUnit = null;
                 _game.PacketNotifier.NotifySetTarget(this, null);

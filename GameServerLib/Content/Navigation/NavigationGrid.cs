@@ -864,17 +864,17 @@ namespace LeagueSandbox.GameServer.Content.Navigation
         {
             if (a is IObjBuilding)
             {
-                double rayDist = Math.Sqrt((CastRay(b.GetPosition(), a.GetPosition(), !checkVision, checkVision).Value - b.GetPosition()).SqrLength());
+                double rayDist = Math.Sqrt((CastRay(b.Position, a.Position, !checkVision, checkVision).Value - b.Position).SqrLength());
                 rayDist += a.CollisionRadius;
-                return (rayDist * rayDist) < (b.GetPosition() - a.GetPosition()).SqrLength();
+                return (rayDist * rayDist) < (b.Position - a.Position).SqrLength();
             }
             if (b is IObjBuilding)
             {
-                double rayDist = Math.Sqrt((CastRay(a.GetPosition(), b.GetPosition(), !checkVision, checkVision).Value - a.GetPosition()).SqrLength());
+                double rayDist = Math.Sqrt((CastRay(a.Position, b.Position, !checkVision, checkVision).Value - a.Position).SqrLength());
                 rayDist += b.CollisionRadius;
-                return (rayDist * rayDist) < (b.GetPosition() - a.GetPosition()).SqrLength();
+                return (rayDist * rayDist) < (b.Position - a.Position).SqrLength();
             }
-            return !CastRay(a.GetPosition(), b.GetPosition(), !checkVision, checkVision).Key;
+            return !CastRay(a.Position, b.Position, !checkVision, checkVision).Key;
         }
 
         /// <summary>

@@ -28,8 +28,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Missiles
 
         public Laser(
             Game game,
-            float x,
-            float y,
+            Vector2 position,
             int collisionRadius,
             IAttackableUnit owner,
             Vector2 targetPos,
@@ -37,10 +36,10 @@ namespace LeagueSandbox.GameServer.GameObjects.Missiles
             string effectName,
             int flags,
             bool affectAsCastIsOver,
-            uint netid) : base(game, x, y, collisionRadius, owner, targetPos, originSpell, 0, effectName, flags, netid)
+            uint netid) : base(game, position, collisionRadius, owner, targetPos, originSpell, 0, effectName, flags, netid)
         {
             SpellData = _game.Config.ContentManager.GetSpellData(effectName);
-            CreateRectangle(new Vector2(x, y), targetPos);
+            CreateRectangle(position, targetPos);
             _affectAsCastIsOver = affectAsCastIsOver;
         }
 
@@ -108,7 +107,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Missiles
         /// <returns>true if target is in rectangle, otherwise false.</returns>
         private bool TargetIsInRectangle(IAttackableUnit target)
         {
-            var unitCoords = new Vector2(target.X, target.Y);
+            var unitCoords = new Vector2(target.Position.X, target.Position.Y);
 
             var shortSide = Vector2.Distance(_rectangleCornerBegin1, _rectangleCornerBegin2);
             var longSide = Vector2.Distance(_rectangleCornerBegin1, _rectangleCornerEnd1);

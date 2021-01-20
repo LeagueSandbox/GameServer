@@ -21,7 +21,7 @@ namespace LuluR
         private float _healthNow;
         private float _healthBonus;
 
-        public void OnActivate(IObjAiBase unit, IBuff buff, ISpell ownerSpell)
+        public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
             StatsModifier.Size.PercentBonus = StatsModifier.Size.PercentBonus + 1;
             _healthBefore = unit.Stats.CurrentHealth;
@@ -31,7 +31,7 @@ namespace LuluR
             unit.AddStatModifier(StatsModifier);
         }
 
-        public void OnDeactivate(IObjAiBase unit)
+        public void OnDeactivate(IAttackableUnit unit)
         {
             _healthNow = unit.Stats.CurrentHealth - _healthBonus;
             _meantimeDamage = _healthBefore - _healthNow;

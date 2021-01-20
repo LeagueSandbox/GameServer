@@ -21,7 +21,7 @@ namespace YasuoQ02
         private IParticle p3;
         private IParticle p4;
 
-        public void OnActivate(IObjAiBase unit, IBuff buff, ISpell ownerSpell)
+        public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
             ((IChampion)unit).SetSpell("YasuoQ3W", 0, true);
             p1 = AddParticleTarget((IChampion)unit, "Yasuo_Base_Q3_Indicator_Ring.troy", unit);
@@ -30,7 +30,7 @@ namespace YasuoQ02
             p4 = AddParticleTarget((IChampion)unit, "Yasuo_Base_Q_strike_build_up_test.troy", unit);
         }
 
-        public void OnDeactivate(IObjAiBase unit)
+        public void OnDeactivate(IAttackableUnit unit)
         {
             if (((IChampion)unit).Spells[0].SpellName == "YasuoQ3W")
             {

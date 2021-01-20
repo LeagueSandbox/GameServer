@@ -17,11 +17,11 @@ namespace TaricEhud
 
         public IStatsModifier StatsModifier { get; private set; }
 
-        public void OnActivate(IObjAiBase unit, IBuff buff, ISpell ownerSpell)
+        public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
         }
 
-        public void OnDeactivate(IObjAiBase unit)
+        public void OnDeactivate(IAttackableUnit unit)
         {
 
         }

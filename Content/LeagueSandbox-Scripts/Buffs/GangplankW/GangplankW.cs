@@ -8,7 +8,6 @@ namespace GangplankW
 {
     internal class GangplankW : IBuffGameScript
     {
-
         public BuffType BuffType => BuffType.HEAL;
 
         public BuffAddType BuffAddType => BuffAddType.RENEW_EXISTING;
@@ -19,13 +18,13 @@ namespace GangplankW
 
         public IStatsModifier StatsModifier => new StatsModifier();
 
-        public void OnActivate(IObjAiBase unit, IBuff buff, ISpell ownerSpell)
+        public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
             StatsModifier.MoveSpeed.PercentBonus = StatsModifier.MoveSpeed.PercentBonus + (10f + 5f * ownerSpell.Level) / 100f;
             unit.AddStatModifier(StatsModifier);
         }
 
-        public void OnDeactivate(IObjAiBase unit)
+        public void OnDeactivate(IAttackableUnit unit)
         {
             unit.RemoveStatModifier(StatsModifier);
         }

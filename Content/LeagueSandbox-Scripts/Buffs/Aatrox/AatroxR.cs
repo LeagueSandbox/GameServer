@@ -24,7 +24,7 @@ namespace AatroxR
         string pmodelname;
         IParticle pmodel;
 
-        public void OnActivate(IObjAiBase unit, IBuff buff, ISpell ownerSpell)
+        public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
             if (unit is IChampion c)
             {
@@ -51,7 +51,7 @@ namespace AatroxR
             }
         }
 
-        public void OnDeactivate(IObjAiBase unit)
+        public void OnDeactivate(IAttackableUnit unit)
         {
             RemoveParticle(pmodel);
             unit.RemoveStatModifier(StatsModifier);

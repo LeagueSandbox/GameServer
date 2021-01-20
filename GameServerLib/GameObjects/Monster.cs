@@ -18,10 +18,8 @@ namespace LeagueSandbox.GameServer.GameObjects
 
         public Monster(
             Game game,
-            float x,
-            float y,
-            float facingX,
-            float facingY,
+            Vector2 position,
+            Vector2 facing,
             string model,
             string name,
             string spawnAnimation = "",
@@ -29,7 +27,7 @@ namespace LeagueSandbox.GameServer.GameObjects
             byte campUnk = 0x2A,
             float spawnAnimationTime = 0.0f,
             uint netId = 0
-        ) : base(game, null, x, y, model, name, netId)
+        ) : base(game, null, position, model, name, netId)
         {
             var teams = Enum.GetValues(typeof(TeamId)).Cast<TeamId>();
             foreach (var team in teams)
@@ -37,8 +35,8 @@ namespace LeagueSandbox.GameServer.GameObjects
                 SetVisibleByTeam(team, true);
             }
 
-            MoveOrder = MoveOrder.MOVE_ORDER_MOVE;
-            Facing = new Vector2(facingX, facingY);
+            MoveOrder = MoveOrder.MOVE_ORDER_MOVETO;
+            Facing = facing;
             Name = name;
             SpawnAnimation = spawnAnimation;
             CampId = campId;

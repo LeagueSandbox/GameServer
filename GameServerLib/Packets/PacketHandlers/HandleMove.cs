@@ -51,14 +51,14 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                     Vector2 exit = nav.GetClosestTerrainExit(translatedWaypoints[lastindex]);
 
                     // prevent player pathing within their collision radius
-                    if (Vector2.DistanceSquared(champion.GetPosition(), exit) < (champion.CollisionRadius * champion.CollisionRadius))
+                    if (Vector2.DistanceSquared(champion.Position, exit) < (champion.CollisionRadius * champion.CollisionRadius))
                     {
                         return true;
                     }
 
-                    if (_game.Map.NavigationGrid.IsWalkable(champion.GetPosition()))
+                    if (_game.Map.NavigationGrid.IsWalkable(champion.Position))
                     {
-                        translatedWaypoints = nav.GetPath(champion.GetPosition(), exit);
+                        translatedWaypoints = nav.GetPath(champion.Position, exit);
                     }
                     break;
                 }
@@ -67,20 +67,21 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             switch (req.Type)
             {
                 case MoveType.STOP:
-                    champion.UpdateMoveOrder(MoveOrder.MOVE_ORDER_MOVE);
+                    champion.UpdateMoveOrder(MoveOrder.MOVE_ORDER_STOP);
                     champion.StopMovement();
                     break;
                 case MoveType.EMOTE:
-                    //Logging->writeLine("Emotion");
+                    champion.UpdateMoveOrder(MoveOrder.MOVE_ORDER_TAUNT);
+                    champion.StopMovement();
                     return true;
                 case MoveType.ATTACKMOVE:
-                    translatedWaypoints[0] = champion.GetPosition();
+                    translatedWaypoints[0] = champion.Position;
                     champion.UpdateMoveOrder(MoveOrder.MOVE_ORDER_ATTACKMOVE);
                     champion.SetWaypoints(translatedWaypoints);
                     break;
                 case MoveType.MOVE:
-                    translatedWaypoints[0] = champion.GetPosition();
-                    champion.UpdateMoveOrder(MoveOrder.MOVE_ORDER_MOVE);
+                    translatedWaypoints[0] = champion.Position;
+                    champion.UpdateMoveOrder(MoveOrder.MOVE_ORDER_MOVETO);
                     champion.SetWaypoints(translatedWaypoints);
                     break;
             }

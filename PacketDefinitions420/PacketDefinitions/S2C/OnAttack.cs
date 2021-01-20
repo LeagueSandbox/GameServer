@@ -10,9 +10,9 @@ namespace PacketDefinitions420.PacketDefinitions.S2C
             : base(PacketCmd.PKT_S2C_ON_ATTACK, attacker.NetId)
         {
             Write((byte)attackType);
-            Write(attacked.X);
+            Write(attacked.Position.X);
             Write(attacked.GetHeight());
-            Write(attacked.Y);
+            Write(attacked.Position.Y);
             WriteNetId(attacked);
         }
     }

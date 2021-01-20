@@ -49,7 +49,7 @@ namespace Spells
             {
                 var damage = 200 + (100 * (spell.Level - 1)) + (c.Stats.AbilityPower.Total);
 
-                var units = GetUnitsInRange(c, 550f, true);
+                var units = GetUnitsInRange(c.Position, 550f, true);
                 for (int i = 0; i < units.Count; i++)
                 {
                     if (units[i].Team != c.Team && !(units[i] is IObjBuilding || units[i] is IBaseTurret))

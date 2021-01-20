@@ -20,7 +20,7 @@ namespace Recall
         private IChampion owner;
         private IBuff sourceBuff;
 
-        public void OnActivate(IObjAiBase unit, IBuff buff, ISpell ownerSpell)
+        public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
             IChampion champion = unit as IChampion;
             owner = champion;
@@ -29,7 +29,7 @@ namespace Recall
             _createdParticle = AddParticleTarget(champion, "TeleportHome.troy", champion);
         }
 
-        public void OnDeactivate(IObjAiBase unit)
+        public void OnDeactivate(IAttackableUnit unit)
         {
             LogInfo("sourceBuff.TimeElapsed: " + sourceBuff.TimeElapsed);
             if (sourceBuff.TimeElapsed >= sourceBuff.Duration)

@@ -16,7 +16,7 @@ namespace Spells
 
         public void OnFinishCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
         {
-            foreach (var unit in GetChampionsInRange(owner, 600, true))
+            foreach (var unit in GetChampionsInRange(owner.Position, 600, true))
             {
                 if (unit.Team == owner.Team)
                 {

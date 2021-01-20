@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Numerics;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
 
@@ -12,14 +13,13 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         public LaneTurret(
             Game game,
             string name,
-            float x = 0,
-            float y = 0,
+            Vector2 position,
             TeamId team = TeamId.TEAM_BLUE,
             TurretType type = TurretType.OUTER_TURRET,
             int[] items = null,
             uint netId = 0,
             LaneID lane = LaneID.NONE
-        ) : base(game, name, "", x, y, team, netId)
+        ) : base(game, name, "", position, team, netId)
         {
             Type = type;
 
@@ -281,15 +281,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
             _turretHpUpdated = true;
             base.Update(diff);
-        }
-
-        public override void RefreshWaypoints()
-        {
-        }
-
-        public override float GetMoveSpeed()
-        {
-            return 0;
         }
 
         public override void AutoAttackHit(IAttackableUnit target)

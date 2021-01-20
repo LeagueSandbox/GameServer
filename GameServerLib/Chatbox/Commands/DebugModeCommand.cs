@@ -152,7 +152,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
                         }
                     }
 
-                    var circleparticle = new Particle(_game, _userChampion, _userChampion.GetPosition(), "DebugCircle_green.troy", circlesize, "", 0, default, 0.1f, false, false);
+                    var circleparticle = new Particle(_game, _userChampion, _userChampion.Position, "DebugCircle_green.troy", circlesize, "", 0, default, 0.1f, false, false);
                     _circleParticles.Add(_userChampion.NetId, circleparticle);
                     _game.PacketNotifier.NotifyFXCreateGroup(circleparticle, userId);
 
@@ -171,7 +171,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
                             }
                         }
 
-                        for (int waypoint = _userChampion.WaypointIndex; waypoint < _userChampion.Waypoints.Count; waypoint++)
+                        for (int waypoint = _userChampion.CurrentWaypoint.Key; waypoint < _userChampion.Waypoints.Count; waypoint++)
                         {
                             var current = _userChampion.Waypoints[waypoint - 1];
 
@@ -181,7 +181,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
                             var to = Vector2.Normalize(new Vector2(wpTarget.X, wpTarget.Y) - current);
                             if (_userChampion.Waypoints.Count - 1 > waypoint)
                             {
-                                var nextTargetWp = new Target(_userChampion.Waypoints[waypoint + 1]);
+                                var nextTargetWp = _userChampion.Waypoints[waypoint + 1];
                                 to = Vector2.Normalize(new Vector2(nextTargetWp.X, nextTargetWp.Y) - _userChampion.Waypoints[waypoint]);
                             }
                             var direction = new Vector3(to.X, 0, to.Y);
@@ -249,7 +249,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
                         }
                         circlesize = (1f / 100f) * champion.CollisionRadius;
 
-                        var circleparticle = new Particle(_game, champion, champion.GetPosition(), "DebugCircle_green.troy", circlesize, "", 0, default, 0, false, false);
+                        var circleparticle = new Particle(_game, champion, champion.Position, "DebugCircle_green.troy", circlesize, "", 0, default, 0, false, false);
                         _circleParticles.Add(champion.NetId, circleparticle);
                         _game.PacketNotifier.NotifyFXCreateGroup(circleparticle, userId);
 
@@ -268,7 +268,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
                                 }
                             }
 
-                            for (int waypoint = champion.WaypointIndex; waypoint < champion.Waypoints.Count; waypoint++)
+                            for (int waypoint = champion.CurrentWaypoint.Key; waypoint < champion.Waypoints.Count; waypoint++)
                             {
                                 var current = champion.Waypoints[waypoint - 1];
 
@@ -278,7 +278,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
                                 var to = Vector2.Normalize(new Vector2(wpTarget.X, wpTarget.Y) - current);
                                 if (champion.Waypoints.Count - 1 > waypoint)
                                 {
-                                    var nextTargetWp = new Target(champion.Waypoints[waypoint + 1]);
+                                    var nextTargetWp = champion.Waypoints[waypoint + 1];
                                     to = Vector2.Normalize(new Vector2(nextTargetWp.X, nextTargetWp.Y) - champion.Waypoints[waypoint]);
                                 }
                                 var direction = new Vector3(to.X, 0, to.Y);

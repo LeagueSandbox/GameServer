@@ -139,7 +139,10 @@ namespace LeagueSandbox.GameServer.API
         /// <param name="y">Y coordinate.</param>
         public static void TeleportTo(IObjAiBase unit, float x, float y)
         {
-            CancelDash(unit);
+            if (unit.IsDashing)
+            {
+                CancelDash(unit);
+            }
             unit.TeleportTo(x, y);
         }
 
@@ -243,17 +246,16 @@ namespace LeagueSandbox.GameServer.API
         /// </summary>
         /// <param name="unit">AI unit that should own this particle.</param>
         /// <param name="particle">Internal name of the particle.</param>
-        /// <param name="toX">X coordinate.</param>
-        /// <param name="toY">Y coordinate.</param>
+        /// <param name="position">Position to spawn at.</param>
         /// <param name="size">Scale.</param>
         /// <param name="bone">Bone the particle should be attached to.</param>
         /// <param name="direction">3D direction the particle should face.</param>
         /// <param name="lifetime">Time in seconds the particle should last.</param>
         /// <param name="reqVision">Whether or not the particle can be obstructed by terrain.</param>
         /// <returns>New particle instance.</returns>
-        public static IParticle AddParticle(IObjAiBase unit, string particle, float toX, float toY, float size = 1.0f, string bone = "", Vector3 direction = new Vector3(), float lifetime = 0, bool reqVision = true)
+        public static IParticle AddParticle(IObjAiBase unit, string particle, Vector2 position, float size = 1.0f, string bone = "", Vector3 direction = new Vector3(), float lifetime = 0, bool reqVision = true)
         {
-            var p = new Particle(_game, unit, new Vector2(toX, toY), particle, size, bone, 0, direction, lifetime, reqVision);
+            var p = new Particle(_game, unit, position, particle, size, bone, 0, direction, lifetime, reqVision);
             return p;
         }
 
@@ -261,7 +263,7 @@ namespace LeagueSandbox.GameServer.API
         /// Creates a new particle with the specified parameters.
         /// This particle will be attached to a target.
         /// </summary>
-        /// <param name="unit">AI unit that should own this particle.</param>
+        /// <param name="unit">Unit that should own this particle.</param>
         /// <param name="particle">Internal name of the particle.</param>
         /// <param name="target">GameObject to attach this particle to.</param>
         /// <param name="size">Scale.</param>
@@ -291,14 +293,13 @@ namespace LeagueSandbox.GameServer.API
         /// <param name="owner">AI unit that owns this minion.</param>
         /// <param name="model">Internal name of the model of this minion.</param>
         /// <param name="name">Internal name of the minion.</param>
-        /// <param name="toX">X coordinate.</param>
-        /// <param name="toY">Y coordinate.</param>
+        /// <param name="position">Position to spawn at.</param>
         /// <param name="isVisible">Whether or not this minion should be visible.</param>
         /// <param name="aiPaused">Whether or not this minion's AI is inactive.</param>
         /// <returns>New Minion instance.</returns>
-        public static IMinion AddMinion(IObjAiBase owner, string model, string name, float toX, float toY, bool isVisible = true, bool aiPaused = true)
+        public static IMinion AddMinion(IObjAiBase owner, string model, string name, Vector2 position, bool isVisible = true, bool aiPaused = true)
         {
-            var m = new Minion(_game, owner, toX, toY, model, name, 0, owner.Team);
+            var m = new Minion(_game, owner, position, model, name, 0, owner.Team);
             _game.ObjectManager.AddObject(m);
             m.SetVisibleByTeam(owner.Team, isVisible);
             m.PauseAi(aiPaused);
@@ -307,7 +308,7 @@ namespace LeagueSandbox.GameServer.API
 
         /// <summary>
         /// Creates a new Minion with the specified parameters.
-        /// Minion will spawn at the target's location.
+        /// Minion will spawn at the given target's position.
         /// </summary>
         /// <param name="owner">AI unit that owns this minion.</param>
         /// <param name="model">Internal name of the minion's model.</param>
@@ -316,9 +317,10 @@ namespace LeagueSandbox.GameServer.API
         /// <param name="isVisible">Whether or not this minion should be visible.</param>
         /// <param name="aiPaused">Whether or not this minion's AI is inactive.</param>
         /// <returns>New Minion instance.</returns>
-        public static IMinion AddMinionTarget(IObjAiBase owner, string model, string name, ITarget target, bool isVisible = true, bool aiPaused = true)
+        public static IMinion AddMinionTarget(IObjAiBase owner, string model, string name, IGameObject target, bool isVisible = true, bool aiPaused = true)
         {
-            return AddMinion(owner, model, name, target.X, target.Y, isVisible, aiPaused);
+            // TODO: Implement attachable Minions/GameObjects.
+            return AddMinion(owner, model, name, target.Position, isVisible, aiPaused);
         }
 
         /// <summary>
@@ -346,141 +348,92 @@ namespace LeagueSandbox.GameServer.API
         /// <summary>
         /// Acquires all alive or dead AttackableUnits within the specified range of a target position.
         /// </summary>
-        /// <param name="target">Origin of the range to check.</param>
+        /// <param name="targetPos">Origin of the range to check.</param>
         /// <param name="range">Range to check from the target position.</param>
         /// <param name="isAlive">Whether or not to return alive AttackableUnits.</param>
         /// <returns>List of AttackableUnits.</returns>
-        public static List<IAttackableUnit> GetUnitsInRange(ITarget target, float range, bool isAlive)
+        public static List<IAttackableUnit> GetUnitsInRange(Vector2 targetPos, float range, bool isAlive)
         {
-            return _game.ObjectManager.GetUnitsInRange(target, range, isAlive);
+            return _game.ObjectManager.GetUnitsInRange(targetPos, range, isAlive);
         }
 
         /// <summary>
         /// Acquires all alive or dead Champions within the specified range of a target position.
         /// </summary>
-        /// <param name="target">Origin of the range to check.</param>
+        /// <param name="targetPos">Origin of the range to check.</param>
         /// <param name="range">Range to check from the target position.</param>
         /// <param name="isAlive">Whether or not the return alive Champions.</param>
         /// <returns>List of Champions.</returns>
-        public static List<IChampion> GetChampionsInRange(ITarget target, float range, bool isAlive)
+        public static List<IChampion> GetChampionsInRange(Vector2 targetPos, float range, bool isAlive)
         {
-            return _game.ObjectManager.GetChampionsInRange(target, range, isAlive);
+            return _game.ObjectManager.GetChampionsInRange(targetPos, range, isAlive);
         }
 
         /// <summary>
-        /// Instantly cancels any dashes the specified AI unit is performing.
+        /// Instantly cancels any dashes the specified unit is performing.
         /// </summary>
-        /// <param name="unit">AI unit to stop dashing.</param>
-        public static void CancelDash(IObjAiBase unit)
+        /// <param name="unit">Unit to stop dashing.</param>
+        public static void CancelDash(IAttackableUnit unit)
         {
             // Allow the user to move the champion
             unit.SetDashingState(false);
 
             // Reset the default run animation
             var animList = new List<string> { "RUN", "" };
-            _game.PacketNotifier.NotifySetAnimation(unit, animList); // TODO: Move PacketNotifier usage to less abstract classes (in this case ObjAiBase)
+            // TODO: Move PacketNotifier usage to less abstract classes (in this case ObjAiBase)
+            _game.PacketNotifier.NotifySetAnimation(unit, animList);
         }
 
         /// <summary>
-        /// Forces the specified AI unit to perform a dash with the specified parameters.
-        /// Dash ends at the specified Target (GameObject/position)
+        /// Forces the specified AI unit to perform a dash which follows the specified AttackableUnit.
         /// </summary>
-        /// <param name="unit">Unit who will perform the dash.</param>
-        /// <param name="target">Target of the dash (GameObject/position).</param>
-        /// <param name="dashSpeed">Amount of units the dash should travel in a second (movespeed).</param>
-        /// <param name="keepFacingLastDirection">Whether or not the AI unit should face the direction they were facing before the dash.</param>
-        /// <param name="animation">Internal name of the animation.</param>
-        /// <param name="leapHeight">Amount of units high the dash should go before ending.</param>
-        /// <param name="followTargetMaxDistance">Maximum distance the dash will follow a target before ending.</param>
-        /// <param name="backDistance">Unknown.</param>
-        /// <param name="travelTime">Time in seconds the dash should last.</param>
-        public static void DashToUnit(IObjAiBase unit,
-                                  ITarget target,
-                                  float dashSpeed,
-                                  bool keepFacingLastDirection,
-                                  string animation = null,
-                                  float leapHeight = 0.0f,
-                                  float followTargetMaxDistance = 0.0f,
-                                  float backDistance = 0.0f,
-                                  float travelTime = 0.0f
-                                  )
+        /// <param name="unit">AI unit that is dashing.</param>
+        /// <param name="animation">Internal name of the dash animation.</param>
+        /// <param name="dashSpeed">Constant speed that the unit will have during the dash.</param>
+        /// <param name="leapGravity">How much gravity the unit will experience when above the ground while dashing.</param>
+        /// <param name="keepFacingLastDirection">Whether or not the unit should maintain the direction they were facing before dashing.</param>
+        /// <param name="target">Unit to follow.</param>
+        /// <param name="followTargetMaxDistance">Maximum distance the unit will follow the Target before stopping the dash or reaching to the Target.</param>
+        /// <param name="backDistance">Unknown parameter.</param>
+        /// <param name="travelTime">Total time the dash will follow the GameObject before stopping or reaching the Target.</param>
+        /// TODO: Implement Dash class which houses these parameters, then have that as the only parameter to this function (and other Dash-based functions).
+        public static void DashToTarget
+        (
+            IObjAiBase unit,
+            IAttackableUnit target,
+            float dashSpeed,
+            string animation,
+            float leapGravity,
+            bool keepFacingLastDirection,
+            float followTargetMaxDistance,
+            float backDistance,
+            float travelTime
+        )
         {
-            if (animation != null)
-            {
-                var animList = new List<string> { "RUN", animation };
-                _game.PacketNotifier.NotifySetAnimation(unit, animList); // TODO: Move PacketNotifier usage to less abstract classes (in this case ObjAiBase)
-            }
-
-            if (target.IsSimpleTarget)
-            {
-                var newCoords = _game.Map.NavigationGrid.GetClosestTerrainExit(new Vector2(target.X, target.Y), unit.CollisionRadius + 1.0f);
-                var newTarget = new Target(newCoords);
-                unit.DashToTarget(newTarget, dashSpeed, followTargetMaxDistance, backDistance, travelTime);
-                _game.PacketNotifier.NotifyDash(
-                    unit,
-                    newTarget,
-                    dashSpeed,
-                    keepFacingLastDirection,
-                    leapHeight,
-                    followTargetMaxDistance,
-                    backDistance,
-                    travelTime
-                );
-            } // TODO: Move PacketNotifier usage to less abstract classes (in this case ObjAiBase)
-            else
-            {
-                unit.DashToTarget(target, dashSpeed, followTargetMaxDistance, backDistance, travelTime);
-                _game.PacketNotifier.NotifyDash(
-                    unit,
-                    target,
-                    dashSpeed,
-                    keepFacingLastDirection,
-                    leapHeight,
-                    followTargetMaxDistance,
-                    backDistance,
-                    travelTime
-                ); // TODO: Move PacketNotifier usage to less abstract classes (in this case ObjAiBase)
-            }
-            unit.TargetUnit = null;
+            unit.DashToTarget(target, dashSpeed, animation, leapGravity, keepFacingLastDirection, followTargetMaxDistance, backDistance, travelTime);
         }
 
         /// <summary>
-        /// Forces the specified AI unit to perform a dash with the specified parameters.
-        /// Dash ends at a specified location.
+        /// Forces the specified unit to perform a dash which ends at the given position.
         /// </summary>
-        /// <param name="unit">Unit who will perform the dash.</param>
-        /// <param name="x">X coordinate to end the dash at.</param>
-        /// <param name="y">Y coordinate to end the dash at.</param>
+        /// <param name="unit">Unit that will perform the dash.</param>
+        /// <param name="animation">Internal name of the dash animation.</param>
+        /// <param name="endPos">Position to end the dash at.</param>
         /// <param name="dashSpeed">Amount of units the dash should travel in a second (movespeed).</param>
+        /// <param name="leapGravity">Optionally how much gravity the unit will experience when above the ground while dashing.</param>
         /// <param name="keepFacingLastDirection">Whether or not the AI unit should face the direction they were facing before the dash.</param>
-        /// <param name="animation">Internal name of the animation.</param>
-        /// <param name="leapHeight">Amount of units high the dash should go before ending.</param>
-        /// <param name="followTargetMaxDistance">Maximum distance the dash will follow a target before ending.</param>
-        /// <param name="backDistance">Unknown.</param>
-        /// <param name="travelTime">Time in seconds the dash should last.</param>
-        public static void DashToLocation(IObjAiBase unit,
-                                 float x,
-                                 float y,
-                                 float dashSpeed,
-                                 bool keepFacingLastDirection,
-                                 string animation = null,
-                                 float leapHeight = 0.0f,
-                                 float followTargetMaxDistance = 0.0f,
-                                 float backDistance = 0.0f,
-                                 float travelTime = 0.0f
-                                 )
+        /// TODO: Implement Dash class which houses these parameters, then have that as the only parameter to this function (and other Dash-based functions).
+        public static void DashToLocation
+        (
+            IAttackableUnit unit,
+            Vector2 endPos,
+            float dashSpeed,
+            string animation = "RUN",
+            float leapGravity = 0.0f,
+            bool keepFacingLastDirection = true
+        )
         {
-            DashToUnit(
-                unit,
-                new Target(x, y),
-                dashSpeed,
-                keepFacingLastDirection,
-                animation,
-                leapHeight,
-                followTargetMaxDistance,
-                backDistance,
-                travelTime
-            );
+            unit.DashToLocation(endPos, dashSpeed, animation, leapGravity, keepFacingLastDirection);
         }
     }
 }

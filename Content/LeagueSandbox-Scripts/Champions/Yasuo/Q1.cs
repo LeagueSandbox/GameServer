@@ -22,7 +22,7 @@ namespace Spells
 
         public void OnStartCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
         {
-            var current = new Vector2(owner.X, owner.Y);
+            var current = new Vector2(owner.Position.X, owner.Position.Y);
             var to = Vector2.Normalize(new Vector2(spell.X, spell.Y) - current);
             var range = to * spell.SpellData.CastRangeDisplayOverride[0];
             trueCoords = current + range;
@@ -36,8 +36,8 @@ namespace Spells
             {
                 spell.SpellAnimation("SPELL3b", owner);
                 AddParticleTarget(owner, "Yasuo_Base_EQ_cas.troy", owner);
-                AddParticleTarget(owner, "Yasuo_Base_EQ_SwordGlow.troy", owner,1,"C_BUFFBONE_GLB_Weapon_1");
-                foreach (var affectEnemys in GetUnitsInRange(owner, 270f, true))
+                AddParticleTarget(owner, "Yasuo_Base_EQ_SwordGlow.troy", owner, 1, "C_BUFFBONE_GLB_Weapon_1");
+                foreach (var affectEnemys in GetUnitsInRange(owner.Position, 270f, true))
                 {
                     if (affectEnemys is IAttackableUnit && affectEnemys.Team != owner.Team)
                     {
@@ -50,7 +50,7 @@ namespace Spells
             else
             {
                 spell.SpellAnimation("SPELL1A", owner);
-                spell.AddLaser("YasuoQ", trueCoords.X, trueCoords.Y);
+                spell.AddLaser("YasuoQ", trueCoords);
                 AddParticleTarget(owner, "Yasuo_Q_Hand.troy", owner);
                 AddParticleTarget(owner, "Yasuo_Base_Q1_cast_sound.troy", owner);
             }

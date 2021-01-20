@@ -42,13 +42,13 @@ namespace Spells
             //TODO: Implement Fear buff and ShacoBoxSpell
             //var fearrange = 300;
             var fearduration = 0.5f + (0.25 * (spell.Level - 1));
-            var ownerPos = new Vector2(owner.X, owner.Y);
+            var ownerPos = owner.Position;
             var spellPos = new Vector2(spell.X, spell.Y);
 
-            if (owner.WithinRange(ownerPos, spellPos, castrange))
+            if (Extensions.IsVectorWithinRange(ownerPos, spellPos, castrange))
             {
-                IMinion m = AddMinion((IChampion)owner, "ShacoBox", "ShacoBox", spell.X, spell.Y);
-                AddParticle(owner, "JackintheboxPoof.troy", spell.X, spell.Y);
+                IMinion m = AddMinion((IChampion)owner, "ShacoBox", "ShacoBox", spellPos);
+                AddParticle(owner, "JackintheboxPoof.troy", spellPos);
 
                 var attackrange = m.Stats.Range.Total;
 
@@ -56,14 +56,13 @@ namespace Spells
                 {
                     if (!m.IsDead)
                     {
-                        var units = GetUnitsInRange(m, attackrange, true);
+                        var units = GetUnitsInRange(m.Position, attackrange, true);
                         foreach (var value in units)
                         {
                             if (owner.Team != value.Team && value is IAttackableUnit && !(value is IBaseTurret) && !(value is IObjAnimatedBuilding))
                             {
                                 //TODO: Change TakeDamage to activate on Jack AutoAttackHit, not use CreateTimer, and make Pets use owner spell stats
                                 m.SetTargetUnit(value);
-                                m.AutoAttackTarget = value;
                                 m.AutoAttackProjectileSpeed = 1450;
                                 m.AutoAttackHit(value);
                                 for (petTimeAlive = 0.0f; petTimeAlive < jackduration; petTimeAlive += attspeed)

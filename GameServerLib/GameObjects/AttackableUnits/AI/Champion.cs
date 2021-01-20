@@ -48,7 +48,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                         ClientInfo clientInfo,
                         uint netId = 0,
                         TeamId team = TeamId.TEAM_BLUE)
-            : base(game, model, new Stats.Stats(), 30, 0, 0, 1200, netId, team)
+            : base(game, model, new Stats.Stats(), 30, new Vector2(), 1200, netId, team)
         {
             _playerId = playerId;
             _playerTeamSpecialId = playerTeamSpecialId;
@@ -157,18 +157,9 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             return 0;
         }
 
-        public bool CanMove()
+        public override void UpdateMoveOrder(MoveOrder order)
         {
-            return !HasCrowdControl(CrowdControlType.STUN) &&
-                !IsDashing &&
-                (GetBuffs().Count(x => x.OriginSpell.SpellData.CanMoveWhileChanneling) == GetBuffsCount() || !IsCastingSpell) &&
-                !IsDead &&
-                !HasCrowdControl(CrowdControlType.ROOT);
-        }
-
-        public void UpdateMoveOrder(MoveOrder order)
-        {
-            MoveOrder = order;
+            base.UpdateMoveOrder(order);
 
             ApiEventManager.OnChampionMove.Publish(this);
         }
@@ -208,28 +199,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
         public Vector2 GetRespawnPosition()
         {
-            var config = _game.Config;
-            var playerIndex = GetPlayerIndex();
-
-            if (config.Players.ContainsKey(playerIndex))
-            {
-                var p = config.Players[playerIndex];
-            }
-
-            var coords = new Vector2
-            {
-                X = _game.Map.MapProperties.GetRespawnLocation(Team).X,
-                Y = _game.Map.MapProperties.GetRespawnLocation(Team).Y
-            };
-
-            return new Vector2(coords.X, coords.Y);
-        }
-
-        // TODO: fix StopMovement function in ObjAiBase and delete this
-        public void StopChampionMovement()
-        {
-            StopMovement();
-            _game.PacketNotifier.NotifyMovement(this);
+            return _game.Map.MapProperties.GetRespawnLocation(Team);
         }
         
         public void TeleportTo(float x, float y)
@@ -294,7 +264,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             if (!IsDead && MoveOrder == MoveOrder.MOVE_ORDER_ATTACKMOVE && TargetUnit != null)
             {
                 var objects = _game.ObjectManager.GetObjects();
-                var distanceToTarget = 25000f;
+                var sqrDistanceToTarget = 25000f * 25000f;
                 IAttackableUnit nextTarget = null;
                 var range = Math.Max(Stats.Range.Total, DETECT_RANGE);
 
@@ -303,12 +273,12 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                     if (!(it.Value is IAttackableUnit u) ||
                         u.IsDead ||
                         u.Team == Team ||
-                        GetDistanceTo(u) > range)
+                        Vector2.DistanceSquared(Position, u.Position) > range * range)
                         continue;
 
-                    if (!(GetDistanceTo(u) < distanceToTarget))
+                    if (!(Vector2.DistanceSquared(Position, u.Position) < sqrDistanceToTarget))
                         continue;
-                    distanceToTarget = GetDistanceTo(u);
+                    sqrDistanceToTarget = Vector2.DistanceSquared(Position, u.Position);
                     nextTarget = u;
                 }
 
@@ -371,8 +341,8 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
         public bool OnDisconnect()
         {
-            this.StopChampionMovement();
-            this.SetWaypoints(_game.Map.NavigationGrid.GetPath(GetPosition(), _game.Map.MapProperties.GetRespawnLocation(Team).GetPosition()));
+            this.StopMovement();
+            this.SetWaypoints(_game.Map.NavigationGrid.GetPath(Position, _game.Map.MapProperties.GetRespawnLocation(Team)));
 
             return true;
         }
@@ -514,6 +484,15 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             if (isTerrain)
             {
                 //CORE_INFO("I bumped into a wall!");
+            }
+            // Champions are only teleported if they collide with other Champions.
+            // TODO: Implement Collision Priority
+            // TODO: Implement dynamic navigation grid for buildings and turrets.
+            else if (collider is IChampion || collider is IBaseTurret)
+            {
+                // Teleport out of other objects (+1 for insurance).
+                Vector2 exit = Extensions.GetCircleEscapePoint(Position, CollisionRadius * 2, collider.Position, collider.CollisionRadius);
+                TeleportTo(exit.X, exit.Y);
             }
         }
 

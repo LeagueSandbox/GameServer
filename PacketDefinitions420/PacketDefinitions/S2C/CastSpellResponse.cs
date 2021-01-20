@@ -36,9 +36,9 @@ namespace PacketDefinitions420.PacketDefinitions.S2C
             Write((byte)0); // flags (isAutoAttack, secondAttack, forceCastingOrChannelling, mShouldOverrideCastPosition)
             Write((byte)s.Slot);
             Write((float)s.SpellData.ManaCost[s.Level]);
-            Write((float)s.Owner.X);
+            Write((float)s.Owner.Position.X);
             Write((float)s.Owner.GetHeight());
-            Write((float)s.Owner.Y);
+            Write((float)s.Owner.Position.Y);
             Write((long)1); // Unk
         }
     }

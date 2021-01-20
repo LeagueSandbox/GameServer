@@ -25,7 +25,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             string model,
             uint netId = 0,
             TeamId team = TeamId.TEAM_BLUE
-        ) : base(game, null, 0, 0, model, model, netId, team)
+        ) : base(game, null, new Vector2(), model, model, netId, team)
         {
             IsLaneMinion = true;
             MinionSpawnType = spawnType;
@@ -43,11 +43,11 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             if (mainWaypoints.Count > 0)
             {
                 // Follow these instructions
-                SetWaypoints(new List<Vector2> { mainWaypoints[1] });
+                SetWaypoints(new List<Vector2> { Position, mainWaypoints[1] });
             }
             else
             {
-                // Otherwise path to own position. (Stand still)
+                // Otherwise stand still
                 StopMovement();
             }
 
@@ -96,10 +96,10 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         {
             if (_mainWaypoints.Count > _curMainWaypoint + 1)
             {
-                if (Waypoints.Count == 1 || WaypointIndex >= Waypoints.Count && ++_curMainWaypoint < _mainWaypoints.Count)
+                if (Waypoints.Count == 1 || IsPathEnded() && ++_curMainWaypoint < _mainWaypoints.Count)
                 {
                     //CORE_INFO("Minion reached a point! Going to %f; %f", mainWaypoints[curMainWaypoint].X, mainWaypoints[curMainWaypoint].Y);
-                    SetWaypoints(new List<Vector2>() { GetPosition(), _mainWaypoints[_curMainWaypoint] });
+                    SetWaypoints(new List<Vector2>() { Position, _mainWaypoints[_curMainWaypoint] });
 
                     //TODO: Here we need a certain way to tell if the Minion is in the path/lane, else use pathfinding to return to the lane.
                     //I think in league when minion start chasing they save Current Position and

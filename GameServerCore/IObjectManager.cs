@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Numerics;
 using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
@@ -75,23 +76,13 @@ namespace GameServerCore
         void RemoveVisionUnit(TeamId team, uint netId);
 
         /// <summary>
-        /// Gets a list of all GameObjects of type AttackableUnit that are within a certain distance from a specified point.
+        /// Gets a list of all GameObjects of type AttackableUnit that are within a certain distance from a specified position.
         /// </summary>
-        /// <param name="x">X coordinate of the point.</param>
-        /// <param name="y">Y coordinate of the point (Z-axis in 3D space).</param>
+        /// <param name="checkPos">Vector2 position to check.</param>
         /// <param name="range">Distance to check.</param>
         /// <param name="onlyAlive">Whether dead units should be excluded or not.</param>
         /// <returns>List of all AttackableUnits within the specified range and of the specified alive status.</returns>
-        List<IAttackableUnit> GetUnitsInRange(float x, float y, float range, bool onlyAlive = false);
-
-        /// <summary>
-        /// Gets a list of all GameObjects of type AttackableUnit that are within a certain distance from a specified Target. *NOTE*: Function will be depricated when Target class is removed.
-        /// </summary>
-        /// <param name="t">Target to check; could be a single point or an instance of a GameObject.</param>
-        /// <param name="range">Distance to check.</param>
-        /// <param name="onlyAlive">Whether dead units should be excluded or not.</param>
-        /// <returns>List of all AttackableUnits within the specified range and of the specified alive status.</returns>
-        List<IAttackableUnit> GetUnitsInRange(ITarget t, float range, bool onlyAlive = false);
+        List<IAttackableUnit> GetUnitsInRange(Vector2 checkPos, float range, bool onlyAlive = false);
 
         /// <summary>
         /// Counts the number of units attacking a specified GameObject of type AttackableUnit.
@@ -178,23 +169,13 @@ namespace GameServerCore
         List<IChampion> GetAllChampionsFromTeam(TeamId team);
 
         /// <summary>
-        /// Gets a new list of all Champions that are within the specified distance range of the specified point.
+        /// Gets a list of all GameObjects of type Champion that are within a certain distance from a specified position.
         /// </summary>
-        /// <param name="x">X coordinate of the point.</param>
-        /// <param name="y">Y coordinate of the point.</param>
-        /// <param name="range">Distance to check.</param>
-        /// <param name="onlyAlive">Whether to exclude dead Champions from the list.</param>
-        /// <returns>List of all Champions within the specified range and of the specified alive status.</returns>
-        List<IChampion> GetChampionsInRange(float x, float y, float range, bool onlyAlive = false);
-
-        /// <summary>
-        /// Gets a list of all GameObjects of type Champion that are within a certain distance from a specified Target. *NOTE*: Function will be depricated when Target class is removed.
-        /// </summary>
-        /// <param name="t">Target to check; could be a single point or an instance of a GameObject.</param>
+        /// <param name="checkPos">Vector2 position to check.</param>
         /// <param name="range">Distance to check.</param>
         /// <param name="onlyAlive">Whether dead Champions should be excluded or not.</param>
-        /// <returns>List of all Champions within the specified range and of the specified alive status.</returns>
-        List<IChampion> GetChampionsInRange(ITarget t, float range, bool onlyAlive = false);
+        /// <returns>List of all Champions within the specified range of the position and of the specified alive status.</returns>
+        List<IChampion> GetChampionsInRange(Vector2 checkPos, float range, bool onlyAlive = false);
 
         /// <summary>
         /// Removes a GameObject of type Champion from the list of Champions in ObjectManager.

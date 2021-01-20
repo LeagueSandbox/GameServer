@@ -4,6 +4,7 @@ using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
 using GameServerCore.Domain;
 using LeagueSandbox.GameServer.Scripting.CSharp;
+using System.Numerics;
 
 namespace Spells
 {
@@ -24,7 +25,7 @@ namespace Spells
 
         public void OnFinishCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
         {
-            if (owner.GetDistanceTo(target) > 625)
+            if (Vector2.DistanceSquared(owner.Position, target.Position) > 625 * 625)
             {
                 return;
             }
@@ -39,11 +40,12 @@ namespace Spells
             var time = 1.1f + 0.1f * spell.Level;
             var ap = owner.Stats.AbilityPower.Total;
             var damage = 10 + spell.Level * 30 + ap * 0.2f;
-            if (owner.GetDistanceTo(target) <= 460)
+            var dist = Vector2.DistanceSquared(owner.Position, target.Position);
+            if (dist <= 460 * 460)
             {
                 damage = 15 + spell.Level * 45 + ap * 0.3f;
             }
-            if (owner.GetDistanceTo(target) <= 295)
+            if (dist <= 295 * 295)
             {
                 damage = 20 + spell.Level * 60 + ap * 0.4f;
             }

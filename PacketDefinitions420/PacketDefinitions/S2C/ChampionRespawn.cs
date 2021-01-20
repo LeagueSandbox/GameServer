@@ -8,8 +8,8 @@ namespace PacketDefinitions420.PacketDefinitions.S2C
         public ChampionRespawn(IChampion c) :
             base(PacketCmd.PKT_S2C_CHAMPION_RESPAWN, c.NetId)
         {
-            Write((float)c.X);
-            Write((float)c.Y);
+            Write((float)c.Position.X);
+            Write((float)c.Position.Y);
             Write((float)c.GetHeight());
         }
     }

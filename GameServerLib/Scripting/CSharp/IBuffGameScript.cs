@@ -14,8 +14,8 @@ namespace LeagueSandbox.GameServer.Scripting.CSharp
         int MaxStacks { get; }
         IStatsModifier StatsModifier { get; }
 
-        void OnActivate(IObjAiBase unit, IBuff buff, ISpell ownerSpell);
-        void OnDeactivate(IObjAiBase unit);
+        void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell);
+        void OnDeactivate(IAttackableUnit unit);
         void OnUpdate(double diff);
     }
 }

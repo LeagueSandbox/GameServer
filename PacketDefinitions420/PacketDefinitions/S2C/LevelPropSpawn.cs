@@ -14,14 +14,14 @@ namespace PacketDefinitions420.PacketDefinitions.S2C
             Write((byte)0);
             Write((byte)0);
             Write((byte)0); // Unk
-            Write(lp.X);
-            Write(lp.Z);
-            Write(lp.Y);
+            Write(lp.Position.X);
+            Write(lp.GetHeight());
+            Write(lp.Position.Y);
             Write(0.0f); // Rotation Y
 
-            Write(lp.DirX);
-            Write(lp.DirZ);
-            Write(lp.DirY);
+            Write(lp.Direction.X);
+            Write(lp.Direction.Z);
+            Write(lp.Direction.Y);
             Write(lp.Unk1);
             Write(lp.Unk2);
 

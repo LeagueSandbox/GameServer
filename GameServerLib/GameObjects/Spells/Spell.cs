@@ -102,7 +102,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
             Projectiles = new Dictionary<uint, IProjectile>();
             SpellNetId = _networkIdManager.GetNewNetId();
 
-            if (SpellData.TargettingType == 1 && Target != null && Target.GetDistanceTo(Owner) > SpellData.CastRange[Level])
+            if (SpellData.TargettingType == 1 && Target != null && Vector2.DistanceSquared(Target.Position, Owner.Position) > SpellData.CastRange[Level] * SpellData.CastRange[Level])
             {
                 return false;
             }
@@ -233,17 +233,16 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
             }
         }
 
-        public void AddProjectile(string nameMissile, float fromX, float fromY, float toX, float toY, bool isServerOnly = false)
+        public void AddProjectile(string nameMissile, Vector2 startPos, Vector2 endPos, bool isServerOnly = false)
         {
             ISpellData projectileSpellData = this._game.Config.ContentManager.GetSpellData(nameMissile);
 
             var p = new Projectile(
                     _game,
-                    fromX,
-                    fromY,
+                    startPos,
                     (int)projectileSpellData.LineWidth,
                     Owner,
-                    new Vector2(toX, toY),
+                    endPos,
                     this,
                     projectileSpellData.MissileSpeed,
                     nameMissile,
@@ -270,8 +269,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
 
             var p = new Projectile(
                 _game,
-                Owner.X,
-                Owner.Y,
+                Owner.Position,
                 (int)projectileSpellData.LineWidth,
                 Owner,
                 target,
@@ -294,15 +292,15 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
             _futureProjNetId = _networkIdManager.GetNewNetId();
         }
 
-        public void AddLaser(string effectName, float toX, float toY, bool affectAsCastIsOver = true)
+        public void AddLaser(string effectName, Vector2 targetPos, bool affectAsCastIsOver = true)
         {
             var l = new Laser(
                 _game,
-                Owner.X, // TODO: Change this to a parameter.
-                Owner.Y, // TODO: Change this to a parameter.
+                // TODO: Change this to a parameter.
+                Owner.Position,
                 (int)SpellData.LineWidth, // TODO: Change this to a parameter.
                 Owner,
-                new Vector2(toX, toY), // TODO: Remove Target class.
+                targetPos, // TODO: Remove Target class.
                 this,
                 effectName,
                 SpellData.Flags,
@@ -314,15 +312,15 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
             _futureProjNetId = _networkIdManager.GetNewNetId();
         }
 
-        public void AddCone(string effectName, float toX, float toY, float angleDeg, bool affectAsCastIsOver = true)
+        public void AddCone(string effectName, Vector2 targetPos, float angleDeg, bool affectAsCastIsOver = true)
         {
             var c = new Cone(
                 _game,
-                Owner.X,
-                Owner.Y,
+                // TODO: Change this to a parameter.
+                Owner.Position,
                 (int)SpellData.LineWidth,
                 Owner,
-                new Vector2(toX, toY),
+                targetPos,
                 this,
                 effectName,
                 SpellData.Flags,

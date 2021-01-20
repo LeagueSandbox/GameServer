@@ -25,11 +25,11 @@ namespace Spells
 
         public void OnFinishCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
         {
-            var current = new Vector2(owner.X, owner.Y);
+            var current = new Vector2(owner.Position.X, owner.Position.Y);
             var to = Vector2.Normalize(new Vector2(spell.X, spell.Y) - current);
             var range = to * 1150;
             var trueCoords = current + range;
-            spell.AddProjectile("CaitlynPiltoverPeacemaker", owner.X, owner.Y, trueCoords.X, trueCoords.Y, true);
+            spell.AddProjectile("CaitlynPiltoverPeacemaker", current, trueCoords, true);
         }
 
         public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, IProjectile projectile)

@@ -361,36 +361,85 @@ namespace PacketDefinitions420
         }
 
         /// <summary>
-        /// Sends a packet to all players that have vision of the specified unit. The packet details a group of waypoints which the unit will move to given the specified parameters.
+        /// Sends a packet to all players that have vision of the specified unit.
+        /// The packet details a group of waypoints with speed parameters which determine what kind of movement will be done to reach the waypoints, or optionally a GameObject.
+        /// Functionally referred to as a dash in-game.
         /// </summary>
         /// <param name="u">Unit that is dashing.</param>
-        /// <param name="t">Target the unit is dashing to (single-point or unit).</param>
         /// <param name="dashSpeed">Constant speed that the unit will have during the dash.</param>
-        /// <param name="keepFacingLastDirection">Whether or not the unit should maintain the direction they were facing before dashing.</param>
-        /// <param name="leapHeight">How high the unit will reach at the peak of the dash.</param>
-        /// <param name="followTargetMaxDistance">Maximum distance the unit will follow the Target before stopping the dash or reaching to the Target.</param>
-        /// <param name="backDistance">Unknown parameter.</param>
-        /// <param name="travelTime">Total time the dash will attempt to travel to the Target before stopping or reaching the Target.</param>
-        /// TODO: Replace current implementation with LeaguePackets as this is incomplete.
-        public void NotifyDash(IAttackableUnit u,
-                               ITarget t,
-                               float dashSpeed,
-                               bool keepFacingLastDirection,
-                               float leapHeight,
-                               float followTargetMaxDistance,
-                               float backDistance,
-                               float travelTime)
+        /// <param name="leapGravity">Optionally how much gravity the unit will experience when above the ground while dashing.</param>
+        /// <param name="keepFacingLastDirection">Optionally whether or not the unit should maintain the direction they were facing before dashing.</param>
+        /// <param name="target">Optional GameObject to follow.</param>
+        /// <param name="followTargetMaxDistance">Optional maximum distance the unit will follow the Target before stopping the dash or reaching to the Target.</param>
+        /// <param name="backDistance">Optional unknown parameter.</param>
+        /// <param name="travelTime">Optional total time the dash will follow the GameObject before stopping or reaching the Target.</param>
+        /// TODO: Implement Dash class which houses these parameters, then have that as the only parameter to this function (and other Dash-based functions).
+        public void NotifyWaypointGroupWithSpeed
+        (
+            IAttackableUnit u,
+            float dashSpeed,
+            float leapGravity = 0,
+            bool keepFacingLastDirection = false,
+            IGameObject target = null,
+            float followTargetMaxDistance = 0,
+            float backDistance = 0,
+            float travelTime = 0
+        )
         {
-            var dash = new Dash(_navGrid,
-                                u,
-                                t,
-                                dashSpeed,
-                                keepFacingLastDirection,
-                                leapHeight,
-                                followTargetMaxDistance,
-                                backDistance,
-                                travelTime);
-            _packetHandlerManager.BroadcastPacketVision(u, dash, Channel.CHL_S2C);
+            // Prevent 0 waypoints packet error.
+            if (u.Waypoints.Count < 1)
+            {
+                return;
+            }
+
+            var waypoints = new List<CompressedWaypoint>();
+
+            foreach (Vector2 v in u.Waypoints)
+            {
+                var vec = MovementVector.ToCenteredScaledCoordinates(v, _navGrid);
+                waypoints.Add(new CompressedWaypoint((short)vec.X, (short)vec.Y));
+            }
+
+            // TODO: Implement Dash class and house a List of these and waypoints.
+            var speeds = new SpeedParams
+            {
+                PathSpeedOverride = dashSpeed,
+                ParabolicGravity = leapGravity,
+                // TODO: Implement as parameter (ex: Aatrox Q).
+                ParabolicStartPoint = u.Position,
+                Facing = keepFacingLastDirection,
+                FollowNetID = 0,
+                FollowDistance = followTargetMaxDistance,
+                FollowBackDistance = backDistance,
+                FollowTravelTime = travelTime
+            };
+
+            if (target != null)
+            {
+                speeds.FollowNetID = target.NetId;
+            }
+
+            var md = new MovementDataWithSpeed
+            {
+                SyncID = (int)u.SyncId,
+                // TODO: Verify
+                TeleportNetID = u.NetId,
+                // TODO: Implement teleportID (likely to be the index of a waypoint we want to TP to).
+                HasTeleportID = true,
+                TeleportID = 1,
+                Waypoints = waypoints,
+                SpeedParams = speeds
+            };
+
+            var speedWpGroup = new WaypointGroupWithSpeed
+            {
+                SenderNetID = u.NetId,
+                SyncID = (int)u.SyncId,
+                // TOOD: Implement support for multiple speed-based movements (functionally known as dashes).
+                Movements = new List<MovementDataWithSpeed> { md }
+            };
+
+            _packetHandlerManager.BroadcastPacketVision(u, speedWpGroup.GetBytes(), Channel.CHL_S2C);
         }
 
         /// <summary>
@@ -634,7 +683,7 @@ namespace PacketDefinitions420
             {
                 var md = new MovementDataStop
                 {
-                    Position = o.GetPosition(),
+                    Position = o.Position,
                     Forward = o.GetDirection(),
                     SyncID = (int)o.SyncId
                 };
@@ -691,10 +740,9 @@ namespace PacketDefinitions420
 
             var fxDataList = new List<FXCreateData>();
 
-            var ownerHeight = _navGrid.GetHeightAtLocation(particle.Owner.X, particle.Owner.Y);
+            var ownerPos = particle.Owner.GetPosition3D();
             var targetHeight = _navGrid.GetHeightAtLocation(particle.TargetPosition.X, particle.TargetPosition.Y);
-            var particleHeight = _navGrid.GetHeightAtLocation(particle.X, particle.Y);
-            var higherValue = Math.Max(targetHeight, particleHeight);
+            var higherValue = Math.Max(targetHeight, particle.GetHeight());
 
             // TODO: implement option for multiple particles instead of hardcoding one
             var fxData1 = new FXCreateData
@@ -703,15 +751,15 @@ namespace PacketDefinitions420
                 CasterNetID = particle.Owner.NetId,
                 KeywordNetID = 0, // Not sure what this is
 
-                PositionX = (short)((particle.X - _navGrid.MapWidth / 2) / 2),
+                PositionX = (short)((particle.Position.X - _navGrid.MapWidth / 2) / 2),
                 PositionY = higherValue,
-                PositionZ = (short)((particle.Y - _navGrid.MapHeight / 2) / 2),
+                PositionZ = (short)((particle.Position.Y - _navGrid.MapHeight / 2) / 2),
 
                 TargetPositionY = targetHeight,
 
-                OwnerPositionX = (short)((particle.Owner.X - _navGrid.MapWidth / 2) / 2),
-                OwnerPositionY = ownerHeight,
-                OwnerPositionZ = (short)((particle.Owner.Y - _navGrid.MapHeight / 2) / 2),
+                OwnerPositionX = (short)((ownerPos.X - _navGrid.MapWidth / 2) / 2),
+                OwnerPositionY = ownerPos.Y,
+                OwnerPositionZ = (short)((ownerPos.Z - _navGrid.MapHeight / 2) / 2),
 
                 // NOTE: particles may have a set lifetime, which ignores this
                 TimeSpent = particle.Lifetime,
@@ -731,8 +779,8 @@ namespace PacketDefinitions420
                 fxData1.TargetNetID = particle.TargetObject.NetId;
                 fxData1.BindNetID = particle.TargetObject.NetId; // Not sure what this is
 
-                fxData1.TargetPositionX = (short)particle.TargetObject.X;
-                fxData1.TargetPositionZ = (short)particle.TargetObject.Y;
+                fxData1.TargetPositionX = (short)particle.TargetObject.Position.X;
+                fxData1.TargetPositionZ = (short)particle.TargetObject.Position.Y;
             }
 
             if (particle.Direction.Length() <= 0)
@@ -1120,7 +1168,7 @@ namespace PacketDefinitions420
                 NetID = minion.NetId,
                 OwnerNetID = minion.NetId,
                 NetNodeID = (byte)NetNodeID.Spawned, // TODO: Verify
-                Position = new Vector3(minion.GetPosition().X, minion.GetHeight(), minion.GetPosition().Y), // TODO: Verify
+                Position = minion.GetPosition3D(), // TODO: Verify
                 SkinID = 0, // TODO: Unhardcode
                 // CloneNetID, clones not yet implemented
                 TeamID = (ushort)minion.Team,
@@ -1158,20 +1206,20 @@ namespace PacketDefinitions420
                 return;
             }
 
-            var current = new Vector3(p.X, _navGrid.GetHeightAtLocation(p.X, p.Y), p.Y);
+            var current = p.GetPosition3D();
             var to = Vector3.Normalize(new Vector3(targetPos.X, _navGrid.GetHeightAtLocation(targetPos.X, targetPos.Y), targetPos.Y) - current);
             var misPacket = new MissileReplication();
             misPacket.SenderNetID = p.Owner.NetId;
-            misPacket.Position = new Vector3(p.X, p.GetHeight(), p.Y);
-            misPacket.CasterPosition = new Vector3(p.Owner.X, p.Owner.GetHeight(), p.Owner.Y);
+            misPacket.Position = p.GetPosition3D();
+            misPacket.CasterPosition = p.Owner.GetPosition3D();
             // Not sure if we want to add height for these, but i did it anyway
             misPacket.Direction = new Vector3(to.X, 0, to.Y);
-            misPacket.Velocity = new Vector3(to.X * p.GetMoveSpeed(), 0, to.Y * p.GetMoveSpeed());
-            misPacket.StartPoint = new Vector3(p.X, p.GetHeight(), p.Y);
+            misPacket.Velocity = new Vector3(to.X * p.GetSpeed(), 0, to.Y * p.GetSpeed());
+            misPacket.StartPoint = p.GetPosition3D();
             misPacket.EndPoint = new Vector3(targetPos.X, _navGrid.GetHeightAtLocation(targetPos.X, targetPos.Y), targetPos.Y);
-            misPacket.UnitPosition = new Vector3(p.Owner.X, p.Owner.GetHeight(), p.Owner.Y);
+            misPacket.UnitPosition = p.Owner.GetPosition3D(); // TODO: Verify if Owner is what it means by Unit.
             misPacket.TimeFromCreation = 0f; // TODO: Unhardcode
-            misPacket.Speed = p.GetMoveSpeed();
+            misPacket.Speed = p.GetSpeed();
             misPacket.LifePercentage = 0f; // TODO: Unhardcode
             //TODO: Implement time limited projectiles
             misPacket.TimedSpeedDelta = 0f; // TODO: Implement time limited projectiles for this
@@ -1216,7 +1264,7 @@ namespace PacketDefinitions420
 
             cast.SpellSlot = p.OriginSpell != null ? p.OriginSpell.Slot : (byte)0x30;
             cast.ManaCost = p.OriginSpell != null ? p.OriginSpell.SpellData.ManaCost[p.OriginSpell.Level] : 0f;
-            cast.SpellCastLaunchPosition = new Vector3(p.X, p.GetHeight(), p.Y);
+            cast.SpellCastLaunchPosition = p.GetPosition3D();
             cast.AmmoUsed = p.OriginSpell != null ? p.OriginSpell.SpellData.AmmoUsed[p.OriginSpell.Level] : 0;
             cast.AmmoRechargeTime = p.OriginSpell != null ? p.OriginSpell.SpellData.AmmoRechargeTime[p.OriginSpell.Level] : 0f;
 
@@ -1314,31 +1362,32 @@ namespace PacketDefinitions420
         }
 
         /// <summary>
-        /// Sends a packet to all players that have vision of the specified GameObject that it has made a movement.
+        /// Sends a packet to all players that have vision of the specified unit that it has made a movement.
         /// </summary>
-        /// <param name="o">GameObject that is moving.</param>
-        public void NotifyMovement(IGameObject o)
+        /// <param name="u">AttackableUnit that is moving.</param>
+        public void NotifyMovement(IAttackableUnit u)
         {
             var l = new List<Vector2>();
-            l.AddRange(o.Waypoints);
+            l.AddRange(u.Waypoints);
             var waypoints = l.ConvertAll(v => Convertors.Vector2ToWaypoint(Convertors.TranslateToCenteredCoordinates(v, _navGrid)));
 
             var move = new MovementDataNormal
             {
-                SyncID = (int)o.SyncId,
-                TeleportNetID = o.NetId,
+                SyncID = (int)u.SyncId,
+                TeleportNetID = u.NetId,
                 HasTeleportID = false,
                 Waypoints = waypoints
             };
 
+            // TODO: Implement support for multiple movements.
             var packet = new WaypointGroup
             {
-                SenderNetID = o.NetId,
-                SyncID = (int)o.SyncId,
+                SenderNetID = u.NetId,
+                SyncID = (int)u.SyncId,
                 Movements = new List<MovementDataNormal>() { move }
             };
 
-            _packetHandlerManager.BroadcastPacketVision(o, packet.GetBytes(), Channel.CHL_LOW_PRIORITY);
+            _packetHandlerManager.BroadcastPacketVision(u, packet.GetBytes(), Channel.CHL_LOW_PRIORITY);
         }
 
         /// <summary>
@@ -1381,13 +1430,13 @@ namespace PacketDefinitions420
         /// <summary>
         /// Sends a packet to all players with vision of the specified ObjAiBase detailing that the specified group of buffs has been added to the ObjAiBase.
         /// </summary>
-        /// <param name="target">ObjAiBase who is receiving the group of buffs.</param>
+        /// <param name="target">Unit that is receiving the group of buffs.</param>
         /// <param name="buffs">Group of buffs being added to the target.</param>
         /// <param name="buffType">Type of buff that applies to the entire group of buffs.</param>
         /// <param name="buffName">Internal name of the buff that applies to the group of buffs.</param>
         /// <param name="runningTime">Time that has passed since the group of buffs was created.</param>
         /// <param name="duration">Total amount of time the group of buffs should be active.</param>
-        public void NotifyNPC_BuffAddGroup(IObjAiBase target, List<IBuff> buffs, BuffType buffType, string buffName, float runningTime, float duration)
+        public void NotifyNPC_BuffAddGroup(IAttackableUnit target, List<IBuff> buffs, BuffType buffType, string buffName, float runningTime, float duration)
         {
             var addGroupPacket = new NPC_BuffAddGroup
             {
@@ -1435,10 +1484,10 @@ namespace PacketDefinitions420
         /// <summary>
         /// Sends a packet to all players with vision of the specified ObjAiBase detailing that the specified group of buffs is being removed from the ObjAiBase.
         /// </summary>
-        /// <param name="target">ObjAiBase getting their group of buffs removed.</param>
+        /// <param name="target">Unit getting their group of buffs removed.</param>
         /// <param name="buffs">Group of buffs getting removed.</param>
         /// <param name="buffName">Internal name of the buff that is applicable to the entire group of buffs.</param>
-        public void NotifyNPC_BuffRemoveGroup(IObjAiBase target, List<IBuff> buffs, string buffName)
+        public void NotifyNPC_BuffRemoveGroup(IAttackableUnit target, List<IBuff> buffs, string buffName)
         {
             var removeGroupPacket = new NPC_BuffRemoveGroup
             {
@@ -1479,13 +1528,13 @@ namespace PacketDefinitions420
         }
 
         /// <summary>
-        /// Sends a packet to all players with vision of the specified ObjAiBase detailing that the buffs already occupying the slots of the group of buffs were replaced by the newly specified group of buffs.
+        /// Sends a packet to all players with vision of the specified unit detailing that the buffs already occupying the slots of the group of buffs were replaced by the newly specified group of buffs.
         /// </summary>
-        /// <param name="target">ObjAiBase getting their group of buffs replaced.</param>
+        /// <param name="target">Unit getting their group of buffs replaced.</param>
         /// <param name="buffs">Group of buffs replacing buffs in the same slots.</param>
         /// <param name="runningtime">Time since the group of buffs was created.</param>
         /// <param name="duration">Total time the group of buffs should be active.</param>
-        public void NotifyNPC_BuffReplaceGroup(IObjAiBase target, List<IBuff> buffs, float runningtime, float duration)
+        public void NotifyNPC_BuffReplaceGroup(IAttackableUnit target, List<IBuff> buffs, float runningtime, float duration)
         {
             var replaceGroupPacket = new NPC_BuffReplaceGroup
             {
@@ -1532,11 +1581,11 @@ namespace PacketDefinitions420
         /// <summary>
         /// Sends a packet to all players with vision of the specified target detailing an update to the number of buffs in each of the buff slots occupied by the specified group of buffs.
         /// </summary>
-        /// <param name="target">ObjAiBase who's buffs will be updated.</param>
+        /// <param name="target">Unit who's buffs will be updated.</param>
         /// <param name="buffs">Group of buffs to update.</param>
         /// <param name="duration">Total time the buff should last.</param>
         /// <param name="runningTime">Time since the buff's creation.</param>
-        public void NotifyNPC_BuffUpdateCountGroup(IObjAiBase target, List<IBuff> buffs, float duration, float runningTime)
+        public void NotifyNPC_BuffUpdateCountGroup(IAttackableUnit target, List<IBuff> buffs, float duration, float runningTime)
         {
             var updateGroupPacket = new NPC_BuffUpdateCountGroup
             {
@@ -1610,7 +1659,7 @@ namespace PacketDefinitions420
                 //TODO: Implement castInfo.IsAutoAttack/IsSecondAutoAttack/IsForceCastingOrChannel/IsOverrideCastPosition/IsClickCasted (you may have checks for all of these, but only one of these can be present in the packet when sent)
 
                 SpellSlot = s.Slot,
-                SpellCastLaunchPosition = new Vector3(s.Owner.X, navGrid.GetHeightAtLocation(s.Owner.GetPosition()), s.Owner.Y),
+                SpellCastLaunchPosition = s.Owner.GetPosition3D(),
                 AmmoUsed = 0, // TODO: Unhardcode (requires implementing Ammo)
                 AmmoRechargeTime = s.GetCooldown() // TODO: Implement correctly (requires implementing Ammo)
             };
@@ -2115,8 +2164,9 @@ namespace PacketDefinitions420
             var tp = new MovementDataNormal
             {
                 SyncID = (int)o.SyncId,
-                HasTeleportID = true, // TODO: Unhardcode.
-                TeleportID = 1, // TODO: Unhardcode.
+                // TODO: Implement teleportID (likely to be the index of a waypoint we want to TP to).
+                HasTeleportID = true,
+                TeleportID = 1,
                 TeleportNetID = o.NetId,
                 Waypoints = new List<CompressedWaypoint>()
             };

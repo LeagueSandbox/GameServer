@@ -27,7 +27,7 @@ namespace Spells
 
         public void OnFinishCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
         {
-            var current = new Vector2(owner.X, owner.Y);
+            var current = new Vector2(owner.Position.X, owner.Position.Y);
             var to = new Vector2(spell.X, spell.Y) - current;
             Vector2 trueCoords;
             if (to.Length() > 475)
@@ -41,22 +41,21 @@ namespace Spells
                 trueCoords = new Vector2(spell.X, spell.Y);
             }
 
-            AddParticle(owner, "Ezreal_arcaneshift_cas.troy", owner.X, owner.Y);
+            AddParticle(owner, "Ezreal_arcaneshift_cas.troy", owner.Position);
             TeleportTo(owner, trueCoords.X, trueCoords.Y);
             AddParticleTarget(owner, "Ezreal_arcaneshift_flash.troy", owner);
             IAttackableUnit target2 = null;
-            var units = GetUnitsInRange(owner, 700, true);
-            float distance = 700;
+            var units = GetUnitsInRange(current, 700, true);
+            float sqrDistance = 700 * 700;
             foreach (var value in units)
             {
                 if (owner.Team != value.Team && value is IObjAiBase)
                 {
-                    if (Vector2.Distance(new Vector2(trueCoords.X, trueCoords.Y), new Vector2(value.X, value.Y)) <=
-                        distance)
+                    if (Vector2.DistanceSquared(trueCoords, value.Position) <=
+                        sqrDistance)
                     {
                         target2 = value;
-                        distance = Vector2.Distance(new Vector2(trueCoords.X, trueCoords.Y),
-                            new Vector2(value.X, value.Y));
+                        sqrDistance = Vector2.DistanceSquared(trueCoords, value.Position);
                     }
                 }
             }

@@ -23,7 +23,7 @@ namespace GameServerCore.Domain
 
         void SetMinionStats(ILaneMinion m);
 
-        ITarget GetRespawnLocation(TeamId team);
+        Vector2 GetRespawnLocation(TeamId team);
 
         string GetMinionModel(TeamId team, MinionSpawnType type);
 

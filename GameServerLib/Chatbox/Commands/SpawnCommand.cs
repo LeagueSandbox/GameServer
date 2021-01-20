@@ -44,7 +44,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
 
         public void SpawnMinionsForTeam(TeamId team, int userId)
         {
-            var champion = _playerManager.GetPeerInfo((ulong)userId).Champion;
+            var championPos = _playerManager.GetPeerInfo((ulong)userId).Champion.Position;
             var random = new Random();
 
             var casterModel = Game.Map.MapProperties.GetMinionModel(team, MinionSpawnType.MINION_TYPE_CASTER);
@@ -54,16 +54,16 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
 
             var minions = new[]
             {
-                new Minion(Game, null, champion.X, champion.Y, casterModel, casterModel, 0, team),
-                new Minion(Game, null, champion.X, champion.Y, cannonModel, cannonModel, 0, team),
-                new Minion(Game, null, champion.X, champion.Y, meleeModel, meleeModel, 0, team),
-                new Minion(Game, null, champion.X, champion.Y, superModel, superModel, 0, team)
+                new Minion(Game, null, championPos, casterModel, casterModel, 0, team),
+                new Minion(Game, null, championPos, cannonModel, cannonModel, 0, team),
+                new Minion(Game, null, championPos, meleeModel, meleeModel, 0, team),
+                new Minion(Game, null, championPos, superModel, superModel, 0, team)
             };
 
             const int X = 400;
             foreach (var minion in minions)
             {
-                minion.SetPosition(champion.X + random.Next(-X, X), champion.Y + random.Next(-X, X));
+                minion.SetPosition(championPos.X + random.Next(-X, X), championPos.Y + random.Next(-X, X));
                 minion.PauseAi(true);
                 minion.StopMovement();
                 Game.ObjectManager.AddObject(minion);

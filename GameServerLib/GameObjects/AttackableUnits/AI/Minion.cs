@@ -3,6 +3,7 @@ using GameServerCore;
 using GameServerCore.Domain.GameObjects;
 using LeagueSandbox.GameServer.GameObjects.Stats;
 using GameServerCore.Enums;
+using System.Numerics;
 
 namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 {
@@ -20,13 +21,12 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         public Minion(
             Game game,
             IObjAiBase owner,
-            float x,
-            float y,
+            Vector2 position,
             string model,
             string name,
             uint netId = 0,
             TeamId team = TeamId.TEAM_NEUTRAL
-        ) : base(game, model, new Stats.Stats(), 40, x, y, 1100, netId, team)
+        ) : base(game, model, new Stats.Stats(), 40, position, 1100, netId, team)
         {
             Name = name;
 
@@ -46,7 +46,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
             SetVisibleByTeam(Team, true);
 
-            MoveOrder = MoveOrder.MOVE_ORDER_MOVE;
+            MoveOrder = MoveOrder.MOVE_ORDER_MOVETO;
 
             Replication = new ReplicationMinion(this);
         }
@@ -102,12 +102,12 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             var nextTargetPriority = 14;
             var objects = _game.ObjectManager.GetObjects();
             //Find target closest to max attack range.
-            foreach (var it in objects.OrderBy(x => GetDistanceTo(x.Value) - Stats.Range.Total))
+            foreach (var it in objects.OrderBy(x => Vector2.DistanceSquared(Position, x.Value.Position) - (Stats.Range.Total * Stats.Range.Total)))
             {
                 if (!(it.Value is IAttackableUnit u) ||
                     u.IsDead ||
                     u.Team == Team ||
-                    GetDistanceTo(u) > DETECT_RANGE ||
+                    Vector2.DistanceSquared(Position, u.Position) > DETECT_RANGE * DETECT_RANGE ||
                     !_game.ObjectManager.TeamHasVisionOn(Team, u))
                     continue;
                 var priority = (int)ClassifyTarget(u);  // get the priority.
@@ -130,7 +130,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
         protected void KeepFocusingTarget()
         {
-            if (IsAttacking && (TargetUnit == null || TargetUnit.IsDead || GetDistanceTo(TargetUnit) > Stats.Range.Total))
+            if (IsAttacking && (TargetUnit == null || TargetUnit.IsDead || Vector2.DistanceSquared(Position, TargetUnit.Position) > Stats.Range.Total * Stats.Range.Total))
             // If target is dead or out of range
             {
                 _game.PacketNotifier.NotifyNPC_InstantStopAttack(this, false);

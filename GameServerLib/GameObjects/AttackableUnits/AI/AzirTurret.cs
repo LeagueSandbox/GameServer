@@ -1,5 +1,6 @@
 ﻿using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
+using System.Numerics;
 
 namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 {
@@ -12,12 +13,11 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             IAttackableUnit owner,
             string name,
             string model,
-            float x = 0,
-            float y = 0,
+            Vector2 position,
             TeamId team = TeamId.TEAM_BLUE,
             uint netId = 0,
             LaneID lane = LaneID.NONE
-        ) : base(game, name, model, x, y, team, netId, lane)
+        ) : base(game, name, model, position, team, netId, lane)
         {
             Owner = owner;
 
@@ -29,15 +29,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         {
             base.OnAdded();
             _game.PacketNotifier.NotifySpawn(this);
-        }
-
-        public override void RefreshWaypoints()
-        {
-        }
-
-        public override float GetMoveSpeed()
-        {
-            return 0;
         }
     }
 }

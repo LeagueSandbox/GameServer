@@ -14,7 +14,7 @@ namespace Spells
 
         public void OnFinishCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
         {
-            var current = new Vector2(owner.X, owner.Y);
+            var current = new Vector2(owner.Position.X, owner.Position.Y);
             var to = new Vector2(spell.X, spell.Y) - current;
             Vector2 trueCoords;
 
@@ -29,7 +29,7 @@ namespace Spells
                 trueCoords = new Vector2(spell.X, spell.Y);
             }
 
-            AddParticle(owner, "global_ss_flash.troy", owner.X, owner.Y);
+            AddParticle(owner, "global_ss_flash.troy", owner.Position);
             TeleportTo(owner, trueCoords.X, trueCoords.Y);
             AddParticleTarget(owner, "global_ss_flash_02.troy", owner);
         }

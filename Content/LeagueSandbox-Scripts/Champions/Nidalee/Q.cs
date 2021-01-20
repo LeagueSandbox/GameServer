@@ -23,7 +23,7 @@ namespace Spells
 
         public void OnStartCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
         {
-            castcoords = new Vector2(owner.X, owner.Y);
+            castcoords = owner.Position;
         }
 
         public void OnFinishCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
@@ -31,15 +31,15 @@ namespace Spells
             var to = Vector2.Normalize(new Vector2(spell.X, spell.Y) - castcoords);
             var range = to * 1500f;
             var trueCoords = castcoords + range;
-            spell.AddProjectile("JavelinToss", castcoords.X, castcoords.Y, trueCoords.X, trueCoords.Y, true);
+            spell.AddProjectile("JavelinToss", castcoords, trueCoords, true);
         }
 
         public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, IProjectile projectile)
         {
             var ap = owner.Stats.AbilityPower.Total;
             var basedamage = 25 + spell.Level * 55 + ap;
-            var hitcoords = new Vector2(projectile.X, projectile.Y);
-            var distance = Math.Sqrt(Math.Pow((castcoords.X - hitcoords.X), 2) + Math.Pow((castcoords.Y - hitcoords.Y), 2));
+            var hitcoords = new Vector2(projectile.Position.X, projectile.Position.Y);
+            var distance = Math.Sqrt(Math.Pow(castcoords.X - hitcoords.X, 2) + Math.Pow(castcoords.Y - hitcoords.Y, 2));
             if (Math.Abs(distance) <= 525f)
             {
                 finaldamage = basedamage;
