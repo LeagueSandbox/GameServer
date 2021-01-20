@@ -32,6 +32,7 @@ namespace LeagueSandbox.GameServerConsole
                 Encoding.UTF8.GetString(Resources.GameInfo));
 
             var gameServerLauncher = new GameServerLauncher(
+                parsedArgs.ServerIp,
                 parsedArgs.ServerPort,
                 parsedArgs.GameInfoJson);
 
@@ -142,6 +143,9 @@ namespace LeagueSandbox.GameServerConsole
 
         [Option("config-gameserver-json", Default = "")]
         public string GameServerSettingsJson { get; set; }
+
+        [Option("host", Default = "0.0.0.0")]
+        public string ServerIp { get; set; }
 
         [Option("port", Default = (ushort)5119)]
         public ushort ServerPort { get; set; }

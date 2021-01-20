@@ -19,15 +19,17 @@ namespace LeagueSandbox.GameServer
         private readonly ILog _logger;
         private Game _game;
         private Config _config;
+        private string _serverIp { get; }
         private ushort _serverPort { get; }
 
         /// <summary>
         /// Initialize base variables for future usage.
         /// </summary>
-        public Server(Game game, ushort port, string configJson)
+        public Server(Game game, string ipaddr, ushort port, string configJson)
         {
             _logger = LoggerProvider.GetLogger();
             _game = game;
+            _serverIp = ipaddr;
             _serverPort = port;
             _config = Config.LoadFromJson(game, configJson);
 
@@ -48,9 +50,9 @@ namespace LeagueSandbox.GameServer
 
             _logger.Debug(build);
             _logger.Debug($"Yorick {_serverVersion}");
-            _logger.Info($"Game started on port: {_serverPort}");
+            _logger.Info($"Game started on: {_serverIp}:{_serverPort}");
 
-            packetServer.InitServer(_serverPort, _blowfishKeys, _game, _game.RequestHandler, _game.ResponseHandler);
+            packetServer.InitServer(_serverIp, _serverPort, _blowfishKeys, _game, _game.RequestHandler, _game.ResponseHandler);
             _game.Initialize(_config, packetServer);
         }
 

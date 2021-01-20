@@ -16,7 +16,7 @@ namespace PacketDefinitions420
     public class PacketServer
     {
         private Host _server;
-        private uint _serverHost = Address.IPv4HostAny;
+        private uint _serverHost;
         private IGame _game;
         protected const int PEER_MTU = 996;
 
@@ -32,13 +32,19 @@ namespace PacketDefinitions420
         /// <summary>
         /// Creates and sets up the host for the server as well as the packet handler manager.
         /// </summary>
+        /// <param name="ipaddr">Port the server will be hosted on.</param>
         /// <param name="port">Port the server will be hosted on.</param>
         /// <param name="blowfishKeys">Unique blowfish keys the server will use for encryption for each player.</param>
         /// <param name="game">Game instance.</param>
         /// <param name="netReq">Network request handler instance.</param>
         /// <param name="netResp">Network response handler instance.</param>
-        public void InitServer(ushort port, Dictionary<ulong, string> blowfishKeys, IGame game, NetworkHandler<ICoreRequest> netReq, NetworkHandler<ICoreResponse> netResp)
+        public void InitServer(string ipaddr, ushort port, Dictionary<ulong, string> blowfishKeys, IGame game, NetworkHandler<ICoreRequest> netReq, NetworkHandler<ICoreResponse> netResp)
         {
+
+            //Convert string IP to uint
+            string[] octets = ipaddr.Split('.');
+            _serverHost = (uint)(((short.Parse(octets[0]) << 24) | (short.Parse(octets[1]) << 16) | (short.Parse(octets[2]) << 8) | short.Parse(octets[3])) & 0xffffffffL);
+
             _game = game;
             _server = new Host();
             _server.Create(new Address(_serverHost,port), 32, 32, 0, 0);

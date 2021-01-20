@@ -25,6 +25,11 @@ namespace LeagueSandbox.GameServer
         /// </summary>
         public string ConfigJson { get; private set; }
         /// <summary>
+        /// Ip that the GameServer will be hosted on.
+        /// </summary>
+        public string ServerIp { get; private set; }
+
+        /// <summary>
         /// Port that the GameServer will be hosted on.
         /// </summary>
         public ushort ServerPort { get; private set; }
@@ -32,25 +37,27 @@ namespace LeagueSandbox.GameServer
         /// <summary>
         /// Represents the class which will call for the GameServer to start.
         /// </summary>
+        /// <param name="serverIp">Launch argument representing the port the server will be hosted on.</param>
         /// <param name="serverPort">Launch argument representing the port the server will be hosted on.</param>
         /// <param name="configJson">Launch argument representing the configuration file that houses all information about the game such as players, champions, map, etc.</param>
         /// <param name="blowfishKey">Singular blowfish key which the GameServer will run on. *NOTE*: Will be depricated once per-peer blowfish keys are implemented.</param>
-        public GameServerLauncher(ushort serverPort, string configJson)
+        public GameServerLauncher(string serverIp, ushort serverPort, string configJson)
         {
             ConfigJson = configJson;
+            ServerIp   = serverIp;
             ServerPort = serverPort;
             _logger = LoggerProvider.GetLogger();
             game = new Game();
 
-            _server = new Server(game, serverPort, configJson);
+            _server = new Server(game, serverIp, serverPort, configJson);
 
 #if !DEBUG
             try
             {
 #endif
-                // Where the server first initializes.
-                ExecutingDirectory = ServerContext.ExecutingDirectory;
-                _server.Start();
+            // Where the server first initializes.
+            ExecutingDirectory = ServerContext.ExecutingDirectory;
+            _server.Start();
 #if !DEBUG
             }
             catch (Exception e)
@@ -69,7 +76,7 @@ namespace LeagueSandbox.GameServer
             try
             {
 #endif
-                _server.StartNetworkLoop();
+            _server.StartNetworkLoop();
 #if !DEBUG
             }
             catch (Exception e)
