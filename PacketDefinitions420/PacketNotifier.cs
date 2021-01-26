@@ -1651,7 +1651,7 @@ namespace PacketDefinitions420
                 // TODO: Implement castInfo.Targets
 
                 DesignerCastTime = s.SpellData.GetCastTime(), // TODO: Verify
-                ExtraCastTime = 0.0f, // TODO: Unhardcode
+                ExtraCastTime = s.SpellData.ChannelDuration[s.Level] + s.SpellData.DelayCastOffsetPercent,
                 DesignerTotalTime = s.SpellData.GetCastTimeTotal(), // TODO: Verify
                 Cooldown = s.GetCooldown(),
                 StartCastTime = 0.0f, // TODO: Unhardcode

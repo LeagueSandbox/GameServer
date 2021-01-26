@@ -121,7 +121,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
             }
 
             // TODO: Check SpellData for if the spell should stop movement (and when).
-            if (!Owner.IsDashing)
+            if (!Owner.IsDashing && !SpellData.CanMoveWhileChanneling)
             {
                 Owner.StopMovement();
             }

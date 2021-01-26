@@ -41,7 +41,20 @@ namespace PacketDefinitions420
         {
             _game = game;
             _server = new Host();
-            _server.Create(new Address(_serverHost,port), 32, 32, 0, 0);
+            try
+            {
+                _server.Create(new Address(_serverHost, port), 32, 32, 0, 0);
+            }
+            catch (Exception)
+            {
+                foreach (var process in System.Diagnostics.Process.GetProcessesByName("League of Legends"))
+                {
+                    process.Kill();
+                }
+
+                System.Threading.Thread.Sleep(200);
+                _server.Create(new Address(_serverHost, port), 32, 32, 0, 0);
+            }
 
             Dictionary<ulong, BlowFish> blowfishes = new Dictionary<ulong, BlowFish>();
             foreach(var rawKey in blowfishKeys)
