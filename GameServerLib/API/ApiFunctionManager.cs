@@ -413,6 +413,11 @@ namespace LeagueSandbox.GameServer.API
             unit.DashToTarget(target, dashSpeed, animation, leapGravity, keepFacingLastDirection, followTargetMaxDistance, backDistance, travelTime);
         }
 
+        public static void PlaySFX(IObjAiBase owner, string name)
+        {
+            _game.PacketNotifier.NotifySfxCreated(name, owner.NetId);
+        }
+
         /// <summary>
         /// Forces the specified unit to perform a dash which ends at the given position.
         /// </summary>

@@ -1,8 +1,11 @@
-﻿using GameServerCore;
+﻿using GameMaths;
+
+using GameServerCore;
 using GameServerCore.Content;
 using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
+
 using LeagueSandbox.GameServer.API;
 using LeagueSandbox.GameServer.Content;
 using LeagueSandbox.GameServer.GameObjects.AttackableUnits;
@@ -11,6 +14,7 @@ using LeagueSandbox.GameServer.GameObjects.Missiles;
 using LeagueSandbox.GameServer.GameObjects.Other;
 using LeagueSandbox.GameServer.Packets;
 using LeagueSandbox.GameServer.Scripting.CSharp;
+
 using System.Collections.Generic;
 using System.Numerics;
 
@@ -126,7 +130,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
                 Owner.StopMovement();
             }
 
-            _game.PacketNotifier.NotifyNPC_CastSpellAns(_game.Map.NavigationGrid, this, new Vector2(x, y) , new Vector2(x2, y2), _futureProjNetId);
+            _game.PacketNotifier.NotifyNPC_CastSpellAns(_game.Map.NavigationGrid, this, new Vector2(x, y), new Vector2(x2, y2), _futureProjNetId);
 
             return true;
         }
@@ -214,6 +218,16 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
                     }
                     break;
             }
+        }
+
+        //Preparations for the charging
+        private int CalculateGrowthFromCurrentChannelDuration()
+        {
+            var actuallyPassed = SpellData.ChannelDuration[Level] - CurrentChannelDuration;
+            var percentageGrowth = actuallyPassed / SpellData.CastRangeGrowthDuration[Level];
+            var newRange = MathExtension.Lerp(SpellData.CastRange[Level], SpellData.CastRadius[Level], percentageGrowth);
+
+            return (int)System.Math.Min(newRange, SpellData.CastRadius[Level]);
         }
 
         /// <summary>
