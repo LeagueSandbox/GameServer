@@ -109,7 +109,7 @@ namespace LeagueSandbox.GameServer.Scripting.CSharp
                         _scriptAssembly.Add(assembly);
                         foreach (var type in assembly.GetTypes())
                         {
-                            types.Add(type.FullName, type);
+                            types[type.FullName] = type;
                         }
                         return state;
                     }
