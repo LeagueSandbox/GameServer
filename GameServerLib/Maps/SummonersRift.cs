@@ -247,8 +247,6 @@ namespace LeagueSandbox.GameServer.Maps
             var nexusRadius = 353;
             var sightRange = 1700;
 
-            // TODO: Verify if "OrderTurretNormal" is correct for all 
-
             //BLUE TEAM
             // Outer top - mid - bot turrets
             _blueOuterTurrets.Add(new LaneTurret(_game, "Turret_T1_L_03_A", "OrderTurretNormal", new Vector2(574.66f, 10220.47f), TeamId.TEAM_BLUE,

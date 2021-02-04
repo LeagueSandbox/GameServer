@@ -153,7 +153,10 @@ namespace LeagueSandbox.GameServer
                 var ai = u as IObjAiBase;
                 if (ai != null)
                 {
-                    if ((!ai.SpellToCast.SpellData.IsToggleSpell && !ai.SpellToCast.SpellData.CanMoveWhileChanneling))
+                    if ((!ai.SpellToCast.SpellData.IsToggleSpell && !ai.SpellToCast.SpellData.CanMoveWhileChanneling
+                        && ai.SpellToCast.SpellData.CantCancelWhileChanneling)
+                        || (!ai.SpellToCast.SpellData.NoWinddownIfCancelled
+                        && ai.SpellToCast.SpellData.CantCancelWhileWindingUp))
                     {
                         ai.StopMovement();
                     }
