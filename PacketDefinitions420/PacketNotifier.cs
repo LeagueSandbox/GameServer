@@ -185,6 +185,56 @@ namespace PacketDefinitions420
         }
 
         /// <summary>
+        /// Sends a packet to all players with vision of the specified attacker detailing that they have targeted the specified target.
+        /// </summary>
+        /// <param name="attacker">AI that is targeting an AttackableUnit.</param>
+        /// <param name="target">AttackableUnit that is being targeted by the attacker.</param>
+        public void NotifyAI_TargetS2C(IObjAiBase attacker, IAttackableUnit target)
+        {
+            var targetPacket = new AI_TargetS2C
+            {
+                SenderNetID = attacker.NetId,
+                TargetNetID = 0
+            };
+
+            if (target != null)
+            {
+                targetPacket.TargetNetID = target.NetId;
+            }
+
+            // TODO: Verify if we need to account for other cases.
+            if (attacker is IBaseTurret)
+            {
+                _packetHandlerManager.BroadcastPacket(targetPacket.GetBytes(), Channel.CHL_S2C);
+            }
+            else
+            {
+                _packetHandlerManager.BroadcastPacketVision(attacker, targetPacket.GetBytes(), Channel.CHL_S2C);
+            }
+        }
+
+        /// <summary>
+        /// Sends a packet to all players with vision of the specified attacker detailing that they have targeted the specified champion.
+        /// </summary>
+        /// <param name="attacker">AI that is targeting a champion.</param>
+        /// <param name="target">Champion that is being targeted by the attacker.</param>
+        public void NotifyAI_TargetHeroS2C(IObjAiBase attacker, IChampion target)
+        {
+            var targetPacket = new AI_TargetHeroS2C
+            {
+                SenderNetID = attacker.NetId,
+                TargetNetID = 0
+            };
+
+            if (target != null)
+            {
+                targetPacket.TargetNetID = target.NetId;
+            }
+
+            _packetHandlerManager.BroadcastPacketVision(attacker, targetPacket.GetBytes(), Channel.CHL_S2C);
+        }
+
+        /// <summary>
         /// Sends a packet to all players that announces a specified message (ex: "Minions have spawned.")
         /// </summary>
         /// <param name="mapId">Current map ID.</param>
@@ -230,30 +280,85 @@ namespace PacketDefinitions420
         }
 
         /// <summary>
-        /// Sends a packet to all players that the specified attacker is starting their first auto attack.
+        /// Sends a packet to all players detailing that the specified  unit is starting their next auto attack.
         /// </summary>
-        /// <param name="attacker">AttackableUnit that is starting an auto attack.</param>
-        /// <param name="victim">AttackableUnit that is the target of the auto attack.</param>
-        /// <param name="futureProjNetId">NetID of the projectile that will be created for the auto attack.</param>
-        /// <param name="isCritical">Whether or not the auto attack is a critical.</param>
-        public void NotifyBeginAutoAttack(IAttackableUnit attacker, IAttackableUnit victim, uint futureProjNetId, bool isCritical)
+        /// <param name="attacker">Unit that is attacking.</param>
+        /// <param name="target">AttackableUnit being attacked.</param>
+        /// <param name="futureProjNetId">NetId of the auto attack projectile.</param>
+        /// <param name="isCrit">Whether or not the auto attack will crit.</param>
+        /// <param name="nextAttackFlag">Whether or this basic attack is not the first time this basic attack has been performed on the given target.</param>
+        /// TODO: Verify the differences between normal Basic_Attack and Basic_Attack_Pos.
+        public void NotifyBasic_Attack(IObjAiBase attacker, IAttackableUnit target, uint futureProjNetId, bool isCrit, bool nextAttackFlag)
         {
-            var aa = new BeginAutoAttack(_navGrid, attacker, victim, futureProjNetId, isCritical);
-            _packetHandlerManager.BroadcastPacket(aa, Channel.CHL_S2C);
+            var targetPos = MovementVector.ToCenteredScaledCoordinates(target.Position, _navGrid);
+
+            // TODO: Remove attacker, target, and futureProjNetId parameters and replace with CastInfo
+            var basicAttackData = new BasicAttackData
+            {
+                TargetNetID = target.NetId,
+                ExtraTime = 0, // TODO: Verify, maybe related to CastInfo.ExtraCastTime?
+                MissileNextID = futureProjNetId,
+                AttackSlot = attacker.AutoAttackSpell.CastInfo.SpellSlot, // TODO: Unhardcode (by using CastInfo)
+                // TODO: Verify TargetPosition, taken from LS packet
+                TargetPosition = new Vector3(targetPos.X, _navGrid.GetHeightAtLocation(targetPos.X, targetPos.Y), targetPos.Y)
+            };
+            if (!nextAttackFlag)
+            {
+                basicAttackData.ExtraTime = -0.01f; // TODO: Verify, maybe related to CastInfo.ExtraCastTime?
+            }
+
+            var basicAttackPacket = new Basic_Attack
+            {
+                SenderNetID = attacker.NetId,
+                Attack = basicAttackData
+            };
+            _packetHandlerManager.BroadcastPacketVision(attacker, basicAttackPacket.GetBytes(), Channel.CHL_S2C);
         }
 
         /// <summary>
-        /// Sends a side bar tip to the specified player (ex: quest tips).
+        /// Sends a packet to all players that the specified attacker is starting their first auto attack.
         /// </summary>
-        /// <param name="userId">User to send the packet to.</param>
-        /// <param name="title">Title of the tip.</param>
-        /// <param name="text">Description text of the tip.</param>
-        /// <param name="imagePath">Path to an image that will be embedded in the tip.</param>
-        /// <param name="tipCommand">Action suggestion(? unconfirmed).</param>
-        /// <param name="playerNetId">NetID to send the packet to.</param>
-        /// <param name="targetNetId">NetID of the target referenced by the tip.</param>
-        /// TODO: tipCommand should be a lib/core enum that gets translated into a league version specific packet enum as it may change over time.
-        public void NotifyBlueTip(int userId, string title, string text, string imagePath, byte tipCommand, uint playerNetId,
+        /// <param name="attacker">AI that is starting an auto attack.</param>
+        /// <param name="target">AttackableUnit being attacked.</param>
+        /// <param name="futureProjNetId">NetID of the projectile that will be created for the auto attack.</param>
+        /// <param name="isCrit">Whether or not the auto attack is a critical.</param>
+        /// TODO: Verify the differences between BasicAttackPos and normal BasicAttack.
+        public void NotifyBasic_Attack_Pos(IObjAiBase attacker, IAttackableUnit target, uint futureProjNetId, bool isCrit)
+        {
+            var targetPos = MovementVector.ToCenteredScaledCoordinates(target.Position, _navGrid);
+
+            // TODO: Remove attacker, target, and futureProjNetId parameters and replace with CastInfo
+            var basicAttackData = new BasicAttackData
+            {
+                TargetNetID = target.NetId,
+                ExtraTime = 0, // TODO: Verify, maybe related to CastInfo.ExtraCastTime?
+                MissileNextID = futureProjNetId,
+                AttackSlot = attacker.AutoAttackSpell.CastInfo.SpellSlot,
+                // TODO: Verify TargetPosition, taken from LS packet
+                TargetPosition = new Vector3(targetPos.X, target.GetHeight(), targetPos.Y)
+            };
+
+            var basicAttackPacket = new Basic_Attack_Pos
+            {
+                SenderNetID = attacker.NetId,
+                Attack = basicAttackData,
+                Position = attacker.Position // TODO: Verify
+            };
+            _packetHandlerManager.BroadcastPacketVision(attacker, basicAttackPacket.GetBytes(), Channel.CHL_S2C);
+        }
+
+    /// <summary>
+    /// Sends a side bar tip to the specified player (ex: quest tips).
+    /// </summary>
+    /// <param name="userId">User to send the packet to.</param>
+    /// <param name="title">Title of the tip.</param>
+    /// <param name="text">Description text of the tip.</param>
+    /// <param name="imagePath">Path to an image that will be embedded in the tip.</param>
+    /// <param name="tipCommand">Action suggestion(? unconfirmed).</param>
+    /// <param name="playerNetId">NetID to send the packet to.</param>
+    /// <param name="targetNetId">NetID of the target referenced by the tip.</param>
+    /// TODO: tipCommand should be a lib/core enum that gets translated into a league version specific packet enum as it may change over time.
+    public void NotifyBlueTip(int userId, string title, string text, string imagePath, byte tipCommand, uint playerNetId,
             uint targetNetId)
         {
             var packet = new BlueTip(title, text, imagePath, tipCommand, playerNetId, targetNetId);
@@ -320,6 +425,8 @@ namespace PacketDefinitions420
             var cr = new ChampionRespawn(c);
             _packetHandlerManager.BroadcastPacket(cr, Channel.CHL_S2C);
         }
+
+        // TODO: Implement NotifyChangeSlotSpellData
 
         /// <summary>
         /// Sends a packet to all players with vision of a specified ObjAiBase explaining that their specified spell's cooldown has been set.
@@ -598,6 +705,13 @@ namespace PacketDefinitions420
                 MovementData = md
             };
 
+            charStackDataList.Add(charStackData);
+            enterVis.CharacterDataStack = charStackDataList;
+
+            enterVis.LookAtPosition = new Vector3(1, 0, 0);
+            // TODO: Verify
+            enterVis.UnknownIsHero = isChampion;
+
             if (userId != 0)
             {
                 _packetHandlerManager.SendPacket(userId, enterVis.GetBytes(), Channel.CHL_S2C);
@@ -636,9 +750,12 @@ namespace PacketDefinitions420
         /// <param name="p">Projectile that was created.</param>
         public void NotifyForceCreateMissile(ISpellMissile p)
         {
-            var misPacket = new S2C_ForceCreateMissile();
-            misPacket.SenderNetID = p.Owner.NetId;
-            misPacket.MissileNetID = p.NetId;
+            var misPacket = new S2C_ForceCreateMissile
+            {
+                SenderNetID = p.CastInfo.Owner.NetId,
+                MissileNetID = p.NetId
+            };
+
             _packetHandlerManager.BroadcastPacket(misPacket.GetBytes(), Channel.CHL_S2C);
         }
 
@@ -1114,72 +1231,82 @@ namespace PacketDefinitions420
         /// <param name="p">Projectile that was created.</param>
         public void NotifyMissileReplication(ISpellMissile p)
         {
-            var targetPos = p.GetTargetPosition();
-            if (targetPos == new Vector2(float.NaN, float.NaN))
+            var to = Vector3.Normalize(p.CastInfo.TargetPositionEnd - p.CastInfo.TargetPosition);
+
+            var castInfo = new CastInfo
             {
-                return;
+                SpellHash = p.CastInfo.SpellHash,
+                SpellNetID = p.CastInfo.SpellNetID,
+
+                SpellLevel = p.CastInfo.SpellLevel,
+                AttackSpeedModifier = p.CastInfo.AttackSpeedModifier,
+                CasterNetID = p.CastInfo.Owner.NetId,
+                // TODO: Implement spell chains?
+                SpellChainOwnerNetID = p.CastInfo.Owner.NetId,
+                PackageHash = p.CastInfo.PackageHash,
+                MissileNetID = p.CastInfo.MissileNetID,
+                // Not sure if we want to add height for these, but i did it anyway
+                TargetPosition = p.CastInfo.TargetPosition,
+                TargetPositionEnd = p.CastInfo.TargetPositionEnd,
+                DesignerCastTime = p.CastInfo.DesignerCastTime,
+                ExtraCastTime = p.CastInfo.ExtraCastTime,
+                DesignerTotalTime = p.CastInfo.DesignerTotalTime,
+
+                Cooldown = p.CastInfo.Cooldown,
+                StartCastTime = p.CastInfo.StartCastTime,
+
+                IsAutoAttack = p.CastInfo.IsAutoAttack,
+                IsSecondAutoAttack = p.CastInfo.IsSecondAutoAttack,
+                IsForceCastingOrChannel = p.CastInfo.IsForceCastingOrChannel,
+                IsOverrideCastPosition = p.CastInfo.IsOverrideCastPosition,
+                IsClickCasted = p.CastInfo.IsClickCasted,
+
+                SpellSlot = p.CastInfo.SpellSlot,
+                ManaCost = p.CastInfo.ManaCost,
+                SpellCastLaunchPosition = p.CastInfo.SpellCastLaunchPosition,
+                AmmoUsed = p.CastInfo.AmmoUsed,
+                AmmoRechargeTime = p.CastInfo.AmmoRechargeTime
+            };
+
+            if (p.CastInfo.Targets.Count > 0)
+            {
+                p.CastInfo.Targets.ForEach(t =>
+                {
+                    if (t.Unit != null)
+                    {
+                        castInfo.Targets.Add(new CastInfo.Target() { UnitNetID = t.Unit.NetId, HitResult = (byte)t.HitResult });
+                    }
+                    else
+                    {
+                        castInfo.Targets.Add(new CastInfo.Target() { UnitNetID = 0, HitResult = (byte)t.HitResult });
+                    }
+                });
             }
 
-            var current = p.GetPosition3D();
-            var to = Vector3.Normalize(new Vector3(targetPos.X, _navGrid.GetHeightAtLocation(targetPos.X, targetPos.Y), targetPos.Y) - current);
-            var misPacket = new MissileReplication();
-            misPacket.SenderNetID = p.Owner.NetId;
-            misPacket.Position = p.GetPosition3D();
-            misPacket.CasterPosition = p.Owner.GetPosition3D();
-            // Not sure if we want to add height for these, but i did it anyway
-            misPacket.Direction = new Vector3(to.X, 0, to.Y);
-            misPacket.Velocity = new Vector3(to.X * p.GetSpeed(), 0, to.Y * p.GetSpeed());
-            misPacket.StartPoint = p.GetPosition3D();
-            misPacket.EndPoint = new Vector3(targetPos.X, _navGrid.GetHeightAtLocation(targetPos.X, targetPos.Y), targetPos.Y);
-            misPacket.UnitPosition = p.Owner.GetPosition3D(); // TODO: Verify if Owner is what it means by Unit.
-            misPacket.TimeFromCreation = 0f; // TODO: Unhardcode
-            misPacket.Speed = p.GetSpeed();
-            misPacket.LifePercentage = 0f; // TODO: Unhardcode
-            //TODO: Implement time limited projectiles
-            misPacket.TimedSpeedDelta = 0f; // TODO: Implement time limited projectiles for this
-            misPacket.TimedSpeedDeltaTime = 0x7F7FFFFF; // Same as above (this value is from the SpawnProjectile packet, it is a placeholder)
-            misPacket.Bounced = false; //TODO: Implement bouncing projectiles
-            var cast = new CastInfo();
-            cast.SpellHash = (uint)p.ProjectileId;
-            cast.SpellNetID = p.OriginSpell != null ? p.OriginSpell.SpellNetId : 0;
-            cast.SpellLevel = p.OriginSpell != null ? p.OriginSpell.Level : (byte)0;
-            cast.AttackSpeedModifier = 1.0f; // Unsure of a use for this
-            cast.CasterNetID = p.OriginSpell != null ? p.OriginSpell.Owner.NetId : p.Owner.NetId;
-            //TODO: Implement spell chains
-            cast.SpellChainOwnerNetID = p.OriginSpell != null ? p.OriginSpell.Owner.NetId : p.Owner.NetId; // TODO: Implement spell chains
-            cast.PackageHash = p.OriginSpell != null ? (p.Owner as IObjAiBase).GetObjHash() : 0;
-            cast.MissileNetID = p.NetId;
-            // Not sure if we want to add height for these, but i did it anyway
-            cast.TargetPosition = new Vector3(targetPos.X, _navGrid.GetHeightAtLocation(targetPos.X, targetPos.Y), targetPos.Y);
-            cast.TargetPositionEnd = new Vector3(targetPos.X, _navGrid.GetHeightAtLocation(targetPos.X, targetPos.Y), targetPos.Y);
-
-            if (p.TargetUnit != null)
+            var misPacket = new MissileReplication
             {
-                var targets = new List<CastInfo.Target>();
-                var tar = new CastInfo.Target();
-                tar.UnitNetID = p.TargetUnit.NetId;
-                tar.HitResult = 0; // TODO: Unhardcode
-                targets.Add(tar);
-                cast.Targets = targets;
-            }
+                SenderNetID = p.CastInfo.Owner.NetId,
+                Position = p.CastInfo.SpellCastLaunchPosition,
+                CasterPosition = p.CastInfo.Owner.GetPosition3D(),
+                // Not sure if we want to add height for these, but i did it anyway
+                Direction = to,
+                Velocity = to * p.GetSpeed(),
+                StartPoint = p.CastInfo.SpellCastLaunchPosition,
+                EndPoint = p.CastInfo.TargetPositionEnd,
+                // TODO: Verify
+                UnitPosition = p.CastInfo.Owner.GetPosition3D(),
+                TimeFromCreation = 0f, // TODO: Unhardcode
+                Speed = p.GetSpeed(),
+                LifePercentage = 0f, // TODO: Unhardcode
+                //TODO: Implement time limited projectiles
+                TimedSpeedDelta = 0f, // TODO: Implement time limited projectiles for this
+                TimedSpeedDeltaTime = 0x7F7FFFFF, // Same as above (this value is from the SpawnProjectile packet, it is a placeholder)
 
-            cast.DesignerCastTime = p.OriginSpell != null ? p.OriginSpell.CastTime : 1.0f; // TODO: Verify
-            cast.ExtraCastTime = 0f; // TODO: Unhardcode
-            cast.DesignerTotalTime = p.OriginSpell != null ? p.OriginSpell.CastTime : 1.0f; // TODO: Verify
-            cast.Cooldown = p.OriginSpell != null ? p.OriginSpell.GetCooldown() : 0f;
-            cast.StartCastTime = p.OriginSpell != null ? p.OriginSpell.CastTime : 0f; // TODO: Verify
+                Bounced = false, //TODO: Implement bouncing projectiles
 
-            //TODO: Implement spell flags so these aren't set manually (hardcoded)
-            cast.IsAutoAttack = false;
-            cast.IsSecondAutoAttack = false;
-            cast.IsForceCastingOrChannel = false;
-            cast.IsOverrideCastPosition = false;
-            cast.IsClickCasted = false;
+                CastInfo = castInfo
+            };
 
-            cast.SpellSlot = p.OriginSpell != null ? p.OriginSpell.Slot : (byte)0x30;
-            cast.SpellCastLaunchPosition = p.GetPosition3D();
-
-            misPacket.CastInfo = cast;
             if (!p.IsServerOnly)
             {
                 _packetHandlerManager.BroadcastPacketVision(p, misPacket.GetBytes(), Channel.CHL_S2C);
@@ -1293,21 +1420,6 @@ namespace PacketDefinitions420
         }
 
         /// <summary>
-        /// Sends a packet to all players detailing that the specified attacker unit is starting their next auto attack.
-        /// </summary>
-        /// <param name="attacker">AttackableUnit auto attacking.</param>
-        /// <param name="target">AttackableUnit that is the target of the auto attack.</param>
-        /// <param name="futureProjNetId">NetId of the auto attack projectile.</param>
-        /// <param name="isCritical">Whether or not the auto attack will crit.</param>
-        /// <param name="nextAttackFlag">Whether or not to increase the time to auto attack due to being the next auto attack.</param>
-        public void NotifyNextAutoAttack(IAttackableUnit attacker, IAttackableUnit target, uint futureProjNetId, bool isCritical,
-            bool nextAttackFlag)
-        {
-            var aa = new NextAutoAttack(attacker, target, futureProjNetId, isCritical, nextAttackFlag);
-            _packetHandlerManager.BroadcastPacket(aa, Channel.CHL_S2C);
-        }
-
-        /// <summary>
         /// Sends a packet to all players who have vision of the specified buff's target detailing that the buff has been added to the target.
         /// </summary>
         /// <param name="b">Buff being added.</param>
@@ -1355,7 +1467,7 @@ namespace PacketDefinitions420
                 var entry = new BuffAddGroupEntry
                 {
                     OwnerNetID = buffs[i].TargetUnit.NetId,
-                    CasterNetID = buffs[i].OriginSpell.Owner.NetId,
+                    CasterNetID = buffs[i].OriginSpell.CastInfo.Owner.NetId,
                     Slot = buffs[i].Slot,
                     Count = (byte)buffs[i].StackCount,
                     IsHidden = buffs[i].IsHidden
@@ -1424,7 +1536,7 @@ namespace PacketDefinitions420
                 BuffSlot = b.Slot,
                 RunningTime = b.TimeElapsed,
                 Duration = b.Duration,
-                CasterNetID = b.OriginSpell.Owner.NetId
+                CasterNetID = b.OriginSpell.CastInfo.Owner.NetId
             };
             _packetHandlerManager.BroadcastPacketVision(b.TargetUnit, replacePacket.GetBytes(), Channel.CHL_S2C);
         }
@@ -1450,7 +1562,7 @@ namespace PacketDefinitions420
                 var entry = new BuffReplaceGroupEntry
                 {
                     OwnerNetID = buffs[i].TargetUnit.NetId,
-                    CasterNetID = buffs[i].OriginSpell.Owner.NetId,
+                    CasterNetID = buffs[i].OriginSpell.CastInfo.Owner.NetId,
                     Slot = buffs[i].Slot
                 };
                 entries.Add(entry);
@@ -1501,7 +1613,7 @@ namespace PacketDefinitions420
                 var entry = new BuffUpdateCountGroupEntry
                 {
                     OwnerNetID = buffs[i].TargetUnit.NetId,
-                    CasterNetID = buffs[i].OriginSpell.Owner.NetId,
+                    CasterNetID = buffs[i].OriginSpell.CastInfo.Owner.NetId,
                     BuffSlot = buffs[i].Slot,
                     Count = (byte)buffs[i].StackCount
                 };
@@ -1530,42 +1642,54 @@ namespace PacketDefinitions420
         /// <summary>
         /// Sends a packet to all players with vision of the owner of the specified spell detailing that a spell has been cast.
         /// </summary>
-        /// <param name="navGrid">NavigationGrid instance used for networking positional data.</param>
         /// <param name="s">Spell being cast.</param>
-        /// <param name="start">Starting position of the spell.</param>
-        /// <param name="end">End position of the spell.</param>
         /// <param name="futureProjNetId">NetId of the projectile that may be spawned by the spell.</param>
-        public void NotifyNPC_CastSpellAns(INavigationGrid navGrid, ISpell s, Vector2 start, Vector2 end, uint futureProjNetId)
+        public void NotifyNPC_CastSpellAns(ISpell s, uint futureProjNetId)
         {
             var castInfo = new CastInfo
             {
                 SpellHash = (uint)s.GetId(),
-                SpellNetID = s.SpellNetId,
-                SpellLevel = s.Level,
-                AttackSpeedModifier = 1.0f, // TOOD: Unhardcode
-                CasterNetID = s.Owner.NetId,
-                SpellChainOwnerNetID = s.Owner.NetId,
-                PackageHash = s.Owner.GetObjHash(),
+                SpellNetID = s.CastInfo.SpellNetID,
+                SpellLevel = s.CastInfo.SpellLevel,
+                AttackSpeedModifier = s.CastInfo.AttackSpeedModifier,
+                CasterNetID = s.CastInfo.Owner.NetId,
+                SpellChainOwnerNetID = s.CastInfo.Owner.NetId,
+                PackageHash = s.CastInfo.Owner.GetObjHash(),
                 MissileNetID = futureProjNetId,
-                TargetPosition = new Vector3(start.X, navGrid.GetHeightAtLocation(start.X, start.Y), start.Y),
-                TargetPositionEnd = new Vector3(end.X, navGrid.GetHeightAtLocation(end.X, end.Y), end.Y),
-
-                // TODO: Implement castInfo.Targets
-
-                DesignerCastTime = s.SpellData.GetCastTime(), // TODO: Verify
-                ExtraCastTime = 0.0f, // TODO: Unhardcode
-                DesignerTotalTime = s.SpellData.GetCastTimeTotal(), // TODO: Verify
-                Cooldown = s.GetCooldown(),
-                StartCastTime = 0.0f, // TODO: Unhardcode
-
-                //TODO: Implement castInfo.IsAutoAttack/IsSecondAutoAttack/IsForceCastingOrChannel/IsOverrideCastPosition/IsClickCasted (you may have checks for all of these, but only one of these can be present in the packet when sent)
-
-                SpellSlot = s.Slot,
-                SpellCastLaunchPosition = s.Owner.GetPosition3D(),
-                AmmoUsed = 0, // TODO: Unhardcode (requires implementing Ammo)
-                AmmoRechargeTime = s.GetCooldown() // TODO: Implement correctly (requires implementing Ammo)
+                TargetPosition = s.CastInfo.TargetPosition,
+                TargetPositionEnd = s.CastInfo.TargetPositionEnd,
+                DesignerCastTime = s.CastInfo.DesignerCastTime,
+                ExtraCastTime = s.CastInfo.ExtraCastTime,
+                DesignerTotalTime = s.CastInfo.DesignerTotalTime,
+                Cooldown = s.CastInfo.Cooldown,
+                StartCastTime = s.CastInfo.StartCastTime,
+                IsAutoAttack = s.CastInfo.IsAutoAttack,
+                IsSecondAutoAttack = s.CastInfo.IsSecondAutoAttack,
+                IsForceCastingOrChannel = s.CastInfo.IsForceCastingOrChannel,
+                IsOverrideCastPosition = s.CastInfo.IsOverrideCastPosition,
+                IsClickCasted = s.CastInfo.IsClickCasted,
+                SpellSlot = s.CastInfo.SpellSlot,
+                SpellCastLaunchPosition = s.CastInfo.SpellCastLaunchPosition,
+                AmmoUsed = s.CastInfo.AmmoUsed,
+                AmmoRechargeTime = s.CastInfo.AmmoRechargeTime
             };
-            if (s.Level > 0)
+
+            if (s.CastInfo.Targets.Count > 0)
+            {
+                s.CastInfo.Targets.ForEach(t =>
+                {
+                    if (t.Unit != null)
+                    {
+                        castInfo.Targets.Add(new CastInfo.Target() { UnitNetID = t.Unit.NetId, HitResult = (byte)t.HitResult });
+                    }
+                    else
+                    {
+                        castInfo.Targets.Add(new CastInfo.Target() { UnitNetID = 0, HitResult = (byte)t.HitResult });
+                    }
+                });
+            }
+
+            if (s.CastInfo.SpellLevel > 0)
             {
                 castInfo.ManaCost = s.SpellData.ManaCost[s.Level];
             }
@@ -1576,12 +1700,34 @@ namespace PacketDefinitions420
 
             var castAnsPacket = new NPC_CastSpellAns
             {
-                SenderNetID = s.Owner.NetId,
-                CasterPositionSyncID = (int)s.Owner.SyncId,
-                Unknown1 = false, // TODO: Find what this is (if false, CasterPositionSyncID is used)
+                SenderNetID = s.CastInfo.Owner.NetId,
+                CasterPositionSyncID = s.CastInfo.Owner.SyncId,
+                // TODO: Find what this is (if false, causes CasterPositionSyncID to be used)
+                Unknown1 = false,
                 CastInfo = castInfo
             };
-            _packetHandlerManager.BroadcastPacketVision(s.Owner, castAnsPacket.GetBytes(), Channel.CHL_S2C);
+            _packetHandlerManager.BroadcastPacketVision(s.CastInfo.Owner, castAnsPacket.GetBytes(), Channel.CHL_S2C);
+        }
+
+        /// <summary>
+        /// Sends a packet to the specified player detailing that they have leveled up the specified skill.
+        /// </summary>
+        /// <param name="userId">User to send the packet to.</param>
+        /// <param name="netId">NetId of the GameObject whos skill is being leveled up.</param>
+        /// <param name="slot">Slot of the skill being leveled up.</param>
+        /// <param name="level">Current level of the skill.</param>
+        /// <param name="points">Number of skill points available after the skill has been leveled up.</param>
+        public void NotifyNPC_UpgradeSpellAns(int userId, uint netId, byte slot, byte level, byte points)
+        {
+            var upgradeSpellPacket = new NPC_UpgradeSpellAns
+            {
+                SenderNetID = netId,
+                Slot = slot,
+                SpellLevel = level,
+                SkillPoints = points
+            };
+
+            _packetHandlerManager.SendPacket(userId, upgradeSpellPacket.GetBytes(), Channel.CHL_GAMEPLAY);
         }
 
         /// <summary>
@@ -1589,18 +1735,28 @@ namespace PacketDefinitions420
         /// </summary>
         /// <param name="attacker">AttackableUnit that stopped their auto attack.</param>
         /// <param name="isSummonerSpell">Whether or not the spell is a summoner spell.</param>
+        /// <param name="keepAnimating">Whether or not to continue the auto attack animation after the abrupt stop.</param>
+        /// <param name="destroyMissile">Whether or not to destroy the missile which may have been created before stopping (client-side removal).</param>
+        /// <param name="overrideVisibility">Whether or not stopping this auto attack overrides visibility checks.</param>
+        /// <param name="forceClient">Whether or not this packet should be forcibly applied, regardless of if an auto attack is being performed client-side.</param>
         /// <param name="missileNetID">NetId of the missile that may have been spawned by the spell.</param>
-        public void NotifyNPC_InstantStopAttack(IAttackableUnit attacker, bool isSummonerSpell, uint missileNetID = 0)
+        /// TODO: Find a better way to implement these parameters
+        public void NotifyNPC_InstantStop_Attack(IAttackableUnit attacker, bool isSummonerSpell,
+            bool keepAnimating = false,
+            bool destroyMissile = true,
+            bool overrideVisibility = true,
+            bool forceClient = false,
+            uint missileNetID = 0)
         {
             var stopAttack = new NPC_InstantStop_Attack
             {
                 SenderNetID = attacker.NetId,
                 MissileNetID = missileNetID, //TODO: Fix MissileNetID, currently it only works when it is 0
-                KeepAnimating = false,
-                DestroyMissile = true,
-                OverrideVisibility = true,
+                KeepAnimating = keepAnimating,
+                DestroyMissile = destroyMissile,
+                OverrideVisibility = overrideVisibility,
                 IsSummonerSpell = isSummonerSpell,
-                ForceDoClient = false
+                ForceDoClient = forceClient
             };
             _packetHandlerManager.BroadcastPacketVision(attacker, stopAttack.GetBytes(), Channel.CHL_S2C);
         }
@@ -1614,18 +1770,6 @@ namespace PacketDefinitions420
         {
             var nd = new NpcDie(unit, killer);
             _packetHandlerManager.BroadcastPacket(nd, Channel.CHL_S2C);
-        }
-
-        /// <summary>
-        /// Sends a packet to all players detailing that the specified attacker has begun trying to attack (has targeted) the specified target. Functionally makes the attacker face the target.
-        /// </summary>
-        /// <param name="attacker">AttackableUnit that is targeting another unit.</param>
-        /// <param name="target">AttackableUnit being targetted by the attacker.</param>
-        /// <param name="attackType">Type of attack; RADIAL/MELEE/TARGETED</param>
-        public void NotifyOnAttack(IAttackableUnit attacker, IAttackableUnit target, AttackType attackType)
-        {
-            var oa = new OnAttack(attacker, target, attackType);
-            _packetHandlerManager.BroadcastPacket(oa, Channel.CHL_S2C);
         }
 
         /// <summary>
@@ -1757,6 +1901,122 @@ namespace PacketDefinitions420
             _packetHandlerManager.BroadcastPacket(upg, Channel.CHL_S2C);
         }
 
+        // <summary>
+        /// Sends a packet to all players with vision of the specified unit detailing that it is playing the specified animation.
+        /// </summary>
+        /// <param name="u">Unit that is playing the animation.</param>
+        /// <param name="animation">Internal name of the animation to play.</param>
+        /// TODO: Implement AnimationFlags enum for this and fill it in.
+        /// <param name="flags">Animation flags. Possible values and functions unknown.</param>
+        /// <param name="timeScale">How fast the animation should play. Default 1x speed.</param>
+        /// <param name="startTime">Time in the animation to start at.</param>
+        /// TODO: Verify if this description is correct, if not, correct it.
+        /// <param name="speedScale">How much the speed of the unit should affect the animation.</param>
+        public void NotifyS2C_PlayAnimation(IAttackableUnit u, string animation, byte flags = 0, float timeScale = 1.0f, float startTime = 0.0f, float speedScale = 1.0f)
+        {
+            var animPacket = new S2C_PlayAnimation
+            {
+                SenderNetID = u.NetId,
+                AnimationFlags = flags, // TODO: figure out what these do, and probably make an enum for it
+                ScaleTime = timeScale,
+                StartProgress = startTime,
+                SpeedRatio = speedScale,
+                AnimationName = animation
+            };
+
+            _packetHandlerManager.BroadcastPacketVision(u, animPacket.GetBytes(), Channel.CHL_S2C);
+        }
+
+        /// <summary>
+        /// Sends a packet to all players with vision of the specified unit detailing that its animation states have changed to the specified animation pairs.
+        /// Replaces the unit's normal animation behaviors with the given animation pairs. Structure of the animationPairs is expected to follow the same structure from before the replacement.
+        /// </summary>
+        /// <param name="u">AttackableUnit to change.</param>
+        /// <param name="animationPairs">Dictionary of animations to set.</param>
+        public void NotifyS2C_SetAnimStates(IAttackableUnit u, Dictionary<string, string> animationPairs)
+        {
+            var setAnimPacket = new S2C_SetAnimStates
+            {
+                SenderNetID = u.NetId,
+                AnimationOverrides = animationPairs
+            };
+
+            _packetHandlerManager.BroadcastPacketVision(u, setAnimPacket.GetBytes(), Channel.CHL_S2C);
+        }
+
+        /// <summary>
+        /// Sends a packet to the specified user detailing that the spell in the given slot has had its spelldata changed to the spelldata of the given spell name.
+        /// </summary>
+        /// <param name="userId">User to send the packet to.</param>
+        /// <param name="netId">NetId of the unit that owns the spell being changed.</param>
+        /// <param name="spellName">Internal name of the spell to grab spell data from (to set).</param>
+        /// <param name="slot">Slot of the spell being changed.</param>
+        public void NotifyS2C_SetSpellData(int userId, uint netId, string spellName, byte slot)
+        {
+            var spellDataPacket = new S2C_SetSpellData
+            {
+                SenderNetID = netId,
+                ObjectNetID = netId,
+                HashedSpellName = HashStringNorm(spellName),
+                SpellSlot = slot
+            };
+
+            _packetHandlerManager.SendPacket(userId, spellDataPacket.GetBytes(), Channel.CHL_S2C);
+        }
+
+        /// <summary>
+        /// Sends a packet to the specified player detailing that the level of the spell in the given slot has changed.
+        /// </summary>
+        /// <param name="userId">User to send the packet to.</param>
+        /// <param name="netId">NetId of the unit that owns the spell being changed.</param>
+        /// <param name="slot">Slot of the spell being changed.</param>
+        /// <param name="level">New level of the spell to set.</param>
+        public void NotifyS2C_SetSpellLevel(int userId, uint netId, int slot, int level)
+        {
+            var spellLevelPacket = new S2C_SetSpellLevel
+            {
+                SenderNetID = netId,
+                SpellSlot = slot,
+                SpellLevel = level
+            };
+
+            _packetHandlerManager.SendPacket(userId, spellLevelPacket.GetBytes(), Channel.CHL_S2C);
+        }
+
+        /// <summary>
+        /// Sends a packet to all players with vision of the specified attacker that it is looking at (targeting) the specified attacked unit with the given AttackType.
+        /// </summary>
+        /// <param name="attacker">Unit that is attacking.</param>
+        /// <param name="attacked">Unit that is being attacked.</param>
+        /// <param name="attackType">AttackType that the attacker is using to attack.</param>
+        public void NotifyS2C_UnitSetLookAt(IAttackableUnit attacker, IAttackableUnit attacked, AttackType attackType)
+        {
+            var lookAtPacket = new S2C_UnitSetLookAt
+            {
+                SenderNetID = attacker.NetId,
+                LookAtType = (byte)attackType,
+                TargetPosition = attacked.GetPosition3D(),
+                TargetNetID = attacked.NetId
+            };
+
+            _packetHandlerManager.BroadcastPacketVision(attacker, lookAtPacket.GetBytes(), Channel.CHL_S2C);
+        }
+
+        /// <summary>
+        /// Sends a packet to the specified user detailing that the specified spell's toggle state has been updated.
+        /// </summary>
+        /// <param name="userId">User to send the packet to.</param>
+        /// <param name="s">Spell being updated.</param>
+        public void NotifyS2C_UpdateSpellToggle(int userId, ISpell s)
+        {
+            var spellTogglePacket = new S2C_UpdateSpellToggle();
+            spellTogglePacket.SenderNetID = s.CastInfo.Owner.NetId;
+            spellTogglePacket.SpellSlot = s.CastInfo.SpellSlot;
+            spellTogglePacket.ToggleValue = s.Toggle;
+
+            _packetHandlerManager.SendPacket(userId, spellTogglePacket.GetBytes(), Channel.CHL_S2C);
+        }
+
         /// <summary>
         /// Sends a packet to all players with vision of the specified object detailing that it is playing the specified animation.
         /// </summary>
@@ -1816,17 +2076,6 @@ namespace PacketDefinitions420
         }
 
         /// <summary>
-        /// Sends a packet to all players with vision of the specified unit detailing that the unit's animations have been set.
-        /// </summary>
-        /// <param name="u">AttackableUnit to set the animations of.</param>
-        /// <param name="animationPairs">Animations to apply.</param>
-        public void NotifySetAnimation(IAttackableUnit u, List<string> animationPairs)
-        {
-            var setAnimation = new SetAnimation(u, animationPairs);
-            _packetHandlerManager.BroadcastPacketVision(u, setAnimation, Channel.CHL_S2C);
-        }
-
-        /// <summary>
         /// Sends a packet to all players on the specified team detailing whether the team has become able to surrender.
         /// </summary>
         /// <param name="can">Whether or not the team should be able to surrender.</param>
@@ -1879,47 +2128,6 @@ namespace PacketDefinitions420
         }
 
         /// <summary>
-        /// Sends a packet to all players with vision of the specified attacker detailing that they have targeted the specified target.
-        /// </summary>
-        /// <param name="attacker">AttackableUnit that is targeting an AttackableUnit.</param>
-        /// <param name="target">AttackableUnit that is being targeted by the attacker.</param>
-        public void NotifySetTarget(IAttackableUnit attacker, IAttackableUnit target)
-        {
-            var st = new AI_TargetS2C
-            {
-                SenderNetID = attacker.NetId,
-                TargetNetID = 0
-            };
-
-            if (target != null)
-            {
-                st.TargetNetID = target.NetId;
-            }
-
-            // TODO: Verify if we need to account for other cases.
-            if (attacker is IBaseTurret)
-            {
-                _packetHandlerManager.BroadcastPacket(st.GetBytes(), Channel.CHL_S2C);
-            }
-            else
-            {
-                _packetHandlerManager.BroadcastPacketVision(attacker, st.GetBytes(), Channel.CHL_S2C);
-            }
-
-            // TODO: Verify if this is the correct usage of the AI_TargetHeroS2C packet.
-            if (target is IChampion)
-            {
-                var st2 = new AI_TargetHeroS2C
-                {
-                    SenderNetID = attacker.NetId,
-                    TargetNetID = target.NetId
-                };
-                // TODO: Verify if broadcasting for vision is okay for all cases.
-                _packetHandlerManager.BroadcastPacketVision(attacker, st2.GetBytes(), Channel.CHL_S2C);
-            }
-        }
-
-        /// <summary>
         /// Sends a packet to all players detailing that the specified unit's team has been set.
         /// </summary>
         /// <param name="unit">AttackableUnit who's team has been set.</param>
@@ -1932,26 +2140,6 @@ namespace PacketDefinitions420
                 TeamID = (uint)unit.Team // TODO: Verify if TeamID is actually supposed to be a uint
             };
             _packetHandlerManager.BroadcastPacket(p.GetBytes(), Channel.CHL_S2C);
-        }
-
-        /// <summary>
-        /// Sends a packet to the specified player detailing that they have leveled up the specified skill.
-        /// </summary>
-        /// <param name="userId">User to send the packet to.</param>
-        /// <param name="netId">NetId of the GameObject whos skill is being leveled up.</param>
-        /// <param name="skill">Slot of the skill being leveled up.</param>
-        /// <param name="level">Current level of the skill.</param>
-        /// <param name="pointsLeft">Number of skill points available after the skill has been leveled up.</param>
-        public void NotifySkillUp(int userId, uint netId, byte skill, byte level, byte pointsLeft)
-        {
-            var skillUpResponse = new NPC_UpgradeSpellAns
-            {
-                SenderNetID = netId,
-                Slot = skill,
-                SpellLevel = level,
-                SkillPoints = pointsLeft
-            };
-            _packetHandlerManager.SendPacket(userId, skillUpResponse.GetBytes(), Channel.CHL_GAMEPLAY);
         }
 
         /// <summary>
@@ -2005,17 +2193,6 @@ namespace PacketDefinitions420
                 BotCountChaos = 0
             };
             _packetHandlerManager.SendPacket(userId, start.GetBytes(), Channel.CHL_S2C);
-        }
-
-        /// <summary>
-        /// Sends a packet to all players with vision of the specified unit detailing that the unit is playing an animation.
-        /// </summary>
-        /// <param name="u">Unit that will do the animation.</param>
-        /// <param name="animation">Animation that the unit will do.</param>
-        public void NotifySpellAnimation(IAttackableUnit u, string animation)
-        {
-            var sa = new SpellAnimation(u, animation);
-            _packetHandlerManager.BroadcastPacketVision(u, sa, Channel.CHL_S2C);
         }
 
         /// <summary>

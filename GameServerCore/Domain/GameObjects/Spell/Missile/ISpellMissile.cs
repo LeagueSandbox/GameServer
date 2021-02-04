@@ -11,29 +11,11 @@ namespace GameServerCore.Domain.GameObjects.Spell.Missile
         /// </summary>
         List<IGameObject> ObjectsHit { get; }
         /// <summary>
-        /// Unit which owns the spell that created this projectile.
-        /// </summary>
-        IAttackableUnit Owner { get; }
-        /// <summary>
-        /// Unique identification of this projectile.
-        /// </summary>
-        int ProjectileId { get; }
-        /// <summary>
         /// Projectile spell data, housing all information about this projectile's properties. Most projectiles are counted as ExtraSpells within a character's data.
         /// </summary>
         ISpellData SpellData { get; }
-        /// <summary>
-        /// Current unit this projectile is homing in on and moving towards. Projectile is destroyed on contact with this unit.
-        /// </summary>
-        IAttackableUnit TargetUnit { get; }
-        /// <summary>
-        /// Position this projectile is moving towards. Projectile is destroyed once it reaches this destination. Equals Vector2.Zero if TargetUnit is not null.
-        /// </summary>
-        Vector2 Destination { get; }
-        /// <summary>
-        /// Spell which created this projectile.
-        /// </summary>
-        ISpell OriginSpell { get; }
+        ICastInfo CastInfo { get; }
+        ISpell SpellOrigin { get; }
         /// <summary>
         /// Whether or not this projectile's visuals should not be networked to clients.
         /// </summary>

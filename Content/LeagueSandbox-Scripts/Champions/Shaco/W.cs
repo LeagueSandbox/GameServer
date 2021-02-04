@@ -14,7 +14,7 @@ namespace Spells
     {
         public float petTimeAlive = 0.00f;
 
-        public void OnActivate(IObjAiBase owner)
+        public void OnActivate(IObjAiBase owner, ISpell spell)
         {
         }
 
@@ -22,7 +22,7 @@ namespace Spells
         {
         }
 
-        public void OnDeactivate(IObjAiBase owner)
+        public void OnDeactivate(IObjAiBase owner, ISpell spell)
         {
         }
 
@@ -34,14 +34,14 @@ namespace Spells
         {
             var castrange = spell.SpellData.CastRange[0];
             var apbonus = owner.Stats.AbilityPower.Total * 0.2f;
-            var damage = 35 + ((15 * (spell.Level - 1)) + apbonus); //TODO: Should replace minion AA damage
+            var damage = 35 + ((15 * (spell.CastInfo.SpellLevel - 1)) + apbonus); //TODO: Should replace minion AA damage
             var jackduration = 5.0f; //TODO: Split into Active duration and Hidden duration when Invisibility is implemented
             var attspeed = 1 / 1.8f; // 1.8 attacks a second = ~.56 seconds per attack, could not extrapolate from minion stats
             //TODO: Implement Fear buff and ShacoBoxSpell
             //var fearrange = 300;
-            var fearduration = 0.5f + (0.25 * (spell.Level - 1));
+            var fearduration = 0.5f + (0.25 * (spell.CastInfo.SpellLevel - 1));
             var ownerPos = owner.Position;
-            var spellPos = new Vector2(spell.X, spell.Y);
+            var spellPos = new Vector2(spell.CastInfo.TargetPosition.X, spell.CastInfo.TargetPosition.Z);
 
             if (Extensions.IsVectorWithinRange(ownerPos, spellPos, castrange))
             {
@@ -61,8 +61,6 @@ namespace Spells
                             {
                                 //TODO: Change TakeDamage to activate on Jack AutoAttackHit, not use CreateTimer, and make Pets use owner spell stats
                                 m.SetTargetUnit(value);
-                                m.AutoAttackProjectileSpeed = 1450;
-                                m.AutoAttackHit(value);
                                 for (petTimeAlive = 0.0f; petTimeAlive < jackduration; petTimeAlive += attspeed)
                                 {
                                     CreateTimer(petTimeAlive, () => {
@@ -90,7 +88,7 @@ namespace Spells
         {
         }
 
-        public void OnUpdate(double diff)
+        public void OnUpdate(float diff)
         {
         }
     }

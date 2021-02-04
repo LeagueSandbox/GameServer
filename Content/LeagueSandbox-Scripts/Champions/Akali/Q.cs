@@ -10,11 +10,11 @@ namespace Spells
 {
     public class AkaliMota : IGameScript
     {
-        public void OnActivate(IObjAiBase owner)
+        public void OnActivate(IObjAiBase owner, ISpell spell)
         {
         }
 
-        public void OnDeactivate(IObjAiBase owner)
+        public void OnDeactivate(IObjAiBase owner, ISpell spell)
         {
         }
 
@@ -34,13 +34,13 @@ namespace Spells
         public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, ISpellMissile projectile)
         {
             var ap = owner.Stats.AbilityPower.Total * 0.4f;
-            var damage = 15 + spell.Level * 20 + ap;
+            var damage = 15 + spell.CastInfo.SpellLevel * 20 + ap;
             target.TakeDamage(owner, damage, DamageType.DAMAGE_TYPE_PHYSICAL, DamageSource.DAMAGE_SOURCE_ATTACK, false);
             AddParticleTarget(owner, "akali_markOftheAssasin_marker_tar_02.troy", target, 1, "");
             projectile.SetToRemove();
         }
 
-        public void OnUpdate(double diff)
+        public void OnUpdate(float diff)
         {
         }
     }

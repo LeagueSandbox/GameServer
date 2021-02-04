@@ -11,11 +11,11 @@ namespace Spells
 {
     public class EzrealTrueshotBarrage : IGameScript
     {
-        public void OnActivate(IObjAiBase owner)
+        public void OnActivate(IObjAiBase owner, ISpell spell)
         {
         }
 
-        public void OnDeactivate(IObjAiBase owner)
+        public void OnDeactivate(IObjAiBase owner, ISpell spell)
         {
         }
 
@@ -27,11 +27,12 @@ namespace Spells
         public void OnFinishCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
         {
             var current = new Vector2(owner.Position.X, owner.Position.Y);
-            var to = Vector2.Normalize(new Vector2(spell.X, spell.Y) - current);
+            var spellPos = new Vector2(spell.CastInfo.TargetPosition.X, spell.CastInfo.TargetPosition.Z);
+            var to = Vector2.Normalize(spellPos - current);
             var range = to * 20000;
             var trueCoords = current + range;
 
-            spell.AddProjectile("EzrealTrueshotBarrage", current, trueCoords, true);
+            spell.AddProjectile("EzrealTrueshotBarrage", current, trueCoords, HitResult.HIT_Normal, true);
         }
 
         public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, ISpellMissile projectile)
@@ -39,12 +40,12 @@ namespace Spells
             var reduc = Math.Min(projectile.ObjectsHit.Count, 7);
             var bonusAd = owner.Stats.AttackDamage.Total - owner.Stats.AttackDamage.BaseValue;
             var ap = owner.Stats.AbilityPower.Total * 0.9f;
-            var damage = 200 + spell.Level * 150 + bonusAd + ap;
+            var damage = 200 + spell.CastInfo.SpellLevel * 150 + bonusAd + ap;
             target.TakeDamage(owner, damage * (1 - reduc / 10), DamageType.DAMAGE_TYPE_MAGICAL,
                 DamageSource.DAMAGE_SOURCE_SPELL, false);
         }
 
-        public void OnUpdate(double diff)
+        public void OnUpdate(float diff)
         {
         }
     }

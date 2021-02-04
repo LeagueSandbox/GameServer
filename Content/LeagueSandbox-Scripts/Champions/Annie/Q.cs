@@ -8,11 +8,11 @@ namespace Spells
 {
     public class Disintegrate : IGameScript
     {
-        public void OnActivate(IObjAiBase owner)
+        public void OnActivate(IObjAiBase owner, ISpell spell)
         {
         }
 
-        public void OnDeactivate(IObjAiBase owner)
+        public void OnDeactivate(IObjAiBase owner, ISpell spell)
         {
         }
 
@@ -22,13 +22,13 @@ namespace Spells
 
         public void OnFinishCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
         {
-            spell.AddProjectileTarget("Disintegrate", target, false);
+            spell.AddProjectileTarget("Disintegrate", target, HitResult.HIT_Normal, false);
         }
 
         public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, ISpellMissile projectile)
         {
             var ap = owner.Stats.AbilityPower.Total * 0.8f;
-            var damage = 45 + spell.Level * 35 + ap;
+            var damage = 45 + spell.CastInfo.SpellLevel * 35 + ap;
             if (target != null && !target.IsDead)
             {
                 target.TakeDamage(owner, damage, DamageType.DAMAGE_TYPE_MAGICAL, DamageSource.DAMAGE_SOURCE_SPELL,
@@ -36,7 +36,7 @@ namespace Spells
                 if (target.IsDead)
                 {
                     spell.LowerCooldown(spell.GetCooldown());
-                    float manaToRecover = 55 + spell.Level * 5;
+                    float manaToRecover = 55 + spell.CastInfo.SpellLevel * 5;
                     var newMana = owner.Stats.CurrentMana + manaToRecover;
                     var maxMana = owner.Stats.ManaPoints.Total;
                     if (newMana >= maxMana)
@@ -53,7 +53,7 @@ namespace Spells
             projectile.SetToRemove();
         }
 
-        public void OnUpdate(double diff)
+        public void OnUpdate(float diff)
         {
         }
     }

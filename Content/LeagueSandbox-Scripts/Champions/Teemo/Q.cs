@@ -9,11 +9,11 @@ namespace Spells
 {
     public class BlindingDart : IGameScript
     {
-        public void OnActivate(IObjAiBase owner)
+        public void OnActivate(IObjAiBase owner, ISpell spell)
         {
         }
 
-        public void OnDeactivate(IObjAiBase owner)
+        public void OnDeactivate(IObjAiBase owner, ISpell spell)
         {
         }
 
@@ -29,14 +29,14 @@ namespace Spells
         public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, ISpellMissile projectile)
         {
             var ap = owner.Stats.AbilityPower.Total * 0.8f;
-            var damage = 35 + spell.Level * 45 + ap;
+            var damage = 35 + spell.CastInfo.SpellLevel * 45 + ap;
             target.TakeDamage(owner, damage, DamageType.DAMAGE_TYPE_MAGICAL, DamageSource.DAMAGE_SOURCE_SPELL, false);
-            var time = 1.25f + 0.25f * spell.Level;
-            AddBuff("Blind", time, 1, spell, (IObjAiBase)target, owner);
+            var time = 1.25f + 0.25f * spell.CastInfo.SpellLevel;
+            AddBuff("Blind", time, 1, spell, target, owner);
             projectile.SetToRemove();
         }
 
-        public void OnUpdate(double diff)
+        public void OnUpdate(float diff)
         {
         }
     }

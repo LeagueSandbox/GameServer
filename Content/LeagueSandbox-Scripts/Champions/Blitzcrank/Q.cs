@@ -10,11 +10,11 @@ namespace Spells
 {
     public class RocketGrab : IGameScript
     {
-        public void OnActivate(IObjAiBase owner)
+        public void OnActivate(IObjAiBase owner, ISpell spell)
         {
         }
 
-        public void OnDeactivate(IObjAiBase owner)
+        public void OnDeactivate(IObjAiBase owner, ISpell spell)
         {
         }
 
@@ -26,7 +26,8 @@ namespace Spells
         public void OnFinishCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
         {
             var current = new Vector2(owner.Position.X, owner.Position.Y);
-            var to = Vector2.Normalize(new Vector2(spell.X, spell.Y) - current);
+            var spellPos = new Vector2(spell.CastInfo.TargetPosition.X, spell.CastInfo.TargetPosition.Z);
+            var to = Vector2.Normalize(spellPos - current);
             var range = to * 925;
             var trueCoords = current + range;
             spell.AddProjectile("RocketGrabMissile", current, trueCoords);
@@ -35,13 +36,14 @@ namespace Spells
         public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, ISpellMissile projectile)
         {
             var ap = owner.Stats.AbilityPower.Total;
-            var damage = 25 + spell.Level * 55 + ap;
+            var damage = 25 + spell.CastInfo.SpellLevel * 55 + ap;
             target.TakeDamage(owner, damage, DamageType.DAMAGE_TYPE_MAGICAL, DamageSource.DAMAGE_SOURCE_SPELL, false);
             if (!target.IsDead)
             {
                 AddParticleTarget(owner, "Blitzcrank_Grapplin_tar.troy", target, 1, "L_HAND");
                 var current = new Vector2(owner.Position.X, owner.Position.Y);
-                var to = Vector2.Normalize(new Vector2(spell.X, spell.Y) - current);
+                var spellPos = new Vector2(spell.CastInfo.TargetPosition.X, spell.CastInfo.TargetPosition.Z);
+                var to = Vector2.Normalize(spellPos - current);
                 var range = to * 50;
                 var trueCoords = current + range;
                 ForceMovement(target, "RUN", trueCoords, spell.SpellData.MissileSpeed, 0, 0, 0, movementOrdersFacing: ForceMovementOrdersFacing.KEEP_CURRENT_FACING);
@@ -50,7 +52,7 @@ namespace Spells
             projectile.SetToRemove();
         }
 
-        public void OnUpdate(double diff)
+        public void OnUpdate(float diff)
         {
         }
     }

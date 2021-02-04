@@ -11,11 +11,11 @@ namespace Spells
 {
     public class TaricHammerSmash : IGameScript
     {
-        public void OnActivate(IObjAiBase owner)
+        public void OnActivate(IObjAiBase owner, ISpell spell)
         {
         }
 
-        public void OnDeactivate(IObjAiBase owner)
+        public void OnDeactivate(IObjAiBase owner, ISpell spell)
         {
         }
 
@@ -30,7 +30,7 @@ namespace Spells
             var p2 = AddParticleTarget(owner, "TaricHammerSmash_shatter.troy", owner);
             var hasbuff = owner.HasBuff("Radiance");
             var ap = owner.Stats.AbilityPower.Total * 0.5f;
-            var damage = 50 + spell.Level * 100 + ap;
+            var damage = 50 + spell.CastInfo.SpellLevel * 100 + ap;
 
             foreach (var enemyTarget in GetUnitsInRange(owner.Position, 375, true)
                 .Where(x => x.Team == CustomConvert.GetEnemyTeam(owner.Team)))
@@ -55,7 +55,7 @@ namespace Spells
             {
                 if (allyTarget is IObjAiBase && owner != allyTarget && hasbuff == false)
                 {
-                    AddBuff("Radiance_ally", 10.0f, 1, spell, (IObjAiBase)allyTarget, owner);
+                    AddBuff("Radiance_ally", 10.0f, 1, spell, allyTarget, owner);
                 }
             }
             if (owner == target && hasbuff == false)
@@ -81,7 +81,7 @@ namespace Spells
 
         }
 
-        public void OnUpdate(double diff)
+        public void OnUpdate(float diff)
         {
         }
     }

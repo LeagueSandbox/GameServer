@@ -36,13 +36,13 @@ namespace BlindMonkSonicWave
                 return;
             }
 
-            var owner = originSpell.Owner;
+            var owner = originSpell.CastInfo.Owner;
             var target = thisBuff.TargetUnit;
             if (owner.IsCollidingWith(target))
             {
                 owner.SetDashingState(false);
                 var ad = owner.Stats.AttackDamage.Total * 1.0f;
-                var damage = 50 + (originSpell.Level * 30) + ad + (0.08f * (target.Stats.HealthPoints.Total - target.Stats.CurrentHealth));
+                var damage = 50 + (originSpell.CastInfo.SpellLevel * 30) + ad + (0.08f * (target.Stats.HealthPoints.Total - target.Stats.CurrentHealth));
                 target.TakeDamage(owner, damage, DamageType.DAMAGE_TYPE_PHYSICAL, DamageSource.DAMAGE_SOURCE_REACTIVE, false);
                 AddParticleTarget(owner, "GlobalHit_Yellow_tar.troy", target, 1);
 

@@ -10,11 +10,11 @@ namespace Spells
 {
     public class EzrealMysticShot : IGameScript
     {
-        public void OnActivate(IObjAiBase owner)
+        public void OnActivate(IObjAiBase owner, ISpell spell)
         {
         }
 
-        public void OnDeactivate(IObjAiBase owner)
+        public void OnDeactivate(IObjAiBase owner, ISpell spell)
         {
         }
 
@@ -26,7 +26,8 @@ namespace Spells
         public void OnFinishCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
         {
             var current = new Vector2(owner.Position.X, owner.Position.Y);
-            var to = Vector2.Normalize(new Vector2(spell.X, spell.Y) - current);
+            var spellPos = new Vector2(spell.CastInfo.TargetPosition.X, spell.CastInfo.TargetPosition.Z);
+            var to = Vector2.Normalize(spellPos - current);
             var range = to * 1150;
             var trueCoords = current + range;
             spell.AddProjectile("EzrealMysticShotMissile", current, trueCoords);
@@ -36,17 +37,17 @@ namespace Spells
         {
             var ad = owner.Stats.AttackDamage.Total * 1.1f;
             var ap = owner.Stats.AbilityPower.Total * 0.4f;
-            var damage = 15 + spell.Level * 20 + ad + ap;
+            var damage = 15 + spell.CastInfo.SpellLevel * 20 + ad + ap;
             target.TakeDamage(owner, damage, DamageType.DAMAGE_TYPE_PHYSICAL, DamageSource.DAMAGE_SOURCE_ATTACK, false);
             for (byte i = 0; i < 4; i++)
             {
-                (owner as IChampion).Spells[i].LowerCooldown(1);
+                owner.Spells[i].LowerCooldown(1);
             }
 
             projectile.SetToRemove();
         }
 
-        public void OnUpdate(double diff)
+        public void OnUpdate(float diff)
         {
         }
     }

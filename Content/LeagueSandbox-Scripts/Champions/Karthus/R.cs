@@ -11,11 +11,11 @@ namespace Spells
 {
     public class FallenOne : IGameScript
     {
-        public void OnActivate(IObjAiBase owner)
+        public void OnActivate(IObjAiBase owner, ISpell spell)
         {
         }
 
-        public void OnDeactivate(IObjAiBase owner)
+        public void OnDeactivate(IObjAiBase owner, ISpell spell)
         {
         }
 
@@ -31,7 +31,7 @@ namespace Spells
         public void OnFinishCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
         {
             var ap = owner.Stats.AbilityPower.Total;
-            var damage = 100 + spell.Level * 150 + ap * 0.6f;
+            var damage = 100 + spell.CastInfo.SpellLevel * 150 + ap * 0.6f;
             foreach (var enemyTarget in GetChampionsInRange(owner.Position, 20000, true)
                 .Where(x => x.Team == CustomConvert.GetEnemyTeam(owner.Team)))
             {
@@ -44,7 +44,7 @@ namespace Spells
         {
         }
 
-        public void OnUpdate(double diff)
+        public void OnUpdate(float diff)
         {
         }
     }

@@ -16,7 +16,8 @@ namespace Spells
         public void OnFinishCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
         {
             var current = new Vector2(owner.Position.X, owner.Position.Y);
-            var to = new Vector2(spell.X, spell.Y) - current;
+            var spellPos = new Vector2(spell.CastInfo.TargetPosition.X, spell.CastInfo.TargetPosition.Z);
+            var to = spellPos - current;
             Vector2 trueCoords;
 
             if (to.Length() > 425)
@@ -27,7 +28,7 @@ namespace Spells
             }
             else
             {
-                trueCoords = new Vector2(spell.X, spell.Y);
+                trueCoords = spellPos;
             }
 
             AddParticle(owner, "global_ss_flash.troy", owner.Position);
@@ -39,15 +40,15 @@ namespace Spells
         {
         }
 
-        public void OnUpdate(double diff)
+        public void OnUpdate(float diff)
         {
         }
 
-        public void OnActivate(IObjAiBase owner)
+        public void OnActivate(IObjAiBase owner, ISpell spell)
         {
         }
 
-        public void OnDeactivate(IObjAiBase owner)
+        public void OnDeactivate(IObjAiBase owner, ISpell spell)
         {
         }
     }

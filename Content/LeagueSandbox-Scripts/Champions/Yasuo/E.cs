@@ -10,12 +10,12 @@ namespace Spells
     {
         public static IObjAiBase _target = null;
         public static IChampion _owner = null;
-        public void OnActivate(IObjAiBase owner)
+        public void OnActivate(IObjAiBase owner, ISpell spell)
         {
             //here's nothing yet
         }
 
-        public void OnDeactivate(IObjAiBase owner)
+        public void OnDeactivate(IObjAiBase owner, ISpell spell)
         {
             //here's empty
         }
@@ -32,8 +32,8 @@ namespace Spells
 
             if (!_target.HasBuff("YasuoEBlock"))
             {
-                AddBuff("YasuoE", 0.395f - spell.Level * 0.012f, 1, spell, _owner, _owner);            
-                AddBuff("YasuoEBlock", 11f - spell.Level * 1f, 1, spell, _target, _owner);
+                AddBuff("YasuoE", 0.395f - spell.CastInfo.SpellLevel * 0.012f, 1, spell, _owner, _owner);            
+                AddBuff("YasuoEBlock", 11f - spell.CastInfo.SpellLevel * 1f, 1, spell, _target, _owner);
             }
         }
 
@@ -42,7 +42,7 @@ namespace Spells
             //here's empty because no needed to add things here
         }
                
-        public void OnUpdate(double diff)
+        public void OnUpdate(float diff)
         {
             //here's empty because it's not working
         }

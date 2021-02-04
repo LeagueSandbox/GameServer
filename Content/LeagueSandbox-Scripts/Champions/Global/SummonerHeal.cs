@@ -60,15 +60,15 @@ namespace Spells
             AddParticleTarget(owner, "global_ss_heal_speedboost.troy", target);
         }
 
-        public void OnUpdate(double diff)
+        public void OnUpdate(float diff)
         {
         }
 
-        public void OnActivate(IObjAiBase owner)
+        public void OnActivate(IObjAiBase owner, ISpell spell)
         {
         }
 
-        public void OnDeactivate(IObjAiBase owner)
+        public void OnDeactivate(IObjAiBase owner, ISpell spell)
         {
         }
     }

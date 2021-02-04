@@ -56,8 +56,9 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             }
 
             // Not sure why both 7 and 14 skill slot, but it does not seem to work without it
-             _game.PacketNotifier.NotifySkillUp(userId, peerInfo.Champion.NetId, 7, 1, peerInfo.Champion.SkillPoints);
-             _game.PacketNotifier.NotifySkillUp(userId, peerInfo.Champion.NetId, 14, 1, peerInfo.Champion.SkillPoints);
+            // TODO: Verify if ^ is still true! Commenting them out does not seem to cause any damage.
+            _game.PacketNotifier.NotifyNPC_UpgradeSpellAns(userId, peerInfo.Champion.NetId, 7, 1, peerInfo.Champion.SkillPoints);
+            _game.PacketNotifier.NotifyNPC_UpgradeSpellAns(userId, peerInfo.Champion.NetId, 13, 1, peerInfo.Champion.SkillPoints);
 
             peerInfo.Champion.Stats.SetSpellEnabled(7, true);
             peerInfo.Champion.Stats.SetSpellEnabled(14, true);

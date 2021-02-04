@@ -45,13 +45,13 @@ namespace Spells
         {
             var ap = owner.Stats.AbilityPower.Total * 0.3f;
             var baseHp = (owner.Stats.HealthPoints.Total - owner.Stats.HealthPoints.BaseValue) * 0.05f;
-            float healthGain = 20 + spell.Level * 40 + ap + baseHp;
+            float healthGain = 20 + spell.CastInfo.SpellLevel * 40 + ap + baseHp;
 
-            if (target == owner && spell.Target == owner)
+            if (target == owner && spell.CastInfo.Targets[0] == owner)
             {
                 var selfAp = owner.Stats.AbilityPower.Total * 0.42f;
                 var selfBaseHp = (owner.Stats.HealthPoints.Total - owner.Stats.HealthPoints.BaseValue) * 0.07f;
-                healthGain = 28 + spell.Level * 56 + selfAp + selfBaseHp;
+                healthGain = 28 + spell.CastInfo.SpellLevel * 56 + selfAp + selfBaseHp;
             }
 
             var newHealth = target.Stats.CurrentHealth + healthGain;
@@ -60,15 +60,15 @@ namespace Spells
             AddParticleTarget(owner, "global_ss_heal_speedboost.troy", target);
         }
 
-        public void OnUpdate(double diff)
+        public void OnUpdate(float diff)
         {
         }
 
-        public void OnActivate(IObjAiBase owner)
+        public void OnActivate(IObjAiBase owner, ISpell spell)
         {
         }
 
-        public void OnDeactivate(IObjAiBase owner)
+        public void OnDeactivate(IObjAiBase owner, ISpell spell)
         {
         }
     }

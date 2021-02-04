@@ -11,11 +11,11 @@ namespace Spells
 {
     public class AkaliShadowSwipe : IGameScript
     {
-        public void OnActivate(IObjAiBase owner)
+        public void OnActivate(IObjAiBase owner, ISpell spell)
         {
         }
 
-        public void OnDeactivate(IObjAiBase owner)
+        public void OnDeactivate(IObjAiBase owner, ISpell spell)
         {
         }
 
@@ -27,7 +27,7 @@ namespace Spells
         {
             var ap = owner.Stats.AbilityPower.Total * 0.3f;
             var ad = owner.Stats.AttackDamage.Total * 0.6f;
-            var damage = 40 + spell.Level * 30 + ap + ad;
+            var damage = 40 + spell.CastInfo.SpellLevel * 30 + ap + ad;
             foreach (var enemyTarget in GetUnitsInRange(owner.Position, 300, true)
                 .Where(x => x.Team == CustomConvert.GetEnemyTeam(owner.Team)))
             {
@@ -45,7 +45,7 @@ namespace Spells
 
         }
 
-        public void OnUpdate(double diff)
+        public void OnUpdate(float diff)
         {
         }
     }

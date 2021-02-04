@@ -8,7 +8,7 @@ namespace Spells
 {
     public class MasterYiHighlander : IGameScript
     {
-        public void OnActivate(IObjAiBase owner)
+        public void OnActivate(IObjAiBase owner, ISpell spell)
         {
         }
 
@@ -17,14 +17,14 @@ namespace Spells
             //No Cooldown reduction on the other skills yet
         }
 
-        public void OnDeactivate(IObjAiBase owner)
+        public void OnDeactivate(IObjAiBase owner, ISpell spell)
         {
         }
 
         public void OnStartCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
         {
             var p = AddParticleTarget(owner, "Highlander_buf.troy", target, 1);
-            AddBuff("Highlander", 10.0f, 1, spell, (IObjAiBase)target, owner);
+            AddBuff("Highlander", 10.0f, 1, spell, target, owner);
             CreateTimer(10.0f, () =>
             {
                 RemoveParticle(p);
@@ -40,7 +40,7 @@ namespace Spells
         {
         }
 
-        public void OnUpdate(double diff)
+        public void OnUpdate(float diff)
         {
         }
     }

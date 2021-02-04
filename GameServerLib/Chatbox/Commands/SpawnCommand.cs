@@ -66,8 +66,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
             {
                 minion.SetPosition(championPos.X + random.Next(-X, X), championPos.Y + random.Next(-X, X));
                 minion.PauseAi(true);
-                minion.StopMovement();
-                minion.UpdateMoveOrder(OrderType.Hold);
+                minion.StopMovement(OrderType.Hold);
                 Game.ObjectManager.AddObject(minion);
             }
         }

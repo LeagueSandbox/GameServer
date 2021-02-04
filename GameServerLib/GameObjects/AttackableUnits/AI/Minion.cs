@@ -121,10 +121,19 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             if (nextTarget != null) // If we have a target
             {
                 TargetUnit = nextTarget; // Set the new target and refresh waypoints
-                _game.PacketNotifier.NotifySetTarget(this, nextTarget);
+
+                if (nextTarget is IChampion c)
+                {
+                    _game.PacketNotifier.NotifyAI_TargetHeroS2C(this, c);
+                }
+                else
+                {
+                    _game.PacketNotifier.NotifyAI_TargetS2C(this, nextTarget);
+                }
+
                 return true;
             }
-            _game.PacketNotifier.NotifyNPC_InstantStopAttack(this, false);
+            _game.PacketNotifier.NotifyNPC_InstantStop_Attack(this, false);
             IsAttacking = false;
             return false;
         }
@@ -134,7 +143,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             if (IsAttacking && (TargetUnit == null || TargetUnit.IsDead || Vector2.DistanceSquared(Position, TargetUnit.Position) > Stats.Range.Total * Stats.Range.Total))
             // If target is dead or out of range
             {
-                _game.PacketNotifier.NotifyNPC_InstantStopAttack(this, false);
+                _game.PacketNotifier.NotifyNPC_InstantStop_Attack(this, false);
                 IsAttacking = false;
             }
         }

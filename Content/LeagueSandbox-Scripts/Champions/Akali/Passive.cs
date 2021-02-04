@@ -7,13 +7,13 @@ namespace Spells
 {
     public class AkaliTwinDisciplines : IGameScript
     {
-        public void OnActivate(IObjAiBase owner)
+        public void OnActivate(IObjAiBase owner, ISpell spell)
         {
             var bonusAd = owner.Stats.AttackDamage.Total - owner.Stats.AttackDamage.BaseValue;
             owner.Stats.SpellVamp.PercentBonus = 6 + bonusAd % 6;
         }
 
-        public void OnDeactivate(IObjAiBase owner)
+        public void OnDeactivate(IObjAiBase owner, ISpell spell)
         {
         }
 
@@ -29,7 +29,7 @@ namespace Spells
         {
         }
 
-        public void OnUpdate(double diff)
+        public void OnUpdate(float diff)
         {
         }
     }

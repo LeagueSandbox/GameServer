@@ -153,7 +153,12 @@ namespace LeagueSandbox.GameServer
                 var ai = u as IObjAiBase;
                 if (ai != null)
                 {
-                    var tempBuffs = new List<IBuff>(ai.GetBuffs());
+                    if ((!ai.SpellToCast.SpellData.IsToggleSpell && !ai.SpellToCast.SpellData.CanMoveWhileChanneling))
+                    {
+                        ai.StopMovement();
+                    }
+
+                    var tempBuffs = new List<GameServerCore.Domain.IBuff>(ai.GetBuffs());
                     for (int i = tempBuffs.Count - 1; i >= 0; i--)
                     {
                         if (tempBuffs[i].Elapsed())
@@ -406,7 +411,7 @@ namespace LeagueSandbox.GameServer
                         if (ai.TargetUnit == target)
                         {
                             ai.SetTargetUnit(null);
-                            _game.PacketNotifier.NotifySetTarget(u, null);
+                            _game.PacketNotifier.NotifyAI_TargetS2C(ai, null);
                         }
                     }
                 }

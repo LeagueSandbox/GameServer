@@ -22,18 +22,15 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Sector
 
         public Laser(
             Game game,
-            Vector2 position,
             int collisionRadius,
-            IAttackableUnit owner,
-            Vector2 targetPos,
             ISpell originSpell,
+            ICastInfo castInfo,
             string effectName,
             SpellDataFlags flags,
             bool affectAsCastIsOver,
-            uint netid) : base(game, position, collisionRadius, owner, targetPos, originSpell, 0, effectName, flags, netid)
+            uint netid) : base(game, collisionRadius, originSpell, castInfo, 0, effectName, flags, netid)
         {
-            SpellData = _game.Config.ContentManager.GetSpellData(effectName);
-            CreateRectangle(position, targetPos);
+            CreateRectangle(new Vector2(castInfo.TargetPosition.X, castInfo.TargetPosition.Z), new Vector2(castInfo.TargetPositionEnd.X, castInfo.TargetPositionEnd.Z));
             _affectAsCastIsOver = affectAsCastIsOver;
         }
 
@@ -44,7 +41,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Sector
                 return;
             }
 
-            if (OriginSpell.State != SpellState.STATE_CASTING)
+            if (SpellOrigin.State != SpellState.STATE_CASTING)
             {
                 var objects = _game.ObjectManager.GetObjects().Values;
                 foreach (var obj in objects)
@@ -68,7 +65,10 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Sector
             ObjectsHit.Add(unit);
             if (unit != null)
             {
-                OriginSpell.ApplyEffects(unit, this);
+                if (SpellOrigin != null)
+                {
+                    SpellOrigin.ApplyEffects(unit, this);
+                }
             }
         }
 
@@ -77,21 +77,19 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Sector
         /// </summary>
         private void CreateRectangle(Vector2 beginPoint, Vector2 endPoint)
         {
-            var beginCoords = new Vector2(beginPoint.X, beginPoint.Y);
-            var trueEndCoords = new Vector2(endPoint.X, endPoint.Y);
-            var distance = Vector2.Distance(beginCoords, trueEndCoords);
-            var fakeEndCoords = new Vector2(beginCoords.X, beginCoords.Y + distance);
-            var startCorner1 = new Vector2(beginCoords.X + CollisionRadius, beginCoords.Y);
-            var startCorner2 = new Vector2(beginCoords.X - CollisionRadius, beginCoords.Y);
+            var distance = Vector2.Distance(beginPoint, endPoint);
+            var fakeEndCoords = new Vector2(beginPoint.X, endPoint.Y + distance);
+            var startCorner1 = new Vector2(beginPoint.X + CollisionRadius, endPoint.Y);
+            var startCorner2 = new Vector2(beginPoint.X - CollisionRadius, endPoint.Y);
             var endCorner1 = new Vector2(fakeEndCoords.X + CollisionRadius, fakeEndCoords.Y);
             var endCorner2 = new Vector2(fakeEndCoords.X - CollisionRadius, fakeEndCoords.Y);
 
-            var angle = fakeEndCoords.AngleBetween(trueEndCoords, beginCoords);
+            var angle = fakeEndCoords.AngleBetween(endPoint, beginPoint);
 
-            _rectangleCornerBegin1 = startCorner1.Rotate(beginCoords, angle);
-            _rectangleCornerBegin2 = startCorner2.Rotate(beginCoords, angle);
-            _rectangleCornerEnd1 = endCorner1.Rotate(beginCoords, angle);
-            _rectangleCornerEnd2 = endCorner2.Rotate(beginCoords, angle);
+            _rectangleCornerBegin1 = startCorner1.Rotate(beginPoint, angle);
+            _rectangleCornerBegin2 = startCorner2.Rotate(beginPoint, angle);
+            _rectangleCornerEnd1 = endCorner1.Rotate(beginPoint, angle);
+            _rectangleCornerEnd2 = endCorner2.Rotate(beginPoint, angle);
         }
 
         /// <summary>

@@ -68,13 +68,14 @@ namespace LeagueSandbox.GameServer.API
         {
             OnChampionDamageTaken.RemoveListener(owner);
             OnUpdate.RemoveListener(owner);
-            OnChampionMove.RemoveListener(owner);
+            OnUnitUpdateMoveOrder.RemoveListener(owner);
         }
 
         public static EventOnUpdate OnUpdate = new EventOnUpdate();
         public static EventOnChampionDamageTaken OnChampionDamageTaken = new EventOnChampionDamageTaken();
         public static EventOnUnitDamageTaken OnUnitDamageTaken = new EventOnUnitDamageTaken();
-        public static EventOnChampionMove OnChampionMove = new EventOnChampionMove();
+        public static EventOnUnitUpdateMoveOrder OnUnitUpdateMoveOrder = new EventOnUnitUpdateMoveOrder();
+        public static EventOnChampionHitUnit OnChampionHitUnit = new EventOnChampionHitUnit();
         public static EventOnHitUnit OnHitUnit = new EventOnHitUnit();
         public static EventOnUnitCrowdControlled OnUnitCrowdControlled = new EventOnUnitCrowdControlled();
         public static EventOnChampionCrowdControlled OnChampionCrowdControlled = new EventOnChampionCrowdControlled();
@@ -158,18 +159,18 @@ namespace LeagueSandbox.GameServer.API
         }
     }
 
-    public class EventOnChampionMove
+    public class EventOnUnitUpdateMoveOrder
     {
-        private readonly List<Tuple<object, IChampion, Action>> _listeners = new List<Tuple<object, IChampion, Action>>();
-        public void AddListener(object owner, IChampion champion, Action callback)
+        private readonly List<Tuple<object, IObjAiBase, Action>> _listeners = new List<Tuple<object, IObjAiBase, Action>>();
+        public void AddListener(object owner, IObjAiBase unit, Action callback)
         {
-            var listenerTuple = new Tuple<object, IChampion, Action>(owner, champion, callback);
+            var listenerTuple = new Tuple<object, IObjAiBase, Action>(owner, unit, callback);
             _listeners.Add(listenerTuple);
         }
 
-        public void RemoveListener(object owner, IChampion champion)
+        public void RemoveListener(object owner, IObjAiBase unit)
         {
-            _listeners.RemoveAll(listener => listener.Item1 == owner && listener.Item2 == champion);
+            _listeners.RemoveAll(listener => listener.Item1 == owner && listener.Item2 == unit);
         }
 
         public void RemoveListener(object owner)
@@ -177,13 +178,41 @@ namespace LeagueSandbox.GameServer.API
             _listeners.RemoveAll(listener => listener.Item1 == owner);
         }
 
-        public void Publish(IChampion champion)
+        public void Publish(IObjAiBase unit)
         {
             _listeners.ForEach(listener =>
             {
-                if (listener.Item2 == champion)
+                if (listener.Item2 == unit)
                 {
                     listener.Item3();
+                }
+            });
+        }
+    }
+
+    public class EventOnChampionHitUnit
+    {
+        private List<Tuple<object, IChampion, Action<IAttackableUnit, bool>>> listeners = new List<Tuple<object, IChampion, Action<IAttackableUnit, bool>>>();
+        public void AddListener(object owner, IChampion champ, Action<IAttackableUnit, bool> callback)
+        {
+            var listenerTuple = new Tuple<object, IChampion, Action<IAttackableUnit, bool>>(owner, champ, callback);
+            listeners.Add(listenerTuple);
+        }
+        public void RemoveListener(object owner, IChampion champ)
+        {
+            listeners.RemoveAll((listener) => listener.Item1 == owner && listener.Item2 == champ);
+        }
+        public void RemoveListener(object owner)
+        {
+            listeners.RemoveAll((listener) => listener.Item1 == owner);
+        }
+        public void Publish(IChampion unit, IAttackableUnit target, bool isCrit)
+        {
+            listeners.ForEach((listener) =>
+            {
+                if (listener.Item2 == unit)
+                {
+                    listener.Item3(target, isCrit);
                 }
             });
         }
@@ -214,10 +243,6 @@ namespace LeagueSandbox.GameServer.API
                     listener.Item3(target, isCrit);
                 }
             });
-        }
-        public void AddListener(IChampion owner, Action<IAttackableUnit, bool> onAutoAttack)
-        {
-            throw new NotImplementedException();
         }
     }
 

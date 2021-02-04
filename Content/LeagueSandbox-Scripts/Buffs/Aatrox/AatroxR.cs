@@ -44,7 +44,7 @@ namespace AatroxR
                 pmodel = AddParticleTarget(c, pmodelname, c);
                 pmodel.SetToRemove();
 
-                StatsModifier.AttackSpeed.PercentBonus = (0.4f + (0.1f * (ownerSpell.Level - 1))) * buff.StackCount; // StackCount included here as an example
+                StatsModifier.AttackSpeed.PercentBonus = (0.4f + (0.1f * (ownerSpell.CastInfo.SpellLevel - 1))) * buff.StackCount; // StackCount included here as an example
                 StatsModifier.Range.FlatBonus = 175f * buff.StackCount;
 
                 unit.AddStatModifier(StatsModifier);

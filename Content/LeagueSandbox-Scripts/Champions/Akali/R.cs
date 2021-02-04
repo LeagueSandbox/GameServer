@@ -10,11 +10,11 @@ namespace Spells
 {
     public class AkaliShadowDance : IGameScript
     {
-        public void OnActivate(IObjAiBase owner)
+        public void OnActivate(IObjAiBase owner, ISpell spell)
         {
         }
 
-        public void OnDeactivate(IObjAiBase owner)
+        public void OnDeactivate(IObjAiBase owner, ISpell spell)
         {
         }
 
@@ -39,12 +39,12 @@ namespace Spells
         {
             var bonusAd = owner.Stats.AttackDamage.Total - owner.Stats.AttackDamage.BaseValue;
             var ap = owner.Stats.AbilityPower.Total * 0.9f;
-            var damage = 200 + spell.Level * 150 + bonusAd + ap;
+            var damage = 200 + spell.CastInfo.SpellLevel * 150 + bonusAd + ap;
             target.TakeDamage(owner, damage, DamageType.DAMAGE_TYPE_MAGICAL,
                 DamageSource.DAMAGE_SOURCE_SPELL, false);
         }
 
-        public void OnUpdate(double diff)
+        public void OnUpdate(float diff)
         {
         }
     }

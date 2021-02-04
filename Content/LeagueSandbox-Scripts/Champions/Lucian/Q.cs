@@ -10,18 +10,19 @@ namespace Spells
 {
     public class LucianQ : IGameScript
     {
-        public void OnActivate(IObjAiBase owner)
+        public void OnActivate(IObjAiBase owner, ISpell spell)
         {
         }
 
-        public void OnDeactivate(IObjAiBase owner)
+        public void OnDeactivate(IObjAiBase owner, ISpell spell)
         {
         }
 
         public void OnStartCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
         {
             var current = new Vector2(owner.Position.X, owner.Position.Y);
-            var to = Vector2.Normalize(new Vector2(spell.X, spell.Y) - current);
+            var spellPos = new Vector2(spell.CastInfo.TargetPosition.X, spell.CastInfo.TargetPosition.Z);
+            var to = Vector2.Normalize(spellPos - current);
             var range = to * 1100;
             var trueCoords = current + range;
 
@@ -37,12 +38,12 @@ namespace Spells
 
         public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, ISpellMissile projectile)
         {
-            var damage = owner.Stats.AttackDamage.Total * (0.45f + spell.Level * 0.15f) + (50 + spell.Level * 30);
+            var damage = owner.Stats.AttackDamage.Total * (0.45f + spell.CastInfo.SpellLevel * 0.15f) + (50 + spell.CastInfo.SpellLevel * 30);
             target.TakeDamage(owner, damage, DamageType.DAMAGE_TYPE_PHYSICAL, DamageSource.DAMAGE_SOURCE_SPELL,
                 false);
         }
 
-        public void OnUpdate(double diff)
+        public void OnUpdate(float diff)
         {
         }
     }

@@ -69,15 +69,14 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                 case OrderType.AttackTo:
                     translatedWaypoints[0] = champion.Position;
                     champion.UpdateMoveOrder(OrderType.AttackTo);
+                    // TODO: Verify if stopping movement is the correct thing to do.
                     champion.SetWaypoints(translatedWaypoints);
                     break;
                 case OrderType.Stop:
-                    champion.StopMovement();
-                    champion.UpdateMoveOrder(OrderType.Stop);
+                    champion.StopMovement(OrderType.Stop);
                     break;
                 case OrderType.Taunt:
-                    champion.StopMovement();
-                    champion.UpdateMoveOrder(OrderType.Taunt);
+                    champion.StopMovement(OrderType.Taunt);
                     return true;
                 case OrderType.AttackMove:
                     translatedWaypoints[0] = champion.Position;
@@ -92,7 +91,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             }
 
             var u = _game.ObjectManager.GetObjectById(req.TargetNetId) as IAttackableUnit;
-            champion.UpdateTargetUnit(u);
+            champion.SetTargetUnit(u);
 
             if (translatedWaypoints == null)
             {

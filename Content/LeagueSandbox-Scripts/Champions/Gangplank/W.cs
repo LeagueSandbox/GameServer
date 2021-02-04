@@ -9,7 +9,7 @@ namespace Spells
 {
     public class RemoveScurvy : IGameScript
     {
-        public void OnActivate(IObjAiBase owner)
+        public void OnActivate(IObjAiBase owner, ISpell spell)
         {
 
         }
@@ -18,7 +18,7 @@ namespace Spells
         {
         }
 
-        public void OnDeactivate(IObjAiBase owner)
+        public void OnDeactivate(IObjAiBase owner, ISpell spell)
         {
 
         }
@@ -38,7 +38,7 @@ namespace Spells
         {
         }
 
-        public void OnUpdate(double diff)
+        public void OnUpdate(float diff)
         {
         }
     }

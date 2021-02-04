@@ -13,11 +13,11 @@ namespace Spells
     {
         public float finaldamage;
         public Vector2 castcoords;
-        public void OnActivate(IObjAiBase owner)
+        public void OnActivate(IObjAiBase owner, ISpell spell)
         {
         }
 
-        public void OnDeactivate(IObjAiBase owner)
+        public void OnDeactivate(IObjAiBase owner, ISpell spell)
         {
         }
 
@@ -28,16 +28,17 @@ namespace Spells
 
         public void OnFinishCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
         {
-            var to = Vector2.Normalize(new Vector2(spell.X, spell.Y) - castcoords);
+            var spellPos = new Vector2(spell.CastInfo.TargetPosition.X, spell.CastInfo.TargetPosition.Z);
+            var to = Vector2.Normalize(spellPos - castcoords);
             var range = to * 1500f;
             var trueCoords = castcoords + range;
-            spell.AddProjectile("JavelinToss", castcoords, trueCoords, true);
+            spell.AddProjectile("JavelinToss", castcoords, trueCoords, HitResult.HIT_Normal, true);
         }
 
         public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, ISpellMissile projectile)
         {
             var ap = owner.Stats.AbilityPower.Total;
-            var basedamage = 25 + spell.Level * 55 + ap;
+            var basedamage = 25 + spell.CastInfo.SpellLevel * 55 + ap;
             var hitcoords = new Vector2(projectile.Position.X, projectile.Position.Y);
             var distance = Math.Sqrt(Math.Pow(castcoords.X - hitcoords.X, 2) + Math.Pow(castcoords.Y - hitcoords.Y, 2));
             if (Math.Abs(distance) <= 525f)
@@ -62,7 +63,7 @@ namespace Spells
             projectile.SetToRemove();
         }
 
-        public void OnUpdate(double diff)
+        public void OnUpdate(float diff)
         {
         }
     }

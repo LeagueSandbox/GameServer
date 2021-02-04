@@ -1,6 +1,7 @@
 using GameServerCore.Enums;
 using GameServerCore.Domain.GameObjects;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
+using GameServerCore.Domain;
 using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using GameServerCore.Domain.GameObjects.Spell;
@@ -12,7 +13,7 @@ namespace Spells
     {
         public void OnStartCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
         {
-            AddBuff("SummonerDot", 4.0f, 1, spell, (ObjAiBase)target, owner);
+            AddBuff("SummonerDot", 4.0f, 1, spell, target, owner);
             var p = AddParticleTarget(owner, "Global_SS_Ignite.troy", target, 1);
             var damage = 10 + owner.Stats.Level * 4;
             target.TakeDamage(owner, damage, DamageType.DAMAGE_TYPE_TRUE, DamageSource.DAMAGE_SOURCE_SPELL, false);
@@ -38,15 +39,15 @@ namespace Spells
         {
         }
 
-        public void OnUpdate(double diff)
+        public void OnUpdate(float diff)
         {
         }
 
-        public void OnActivate(IObjAiBase owner)
+        public void OnActivate(IObjAiBase owner, ISpell spell)
         {
         }
 
-        public void OnDeactivate(IObjAiBase owner)
+        public void OnDeactivate(IObjAiBase owner, ISpell spell)
         {
         }
     }

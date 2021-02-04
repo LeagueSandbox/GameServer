@@ -7,36 +7,34 @@ namespace GameServerCore.Domain.GameObjects.Spell
 {
     public interface ISpell: IUpdate
     {
-        IObjAiBase Owner { get; }
-        byte Level { get; }
-        byte Slot { get; }
-        float CastTime { get; }
-        string SpellName { get; }
-        SpellState State { get; }
+        ICastInfo CastInfo { get; }
         float CurrentCooldown { get; }
         float CurrentCastTime { get; }
         float CurrentChannelDuration { get; }
-        Dictionary<uint, ISpellMissile> Projectiles { get; }
-        uint SpellNetId { get; }
-        IAttackableUnit Target { get; }
-        float X { get; }
-        float Y { get; }
-        float X2 { get; }
-        float Y2 { get; }
+        float CurrentDelayTime { get; }
+        bool HasEmptyScript { get; }
+        Dictionary<uint, IProjectile> Projectiles { get; }
+        bool Toggle { get; }
         ISpellData SpellData { get; }
+        string SpellName { get; }
+        SpellState State { get; }
 
-        bool Cast(float x, float y, float x2, float y2, IAttackableUnit u);
+        void AddCone(string effectName, Vector2 targetPos, float angleDeg, HitResult hitResult = HitResult.HIT_Normal, bool affectAsCastIsOver = true);
+        void AddLaser(string effectName, Vector2 targetPos, HitResult hitResult = HitResult.HIT_Normal, bool affectAsCastIsOver = true);
+        void AddProjectile(string nameMissile, Vector2 startPos, Vector2 endPos, HitResult hitResult = HitResult.HIT_Normal, bool isServerOnly = false);
+        void AddProjectileTarget(string nameMissile, IAttackableUnit target, HitResult hitResult = HitResult.HIT_Normal, bool isServerOnly = false);
+        void ApplyEffects(IAttackableUnit u, IProjectile p);
+        bool Cast(Vector2 start, Vector2 end, IAttackableUnit unit = null);
+        void Deactivate();
         int GetId();
         float GetCooldown();
-        void LowerCooldown(float lowerValue);
-        void Deactivate();
-        void ApplyEffects(IAttackableUnit u, ISpellMissile p);
+        string GetStringForSlot();
         void LevelUp();
+        void LowerCooldown(float lowerValue);
+        void ResetSpellDelay();
+        void SetCooldown(float newCd);
         void SetLevel(byte toLevel);
-        void AddProjectile(string nameMissile, Vector2 startPos, Vector2 endPos, bool isServerOnly = false);
-        void AddProjectileTarget(string nameMissile, IAttackableUnit target, bool isServerOnly = false);
-        void AddLaser(string effectName, Vector2 targetPos, bool affectAsCastIsOver = true);
-        void AddCone(string effectName, Vector2 targetPos, float angleDeg, bool affectAsCastIsOver = true);
+        void SetSpellState(SpellState state);
         void SpellAnimation(string animName, IAttackableUnit target);
     }
 }

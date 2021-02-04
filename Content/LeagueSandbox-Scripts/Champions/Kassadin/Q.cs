@@ -9,11 +9,11 @@ namespace Spells
 {
     public class NullLance : IGameScript
     {
-        public void OnActivate(IObjAiBase owner)
+        public void OnActivate(IObjAiBase owner, ISpell spell)
         {
         }
 
-        public void OnDeactivate(IObjAiBase owner)
+        public void OnDeactivate(IObjAiBase owner, ISpell spell)
         {
         }
 
@@ -24,13 +24,13 @@ namespace Spells
 
         public void OnFinishCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
         {
-            spell.AddProjectileTarget("NullLance", target, true);
+            spell.AddProjectileTarget("NullLance", target, HitResult.HIT_Normal, true);
         }
 
         public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, ISpellMissile projectile)
         {
             var ap = owner.Stats.AbilityPower.Total * 0.7f;
-            var damage = 30 + spell.Level * 50 + ap;
+            var damage = 30 + spell.CastInfo.SpellLevel * 50 + ap;
 
             if (target != null && !target.IsDead)
             {
@@ -44,7 +44,7 @@ namespace Spells
             projectile.SetToRemove();
         }
 
-        public void OnUpdate(double diff)
+        public void OnUpdate(float diff)
         {
         }
     }

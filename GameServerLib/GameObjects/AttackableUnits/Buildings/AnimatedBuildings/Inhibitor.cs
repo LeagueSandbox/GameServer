@@ -47,10 +47,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.Buildings.Animate
                 var u = obj as IObjAiBase;
                 if (u != null && u.TargetUnit == this)
                 {
-                    u.SetTargetUnit(null);
-                    u.IsAttacking = false;
-                    _game.PacketNotifier.NotifySetTarget(u, null);
-                    u.HasMadeInitialAttack = false;
+                    u.SetTargetUnit(null, true);
                 }
             }
 

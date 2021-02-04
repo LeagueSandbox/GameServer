@@ -20,7 +20,7 @@ namespace EzrealWBuff
 
         public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
-            StatsModifier.AttackSpeed.PercentBonus = StatsModifier.AttackSpeed.PercentBonus + (0.15f + 0.05f * ownerSpell.Level);
+            StatsModifier.AttackSpeed.PercentBonus = StatsModifier.AttackSpeed.PercentBonus + (0.15f + 0.05f * ownerSpell.CastInfo.SpellLevel);
 
             unit.AddStatModifier(StatsModifier);
         }

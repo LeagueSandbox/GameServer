@@ -84,9 +84,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                     Stats.Armor.BaseValue = 60.0f;
                     Stats.MagicResist.BaseValue = 100.0f;
                     Stats.AttackDamage.BaseValue = 170.0f;
-
-                    AutoAttackCastTime = 0.165f;
-                    AutoAttackProjectileSpeed = 1200.0f;
                     break;
                 case TurretType.OUTER_TURRET:
                     _globalGold = 125;
@@ -99,9 +96,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                     Stats.Armor.BaseValue = 60.0f;
                     Stats.MagicResist.BaseValue = 100.0f;
                     Stats.AttackDamage.BaseValue = 152.0f;
-
-                    AutoAttackCastTime = 0.165f;
-                    AutoAttackProjectileSpeed = 1200.0f;
                     break;
                 case TurretType.INHIBITOR_TURRET:
                     _globalGold = 150;
@@ -116,9 +110,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                     Stats.Armor.BaseValue = 67.0f;
                     Stats.MagicResist.BaseValue = 100.0f;
                     Stats.AttackDamage.BaseValue = 190.0f;
-
-                    AutoAttackCastTime = 0.165f;
-                    AutoAttackProjectileSpeed = 1200.0f;
                     break;
                 case TurretType.NEXUS_TURRET:
                     _globalGold = 50;
@@ -132,9 +123,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                     Stats.Armor.BaseValue = 65.0f;
                     Stats.MagicResist.BaseValue = 100.0f;
                     Stats.AttackDamage.BaseValue = 180.0f;
-
-                    AutoAttackCastTime = 0.165f;
-                    AutoAttackProjectileSpeed = 1200.0f;
                     break;
                 case TurretType.FOUNTAIN_TURRET:
                     IsMelee = true;
@@ -146,8 +134,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                     Stats.AttackDamage.BaseValue = 999.0f;
                     _globalGold = 100.0f;
                     Stats.Range.BaseValue = 1250.0f;
-                    AutoAttackCastTime = 1f / 30;
-                    AutoAttackProjectileSpeed = 2000.0f;
                     break;
                 default:
 
@@ -158,9 +144,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                     Stats.AttackSpeedFlat = 0.83f;
                     Stats.Armor.PercentBonus = 0.5f;
                     Stats.MagicResist.PercentBonus = 0.5f;
-
-                    AutoAttackCastTime = 0.165f;
-                    AutoAttackProjectileSpeed = 1200.0f;
 
                     break;
             }

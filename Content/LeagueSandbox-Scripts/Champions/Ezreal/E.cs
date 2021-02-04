@@ -10,11 +10,11 @@ namespace Spells
 {
     public class EzrealArcaneShift : IGameScript
     {
-        public void OnActivate(IObjAiBase owner)
+        public void OnActivate(IObjAiBase owner, ISpell spell)
         {
         }
 
-        public void OnDeactivate(IObjAiBase owner)
+        public void OnDeactivate(IObjAiBase owner, ISpell spell)
         {
         }
 
@@ -25,7 +25,8 @@ namespace Spells
         public void OnFinishCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
         {
             var current = new Vector2(owner.Position.X, owner.Position.Y);
-            var to = new Vector2(spell.X, spell.Y) - current;
+            var spellPos = new Vector2(spell.CastInfo.TargetPosition.X, spell.CastInfo.TargetPosition.Z);
+            var to = spellPos - current;
             Vector2 trueCoords;
             if (to.Length() > 475)
             {
@@ -35,7 +36,7 @@ namespace Spells
             }
             else
             {
-                trueCoords = new Vector2(spell.X, spell.Y);
+                trueCoords = spellPos;
             }
 
             AddParticle(owner, "Ezreal_arcaneshift_cas.troy", owner.Position);
@@ -68,12 +69,12 @@ namespace Spells
 
         public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, ISpellMissile projectile)
         {
-            target.TakeDamage(owner, 25f + spell.Level * 50f + owner.Stats.AbilityPower.Total * 0.75f,
+            target.TakeDamage(owner, 25f + spell.CastInfo.SpellLevel * 50f + owner.Stats.AbilityPower.Total * 0.75f,
                 DamageType.DAMAGE_TYPE_MAGICAL, DamageSource.DAMAGE_SOURCE_SPELL, false);
             projectile.SetToRemove();
         }
 
-        public void OnUpdate(double diff)
+        public void OnUpdate(float diff)
         {
         }
     }

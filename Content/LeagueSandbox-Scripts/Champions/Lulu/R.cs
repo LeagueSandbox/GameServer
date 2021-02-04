@@ -8,18 +8,18 @@ namespace Spells
 {
     public class LuluR : IGameScript
     {
-        public void OnActivate(IObjAiBase owner)
+        public void OnActivate(IObjAiBase owner, ISpell spell)
         {
         }
 
-        public void OnDeactivate(IObjAiBase owner)
+        public void OnDeactivate(IObjAiBase owner, ISpell spell)
         {
         }
 
         public void OnStartCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
         {
             var p = AddParticleTarget(owner, "Lulu_R_cas.troy", target, 1);
-            AddBuff("LuluR", 7.0f, 1, spell, (IObjAiBase)target, owner);
+            AddBuff("LuluR", 7.0f, 1, spell, target, owner);
             CreateTimer(7.0f, () =>
             {
                 RemoveParticle(p);
@@ -35,7 +35,7 @@ namespace Spells
         {
         }
 
-        public void OnUpdate(double diff)
+        public void OnUpdate(float diff)
         {
         }
     }

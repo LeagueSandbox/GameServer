@@ -11,12 +11,12 @@ namespace Spells
 {
     public class Shatter : IGameScript
     {
-        public void OnActivate(IObjAiBase owner)
+        public void OnActivate(IObjAiBase owner, ISpell spell)
         {
 
         }
 
-        public void OnDeactivate(IObjAiBase owner)
+        public void OnDeactivate(IObjAiBase owner, ISpell spell)
         {
 
         }
@@ -29,8 +29,8 @@ namespace Spells
         public void OnFinishCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
         {
             var armor = owner.Stats.Armor.Total;
-            var damage = spell.Level * 40 + armor * 0.2f;
-            var reduce = spell.Level * 5 + armor * 0.05f;
+            var damage = spell.CastInfo.SpellLevel * 40 + armor * 0.2f;
+            var reduce = spell.CastInfo.SpellLevel * 5 + armor * 0.05f;
             AddParticleTarget(owner, "Shatter_nova.troy", owner, 1);
 
             foreach (var enemy in GetUnitsInRange(owner.Position, 375, true)
@@ -41,7 +41,7 @@ namespace Spells
                 {
                     enemy.TakeDamage(owner, damage, DamageType.DAMAGE_TYPE_MAGICAL, DamageSource.DAMAGE_SOURCE_SPELL, false);
                     var p2 = AddParticleTarget(owner, "Shatter_tar.troy", enemy, 1);
-                    AddBuff("TaricWDis", 4.0f, 1, spell, (IObjAiBase)enemy, owner);
+                    AddBuff("TaricWDis", 4.0f, 1, spell, enemy, owner);
 
                     if (hasbuff == true)
                     {
@@ -66,7 +66,7 @@ namespace Spells
 
         }
 
-        public void OnUpdate(double diff)
+        public void OnUpdate(float diff)
         {
 
         }

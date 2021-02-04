@@ -10,11 +10,11 @@ namespace Spells
 {
     public class BlindMonkQOne : IGameScript
     {
-        public void OnActivate(IObjAiBase owner)
+        public void OnActivate(IObjAiBase owner, ISpell spell)
         {
         }
 
-        public void OnDeactivate(IObjAiBase owner)
+        public void OnDeactivate(IObjAiBase owner, ISpell spell)
         {
         }
 
@@ -25,7 +25,8 @@ namespace Spells
         public void OnFinishCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
         {
             var current = new Vector2(owner.Position.X, owner.Position.Y);
-            var to = Vector2.Normalize(new Vector2(spell.X, spell.Y) - current);
+            var spellPos = new Vector2(spell.CastInfo.TargetPosition.X, spell.CastInfo.TargetPosition.Z);
+            var to = Vector2.Normalize(spellPos - current);
             var range = to * 1150;
             var trueCoords = current + range;
             spell.AddProjectile("BlindMonkQOne", current, trueCoords);
@@ -34,7 +35,7 @@ namespace Spells
         public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, ISpellMissile projectile)
         {
             var ad = owner.Stats.AttackDamage.Total * 0.9f;
-            var damage = 50 + (spell.Level * 30) + ad;
+            var damage = 50 + (spell.CastInfo.SpellLevel * 30) + ad;
             target.TakeDamage(owner, damage, DamageType.DAMAGE_TYPE_PHYSICAL, DamageSource.DAMAGE_SOURCE_ATTACK, false);
             AddParticleTarget(owner, "blindMonk_Q_resonatingStrike_tar.troy", target, 1, "C_BuffBone_Glb_Center_Loc");
             AddParticleTarget(owner, "blindMonk_Q_tar.troy", target, 1, "C_BuffBone_Glb_Center_Loc");

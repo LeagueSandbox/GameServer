@@ -9,11 +9,11 @@ namespace Spells
 {
     public class GarenR : IGameScript
     {
-        public void OnActivate(IObjAiBase owner)
+        public void OnActivate(IObjAiBase owner, ISpell spell)
         {
         }
 
-        public void OnDeactivate(IObjAiBase owner)
+        public void OnDeactivate(IObjAiBase owner, ISpell spell)
         {
         }
 
@@ -26,8 +26,8 @@ namespace Spells
             AddParticleTarget(owner, "Garen_Base_R_Tar_Impact.troy", target, 1);
             AddParticleTarget(owner, "Garen_Base_R_Sword_Tar.troy", target, 1);
             var missinghealth = target.Stats.HealthPoints.Total - target.Stats.CurrentHealth;
-            var damageperc = missinghealth * new[] { 0.28f, 0.33f, 0.40f }[spell.Level - 1];
-            var damage = spell.Level * 175 + damageperc;
+            var damageperc = missinghealth * new[] { 0.28f, 0.33f, 0.40f }[spell.CastInfo.SpellLevel - 1];
+            var damage = spell.CastInfo.SpellLevel * 175 + damageperc;
             target.TakeDamage(owner, damage, DamageType.DAMAGE_TYPE_MAGICAL, DamageSource.DAMAGE_SOURCE_SPELL, false);
             if (target.IsDead)
             {
@@ -40,7 +40,7 @@ namespace Spells
         {
         }
 
-        public void OnUpdate(double diff)
+        public void OnUpdate(float diff)
         {
         }
     }

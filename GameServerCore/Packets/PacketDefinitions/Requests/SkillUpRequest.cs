@@ -2,13 +2,13 @@
 {
     public class SkillUpRequest : ICoreRequest
     {
-        public uint NetId { get; }
-        public byte Skill { get; }
+        public byte Slot { get; }
+        public bool IsEvolve { get; }
 
-        public SkillUpRequest(uint netId, byte skill)
+        public SkillUpRequest(byte slot, bool isEvolve)
         {
-            NetId = netId;
-            Skill = skill;
+            Slot = slot;
+            IsEvolve = isEvolve;
         }
     }
 }

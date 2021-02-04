@@ -10,11 +10,11 @@ namespace Spells
 {
     public class EzrealEssenceFlux : IGameScript
     {
-        public void OnActivate(IObjAiBase owner)
+        public void OnActivate(IObjAiBase owner, ISpell spell)
         {
         }
 
-        public void OnDeactivate(IObjAiBase owner)
+        public void OnDeactivate(IObjAiBase owner, ISpell spell)
         {
         }
 
@@ -26,7 +26,8 @@ namespace Spells
         public void OnFinishCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
         {
             var current = new Vector2(owner.Position.X, owner.Position.Y);
-            var to = Vector2.Normalize(new Vector2(spell.X, spell.Y) - current);
+            var spellPos = new Vector2(spell.CastInfo.TargetPosition.X, spell.CastInfo.TargetPosition.Z);
+            var to = Vector2.Normalize(spellPos - current);
             var range = to * 1000;
             var trueCoords = current + range;
             spell.AddProjectile("EzrealEssenceFluxMissile", current, trueCoords);
@@ -50,13 +51,13 @@ namespace Spells
             }
             else
             {
-                var damage = 25 + (45 * spell.Level) + (ownerAbilityPowerTotal * 0.8f);
+                var damage = 25 + (45 * spell.CastInfo.SpellLevel) + (ownerAbilityPowerTotal * 0.8f);
 
                 target.TakeDamage(owner, damage, DamageType.DAMAGE_TYPE_MAGICAL, DamageSource.DAMAGE_SOURCE_SPELL, DamageResultType.RESULT_NORMAL);
             }
         }
 
-        public void OnUpdate(double diff)
+        public void OnUpdate(float diff)
         {
         }
     }

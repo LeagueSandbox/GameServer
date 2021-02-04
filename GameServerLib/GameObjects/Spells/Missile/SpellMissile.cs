@@ -15,34 +15,27 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Missile
         protected float _moveSpeed;
         private bool _atDestination;
 
+        public ICastInfo CastInfo { get; protected set; }
         /// <summary>
         /// Number of objects this projectile has hit since it was created.
         /// </summary>
         public List<IGameObject> ObjectsHit { get; }
         /// <summary>
-        /// Unit which owns the spell that created this projectile.
-        /// </summary>
-        public IAttackableUnit Owner { get; }
-        /// <summary>
-        /// Unique identification of this projectile.
-        /// </summary>
-        public int ProjectileId { get; }
-        /// <summary>
         /// Projectile spell data, housing all information about this projectile's properties. Most projectiles are counted as ExtraSpells within a character's data.
         /// </summary>
         public ISpellData SpellData { get; protected set; }
         /// <summary>
-        /// Current unit this projectile is homing in on and moving towards. Projectile is destroyed on contact with this unit.
+        /// Current unit this projectile is homing in on and moving towards. Projectile is destroyed on contact with this unit unless it has more than one target.
         /// </summary>
-        public IAttackableUnit TargetUnit { get; }
+        public IAttackableUnit TargetUnit { get; protected set; }
         /// <summary>
         /// Position this projectile is moving towards. Projectile is destroyed once it reaches this destination. Equals Vector2.Zero if TargetUnit is not null.
         /// </summary>
-        public Vector2 Destination { get; }
+        public Vector2 Destination { get; protected set; }
         /// <summary>
         /// Spell which created this projectile.
         /// </summary>
-        public ISpell OriginSpell { get; protected set; }
+        public ISpell SpellOrigin { get; protected set; }
         /// <summary>
         /// Whether or not this projectile's visuals should not be networked to clients.
         /// </summary>
@@ -50,51 +43,49 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Missile
 
         public SpellMissile(
             Game game,
-            Vector2 position,
             int collisionRadius,
-            IAttackableUnit owner,
-            IAttackableUnit unit,
             ISpell originSpell,
+            ICastInfo castInfo,
             float moveSpeed,
             string projectileName,
             SpellDataFlags flags = 0,
             uint netId = 0,
             bool serverOnly = false
-        ) : base(game, position, collisionRadius, 0, netId)
+        ) : base(game, castInfo.Owner.Position, collisionRadius, 0, netId)
         {
-            SpellData = _game.Config.ContentManager.GetSpellData(projectileName);
-            OriginSpell = originSpell;
             _moveSpeed = moveSpeed;
-            Owner = owner;
-            Team = owner.Team;
-            ProjectileId = (int)HashFunctions.HashString(projectileName);
+            _atDestination = false;
+
+            SpellOrigin = originSpell;
+            SpellData = _game.Config.ContentManager.GetSpellData(projectileName);
+
+            CastInfo = castInfo;
+            
+            // TODO: Implemented full support for multiple targets.
+            if (!castInfo.Targets.Exists(t =>
+            {
+                if (t.Unit != null)
+                {
+                    TargetUnit = t.Unit;
+                    Destination = Vector2.Zero;
+                    return true;
+                }
+                return false;
+            }))
+            {
+                Destination = new Vector2(castInfo.TargetPositionEnd.X, castInfo.TargetPositionEnd.Z);
+            }
+
             if (!string.IsNullOrEmpty(projectileName))
             {
                 VisionRadius = SpellData.MissilePerceptionBubbleRadius;
             }
+
             ObjectsHit = new List<IGameObject>();
 
-            TargetUnit = unit;
-            Destination = Vector2.Zero;
-            IsServerOnly = serverOnly;
-            _atDestination = false;
-        }
+            Team = CastInfo.Owner.Team;
 
-        public SpellMissile(
-            Game game,
-            Vector2 startPosition,
-            int collisionRadius,
-            IAttackableUnit owner,
-            Vector2 targetPos,
-            ISpell originSpell,
-            float moveSpeed,
-            string projectileName,
-            SpellDataFlags flags = 0,
-            uint netId = 0,
-            bool serverOnly = false
-        ) : this(game, startPosition, collisionRadius, owner, null, originSpell, moveSpeed, projectileName, flags, netId, serverOnly)
-        {
-            Destination = targetPos;
+            IsServerOnly = serverOnly;
         }
 
         public override void Update(float diff)
@@ -214,7 +205,8 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Missile
                 return;
             }
 
-            if (TargetUnit == null)
+            // TODO: Verify if this works in all cases, if not, then change to: if (TargetUnit == null)
+            if (!CastInfo.IsClickCasted)
             {
                 // Skillshot
                 if (!CheckIfValidTarget(unit))
@@ -224,27 +216,24 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Missile
 
                 ObjectsHit.Add(unit);
                 var attackableUnit = unit;
-                if (attackableUnit != null)
+                if (SpellOrigin != null)
                 {
-                    OriginSpell.ApplyEffects(attackableUnit, this);
+                    SpellOrigin.ApplyEffects(attackableUnit, this);
                 }
             }
             else
             {
-                // Homing spell
-                if (OriginSpell != null)
+                // Targeted Spell (including auto attacks)
+                if (SpellOrigin != null)
                 {
-                    OriginSpell.ApplyEffects(TargetUnit, this);
-                }
-                else
-                {
-                    // Auto attack
-                    if (Owner is IObjAiBase ai)
+                    SpellOrigin.ApplyEffects(TargetUnit, this);
+                    if (CastInfo.Owner is IObjAiBase ai)
                     {
                         ai.AutoAttackHit(TargetUnit);
                     }
-                    SetToRemove();
                 }
+
+                SetToRemove();
             }
         }
 
@@ -272,6 +261,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Missile
             }
 
             if (unit.Team != Owner.Team && unit.Team != TeamId.TEAM_NEUTRAL && !SpellData.Flags.HasFlag(SpellDataFlags.AffectEnemies))
+            if (unit.Team != CastInfo.Owner.Team && unit.Team != TeamId.TEAM_NEUTRAL && !((SpellData.Flags & (int)SpellFlag.SPELL_FLAG_AFFECT_ENEMIES) > 0))
             {
                 return false;
             }

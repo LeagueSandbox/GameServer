@@ -26,9 +26,9 @@ namespace LuluR
         {
             StatsModifier.Size.PercentBonus = StatsModifier.Size.PercentBonus + 1;
             _healthBefore = unit.Stats.CurrentHealth;
-            _healthBonus = 150 + 150 * ownerSpell.Level;
-            StatsModifier.HealthPoints.BaseBonus = StatsModifier.HealthPoints.BaseBonus + 150 + 150 * ownerSpell.Level;
-            unit.Stats.CurrentHealth = unit.Stats.CurrentHealth + 150 + 150 * ownerSpell.Level;
+            _healthBonus = 150 + 150 * ownerSpell.CastInfo.SpellLevel;
+            StatsModifier.HealthPoints.BaseBonus = StatsModifier.HealthPoints.BaseBonus + 150 + 150 * ownerSpell.CastInfo.SpellLevel;
+            unit.Stats.CurrentHealth = unit.Stats.CurrentHealth + 150 + 150 * ownerSpell.CastInfo.SpellLevel;
             unit.AddStatModifier(StatsModifier);
         }
 

@@ -8,16 +8,19 @@ namespace Spells
 {
     public class EvelynnPassive : IGameScript
     {
-        public void OnActivate(IObjAiBase owner)
+        public void OnActivate(IObjAiBase owner, ISpell spell)
         {
-            ApiEventManager.OnChampionDamageTaken.AddListener(this, (IChampion)owner, SelfWasDamaged);
+            if (owner is IChampion champion)
+            {
+                ApiEventManager.OnChampionDamageTaken.AddListener(this, champion, SelfWasDamaged);
+            }
         }
 
         private void SelfWasDamaged()
         {
         }
 
-        public void OnDeactivate(IObjAiBase owner)
+        public void OnDeactivate(IObjAiBase owner, ISpell spell)
         {
             //Listeners are automatically removed when GameScripts deactivate
         }
@@ -34,7 +37,7 @@ namespace Spells
         {
         }
 
-        public void OnUpdate(double diff)
+        public void OnUpdate(float diff)
         {
         }
     }

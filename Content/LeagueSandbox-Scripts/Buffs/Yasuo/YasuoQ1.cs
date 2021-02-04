@@ -17,14 +17,14 @@ namespace YasuoQ01
 
         public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
-            ((IChampion)unit).SetSpell("YasuoQ2W", 0, true);
+            ((IObjAiBase)unit).SetSpell("YasuoQ2W", 0, true);
         }
 
         public void OnDeactivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
-            if (((IChampion)unit).Spells[0].SpellName == "YasuoQ2W")
+            if (((IObjAiBase)unit).Spells[0].SpellName == "YasuoQ2W")
             {
-                ((IChampion)unit).SetSpell("YasuoQW", 0, true);
+                ((IObjAiBase)unit).SetSpell("YasuoQW", 0, true);
             }
         }
 

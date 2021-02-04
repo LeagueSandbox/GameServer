@@ -8,11 +8,11 @@ namespace Spells
 {
     public class LuluW : IGameScript
     {
-        public void OnActivate(IObjAiBase owner)
+        public void OnActivate(IObjAiBase owner, ISpell spell)
         {
         }
 
-        public void OnDeactivate(IObjAiBase owner)
+        public void OnDeactivate(IObjAiBase owner, ISpell spell)
         {
         }
 
@@ -32,8 +32,8 @@ namespace Spells
             {
                 var p1 = AddParticleTarget(owner, "Lulu_W_buf_02.troy", target, 1);
                 var p2 = AddParticleTarget(owner, "Lulu_W_buf_01.troy", target, 1);
-                var time = 2.5f + 0.5f * spell.Level;
-                AddBuff("LuluWBuff", time, 1, spell, (IObjAiBase)target, owner);
+                var time = 2.5f + 0.5f * spell.CastInfo.SpellLevel;
+                AddBuff("LuluWBuff", time, 1, spell, target, owner);
                 CreateTimer(time, () =>
                 {
                     RemoveParticle(p1);
@@ -47,7 +47,7 @@ namespace Spells
             var champion = target as IChampion;
             if (champion == null)
                 return;
-            var time = 1 + 0.25f * spell.Level;
+            var time = 1 + 0.25f * spell.CastInfo.SpellLevel;
             AddBuff("LuluWDebuff", time, 1, spell, champion, owner);
             var model = champion.Model;
             ChangeModel((owner as IChampion).Skin, target);
@@ -61,7 +61,7 @@ namespace Spells
             projectile.SetToRemove();
         }
 
-        public void OnUpdate(double diff)
+        public void OnUpdate(float diff)
         {
         }
 

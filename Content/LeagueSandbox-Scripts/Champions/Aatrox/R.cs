@@ -11,7 +11,7 @@ namespace Spells
     {
         string pcastname;
         string phitname;
-        public void OnActivate(IObjAiBase owner)
+        public void OnActivate(IObjAiBase owner, ISpell spell)
         {
             if (owner is IChampion c)
             {
@@ -33,7 +33,7 @@ namespace Spells
             }
         }
 
-        public void OnDeactivate(IObjAiBase owner)
+        public void OnDeactivate(IObjAiBase owner, ISpell spell)
         {
         }
 
@@ -46,7 +46,7 @@ namespace Spells
         {
             if (owner is IChampion c)
             {
-                var damage = 200 + (100 * (spell.Level - 1)) + (c.Stats.AbilityPower.Total);
+                var damage = 200 + (100 * (spell.CastInfo.SpellLevel - 1)) + (c.Stats.AbilityPower.Total);
 
                 var units = GetUnitsInRange(c.Position, 550f, true);
                 for (int i = 0; i < units.Count; i++)
@@ -68,7 +68,7 @@ namespace Spells
             //projectile.SetToRemove();
         }
 
-        public void OnUpdate(double diff)
+        public void OnUpdate(float diff)
         {
         }
     }

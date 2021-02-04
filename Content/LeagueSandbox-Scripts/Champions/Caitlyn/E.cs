@@ -10,15 +10,15 @@ namespace Spells
 {
     public class CaitlynEntrapment : IGameScript
     {
-        public void OnActivate(IObjAiBase owner)
+        public void OnActivate(IObjAiBase owner, ISpell spell)
         {
         }
 
-        public void OnDeactivate(IObjAiBase owner)
+        public void OnDeactivate(IObjAiBase owner, ISpell spell)
         {
         }
 
-        public void OnUpdate(double diff)
+        public void OnUpdate(float diff)
         {
 
         }
@@ -31,7 +31,8 @@ namespace Spells
         {
             // Calculate net coords
             var current = new Vector2(owner.Position.X, owner.Position.Y);
-            var to = Vector2.Normalize(new Vector2(spell.X, spell.Y) - current);
+            var spellPos = new Vector2(spell.CastInfo.TargetPosition.X, spell.CastInfo.TargetPosition.Z);
+            var to = Vector2.Normalize(spellPos - current);
             var range = to * 750;
             var trueCoords = current + range;
 
@@ -45,10 +46,10 @@ namespace Spells
         public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, ISpellMissile projectile)
         {
             var ap = owner.Stats.AbilityPower.Total * 0.8f;
-            var damage = 80 + (spell.Level - 1) * 50 + ap;
+            var damage = 80 + (spell.CastInfo.SpellLevel - 1) * 50 + ap;
             target.TakeDamage(owner, damage, DamageType.DAMAGE_TYPE_MAGICAL, DamageSource.DAMAGE_SOURCE_SPELL, false);
-            var slowDuration = new[] { 0, 1, 1.25f, 1.5f, 1.75f, 2 }[spell.Level];
-            AddBuff("Slow", slowDuration, 1, spell, (IObjAiBase)target, owner);
+            var slowDuration = new[] { 0, 1, 1.25f, 1.5f, 1.75f, 2 }[spell.CastInfo.SpellLevel];
+            AddBuff("Slow", slowDuration, 1, spell, target, owner);
             AddParticleTarget(owner, "caitlyn_entrapment_tar.troy", target);
             AddParticleTarget(owner, "caitlyn_entrapment_slow.troy", target);
             projectile.SetToRemove();

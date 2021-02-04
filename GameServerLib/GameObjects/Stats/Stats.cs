@@ -116,7 +116,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
             MagicResist.BaseValue = charData.SpellBlock;
             HealthRegeneration.BaseValue = charData.BaseStaticHpRegen;
             ManaRegeneration.BaseValue = charData.BaseStaticMpRegen;
-            AttackSpeedFlat = 0.625f / (1 + charData.AttackDelayOffsetPercent[0]);
+            AttackSpeedFlat = 0.625f / (1.0f + charData.AttackDelayOffsetPercent[0]);
             HealthPerLevel = charData.HpPerLevel;
             ManaPerLevel = charData.MpPerLevel;
             AdPerLevel = charData.DamagePerLevel;

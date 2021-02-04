@@ -10,7 +10,7 @@ namespace Spells
 {
     public class RaiseMorale : IGameScript
     {
-        public void OnActivate(IObjAiBase owner)
+        public void OnActivate(IObjAiBase owner, ISpell spell)
         {
         }
 
@@ -18,7 +18,7 @@ namespace Spells
         {
         }
 
-        public void OnDeactivate(IObjAiBase owner)
+        public void OnDeactivate(IObjAiBase owner, ISpell spell)
         {
         }
 
@@ -40,7 +40,7 @@ namespace Spells
             {
                 if (allyTarget is IAttackableUnit && owner != allyTarget && hasbuff == false)
                 {
-                    AddBuff("GangplankE", 7.0f, 1, spell, (IObjAiBase) allyTarget, owner);
+                    AddBuff("GangplankE", 7.0f, 1, spell, allyTarget, owner);
                 }
             }			
         }
@@ -49,7 +49,7 @@ namespace Spells
         {
         }
 
-        public void OnUpdate(double diff)
+        public void OnUpdate(float diff)
         {
         }
     }

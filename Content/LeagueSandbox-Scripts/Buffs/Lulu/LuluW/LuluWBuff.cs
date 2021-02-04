@@ -1,6 +1,5 @@
 using GameServerCore.Enums;
 using GameServerCore.Domain.GameObjects;
-using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 using LeagueSandbox.GameServer.GameObjects.Stats;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using GameServerCore.Domain.GameObjects.Spell;
@@ -18,10 +17,10 @@ namespace LuluWBuff
 
         public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
-            var ap = ownerSpell.Owner.Stats.AbilityPower.Total * 0.001;
+            var ap = ownerSpell.CastInfo.Owner.Stats.AbilityPower.Total * 0.001;
             StatsModifier.MoveSpeed.PercentBonus = StatsModifier.MoveSpeed.PercentBonus + 0.3f + (float)ap;
             unit.AddStatModifier(StatsModifier);
-            var time = 2.5f + 0.5f * ownerSpell.Level;
+            var time = 2.5f + 0.5f * ownerSpell.CastInfo.SpellLevel;
         }
 
         public void OnDeactivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)

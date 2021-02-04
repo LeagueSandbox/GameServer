@@ -74,6 +74,18 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="experience">Amount of experience gained.</param>
         void NotifyAddXp(IChampion champion, float experience);
         /// <summary>
+        /// Sends a packet to all players with vision of the specified attacker detailing that they have targeted the specified target.
+        /// </summary>
+        /// <param name="attacker">AI that is targeting an AttackableUnit.</param>
+        /// <param name="target">AttackableUnit that is being targeted by the attacker.</param>
+        void NotifyAI_TargetS2C(IObjAiBase attacker, IAttackableUnit target);
+        /// <summary>
+        /// Sends a packet to all players with vision of the specified attacker detailing that they have targeted the specified champion.
+        /// </summary>
+        /// <param name="attacker">AI that is targeting a champion.</param>
+        /// <param name="target">Champion that is being targeted by the attacker.</param>
+        void NotifyAI_TargetHeroS2C(IObjAiBase attacker, IChampion target);
+        /// <summary>
         /// Sends a packet to all players that announces a specified message (ex: "Minions have spawned.")
         /// </summary>
         /// <param name="mapId">Current map ID.</param>
@@ -87,13 +99,24 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="client">Info about the player's summoner data.</param>
         void NotifyAvatarInfo(int userId, ClientInfo client);
         /// <summary>
+        /// Sends a packet to all players detailing that the specified  unit is starting their next auto attack.
+        /// </summary>
+        /// <param name="attacker">Unit that is attacking.</param>
+        /// <param name="target">AttackableUnit being attacked.</param>
+        /// <param name="futureProjNetId">NetId of the auto attack projectile.</param>
+        /// <param name="isCrit">Whether or not the auto attack will crit.</param>
+        /// <param name="nextAttackFlag">Whether or this basic attack is not the first time this basic attack has been performed on the given target.</param>
+        /// TODO: Verify the differences between normal Basic_Attack and Basic_Attack_Pos.
+        void NotifyBasic_Attack(IObjAiBase attacker, IAttackableUnit target, uint futureProjNetId, bool isCrit, bool nextAttackFlag);
+        /// <summary>
         /// Sends a packet to all players that the specified attacker is starting their first auto attack.
         /// </summary>
-        /// <param name="attacker">AttackableUnit that is starting an auto attack.</param>
-        /// <param name="victim">AttackableUnit that is the target of the auto attack.</param>
+        /// <param name="attacker">AI that is starting an auto attack.</param>
+        /// <param name="target">AttackableUnit being attacked.</param>
         /// <param name="futureProjNetId">NetID of the projectile that will be created for the auto attack.</param>
-        /// <param name="isCritical">Whether or not the auto attack is a critical.</param>
-        void NotifyBeginAutoAttack(IAttackableUnit attacker, IAttackableUnit victim, uint futureProjNetId, bool isCritical);
+        /// <param name="isCrit">Whether or not the auto attack is a critical.</param>
+        /// TODO: Verify the differences between BasicAttackPos and normal BasicAttack.
+        void NotifyBasic_Attack_Pos(IObjAiBase attacker, IAttackableUnit target, uint futureProjNetId, bool isCrit);
         /// <summary>
         /// Sends a side bar tip to the specified player (ex: quest tips).
         /// </summary>
@@ -429,15 +452,6 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="u">AttackableUnit that is moving.</param>
         void NotifyMovement(IAttackableUnit u);
         /// <summary>
-        /// Sends a packet to all players detailing that the specified attacker unit is starting their next auto attack.
-        /// </summary>
-        /// <param name="attacker">AttackableUnit auto attacking.</param>
-        /// <param name="target">AttackableUnit that is the target of the auto attack.</param>
-        /// <param name="futureProjNetId">NetId of the auto attack projectile.</param>
-        /// <param name="isCritical">Whether or not the auto attack will crit.</param>
-        /// <param name="nextAttackFlag">Whether or not to increase the time to auto attack due to being the next auto attack.</param>
-        void NotifyNextAutoAttack(IAttackableUnit attacker, IAttackableUnit target, uint futureProjNetId, bool isCritical, bool nextAttackFlag);
-        /// <summary>
         /// Sends a packet to all players who have vision of the specified buff's target detailing that the buff has been added to the target.
         /// </summary>
         /// <param name="b">Buff being added.</param>
@@ -500,32 +514,35 @@ namespace GameServerCore.Packets.Interfaces
         /// <summary>
         /// Sends a packet to all players with vision of the owner of the specified spell detailing that a spell has been cast.
         /// </summary>
-        /// <param name="navGrid">NavigationGrid instance used for networking positional data.</param>
         /// <param name="s">Spell being cast.</param>
-        /// <param name="start">Starting position of the spell.</param>
-        /// <param name="end">End position of the spell.</param>
         /// <param name="futureProjNetId">NetId of the projectile that may be spawned by the spell.</param>
-        void NotifyNPC_CastSpellAns(INavigationGrid navGrid, ISpell s, Vector2 start, Vector2 end, uint futureProjNetId);
+        void NotifyNPC_CastSpellAns(ISpell s, uint futureProjNetId);
         /// <summary>
         /// Sends a packet to all players with vision of the specified AttackableUnit detailing that the attacker has abrubtly stopped their attack (can be a spell or auto attack, although internally AAs are also spells).
         /// </summary>
         /// <param name="attacker">AttackableUnit that stopped their auto attack.</param>
         /// <param name="isSummonerSpell">Whether or not the spell is a summoner spell.</param>
+        /// <param name="keepAnimating">Whether or not to continue the auto attack animation after the abrupt stop.</param>
+        /// <param name="destroyMissile">Whether or not to destroy the missile which may have been created before stopping (client-side removal).</param>
+        /// <param name="overrideVisibility">Whether or not stopping this auto attack overrides visibility checks.</param>
+        /// <param name="forceClient">Whether or not this packet should be forcibly applied, regardless of if an auto attack is being performed client-side.</param>
         /// <param name="missileNetID">NetId of the missile that may have been spawned by the spell.</param>
-        void NotifyNPC_InstantStopAttack(IAttackableUnit attacker, bool isSummonerSpell, uint missileNetID = 0);
+        void NotifyNPC_InstantStop_Attack(IAttackableUnit attacker, bool isSummonerSpell, bool keepAnimating = false, bool destroyMissile = true, bool overrideVisibility = true, bool forceClient = false, uint missileNetID = 0);
+        /// <summary>
+        /// Sends a packet to the specified user that the spell in the specified slot has been upgraded (skill point added).
+        /// </summary>
+        /// <param name="userId">ID of the user to send the packet to.</param>
+        /// <param name="netId">NetID of the unit that owns the spell being upgraded.</param>
+        /// <param name="slot">Slot of the spell being upgraded.</param>
+        /// <param name="level">New level of the spell after being upgraded.</param>
+        /// <param name="points">New number of points after the upgrade.</param>
+        void NotifyNPC_UpgradeSpellAns(int userId, uint netId, byte slot, byte level, byte points);
         /// <summary>
         /// Sends a packet to all players detailing that the specified AttackableUnit die has died to the specified AttackableUnit killer.
         /// </summary>
         /// <param name="unit">AttackableUnit that was killed.</param>
         /// <param name="killer">AttackableUnit that killed the unit.</param>
         void NotifyNpcDie(IAttackableUnit unit, IAttackableUnit killer);
-        /// <summary>
-        /// Sends a packet to all players detailing that the specified attacker has begun trying to attack (has targeted) the specified target. Functionally makes the attacker face the target.
-        /// </summary>
-        /// <param name="attacker">AttackableUnit that is targeting another unit.</param>
-        /// <param name="target">AttackableUnit being targetted by the attacker.</param>
-        /// <param name="attackType">Type of attack; RADIAL/MELEE/TARGETED</param>
-        void NotifyOnAttack(IAttackableUnit attacker, IAttackableUnit target, AttackType attackType);
         /// <summary>
         /// Sends a packet to all players detailing that the game has paused.
         /// </summary>
@@ -630,25 +647,10 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="bitfield">Unknown variable.</param>
         void NotifySetDebugHidden(int userId, uint sender, int objID, byte bitfield = 0x0);
         /// <summary>
-        /// Sends a packet to all players with vision of the specified attacker detailing that they have targeted the specified target.
-        /// </summary>
-        /// <param name="attacker">AttackableUnit that is targeting an AttackableUnit.</param>
-        /// <param name="target">AttackableUnit that is being targeted by the attacker.</param>
-        void NotifySetTarget(IAttackableUnit attacker, IAttackableUnit target);
-        /// <summary>
         /// Sends a packet to all players detailing that the specified unit's team has been set.
         /// </summary>
         /// <param name="unit">AttackableUnit who's team has been set.</param>
         void NotifySetTeam(IAttackableUnit unit);
-        /// <summary>
-        /// Sends a packet to the specified player detailing that they have leveled up the specified skill.
-        /// </summary>
-        /// <param name="userId">User to send the packet to.</param>
-        /// <param name="netId">NetId of the GameObject whos skill is being leveled up.</param>
-        /// <param name="skill">Slot of the skill being leveled up.</param>
-        /// <param name="level">Current level of the skill.</param>
-        /// <param name="pointsLeft">Number of skill points available after the skill has been leveled up.</param>
-        void NotifySkillUp(int userId, uint netId, byte skill, byte level, byte pointsLeft);
         /// <summary>
         /// Calls for the appropriate spawn packet to be sent given the specified GameObject's type and calls for a vision packet to be sent for the specified GameObject.
         /// </summary>
@@ -664,12 +666,6 @@ namespace GameServerCore.Packets.Interfaces
         /// </summary>
         /// <param name="userId">User to send the packet to.</param>
         void NotifySpawnStart(int userId);
-        /// <summary>
-        /// Sends a packet to all players with vision of the specified unit detailing that the unit is playing an animation.
-        /// </summary>
-        /// <param name="u">Unit that will do the animation.</param>
-        /// <param name="animation">Animation that the unit will do.</param>
-        void NotifySpellAnimation(IAttackableUnit u, string animation);
         /// <summary>
         /// Sends a packet to the specified player detailing that the GameObject associated with the specified NetID has spawned.
         /// </summary>

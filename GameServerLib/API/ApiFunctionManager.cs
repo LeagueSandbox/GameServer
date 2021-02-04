@@ -317,6 +317,11 @@ namespace LeagueSandbox.GameServer.API
             }
         }
 
+        public static void RemoveParticleSilent(IParticle p)
+        {
+            p.SilentSetToRemove();
+        }
+
         /// <summary>
         /// Creates a new Minion with the specified parameters.
         /// </summary>
@@ -543,6 +548,11 @@ namespace LeagueSandbox.GameServer.API
         /// </summary>
         /// <param name="unit">Unit to set animation states on.</param>
         /// <param name="animPairs">Dictionary of animations to set.</param>
+        public static void SetAnimStates(IAttackableUnit unit, Dictionary<string, string> animPairs)
+        {
+            unit.SetAnimStates(animPairs);
+        }
+
         public static void SetAnimStates(IAttackableUnit unit, Dictionary<string, string> animPairs)
         {
             unit.SetAnimStates(animPairs);

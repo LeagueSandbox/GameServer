@@ -22,7 +22,7 @@ namespace Quickdraw
 
         public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
-            StatsModifier.AttackSpeed.PercentBonus = 0.2f + (0.1f * ownerSpell.Level);
+            StatsModifier.AttackSpeed.PercentBonus = 0.2f + (0.1f * ownerSpell.CastInfo.SpellLevel);
             unit.AddStatModifier(StatsModifier);
         }
 

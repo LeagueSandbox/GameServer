@@ -10,11 +10,11 @@ namespace Spells
 {
     public class OlafAxeThrowCast : IGameScript
     {
-        public void OnActivate(IObjAiBase owner)
+        public void OnActivate(IObjAiBase owner, ISpell spell)
         {
         }
 
-        public void OnDeactivate(IObjAiBase owner)
+        public void OnDeactivate(IObjAiBase owner, ISpell spell)
         {
         }
 
@@ -25,7 +25,8 @@ namespace Spells
         public void OnFinishCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
         {
             var current = new Vector2(owner.Position.X, owner.Position.Y);
-            var to = new Vector2(spell.X, spell.Y) - current;
+            var spellPos = new Vector2(spell.CastInfo.TargetPosition.X, spell.CastInfo.TargetPosition.Z);
+            var to = spellPos - current;
             Vector2 trueCoords;
 
             if (to.Length() > 1651)
@@ -36,7 +37,7 @@ namespace Spells
             }
             else
             {
-                trueCoords = new Vector2(spell.X, spell.Y);
+                trueCoords = spellPos;
             }
 
             spell.AddProjectile("OlafAxeThrowDamage", current, trueCoords);
@@ -47,11 +48,11 @@ namespace Spells
             AddParticleTarget(owner, "olaf_axeThrow_tar.troy", target, 1);
             var ad = owner.Stats.AttackDamage.Total * 1.1f;
             var ap = owner.Stats.AttackDamage.Total * 0.0f;
-            var damage = 15 + spell.Level * 20 + ad + ap;
+            var damage = 15 + spell.CastInfo.SpellLevel * 20 + ad + ap;
             target.TakeDamage(owner, damage, DamageType.DAMAGE_TYPE_PHYSICAL, DamageSource.DAMAGE_SOURCE_ATTACK, false);
         }
 
-        public void OnUpdate(double diff)
+        public void OnUpdate(float diff)
         {
         }
     }

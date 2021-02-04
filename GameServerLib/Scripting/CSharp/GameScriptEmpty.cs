@@ -6,11 +6,11 @@ namespace LeagueSandbox.GameServer.Scripting.CSharp
 {
     public class GameScriptEmpty : IGameScript
     {
-        public void OnActivate(IObjAiBase owner)
+        public void OnActivate(IObjAiBase owner, ISpell spell)
         {
         }
 
-        public void OnDeactivate(IObjAiBase owner)
+        public void OnDeactivate(IObjAiBase owner, ISpell spell)
         {
         }
 
@@ -23,6 +23,10 @@ namespace LeagueSandbox.GameServer.Scripting.CSharp
         }
 
         public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, ISpellMissile projectile)
+        {
+        }
+
+        public void OnUpdate(float diff)
         {
         }
     }

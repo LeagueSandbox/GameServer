@@ -10,18 +10,19 @@ namespace Spells
 {
     public class LuxMaliceCannon : IGameScript
     {
-        public void OnActivate(IObjAiBase owner)
+        public void OnActivate(IObjAiBase owner, ISpell spell)
         {
         }
 
-        public void OnDeactivate(IObjAiBase owner)
+        public void OnDeactivate(IObjAiBase owner, ISpell spell)
         {
         }
 
         public void OnStartCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
         {
             var current = new Vector2(owner.Position.X, owner.Position.Y);
-            var to = Vector2.Normalize(new Vector2(spell.X, spell.Y) - current);
+            var spellPos = new Vector2(spell.CastInfo.TargetPosition.X, spell.CastInfo.TargetPosition.Z);
+            var to = Vector2.Normalize(spellPos - current);
             var range = to * 3340;
             var trueCoords = current + range;
 
@@ -38,11 +39,11 @@ namespace Spells
 
         public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, ISpellMissile projectile)
         {
-            target.TakeDamage(owner, 200f + spell.Level * 100f + owner.Stats.AbilityPower.Total * 0.75f,
+            target.TakeDamage(owner, 200f + spell.CastInfo.SpellLevel * 100f + owner.Stats.AbilityPower.Total * 0.75f,
                 DamageType.DAMAGE_TYPE_MAGICAL, DamageSource.DAMAGE_SOURCE_SPELL, false);
         }
 
-        public void OnUpdate(double diff)
+        public void OnUpdate(float diff)
         {
         }
     }

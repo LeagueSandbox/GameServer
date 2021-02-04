@@ -11,12 +11,12 @@ namespace Spells
     public class YasuoQW : IGameScript
     {
         private Vector2 trueCoords;
-        public void OnActivate(IObjAiBase owner)
+        public void OnActivate(IObjAiBase owner, ISpell spell)
         {
             // here's nothing
         }
 
-        public void OnDeactivate(IObjAiBase owner)
+        public void OnDeactivate(IObjAiBase owner, ISpell spell)
         {
             // here's empty
         }
@@ -24,8 +24,9 @@ namespace Spells
         public void OnStartCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
         {
             var current = new Vector2(owner.Position.X, owner.Position.Y);
-            var to = Vector2.Normalize(new Vector2(spell.X, spell.Y) - current);
-            var range = to * spell.SpellData.CastRangeDisplayOverride;
+            var spellPos = new Vector2(spell.CastInfo.TargetPosition.X, spell.CastInfo.TargetPosition.Z);
+            var to = Vector2.Normalize(spellPos - current);
+            var range = to * spell.SpellData.CastRangeDisplayOverride[0];
             trueCoords = current + range;
 
             FaceDirection(trueCoords, owner, true, 0f);
@@ -42,7 +43,7 @@ namespace Spells
                 {
                     if (affectEnemys is IAttackableUnit && affectEnemys.Team != owner.Team)
                     {
-                        affectEnemys.TakeDamage(owner, spell.Level * 20f + owner.Stats.AttackDamage.Total, DamageType.DAMAGE_TYPE_PHYSICAL, DamageSource.DAMAGE_SOURCE_ATTACK, false);
+                        affectEnemys.TakeDamage(owner, spell.CastInfo.SpellLevel * 20f + owner.Stats.AttackDamage.Total, DamageType.DAMAGE_TYPE_PHYSICAL, DamageSource.DAMAGE_SOURCE_ATTACK, false);
                         AddParticleTarget(owner, "Yasuo_Base_Q_hit_tar.troy", affectEnemys);
                     }
                 }
@@ -60,14 +61,14 @@ namespace Spells
         public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, ISpellMissile projectile)
         {
             AddParticleTarget(owner, "Yasuo_Base_Q_hit_tar.troy", target);
-            target.TakeDamage(owner, spell.Level * 20f + owner.Stats.AttackDamage.Total,DamageType.DAMAGE_TYPE_PHYSICAL, DamageSource.DAMAGE_SOURCE_ATTACK, false);
+            target.TakeDamage(owner, spell.CastInfo.SpellLevel * 20f + owner.Stats.AttackDamage.Total,DamageType.DAMAGE_TYPE_PHYSICAL, DamageSource.DAMAGE_SOURCE_ATTACK, false);
             if (!HasBuff(owner, "YasuoQ01"))
             {
                 AddBuff("YasuoQ01", 6f, 1, spell, owner, owner);
             }
         }
 
-        public void OnUpdate(double diff)
+        public void OnUpdate(float diff)
         {
             //here's nothing
         }

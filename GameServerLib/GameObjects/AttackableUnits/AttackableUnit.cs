@@ -894,6 +894,8 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                     // Remove one stack and update the other buff instances of the same name
                     b.DecrementStackCount();
 
+                    // TODO: Unload and reload all data of buff scripts here.
+
                     RemoveBuff(b.Name);
                     BuffList.Remove(b);
                     RemoveBuffSlot(b);

@@ -14,7 +14,7 @@ namespace Spells
             spell.AddProjectileTarget("DeathfireGraspSpell", target);
             var p1 = AddParticleTarget(owner, "deathFireGrasp_tar.troy", target);
             var p2 = AddParticleTarget(owner, "obj_DeathfireGrasp_debuff.troy", target);
-            AddBuff("DeathfireGraspSpell", 4.0f, 1, spell, (IObjAiBase)target, owner);
+            AddBuff("DeathfireGraspSpell", 4.0f, 1, spell, target, owner);
             CreateTimer(4.0f, () =>
             {
                 RemoveParticle(p1);
@@ -33,15 +33,15 @@ namespace Spells
             projectile.SetToRemove();
         }
 
-        public void OnUpdate(double diff)
+        public void OnUpdate(float diff)
         {
         }
 
-        public void OnActivate(IObjAiBase owner)
+        public void OnActivate(IObjAiBase owner, ISpell spell)
         {
         }
 
-        public void OnDeactivate(IObjAiBase owner)
+        public void OnDeactivate(IObjAiBase owner, ISpell spell)
         {
         }
     }
