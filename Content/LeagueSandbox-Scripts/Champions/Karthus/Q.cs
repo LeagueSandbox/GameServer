@@ -10,8 +10,13 @@ using GameServerCore.Domain.GameObjects.Spell.Missile;
 
 namespace Spells
 {
-    public class KarthusLayWasteA1 : IGameScript
+    public class KarthusLayWasteA1 : ISpellScript
     {
+        public ISpellScriptMetadata ScriptMetadata { get; private set; } = new SpellScriptMetadata()
+        {
+            // TODO
+        };
+
         public void OnActivate(IObjAiBase owner, ISpell spell)
         {
         }

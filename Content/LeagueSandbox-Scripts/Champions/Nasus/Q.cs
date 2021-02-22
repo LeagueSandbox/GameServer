@@ -7,8 +7,13 @@ using LeagueSandbox.GameServer.Scripting.CSharp;
 
 namespace Spells
 {
-    public class NasusQ : IGameScript
+    public class NasusQ : ISpellScript
     {
+        public ISpellScriptMetadata ScriptMetadata { get; private set; } = new SpellScriptMetadata()
+        {
+            // TODO
+        };
+
         IBuff buffQ;
         public void OnActivate(IObjAiBase owner, ISpell spell)
         {

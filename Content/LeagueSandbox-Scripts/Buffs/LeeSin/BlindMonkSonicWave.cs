@@ -14,7 +14,7 @@ namespace BlindMonkSonicWave
         public bool IsHidden => false;
         public int MaxStacks => 1;
 
-        public IStatsModifier StatsModifier { get; private set; } = new StatsModifier();
+        public IStatsModifier StatsModifier { get; private set; }
 
         ISpell originSpell;
         IBuff thisBuff;
@@ -38,7 +38,7 @@ namespace BlindMonkSonicWave
 
             var owner = originSpell.CastInfo.Owner;
             var target = thisBuff.TargetUnit;
-            if (owner.IsCollidingWith(target))
+            if (owner.IsDashing && owner.IsCollidingWith(target))
             {
                 owner.SetDashingState(false);
                 var ad = owner.Stats.AttackDamage.Total * 1.0f;
@@ -51,4 +51,3 @@ namespace BlindMonkSonicWave
         }
     }
 }
-

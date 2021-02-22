@@ -6,8 +6,13 @@ using GameServerCore.Domain.GameObjects.Spell.Missile;
 
 namespace Spells
 {
-    public class CaitlynAceintheHole : IGameScript
+    public class CaitlynAceintheHole : ISpellScript
     {
+        public ISpellScriptMetadata ScriptMetadata { get; private set; } = new SpellScriptMetadata()
+        {
+            // TODO
+        };
+
         public void OnActivate(IObjAiBase owner, ISpell spell)
         {
         }
@@ -22,7 +27,7 @@ namespace Spells
 
         public void OnFinishCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
         {
-            spell.AddProjectileTarget("CaitlynAceintheHoleMissile", target);
+            spell.AddProjectileTarget("CaitlynAceintheHoleMissile", spell.CastInfo.SpellCastLaunchPosition, target);
         }
 
         public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, ISpellMissile projectile)

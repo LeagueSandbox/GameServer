@@ -8,8 +8,13 @@ using GameServerCore.Domain.GameObjects.Spell.Missile;
 
 namespace Spells
 {
-    public class RaiseMorale : IGameScript
+    public class RaiseMorale : ISpellScript
     {
+        public ISpellScriptMetadata ScriptMetadata { get; private set; } = new SpellScriptMetadata()
+        {
+            // TODO
+        };
+
         public void OnActivate(IObjAiBase owner, ISpell spell)
         {
         }
@@ -34,9 +39,10 @@ namespace Spells
             {
                 AddBuff("GangplankE", 7.0f, 1, spell, owner, owner);
             }
-            
-            foreach (var allyTarget in GetUnitsInRange(owner.Position, 1000, true)
-                .Where(x => x.Team != CustomConvert.GetEnemyTeam(owner.Team)))
+
+            var units = GetUnitsInRange(owner.Position, 1000, true).Where(x => x.Team != CustomConvert.GetEnemyTeam(owner.Team));
+
+            foreach (var allyTarget in units)
             {
                 if (allyTarget is IAttackableUnit && owner != allyTarget && hasbuff == false)
                 {

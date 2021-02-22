@@ -6,8 +6,13 @@ using GameServerCore.Domain.GameObjects.Spell.Missile;
 
 namespace Spells
 {
-    public class LuluW : IGameScript
+    public class LuluW : ISpellScript
     {
+        public ISpellScriptMetadata ScriptMetadata { get; private set; } = new SpellScriptMetadata()
+        {
+            // TODO
+        };
+
         public void OnActivate(IObjAiBase owner, ISpell spell)
         {
         }
@@ -26,7 +31,7 @@ namespace Spells
             var IChampion = (IChampion)target;
             if (IChampion.Team != owner.Team)
             {
-                spell.AddProjectileTarget("LuluWTwo", target);
+                spell.AddProjectileTarget("LuluWTwo", spell.CastInfo.SpellCastLaunchPosition, target);
             }
             else
             {

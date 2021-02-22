@@ -6,8 +6,13 @@ using GameServerCore.Domain.GameObjects.Spell.Missile;
 
 namespace Spells
 {
-    public class SummonerRevive : IGameScript
+    public class SummonerRevive : ISpellScript
     {
+        public ISpellScriptMetadata ScriptMetadata { get; private set; } = new SpellScriptMetadata()
+        {
+            // TODO
+        };
+
         public void OnStartCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
         {
         }

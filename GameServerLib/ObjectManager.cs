@@ -112,6 +112,12 @@ namespace LeagueSandbox.GameServer
                     }
                 }
 
+                //var projectile = obj as IProjectile;
+                //if (projectile != null && !projectile.IsToRemove())
+                //{
+                //    _game.PacketNotifier.NotifyMissileReplication(projectile);
+                //}
+
                 if (!(obj is IAttackableUnit))
                     continue;
 
@@ -153,14 +159,6 @@ namespace LeagueSandbox.GameServer
                 var ai = u as IObjAiBase;
                 if (ai != null)
                 {
-                    if ((!ai.SpellToCast.SpellData.IsToggleSpell && !ai.SpellToCast.SpellData.CanMoveWhileChanneling
-                        && ai.SpellToCast.SpellData.CantCancelWhileChanneling)
-                        || (!ai.SpellToCast.SpellData.NoWinddownIfCancelled
-                        && ai.SpellToCast.SpellData.CantCancelWhileWindingUp))
-                    {
-                        ai.StopMovement();
-                    }
-
                     var tempBuffs = new List<GameServerCore.Domain.IBuff>(ai.GetBuffs());
                     for (int i = tempBuffs.Count - 1; i >= 0; i--)
                     {

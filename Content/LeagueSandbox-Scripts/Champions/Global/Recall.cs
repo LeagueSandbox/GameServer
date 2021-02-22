@@ -7,10 +7,17 @@ using GameServerCore.Domain.GameObjects.Spell.Missile;
 
 namespace Spells
 {
-    public class Recall : IGameScript
+    public class Recall : ISpellScript
     {
+        public ISpellScriptMetadata ScriptMetadata { get; private set; } = new SpellScriptMetadata()
+        {
+            TriggersSpellCasts = true
+            // TODO
+        };
+
         public void OnStartCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
         {
+            owner.StopMovement();
         }
 
         public void OnFinishCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)

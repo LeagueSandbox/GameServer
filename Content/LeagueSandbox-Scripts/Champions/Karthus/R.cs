@@ -9,8 +9,13 @@ using GameServerCore.Domain.GameObjects.Spell.Missile;
 
 namespace Spells
 {
-    public class FallenOne : IGameScript
+    public class FallenOne : ISpellScript
     {
+        public ISpellScriptMetadata ScriptMetadata { get; private set; } = new SpellScriptMetadata()
+        {
+            // TODO
+        };
+
         public void OnActivate(IObjAiBase owner, ISpell spell)
         {
         }

@@ -6,8 +6,13 @@ using GameServerCore.Domain.GameObjects.Spell.Missile;
 
 namespace Spells
 {
-    public class YasuoDashWrapper : IGameScript
+    public class YasuoDashWrapper : ISpellScript
     {
+        public ISpellScriptMetadata ScriptMetadata { get; private set; } = new SpellScriptMetadata()
+        {
+            // TODO
+        };
+
         public static IObjAiBase _target = null;
         public static IChampion _owner = null;
         public void OnActivate(IObjAiBase owner, ISpell spell)

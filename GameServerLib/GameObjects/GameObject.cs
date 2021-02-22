@@ -22,7 +22,6 @@ namespace LeagueSandbox.GameServer.GameObjects
         // Function Vars
         protected bool _toRemove;
         protected bool _movementUpdated;
-        protected Vector2 _direction;
         private Dictionary<TeamId, bool> _visibleByTeam;
 
         /// <summary>

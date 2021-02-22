@@ -1,6 +1,8 @@
-﻿namespace LeagueSandbox.GameServer.Chatbox
+﻿using GameServerCore.Domain;
+
+namespace LeagueSandbox.GameServer.Chatbox
 {
-    public abstract class ChatCommandBase : IChatCommand
+    public abstract class ChatCommandBase : IChatCommand, IUpdate
     {
         protected readonly ChatCommandManager ChatCommandManager;
 
@@ -22,6 +24,10 @@
         {
             var msg = $"{ChatCommandManager.CommandStarterCharacter}{Syntax}";
             ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.SYNTAX, msg);
+        }
+
+        public virtual void Update(float diff)
+        {
         }
     }
 }

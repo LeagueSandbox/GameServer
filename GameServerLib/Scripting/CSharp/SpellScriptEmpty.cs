@@ -4,8 +4,10 @@ using GameServerCore.Domain.GameObjects.Spell.Missile;
 
 namespace LeagueSandbox.GameServer.Scripting.CSharp
 {
-    public class GameScriptEmpty : IGameScript
+    public class SpellScriptEmpty : ISpellScript
     {
+        public ISpellScriptMetadata ScriptMetadata { get; private set; } = new SpellScriptMetadata();
+
         public void OnActivate(IObjAiBase owner, ISpell spell)
         {
         }

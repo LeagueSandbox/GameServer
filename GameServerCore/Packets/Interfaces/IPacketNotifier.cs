@@ -377,11 +377,6 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="levelProp">LevelProp that has spawned.</param>
         void NotifyLevelPropSpawn(int userId, ILevelProp levelProp);
         /// <summary>
-        /// Sends a packet to all players detailing that the specified Champion has leveled up.
-        /// </summary>
-        /// <param name="c">Champion which leveled up.</param>
-        void NotifyLevelUp(IChampion c);
-        /// <summary>
         /// Sends a packet to the specified player detailing the load screen information.
         /// </summary>
         /// <param name="userId">User to send the packet to.</param>
@@ -515,8 +510,7 @@ namespace GameServerCore.Packets.Interfaces
         /// Sends a packet to all players with vision of the owner of the specified spell detailing that a spell has been cast.
         /// </summary>
         /// <param name="s">Spell being cast.</param>
-        /// <param name="futureProjNetId">NetId of the projectile that may be spawned by the spell.</param>
-        void NotifyNPC_CastSpellAns(ISpell s, uint futureProjNetId);
+        void NotifyNPC_CastSpellAns(ISpell s);
         /// <summary>
         /// Sends a packet to all players with vision of the specified AttackableUnit detailing that the attacker has abrubtly stopped their attack (can be a spell or auto attack, although internally AAs are also spells).
         /// </summary>
@@ -528,6 +522,11 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="forceClient">Whether or not this packet should be forcibly applied, regardless of if an auto attack is being performed client-side.</param>
         /// <param name="missileNetID">NetId of the missile that may have been spawned by the spell.</param>
         void NotifyNPC_InstantStop_Attack(IAttackableUnit attacker, bool isSummonerSpell, bool keepAnimating = false, bool destroyMissile = true, bool overrideVisibility = true, bool forceClient = false, uint missileNetID = 0);
+        /// <summary>
+        /// Sends a packet to all players detailing that the specified Champion has leveled up.
+        /// </summary>
+        /// <param name="c">Champion which leveled up.</param>
+        void NotifyNPC_LevelUp(IChampion c);
         /// <summary>
         /// Sends a packet to the specified user that the spell in the specified slot has been upgraded (skill point added).
         /// </summary>
@@ -600,7 +599,12 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="showWindow">Whether or not to show a window before unpausing (delay).</param>
         void NotifyResumeGame(IAttackableUnit unpauser, bool showWindow);
         /// <summary>
-        /// Sends a packet to all players with vision of the specified object detailing that it is playing the specified animation.
+        /// Sends a packet to all players with vision of the given projectile that it has changed targets (unit/position).
+        /// </summary>
+        /// <param name="p">Projectile that has changed target.</param>
+        void NotifyS2C_ChangeMissileTarget(IProjectile p);
+        /// <summary>
+        /// Sends a packet to all players with vision of the specified unit detailing that it is playing the specified animation.
         /// </summary>
         /// <param name="obj">GameObject that is playing the animation.</param>
         /// <param name="animation">Internal name of the animation to play.</param>
@@ -618,6 +622,35 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="u">AttackableUnit to change.</param>
         /// <param name="animationPairs">Dictionary of animations to set.</param>
         void NotifyS2C_SetAnimStates(IAttackableUnit u, Dictionary<string, string> animationPairs);
+        /// <summary>
+        /// Sends a packet to the specified user detailing that the spell in the given slot has had its spelldata changed to the spelldata of the given spell name.
+        /// </summary>
+        /// <param name="userId">User to send the packet to.</param>
+        /// <param name="netId">NetId of the unit that owns the spell being changed.</param>
+        /// <param name="spellName">Internal name of the spell to grab spell data from (to set).</param>
+        /// <param name="slot">Slot of the spell being changed.</param>
+        void NotifyS2C_SetSpellData(int userId, uint netId, string spellName, byte slot);
+        /// <summary>
+        /// Sends a packet to the specified player detailing that the level of the spell in the given slot has changed.
+        /// </summary>
+        /// <param name="userId">User to send the packet to.</param>
+        /// <param name="netId">NetId of the unit that owns the spell being changed.</param>
+        /// <param name="slot">Slot of the spell being changed.</param>
+        /// <param name="level">New level of the spell to set.</param>
+        void NotifyS2C_SetSpellLevel(int userId, uint netId, int slot, int level);
+        /// <summary>
+        /// Sends a packet to all players with vision of the specified attacker that it it looking at the specified attacked unit with the given AttackType.
+        /// </summary>
+        /// <param name="attacker">Unit that is attacking.</param>
+        /// <param name="attacked">Unit that is being attacked.</param>
+        /// <param name="attackType">AttackType that the attacker is using to attack.</param>
+        void NotifyS2C_UnitSetLookAt(IAttackableUnit attacker, IAttackableUnit attacked, AttackType attackType);
+        /// <summary>
+        /// Sends a packet to the specified user detailing that the specified spell's toggle state has been updated.
+        /// </summary>
+        /// <param name="userId">User to send the packet to.</param>
+        /// <param name="s">Spell being updated.</param>
+        void NotifyS2C_UpdateSpellToggle(int userId, ISpell s);
         /// <summary>
         /// Sends a packet to all players detailing that the server has ticked within the specified time delta.
         /// </summary>

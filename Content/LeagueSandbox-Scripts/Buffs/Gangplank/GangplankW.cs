@@ -9,14 +9,11 @@ namespace GangplankW
     internal class GangplankW : IBuffGameScript
     {
         public BuffType BuffType => BuffType.HEAL;
-
         public BuffAddType BuffAddType => BuffAddType.RENEW_EXISTING;
-
+        public int MaxStacks => 1;
         public bool IsHidden => false;
 
-        public int MaxStacks => 1;
-
-        public IStatsModifier StatsModifier => new StatsModifier();
+        public IStatsModifier StatsModifier { get; private set; } = new StatsModifier();
 
         public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {

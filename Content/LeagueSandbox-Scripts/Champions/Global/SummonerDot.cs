@@ -9,8 +9,13 @@ using GameServerCore.Domain.GameObjects.Spell.Missile;
 
 namespace Spells
 {
-    public class SummonerDot : IGameScript
+    public class SummonerDot : ISpellScript
     {
+        public ISpellScriptMetadata ScriptMetadata { get; private set; } = new SpellScriptMetadata()
+        {
+            // TODO
+        };
+
         public void OnStartCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
         {
             AddBuff("SummonerDot", 4.0f, 1, spell, target, owner);

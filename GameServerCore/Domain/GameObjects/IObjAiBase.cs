@@ -41,10 +41,6 @@ namespace GameServerCore.Domain.GameObjects
         /// </summary>
         bool IsAttacking { get; }
         /// <summary>
-        /// Whether or not this AI is currently casting a spell. *NOTE*: Not to be confused with channeling (which isn't implemented yet).
-        /// </summary>
-        bool IsCastingSpell { get; set; }
-        /// <summary>
         /// Spell this unit will cast when in range of its target.
         /// Overrides auto attack spell casting.
         /// </summary>
@@ -69,11 +65,6 @@ namespace GameServerCore.Domain.GameObjects
         /// </summary>
         IAttackableUnit DashTarget { get; }
 
-        /// <summary>
-        /// Forces this unit to stop moving by flushing its waypoints. Automatically networked.
-        /// </summary>
-        /// <param name="orderCause">OrderType that caused the unit to stop moving.</param>
-        void StopMovement(OrderType orderCause = OrderType.Stop);
         /// <summary>
         /// Function called by this AI's auto attack projectile when it hits its target.
         /// </summary>

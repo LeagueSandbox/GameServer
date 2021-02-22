@@ -19,12 +19,69 @@ namespace GameServerCore.Domain.GameObjects.Spell
         string SpellName { get; }
         SpellState State { get; }
 
-        void AddCone(string effectName, Vector2 targetPos, float angleDeg, HitResult hitResult = HitResult.HIT_Normal, bool affectAsCastIsOver = true);
-        void AddLaser(string effectName, Vector2 targetPos, HitResult hitResult = HitResult.HIT_Normal, bool affectAsCastIsOver = true);
-        void AddProjectile(string nameMissile, Vector2 startPos, Vector2 endPos, HitResult hitResult = HitResult.HIT_Normal, bool isServerOnly = false);
-        void AddProjectileTarget(string nameMissile, IAttackableUnit target, HitResult hitResult = HitResult.HIT_Normal, bool isServerOnly = false);
+        /// <summary>
+        /// Creates a area of effect cone at this spell's owner position pointing towards the given target position that will act as follows:
+        /// ApplyEffect for each unit that has not been affected yet within the area.
+        /// If affectAsCastIsOver = true: when the spell origin has finished casting, despawns after doing one area of effect check.
+        /// If false: performs continuous area of effect checks until manually SetToRemove.
+        /// </summary>
+        /// <param name="effectName">Internal name of the cone to spawn. Required for cone features.</param>
+        /// <param name="target">Position the area of effect will point towards (from the owner's position).</param>
+        /// <param name="hitResult">How the damage applied by this area of effect should be shown to clients.</param>
+        /// <param name="affectAsCastIsOver">Whether or not the area of effect will last until its origin spell is finished casting. False = lasts forever (or until something calls SetToRemove for it manually, likely via spell script).</param>
+        /// <returns>Newly created area of effect cone with the given functionality.</returns>
+        IProjectile AddCone(string effectName, Vector2 target, float angleDeg, HitResult hitResult = HitResult.HIT_Normal, bool affectAsCastIsOver = true);
+        /// <summary>
+        /// Creates a area of effect rectangle at this spell's owner position pointing towards the given target position that will act as follows:
+        /// ApplyEffect for each unit that has not been affected yet within the area.
+        /// If affectAsCastIsOver = true: when the spell origin has finished casting, despawns after doing one area of effect check.
+        /// If false: performs continuous area of effect checks until manually SetToRemove.
+        /// </summary>
+        /// <param name="effectName">Internal name of the laser to spawn. Required for laser features.</param>
+        /// <param name="target">Position the area of effect will point towards (from the owner's position).</param>
+        /// <param name="hitResult">How the damage applied by this area of effect should be shown to clients.</param>
+        /// <param name="affectAsCastIsOver">Whether or not the area of effect will last until its origin spell is finished casting. False = lasts forever (or until something calls SetToRemove for it manually, likely via spell script).</param>
+        /// <returns>Newly created area of effect rectangle with the given functionality.</returns>
+        IProjectile AddLaser(string effectName, Vector2 target, HitResult hitResult = HitResult.HIT_Normal, bool affectAsCastIsOver = true);
+        /// <summary>
+        /// Creates a line missile at the specified cast position that will move as follows: from -> to.
+        /// If overrideCastPosition is used, the line missile will move as follows: castPos -> from, to will determine the distance to travel: castPos -> to.
+        /// *NOTE*: Missiles will not spawn client-side if from = to.
+        /// </summary>
+        /// <param name="nameMissile">Internal name of the missile to spawn. Required for missile features.</param>
+        /// <param name="castPos">Position the missile will spawn at.</param>
+        /// <param name="from">Position the missile's path will start at. If overrideCastPosition is used, this becomes the end of the path.</param>
+        /// <param name="to">Position the missile's path will end at. If overrideCastPosition is used, this will only determine</param>
+        /// <param name="hitResult">How the damage applied by this projectile should be shown to clients.</param>
+        /// <param name="isServerOnly">Whether or not this missile will only spawn server-side.</param>
+        /// <param name="overrideCastPosition">Whether or not to override default cast position behavior with the given cast position. Refer to main summary for new behavior.</param>
+        /// <returns>Newly created missile with the given functionality.</returns>
+        IProjectile AddProjectile(string nameMissile, Vector2 castPos, Vector2 from, Vector2 to, HitResult hitResult = HitResult.HIT_Normal, bool isServerOnly = false, bool overrideCastPosition = false);
+        /// <summary>
+        /// Creates a single-target missile at the specified cast position that will move as follows: Owner.Position -> target.Position. Despawns when Position = target.Position
+        /// </summary>
+        /// <param name="nameMissile">Internal name of the missile to spawn. Required for missile features.</param>
+        /// <param name="castPos">Position the missile will spawn at.</param>
+        /// <param name="target">Unit the missile will move towards. Once hit, this missile will despawn (unless it has bounces left).</param>
+        /// <param name="hitResult">How the damage applied by this projectile should be shown to clients.</param>
+        /// <param name="isServerOnly">Whether or not this missile will only spawn server-side.</param>
+        /// <param name="overrideCastPosition">Whether or not to override default cast position behavior with the given cast position.</param>
+        /// <returns>Newly created missile with the given functionality.</returns>
+        IProjectile AddProjectileTarget(string nameMissile, Vector3 castPos, IAttackableUnit target, HitResult hitResult = HitResult.HIT_Normal, bool isServerOnly = false, bool overrideCastPosition = false);
         void ApplyEffects(IAttackableUnit u, IProjectile p);
+        /// <summary>
+        /// Removes the given projectile instance from this spell's dictionary of projectiles. Will automatically SetToRemove the projectile.
+        /// </summary>
+        /// <param name="p">Projectile to remove.</param>
+        void RemoveProjectile(IProjectile p);
+        /// <summary>
+        /// Called when the character casts this spell. Initializes the CastInfo for this spell and begins casting.
+        /// </summary>
         bool Cast(Vector2 start, Vector2 end, IAttackableUnit unit = null);
+        /// <summary>
+        /// Called when the character casts this spell via a script.
+        /// </summary>
+        bool Cast(ICastInfo castInfo);
         void Deactivate();
         int GetId();
         float GetCooldown();

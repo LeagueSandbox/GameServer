@@ -8,8 +8,13 @@ using GameServerCore.Domain.GameObjects.Spell.Missile;
 
 namespace Spells
 {
-    public class AkaliShadowDance : IGameScript
+    public class AkaliShadowDance : ISpellScript
     {
+        public ISpellScriptMetadata ScriptMetadata => new SpellScriptMetadata()
+        {
+            // TODO
+        };
+
         public void OnActivate(IObjAiBase owner, ISpell spell)
         {
         }

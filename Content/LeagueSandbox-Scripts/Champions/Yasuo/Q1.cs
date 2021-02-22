@@ -8,8 +8,13 @@ using GameServerCore.Domain.GameObjects.Spell.Missile;
 
 namespace Spells
 {
-    public class YasuoQW : IGameScript
+    public class YasuoQW : ISpellScript
     {
+        public ISpellScriptMetadata ScriptMetadata { get; private set; } = new SpellScriptMetadata()
+        {
+            // TODO
+        };
+
         private Vector2 trueCoords;
         public void OnActivate(IObjAiBase owner, ISpell spell)
         {
@@ -26,7 +31,7 @@ namespace Spells
             var current = new Vector2(owner.Position.X, owner.Position.Y);
             var spellPos = new Vector2(spell.CastInfo.TargetPosition.X, spell.CastInfo.TargetPosition.Z);
             var to = Vector2.Normalize(spellPos - current);
-            var range = to * spell.SpellData.CastRangeDisplayOverride[0];
+            var range = to * spell.SpellData.CastRangeDisplayOverride;
             trueCoords = current + range;
 
             FaceDirection(trueCoords, owner, true, 0f);

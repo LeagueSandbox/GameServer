@@ -8,8 +8,14 @@ using GameServerCore.Domain.GameObjects.Spell.Missile;
 
 namespace Spells
 {
-    public class EzrealArcaneShift : IGameScript
+    public class EzrealArcaneShift : ISpellScript
     {
+        public ISpellScriptMetadata ScriptMetadata => new SpellScriptMetadata()
+        {
+            TriggersSpellCasts = true
+            // TODO
+        };
+
         public void OnActivate(IObjAiBase owner, ISpell spell)
         {
         }
@@ -62,7 +68,7 @@ namespace Spells
             {
                 if (!(target2 is IBaseTurret))
                 {
-                    spell.AddProjectileTarget("EzrealArcaneShiftMissile", target2);
+                    spell.AddProjectileTarget("EzrealArcaneShiftMissile", new Vector3(trueCoords.X, owner.GetHeight() + 150.0f, trueCoords.Y), target2, overrideCastPosition: true);
                 }
             }
         }

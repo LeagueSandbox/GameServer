@@ -7,8 +7,13 @@ using GameServerCore.Domain.GameObjects.Spell.Missile;
 
 namespace Spells
 {
-    public class AatroxR : IGameScript
+    public class AatroxR : ISpellScript
     {
+        public ISpellScriptMetadata ScriptMetadata { get; private set; } = new SpellScriptMetadata()
+        {
+            // TODO
+        };
+
         string pcastname;
         string phitname;
         public void OnActivate(IObjAiBase owner, ISpell spell)

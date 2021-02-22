@@ -9,8 +9,14 @@ using GameServerCore.Domain.GameObjects.Spell.Missile;
 
 namespace Spells
 {
-    public class EzrealTrueshotBarrage : IGameScript
+    public class EzrealTrueshotBarrage : ISpellScript
     {
+        public ISpellScriptMetadata ScriptMetadata { get; private set; } = new SpellScriptMetadata()
+        {
+            TriggersSpellCasts = true
+            // TODO
+        };
+
         public void OnActivate(IObjAiBase owner, ISpell spell)
         {
         }
@@ -32,7 +38,7 @@ namespace Spells
             var range = to * 20000;
             var trueCoords = current + range;
 
-            spell.AddProjectile("EzrealTrueshotBarrage", current, trueCoords, HitResult.HIT_Normal, true);
+            spell.AddProjectile("EzrealTrueshotBarrage", new Vector2(spell.CastInfo.SpellCastLaunchPosition.X, spell.CastInfo.SpellCastLaunchPosition.Z), current, trueCoords, HitResult.HIT_Normal, true);
         }
 
         public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, ISpellMissile projectile)

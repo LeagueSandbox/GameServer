@@ -7,8 +7,13 @@ using GameServerCore.Domain.GameObjects.Spell.Missile;
 
 namespace Spells
 {
-    public class SummonerFlash : IGameScript
+    public class SummonerFlash : ISpellScript
     {
+        public ISpellScriptMetadata ScriptMetadata { get; private set; } = new SpellScriptMetadata()
+        {
+            // TODO
+        };
+
         public void OnStartCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
         {
         }
@@ -30,6 +35,8 @@ namespace Spells
             {
                 trueCoords = spellPos;
             }
+
+            owner.FaceDirection(new Vector3(to.X, 0.0f, to.Y));
 
             AddParticle(owner, "global_ss_flash.troy", owner.Position);
             TeleportTo(owner, trueCoords.X, trueCoords.Y);

@@ -8,8 +8,13 @@ using GameServerCore.Domain.GameObjects.Spell.Missile;
 
 namespace Spells
 {
-    public class BlindMonkQOne : IGameScript
+    public class BlindMonkQOne : ISpellScript
     {
+        public ISpellScriptMetadata ScriptMetadata { get; private set; } = new SpellScriptMetadata()
+        {
+            // TODO
+        };
+
         public void OnActivate(IObjAiBase owner, ISpell spell)
         {
         }
@@ -24,12 +29,13 @@ namespace Spells
 
         public void OnFinishCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
         {
-            var current = new Vector2(owner.Position.X, owner.Position.Y);
+            var current = new Vector2(spell.CastInfo.SpellCastLaunchPosition.X, spell.CastInfo.SpellCastLaunchPosition.Z);
             var spellPos = new Vector2(spell.CastInfo.TargetPosition.X, spell.CastInfo.TargetPosition.Z);
             var to = Vector2.Normalize(spellPos - current);
-            var range = to * 1150;
+            var range = to * spell.SpellData.CastRangeDisplayOverride;
             var trueCoords = current + range;
-            spell.AddProjectile("BlindMonkQOne", current, trueCoords);
+            //LogDebug("BlindMonkQOne going from (" + current.X + ", " + current.Y + ") -> (" + trueCoords.X + ", " + trueCoords.Y + ")");
+            spell.AddProjectile("BlindMonkQOne", new Vector2(spell.CastInfo.SpellCastLaunchPosition.X, spell.CastInfo.SpellCastLaunchPosition.Z), current, trueCoords, HitResult.HIT_Normal, true);
         }
 
         public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, ISpellMissile projectile)
@@ -45,10 +51,8 @@ namespace Spells
             }
 
             projectile.SetToRemove();
-            if (Vector2.DistanceSquared(owner.Position, target.Position) <= 800 * 800 && !target.IsDead)
-            {
-                ForceMovement(owner, target, "Spell1b", 2200, 0, 0, 0, 20000);
-            }
+
+            // TODO: SetSpell("BlindMonkQTwo")
         }
 
         public void OnUpdate(float diff)

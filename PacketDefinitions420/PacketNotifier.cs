@@ -426,7 +426,117 @@ namespace PacketDefinitions420
             _packetHandlerManager.BroadcastPacket(cr, Channel.CHL_S2C);
         }
 
-        // TODO: Implement NotifyChangeSlotSpellData
+        /// <summary>
+        /// Sends a packet to the specified user detailing that the specified owner unit's spell in the specified slot has been changed.
+        /// </summary>
+        /// <param name="userId">User to send the packet to.</param>
+        /// <param name="owner">Unit that owns the spell being changed.</param>
+        /// <param name="slot">Slot of the spell being changed.</param>
+        /// <param name="changeType">Type of change being made.</param>
+        /// <param name="isSummonerSpell">Whether or not the spell being changed is a summoner spell.</param>
+        /// <param name="targetingType">New targeting type to set.</param>
+        /// <param name="newName">New internal name of a spell to set.</param>
+        /// <param name="newRange">New cast range for the spell to set.</param>
+        /// <param name="newMaxCastRange">New max cast range for the spell to set.</param>
+        /// <param name="newDisplayRange">New max display range for the spell to set.</param>
+        /// <param name="newIconIndex">New index of an icon for the spell to set.</param>
+        /// <param name="offsetTargets">New target netids for the spell to set.</param>
+        public void NotifyChangeSlotSpellData(int userId, IObjAiBase owner, byte slot, ChangeSlotSpellDataType changeType, bool isSummonerSpell = false, TargetingType targetingType = TargetingType.Invalid, string newName = "", float newRange = 0, float newMaxCastRange = 0, float newDisplayRange = 0, byte newIconIndex = 0x0, List<uint> offsetTargets = null)
+        {
+            ChangeSpellData spellData = new ChangeSpellDataUnknown()
+            {
+                SpellSlot = slot,
+                IsSummonerSpell = isSummonerSpell
+            };
+
+            switch(changeType)
+            {
+                case ChangeSlotSpellDataType.TargetingType:
+                {
+                    if (targetingType != TargetingType.Invalid)
+                    {
+                        spellData = new ChangeSpellDataTargetingType()
+                        {
+                            SpellSlot = slot,
+                            IsSummonerSpell = isSummonerSpell,
+                            TargetingType = (byte)targetingType
+                        };
+                    }
+                    break;
+                }
+                case ChangeSlotSpellDataType.SpellName:
+                {
+                    spellData = new ChangeSpellDataSpellName()
+                    {
+                        SpellSlot = slot,
+                        IsSummonerSpell = isSummonerSpell,
+                        SpellName = newName
+                    };
+                    break;
+                }
+                case ChangeSlotSpellDataType.Range:
+                {
+                    spellData = new ChangeSpellDataRange()
+                    {
+                        SpellSlot = slot,
+                        IsSummonerSpell = isSummonerSpell,
+                        CastRange = newRange
+                    };
+                    break;
+                }
+                case ChangeSlotSpellDataType.MaxGrowthRange:
+                {
+                    spellData = new ChangeSpellDataMaxGrowthRange()
+                    {
+                        SpellSlot = slot,
+                        IsSummonerSpell = isSummonerSpell,
+                        OverrideMaxCastRange = newMaxCastRange
+                    };
+                    break;
+                }
+                case ChangeSlotSpellDataType.RangeDisplay:
+                {
+                    spellData = new ChangeSpellDataRangeDisplay()
+                    {
+                        SpellSlot = slot,
+                        IsSummonerSpell = isSummonerSpell,
+                        OverrideCastRangeDisplay = newDisplayRange
+                    };
+                    break;
+                }
+                case ChangeSlotSpellDataType.IconIndex:
+                {
+                    spellData = new ChangeSpellDataIconIndex()
+                    {
+                        SpellSlot = slot,
+                        IsSummonerSpell = isSummonerSpell,
+                        IconIndex = newIconIndex
+                    };
+                    break;
+                }
+                case ChangeSlotSpellDataType.OffsetTarget:
+                {
+                    if (offsetTargets != null)
+                    {
+                        spellData = new ChangeSpellDataOffsetTarget()
+                        {
+                            SpellSlot = slot,
+                            IsSummonerSpell = isSummonerSpell,
+                            Targets = offsetTargets
+                        };
+                    }
+                    break;
+                }
+            }
+
+            var changePacket = new ChangeSlotSpellData()
+            {
+                SenderNetID = owner.NetId,
+                ChangeSpellData = spellData
+            };
+
+            _packetHandlerManager.SendPacket(userId, changePacket.GetBytes(), Channel.CHL_S2C);
+        }
 
         /// <summary>
         /// Sends a packet to all players with vision of a specified ObjAiBase explaining that their specified spell's cooldown has been set.
@@ -1145,16 +1255,6 @@ namespace PacketDefinitions420
         }
 
         /// <summary>
-        /// Sends a packet to all players detailing that the specified Champion has leveled up.
-        /// </summary>
-        /// <param name="c">Champion which leveled up.</param>
-        public void NotifyLevelUp(IChampion c)
-        {
-            var lu = new LevelUp(c);
-            _packetHandlerManager.BroadcastPacket(lu, Channel.CHL_S2C);
-        }
-
-        /// <summary>
         /// Sends a packet to the specified player detailing the order and size of both teams on the loading screen.
         /// </summary>
         /// <param name="userId">User to send the packet to.</param>
@@ -1232,6 +1332,10 @@ namespace PacketDefinitions420
         public void NotifyMissileReplication(ISpellMissile p)
         {
             var to = Vector3.Normalize(p.CastInfo.TargetPositionEnd - p.CastInfo.TargetPosition);
+            if (p.CastInfo.IsOverrideCastPosition)
+            {
+                to = Vector3.Normalize(p.CastInfo.TargetPositionEnd - p.CastInfo.SpellCastLaunchPosition);
+            }
 
             var castInfo = new CastInfo
             {
@@ -1295,7 +1399,7 @@ namespace PacketDefinitions420
                 EndPoint = p.CastInfo.TargetPositionEnd,
                 // TODO: Verify
                 UnitPosition = p.CastInfo.Owner.GetPosition3D(),
-                TimeFromCreation = 0f, // TODO: Unhardcode
+                TimeFromCreation = p.GetTimeSinceCreation(), // TODO: Unhardcode
                 Speed = p.GetSpeed(),
                 LifePercentage = 0f, // TODO: Unhardcode
                 //TODO: Implement time limited projectiles
@@ -1643,8 +1747,7 @@ namespace PacketDefinitions420
         /// Sends a packet to all players with vision of the owner of the specified spell detailing that a spell has been cast.
         /// </summary>
         /// <param name="s">Spell being cast.</param>
-        /// <param name="futureProjNetId">NetId of the projectile that may be spawned by the spell.</param>
-        public void NotifyNPC_CastSpellAns(ISpell s, uint futureProjNetId)
+        public void NotifyNPC_CastSpellAns(ISpell s)
         {
             var castInfo = new CastInfo
             {
@@ -1655,7 +1758,7 @@ namespace PacketDefinitions420
                 CasterNetID = s.CastInfo.Owner.NetId,
                 SpellChainOwnerNetID = s.CastInfo.Owner.NetId,
                 PackageHash = s.CastInfo.Owner.GetObjHash(),
-                MissileNetID = futureProjNetId,
+                MissileNetID = s.CastInfo.MissileNetID,
                 TargetPosition = s.CastInfo.TargetPosition,
                 TargetPositionEnd = s.CastInfo.TargetPositionEnd,
                 DesignerCastTime = s.CastInfo.DesignerCastTime,
@@ -1707,6 +1810,23 @@ namespace PacketDefinitions420
                 CastInfo = castInfo
             };
             _packetHandlerManager.BroadcastPacketVision(s.CastInfo.Owner, castAnsPacket.GetBytes(), Channel.CHL_S2C);
+        }
+
+        /// <summary>
+        /// Sends a packet to all players detailing that the specified Champion has leveled up.
+        /// </summary>
+        /// <param name="c">Champion which leveled up.</param>
+        public void NotifyNPC_LevelUp(IChampion c)
+        {
+            var levelUp = new NPC_LevelUp()
+            {
+                SenderNetID = c.NetId,
+                Level = c.Stats.Level,
+                // TODO: Typo :(
+                AveliablePoints = c.SkillPoints
+            };
+
+            _packetHandlerManager.BroadcastPacketVision(c, levelUp.GetBytes(), Channel.CHL_S2C);
         }
 
         /// <summary>
@@ -1899,6 +2019,35 @@ namespace PacketDefinitions420
             }
 
             _packetHandlerManager.BroadcastPacket(upg, Channel.CHL_S2C);
+        }
+
+        /// <summary>
+        /// Sends a packet to all players with vision of the given projectile that it has changed targets (unit/position).
+        /// </summary>
+        /// <param name="p">Projectile that has changed target.</param>
+        public void NotifyS2C_ChangeMissileTarget(IProjectile p)
+        {
+            if (!p.HasTarget())
+            {
+                return;
+            }
+
+            var changePacket = new S2C_ChangeMissileTarget()
+            {
+                SenderNetID = p.NetId,
+                TargetNetID = 0,
+                TargetPosition = new Vector3(p.GetTargetPosition().X, _navGrid.GetHeightAtLocation(p.GetTargetPosition()), p.GetTargetPosition().Y)
+            };
+
+            if (p.CastInfo.Targets.Count > 0)
+            {
+                if (p.CastInfo.Targets[0].Unit != null)
+                {
+                    changePacket.TargetNetID = p.CastInfo.Targets[0].Unit.NetId;
+                }
+            }
+
+            _packetHandlerManager.BroadcastPacketVision(p, changePacket.GetBytes(), Channel.CHL_S2C);
         }
 
         // <summary>
@@ -2282,7 +2431,17 @@ namespace PacketDefinitions420
             {
                 SenderNetID = o.NetId,
                 SyncID = o.SyncId,
-                Movements = new List<MovementDataNormal> { tp }
+                Movements = new List<MovementDataNormal>()
+            };
+
+            var tp = new MovementDataNormal
+            {
+                SyncID = o.SyncId,
+                // TODO: Implement teleportID (likely to be the index of a waypoint we want to TP to).
+                HasTeleportID = true,
+                TeleportID = 1,
+                TeleportNetID = o.NetId,
+                Waypoints = new List<CompressedWaypoint>()
             };
 
             _packetHandlerManager.BroadcastPacketVision(o, packet.GetBytes(), Channel.CHL_S2C);

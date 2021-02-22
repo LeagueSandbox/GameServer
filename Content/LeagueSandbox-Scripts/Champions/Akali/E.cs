@@ -9,8 +9,13 @@ using GameServerCore.Domain.GameObjects.Spell.Missile;
 
 namespace Spells
 {
-    public class AkaliShadowSwipe : IGameScript
+    public class AkaliShadowSwipe : ISpellScript
     {
+        public ISpellScriptMetadata ScriptMetadata => new SpellScriptMetadata()
+        {
+            // TODO
+        };
+
         public void OnActivate(IObjAiBase owner, ISpell spell)
         {
         }

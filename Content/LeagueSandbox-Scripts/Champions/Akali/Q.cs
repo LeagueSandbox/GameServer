@@ -8,8 +8,13 @@ using GameServerCore.Domain.GameObjects.Spell.Missile;
 
 namespace Spells
 {
-    public class AkaliMota : IGameScript
+    public class AkaliMota : ISpellScript
     {
+        public ISpellScriptMetadata ScriptMetadata => new SpellScriptMetadata()
+        {
+            // TODO
+        };
+
         public void OnActivate(IObjAiBase owner, ISpell spell)
         {
         }
@@ -28,7 +33,7 @@ namespace Spells
             var to = Vector2.Normalize(new Vector2(target.Position.X, target.Position.Y) - current);
             var range = to * 1150;
             var trueCoords = current + range;
-            spell.AddProjectile("AkaliMota", current, trueCoords);
+            spell.AddProjectile("AkaliMota", current, current, trueCoords);
         }
 
         public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, ISpellMissile projectile)

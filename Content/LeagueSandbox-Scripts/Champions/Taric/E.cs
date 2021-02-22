@@ -8,8 +8,13 @@ using GameServerCore.Domain.GameObjects.Spell.Missile;
 
 namespace Spells
 {
-    public class Dazzle : IGameScript
+    public class Dazzle : ISpellScript
     {
+        public ISpellScriptMetadata ScriptMetadata { get; private set; } = new SpellScriptMetadata()
+        {
+            // TODO
+        };
+
         public void OnActivate(IObjAiBase owner, ISpell spell)
         {
         }
@@ -31,7 +36,7 @@ namespace Spells
             }
             else
             {
-                spell.AddProjectileTarget("Dazzle", target, HitResult.HIT_Normal, true);
+                spell.AddProjectileTarget("Dazzle", spell.CastInfo.SpellCastLaunchPosition, target, HitResult.HIT_Normal, true);
             }
         }
 

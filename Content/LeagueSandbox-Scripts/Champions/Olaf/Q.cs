@@ -8,8 +8,13 @@ using GameServerCore.Domain.GameObjects.Spell.Missile;
 
 namespace Spells
 {
-    public class OlafAxeThrowCast : IGameScript
+    public class OlafAxeThrowCast : ISpellScript
     {
+        public ISpellScriptMetadata ScriptMetadata { get; private set; } = new SpellScriptMetadata()
+        {
+            // TODO
+        };
+
         public void OnActivate(IObjAiBase owner, ISpell spell)
         {
         }
@@ -40,7 +45,7 @@ namespace Spells
                 trueCoords = spellPos;
             }
 
-            spell.AddProjectile("OlafAxeThrowDamage", current, trueCoords);
+            spell.AddProjectile("OlafAxeThrowDamage", new Vector2(spell.CastInfo.SpellCastLaunchPosition.X, spell.CastInfo.SpellCastLaunchPosition.Z), current, trueCoords);
         }
 
         public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, ISpellMissile projectile)

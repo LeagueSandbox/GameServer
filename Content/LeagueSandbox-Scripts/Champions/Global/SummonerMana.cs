@@ -6,8 +6,13 @@ using GameServerCore.Domain.GameObjects.Spell.Missile;
 
 namespace Spells
 {
-    public class SummonerMana : IGameScript
+    public class SummonerMana : ISpellScript
     {
+        public ISpellScriptMetadata ScriptMetadata { get; private set; } = new SpellScriptMetadata()
+        {
+            // TODO
+        };
+
         private const float PERCENT_MAX_MANA_HEAL = 0.40f;
 
         public void OnStartCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)

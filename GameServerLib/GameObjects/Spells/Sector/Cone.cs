@@ -41,6 +41,19 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Sector
         {
             if (!_affectAsCastIsOver)
             {
+                var objects = _game.ObjectManager.GetObjects().Values;
+                foreach (var obj in objects)
+                {
+                    var u = obj as IAttackableUnit;
+                    if (u != null && CheckIfValidTarget(u))
+                    {
+                        if (TargetIsInCone(u))
+                        {
+                            ApplyEffects(u);
+                        }
+                    }
+                }
+
                 return;
             }
 

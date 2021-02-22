@@ -8,8 +8,13 @@ using GameServerCore.Domain.GameObjects.Spell.Missile;
 
 namespace Spells
 {
-    public class CaitlynPiltoverPeacemaker : IGameScript
+    public class CaitlynPiltoverPeacemaker : ISpellScript
     {
+        public ISpellScriptMetadata ScriptMetadata => new SpellScriptMetadata()
+        {
+            // TODO
+        };
+
         public void OnActivate(IObjAiBase owner, ISpell spell)
         {
         }
@@ -29,7 +34,7 @@ namespace Spells
             var to = Vector2.Normalize(spellPos - current);
             var range = to * 1150;
             var trueCoords = current + range;
-            spell.AddProjectile("CaitlynPiltoverPeacemaker", current, trueCoords, HitResult.HIT_Normal, true);
+            spell.AddProjectile("CaitlynPiltoverPeacemaker", new Vector2(spell.CastInfo.SpellCastLaunchPosition.X, spell.CastInfo.SpellCastLaunchPosition.Z), current, trueCoords, HitResult.HIT_Normal, true);
         }
 
         public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, ISpellMissile projectile)

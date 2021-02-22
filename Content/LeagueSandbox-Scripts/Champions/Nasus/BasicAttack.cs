@@ -6,8 +6,13 @@ using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 
 namespace Spells
 {
-    public class NasusBasicAttack : IGameScript
+    public class NasusBasicAttack : ISpellScript
     {
+        public ISpellScriptMetadata ScriptMetadata { get; private set; } = new SpellScriptMetadata()
+        {
+            // TODO
+        };
+
         public void OnActivate(IObjAiBase owner, ISpell spell)
         {
         }
@@ -34,8 +39,13 @@ namespace Spells
         }
     }
 
-    public class NasusBasicAttack2 : IGameScript
+    public class NasusBasicAttack2 : ISpellScript
     {
+        public ISpellScriptMetadata ScriptMetadata { get; private set; } = new SpellScriptMetadata()
+        {
+            // TODO
+        };
+
         public void OnActivate(IObjAiBase owner, ISpell spell)
         {
         }
@@ -62,8 +72,13 @@ namespace Spells
         }
     }
 
-    public class NasusCritAttack : IGameScript
+    public class NasusCritAttack : ISpellScript
     {
+        public ISpellScriptMetadata ScriptMetadata { get; private set; } = new SpellScriptMetadata()
+        {
+            // TODO
+        };
+
         public void OnActivate(IObjAiBase owner, ISpell spell)
         {
         }
@@ -89,8 +104,13 @@ namespace Spells
         }
     }
 
-    public class NasusQAttack : IGameScript
+    public class NasusQAttack : ISpellScript
     {
+        public ISpellScriptMetadata ScriptMetadata { get; private set; } = new SpellScriptMetadata()
+        {
+            // TODO
+        };
+
         IParticle pTar;
         public void OnActivate(IObjAiBase owner, ISpell spell)
         {

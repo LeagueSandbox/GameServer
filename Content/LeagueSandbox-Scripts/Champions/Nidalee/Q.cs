@@ -9,8 +9,13 @@ using GameServerCore.Domain.GameObjects.Spell.Missile;
 
 namespace Spells
 {
-    public class JavelinToss : IGameScript
+    public class JavelinToss : ISpellScript
     {
+        public ISpellScriptMetadata ScriptMetadata { get; private set; } = new SpellScriptMetadata()
+        {
+            // TODO
+        };
+
         public float finaldamage;
         public Vector2 castcoords;
         public void OnActivate(IObjAiBase owner, ISpell spell)
@@ -32,7 +37,7 @@ namespace Spells
             var to = Vector2.Normalize(spellPos - castcoords);
             var range = to * 1500f;
             var trueCoords = castcoords + range;
-            spell.AddProjectile("JavelinToss", castcoords, trueCoords, HitResult.HIT_Normal, true);
+            spell.AddProjectile("JavelinToss", castcoords, castcoords, trueCoords, HitResult.HIT_Normal, true);
         }
 
         public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, ISpellMissile projectile)

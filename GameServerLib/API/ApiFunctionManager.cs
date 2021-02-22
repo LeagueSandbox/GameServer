@@ -139,6 +139,7 @@ namespace LeagueSandbox.GameServer.API
             {
                 CancelDash(unit);
             }
+
             unit.TeleportTo(x, y);
             unit.StopMovement();
         }
@@ -332,7 +333,7 @@ namespace LeagueSandbox.GameServer.API
         /// <param name="isVisible">Whether or not this minion should be visible.</param>
         /// <param name="aiPaused">Whether or not this minion's AI is inactive.</param>
         /// <returns>New Minion instance.</returns>
-        public static IMinion AddMinion(IObjAiBase owner, string model, string name, Vector2 position, bool isVisible = true, bool aiPaused = true)
+        public static IMinion AddMinion(IObjAiBase owner, string model, string name, Vector2 position, Vector2 facingDirection = new Vector2(), bool isVisible = true, bool aiPaused = true)
         {
             var m = new Minion(_game, owner, position, model, name, 0, owner.Team);
             _game.ObjectManager.AddObject(m);
@@ -355,7 +356,7 @@ namespace LeagueSandbox.GameServer.API
         public static IMinion AddMinionTarget(IObjAiBase owner, string model, string name, IGameObject target, bool isVisible = true, bool aiPaused = true)
         {
             // TODO: Implement attachable Minions/GameObjects.
-            return AddMinion(owner, model, name, target.Position, isVisible, aiPaused);
+            return AddMinion(owner, model, name, target.Position, isVisible: isVisible, aiPaused: aiPaused);
         }
 
         /// <summary>
@@ -556,6 +557,70 @@ namespace LeagueSandbox.GameServer.API
         public static void SetAnimStates(IAttackableUnit unit, Dictionary<string, string> animPairs)
         {
             unit.SetAnimStates(animPairs);
+        }
+
+        public static void SpellCast(IObjAiBase caster, int slot, SpellSlotType slotType, Vector3 pos, Vector3 endPos, Vector3 overrideCastPos, List<ICastTarget> targets = null, bool isForceCastingOrChanneling = false, int overrideForceLevel = -1, bool updateAutoAttackTimer = false, bool useAutoAttackSpell = false)
+        {
+            if (slotType == SpellSlotType.InventorySlots && slot >= 0 && slot <= 6)
+            {
+                slot += 4;
+            }
+
+            if (slotType == SpellSlotType.ExtraSlots && slot >= 0 && slot <= 15)
+            {
+                slot += 45;
+            }
+
+            ISpell spell = caster.GetSpell((byte)slot);
+
+            ICastInfo castInfo = new CastInfo()
+            {
+                SpellHash = (uint)spell.GetId(),
+                SpellNetID = _game.NetworkIdManager.GetNewNetId(),
+                SpellLevel = spell.CastInfo.SpellLevel,
+                AttackSpeedModifier = caster.Stats.AttackSpeedMultiplier.Total,
+                Owner = caster,
+                // TODO: Verify
+                SpellChainOwnerNetID = caster.NetId,
+                PackageHash = caster.GetObjHash(),
+                MissileNetID = _game.NetworkIdManager.GetNewNetId(),
+                TargetPosition = pos,
+                TargetPositionEnd = endPos,
+
+                Targets = targets,
+
+                IsAutoAttack = updateAutoAttackTimer,
+                // TODO: Verify the differences between these two and make separate options for them.
+                UseAttackCastTime = useAutoAttackSpell,
+                UseAttackCastDelay = false,
+                IsForceCastingOrChannel = isForceCastingOrChanneling,
+                
+                SpellSlot = (byte)slot,
+                SpellCastLaunchPosition = caster.GetPosition3D(),
+            };
+
+            if (pos == Vector3.Zero)
+            {
+                castInfo.TargetPosition = caster.GetPosition3D();
+            }
+
+            if (endPos == Vector3.Zero && targets[0].Unit != null)
+            {
+                castInfo.TargetPositionEnd = targets[0].Unit.GetPosition3D();
+            }
+
+            if (overrideCastPos != Vector3.Zero)
+            {
+                castInfo.IsOverrideCastPosition = true;
+                castInfo.SpellCastLaunchPosition = overrideCastPos;
+            }
+
+            if (overrideForceLevel >= 0)
+            {
+                castInfo.SpellLevel = (byte)overrideForceLevel;
+            }
+
+            spell.Cast(castInfo);
         }
     }
 }

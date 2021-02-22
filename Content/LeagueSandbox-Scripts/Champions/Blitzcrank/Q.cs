@@ -8,8 +8,13 @@ using GameServerCore.Domain.GameObjects.Spell.Missile;
 
 namespace Spells
 {
-    public class RocketGrab : IGameScript
+    public class RocketGrab : ISpellScript
     {
+        public ISpellScriptMetadata ScriptMetadata => new SpellScriptMetadata()
+        {
+            // TODO
+        };
+
         public void OnActivate(IObjAiBase owner, ISpell spell)
         {
         }
@@ -30,7 +35,7 @@ namespace Spells
             var to = Vector2.Normalize(spellPos - current);
             var range = to * 925;
             var trueCoords = current + range;
-            spell.AddProjectile("RocketGrabMissile", current, trueCoords);
+            spell.AddProjectile("RocketGrabMissile", current, current, trueCoords);
         }
 
         public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, ISpellMissile projectile)

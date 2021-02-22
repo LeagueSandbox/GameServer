@@ -6,8 +6,13 @@ using GameServerCore.Domain.GameObjects.Spell.Missile;
 
 namespace Spells
 {
-    public class LucianW : IGameScript
+    public class LucianW : ISpellScript
     {
+        public ISpellScriptMetadata ScriptMetadata { get; private set; } = new SpellScriptMetadata()
+        {
+            // TODO
+        };
+
         public void OnActivate(IObjAiBase owner, ISpell spell)
         {
         }
@@ -28,7 +33,7 @@ namespace Spells
             var range = to * 900;
             var trueCoords = current + range;
 
-            spell.AddProjectile("LucianWMissile", current, trueCoords);
+            spell.AddProjectile("LucianWMissile", current, current, trueCoords);
         }
 
         public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, ISpellMissile projectile)

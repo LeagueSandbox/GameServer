@@ -106,7 +106,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 return;
             }
 
-            TargetUnit = nextTarget;
+            SetTargetUnit(nextTarget);
 
             _game.PacketNotifier.NotifyAI_TargetS2C(this, nextTarget);
 
@@ -197,7 +197,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             // Lose focus of the unit target if the target is out of range
             if (TargetUnit != null && Vector2.DistanceSquared(Position, TargetUnit.Position) > Stats.Range.Total * Stats.Range.Total)
             {
-                TargetUnit = null;
+                SetTargetUnit(null);
                 _game.PacketNotifier.NotifyAI_TargetS2C(this, null);
             }
 

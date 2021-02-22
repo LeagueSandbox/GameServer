@@ -291,6 +291,7 @@ namespace LeagueSandbox.GameServer
             ObjectManager.Update(diff);
             ProtectionManager.Update(diff);
             Map.Update(diff);
+            ChatCommandManager.GetCommands().ForEach(command => command.Update(diff));
             _gameScriptTimers.ForEach(gsTimer => gsTimer.Update(diff));
             _gameScriptTimers.RemoveAll(gsTimer => gsTimer.IsDead());
 

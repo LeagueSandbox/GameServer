@@ -1,6 +1,5 @@
+using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
-using LeagueSandbox.GameServer.Scripting.CSharp;
-using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 using GameServerCore.Enums;
 using System.Collections.Generic;
 using LeagueSandbox.GameServer.GameObjects.Stats;
@@ -11,14 +10,11 @@ namespace GangplankE
     internal class GangplankE : IBuffGameScript
     {
         public BuffType BuffType => BuffType.COMBAT_ENCHANCER;
-
         public BuffAddType BuffAddType => BuffAddType.RENEW_EXISTING;
-
+        public int MaxStacks => 1;
         public bool IsHidden => false;
 
-        public int MaxStacks => 1;
-
-        public IStatsModifier StatsModifier => new StatsModifier();
+        public IStatsModifier StatsModifier { get; private set; } = new StatsModifier();
 
         private List<IParticle> Particles => new List<IParticle>();
 
@@ -28,9 +24,9 @@ namespace GangplankE
             StatsModifier.MoveSpeed.PercentBonus = StatsModifier.MoveSpeed.PercentBonus + (10f + 5f * ownerSpell.CastInfo.SpellLevel) / 100f;
             StatsModifier.AttackDamage.PercentBonus = StatsModifier.AttackDamage.PercentBonus + (10f + 10f * ownerSpell.CastInfo.SpellLevel) / 100f;
             unit.AddStatModifier(StatsModifier);
-            
+
             var time = 7.0f;
-            
+
             //_hudvisual = AddBuffHUDVisual("RaiseMorale", time, 1, unit);
 
             Particles.Add(AddParticleTarget(ownerSpell.CastInfo.Owner, "pirate_raiseMorale_cas.troy", unit, 1));
@@ -46,7 +42,7 @@ namespace GangplankE
 
         public void OnUpdate(float diff)
         {
-            
+
         }
     }
 }

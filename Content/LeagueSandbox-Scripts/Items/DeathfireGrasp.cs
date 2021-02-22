@@ -7,11 +7,16 @@ using GameServerCore.Domain.GameObjects.Spell.Missile;
 
 namespace Spells
 {
-    public class DeathfireGrasp : IGameScript
+    public class DeathfireGrasp : ISpellScript
     {
+        public ISpellScriptMetadata ScriptMetadata { get; private set; } = new SpellScriptMetadata()
+        {
+            // TODO
+        };
+
         public void OnStartCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
         {
-            spell.AddProjectileTarget("DeathfireGraspSpell", target);
+            spell.AddProjectileTarget("DeathfireGraspSpell", spell.CastInfo.SpellCastLaunchPosition, target);
             var p1 = AddParticleTarget(owner, "deathFireGrasp_tar.troy", target);
             var p2 = AddParticleTarget(owner, "obj_DeathfireGrasp_debuff.troy", target);
             AddBuff("DeathfireGraspSpell", 4.0f, 1, spell, target, owner);

@@ -155,7 +155,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             return _game.Map.MapProperties.GetRespawnLocation(Team);
         }
 
-        public ISpell LevelUpSpell(byte slot)
+        public override ISpell LevelUpSpell(byte slot)
         {
             if (SkillPoints == 0)
             {
@@ -189,7 +189,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             var isLevelup = LevelUp();
             if (isLevelup)
             {
-                _game.PacketNotifier.NotifyLevelUp(this);
+                _game.PacketNotifier.NotifyNPC_LevelUp(this);
                 // TODO: send this in one place only
                 _game.PacketNotifier.NotifyUpdatedStats(this, false);
             }
@@ -220,6 +220,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         {
             this.StopMovement();
             this.SetWaypoints(_game.Map.NavigationGrid.GetPath(Position, _game.Map.MapProperties.GetRespawnLocation(Team)));
+            this.UpdateMoveOrder(OrderType.MoveTo);
 
             return true;
         }

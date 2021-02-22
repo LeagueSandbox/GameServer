@@ -10,8 +10,13 @@ using GameServerCore.Domain.GameObjects.Spell.Missile;
 
 namespace Spells
 {
-    public class JackInTheBox : IGameScript
+    public class JackInTheBox : ISpellScript
     {
+        public ISpellScriptMetadata ScriptMetadata { get; private set; } = new SpellScriptMetadata()
+        {
+            // TODO
+        };
+
         public float petTimeAlive = 0.00f;
 
         public void OnActivate(IObjAiBase owner, ISpell spell)

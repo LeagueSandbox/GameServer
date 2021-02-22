@@ -14,6 +14,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Missile
         // Function Vars.
         protected float _moveSpeed;
         private bool _atDestination;
+        private float _timeSinceCreation;
 
         public ICastInfo CastInfo { get; protected set; }
         /// <summary>
@@ -55,6 +56,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Missile
         {
             _moveSpeed = moveSpeed;
             _atDestination = false;
+            _timeSinceCreation = 0.0f;
 
             SpellOrigin = originSpell;
             SpellData = _game.Config.ContentManager.GetSpellData(projectileName);
@@ -73,6 +75,21 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Missile
                 return false;
             }))
             {
+                if (SpellOrigin.SpellData.TargetingType != TargetingType.Location)
+                {
+                    Position = new Vector2(castInfo.SpellCastLaunchPosition.X, castInfo.SpellCastLaunchPosition.Z);
+                }
+                else
+                {
+                    if (CastInfo.IsOverrideCastPosition)
+                    {
+                        Position = new Vector2(castInfo.SpellCastLaunchPosition.X, castInfo.SpellCastLaunchPosition.Z);
+                    }
+                    else
+                    {
+                        Position = new Vector2(castInfo.TargetPosition.X, castInfo.TargetPosition.Z);
+                    }
+                }
                 Destination = new Vector2(castInfo.TargetPositionEnd.X, castInfo.TargetPositionEnd.Z);
             }
 
@@ -95,6 +112,8 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Missile
                 SetToRemove();
                 return;
             }
+            _timeSinceCreation += diff;
+
             Move(diff);
         }
 
@@ -115,13 +134,6 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Missile
             {
                 CheckFlagsForUnit(collider as IAttackableUnit);
             }
-            else
-            {
-                if (TargetUnit == collider)
-                {
-                    CheckFlagsForUnit(collider as IAttackableUnit);
-                }
-            }
         }
 
         /// <summary>
@@ -134,6 +146,15 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Missile
         }
 
         /// <summary>
+        /// Gets the time since this projectile was created.
+        /// </summary>
+        /// <returns></returns>
+        public float GetTimeSinceCreation()
+        {
+            return _timeSinceCreation;
+        }
+
+        /// <summary>
         /// Moves this projectile to either its target unit, or its destination, and updates its coordinates along the way.
         /// </summary>
         /// <param name="diff">The amount of milliseconds the AI is supposed to move</param>
@@ -141,7 +162,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Missile
         {
             if (!HasTarget())
             {
-                _direction = new Vector2();
+                Direction = new Vector3();
 
                 return;
             }
@@ -151,14 +172,16 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Missile
 
             var next = GetTargetPosition();
 
-            var goingTo = next - cur;
-            _direction = Vector2.Normalize(goingTo);
+            var goingTo = new Vector3(next.X, _game.Map.NavigationGrid.GetHeightAtLocation(next.X, next.Y), next.Y) - new Vector3(cur.X, _game.Map.NavigationGrid.GetHeightAtLocation(cur.X, cur.Y), cur.Y);
+            var dirTemp = Vector3.Normalize(goingTo);
 
             // usually doesn't happen
-            if (float.IsNaN(_direction.X) || float.IsNaN(_direction.Y))
+            if (float.IsNaN(dirTemp.X) || float.IsNaN(dirTemp.Y) || float.IsNaN(dirTemp.Z))
             {
-                _direction = new Vector2(0, 0);
+                dirTemp = new Vector3(0, 0, 0);
             }
+
+            Direction = dirTemp;
 
             var moveSpeed = GetSpeed();
 
@@ -172,8 +195,8 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Missile
                 deltaMovement = dist;
             }
 
-            var xx = _direction.X * deltaMovement;
-            var yy = _direction.Y * deltaMovement;
+            var xx = Direction.X * deltaMovement;
+            var yy = Direction.Z * deltaMovement;
 
             Position = new Vector2(Position.X + xx, Position.Y + yy);
 
@@ -186,6 +209,10 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Missile
             {
                 if (this is ISpellMissile && TargetUnit != null)
                 {
+                    if (Position == TargetUnit.Position)
+                    {
+                        CheckFlagsForUnit(TargetUnit);
+                    }
                     return;
                 }
 
@@ -227,7 +254,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Missile
                 if (SpellOrigin != null)
                 {
                     SpellOrigin.ApplyEffects(TargetUnit, this);
-                    if (CastInfo.Owner is IObjAiBase ai)
+                    if (CastInfo.Owner is IObjAiBase ai && SpellOrigin.CastInfo.IsAutoAttack)
                     {
                         ai.AutoAttackHit(TargetUnit);
                     }
@@ -240,6 +267,12 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Missile
         public override void SetToRemove()
         {
             base.SetToRemove();
+
+            if (SpellOrigin != null)
+            {
+                SpellOrigin.RemoveProjectile(this);
+            }
+
             _game.PacketNotifier.NotifyDestroyClientMissile(this);
         }
         

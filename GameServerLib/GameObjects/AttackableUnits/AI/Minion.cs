@@ -120,7 +120,8 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             }
             if (nextTarget != null) // If we have a target
             {
-                TargetUnit = nextTarget; // Set the new target and refresh waypoints
+                // Set the new target and refresh waypoints
+                SetTargetUnit(nextTarget);
 
                 if (nextTarget is IChampion c)
                 {
