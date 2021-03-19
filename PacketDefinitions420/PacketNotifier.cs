@@ -1413,7 +1413,7 @@ namespace PacketDefinitions420
         {
             var addPacket = new NPC_BuffAdd2
             {
-                SenderNetID = b.SourceUnit.NetId,
+                SenderNetID = b.TargetUnit.NetId,
                 BuffSlot = b.Slot,
                 BuffType = (byte)b.BuffType,
                 Count = (byte)b.StackCount,
@@ -1452,7 +1452,7 @@ namespace PacketDefinitions420
             {
                 var entry = new BuffAddGroupEntry
                 {
-                    OwnerNetID = buffs[i].SourceUnit.NetId,
+                    OwnerNetID = buffs[i].TargetUnit.NetId,
                     CasterNetID = buffs[i].OriginSpell.Owner.NetId,
                     Slot = buffs[i].Slot,
                     Count = (byte)buffs[i].StackCount,
@@ -1473,7 +1473,7 @@ namespace PacketDefinitions420
         {
             var removePacket = new NPC_BuffRemove2
             {
-                SenderNetID = b.SourceUnit.NetId, //TODO: Verify if this should change depending on the removal source
+                SenderNetID = b.TargetUnit.NetId, //TODO: Verify if this should change depending on the removal source
                 BuffSlot = b.Slot,
                 BuffNameHash = HashFunctions.HashString(b.Name),
                 RunTimeRemove = b.Duration - b.TimeElapsed
@@ -1499,7 +1499,7 @@ namespace PacketDefinitions420
             {
                 var entry = new BuffRemoveGroupEntry
                 {
-                    OwnerNetID = buffs[i].SourceUnit.NetId,
+                    OwnerNetID = buffs[i].TargetUnit.NetId,
                     Slot = buffs[i].Slot,
                     RunTimeRemove = buffs[i].Duration - buffs[i].TimeElapsed
                 };
@@ -1518,7 +1518,7 @@ namespace PacketDefinitions420
         {
             var replacePacket = new NPC_BuffReplace
             {
-                SenderNetID = b.SourceUnit.NetId,
+                SenderNetID = b.TargetUnit.NetId,
                 BuffSlot = b.Slot,
                 RunningTime = b.TimeElapsed,
                 Duration = b.Duration,
@@ -1547,7 +1547,7 @@ namespace PacketDefinitions420
             {
                 var entry = new BuffReplaceGroupEntry
                 {
-                    OwnerNetID = buffs[i].SourceUnit.NetId,
+                    OwnerNetID = buffs[i].TargetUnit.NetId,
                     CasterNetID = buffs[i].OriginSpell.Owner.NetId,
                     Slot = buffs[i].Slot
                 };
@@ -1568,7 +1568,7 @@ namespace PacketDefinitions420
         {
             var updatePacket = new NPC_BuffUpdateCount
             {
-                SenderNetID = b.SourceUnit.NetId,
+                SenderNetID = b.TargetUnit.NetId,
                 BuffSlot = b.Slot,
                 Count = (byte)b.StackCount,
                 Duration = duration,
@@ -1598,7 +1598,7 @@ namespace PacketDefinitions420
             {
                 var entry = new BuffUpdateCountGroupEntry
                 {
-                    OwnerNetID = buffs[i].SourceUnit.NetId,
+                    OwnerNetID = buffs[i].TargetUnit.NetId,
                     CasterNetID = buffs[i].OriginSpell.Owner.NetId,
                     BuffSlot = buffs[i].Slot,
                     Count = (byte)buffs[i].StackCount
@@ -1618,7 +1618,7 @@ namespace PacketDefinitions420
         {
             var updateNumPacket = new NPC_BuffUpdateNumCounter
             {
-                SenderNetID = b.SourceUnit.NetId,
+                SenderNetID = b.TargetUnit.NetId,
                 BuffSlot = b.Slot,
                 Counter = b.StackCount // TODO: Verify if it allows stacks to go above 255 on the buff bar
             };
@@ -1803,21 +1803,21 @@ namespace PacketDefinitions420
         }
 
         /// <summary>
-        /// Sends a packet to all players with vision of the specified Champion detailing that item in the specified slot was removed (or the number of stacks of the item in that slot changed).
+        /// Sends a packet to all players with vision of the specified AI detailing that item in the specified slot was removed (or the number of stacks of the item in that slot changed).
         /// </summary>
-        /// <param name="c">Champion with the items.</param>
+        /// <param name="ai">AI with the items.</param>
         /// <param name="slot">Slot of the item that was removed.</param>
         /// <param name="remaining">Number of stacks of the item left (0 if not applicable).</param>
-        public void NotifyRemoveItem(IChampion c, byte slot, byte remaining)
+        public void NotifyRemoveItem(IObjAiBase ai, byte slot, byte remaining)
         {
             var ria = new RemoveItemAns()
             {
-                SenderNetID = c.NetId,
+                SenderNetID = ai.NetId,
                 Slot = slot,
                 ItemsInSlot = remaining,
                 NotifyInventoryChange = true
             };
-            _packetHandlerManager.BroadcastPacketVision(c, ria.GetBytes(), Channel.CHL_S2C);
+            _packetHandlerManager.BroadcastPacketVision(ai, ria.GetBytes(), Channel.CHL_S2C);
         }
 
         /// <summary>
@@ -2307,6 +2307,24 @@ namespace PacketDefinitions420
                     u.Replication.MarkAsUnchanged();
                 }
             }
+        }
+
+        /// <summary>
+        /// Sends a packet to the player attempting to use an item that the item was used successfully.
+        /// </summary>
+        /// <param name="userId">User to send the packet to.</param>
+        /// <param name="ai">GameObject of type ObjAiBase that can buy items.</param>
+        /// <param name="itemInstance">Item instance housing all information about the item that has been used.</param>
+        public void NotifyUseItemAns(int userId, IObjAiBase ai, IItem itemInstance)
+        {
+            var useItemPacket = new UseItemAns
+            {
+                SenderNetID = ai.NetId,
+                Slot = ai.Inventory.GetItemSlot(itemInstance),
+                SpellCharges = (byte)itemInstance.StackCount // TODO: Unhardcode
+            };
+
+            _packetHandlerManager.SendPacket(userId, useItemPacket.GetBytes(), Channel.CHL_S2C);
         }
 
         /// <summary>

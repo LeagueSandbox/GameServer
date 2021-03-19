@@ -12,7 +12,7 @@ namespace GameServerCore.Domain
         string Name { get; }
         ISpell OriginSpell { get; }
         byte Slot { get; }
-        IAttackableUnit SourceUnit { get; }
+        IObjAiBase SourceUnit { get; }
         IAttackableUnit TargetUnit { get; }
         float TimeElapsed { get; }
 
@@ -20,6 +20,7 @@ namespace GameServerCore.Domain
         void DeactivateBuff();
         bool Elapsed();
         IStatsModifier GetStatsModifier();
+        bool IsBuffInfinite();
         bool IsBuffSame(string buffName);
         void ResetTimeElapsed();
         void SetSlot(byte slot);

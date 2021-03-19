@@ -18,7 +18,7 @@ namespace GarenE
 
         public int MaxStacks => 1;
 
-        public IStatsModifier StatsModifier => null;
+        public IStatsModifier StatsModifier { get; private set; }
 
         public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {

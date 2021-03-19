@@ -18,7 +18,6 @@ namespace Quickdraw
 
         public void OnUpdate(double diff)
         {
-
         }
 
         public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)

@@ -173,6 +173,7 @@ namespace LeagueSandbox.GameServer.Scripting.CSharp
                 return default(T);
             }
 
+            scriptNamespace = scriptNamespace.Replace(" ", "_");
             scriptClass = scriptClass.Replace(" ", "_");
             var fullClassName = scriptNamespace + "." + scriptClass;
 
