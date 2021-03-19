@@ -65,6 +65,12 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
 
             //Set the game script for the spell
             _spellScript = _scriptEngine.CreateObject<ISpellScript>("Spells", spellName) ?? new SpellScriptEmpty();
+
+            if (_spellScript.ScriptMetadata.TriggersSpellCasts)
+            {
+                ApiEventManager.OnSpellCast.AddListener(_spellScript, this, _spellScript.OnSpellCast);
+                ApiEventManager.OnSpellPostCast.AddListener(_spellScript, this, _spellScript.OnSpellPostCast);
+            }
             //Activate spell - Notes: Deactivate is never called as spell removal hasn't been added
             _spellScript.OnActivate(owner, this);
         }
@@ -494,7 +500,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
 
             if (!HasEmptyScript)
             {
-                _spellScript.ApplyEffects(CastInfo.Owner, u, this, p);
+                ApiEventManager.OnSpellHit.Publish(CastInfo.Owner, this, u, p);
             }
             if (p != null && p.IsToRemove())
             {
@@ -523,6 +529,8 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
         /// </summary>
         public virtual bool Cast(Vector2 start, Vector2 end, IAttackableUnit unit = null)
         {
+            _spellScript.OnSpellPreCast(CastInfo.Owner, this, unit, start, end);
+
             var stats = CastInfo.Owner.Stats;
 
             if ((SpellData.ManaCost[CastInfo.SpellLevel] * (1 - stats.SpellCostReduction) >= stats.CurrentMana && !CastInfo.IsAutoAttack) || State != SpellState.STATE_READY)
@@ -622,7 +630,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
                 CastInfo.Owner.UpdateMoveOrder(OrderType.CastSpell);
             }
 
-            _spellScript.OnStartCasting(CastInfo.Owner, this, CastInfo.Targets[0].Unit);
+            ApiEventManager.OnSpellCast.Publish(this);
 
             if (CastInfo.IsAutoAttack && CastInfo.Owner.IsMelee)
             {
@@ -810,7 +818,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
 
                 CastInfo.Owner.UpdateMoveOrder(OrderType.CastSpell);
 
-                _spellScript.OnStartCasting(CastInfo.Owner, this, CastInfo.Targets[0].Unit);
+                ApiEventManager.OnSpellCast.Publish(this);
 
                 if (CastInfo.IsAutoAttack || CastInfo.UseAttackCastTime)
                 {
@@ -885,7 +893,12 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
         public virtual void Channel()
         {
             State = SpellState.STATE_CHANNELING;
+            ApiEventManager.OnSpellChannel.Publish(this);
             CurrentChannelDuration = SpellData.ChannelDuration[CastInfo.SpellLevel];
+            if (_spellScript.ScriptMetadata.ChannelDuration > 0)
+            {
+                CurrentChannelDuration = _spellScript.ScriptMetadata.ChannelDuration;
+            }
         }
 
         void ISpell.Deactivate()
@@ -921,27 +934,20 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
                     }
                     else
                     {
-                        _spellScript.OnFinishCasting(CastInfo.Owner, this, CastInfo.Targets[0].Unit);
+                        ApiEventManager.OnSpellPostCast.Publish(this);
                     }
                 }
                 else
                 {
-                    if (CastInfo.Owner is IChampion c)
-                    {
-                        ApiEventManager.OnChampionHitUnit.Publish(c, CastInfo.Targets[0].Unit, CastInfo.Owner.IsNextAutoCrit);
-                    }
-                    ApiEventManager.OnHitUnit.Publish(CastInfo.Owner, CastInfo.Targets[0].Unit, CastInfo.Owner.IsNextAutoCrit);
-
-                    _spellScript.OnFinishCasting(CastInfo.Owner, this, CastInfo.Targets[0].Unit);
+                    ApiEventManager.OnSpellPostCast.Publish(this);
                     CastInfo.Owner.AutoAttackHit(CastInfo.Targets[0].Unit);
-                    _spellScript.ApplyEffects(CastInfo.Owner, CastInfo.Targets[0].Unit, this, null);
                 }
 
                 State = SpellState.STATE_READY;
             }
             else
             {
-                _spellScript.OnFinishCasting(CastInfo.Owner, this, CastInfo.Targets[0].Unit);
+                ApiEventManager.OnSpellPostCast.Publish(this);
                 if (SpellData.ChannelDuration[CastInfo.SpellLevel] <= 0)
                 {
                     State = SpellState.STATE_COOLDOWN;
@@ -971,6 +977,8 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
         /// </summary>
         public virtual void FinishChanneling()
         {
+            ApiEventManager.OnSpellPostChannel.Publish(this);
+
             CastInfo.Owner.UpdateMoveOrder(OrderType.Hold);
 
             State = SpellState.STATE_COOLDOWN;
@@ -1101,7 +1109,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
                         if (CurrentCastTime <= 0)
                         {
                             FinishCasting();
-                            if (SpellData.ChannelDuration[CastInfo.SpellLevel] > 0)
+                            if (SpellData.ChannelDuration[CastInfo.SpellLevel] > 0 || _spellScript.ScriptMetadata.ChannelDuration > 0)
                             {
                                 Channel();
                             }

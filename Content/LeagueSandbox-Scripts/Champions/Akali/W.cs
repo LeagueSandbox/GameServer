@@ -3,6 +3,7 @@ using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using GameServerCore.Domain.GameObjects.Spell;
 using GameServerCore.Domain.GameObjects.Spell.Missile;
+using System.Numerics;
 
 namespace Spells
 {
@@ -10,6 +11,7 @@ namespace Spells
     {
         public ISpellScriptMetadata ScriptMetadata => new SpellScriptMetadata()
         {
+            TriggersSpellCasts = true
             // TODO
         };
 
@@ -21,12 +23,17 @@ namespace Spells
         {
         }
 
-        public void OnStartCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
+        public void OnSpellPreCast(IObjAiBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
         {
         }
 
-        public void OnFinishCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
+        public void OnSpellCast(ISpell spell)
         {
+        }
+
+        public void OnSpellPostCast(ISpell spell)
+        {
+            var owner = spell.CastInfo.Owner;
             var smokeBomb = AddParticle(owner, "akali_smoke_bomb_tar.troy", owner.Position);
             /*
              * TODO: Display green border (akali_smoke_bomb_tar_team_green.troy) for the own team,
@@ -43,10 +50,6 @@ namespace Spells
                 RemoveParticle(smokeBombBorder);
                 //TODO: Remove invisibility
             });
-        }
-
-        public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, ISpellMissile projectile)
-        {
         }
 
         public void OnUpdate(float diff)

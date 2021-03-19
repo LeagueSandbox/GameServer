@@ -409,7 +409,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                 damage = defense >= 0 ? 100 / (100 + defense) * damage : (2 - 100 / (100 - defense)) * damage;
             }
 
-            ApiEventManager.OnUnitDamageTaken.Publish(this);
+            ApiEventManager.OnTakeDamage.Publish(this);
 
             Stats.CurrentHealth = Math.Max(0.0f, Stats.CurrentHealth - damage);
             if (!IsDead && Stats.CurrentHealth <= 0)

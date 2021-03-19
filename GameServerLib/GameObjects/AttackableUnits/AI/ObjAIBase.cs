@@ -209,6 +209,8 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         /// </summary>
         public virtual void AutoAttackHit(IAttackableUnit target)
         {
+            ApiEventManager.OnHitUnit.Publish(this, target, IsNextAutoCrit);
+
             if (HasCrowdControl(CrowdControlType.BLIND))
             {
                 target.TakeDamage(this, 0, DamageType.DAMAGE_TYPE_PHYSICAL,
@@ -365,11 +367,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             base.ClearWaypoints();
 
             UpdateMoveOrder(OrderType.Hold);
-        }
-
-        public override void TeleportTo(float x, float y)
-        {
-            base.TeleportTo(x, y);
         }
 
         /// <summary>

@@ -12,6 +12,7 @@ namespace Spells
     {
         public ISpellScriptMetadata ScriptMetadata { get; private set; } = new SpellScriptMetadata()
         {
+            TriggersSpellCasts = true
             // TODO
         };
 
@@ -23,19 +24,22 @@ namespace Spells
         {
         }
 
-        public void OnStartCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
+        public void OnSpellPreCast(IObjAiBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
         {
         }
 
-        public void OnFinishCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
+        public void OnSpellCast(ISpell spell)
+        {
+        }
+
+        public void OnSpellPostCast(ISpell spell)
         {
             var current = new Vector2(spell.CastInfo.SpellCastLaunchPosition.X, spell.CastInfo.SpellCastLaunchPosition.Z);
             var spellPos = new Vector2(spell.CastInfo.TargetPosition.X, spell.CastInfo.TargetPosition.Z);
             var to = Vector2.Normalize(spellPos - current);
             var range = to * spell.SpellData.CastRangeDisplayOverride;
             var trueCoords = current + range;
-            //LogDebug("BlindMonkQOne going from (" + current.X + ", " + current.Y + ") -> (" + trueCoords.X + ", " + trueCoords.Y + ")");
-            spell.AddProjectile("BlindMonkQOne", new Vector2(spell.CastInfo.SpellCastLaunchPosition.X, spell.CastInfo.SpellCastLaunchPosition.Z), current, trueCoords, HitResult.HIT_Normal, true);
+            //spell.AddProjectile("BlindMonkQOne", new Vector2(spell.CastInfo.SpellCastLaunchPosition.X, spell.CastInfo.SpellCastLaunchPosition.Z), current, trueCoords, HitResult.HIT_Normal, true);
         }
 
         public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, ISpellMissile projectile)

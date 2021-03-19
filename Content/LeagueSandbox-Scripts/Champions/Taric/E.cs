@@ -12,6 +12,7 @@ namespace Spells
     {
         public ISpellScriptMetadata ScriptMetadata { get; private set; } = new SpellScriptMetadata()
         {
+            TriggersSpellCasts = true
             // TODO
         };
 
@@ -23,20 +24,23 @@ namespace Spells
         {
         }
 
-        public void OnStartCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
+        public void OnSpellPreCast(IObjAiBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
         {
-
         }
 
-        public void OnFinishCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
+        public void OnSpellCast(ISpell spell)
         {
-            if (Vector2.DistanceSquared(owner.Position, target.Position) > 625 * 625)
+        }
+
+        public void OnSpellPostCast(ISpell spell)
+        {
+            if (Vector2.DistanceSquared(spell.CastInfo.Owner.Position, spell.CastInfo.Targets[0].Unit.Position) > 625 * 625)
             {
                 return;
             }
             else
             {
-                spell.AddProjectileTarget("Dazzle", spell.CastInfo.SpellCastLaunchPosition, target, HitResult.HIT_Normal, true);
+                //spell.AddProjectileTarget("Dazzle", spell.CastInfo.SpellCastLaunchPosition, spell.CastInfo.Targets[0].Unit, HitResult.HIT_Normal, true);
             }
         }
 
@@ -60,12 +64,10 @@ namespace Spells
             AddBuff("TaricEHud", time, 1, spell, target, owner);
             AddBuff("Stun", time, 1, spell, target, owner);
             AddParticleTarget(owner, "Dazzle_tar.troy", target);
-            var p102 = AddParticleTarget(owner, "Global_Stun.troy", target, 1.25f, "head");
             var p103 = AddParticleTarget(owner, "Taric_HammerFlare.troy", target, 1);
 
             CreateTimer(time, () =>
             {
-                RemoveParticle(p102);
                 RemoveParticle(p103);
             });
 

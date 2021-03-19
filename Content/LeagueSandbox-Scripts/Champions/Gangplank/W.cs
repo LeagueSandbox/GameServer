@@ -4,6 +4,8 @@ using LeagueSandbox.GameServer.Scripting.CSharp;
 using System;
 using GameServerCore.Domain.GameObjects.Spell;
 using GameServerCore.Domain.GameObjects.Spell.Missile;
+using LeagueSandbox.GameServer.GameObjects.Spells;
+using System.Numerics;
 
 namespace Spells
 {
@@ -16,30 +18,24 @@ namespace Spells
 
         public void OnActivate(IObjAiBase owner, ISpell spell)
         {
-
-        }
-
-        private void SelfWasDamaged()
-        {
         }
 
         public void OnDeactivate(IObjAiBase owner, ISpell spell)
         {
-
         }
 
-        public void OnStartCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
-        {	
-        }
-
-        public void OnFinishCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
+        public void OnSpellPreCast(IObjAiBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
         {
             float ap = owner.Stats.AbilityPower.Total; //100% AP Ratio
             float newHealth = target.Stats.CurrentHealth + 80 + ap;
             target.Stats.CurrentHealth = Math.Min(newHealth, target.Stats.HealthPoints.Total);
         }
 
-        public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, ISpellMissile projectile)
+        public void OnSpellCast(ISpell spell)
+        {
+        }
+
+        public void OnSpellPostCast(ISpell spell)
         {
         }
 

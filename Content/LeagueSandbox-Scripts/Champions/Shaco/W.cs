@@ -14,6 +14,7 @@ namespace Spells
     {
         public ISpellScriptMetadata ScriptMetadata { get; private set; } = new SpellScriptMetadata()
         {
+            TriggersSpellCasts = true
             // TODO
         };
 
@@ -23,20 +24,21 @@ namespace Spells
         {
         }
 
-        private void OnUnitHit(IAttackableUnit target, bool isCrit)
-        {
-        }
-
         public void OnDeactivate(IObjAiBase owner, ISpell spell)
         {
         }
 
-        public void OnStartCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
+        public void OnSpellPreCast(IObjAiBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
         {
         }
 
-        public void OnFinishCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
+        public void OnSpellCast(ISpell spell)
         {
+        }
+
+        public void OnSpellPostCast(ISpell spell)
+        {
+            var owner = spell.CastInfo.Owner;
             var castrange = spell.SpellData.CastRange[0];
             var apbonus = owner.Stats.AbilityPower.Total * 0.2f;
             var damage = 35 + ((15 * (spell.CastInfo.SpellLevel - 1)) + apbonus); //TODO: Should replace minion AA damage

@@ -3,6 +3,7 @@ using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using GameServerCore.Domain.GameObjects.Spell;
 using GameServerCore.Domain.GameObjects.Spell.Missile;
+using System.Numerics;
 
 namespace Spells
 {
@@ -21,7 +22,7 @@ namespace Spells
         {
         }
 
-        public void OnStartCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
+        public void OnSpellPreCast(IObjAiBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
         {
             var p = AddParticleTarget(owner, "Overdrive_buf.troy", target, 1);
             AddBuff("Overdrive", 8.0f, 1, spell, owner, owner);
@@ -31,11 +32,11 @@ namespace Spells
             });
         }
 
-        public void OnFinishCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
+        public void OnSpellCast(ISpell spell)
         {
         }
 
-        public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, ISpellMissile projectile)
+        public void OnSpellPostCast(ISpell spell)
         {
         }
 

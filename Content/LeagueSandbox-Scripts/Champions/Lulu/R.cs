@@ -3,6 +3,7 @@ using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using GameServerCore.Domain.GameObjects.Spell;
 using GameServerCore.Domain.GameObjects.Spell.Missile;
+using System.Numerics;
 
 namespace Spells
 {
@@ -21,18 +22,16 @@ namespace Spells
         {
         }
 
-        public void OnStartCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
+        public void OnSpellPreCast(IObjAiBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
         {
-            var p = AddParticleTarget(owner, "Lulu_R_cas.troy", target, 1);
             AddBuff("LuluR", 7.0f, 1, spell, target, owner);
-            CreateTimer(7.0f, () =>
-            {
-                RemoveParticle(p);
-                AddParticleTarget(owner, "Lulu_R_expire.troy", target, 1);
-            });
         }
 
-        public void OnFinishCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
+        public void OnSpellCast(ISpell spell)
+        {
+        }
+
+        public void OnSpellPostCast(ISpell spell)
         {
         }
 

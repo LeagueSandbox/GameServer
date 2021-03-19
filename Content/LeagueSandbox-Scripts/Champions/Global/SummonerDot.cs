@@ -6,6 +6,7 @@ using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using GameServerCore.Domain.GameObjects.Spell;
 using GameServerCore.Domain.GameObjects.Spell.Missile;
+using System.Numerics;
 
 namespace Spells
 {
@@ -13,46 +14,34 @@ namespace Spells
     {
         public ISpellScriptMetadata ScriptMetadata { get; private set; } = new SpellScriptMetadata()
         {
-            // TODO
+            TriggersSpellCasts = false
         };
-
-        public void OnStartCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
-        {
-            AddBuff("SummonerDot", 4.0f, 1, spell, target, owner);
-            var p = AddParticleTarget(owner, "Global_SS_Ignite.troy", target, 1);
-            var damage = 10 + owner.Stats.Level * 4;
-            target.TakeDamage(owner, damage, DamageType.DAMAGE_TYPE_TRUE, DamageSource.DAMAGE_SOURCE_SPELL, false);
-            for (float i = 1.0f; i < 5; ++i)
-            {
-                CreateTimer(1.0f * i, () =>
-                {
-                    target.TakeDamage(owner, damage, DamageType.DAMAGE_TYPE_TRUE, DamageSource.DAMAGE_SOURCE_SPELL,
-                        false);
-                });
-            }
-            CreateTimer(4.0f, () =>
-            {
-                RemoveParticle(p);
-            });
-        }
-
-        public void OnFinishCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
-        {
-        }
-
-        public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, ISpellMissile projectile)
-        {
-        }
-
-        public void OnUpdate(float diff)
-        {
-        }
 
         public void OnActivate(IObjAiBase owner, ISpell spell)
         {
         }
 
         public void OnDeactivate(IObjAiBase owner, ISpell spell)
+        {
+        }
+
+        public void OnSpellPreCast(IObjAiBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
+        {
+            if (target != null)
+            {
+                AddBuff("SummonerDot", 5.0f, 1, spell, target, owner);
+            }
+        }
+
+        public void OnSpellCast(ISpell spell)
+        {
+        }
+
+        public void OnSpellPostCast(ISpell spell)
+        {
+        }
+
+        public void OnUpdate(float diff)
         {
         }
     }

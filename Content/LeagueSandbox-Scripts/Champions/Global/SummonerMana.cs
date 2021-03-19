@@ -3,6 +3,7 @@ using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using GameServerCore.Domain.GameObjects.Spell;
 using GameServerCore.Domain.GameObjects.Spell.Missile;
+using System.Numerics;
 
 namespace Spells
 {
@@ -15,11 +16,15 @@ namespace Spells
 
         private const float PERCENT_MAX_MANA_HEAL = 0.40f;
 
-        public void OnStartCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
+        public void OnActivate(IObjAiBase owner, ISpell spell)
         {
         }
 
-        public void OnFinishCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
+        public void OnDeactivate(IObjAiBase owner, ISpell spell)
+        {
+        }
+
+        public void OnSpellPreCast(IObjAiBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
         {
             foreach (var unit in GetChampionsInRange(owner.Position, 600, true))
             {
@@ -30,9 +35,16 @@ namespace Spells
             }
         }
 
+        public void OnSpellCast(ISpell spell)
+        {
+        }
+
+        public void OnSpellPostCast(ISpell spell)
+        {
+        }
+
         private void RestoreMana(IObjAiBase target)
         {
-
             var maxMp = target.Stats.ManaPoints.Total;
             var newMp = target.Stats.CurrentMana + (maxMp * PERCENT_MAX_MANA_HEAL);
             if (newMp < maxMp)
@@ -42,19 +54,7 @@ namespace Spells
             AddParticleTarget(target, "global_ss_clarity_02.troy", target);
         }
 
-        public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, ISpellMissile projectile)
-        {
-        }
-
         public void OnUpdate(float diff)
-        {
-        }
-
-        public void OnActivate(IObjAiBase owner, ISpell spell)
-        {
-        }
-
-        public void OnDeactivate(IObjAiBase owner, ISpell spell)
         {
         }
     }

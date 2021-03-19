@@ -25,20 +25,24 @@ namespace Spells
         {
         }
 
-        public void OnStartCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
+        public void OnSpellPreCast(IObjAiBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
         {
-            AddParticleTarget(owner, "Ezreal_bow_huge.troy", owner, 1, "L_HAND");
         }
 
-        public void OnFinishCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
+        public void OnSpellCast(ISpell spell)
         {
-            var current = new Vector2(owner.Position.X, owner.Position.Y);
+            AddParticleTarget(spell.CastInfo.Owner, "Ezreal_bow_huge.troy", spell.CastInfo.Owner, 1, "L_HAND", lifetime: 1.0f);
+        }
+
+        public void OnSpellPostCast(ISpell spell)
+        {
+            var current = new Vector2(spell.CastInfo.Owner.Position.X, spell.CastInfo.Owner.Position.Y);
             var spellPos = new Vector2(spell.CastInfo.TargetPosition.X, spell.CastInfo.TargetPosition.Z);
             var to = Vector2.Normalize(spellPos - current);
             var range = to * 20000;
             var trueCoords = current + range;
 
-            spell.AddProjectile("EzrealTrueshotBarrage", new Vector2(spell.CastInfo.SpellCastLaunchPosition.X, spell.CastInfo.SpellCastLaunchPosition.Z), current, trueCoords, HitResult.HIT_Normal, true);
+            //spell.AddProjectile("EzrealTrueshotBarrage", new Vector2(spell.CastInfo.SpellCastLaunchPosition.X, spell.CastInfo.SpellCastLaunchPosition.Z), current, trueCoords, HitResult.HIT_Normal, true);
         }
 
         public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, ISpellMissile projectile)

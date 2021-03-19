@@ -902,8 +902,7 @@ namespace PacketDefinitions420
                 OwnerPositionY = ownerPos.Y,
                 OwnerPositionZ = (short)((ownerPos.Z - _navGrid.MapHeight / 2) / 2),
 
-                // NOTE: particles may have a set lifetime, which ignores this
-                TimeSpent = particle.Lifetime,
+                TimeSpent = particle.GetTimeAlive(),
                 ScriptScale = particle.Scale
             };
 

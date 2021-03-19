@@ -3,33 +3,39 @@ using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using GameServerCore.Domain.GameObjects.Spell;
 using GameServerCore.Domain.GameObjects.Spell.Missile;
+using System.Numerics;
 
 namespace Spells
 {
-    public class RegenerationPotion : IGameScript
+    public class RegenerationPotion : ISpellScript
     {
-        public void OnStartCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
+        public ISpellScriptMetadata ScriptMetadata => new SpellScriptMetadata()
         {
-        }
-
-        public void OnFinishCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
-        {
-            AddBuff("RegenerationPotion", 15.0f, 1, spell, owner, owner);
-        }
-
-        public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, ISpellMissile projectile)
-        {
-        }
-
-        public void OnUpdate(float diff)
-        {
-        }
+            // TODO
+        };
 
         public void OnActivate(IObjAiBase owner, ISpell spell)
         {
         }
 
         public void OnDeactivate(IObjAiBase owner, ISpell spell)
+        {
+        }
+
+        public void OnSpellPreCast(IObjAiBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
+        {
+            AddBuff("RegenerationPotion", 15.0f, 1, spell, owner, owner);
+        }
+
+        public void OnSpellCast(ISpell spell)
+        {
+        }
+
+        public void OnSpellPostCast(ISpell spell)
+        {
+        }
+
+        public void OnUpdate(float diff)
         {
         }
     }

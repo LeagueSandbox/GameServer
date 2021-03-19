@@ -13,6 +13,7 @@ namespace Spells
     {
         public ISpellScriptMetadata ScriptMetadata { get; private set; } = new SpellScriptMetadata()
         {
+            TriggersSpellCasts = true
             // TODO
         };
 
@@ -26,18 +27,22 @@ namespace Spells
         {
         }
 
-        public void OnStartCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
+        public void OnSpellPreCast(IObjAiBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
         {
-            castcoords = owner.Position;
         }
 
-        public void OnFinishCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
+        public void OnSpellCast(ISpell spell)
+        {
+            castcoords = spell.CastInfo.Owner.Position;
+        }
+
+        public void OnSpellPostCast(ISpell spell)
         {
             var spellPos = new Vector2(spell.CastInfo.TargetPosition.X, spell.CastInfo.TargetPosition.Z);
             var to = Vector2.Normalize(spellPos - castcoords);
             var range = to * 1500f;
             var trueCoords = castcoords + range;
-            spell.AddProjectile("JavelinToss", castcoords, castcoords, trueCoords, HitResult.HIT_Normal, true);
+            //spell.AddProjectile("JavelinToss", castcoords, castcoords, trueCoords, HitResult.HIT_Normal, true);
         }
 
         public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, ISpellMissile projectile)

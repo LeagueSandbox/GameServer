@@ -16,8 +16,12 @@ namespace Highlander
 
         public IStatsModifier StatsModifier { get; private set; } = new StatsModifier();
 
+        IParticle highlander;
+
         public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
+            highlander = AddParticleTarget(ownerSpell.CastInfo.Owner, "Highlander_buf.troy", unit, 1);
+
             StatsModifier.MoveSpeed.PercentBonus = StatsModifier.MoveSpeed.PercentBonus + (15f + ownerSpell.CastInfo.SpellLevel * 10) / 100f;
             StatsModifier.AttackSpeed.PercentBonus = StatsModifier.AttackSpeed.PercentBonus + (5f + ownerSpell.CastInfo.SpellLevel * 25) / 100f;
             unit.AddStatModifier(StatsModifier);
@@ -26,6 +30,7 @@ namespace Highlander
 
         public void OnDeactivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
+            RemoveParticle(highlander);
         }
 
         private void OnAutoAttack(IAttackableUnit target, bool isCrit)

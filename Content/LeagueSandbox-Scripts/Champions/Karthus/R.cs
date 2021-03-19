@@ -6,6 +6,7 @@ using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using GameServerCore.Domain.GameObjects.Spell;
 using GameServerCore.Domain.GameObjects.Spell.Missile;
+using System.Numerics;
 
 namespace Spells
 {
@@ -24,8 +25,13 @@ namespace Spells
         {
         }
 
-        public void OnStartCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
+        public void OnSpellPreCast(IObjAiBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
         {
+        }
+
+        public void OnSpellCast(ISpell spell)
+        {
+            var owner = spell.CastInfo.Owner;
             foreach (var enemyTarget in GetChampionsInRange(owner.Position, 20000, true)
                 .Where(x => x.Team == CustomConvert.GetEnemyTeam(owner.Team)))
             {
@@ -33,8 +39,9 @@ namespace Spells
             }
         }
 
-        public void OnFinishCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
+        public void OnSpellPostCast(ISpell spell)
         {
+            var owner = spell.CastInfo.Owner;
             var ap = owner.Stats.AbilityPower.Total;
             var damage = 100 + spell.CastInfo.SpellLevel * 150 + ap * 0.6f;
             foreach (var enemyTarget in GetChampionsInRange(owner.Position, 20000, true)

@@ -27,22 +27,26 @@ namespace Spells
         {
         }
 
-        public void OnStartCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
+        public void OnSpellPreCast(IObjAiBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
+        {
+        }
+
+        public void OnSpellCast(ISpell spell)
         {
             UnitsHit = new List<uint>();
         }
 
-        public void OnFinishCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
+        public void OnSpellPostCast(ISpell spell)
         {
-            var ownerPos = owner.Position;
+            var ownerPos = spell.CastInfo.Owner.Position;
             var spellPos = new Vector2(spell.CastInfo.TargetPosition.X, spell.CastInfo.TargetPosition.Z);
             var to = Vector2.Normalize(spellPos - ownerPos);
             if (float.IsNaN(to.X) || float.IsNaN(to.Y))
             {
-                to = new Vector2(owner.Direction.X, owner.Direction.Z);
+                to = new Vector2(spell.CastInfo.Owner.Direction.X, spell.CastInfo.Owner.Direction.Z);
             }
             var coneRange = to * spell.SpellData.CastRangeDisplayOverride;
-            var missileRange = to * owner.GetSpell("AatroxEConeMissile").SpellData.CastRangeDisplayOverride;
+            var missileRange = to * spell.CastInfo.Owner.GetSpell("AatroxEConeMissile").SpellData.CastRangeDisplayOverride;
 
             var coneWidth = spell.SpellData.LineWidth/*owner.GetSpell("AatroxEConeMissile").SpellData.LineWidth * 2 + owner.GetSpell("AatroxEConeMissile2").SpellData.LineWidth*/;
 
@@ -61,7 +65,7 @@ namespace Spells
             // Both missiles triangulate onto one position.
             var missileEnd = ownerPos + missileRange;
 
-            AddParticleTarget(owner, "Aatrox_Base_E_Glow.troy", owner, bone: "C_BUFFBONE_GLB_CHEST_LOC");
+            AddParticleTarget(spell.CastInfo.Owner, "Aatrox_Base_E_Glow.troy", spell.CastInfo.Owner, bone: "C_BUFFBONE_GLB_CHEST_LOC");
 
             // ConeMissile (middle)
             spell.AddProjectile("AatroxEConeMissile2", ownerPos, ownerPos, coneEnd);

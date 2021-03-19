@@ -4,6 +4,7 @@ using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
 using GameServerCore.Domain.GameObjects.Spell;
 using GameServerCore.Domain.GameObjects.Spell.Missile;
+using System.Numerics;
 
 namespace Spells
 {
@@ -14,20 +15,17 @@ namespace Spells
             // TODO
         };
 
-        public void OnStartCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
+        public void OnSpellPreCast(IObjAiBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
         {
-            spell.AddProjectileTarget("DeathfireGraspSpell", spell.CastInfo.SpellCastLaunchPosition, target);
-            var p1 = AddParticleTarget(owner, "deathFireGrasp_tar.troy", target);
-            var p2 = AddParticleTarget(owner, "obj_DeathfireGrasp_debuff.troy", target);
-            AddBuff("DeathfireGraspSpell", 4.0f, 1, spell, target, owner);
-            CreateTimer(4.0f, () =>
-            {
-                RemoveParticle(p1);
-                RemoveParticle(p2);
-            });
+            //spell.AddProjectileTarget("DeathfireGraspSpell", spell.CastInfo.SpellCastLaunchPosition, target);
+            AddBuff("Deathfire Grasp", 4.0f, 1, spell, target, owner);
         }
 
-        public void OnFinishCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
+        public void OnSpellCast(ISpell spell)
+        {
+        }
+
+        public void OnSpellPostCast(ISpell spell)
         {
         }
 

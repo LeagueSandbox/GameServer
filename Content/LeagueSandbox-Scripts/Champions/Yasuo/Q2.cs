@@ -12,6 +12,7 @@ namespace Spells
     {
         public ISpellScriptMetadata ScriptMetadata { get; private set; } = new SpellScriptMetadata()
         {
+            TriggersSpellCasts = true
             // TODO
         };
 
@@ -26,9 +27,13 @@ namespace Spells
             // here's empty
         }
 
-        public void OnStartCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
+        public void OnSpellPreCast(IObjAiBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
         {
-            var current = new Vector2(owner.Position.X, owner.Position.Y);
+        }
+
+        public void OnSpellCast(ISpell spell)
+        {
+            var current = new Vector2(spell.CastInfo.Owner.Position.X, spell.CastInfo.Owner.Position.Y);
             var spellPos = new Vector2(spell.CastInfo.TargetPosition.X, spell.CastInfo.TargetPosition.Z);
             var to = Vector2.Normalize(spellPos - current);
             var range = to * spell.SpellData.CastRangeDisplayOverride;
@@ -37,30 +42,30 @@ namespace Spells
             FaceDirection(trueCoords, owner, true, 0f);
         }
 
-        public void OnFinishCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
+        public void OnSpellPostCast(ISpell spell)
         {
-            if (HasBuff(owner, "YasuoE"))
+            if (HasBuff(spell.CastInfo.Owner, "YasuoE"))
             {
-                spell.SpellAnimation("SPELL3b", owner);
-                AddParticleTarget(owner, "Yasuo_Base_EQ_cas.troy", owner);
-                AddParticleTarget(owner, "Yasuo_Base_EQ_SwordGlow.troy", owner,1, "C_BUFFBONE_GLB_Weapon_1");
-                foreach (var affectEnemys in GetUnitsInRange(owner.Position, 270f, true))
+                spell.SpellAnimation("SPELL3b", spell.CastInfo.Owner);
+                AddParticleTarget(spell.CastInfo.Owner, "Yasuo_Base_EQ_cas.troy", spell.CastInfo.Owner);
+                AddParticleTarget(spell.CastInfo.Owner, "Yasuo_Base_EQ_SwordGlow.troy", spell.CastInfo.Owner, 1, "C_BUFFBONE_GLB_Weapon_1");
+                foreach (var affectEnemys in GetUnitsInRange(spell.CastInfo.Owner.Position, 270f, true))
                 {
-                    if (affectEnemys is IAttackableUnit && affectEnemys.Team != owner.Team)
+                    if (affectEnemys is IAttackableUnit && affectEnemys.Team != spell.CastInfo.Owner.Team)
                     {
-                        affectEnemys.TakeDamage(owner, spell.CastInfo.SpellLevel * 20f + owner.Stats.AttackDamage.Total, DamageType.DAMAGE_TYPE_PHYSICAL, DamageSource.DAMAGE_SOURCE_ATTACK, false);
-                        AddParticleTarget(owner, "Yasuo_Base_Q_hit_tar.troy", affectEnemys);
+                        affectEnemys.TakeDamage(spell.CastInfo.Owner, spell.CastInfo.SpellLevel * 20f + spell.CastInfo.Owner.Stats.AttackDamage.Total, DamageType.DAMAGE_TYPE_PHYSICAL, DamageSource.DAMAGE_SOURCE_ATTACK, false);
+                        AddParticleTarget(spell.CastInfo.Owner, "Yasuo_Base_Q_hit_tar.troy", affectEnemys);
                     }
                 }
-                AddBuff("YasuoQ02", 6f, 1, spell, owner, owner);
-                RemoveBuff(owner, "YasuoQ01");
+                AddBuff("YasuoQ02", 6f, 1, spell, spell.CastInfo.Owner, spell.CastInfo.Owner);
+                RemoveBuff(spell.CastInfo.Owner, "YasuoQ01");
             }
             else
             {
-                spell.SpellAnimation("SPELL1B", owner);
+                spell.SpellAnimation("SPELL1B", spell.CastInfo.Owner);
                 spell.AddLaser("YasuoQ", trueCoords);
-                AddParticleTarget(owner, "Yasuo_Q_Hand.troy", owner);
-                AddParticleTarget(owner, "Yasuo_Base_Q2_cast_sound.troy", owner);
+                AddParticleTarget(spell.CastInfo.Owner, "Yasuo_Q_Hand.troy", spell.CastInfo.Owner);
+                AddParticleTarget(spell.CastInfo.Owner, "Yasuo_Base_Q2_cast_sound.troy", spell.CastInfo.Owner);
             }
         }
 

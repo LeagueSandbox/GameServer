@@ -8,10 +8,11 @@ using GameServerCore.Domain.GameObjects.Spell.Missile;
 
 namespace Spells
 {
-    public class OlafAxeThrowCast : ISpellScript
+    public class OlafAxeThrow : ISpellScript
     {
         public ISpellScriptMetadata ScriptMetadata { get; private set; } = new SpellScriptMetadata()
         {
+            TriggersSpellCasts = true
             // TODO
         };
 
@@ -23,13 +24,17 @@ namespace Spells
         {
         }
 
-        public void OnStartCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
+        public void OnSpellPreCast(IObjAiBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
         {
         }
 
-        public void OnFinishCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
+        public void OnSpellCast(ISpell spell)
         {
-            var current = new Vector2(owner.Position.X, owner.Position.Y);
+        }
+
+        public void OnSpellPostCast(ISpell spell)
+        {
+            var current = new Vector2(spell.CastInfo.Owner.Position.X, spell.CastInfo.Owner.Position.Y);
             var spellPos = new Vector2(spell.CastInfo.TargetPosition.X, spell.CastInfo.TargetPosition.Z);
             var to = spellPos - current;
             Vector2 trueCoords;
@@ -45,7 +50,7 @@ namespace Spells
                 trueCoords = spellPos;
             }
 
-            spell.AddProjectile("OlafAxeThrowDamage", new Vector2(spell.CastInfo.SpellCastLaunchPosition.X, spell.CastInfo.SpellCastLaunchPosition.Z), current, trueCoords);
+            //spell.AddProjectile("OlafAxeThrowDamage", new Vector2(spell.CastInfo.SpellCastLaunchPosition.X, spell.CastInfo.SpellCastLaunchPosition.Z), current, trueCoords);
         }
 
         public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, ISpellMissile projectile)

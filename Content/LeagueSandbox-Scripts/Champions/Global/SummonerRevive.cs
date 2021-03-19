@@ -3,6 +3,7 @@ using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using GameServerCore.Domain.GameObjects.Spell;
 using GameServerCore.Domain.GameObjects.Spell.Missile;
+using System.Numerics;
 
 namespace Spells
 {
@@ -13,11 +14,15 @@ namespace Spells
             // TODO
         };
 
-        public void OnStartCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
+        public void OnActivate(IObjAiBase owner, ISpell spell)
         {
         }
 
-        public void OnFinishCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
+        public void OnDeactivate(IObjAiBase owner, ISpell spell)
+        {
+        }
+
+        public void OnSpellPreCast(IObjAiBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
         {
             if (!owner.IsDead)
             {
@@ -29,19 +34,15 @@ namespace Spells
             AddParticleTarget(owner, "Global_SS_Revive.troy", owner);
         }
 
-        public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, ISpellMissile projectile)
+        public void OnSpellCast(ISpell spell)
+        {
+        }
+
+        public void OnSpellPostCast(ISpell spell)
         {
         }
 
         public void OnUpdate(float diff)
-        {
-        }
-
-        public void OnActivate(IObjAiBase owner, ISpell spell)
-        {
-        }
-
-        public void OnDeactivate(IObjAiBase owner, ISpell spell)
         {
         }
     }

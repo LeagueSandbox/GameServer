@@ -11,6 +11,7 @@ namespace Spells
     {
         public ISpellScriptMetadata ScriptMetadata { get; private set; } = new SpellScriptMetadata()
         {
+            TriggersSpellCasts = true
             // TODO
         };
 
@@ -22,13 +23,17 @@ namespace Spells
         {
         }
 
-        public void OnStartCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
+        public void OnSpellPreCast(IObjAiBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
         {
         }
 
-        public void OnFinishCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
+        public void OnSpellCast(ISpell spell)
         {
-            spell.AddProjectileTarget("ToxicShot", spell.CastInfo.SpellCastLaunchPosition, target);
+        }
+
+        public void OnSpellPostCast(ISpell spell)
+        {
+            //spell.AddProjectileTarget("ToxicShot", spell.CastInfo.SpellCastLaunchPosition, spell.CastInfo.Targets[0].Unit);
         }
 
         public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, ISpellMissile projectile)

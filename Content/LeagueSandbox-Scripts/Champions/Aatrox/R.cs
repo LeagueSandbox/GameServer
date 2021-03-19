@@ -4,6 +4,7 @@ using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using GameServerCore.Domain.GameObjects.Spell;
 using GameServerCore.Domain.GameObjects.Spell.Missile;
+using System.Numerics;
 
 namespace Spells
 {
@@ -11,6 +12,7 @@ namespace Spells
     {
         public ISpellScriptMetadata ScriptMetadata { get; private set; } = new SpellScriptMetadata()
         {
+            TriggersSpellCasts = true
             // TODO
         };
 
@@ -42,14 +44,18 @@ namespace Spells
         {
         }
 
-        public void OnStartCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
+        public void OnSpellPreCast(IObjAiBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
         {
-            AddParticleTarget(owner, pcastname, owner);
         }
 
-        public void OnFinishCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
+        public void OnSpellCast(ISpell spell)
         {
-            if (owner is IChampion c)
+            AddParticleTarget(spell.CastInfo.Owner, pcastname, spell.CastInfo.Owner);
+        }
+
+        public void OnSpellPostCast(ISpell spell)
+        {
+            if (spell.CastInfo.Owner is IChampion c)
             {
                 var damage = 200 + (100 * (spell.CastInfo.SpellLevel - 1)) + (c.Stats.AbilityPower.Total);
 
@@ -64,7 +70,7 @@ namespace Spells
                     }
                 }
 
-                AddBuff("AatroxR", 12f, 1, spell, owner, owner);
+                AddBuff("AatroxR", 12f, 1, spell, spell.CastInfo.Owner, spell.CastInfo.Owner);
             }
         }
 

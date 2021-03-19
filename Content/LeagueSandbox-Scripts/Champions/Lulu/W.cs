@@ -3,6 +3,7 @@ using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using GameServerCore.Domain.GameObjects.Spell;
 using GameServerCore.Domain.GameObjects.Spell.Missile;
+using System.Numerics;
 
 namespace Spells
 {
@@ -10,6 +11,7 @@ namespace Spells
     {
         public ISpellScriptMetadata ScriptMetadata { get; private set; } = new SpellScriptMetadata()
         {
+            TriggersSpellCasts = true
             // TODO
         };
 
@@ -21,29 +23,25 @@ namespace Spells
         {
         }
 
-        public void OnStartCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
+        public void OnSpellPreCast(IObjAiBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
         {
             spell.SpellAnimation("SPELL2", owner);
         }
 
-        public void OnFinishCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
+        public void OnSpellCast(ISpell spell)
         {
-            var IChampion = (IChampion)target;
-            if (IChampion.Team != owner.Team)
+        }
+
+        public void OnSpellPostCast(ISpell spell)
+        {
+            if (spell.CastInfo.Targets[0].Unit.Team != spell.CastInfo.Owner.Team)
             {
-                spell.AddProjectileTarget("LuluWTwo", spell.CastInfo.SpellCastLaunchPosition, target);
+                spell.AddProjectileTarget("LuluWTwo", spell.CastInfo.SpellCastLaunchPosition, spell.CastInfo.Targets[0].Unit);
             }
             else
             {
-                var p1 = AddParticleTarget(owner, "Lulu_W_buf_02.troy", target, 1);
-                var p2 = AddParticleTarget(owner, "Lulu_W_buf_01.troy", target, 1);
                 var time = 2.5f + 0.5f * spell.CastInfo.SpellLevel;
-                AddBuff("LuluWBuff", time, 1, spell, target, owner);
-                CreateTimer(time, () =>
-                {
-                    RemoveParticle(p1);
-                    RemoveParticle(p2);
-                });
+                AddBuff("LuluWBuff", time, 1, spell, spell.CastInfo.Targets[0].Unit, spell.CastInfo.Owner);
             }
         }
 

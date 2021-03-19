@@ -3,6 +3,7 @@ using GameServerCore.Domain.GameObjects;
 using LeagueSandbox.GameServer.GameObjects.Stats;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using GameServerCore.Domain.GameObjects.Spell;
+using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 
 namespace LuluWBuff
 {
@@ -15,8 +16,14 @@ namespace LuluWBuff
 
         public IStatsModifier StatsModifier { get; private set; } = new StatsModifier();
 
+        IParticle buff1;
+        IParticle buff2;
+
         public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
+            buff1 = AddParticleTarget(ownerSpell.CastInfo.Owner, "Lulu_W_buf_01.troy", unit, 1);
+            buff2 = AddParticleTarget(ownerSpell.CastInfo.Owner, "Lulu_W_buf_02.troy", unit, 1);
+
             var ap = ownerSpell.CastInfo.Owner.Stats.AbilityPower.Total * 0.001;
             StatsModifier.MoveSpeed.PercentBonus = StatsModifier.MoveSpeed.PercentBonus + 0.3f + (float)ap;
             unit.AddStatModifier(StatsModifier);
@@ -25,6 +32,8 @@ namespace LuluWBuff
 
         public void OnDeactivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
+            RemoveParticle(buff1);
+            RemoveParticle(buff2);
         }
 
         public void OnUpdate(float diff)

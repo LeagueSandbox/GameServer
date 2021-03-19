@@ -12,6 +12,7 @@ namespace Spells
     {
         public ISpellScriptMetadata ScriptMetadata { get; private set; } = new SpellScriptMetadata()
         {
+            TriggersSpellCasts = true
             // TODO
         };
 
@@ -23,22 +24,31 @@ namespace Spells
         {
         }
 
-        public void OnStartCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
+        public void OnSpellPreCast(IObjAiBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
         {
-            var current = new Vector2(owner.Position.X, owner.Position.Y);
+        }
+
+        public void OnSpellCast(ISpell spell)
+        {
+            var current = new Vector2(spell.CastInfo.Owner.Position.X, spell.CastInfo.Owner.Position.Y);
+            var spellPos = new Vector2(spell.CastInfo.TargetPosition.X, spell.CastInfo.TargetPosition.Z);
+            var to = Vector2.Normalize(spellPos - current);
+
+            spell.SpellAnimation("SPELL1", spell.CastInfo.Owner);
+            spell.CastInfo.Owner.FaceDirection(new Vector3(to.X, 0, to.Y), false);
+        }
+
+        public void OnSpellPostCast(ISpell spell)
+        {
+            var current = new Vector2(spell.CastInfo.Owner.Position.X, spell.CastInfo.Owner.Position.Y);
             var spellPos = new Vector2(spell.CastInfo.TargetPosition.X, spell.CastInfo.TargetPosition.Z);
             var to = Vector2.Normalize(spellPos - current);
             var range = to * 1100;
             var trueCoords = current + range;
 
-            spell.AddLaser("LucianQ", trueCoords);
-            spell.SpellAnimation("SPELL1", owner);
-            AddParticle(owner, "Lucian_Q_laser.troy", trueCoords);
-            AddParticleTarget(owner, "Lucian_Q_cas.troy", owner);
-        }
-
-        public void OnFinishCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
-        {
+            //spell.AddLaser("LucianQ", trueCoords);
+            AddParticle(spell.CastInfo.Owner, "Lucian_Q_laser.troy", trueCoords);
+            AddParticleTarget(spell.CastInfo.Owner, "Lucian_Q_cas.troy", spell.CastInfo.Owner);
         }
 
         public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, ISpellMissile projectile)

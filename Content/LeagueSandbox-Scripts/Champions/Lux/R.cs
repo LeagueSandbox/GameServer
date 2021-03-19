@@ -12,6 +12,7 @@ namespace Spells
     {
         public ISpellScriptMetadata ScriptMetadata { get; private set; } = new SpellScriptMetadata()
         {
+            TriggersSpellCasts = true
             // TODO
         };
 
@@ -23,23 +24,33 @@ namespace Spells
         {
         }
 
-        public void OnStartCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
+        public void OnSpellPreCast(IObjAiBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
         {
-            var current = new Vector2(owner.Position.X, owner.Position.Y);
+        }
+
+        public void OnSpellCast(ISpell spell)
+        {
+            var current = new Vector2(spell.CastInfo.Owner.Position.X, spell.CastInfo.Owner.Position.Y);
             var spellPos = new Vector2(spell.CastInfo.TargetPosition.X, spell.CastInfo.TargetPosition.Z);
             var to = Vector2.Normalize(spellPos - current);
             var range = to * 3340;
             var trueCoords = current + range;
 
-            spell.AddLaser("LuxMaliceCannon", trueCoords);
-            AddParticle(owner, "LuxMaliceCannon_beam.troy", trueCoords);
-            FaceDirection(trueCoords, owner, false);
-            spell.SpellAnimation("SPELL4", owner);
-            AddParticleTarget(owner, "LuxMaliceCannon_cas.troy", owner);
+            spell.CastInfo.Owner.FaceDirection(new Vector3(to.X, 0.0f, to.Y), false);
+            spell.SpellAnimation("SPELL4", spell.CastInfo.Owner);
+            AddParticleTarget(spell.CastInfo.Owner, "LuxMaliceCannon_cas.troy", spell.CastInfo.Owner);
         }
 
-        public void OnFinishCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
+        public void OnSpellPostCast(ISpell spell)
         {
+            var current = new Vector2(spell.CastInfo.Owner.Position.X, spell.CastInfo.Owner.Position.Y);
+            var spellPos = new Vector2(spell.CastInfo.TargetPosition.X, spell.CastInfo.TargetPosition.Z);
+            var to = Vector2.Normalize(spellPos - current);
+            var range = to * 3340;
+            var trueCoords = current + range;
+
+            //spell.AddLaser("LuxMaliceCannon", trueCoords);
+            AddParticle(spell.CastInfo.Owner, "LuxMaliceCannon_beam.troy", trueCoords);
         }
 
         public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, ISpellMissile projectile)

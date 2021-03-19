@@ -4,6 +4,7 @@ using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using GameServerCore.Domain.GameObjects.Spell;
 using GameServerCore.Domain.GameObjects.Spell.Missile;
+using System.Numerics;
 
 namespace Spells
 {
@@ -22,12 +23,18 @@ namespace Spells
         {
         }
 
-        public void OnStartCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
+        public void OnSpellPreCast(IObjAiBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
         {
         }
 
-        public void OnFinishCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
+        public void OnSpellCast(ISpell spell)
         {
+        }
+
+        public void OnSpellPostCast(ISpell spell)
+        {
+            var owner = spell.CastInfo.Owner;
+            var target = spell.CastInfo.Targets[0].Unit;
             AddParticleTarget(owner, "Garen_Base_R_Tar_Impact.troy", target, 1);
             AddParticleTarget(owner, "Garen_Base_R_Sword_Tar.troy", target, 1);
             var missinghealth = target.Stats.HealthPoints.Total - target.Stats.CurrentHealth;
@@ -39,10 +46,6 @@ namespace Spells
                 AddParticleTarget(owner, "Garen_Base_R_Champ_Kill.troy", target, 1);
                 AddParticleTarget(owner, "Garen_Base_R_Champ_Death.troy", target, 1);
             }
-        }
-
-        public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, ISpellMissile projectile)
-        {
         }
 
         public void OnUpdate(float diff)

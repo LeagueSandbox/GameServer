@@ -250,7 +250,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Missile
             }
             else
             {
-                // Targeted Spell (including auto attacks)
+                // Targeted Spell (including auto attack spells)
                 if (SpellOrigin != null)
                 {
                     SpellOrigin.ApplyEffects(TargetUnit, this);

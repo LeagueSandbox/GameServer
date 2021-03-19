@@ -22,8 +22,14 @@ namespace LuluR
         private float _healthNow;
         private float _healthBonus;
 
+        ISpell OwnerSpell;
+        IParticle cast;
+
         public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
+            OwnerSpell = ownerSpell;
+            cast = AddParticleTarget(ownerSpell.CastInfo.Owner, "Lulu_R_cas.troy", unit, 1);
+
             StatsModifier.Size.PercentBonus = StatsModifier.Size.PercentBonus + 1;
             _healthBefore = unit.Stats.CurrentHealth;
             _healthBonus = 150 + 150 * ownerSpell.CastInfo.SpellLevel;
@@ -34,6 +40,8 @@ namespace LuluR
 
         public void OnDeactivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
+            RemoveParticle(cast);
+            AddParticleTarget(OwnerSpell.CastInfo.Owner, "Lulu_R_expire.troy", unit, 1);
             _healthNow = unit.Stats.CurrentHealth - _healthBonus;
             _meantimeDamage = _healthBefore - _healthNow;
             var bonusDamage = _healthBonus - _meantimeDamage;

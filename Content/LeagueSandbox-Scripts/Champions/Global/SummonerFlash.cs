@@ -14,11 +14,15 @@ namespace Spells
             // TODO
         };
 
-        public void OnStartCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
+        public void OnActivate(IObjAiBase owner, ISpell spell)
         {
         }
 
-        public void OnFinishCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
+        public void OnDeactivate(IObjAiBase owner, ISpell spell)
+        {
+        }
+
+        public void OnSpellPreCast(IObjAiBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
         {
             var current = new Vector2(owner.Position.X, owner.Position.Y);
             var spellPos = new Vector2(spell.CastInfo.TargetPosition.X, spell.CastInfo.TargetPosition.Z);
@@ -43,19 +47,15 @@ namespace Spells
             AddParticleTarget(owner, "global_ss_flash_02.troy", owner);
         }
 
-        public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, ISpellMissile projectile)
+        public void OnSpellCast(ISpell spell)
+        {
+        }
+
+        public void OnSpellPostCast(ISpell spell)
         {
         }
 
         public void OnUpdate(float diff)
-        {
-        }
-
-        public void OnActivate(IObjAiBase owner, ISpell spell)
-        {
-        }
-
-        public void OnDeactivate(IObjAiBase owner, ISpell spell)
         {
         }
     }

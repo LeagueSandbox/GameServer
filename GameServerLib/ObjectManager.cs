@@ -112,12 +112,6 @@ namespace LeagueSandbox.GameServer
                     }
                 }
 
-                //var projectile = obj as IProjectile;
-                //if (projectile != null && !projectile.IsToRemove())
-                //{
-                //    _game.PacketNotifier.NotifyMissileReplication(projectile);
-                //}
-
                 if (!(obj is IAttackableUnit))
                     continue;
 

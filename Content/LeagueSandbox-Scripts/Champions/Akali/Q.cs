@@ -23,14 +23,18 @@ namespace Spells
         {
         }
 
-        public void OnStartCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
+        public void OnSpellPreCast(IObjAiBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
         {
         }
 
-        public void OnFinishCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
+        public void OnSpellCast(ISpell spell)
         {
-            var current = new Vector2(owner.Position.X, owner.Position.Y);
-            var to = Vector2.Normalize(new Vector2(target.Position.X, target.Position.Y) - current);
+        }
+
+        public void OnSpellPostCast(ISpell spell)
+        {
+            var current = new Vector2(spell.CastInfo.Owner.Position.X, spell.CastInfo.Owner.Position.Y);
+            var to = Vector2.Normalize(new Vector2(spell.CastInfo.Targets[0].Unit.Position.X, spell.CastInfo.Targets[0].Unit.Position.Y) - current);
             var range = to * 1150;
             var trueCoords = current + range;
             spell.AddProjectile("AkaliMota", current, current, trueCoords);

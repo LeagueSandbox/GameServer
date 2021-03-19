@@ -4,6 +4,7 @@ using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using GameServerCore.Domain.GameObjects.Spell;
 using GameServerCore.Domain.GameObjects.Spell.Missile;
+using System.Numerics;
 
 namespace Spells
 {
@@ -11,16 +12,31 @@ namespace Spells
     {
         public ISpellScriptMetadata ScriptMetadata { get; private set; } = new SpellScriptMetadata()
         {
+            TriggersSpellCasts = true
             // TODO
         };
 
-        public void OnStartCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
+        public void OnActivate(IObjAiBase owner, ISpell spell)
         {
-            spell.SpellAnimation("SPELL1", owner);
         }
 
-        public void OnFinishCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
+        public void OnDeactivate(IObjAiBase owner, ISpell spell)
         {
+        }
+
+        public void OnSpellPreCast(IObjAiBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
+        {
+        }
+
+        public void OnSpellCast(ISpell spell)
+        {
+            spell.SpellAnimation("SPELL1", spell.CastInfo.Owner);
+        }
+
+        public void OnSpellPostCast(ISpell spell)
+        {
+            var owner = spell.CastInfo.Owner;
+            var target = spell.CastInfo.Targets[0].Unit;
             if (target.Team == owner.Team)
             {
                 var p1 = AddParticleTarget(owner, "Imbue_glow.troy", target, 1);
@@ -40,10 +56,6 @@ namespace Spells
                     PerformHeal(owner, spell, owner);
                 }
             }
-        }
-
-        public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, ISpellMissile projectile)
-        {
         }
 
         private void PerformHeal(IObjAiBase owner, ISpell spell, IAttackableUnit target)
@@ -66,14 +78,6 @@ namespace Spells
         }
 
         public void OnUpdate(float diff)
-        {
-        }
-
-        public void OnActivate(IObjAiBase owner, ISpell spell)
-        {
-        }
-
-        public void OnDeactivate(IObjAiBase owner, ISpell spell)
         {
         }
     }

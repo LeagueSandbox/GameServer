@@ -5,6 +5,8 @@ using GameServerCore;
 using System.Linq;
 using GameServerCore.Domain.GameObjects.Spell;
 using GameServerCore.Domain.GameObjects.Spell.Missile;
+using LeagueSandbox.GameServer.GameObjects.Spells;
+using System.Numerics;
 
 namespace Spells
 {
@@ -12,6 +14,7 @@ namespace Spells
     {
         public ISpellScriptMetadata ScriptMetadata { get; private set; } = new SpellScriptMetadata()
         {
+            TriggersSpellCasts = true
             // TODO
         };
 
@@ -19,40 +22,36 @@ namespace Spells
         {
         }
 
-        private void SelfWasDamaged()
-        {
-        }
-
         public void OnDeactivate(IObjAiBase owner, ISpell spell)
         {
         }
 
-        public void OnStartCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
+        public void OnSpellPreCast(IObjAiBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
         {
         }
 
-        public void OnFinishCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
+        public void OnSpellCast(ISpell spell)
+        {
+        }
+
+        public void OnSpellPostCast(ISpell spell)
         {		
-            var hasbuff = owner.HasBuff("GangplankE");
+            var hasbuff = spell.CastInfo.Owner.HasBuff("GangplankE");
             
             if (hasbuff == false)
             {
-                AddBuff("GangplankE", 7.0f, 1, spell, owner, owner);
+                AddBuff("GangplankE", 7.0f, 1, spell, spell.CastInfo.Owner, spell.CastInfo.Owner);
             }
 
-            var units = GetUnitsInRange(owner.Position, 1000, true).Where(x => x.Team != CustomConvert.GetEnemyTeam(owner.Team));
+            var units = GetUnitsInRange(spell.CastInfo.Owner.Position, 1000, true).Where(x => x.Team != CustomConvert.GetEnemyTeam(spell.CastInfo.Owner.Team));
 
             foreach (var allyTarget in units)
             {
-                if (allyTarget is IAttackableUnit && owner != allyTarget && hasbuff == false)
+                if (allyTarget is IAttackableUnit && spell.CastInfo.Owner != allyTarget && hasbuff == false)
                 {
-                    AddBuff("GangplankE", 7.0f, 1, spell, allyTarget, owner);
+                    AddBuff("GangplankE", 7.0f, 1, spell, allyTarget, spell.CastInfo.Owner);
                 }
-            }			
-        }
-
-        public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, ISpellMissile projectile)
-        {
+            }
         }
 
         public void OnUpdate(float diff)

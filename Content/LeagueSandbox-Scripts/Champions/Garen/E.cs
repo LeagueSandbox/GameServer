@@ -5,6 +5,9 @@ using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using GameServerCore.Domain.GameObjects.Spell;
 using GameServerCore.Domain.GameObjects.Spell.Missile;
+using System.Linq;
+using LeagueSandbox.GameServer.GameObjects.Spells;
+using System.Numerics;
 
 namespace Spells
 {
@@ -23,10 +26,10 @@ namespace Spells
         {
         }
 
-        public void OnStartCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
+        public void OnSpellPreCast(IObjAiBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
         {
             spell.SpellAnimation("SPELL3", owner);
-            var p = AddParticleTarget(owner, "Garen_Base_E_Spin.troy", owner, 1, "", default(System.Numerics.Vector3), 3.0f);
+            var p = AddParticleTarget(owner, "Garen_Base_E_Spin.troy", owner, lifetime: 3.0f);
             AddBuff("GarenE", 3.0f, 1, spell, owner, owner);
             CreateTimer(3.0f, () =>
             {
@@ -36,6 +39,10 @@ namespace Spells
             {
                 CreateTimer(i, () => { ApplySpinDamage(owner, spell, target); });
             }
+        }
+
+        public void OnSpellCast(ISpell spell)
+        {
         }
 
         private void ApplySpinDamage(IObjAiBase owner, ISpell spell, IAttackableUnit target)
@@ -56,7 +63,7 @@ namespace Spells
             }
         }
 
-        public void OnFinishCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
+        public void OnSpellPostCast(ISpell spell)
         {
         }
 

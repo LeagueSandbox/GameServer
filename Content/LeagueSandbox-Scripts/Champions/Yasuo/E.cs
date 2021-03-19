@@ -3,6 +3,7 @@ using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using GameServerCore.Domain.GameObjects.Spell;
 using GameServerCore.Domain.GameObjects.Spell.Missile;
+using System.Numerics;
 
 namespace Spells
 {
@@ -13,8 +14,8 @@ namespace Spells
             // TODO
         };
 
-        public static IObjAiBase _target = null;
-        public static IChampion _owner = null;
+        public static IAttackableUnit _target = null;
+
         public void OnActivate(IObjAiBase owner, ISpell spell)
         {
             //here's nothing yet
@@ -25,26 +26,23 @@ namespace Spells
             //here's empty
         }
 
-        public void OnStartCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
+        public void OnSpellPreCast(IObjAiBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
+        {
+            _target = target;
+            if (!target.HasBuff("YasuoEBlock"))
+            {
+                AddBuff("YasuoE", 0.395f - spell.CastInfo.SpellLevel * 0.012f, 1, spell, owner, owner);
+                AddBuff("YasuoEBlock", 11f - spell.CastInfo.SpellLevel * 1f, 1, spell, target, owner);
+            }
+        }
+
+        public void OnSpellCast(ISpell spell)
         {
             //here's empty, maybe will add some functions?
         }
 
-        public void OnFinishCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
+        public void OnSpellPostCast(ISpell spell)
         {
-            _target = (IObjAiBase)target;
-            _owner = (IChampion)owner;
-
-            if (!_target.HasBuff("YasuoEBlock"))
-            {
-                AddBuff("YasuoE", 0.395f - spell.CastInfo.SpellLevel * 0.012f, 1, spell, _owner, _owner);            
-                AddBuff("YasuoEBlock", 11f - spell.CastInfo.SpellLevel * 1f, 1, spell, _target, _owner);
-            }
-        }
-
-        public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, ISpellMissile projectile)
-        {
-            //here's empty because no needed to add things here
         }
                
         public void OnUpdate(float diff)

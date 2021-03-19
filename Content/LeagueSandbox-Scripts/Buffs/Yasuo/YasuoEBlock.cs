@@ -15,17 +15,16 @@ namespace YasuoEBlock
 
         public IStatsModifier StatsModifier { get; private set; }
 
-        private readonly IChampion owner = Spells.YasuoDashWrapper._owner;
-        private IBuff _visualBuff;
+        private IParticle timer;
 
         public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
-            var time = 11f - ownerSpell.CastInfo.SpellLevel * 1f;
-            AddParticleTarget(ownerSpell.CastInfo.Owner, "Yasuo_base_E_timer1.troy", unit);
+            timer = AddParticleTarget(ownerSpell.CastInfo.Owner, "Yasuo_base_E_timer1.troy", unit);
         }
 
         public void OnDeactivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
+            RemoveParticle(timer);
         }
 
         public void OnUpdate(float diff)

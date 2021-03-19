@@ -3,6 +3,7 @@ using GameServerCore.Domain.GameObjects;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using GameServerCore.Domain.GameObjects.Spell;
 using GameServerCore.Domain.GameObjects.Spell.Missile;
+using System.Numerics;
 
 namespace Spells
 {
@@ -10,6 +11,7 @@ namespace Spells
     {
         public ISpellScriptMetadata ScriptMetadata => new SpellScriptMetadata()
         {
+            TriggersSpellCasts = true
             // TODO
         };
 
@@ -21,13 +23,17 @@ namespace Spells
         {
         }
 
-        public void OnStartCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
+        public void OnSpellPreCast(IObjAiBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
         {
         }
 
-        public void OnFinishCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
+        public void OnSpellCast(ISpell spell)
         {
-            spell.AddProjectileTarget("Disintegrate", spell.CastInfo.SpellCastLaunchPosition, target, HitResult.HIT_Normal, false);
+        }
+
+        public void OnSpellPostCast(ISpell spell)
+        {
+            //spell.AddProjectileTarget("Disintegrate", spell.CastInfo.SpellCastLaunchPosition, spell.CastInfo.Targets[0].Unit, HitResult.HIT_Normal, false);
         }
 
         public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, ISpellMissile projectile)

@@ -3,6 +3,9 @@ using GameServerCore.Domain;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using System.Collections.Generic;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
+using System.Numerics;
+using LeagueSandbox.GameServer.API;
+using GameServerCore.Enums;
 
 namespace Spells
 {
@@ -21,17 +24,17 @@ namespace Spells
         {
         }
 
-        public void OnStartCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
+        public void OnSpellPreCast(IObjAiBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
         {
         }
 
-        public void OnFinishCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
+        public void OnSpellCast(ISpell spell)
         {
-            owner.SetAutoAttackSpell("NasusBasicAttack2", false);
         }
 
-        public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, IProjectile p)
+        public void OnSpellPostCast(ISpell spell)
         {
+            spell.CastInfo.Owner.SetAutoAttackSpell("NasusBasicAttack2", false);
         }
 
         public void OnUpdate(float diff)
@@ -54,17 +57,17 @@ namespace Spells
         {
         }
 
-        public void OnStartCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
+        public void OnSpellPreCast(IObjAiBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
         {
         }
 
-        public void OnFinishCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
+        public void OnSpellCast(ISpell spell)
         {
-            owner.SetAutoAttackSpell("NasusBasicAttack", false);
         }
 
-        public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, IProjectile p)
+        public void OnSpellPostCast(ISpell spell)
         {
+            spell.CastInfo.Owner.SetAutoAttackSpell("NasusBasicAttack", false);
         }
 
         public void OnUpdate(float diff)
@@ -87,15 +90,15 @@ namespace Spells
         {
         }
 
-        public void OnStartCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
+        public void OnSpellPreCast(IObjAiBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
         {
         }
 
-        public void OnFinishCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
+        public void OnSpellCast(ISpell spell)
         {
         }
 
-        public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, IProjectile p)
+        public void OnSpellPostCast(ISpell spell)
         {
         }
 
@@ -112,34 +115,44 @@ namespace Spells
         };
 
         IParticle pTar;
+        ISpell ownerSpell;
         public void OnActivate(IObjAiBase owner, ISpell spell)
         {
+            ownerSpell = spell;
+
             spell.CastInfo.UseAttackCastTime = true;
+
+            ApiEventManager.OnHitUnit.AddListener(this, owner, ApplyOnHitEffects);
         }
 
         public void OnDeactivate(IObjAiBase owner, ISpell spell)
         {
         }
 
-        public void OnStartCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
+        public void OnSpellPreCast(IObjAiBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
+        {
+        }
+
+        public void OnSpellCast(ISpell spell)
         {
             var animPairs = new Dictionary<string, string> { { "Attack1", "Spell1" } };
-            SetAnimStates(owner, animPairs);
+            SetAnimStates(spell.CastInfo.Owner, animPairs);
         }
 
-        public void OnFinishCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
+        public void OnSpellPostCast(ISpell spell)
         {
-            pTar = AddParticleTarget(owner, "Nasus_Base_Q_Tar.troy", target);
+            pTar = AddParticleTarget(spell.CastInfo.Owner, "Nasus_Base_Q_Tar.troy", spell.CastInfo.Targets[0].Unit);
 
             var animPairs = new Dictionary<string, string> { { "Spell1", "Attack1" } };
-            SetAnimStates(owner, animPairs);
-            owner.SetAutoAttackSpell("NasusBasicAttack", false);
+            SetAnimStates(spell.CastInfo.Owner, animPairs);
+            spell.CastInfo.Owner.SetAutoAttackSpell("NasusBasicAttack", false);
         }
 
-        public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, IProjectile p)
+        public void ApplyOnHitEffects(IAttackableUnit target, bool isCrit)
         {
             RemoveParticleSilent(pTar);
-            owner.GetSpell("NasusQ").ApplyEffects(target, p);
+            target.TakeDamage(ownerSpell.CastInfo.Owner, 30f + (20f * (ownerSpell.CastInfo.SpellLevel - 1)) + ownerSpell.CastInfo.Owner.GetBuffWithName("NasusQStacks").StackCount, DamageType.DAMAGE_TYPE_PHYSICAL, DamageSource.DAMAGE_SOURCE_ATTACK, ownerSpell.CastInfo.Owner.IsNextAutoCrit);
+            ownerSpell.CastInfo.Owner.GetBuffWithName("NasusQ").DeactivateBuff();
         }
 
         public void OnUpdate(float diff)

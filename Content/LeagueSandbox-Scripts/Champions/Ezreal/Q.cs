@@ -5,6 +5,8 @@ using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using GameServerCore.Domain.GameObjects.Spell;
 using GameServerCore.Domain.GameObjects.Spell.Missile;
+using LeagueSandbox.GameServer.GameObjects.Spells;
+using LeagueSandbox.GameServer.API;
 
 namespace Spells
 {
@@ -16,6 +18,8 @@ namespace Spells
             // TODO
         };
 
+        Vector2 direction;
+
         public void OnActivate(IObjAiBase owner, ISpell spell)
         {
         }
@@ -24,38 +28,40 @@ namespace Spells
         {
         }
 
-        public void OnStartCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
+        public void OnSpellPreCast(IObjAiBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
         {
-            AddParticleTarget(owner, "ezreal_bow.troy", owner, 1, "L_HAND");
         }
 
-        public void OnFinishCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
+        public void OnSpellCast(ISpell spell)
         {
-            var current = new Vector2(owner.Position.X, owner.Position.Y);
+            var current = new Vector2(spell.CastInfo.Owner.Position.X, spell.CastInfo.Owner.Position.Y);
             var spellPos = new Vector2(spell.CastInfo.TargetPosition.X, spell.CastInfo.TargetPosition.Z);
-            var to = Vector2.Normalize(spellPos - current);
-            if (float.IsNaN(to.X) || float.IsNaN(to.Y))
+            direction = Vector2.Normalize(spellPos - current);
+            if (float.IsNaN(direction.X) || float.IsNaN(direction.Y))
             {
-                to = new Vector2(1.0f, 0.0f);
+                direction = new Vector2(1.0f, 0.0f);
             }
-            var range = to * spell.SpellData.CastRangeDisplayOverride;
-            var trueCoords = current + range;
-            owner.FaceDirection(new Vector3(to.X, 0.0f, to.Y));
-            spell.AddProjectile("EzrealMysticShotMissile", current, current, trueCoords);
+            spell.CastInfo.Owner.FaceDirection(new Vector3(direction.X, 0.0f, direction.Y), false);
+
+            AddParticleTarget(spell.CastInfo.Owner, "ezreal_bow.troy", spell.CastInfo.Owner, 1, "L_HAND", lifetime: 1.0f);
+        }
+
+        public void OnSpellPostCast(ISpell spell)
+        {
+            spell.CastInfo.Owner.FaceDirection(new Vector3(direction.X, 0.0f, direction.Y));
+            //spell.AddProjectile("EzrealMysticShotMissile", current, current, trueCoords);
         }
 
         public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, ISpellMissile projectile)
         {
-            var ad = owner.Stats.AttackDamage.Total * spell.SpellData.AttackDamageCoefficient;
-            var ap = owner.Stats.AbilityPower.Total * spell.SpellData.MagicDamageCoefficient;
+            var ad = spell.CastInfo.Owner.Stats.AttackDamage.Total * spell.SpellData.AttackDamageCoefficient;
+            var ap = spell.CastInfo.Owner.Stats.AbilityPower.Total * spell.SpellData.MagicDamageCoefficient;
             var damage = 15 + spell.CastInfo.SpellLevel * 20 + ad + ap;
-            target.TakeDamage(owner, damage, DamageType.DAMAGE_TYPE_PHYSICAL, DamageSource.DAMAGE_SOURCE_ATTACK, false);
+            target.TakeDamage(spell.CastInfo.Owner, damage, DamageType.DAMAGE_TYPE_PHYSICAL, DamageSource.DAMAGE_SOURCE_ATTACK, false);
             for (byte i = 0; i < 4; i++)
             {
-                owner.Spells[i].LowerCooldown(1);
+                spell.CastInfo.Owner.Spells[i].LowerCooldown(1);
             }
-
-            projectile.SetToRemove();
         }
 
         public void OnUpdate(float diff)
