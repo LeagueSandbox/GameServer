@@ -8,6 +8,7 @@ using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
 using LeagueSandbox.GameServer.API;
+using LeagueSandbox.GameServer.GameObjects.Spells;
 using LeagueSandbox.GameServer.Logging;
 using log4net;
 
@@ -615,6 +616,38 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                     // Re-activate the buff's BuffScript.
                     ParentBuffs[b.Name].ActivateBuff();
                 }
+                // If the buff is supposed to be a single stackable buff with a timer = Duration * StackCount
+                else if (b.BuffAddType == BuffAddType.STACKS_AND_CONTINUE)
+                {
+                    // If we've hit the max stacks count for this buff add type
+                    if (ParentBuffs[b.Name].StackCount >= ParentBuffs[b.Name].MaxStacks)
+                    {
+                        ParentBuffs[b.Name].ResetTimeElapsed();
+
+                        if (!b.IsHidden)
+                        {
+                            // If the buff is a counter buff (ex: Nasus Q stacks), then use a packet specialized for big buff stack counts (int.MaxValue).
+                            if (ParentBuffs[b.Name].BuffType == BuffType.COUNTER)
+                            {
+                                _game.PacketNotifier.NotifyNPC_BuffUpdateNumCounter(ParentBuffs[b.Name]);
+                            }
+                            // Otherwise, use the normal buff stack (254) update (usually just adds one to the number on the icon and refreshes the time of the icon).
+                            else
+                            {
+                                _game.PacketNotifier.NotifyNPC_BuffUpdateCount(b, b.Duration, b.TimeElapsed);
+                            }
+                        }
+
+                        return;
+                    }
+
+                    ParentBuffs[b.Name].IncrementStackCount();
+
+                    if (!b.IsHidden)
+                    {
+                        _game.PacketNotifier.NotifyNPC_BuffAdd2(b);
+                    }
+                }
                 // If the buff is supposed to be applied alongside any existing buff instances of the same name.
                 else if (b.BuffAddType == BuffAddType.STACKS_AND_OVERLAPS)
                 {
@@ -814,8 +847,37 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         {
             lock (_buffsLock)
             {
+                // If the buff is supposed to be a single stackable buff with a timer = Duration * StackCount, and their are more than one already present.
+                if (b.BuffAddType == BuffAddType.STACKS_AND_CONTINUE && b.StackCount > 1)
+                {
+                    b.DecrementStackCount();
+
+                    IBuff tempBuff = new Buff(_game, b.Name, b.Duration, b.StackCount, b.OriginSpell, b.TargetUnit, b.SourceUnit, b.IsBuffInfinite());
+
+                    RemoveBuff(b.Name);
+                    BuffList.Remove(b);
+                    RemoveBuffSlot(b);
+
+                    if (!b.IsHidden)
+                    {
+                        _game.PacketNotifier.NotifyNPC_BuffRemove2(b);
+                    }
+
+                    // Next oldest buff takes the place of the removed oldest buff; becomes parent buff.
+                    BuffSlots[b.Slot] = tempBuff;
+                    ParentBuffs.Add(b.Name, tempBuff);
+                    BuffList.Add(tempBuff);
+
+                    // Add the buff to the visual hud.
+                    if (!b.IsHidden)
+                    {
+                        _game.PacketNotifier.NotifyNPC_BuffAdd2(tempBuff);
+                    }
+                    // Activate the buff for BuffScripts
+                    tempBuff.ActivateBuff();
+                }
                 // If the buff is supposed to be applied alongside other buffs of the same name, and their are more than one already present.
-                if (b.BuffAddType == BuffAddType.STACKS_AND_OVERLAPS && b.StackCount > 1)
+                else if (b.BuffAddType == BuffAddType.STACKS_AND_OVERLAPS && b.StackCount > 1)
                 {
                     // Remove one stack and update the other buff instances of the same name
                     b.DecrementStackCount();

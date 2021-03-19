@@ -488,7 +488,7 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="buffs">Group of buffs to update.</param>
         /// <param name="duration">Total time the buff should last.</param>
         /// <param name="runningTime">Time since the buff's creation.</param>
-        void NotifyNPC_BuffUpdateCountGroup(IAttackableUnit target, List<IBuff> buffs, float duration, float runningtime);
+        void NotifyNPC_BuffUpdateCountGroup(IAttackableUnit target, List<IBuff> buffs, float duration, float runningTime);
         /// <summary>
         /// Sends a packet to all players with vision of the target of the specified buff detailing an update to the stack counter of the specified buff.
         /// </summary>
@@ -561,12 +561,12 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="objID">Debug Object being removed.</param>
         void NotifyRemoveDebugObject(int userId, uint sender, int objID);
         /// <summary>
-        /// Sends a packet to all players with vision of the specified Champion detailing that item in the specified slot was removed (or the number of stacks of the item in that slot changed).
+        /// Sends a packet to all players with vision of the specified AI detailing that item in the specified slot was removed (or the number of stacks of the item in that slot changed).
         /// </summary>
-        /// <param name="c">Champion with the items.</param>
+        /// <param name="ai">AI with the items.</param>
         /// <param name="slot">Slot of the item that was removed.</param>
         /// <param name="remaining">Number of stacks of the item left (0 if not applicable).</param>
-        void NotifyRemoveItem(IChampion c, byte slot, byte remaining);
+        void NotifyRemoveItem(IObjAiBase ai, byte slot, byte remaining);
         /// <summary>
         /// Sends a packet to the specified player detailing that the highlight of the specified GameObject was removed.
         /// </summary>
@@ -753,6 +753,13 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="partial">Whether or not the packet should be counted as a partial update (whether the stats have actually changed or not). *NOTE*: Use case for this parameter is unknown.</param>
         /// TODO: Replace with LeaguePackets and preferably move all uses of this function to a central EventHandler class (if one is fully implemented).
         void NotifyUpdatedStats(IAttackableUnit u, bool partial = true);
+        /// <summary>
+        /// Sends a packet to the player attempting to use an item that the item was used successfully.
+        /// </summary>
+        /// <param name="userId">User to send the packet to.</param>
+        /// <param name="ai">GameObject of type ObjAiBase that can buy items.</param>
+        /// <param name="itemInstance">Item instance housing all information about the item that has been used.</param>
+        void NotifyUseItemAns(int userId, IObjAiBase ai, IItem itemInstance);
         /// <summary>
         /// Sends a packet to the specified player detailing that their request to view something with their camera has been acknowledged.
         /// </summary>

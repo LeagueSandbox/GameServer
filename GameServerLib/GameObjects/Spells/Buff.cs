@@ -52,7 +52,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
         /// <summary>
         /// Unit which applied this buff to its target.
         /// </summary>
-        public IAttackableUnit SourceUnit { get; private set; }
+        public IObjAiBase SourceUnit { get; private set; }
         /// <summary>
         /// Unit which has this buff applied to it.
         /// </summary>
@@ -62,7 +62,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
         /// </summary>
         public float TimeElapsed { get; private set; }
 
-        public Buff(Game game, string buffName, float duration, int stacks, ISpell originspell, IObjAiBase onto, IObjAiBase from, bool infiniteDuration = false)
+        public Buff(Game game, string buffName, float duration, int stacks, ISpell originspell, IAttackableUnit onto, IObjAiBase from, bool infiniteDuration = false)
         {
             if (duration < 0)
             {
@@ -91,7 +91,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
             }
             else
             {
-                MaxStacks = _buffGameScript.MaxStacks;
+                MaxStacks = Math.Min(_buffGameScript.MaxStacks, int.MaxValue);
             }
             Name = buffName;
             OriginSpell = originspell;
@@ -114,15 +114,6 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
         public void ActivateBuff()
         {
             _buffGameScript.OnActivate(TargetUnit, this, OriginSpell);
-            if (!OriginSpell.SpellData.CantCancelWhileChanneling)
-            {
-                if (TargetUnit is IChampion c)
-                {
-                    ApiEventManager.OnChampionDamageTaken.AddListener(this, c, DeactivateBuff);
-                    ApiEventManager.OnChampionMove.AddListener(this, c, DeactivateBuff);
-                    ApiEventManager.OnChampionCrowdControlled.AddListener(this, c, DeactivateBuff);
-                }
-            }
 
             _remove = false;
         }
@@ -146,6 +137,11 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
         public IStatsModifier GetStatsModifier()
         {
             return _buffGameScript.StatsModifier;
+        }
+
+        public bool IsBuffInfinite()
+        {
+            return _infiniteDuration;
         }
 
         public bool IsBuffSame(string buffName)
