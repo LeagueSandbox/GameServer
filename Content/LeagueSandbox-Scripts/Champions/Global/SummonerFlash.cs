@@ -25,8 +25,7 @@ namespace Spells
         public void OnSpellPreCast(IObjAiBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
         {
             var current = new Vector2(owner.Position.X, owner.Position.Y);
-            var spellPos = new Vector2(spell.CastInfo.TargetPosition.X, spell.CastInfo.TargetPosition.Z);
-            var to = spellPos - current;
+            var to = start - current;
             Vector2 trueCoords;
 
             if (to.Length() > 425)
@@ -37,7 +36,7 @@ namespace Spells
             }
             else
             {
-                trueCoords = spellPos;
+                trueCoords = start;
             }
 
             owner.FaceDirection(new Vector3(to.X, 0.0f, to.Y));
