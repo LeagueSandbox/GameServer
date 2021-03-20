@@ -634,7 +634,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                             // Otherwise, use the normal buff stack (254) update (usually just adds one to the number on the icon and refreshes the time of the icon).
                             else
                             {
-                                _game.PacketNotifier.NotifyNPC_BuffUpdateCount(b, b.Duration, b.TimeElapsed);
+                                _game.PacketNotifier.NotifyNPC_BuffUpdateCount(ParentBuffs[b.Name], ParentBuffs[b.Name].Duration, ParentBuffs[b.Name].TimeElapsed);
                             }
                         }
 
@@ -645,7 +645,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
 
                     if (!b.IsHidden)
                     {
-                        _game.PacketNotifier.NotifyNPC_BuffAdd2(b);
+                        _game.PacketNotifier.NotifyNPC_BuffUpdateCount(ParentBuffs[b.Name], ParentBuffs[b.Name].Duration - ParentBuffs[b.Name].TimeElapsed, ParentBuffs[b.Name].TimeElapsed);
                     }
                 }
                 // If the buff is supposed to be applied alongside any existing buff instances of the same name.
