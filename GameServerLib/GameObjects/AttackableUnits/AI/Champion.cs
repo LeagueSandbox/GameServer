@@ -480,6 +480,10 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
         public override void OnCollision(IGameObject collider, bool isTerrain = false)
         {
+            if (IsDashing)
+            {
+                return;
+            }
             base.OnCollision(collider, isTerrain);
             if (isTerrain)
             {

@@ -40,10 +40,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         /// </summary>
         public float AutoAttackProjectileSpeed { get; set; }
         /// <summary>
-        /// This AI's current auto attack target. Null if no target.
-        /// </summary>
-        public IAttackableUnit AutoAttackTarget { get; set; }
-        /// <summary>
         /// Variable containing all data about the AI's current character such as base health, base mana, whether or not they are melee, base movespeed, per level stats, etc.
         /// </summary>
         /// TODO: Move to AttackableUnit as it relates to stats.
@@ -78,6 +74,10 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         /// Unit this AI will auto attack when it is in auto attack range.
         /// </summary>
         public IAttackableUnit TargetUnit { get; set; }
+        /// <summary>
+        /// Unit this AI will dash to (assuming they are performing a targeted dash).
+        /// </summary>
+        public IAttackableUnit DashTarget { get; private set; }
 
         public ObjAiBase(Game game, string model, Stats.Stats stats, int collisionRadius = 40,
             Vector2 position = new Vector2(), int visionRadius = 0, uint netId = 0, TeamId team = TeamId.TEAM_NEUTRAL) :
@@ -327,6 +327,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             DashSpeed = dashSpeed;
 
             SetWaypoints(new List<Vector2> { Position, target.Position }, false);
+            DashTarget = target;
             SetTargetUnit(target);
 
             _game.PacketNotifier.NotifyWaypointGroupWithSpeed
@@ -426,7 +427,8 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         /// </summary>
         public virtual void RefreshWaypoints()
         {
-            if (TargetUnit == null || TargetUnit.IsDead || (Vector2.DistanceSquared(Position, TargetUnit.Position) <= Stats.Range.Total * Stats.Range.Total && Waypoints.Count == 1))
+            if (TargetUnit == null || TargetUnit.IsDead || (Vector2.DistanceSquared(Position, TargetUnit.Position) <= Stats.Range.Total * Stats.Range.Total && Waypoints.Count == 1)
+                || (IsDashing && DashTarget == null))
             {
                 return;
             }
@@ -438,7 +440,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             }
             // Stop dashing to target if we reached them.
             // TODO: Implement events so we can centralize things like this.
-            else if (IsDashing && IsCollidingWith(TargetUnit))
+            else if (IsDashing && IsCollidingWith(DashTarget))
             {
                 SetDashingState(false);
             }
@@ -446,13 +448,30 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             // Otherwise, move to the target.
             else
             {
-                Vector2 targetPos = TargetUnit.Position;
-                if (!_game.Map.NavigationGrid.IsWalkable(targetPos, TargetUnit.CollisionRadius))
+                var target = TargetUnit;
+                if (IsDashing)
                 {
-                    targetPos = _game.Map.NavigationGrid.GetClosestTerrainExit(targetPos, CollisionRadius);
+                    target = DashTarget;
+                    DashElapsedTime = 0;
+                }
+                Vector2 targetPos = target.Position;
+                var newWaypoints = new List<Vector2> { Position, targetPos };
+                if (!IsDashing)
+                {
+                    if (!_game.Map.NavigationGrid.IsWalkable(targetPos, target.CollisionRadius))
+                    {
+                        targetPos = _game.Map.NavigationGrid.GetClosestTerrainExit(targetPos, CollisionRadius);
+                    }
+
+                    newWaypoints = _game.Map.NavigationGrid.GetPath(Position, targetPos);
+                    
+                    if (newWaypoints == null)
+                    {
+                        newWaypoints = new List<Vector2> { Position, targetPos };
+                    }
                 }
 
-                var newWaypoints = _game.Map.NavigationGrid.GetPath(Position, targetPos);
+
                 if (newWaypoints.Count > 1)
                 {
                     SetWaypoints(newWaypoints);
@@ -478,6 +497,13 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         {
             TargetUnit = target;
             RefreshWaypoints();
+        }
+
+        public override void SetDashingState(bool state)
+        {
+            base.SetDashingState(state);
+
+            DashTarget = null;
         }
 
         public override void Update(float diff)
@@ -511,7 +537,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
             if (TargetUnit != null)
             {
-                if (TargetUnit.IsDead || !_game.ObjectManager.TeamHasVisionOn(Team, TargetUnit) && !(TargetUnit is IBaseTurret) && !(TargetUnit is IObjBuilding))
+                if (TargetUnit.IsDead || (!_game.ObjectManager.TeamHasVisionOn(Team, TargetUnit) && !(TargetUnit is IBaseTurret) && !(TargetUnit is IObjBuilding) && !IsDashing))
                 {
                     SetTargetUnit(null);
                     IsAttacking = false;
