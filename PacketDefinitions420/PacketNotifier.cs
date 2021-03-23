@@ -1263,10 +1263,7 @@ namespace PacketDefinitions420
             cast.IsClickCasted = false;
 
             cast.SpellSlot = p.OriginSpell != null ? p.OriginSpell.Slot : (byte)0x30;
-            cast.ManaCost = p.OriginSpell != null ? p.OriginSpell.SpellData.ManaCost[p.OriginSpell.Level] : 0f;
             cast.SpellCastLaunchPosition = p.GetPosition3D();
-            cast.AmmoUsed = p.OriginSpell != null ? p.OriginSpell.SpellData.AmmoUsed[p.OriginSpell.Level] : 0;
-            cast.AmmoRechargeTime = p.OriginSpell != null ? p.OriginSpell.SpellData.AmmoRechargeTime[p.OriginSpell.Level] : 0f;
 
             misPacket.CastInfo = cast;
             if (!p.IsServerOnly)
@@ -1665,11 +1662,11 @@ namespace PacketDefinitions420
             };
             if (s.Level > 0)
             {
-                castInfo.ManaCost = s.SpellData.ManaCost[s.Level - 1];
+                castInfo.ManaCost = s.SpellData.ManaCost[s.Level];
             }
             else
             {
-                castInfo.ManaCost = s.SpellData.ManaCost[s.Level];
+                castInfo.ManaCost = s.SpellData.ManaCost[0];
             }
 
             var castAnsPacket = new NPC_CastSpellAns
