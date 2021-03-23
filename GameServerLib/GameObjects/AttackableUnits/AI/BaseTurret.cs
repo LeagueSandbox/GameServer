@@ -193,7 +193,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             // Lose focus of the unit target if the target is out of range
             if (TargetUnit != null && Vector2.DistanceSquared(Position, TargetUnit.Position) > Stats.Range.Total * Stats.Range.Total)
             {
-                TargetUnit = null;
+                SetTargetUnit(null);
                 _game.PacketNotifier.NotifySetTarget(this, null);
             }
 
