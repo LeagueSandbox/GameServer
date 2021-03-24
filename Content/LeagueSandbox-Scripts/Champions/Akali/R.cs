@@ -40,9 +40,7 @@ namespace Spells
             var trueCoords = current + range;
 
             //TODO: Dash to the correct location (in front of the enemy IChampion) instead of far behind or inside them
-            ForceMovement(owner, "Spell4", trueCoords, 2200, 0, 0, 0);
-            AddParticleTarget(owner, "akali_shadowDance_tar.troy", target, 1, "");
-            DashToLocation(spell.CastInfo.Owner, trueCoords, 2200, "Attack1", 0, false);
+            ForceMovement(spell.CastInfo.Owner, trueCoords, 2200, 0, 0, 0);
             AddParticleTarget(spell.CastInfo.Owner, "akali_shadowDance_tar.troy", spell.CastInfo.Targets[0].Unit, 1, "");
         }
 

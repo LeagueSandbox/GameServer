@@ -57,7 +57,7 @@ namespace Spells
                         AddParticleTarget(spell.CastInfo.Owner, "Yasuo_Base_Q_WindStrike.troy", affectEnemys);
                         AddParticleTarget(spell.CastInfo.Owner, "Yasuo_Base_Q_windstrike_02.troy", affectEnemys);
                         AddParticleTarget(spell.CastInfo.Owner, "Yasuo_Base_Q_hit_tar.troy", affectEnemys);
-                        DashToLocation(affectEnemys, new Vector2(affectEnemys.Position.X + 10f, affectEnemys.Position.Y + 10f), 13f, "RUN", 16.5f, true);
+                        ForceMovement(affectEnemys, new Vector2(affectEnemys.Position.X + 10f, affectEnemys.Position.Y + 10f), 13f, 0, 16.5f, 0, movementOrdersFacing: ForceMovementOrdersFacing.KEEP_CURRENT_FACING);
                     }
                 }
             }
@@ -80,8 +80,8 @@ namespace Spells
             AddParticleTarget(owner, "Yasuo_Base_Q_WindStrike.troy", target);
             AddParticleTarget(owner, "Yasuo_Base_Q_windstrike_02.troy", target);
             AddParticleTarget(owner, "Yasuo_Base_Q_hit_tar.troy", target);
-            target.TakeDamage(owner, spell.Level * 20f + owner.Stats.AttackDamage.Total,DamageType.DAMAGE_TYPE_PHYSICAL, DamageSource.DAMAGE_SOURCE_ATTACK, false);
-            ForceMovement(target, "RUN", new Vector2(target.Position.X + 10f, target.Position.Y + 10f), 13f, 0, 16.5f, 0);
+            target.TakeDamage(owner, spell.CastInfo.SpellLevel * 20f + owner.Stats.AttackDamage.Total,DamageType.DAMAGE_TYPE_PHYSICAL, DamageSource.DAMAGE_SOURCE_ATTACK, false);
+            ForceMovement(target, new Vector2(target.Position.X + 10f, target.Position.Y + 10f), 13f, 0, 16.5f, 0);
         }
 
         public void OnUpdate(float diff)

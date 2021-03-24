@@ -11,6 +11,11 @@ namespace Spells
     {
         public ISpellScriptMetadata ScriptMetadata { get; private set; } = new SpellScriptMetadata()
         {
+            CastingBreaksStealth = true,
+            DoesntBreakShields = true,
+            TriggersSpellCasts = true,
+            IsDamagingSpell = false,
+            NotSingleTargetSpell = true
             // TODO
         };
 

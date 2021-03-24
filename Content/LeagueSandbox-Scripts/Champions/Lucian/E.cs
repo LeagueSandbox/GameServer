@@ -39,11 +39,7 @@ namespace Spells
             var range = to * spell.SpellData.CastRangeDisplayOverride;
             var trueCoords = current + range;
 
-            ForceMovement(owner, "", trueCoords, 1500, 0, 0, 0);
-        }
-
-        public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, ISpellMissile projectile)
-        {
+            ForceMovement(spell.CastInfo.Owner, trueCoords, 1500, 0, 0, 0);
         }
 
         public void OnUpdate(float diff)
