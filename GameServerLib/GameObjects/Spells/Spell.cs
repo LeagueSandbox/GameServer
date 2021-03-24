@@ -1223,6 +1223,14 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
                     }
                     else
                     {
+                        if (CastInfo.Owner.TargetUnit != CastInfo.Targets[0].Unit)
+                        {
+                            State = SpellState.STATE_READY;
+                            CurrentDelayTime = 0;
+                            CastInfo.Owner.CancelAutoAttack(true);
+                            break;
+                        }
+
                         CurrentDelayTime += diff / 1000.0f;
                         if (CurrentDelayTime >= CurrentCastTime / CastInfo.AttackSpeedModifier)
                         {

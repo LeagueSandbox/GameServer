@@ -56,10 +56,6 @@ namespace GameServerCore.Domain.GameObjects
         /// Unit this AI will auto attack when it is in auto attack range.
         /// </summary>
         IAttackableUnit TargetUnit { get; set;  }
-        /// <summary>
-        /// Unit this AI will dash to (assuming they are performing a targeted dash).
-        /// </summary>
-        IAttackableUnit DashTarget { get; }
 
         /// <summary>
         /// Function called by this AI's auto attack projectile when it hits its target.

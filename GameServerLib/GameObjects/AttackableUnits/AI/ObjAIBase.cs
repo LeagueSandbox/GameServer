@@ -68,10 +68,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         /// Unit this AI will auto attack or use a spell on when in range.
         /// </summary>
         public IAttackableUnit TargetUnit { get; set; }
-        /// <summary>
-        /// Unit this AI will dash to (assuming they are performing a targeted dash).
-        /// </summary>
-        public IAttackableUnit DashTarget { get; private set; }
         public Dictionary<short, ISpell> Spells { get; }
 
         public ObjAiBase(Game game, string model, Stats.Stats stats, int collisionRadius = 40,
@@ -382,14 +378,13 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         /// <param name="reset">Whether or not to reset the delay between the next auto attack.</param>
         public void CancelAutoAttack(bool reset)
         {
-            //UpdateMoveOrder(OrderType.Stop);
+            AutoAttackSpell.SetSpellState(SpellState.STATE_READY);
             if (reset)
             {
                 _autoAttackCurrentCooldown = 0;
-                AutoAttackSpell.SetSpellState(SpellState.STATE_READY);
                 AutoAttackSpell.ResetSpellDelay();
-                _game.PacketNotifier.NotifyNPC_InstantStop_Attack(this, false);
             }
+            _game.PacketNotifier.NotifyNPC_InstantStop_Attack(this, false);
         }
 
         /// <summary>
@@ -423,7 +418,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             DashSpeed = dashSpeed;
 
             SetWaypoints(new List<Vector2> { Position, target.Position }, false);
-            DashTarget = target;
             SetTargetUnit(target);
 
             _game.PacketNotifier.NotifyWaypointGroupWithSpeed
@@ -870,8 +864,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         public override void SetDashingState(bool state)
         {
             base.SetDashingState(state);
-
-            DashTarget = null;
         }
 
         public override void Update(float diff)
