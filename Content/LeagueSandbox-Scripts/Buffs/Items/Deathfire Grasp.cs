@@ -27,7 +27,7 @@ namespace Deathfire_Grasp
             // TODO: Implement damage amp. stat modifier
         }
 
-        public void OnDeactivate(IAttackableUnit unit)
+        public void OnDeactivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
             RemoveParticle(target);
             RemoveParticle(debuff);

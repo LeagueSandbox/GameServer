@@ -26,7 +26,7 @@ namespace Spells
 
         public void OnSpellCast(ISpell spell)
         {
-            spell.SpellAnimation("SPELL1", spell.CastInfo.Owner);
+            //spell.CastInfo.Owner.SpellAnimation("SPELL1");
         }
 
         public void OnSpellPreCast(IObjAiBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)

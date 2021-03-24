@@ -28,7 +28,7 @@ namespace Spells
 
         public void OnSpellPreCast(IObjAiBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
         {
-            spell.SpellAnimation("SPELL3", owner);
+            //owner.SpellAnimation("SPELL3");
             var p = AddParticleTarget(owner, "Garen_Base_E_Spin.troy", owner, lifetime: 3.0f);
             AddBuff("GarenE", 3.0f, 1, spell, owner, owner);
             CreateTimer(3.0f, () =>

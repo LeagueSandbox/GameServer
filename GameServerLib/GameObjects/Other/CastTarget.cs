@@ -17,12 +17,12 @@ namespace LeagueSandbox.GameServer.GameObjects.Other
             HitResult = hitResult;
         }
 
-        public static HitResult GetHitResult(IAttackableUnit unit, ICastInfo castInfo)
+        public static HitResult GetHitResult(IAttackableUnit unit, bool isAutoAttack, bool isNextAutoCrit)
         {
-            if (castInfo.IsAutoAttack)
+            if (isAutoAttack)
             {
                 // TODO: Implement Dodge and Miss
-                if (castInfo.Owner.IsNextAutoCrit)
+                if (isNextAutoCrit)
                 {
                     return HitResult.HIT_Critical;
                 }

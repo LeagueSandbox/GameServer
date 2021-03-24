@@ -34,8 +34,8 @@ namespace Spells
             var spellPos = new Vector2(spell.CastInfo.TargetPosition.X, spell.CastInfo.TargetPosition.Z);
             var to = Vector2.Normalize(spellPos - current);
 
-            spell.SpellAnimation("SPELL1", spell.CastInfo.Owner);
-            spell.CastInfo.Owner.FaceDirection(new Vector3(to.X, 0, to.Y), false);
+            //spell.SpellAnimation("SPELL1", spell.CastInfo.Owner);
+            //spell.CastInfo.Owner.FaceDirection(new Vector3(to.X, 0, to.Y), false);
         }
 
         public void OnSpellPostCast(ISpell spell)

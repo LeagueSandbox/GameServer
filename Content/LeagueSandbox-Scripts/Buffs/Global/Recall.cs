@@ -26,12 +26,11 @@ namespace Recall
             owner = champion;
             sourceBuff = buff;
 
-            _createdParticle = AddParticleTarget(champion, "TeleportHome.troy", champion);
+            _createdParticle = AddParticleTarget(champion, "TeleportHome.troy", champion, lifetime: buff.Duration);
         }
 
         public void OnDeactivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
-            LogInfo("sourceBuff.TimeElapsed: " + sourceBuff.TimeElapsed);
             if (sourceBuff.TimeElapsed >= sourceBuff.Duration)
             {
                 owner.Recall();

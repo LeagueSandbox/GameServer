@@ -1,0 +1,73 @@
+﻿using System;
+using System.Collections.Generic;
+using GameServerCore.Domain;
+using GameServerCore.Domain.GameObjects;
+using GameServerCore.Enums;
+using LeagueSandbox.GameServer.API;
+using LeagueSandbox.GameServer.GameObjects.Other;
+using LeagueSandbox.GameServer.GameObjects.Stats;
+using LeagueSandbox.GameServer.Scripting.CSharp;
+using static LeagueSandbox.GameServer.API.ApiFunctionManager;
+
+namespace LeonaShieldOfDaybreak
+{
+    class LeonaShieldOfDaybreak : IBuffGameScript
+    {
+        public BuffType BuffType => BuffType.COMBAT_ENCHANCER;
+        public BuffAddType BuffAddType => BuffAddType.RENEW_EXISTING;
+        public int MaxStacks => 1;
+        public bool IsHidden => false;
+
+        public IStatsModifier StatsModifier { get; private set; } = new StatsModifier();
+
+        IParticle pbuff;
+        IBuff thisBuff;
+
+        public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
+        {
+            thisBuff = buff;
+            pbuff = AddParticleTarget(unit, "Leona_ShieldOfDaybreak_cas.troy", unit, 1, "BUFFBONE_CSTM_SHIELD_TOP", lifetime: buff.Duration);
+
+            StatsModifier.Range.FlatBonus = 30.0f;
+
+            unit.AddStatModifier(StatsModifier);
+
+            if (unit is IObjAiBase ai)
+            {
+                SealSpellSlot(ai, SpellSlotType.SpellSlots, 0, SpellbookType.SPELLBOOK_CHAMPION, true);
+                ai.CancelAutoAttack(true);
+
+                ApiEventManager.OnPreAttack.AddListener(this, ai, OnPreAttack, true);
+            }
+        }
+
+        public void OnDeactivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
+        {
+            //ApiEventManager.OnPreAttack.RemoveListener(this, ownerSpell.CastInfo.Owner);
+            // TODO: Spell Cooldown
+
+            if (unit is IObjAiBase ai)
+            {
+                SealSpellSlot(ai, SpellSlotType.SpellSlots, 0, SpellbookType.SPELLBOOK_CHAMPION, false);
+            }
+
+            RemoveParticle(pbuff);
+        }
+
+        public void OnPreAttack(ISpell spell)
+        {
+            spell.CastInfo.Owner.SkipNextAutoAttack();
+
+            SpellCast(spell.CastInfo.Owner, 0, SpellSlotType.ExtraSlots, false, spell.CastInfo.Owner.TargetUnit);
+
+            if (thisBuff != null)
+            {
+                thisBuff.DeactivateBuff();
+            }
+        }
+
+        public void OnUpdate(float diff)
+        {
+        }
+    }
+}

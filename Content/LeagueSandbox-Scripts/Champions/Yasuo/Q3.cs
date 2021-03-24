@@ -46,7 +46,7 @@ namespace Spells
         {
             if (HasBuff(spell.CastInfo.Owner, "YasuoE"))
             {
-                spell.SpellAnimation("SPELL3b", spell.CastInfo.Owner);
+                //spell.CastInfo.Owner.SpellAnimation("SPELL3b");
                 AddParticleTarget(spell.CastInfo.Owner, "Yasuo_Base_EQ3_cas.troy", spell.CastInfo.Owner);
                 AddParticleTarget(spell.CastInfo.Owner, "Yasuo_Base_EQ_SwordGlow.troy", spell.CastInfo.Owner, bone: "C_BUFFBONE_GLB_Weapon_1");
                 foreach (var affectEnemys in GetUnitsInRange(spell.CastInfo.Owner.Position, 270f, true))
@@ -64,7 +64,7 @@ namespace Spells
             else
             {
                 spell.AddProjectile("YasuoQ3Mis", spell.CastInfo.Owner.Position, spell.CastInfo.Owner.Position, trueCoords);
-                spell.SpellAnimation("SPELL1C", spell.CastInfo.Owner);
+                //spell.CastInfo.Owner.SpellAnimation("SPELL1C");
                 (spell.CastInfo.Owner as IChampion).SetSpell("YasuoQW", 0, true);
                 AddParticleTarget(spell.CastInfo.Owner, "Yasuo_Base_Q3_Hand.troy", spell.CastInfo.Owner);
                 AddParticleTarget(spell.CastInfo.Owner, "Yasuo_Base_Q3_cast_sound.troy", spell.CastInfo.Owner);

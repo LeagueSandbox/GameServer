@@ -30,7 +30,7 @@ namespace Spells
 
         public void OnSpellCast(ISpell spell)
         {
-            spell.SpellAnimation("SPELL1", spell.CastInfo.Owner);
+            //spell.CastInfo.Owner.SpellAnimation("SPELL1");
         }
 
         public void OnSpellPostCast(ISpell spell)

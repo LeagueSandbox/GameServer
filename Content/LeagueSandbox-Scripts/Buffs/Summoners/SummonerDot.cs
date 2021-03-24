@@ -31,7 +31,7 @@ namespace SummonerDot
             ignite = AddParticleTarget(Owner, "Global_SS_Ignite.troy", unit, 1, "C_BUFFBONE_GLB_CHEST_LOC", lifetime: buff.Duration);
         }
 
-        public void OnDeactivate(IAttackableUnit unit)
+        public void OnDeactivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
             Owner = null;
             Target = null;

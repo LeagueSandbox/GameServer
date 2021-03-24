@@ -1793,7 +1793,7 @@ namespace PacketDefinitions420
 
             if (s.CastInfo.SpellLevel > 0)
             {
-                castInfo.ManaCost = s.SpellData.ManaCost[s.Level];
+                castInfo.ManaCost = s.SpellData.ManaCost[s.CastInfo.SpellLevel];
             }
             else
             {
@@ -2049,6 +2049,40 @@ namespace PacketDefinitions420
             _packetHandlerManager.BroadcastPacketVision(p, changePacket.GetBytes(), Channel.CHL_S2C);
         }
 
+        public void NotifyS2C_CreateHero(int userId, ClientInfo clientInfo)
+        {
+            var champion = clientInfo.Champion;
+            var heroPacket = new S2C_CreateHero()
+            {
+                NetID = champion.NetId,
+                ClientID = (int)clientInfo.ClientId,
+                // NetNodeID,
+                // For bots (0 = Beginner, 1 = Intermediate)
+                SkillLevel = 0,
+                // TODO: Implement bots and unhardcode this.
+                IsBot = false,
+                // BotRank, deprecated as of v4.18
+                // TODO: Unhardcode
+                SpawnPositionIndex = 0,
+                SkinID = champion.Skin,
+                Name = clientInfo.Name,
+                Skin = champion.Model,
+                DeathDurationRemaining = champion.RespawnTimer,
+                // TimeSinceDeath
+            };
+
+            if (champion.Team == TeamId.TEAM_BLUE)
+            {
+                heroPacket.TeamIsOrder = true;
+            }
+            else
+            {
+                heroPacket.TeamIsOrder = false;
+            }
+
+            _packetHandlerManager.SendPacket(userId, heroPacket.GetBytes(), Channel.CHL_S2C);
+        }
+
         // <summary>
         /// Sends a packet to all players with vision of the specified unit detailing that it is playing the specified animation.
         /// </summary>
@@ -2092,6 +2126,17 @@ namespace PacketDefinitions420
             _packetHandlerManager.BroadcastPacketVision(u, setAnimPacket.GetBytes(), Channel.CHL_S2C);
         }
 
+        public void NotifyS2C_SetInputLockFlag(int userId, InputLockFlags flags, bool enabled)
+        {
+            var inputLockPacket = new S2C_SetInputLockFlag
+            {
+                InputLockFlags = (uint)flags,
+                Value = enabled
+            };
+
+            _packetHandlerManager.SendPacket(userId, inputLockPacket.GetBytes(), Channel.CHL_S2C);
+        }
+
         /// <summary>
         /// Sends a packet to the specified user detailing that the spell in the given slot has had its spelldata changed to the spelldata of the given spell name.
         /// </summary>
@@ -2131,6 +2176,16 @@ namespace PacketDefinitions420
             _packetHandlerManager.SendPacket(userId, spellLevelPacket.GetBytes(), Channel.CHL_S2C);
         }
 
+        public void NotifyS2C_ToggleInputLockFlag(int userId, InputLockFlags flags)
+        {
+            var inputLockPacket = new S2C_ToggleInputLockFlag
+            {
+                InputLockFlags = (uint)flags
+            };
+
+            _packetHandlerManager.SendPacket(userId, inputLockPacket.GetBytes(), Channel.CHL_S2C);
+        }
+
         /// <summary>
         /// Sends a packet to all players with vision of the specified attacker that it is looking at (targeting) the specified attacked unit with the given AttackType.
         /// </summary>
@@ -2157,10 +2212,12 @@ namespace PacketDefinitions420
         /// <param name="s">Spell being updated.</param>
         public void NotifyS2C_UpdateSpellToggle(int userId, ISpell s)
         {
-            var spellTogglePacket = new S2C_UpdateSpellToggle();
-            spellTogglePacket.SenderNetID = s.CastInfo.Owner.NetId;
-            spellTogglePacket.SpellSlot = s.CastInfo.SpellSlot;
-            spellTogglePacket.ToggleValue = s.Toggle;
+            var spellTogglePacket = new S2C_UpdateSpellToggle
+            {
+                SenderNetID = s.CastInfo.Owner.NetId,
+                SpellSlot = s.CastInfo.SpellSlot,
+                ToggleValue = s.Toggle
+            };
 
             _packetHandlerManager.SendPacket(userId, spellTogglePacket.GetBytes(), Channel.CHL_S2C);
         }

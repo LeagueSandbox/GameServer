@@ -16,10 +16,6 @@ namespace GameServerCore.Domain.GameObjects
         /// </summary>
         ISpell AutoAttackSpell { get; }
         /// <summary>
-        /// This AI's current auto attack target. Null if no target.
-        /// </summary>
-        IAttackableUnit AutoAttackTarget { get; set; }
-        /// <summary>
         /// Variable containing all data about the AI's current character such as base health, base mana, whether or not they are melee, base movespeed, per level stats, etc.
         /// </summary>
         /// TODO: Move to AttackableUnit as it relates to stats..
@@ -70,6 +66,11 @@ namespace GameServerCore.Domain.GameObjects
         /// </summary>
         void AutoAttackHit(IAttackableUnit target);
         /// <summary>
+        /// Cancels any auto attacks this AI is performing and resets the time between the next auto attack if specified.
+        /// </summary>
+        /// <param name="reset">Whether or not to reset the delay between the next auto attack.</param>
+        void CancelAutoAttack(bool reset);
+        /// <summary>
         /// Forces this AI unit to perform a dash which follows the specified AttackableUnit.
         /// </summary>
         /// <param name="target">Unit to follow.</param>
@@ -82,6 +83,12 @@ namespace GameServerCore.Domain.GameObjects
         /// <param name="travelTime">Total time the dash will follow the GameObject before stopping or reaching the Target.</param>
         /// TODO: Implement Dash class which houses these parameters, then have that as the only parameter to this function (and other Dash-based functions).
         void DashToTarget(IAttackableUnit target, float dashSpeed, string animation, float leapGravity, bool keepFacingLastDirection, float followTargetMaxDistance, float backDistance, float travelTime);
+        /// <summary>
+        /// Gets a random auto attack spell from the list of auto attacks available for this AI.
+        /// Will only select crit auto attacks if the next auto attack is going to be a crit, otherwise normal auto attacks will be selected.
+        /// </summary>
+        /// <returns>Random auto attack spell.</returns>
+        ISpell GetNewAutoAttack();
         /// <summary>
         /// Whether or not this AI is able to cast spells.
         /// </summary>
@@ -106,20 +113,29 @@ namespace GameServerCore.Domain.GameObjects
         /// <param name="newAutoAttackSpell">ISpell instance to set.</param>
         /// <param name="isReset">Whether or not setting this spell causes auto attacks to be reset (cooldown).</param>
         /// <returns>ISpell set.</returns>
-        ISpell SetAutoAttackSpell(ISpell newAutoAttackSpell, bool isReset);
+        void SetAutoAttackSpell(ISpell newAutoAttackSpell, bool isReset);
         /// <summary>
         /// Sets this unit's auto attack spell that they will use when in range of their target (unless they are going to cast a spell first).
         /// </summary>
         /// <param name="name">Internal name of the spell to set.</param>
         /// <param name="isReset">Whether or not setting this spell causes auto attacks to be reset (cooldown).</param>
         /// <returns>ISpell set.</returns>
-        ISpell SetAutoAttackSpell(string newAutoAttackSpell, bool isReset);
+        ISpell SetAutoAttackSpell(string name, bool isReset);
+        /// <summary>
+        /// Forces this AI to skip its next auto attack. Usually used when spells intend to override the next auto attack with another spell.
+        /// </summary>
+        void SkipNextAutoAttack();
         /// <summary>
         /// Sets the spell that this unit will cast when it gets in range of its target.
         /// Overrides auto attack spell casting.
         /// </summary>
         /// <param name="s"></param>
         void SetSpellToCast(ISpell s);
+        /// <summary>
+        /// Forces this AI to perform the given internally named animation.
+        /// </summary>
+        /// <param name="animName">Internal name of an animation to play.</param>
+        void SpellAnimation(string animName);
         /// <summary>
         /// Sets this AI's current target unit. This relates to both auto attacks as well as general spell targeting.
         /// </summary>

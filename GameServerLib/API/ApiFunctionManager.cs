@@ -175,6 +175,23 @@ namespace LeagueSandbox.GameServer.API
         }
 
         /// <summary>
+        /// Gets a point that is in the direction the specified unit is facing, given it is a specified distance away from the unit.
+        /// </summary>
+        /// <param name="obj">Unit to base the point off of.</param>
+        /// <param name="offsetAngle">Offset angle from the unit's facing angle (in degrees, clockwise). Must be > 0 to have an effect.</param>
+        /// <returns>Vector2 point.</returns>
+        public static Vector2 GetPointFromUnit(IGameObject obj, float distance, float offsetAngle = 0)
+        {
+            Vector2 pos = new Vector2(obj.Position.X, obj.Position.Y);
+            Vector2 dir = new Vector2(obj.Direction.X, obj.Direction.Z);
+            if (offsetAngle > 0)
+            {
+                GameServerCore.Extensions.Rotate(dir, offsetAngle);
+            }
+            return pos + (dir * distance);
+        }
+
+        /// <summary>
         /// Reports whether or not the specified coordinates are walkable.
         /// </summary>
         /// <param name="x">X coordinaate.</param>
@@ -320,7 +337,10 @@ namespace LeagueSandbox.GameServer.API
 
         public static void RemoveParticleSilent(IParticle p)
         {
-            p.SilentSetToRemove();
+            if (p != null)
+            {
+                p.SilentSetToRemove();
+            }
         }
 
         /// <summary>
@@ -554,19 +574,57 @@ namespace LeagueSandbox.GameServer.API
             unit.SetAnimStates(animPairs);
         }
 
+        public static void SealSpellSlot(IObjAiBase target, SpellSlotType slotType, int slot, SpellbookType spellbookType, bool seal)
+        {
+            if (spellbookType == SpellbookType.SPELLBOOK_UNKNOWN
+                || (spellbookType == SpellbookType.SPELLBOOK_SUMMONER && (slotType != SpellSlotType.SpellSlots)
+                || (spellbookType == SpellbookType.SPELLBOOK_CHAMPION
+                    && ((slotType == SpellSlotType.SpellSlots && slot < 0 || slot > 3)
+                        || (slotType == SpellSlotType.InventorySlots && slot < 0 && slot > 6)
+                        || (slotType == SpellSlotType.ExtraSlots && slot < 0 && slot > 15)))))
+            {
+                return;
+            }
+
+            if (spellbookType == SpellbookType.SPELLBOOK_CHAMPION)
+            {
+                if (slotType == SpellSlotType.InventorySlots)
+                {
+                    slot += 6;
+                }
+                if (slotType == SpellSlotType.ExtraSlots)
+                {
+                    slot += 45;
+                }
+            }
+            else
+            {
+                slot += 4;
+            }
+
+            target.Stats.SetSpellEnabled((byte)slot, !seal);
+        }
+
         public static void SetAnimStates(IAttackableUnit unit, Dictionary<string, string> animPairs)
         {
             unit.SetAnimStates(animPairs);
         }
 
-        public static void SpellCast(IObjAiBase caster, int slot, SpellSlotType slotType, Vector3 pos, Vector3 endPos, Vector3 overrideCastPos, List<ICastTarget> targets = null, bool isForceCastingOrChanneling = false, int overrideForceLevel = -1, bool updateAutoAttackTimer = false, bool useAutoAttackSpell = false)
+        public static void SpellCast(IObjAiBase caster, int slot, SpellSlotType slotType, Vector3 pos, Vector3 endPos, bool fireWithoutCasting, Vector3 overrideCastPos, List<ICastTarget> targets = null, bool isForceCastingOrChanneling = false, int overrideForceLevel = -1, bool updateAutoAttackTimer = false, bool useAutoAttackSpell = false)
         {
-            if (slotType == SpellSlotType.InventorySlots && slot >= 0 && slot <= 6)
+            if ((slotType == SpellSlotType.SpellSlots && slot < 0 || slot > 3)
+                || (slotType == SpellSlotType.InventorySlots && slot < 0 && slot > 6)
+                || (slotType == SpellSlotType.ExtraSlots && slot < 0 && slot > 15))
+            {
+                return;
+            }
+
+            if (slotType == SpellSlotType.InventorySlots)
             {
                 slot += 4;
             }
 
-            if (slotType == SpellSlotType.ExtraSlots && slot >= 0 && slot <= 15)
+            if (slotType == SpellSlotType.ExtraSlots)
             {
                 slot += 45;
             }
@@ -596,7 +654,7 @@ namespace LeagueSandbox.GameServer.API
                 IsForceCastingOrChannel = isForceCastingOrChanneling,
                 
                 SpellSlot = (byte)slot,
-                SpellCastLaunchPosition = caster.GetPosition3D(),
+                SpellCastLaunchPosition = caster.GetPosition3D()
             };
 
             if (pos == Vector3.Zero)
@@ -620,7 +678,14 @@ namespace LeagueSandbox.GameServer.API
                 castInfo.SpellLevel = (byte)overrideForceLevel;
             }
 
-            spell.Cast(castInfo);
+            spell.Cast(castInfo, !fireWithoutCasting);
+        }
+
+        public static void SpellCast(IObjAiBase caster, int slot, SpellSlotType slotType, bool fireWithoutCasting, IAttackableUnit target, bool isForceCastingOrChanneling = false, int overrideForceLevel = -1, bool updateAutoAttackTimer = false, bool useAutoAttackSpell = false)
+        {
+            ICastTarget castTarget = new CastTarget(target, CastTarget.GetHitResult(target, useAutoAttackSpell, caster.IsNextAutoCrit));
+            Vector3 targetPos = target.GetPosition3D();
+            SpellCast(caster, slot, slotType, targetPos, targetPos, fireWithoutCasting, caster.GetPosition3D(), new List<ICastTarget> { castTarget }, isForceCastingOrChanneling, overrideForceLevel, updateAutoAttackTimer, useAutoAttackSpell);
         }
     }
 }

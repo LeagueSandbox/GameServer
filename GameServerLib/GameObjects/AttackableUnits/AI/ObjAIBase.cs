@@ -22,6 +22,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
     {
         // Crucial Vars
         private float _autoAttackCurrentCooldown;
+        private bool _skipNextAutoAttack;
         protected ItemManager _itemManager;
         private Random _random = new Random();
 
@@ -29,10 +30,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         /// Variable storing all the data related to this AI's current auto attack. *NOTE*: Will be deprecated as the spells system gets finished.
         /// </summary>
         public ISpell AutoAttackSpell { get; private set; }
-        /// <summary>
-        /// This AI's current auto attack target. Null if no target.
-        /// </summary>
-        public IAttackableUnit AutoAttackTarget { get; set; }
         /// <summary>
         /// Variable containing all data about the AI's current character such as base health, base mana, whether or not they are melee, base movespeed, per level stats, etc.
         /// </summary>
@@ -68,7 +65,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         /// TODO: Rework AI so this enum can be finished.
         public OrderType MoveOrder { get; set; }
         /// <summary>
-        /// Unit this AI will auto attack when it is in auto attack range.
+        /// Unit this AI will auto attack or use a spell on when in range.
         /// </summary>
         public IAttackableUnit TargetUnit { get; set; }
         /// <summary>
@@ -136,34 +133,44 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                     }
                 }
 
+                // SummonerSpellSlots
+                // 4 - 5
+
                 // InventorySlots
-                // 4 - 14
-                for (byte i = 4; i < 14; i++)
+                // 6 - 12 (12 = TrinketSlot)
+                for (byte i = 6; i < 12; i++)
                 {
                     Spells[i] = new Spell(game, this, "BaseSpell", i);
                 }
+
+                // BluePillSlot
+                // 13
+
+                // TempItemSlot
+                // 14
 
                 // RuneSlots
                 // 15 - 44
 
                 // ExtraSpells
                 // 45 - 60
-                for (short i = 45; i < CharData.ExtraSpells.Length; i++)
+                for (short i = 0; i < CharData.ExtraSpells.Length; i++)
                 {
                     if (!string.IsNullOrEmpty(CharData.ExtraSpells[i]))
                     {
-                        Spells[(byte)(i)] = new Spell(game, this, CharData.ExtraSpells[i], (byte)(i));
-                        Spells[(byte)(i)].LevelUp();
+                        var spellSlot = i + 45;
+                        Spells[(byte)(spellSlot)] = new Spell(game, this, CharData.ExtraSpells[i], (byte)(spellSlot));
+                        Spells[(byte)(spellSlot)].LevelUp();
                     }
                 }
 
-                // RespawnSpell
+                // RespawnSpellSlot
                 // 61
 
-                // UseSpell
+                // UseSpellSlot
                 // 62
 
-                // PassiveSpell
+                // PassiveSpellSlot
                 // 63
                 if (!string.IsNullOrEmpty(CharData.Passive.PassiveAbilityName))
                 {
@@ -367,6 +374,22 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             base.ClearWaypoints();
 
             UpdateMoveOrder(OrderType.Hold);
+        }
+
+        /// <summary>
+        /// Cancels any auto attacks this AI is performing and resets the time between the next auto attack if specified.
+        /// </summary>
+        /// <param name="reset">Whether or not to reset the delay between the next auto attack.</param>
+        public void CancelAutoAttack(bool reset)
+        {
+            //UpdateMoveOrder(OrderType.Stop);
+            if (reset)
+            {
+                _autoAttackCurrentCooldown = 0;
+                AutoAttackSpell.SetSpellState(SpellState.STATE_READY);
+                AutoAttackSpell.ResetSpellDelay();
+                _game.PacketNotifier.NotifyNPC_InstantStop_Attack(this, false);
+            }
         }
 
         /// <summary>
@@ -592,6 +615,11 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             }
         }
 
+        /// <summary>
+        /// Gets a random auto attack spell from the list of auto attacks available for this AI.
+        /// Will only select crit auto attacks if the next auto attack is going to be a crit, otherwise normal auto attacks will be selected.
+        /// </summary>
+        /// <returns>Random auto attack spell.</returns>
         public ISpell GetNewAutoAttack()
         {
             if (IsNextAutoCrit)
@@ -663,23 +691,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         }
 
         /// <summary>
-        /// Sets this unit's auto attack spell that they will use when in range of their target (unless they are going to cast a spell first).
-        /// </summary>
-        /// <param name="spell">ISpell instance to set.</param>
-        /// <param name="isReset">Whether or not setting this spell causes auto attacks to be reset (cooldown).</param>
-        /// <returns>ISpell set.</returns>
-        public ISpell SetAutoAttackSpell(ISpell spell, bool isReset)
-        {
-            AutoAttackSpell = spell;
-            if (isReset)
-            {
-                _autoAttackCurrentCooldown = 0;
-                AutoAttackSpell.SetSpellState(SpellState.STATE_READY);
-            }
-            return AutoAttackSpell;
-        }
-
-        /// <summary>
         /// Removes the spell instance from the given slot (replaces it with an empty BaseSpell).
         /// </summary>
         /// <param name="slot">Byte slot of the spell to remove.</param>
@@ -708,6 +719,21 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         /// <summary>
         /// Sets this unit's auto attack spell that they will use when in range of their target (unless they are going to cast a spell first).
         /// </summary>
+        /// <param name="spell">ISpell instance to set.</param>
+        /// <param name="isReset">Whether or not setting this spell causes auto attacks to be reset (cooldown).</param>
+        public void SetAutoAttackSpell(ISpell spell, bool isReset)
+        {
+            AutoAttackSpell = spell;
+            if (isReset)
+            {
+                _autoAttackCurrentCooldown = 0;
+                AutoAttackSpell.SetSpellState(SpellState.STATE_READY);
+            }
+        }
+
+        /// <summary>
+        /// Sets this unit's auto attack spell that they will use when in range of their target (unless they are going to cast a spell first).
+        /// </summary>
         /// <param name="name">Internal name of the spell to set.</param>
         /// <param name="isReset">Whether or not setting this spell causes auto attacks to be reset (cooldown).</param>
         /// <returns>ISpell set.</returns>
@@ -720,6 +746,14 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 AutoAttackSpell.SetSpellState(SpellState.STATE_READY);
             }
             return AutoAttackSpell;
+        }
+
+        /// <summary>
+        /// Forces this AI to skip its next auto attack. Usually used when spells intend to override the next auto attack with another spell.
+        /// </summary>
+        public void SkipNextAutoAttack()
+        {
+            _skipNextAutoAttack = true;
         }
 
         /// <summary>
@@ -782,6 +816,15 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             }
 
             UpdateMoveOrder(OrderType.TempCastSpell);
+        }
+
+        /// <summary>
+        /// Forces this AI to perform the given internally named animation.
+        /// </summary>
+        /// <param name="animName">Internal name of an animation to play.</param>
+        public void SpellAnimation(string animName)
+        {
+            _game.PacketNotifier.NotifyS2C_PlayAnimation(this, animName);
         }
 
         /// <summary>
@@ -890,17 +933,27 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 }
                 else if (IsAttacking && TargetUnit != null && !IsDashing)
                 {
-                    if (AutoAttackSpell.State == SpellState.STATE_READY)
+                    if (AutoAttackSpell.HasEmptyScript || (AutoAttackSpell.CastInfo.SpellSlot - 64 < 9 && IsNextAutoCrit) || (AutoAttackSpell.CastInfo.SpellSlot - 64 >= 9 && !IsNextAutoCrit))
                     {
-                        AutoAttackSpell.Cast(AutoAttackTarget.Position, AutoAttackTarget.Position, AutoAttackTarget);
-                        
-                        _autoAttackCurrentCooldown = 1.0f / Stats.GetTotalAttackSpeed();
-                        IsAttacking = false;
+                        AutoAttackSpell = GetNewAutoAttack();
+                    }
 
-                        if (AutoAttackSpell.HasEmptyScript)
+                    if (AutoAttackSpell.State == SpellState.STATE_READY && TargetUnit != null)
+                    {
+                        ApiEventManager.OnPreAttack.Publish(this, AutoAttackSpell);
+
+                        if (!_skipNextAutoAttack)
                         {
-                            AutoAttackSpell = GetNewAutoAttack();
+                            AutoAttackSpell.Cast(TargetUnit.Position, TargetUnit.Position, TargetUnit);
+
+                            _autoAttackCurrentCooldown = 1.0f / Stats.GetTotalAttackSpeed();
                         }
+                        else
+                        {
+                            _skipNextAutoAttack = false;
+                        }
+
+                        IsAttacking = false;
                     }
                 }
                 else if (Vector2.DistanceSquared(Position, TargetUnit.Position) <= (Stats.Range.Total + TargetUnit.CollisionRadius) * (Stats.Range.Total + TargetUnit.CollisionRadius) && !IsDashing)
@@ -918,7 +971,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                                 AutoAttackSpell.ResetSpellDelay();
                                 // TODO: ApiEventManager.OnUnitPreAttack.Publish(this);
                                 IsAttacking = true;
-                                AutoAttackTarget = TargetUnit;
                             }
                         }
                     }
@@ -968,15 +1020,15 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
                 IsAttacking = false;
 
-                if (AutoAttackSpell != null)
+                if (AutoAttackSpell != null && AutoAttackSpell.State != SpellState.STATE_READY)
                 {
                     if (!HasAutoAttacked)
                     {
                         _autoAttackCurrentCooldown = 0;
                     }
 
-                    AutoAttackSpell.ResetSpellDelay();
                     AutoAttackSpell.SetSpellState(SpellState.STATE_READY);
+                    AutoAttackSpell.ResetSpellDelay();
                     _game.PacketNotifier.NotifyNPC_InstantStop_Attack(this, false);
                 }
 
@@ -991,7 +1043,13 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             if (SpellToCast != null && !IsAttacking)
             {
                 if (OrderType == OrderType.TempCastSpell
-                && Vector2.DistanceSquared(new Vector2(SpellToCast.CastInfo.TargetPosition.X, SpellToCast.CastInfo.TargetPosition.Z), SpellToCast.CastInfo.Owner.Position) <= SpellToCast.SpellData.CastRange[SpellToCast.CastInfo.SpellLevel] * SpellToCast.SpellData.CastRange[SpellToCast.CastInfo.SpellLevel])
+                    && SpellToCast.CastInfo.Targets[0].Unit != null
+                    && Vector2.DistanceSquared(SpellToCast.CastInfo.Targets[0].Unit.Position, SpellToCast.CastInfo.Owner.Position) <= SpellToCast.SpellData.CastRange[SpellToCast.CastInfo.SpellLevel] * SpellToCast.SpellData.CastRange[SpellToCast.CastInfo.SpellLevel])
+                {
+                    IsAttacking = true;
+                }
+                else if (OrderType == OrderType.TempCastSpell
+                        && Vector2.DistanceSquared(new Vector2(SpellToCast.CastInfo.TargetPosition.X, SpellToCast.CastInfo.TargetPosition.Z), SpellToCast.CastInfo.Owner.Position) <= SpellToCast.SpellData.CastRange[SpellToCast.CastInfo.SpellLevel] * SpellToCast.SpellData.CastRange[SpellToCast.CastInfo.SpellLevel])
                 {
                     SpellToCast.Cast(new Vector2(SpellToCast.CastInfo.TargetPosition.X, SpellToCast.CastInfo.TargetPosition.Z), new Vector2(SpellToCast.CastInfo.TargetPositionEnd.X, SpellToCast.CastInfo.TargetPositionEnd.Z));
                 }

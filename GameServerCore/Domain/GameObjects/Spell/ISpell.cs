@@ -79,9 +79,9 @@ namespace GameServerCore.Domain.GameObjects.Spell
         /// </summary>
         bool Cast(Vector2 start, Vector2 end, IAttackableUnit unit = null);
         /// <summary>
-        /// Called when the character casts this spell via a script.
+        /// Called when a script manually casts this spell.
         /// </summary>
-        bool Cast(ICastInfo castInfo);
+        bool Cast(ICastInfo castInfo, bool cast);
         void Deactivate();
         int GetId();
         float GetCooldown();
@@ -92,6 +92,6 @@ namespace GameServerCore.Domain.GameObjects.Spell
         void SetCooldown(float newCd);
         void SetLevel(byte toLevel);
         void SetSpellState(SpellState state);
-        void SpellAnimation(string animName, IAttackableUnit target);
+        void SetSpellToggle(bool toggle);
     }
 }

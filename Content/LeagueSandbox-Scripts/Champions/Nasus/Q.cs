@@ -18,6 +18,10 @@ namespace Spells
 
         public void OnActivate(IObjAiBase owner, ISpell spell)
         {
+            if (!owner.HasBuff("NasusQStacks"))
+            {
+                AddBuff("NasusQStacks", 20000f, 1, null, owner, owner, true);
+            }
         }
 
         public void OnDeactivate(IObjAiBase owner, ISpell spell)
@@ -26,12 +30,7 @@ namespace Spells
 
         public void OnSpellPreCast(IObjAiBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
         {
-            if (!owner.HasBuff("NasusQStacks"))
-            {
-                AddBuff("NasusQStacks", 20000f, 1, null, owner, owner, true);
-            }
             AddBuff("NasusQ", 10f, 1, spell, owner, owner);
-            owner.SetAutoAttackSpell("NasusQAttack", true);
         }
 
         public void OnSpellCast(ISpell spell)
