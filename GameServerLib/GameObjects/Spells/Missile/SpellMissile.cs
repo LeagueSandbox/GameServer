@@ -322,8 +322,8 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Missile
                                 || (m.IsPet && SpellData.Flags.HasFlag(SpellDataFlags.AffectUseable))
                                 || (m.IsWard && SpellData.Flags.HasFlag(SpellDataFlags.AffectWards))
                                 || (!m.IsClone && SpellData.Flags.HasFlag(SpellDataFlags.IgnoreClones))
-                                || (unit.Team == Owner.Team && !SpellData.Flags.HasFlag(SpellDataFlags.IgnoreAllyMinion))
-                                || (unit.Team != Owner.Team && unit.Team != TeamId.TEAM_NEUTRAL && !SpellData.Flags.HasFlag(SpellDataFlags.IgnoreEnemyMinion))
+                                || (unit.Team == CastInfo.Owner.Team && !SpellData.Flags.HasFlag(SpellDataFlags.IgnoreAllyMinion))
+                                || (unit.Team != CastInfo.Owner.Team && unit.Team != TeamId.TEAM_NEUTRAL && !SpellData.Flags.HasFlag(SpellDataFlags.IgnoreEnemyMinion))
                                 || SpellData.Flags.HasFlag(SpellDataFlags.AffectMinions):
                     if (!(unit is ILaneMinion))
                     {

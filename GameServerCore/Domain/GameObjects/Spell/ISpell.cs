@@ -75,6 +75,11 @@ namespace GameServerCore.Domain.GameObjects.Spell
         void Deactivate();
         int GetId();
         float GetCooldown();
+        /// <summary>
+        /// Gets the cast range for this spell (based on level).
+        /// </summary>
+        /// <returns>Cast range based on level.</returns>
+        float GetCurrentCastRange();
         string GetStringForSlot();
         void LevelUp();
         void LowerCooldown(float lowerValue);

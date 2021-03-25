@@ -437,12 +437,28 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
         /// </summary>
         public bool Cast(Vector2 start, Vector2 end, IAttackableUnit unit = null)
         {
+            if (unit == null && SpellData.TargetingType == TargetingType.Target)
+            {
+                return false;
+            }
+
             if (unit == null
                 && SpellData.TargetingType == TargetingType.Self
                 || SpellData.TargetingType == TargetingType.SelfAOE
                 || SpellData.TargetingType == TargetingType.TargetOrLocation)
             {
                 unit = CastInfo.Owner;
+            }
+
+            var distance = Vector2.DistanceSquared(start, CastInfo.Owner.Position);
+            if (SpellData.TargetingType == TargetingType.Target)
+            {
+                distance = Vector2.DistanceSquared(start, unit.Position);
+            }
+            var castRange = GetCurrentCastRange();
+            if (distance > castRange * castRange)
+            {
+                return false;
             }
 
             _spellScript.OnSpellPreCast(CastInfo.Owner, this, unit, start, end);
@@ -584,6 +600,11 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
 
             if (CastInfo.Targets[0].Unit != null && CastInfo.Targets[0].Unit != CastInfo.Owner)
             {
+                if (CastInfo.Targets[0].Unit != CastInfo.Owner.TargetUnit)
+                {
+                    CastInfo.Owner.SetTargetUnit(CastInfo.Targets[0].Unit, false);
+                }
+
                 _game.PacketNotifier.NotifyS2C_UnitSetLookAt(CastInfo.Owner, CastInfo.Targets[0].Unit, attackType);
             }
 
@@ -1017,6 +1038,33 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
         public float GetCooldown()
         {
             return _game.Config.CooldownsEnabled ? SpellData.Cooldown[CastInfo.SpellLevel] * (1 - CastInfo.Owner.Stats.CooldownReduction.Total) : 0;
+        }
+
+        /// <summary>
+        /// Gets the cast range for this spell (based on level).
+        /// </summary>
+        /// <returns>Cast range based on level.</returns>
+        public float GetCurrentCastRange()
+        {
+            var castRange = SpellData.CastRange[0];
+
+            if (CastInfo.SpellLevel == 0)
+            {
+                return castRange;
+            }
+
+            if (CastInfo.SpellLevel > 0)
+            {
+                for (int i = 1; i < SpellData.CastRange.Length - 1; i++)
+                {
+                    if (SpellData.CastRange[i] > castRange && CastInfo.SpellLevel == i)
+                    {
+                        castRange = SpellData.CastRange[i];
+                    }
+                }
+            }
+
+            return castRange;
         }
 
         /// <returns>spell's unique ID</returns>
