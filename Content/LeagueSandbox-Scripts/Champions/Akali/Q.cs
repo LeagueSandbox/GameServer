@@ -37,7 +37,7 @@ namespace Spells
             var to = Vector2.Normalize(new Vector2(spell.CastInfo.Targets[0].Unit.Position.X, spell.CastInfo.Targets[0].Unit.Position.Y) - current);
             var range = to * 1150;
             var trueCoords = current + range;
-            spell.AddProjectile("AkaliMota", current, current, trueCoords);
+            //spell.AddProjectile("AkaliMota", current, current, trueCoords);
         }
 
         public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, ISpellMissile projectile)

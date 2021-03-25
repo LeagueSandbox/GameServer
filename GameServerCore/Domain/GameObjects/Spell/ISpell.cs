@@ -44,19 +44,9 @@ namespace GameServerCore.Domain.GameObjects.Spell
         /// <returns>Newly created area of effect rectangle with the given functionality.</returns>
         IProjectile AddLaser(string effectName, Vector2 target, HitResult hitResult = HitResult.HIT_Normal, bool affectAsCastIsOver = true);
         /// <summary>
-        /// Creates a line missile at the specified cast position that will move as follows: from -> to.
-        /// If overrideCastPosition is used, the line missile will move as follows: castPos -> from, to will determine the distance to travel: castPos -> to.
-        /// *NOTE*: Missiles will not spawn client-side if from = to.
+        /// Creates a line missile with the specified properties.
         /// </summary>
-        /// <param name="nameMissile">Internal name of the missile to spawn. Required for missile features.</param>
-        /// <param name="castPos">Position the missile will spawn at.</param>
-        /// <param name="from">Position the missile's path will start at. If overrideCastPosition is used, this becomes the end of the path.</param>
-        /// <param name="to">Position the missile's path will end at. If overrideCastPosition is used, this will only determine</param>
-        /// <param name="hitResult">How the damage applied by this projectile should be shown to clients.</param>
-        /// <param name="isServerOnly">Whether or not this missile will only spawn server-side.</param>
-        /// <param name="overrideCastPosition">Whether or not to override default cast position behavior with the given cast position. Refer to main summary for new behavior.</param>
-        /// <returns>Newly created missile with the given functionality.</returns>
-        IProjectile AddProjectile(string nameMissile, Vector2 castPos, Vector2 from, Vector2 to, HitResult hitResult = HitResult.HIT_Normal, bool isServerOnly = false, bool overrideCastPosition = false);
+        IProjectile AddProjectile(ICastInfo castInfo);
         /// <summary>
         /// Creates a single-target missile at the specified cast position that will move as follows: Owner.Position -> target.Position. Despawns when Position = target.Position
         /// </summary>

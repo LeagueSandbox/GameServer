@@ -1330,12 +1330,6 @@ namespace PacketDefinitions420
         /// <param name="p">Projectile that was created.</param>
         public void NotifyMissileReplication(ISpellMissile p)
         {
-            var to = Vector3.Normalize(p.CastInfo.TargetPositionEnd - p.CastInfo.TargetPosition);
-            if (p.CastInfo.IsOverrideCastPosition)
-            {
-                to = Vector3.Normalize(p.CastInfo.TargetPositionEnd - p.CastInfo.SpellCastLaunchPosition);
-            }
-
             var castInfo = new CastInfo
             {
                 SpellHash = p.CastInfo.SpellHash,
@@ -1392,8 +1386,8 @@ namespace PacketDefinitions420
                 Position = p.CastInfo.SpellCastLaunchPosition,
                 CasterPosition = p.CastInfo.Owner.GetPosition3D(),
                 // Not sure if we want to add height for these, but i did it anyway
-                Direction = to,
-                Velocity = to * p.GetSpeed(),
+                Direction = p.Direction,
+                Velocity = p.Direction * p.GetSpeed(),
                 StartPoint = p.CastInfo.SpellCastLaunchPosition,
                 EndPoint = p.CastInfo.TargetPositionEnd,
                 // TODO: Verify

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Numerics;
 using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
@@ -43,7 +44,11 @@ namespace LeonaShieldOfDaybreak
 
         public void OnDeactivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
-            //ApiEventManager.OnPreAttack.RemoveListener(this, ownerSpell.CastInfo.Owner);
+            if (buff.TimeElapsed >= buff.Duration)
+            {
+                ApiEventManager.OnPreAttack.RemoveListener(this, unit as IObjAiBase);
+            }
+
             // TODO: Spell Cooldown
 
             if (unit is IObjAiBase ai)
@@ -58,7 +63,7 @@ namespace LeonaShieldOfDaybreak
         {
             spell.CastInfo.Owner.SkipNextAutoAttack();
 
-            SpellCast(spell.CastInfo.Owner, 0, SpellSlotType.ExtraSlots, false, spell.CastInfo.Owner.TargetUnit);
+            SpellCast(spell.CastInfo.Owner, 0, SpellSlotType.ExtraSlots, false, spell.CastInfo.Owner.TargetUnit, Vector2.Zero);
 
             if (thisBuff != null)
             {

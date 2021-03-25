@@ -49,7 +49,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Missile
             ICastInfo castInfo,
             float moveSpeed,
             string projectileName,
-            SpellDataFlags flags = 0,
+            SpellDataFlags overrideFlags = 0, // TODO: Find a use for these
             uint netId = 0,
             bool serverOnly = false
         ) : base(game, castInfo.Owner.Position, collisionRadius, 0, netId)
@@ -75,22 +75,30 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Missile
                 return false;
             }))
             {
-                if (SpellOrigin.SpellData.TargetingType != TargetingType.Location)
+                Position = new Vector2(castInfo.SpellCastLaunchPosition.X, castInfo.SpellCastLaunchPosition.Z);
+
+                var goingTo = new Vector2(castInfo.TargetPositionEnd.X, castInfo.TargetPositionEnd.Z) - Position;
+                var dirTemp = Vector2.Normalize(goingTo);
+                var endPos = Position + (dirTemp * SpellData.CastRangeDisplayOverride);
+
+                // usually doesn't happen
+                if (float.IsNaN(dirTemp.X) || float.IsNaN(dirTemp.Y))
                 {
-                    Position = new Vector2(castInfo.SpellCastLaunchPosition.X, castInfo.SpellCastLaunchPosition.Z);
-                }
-                else
-                {
-                    if (CastInfo.IsOverrideCastPosition)
+                    if (float.IsNaN(CastInfo.Owner.Direction.X) || float.IsNaN(CastInfo.Owner.Direction.Y))
                     {
-                        Position = new Vector2(castInfo.SpellCastLaunchPosition.X, castInfo.SpellCastLaunchPosition.Z);
+                        dirTemp = new Vector2(1, 0);
                     }
                     else
                     {
-                        Position = new Vector2(castInfo.TargetPosition.X, castInfo.TargetPosition.Z);
+                        dirTemp = new Vector2(CastInfo.Owner.Direction.X, CastInfo.Owner.Direction.Z);
                     }
+
+                    endPos = Position + (dirTemp * SpellData.CastRangeDisplayOverride);
+                    CastInfo.TargetPositionEnd = new Vector3(endPos.X, 0, endPos.Y);
                 }
-                Destination = new Vector2(castInfo.TargetPositionEnd.X, castInfo.TargetPositionEnd.Z);
+
+                // TODO: Verify if CastRangeDisplayOverride is the correct variable to use.
+                Destination = Position + (dirTemp * SpellData.CastRangeDisplayOverride);
             }
 
             if (!string.IsNullOrEmpty(projectileName))
@@ -283,7 +291,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Missile
                 return false;
             }
 
-            if (unit.Team == Owner.Team && !SpellData.Flags.HasFlag(SpellDataFlags.AffectFriends))
+            if (unit.Team == CastInfo.Owner.Team && !SpellData.Flags.HasFlag(SpellDataFlags.AffectFriends))
             {
                 return false;
             }
@@ -293,8 +301,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Missile
                 return false;
             }
 
-            if (unit.Team != Owner.Team && unit.Team != TeamId.TEAM_NEUTRAL && !SpellData.Flags.HasFlag(SpellDataFlags.AffectEnemies))
-            if (unit.Team != CastInfo.Owner.Team && unit.Team != TeamId.TEAM_NEUTRAL && !((SpellData.Flags & (int)SpellFlag.SPELL_FLAG_AFFECT_ENEMIES) > 0))
+            if (unit.Team != CastInfo.Owner.Team && unit.Team != TeamId.TEAM_NEUTRAL && !SpellData.Flags.HasFlag(SpellDataFlags.AffectEnemies))
             {
                 return false;
             }

@@ -71,6 +71,12 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
                 ApiEventManager.OnSpellCast.AddListener(_spellScript, this, _spellScript.OnSpellCast);
                 ApiEventManager.OnSpellPostCast.AddListener(_spellScript, this, _spellScript.OnSpellPostCast);
             }
+
+            if (_spellScript.ScriptMetadata.ChannelDuration > 0)
+            {
+                // TODO: Implement OnSpellChannel and OnSpellPostChannel in ISpellScript and AddListener on both.
+            }
+
             //Activate spell - Notes: Deactivate is never called as spell removal hasn't been added
             _spellScript.OnActivate(owner, this);
         }
@@ -240,130 +246,34 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
         }
 
         /// <summary>
-        /// Creates a line missile at the specified cast position that will move as follows: from -> to.
-        /// If overrideCastPosition is used, the line missile will move as follows: castPos -> from, to will determine the distance to travel: castPos -> to.
-        /// *NOTE*: Missiles will not spawn client-side if from = to.
+        /// Creates a line missile with the specified properties.
         /// </summary>
-        /// <param name="nameMissile">Internal name of the missile to spawn. Required for missile features.</param>
-        /// <param name="castPos">Position the missile will spawn at.</param>
-        /// <param name="from">Position the missile's path will start at. If overrideCastPosition is used, this becomes the end of the path.</param>
-        /// <param name="to">Position the missile's path will end at. If overrideCastPosition is used, this will only determine</param>
-        /// <param name="hitResult">How the damage applied by this projectile should be shown to clients.</param>
-        /// <param name="isServerOnly">Whether or not this missile will only spawn server-side.</param>
-        /// <param name="overrideCastPosition">Whether or not to override default cast position behavior with the given cast position. Refer to main summary for new behavior.</param>
-        /// <returns>Newly created missile with the given functionality.</returns>
-        public IProjectile AddProjectile(string nameMissile, Vector2 castPos, Vector2 from, Vector2 to, HitResult hitResult = HitResult.HIT_Normal, bool isServerOnly = false, bool overrideCastPosition = false)
+        public IProjectile AddProjectile(ICastInfo castInfo)
         {
-            var castTargets = new List<ICastTarget>();
-            var castTarget = new CastTarget(null, hitResult); // TODO: Verify if 0 NetId is OK
-            castTargets.Add(castTarget);
-            ICastInfo castInfo = new CastInfo
-            {
-                SpellNetID = _futureProjNetId,
-                SpellLevel = 1, // TODO: Verify
-                AttackSpeedModifier = CastInfo.AttackSpeedModifier,
-                Owner = CastInfo.Owner,
-                SpellChainOwnerNetID = CastInfo.SpellChainOwnerNetID,
-                PackageHash = CastInfo.PackageHash,
-                MissileNetID = _futureProjNetId,
-                TargetPosition = new Vector3(from.X, _game.Map.NavigationGrid.GetHeightAtLocation(from.X, from.Y), from.Y),
-                TargetPositionEnd = new Vector3(to.X, _game.Map.NavigationGrid.GetHeightAtLocation(to.X, to.Y), to.Y),
-                Targets = castTargets,
-                DesignerCastTime = 0, // TODO: Verify
-                ExtraCastTime = 0, // TODO: Verify
-                DesignerTotalTime = 0, // TODO: Verify
-                Cooldown = 0, // TODO: Verify
-                StartCastTime = 0, // TODO: Verify
-                IsForceCastingOrChannel = false, // TODO: Verify
-                IsOverrideCastPosition = overrideCastPosition,
-                ManaCost = 0,
-                SpellCastLaunchPosition = new Vector3(castPos.X, _game.Map.NavigationGrid.GetHeightAtLocation(castPos.X, castPos.Y), castPos.Y),
-                AmmoUsed = 0, // TODO: Verify
-                AmmoRechargeTime = 0 // TODO: Verify
-            };
+            var isServerOnly = false;
 
-            if (overrideCastPosition)
+            if (SpellData.MissileEffect != "")
             {
-                var toTarget = Vector3.Normalize(castInfo.TargetPositionEnd - castInfo.SpellCastLaunchPosition);
-                if (toTarget.Length() == 0.0f
-                    || float.IsNaN(toTarget.X)
-                    || float.IsNaN(toTarget.Y)
-                    || float.IsNaN(toTarget.Z))
-                {
-                    toTarget = new Vector3(1.0f, 0.0f, 0.0f);
-                }
-                castInfo.TargetPositionEnd = castInfo.SpellCastLaunchPosition + (toTarget * Vector2.Distance(new Vector2(castInfo.SpellCastLaunchPosition.X, castInfo.SpellCastLaunchPosition.Z), new Vector2(castInfo.TargetPositionEnd.X, castInfo.TargetPositionEnd.Z)));
+                isServerOnly = true;
             }
 
-            IProjectile p;
-            if (nameMissile == "")
-            {
-                castInfo.SpellHash = HashFunctions.HashString(""); // TODO: Verify
-                castInfo.IsAutoAttack = true;
-                castInfo.IsSecondAutoAttack = CastInfo.Owner.HasMadeInitialAttack;
-                castInfo.IsClickCasted = false; // TODO: Verify
+            var p = new Projectile(
+                _game,
+                (int)SpellData.LineWidth,
+                this,
+                castInfo,
+                SpellData.MissileSpeed,
+                SpellName,
+                SpellData.Flags,
+                castInfo.MissileNetID,
+                isServerOnly
+            );
 
-                p = new Projectile(
-                    _game,
-                    5,
-                    this,
-                    castInfo,
-                    SpellData.MissileSpeed,
-                    nameMissile,
-                    0,
-                    _futureProjNetId
-                );
-            }
-            else
-            {
-                ISpellData projectileSpellData = _game.Config.ContentManager.GetSpellData(nameMissile);
-
-                castInfo.SpellHash = HashFunctions.HashString(nameMissile); // TODO: Verify
-                castInfo.IsAutoAttack = false;
-                castInfo.IsSecondAutoAttack = false;
-                castInfo.IsClickCasted = false; // TODO: Verify
-                castInfo.SpellSlot = 0x33; // TODO: Verify
-
-                // TODO: implement check for IsForceCastingOrChannel and IsOverrideCastPosition
-                if (projectileSpellData.CastType == (int)CastType.CAST_TargetMissile)
-                {
-                    castInfo.IsClickCasted = true; // TODO: Verify
-                }
-
-                for (var i = 0; i < CastInfo.Owner.CharData.SpellNames.Length; i++)
-                {
-                    if (CastInfo.Owner.CharData.SpellNames[i] == nameMissile)
-                    {
-                        castInfo.SpellSlot = (byte)(i + 51); // TODO: Verify
-                    }
-                }
-
-                p = new Projectile(
-                    _game,
-                    (int)projectileSpellData.LineWidth,
-                    this,
-                    castInfo,
-                    projectileSpellData.MissileSpeed,
-                    nameMissile,
-                    projectileSpellData.Flags,
-                    _futureProjNetId,
-                    isServerOnly
-                );
-            }
-
-            Projectiles.Add(p.NetId, p);
             _game.ObjectManager.AddObject(p);
 
-            if (!isServerOnly && nameMissile != "")
-            {
-                _game.PacketNotifier.NotifyMissileReplication(p);
-            }
-            else if (nameMissile != "")
-            {
-                _game.PacketNotifier.NotifyForceCreateMissile(p);
-            }
-
-            _futureProjNetId = _networkIdManager.GetNewNetId();
+            _game.PacketNotifier.NotifyMissileReplication(p);
+            
+            // TODO: Verify when NotifyForceCreateMissile should be used instead.
 
             return p;
         }
@@ -527,6 +437,14 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
         /// </summary>
         public bool Cast(Vector2 start, Vector2 end, IAttackableUnit unit = null)
         {
+            if (unit == null
+                && SpellData.TargetingType == TargetingType.Self
+                || SpellData.TargetingType == TargetingType.SelfAOE
+                || SpellData.TargetingType == TargetingType.TargetOrLocation)
+            {
+                unit = CastInfo.Owner;
+            }
+
             _spellScript.OnSpellPreCast(CastInfo.Owner, this, unit, start, end);
 
             var stats = CastInfo.Owner.Stats;
@@ -629,19 +547,19 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
                     || (!CastInfo.IsAutoAttack && CastInfo.Owner.IsAttacking))
             {
                 attackType = AttackType.ATTACK_TYPE_TARGETED;
-                CastInfo.Owner.SetSpellToCast(this);
+                //CastInfo.Owner.SetSpellToCast(this);
                 return false;
             }
 
             if (!CastInfo.IsAutoAttack && (!SpellData.IsToggleSpell && !SpellData.CanMoveWhileChanneling
                         && SpellData.CantCancelWhileChanneling)
                         || (!SpellData.NoWinddownIfCancelled
-                        && (SpellData.Flags & (int)SpellFlag.SPELL_FLAG_INSTANT_CAST) == 0
+                        && !SpellData.Flags.HasFlag(SpellDataFlags.InstantCast)
                         && SpellData.CantCancelWhileWindingUp))
             {
                 if (_spellScript.ScriptMetadata.TriggersSpellCasts)
                 {
-                    if ((SpellData.Flags & (int)SpellFlag.SPELL_FLAG_INSTANT_CAST) == 0)
+                    if (!SpellData.Flags.HasFlag(SpellDataFlags.InstantCast))
                     {
                         CastInfo.Owner.StopMovement();
                     }
@@ -715,7 +633,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
 
                 if (!CastInfo.UseAttackCastDelay)
                 {
-                    if ((SpellData.Flags & (int)SpellFlag.SPELL_FLAG_INSTANT_CAST) == 0)
+                    if (!SpellData.Flags.HasFlag(SpellDataFlags.InstantCast))
                     {
                         State = SpellState.STATE_CASTING;
                     }
@@ -749,11 +667,10 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
         public bool Cast(ICastInfo castInfo, bool cast)
         {
             CastInfo = castInfo;
-            var unit = CastInfo.Targets[0].Unit;
             var start = new Vector2(CastInfo.TargetPosition.X, CastInfo.TargetPosition.Z);
             var end = new Vector2(CastInfo.TargetPositionEnd.X, CastInfo.TargetPositionEnd.Z);
 
-            _spellScript.OnSpellPreCast(CastInfo.Owner, this, unit, start, end);
+            _spellScript.OnSpellPreCast(CastInfo.Owner, this, castInfo.Targets[0].Unit, start, end);
 
             var stats = CastInfo.Owner.Stats;
 
@@ -828,12 +745,6 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
                 CastInfo.IsClickCasted = true;
             }
 
-            if (!CastInfo.IsOverrideCastPosition)
-            {
-                // TODO: Verify
-                CastInfo.SpellCastLaunchPosition = CastInfo.Owner.GetPosition3D();
-            }
-
             // TODO: Verify
             var attackType = AttackType.ATTACK_TYPE_RADIAL;
 
@@ -859,21 +770,21 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
             if (cast && !CastInfo.IsAutoAttack && (!SpellData.IsToggleSpell && !SpellData.CanMoveWhileChanneling
                         && SpellData.CantCancelWhileChanneling)
                         || (!SpellData.NoWinddownIfCancelled
-                        && (SpellData.Flags & (int)SpellFlag.SPELL_FLAG_INSTANT_CAST) == 0
+                        && !SpellData.Flags.HasFlag(SpellDataFlags.InstantCast)
                         && SpellData.CantCancelWhileWindingUp))
             {
                 if (_spellScript.ScriptMetadata.TriggersSpellCasts)
                 {
-                    if ((SpellData.Flags & (int)SpellFlag.SPELL_FLAG_INSTANT_CAST) == 0)
+                    if (!SpellData.Flags.HasFlag(SpellDataFlags.InstantCast))
                     {
                         CastInfo.Owner.StopMovement();
                     }
 
                     var goingTo = start - CastInfo.Owner.Position;
 
-                    if (unit != null)
+                    if (castInfo.Targets[0].Unit != null)
                     {
-                        goingTo = unit.Position - CastInfo.Owner.Position;
+                        goingTo = castInfo.Targets[0].Unit.Position - CastInfo.Owner.Position;
                     }
 
                     var dirTemp = Vector2.Normalize(goingTo);
@@ -905,6 +816,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
                 float autoAttackTotalTime = CastInfo.Owner.CharData.GlobalCharData.AttackDelay * (1.0f + CastInfo.Owner.CharData.AttackDelayOffsetPercent[0]);
                 CastInfo.DesignerCastTime = autoAttackTotalTime * (CastInfo.Owner.CharData.GlobalCharData.AttackDelayCastPercent + CastInfo.Owner.CharData.AttackDelayCastOffsetPercent[CastInfo.SpellSlot - startIndex]);
 
+                // TODO: Verify if this should be affected by cast variable.
                 if (CastInfo.IsAutoAttack)
                 {
                     if (!CastInfo.IsSecondAutoAttack)
@@ -940,7 +852,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
 
                     if (!CastInfo.UseAttackCastDelay)
                     {
-                        if ((SpellData.Flags & (int)SpellFlag.SPELL_FLAG_INSTANT_CAST) == 0)
+                        if (!SpellData.Flags.HasFlag(SpellDataFlags.InstantCast))
                         {
                             State = SpellState.STATE_CASTING;
                         }
@@ -965,6 +877,13 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
                     _game.PacketNotifier.NotifyNPC_CastSpellAns(this);
                 }
             }
+            else
+            {
+                if (_spellScript.ScriptMetadata.MissileParameters != null)
+                {
+                    AddProjectile(CastInfo);
+                }
+            }
 
             return true;
         }
@@ -975,11 +894,11 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
         public void Channel()
         {
             State = SpellState.STATE_CHANNELING;
-            ApiEventManager.OnSpellChannel.Publish(this);
             CurrentChannelDuration = SpellData.ChannelDuration[CastInfo.SpellLevel];
             if (_spellScript.ScriptMetadata.ChannelDuration > 0)
             {
                 CurrentChannelDuration = _spellScript.ScriptMetadata.ChannelDuration;
+                ApiEventManager.OnSpellChannel.Publish(this);
             }
         }
 
@@ -999,8 +918,6 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
             {
                 ApiEventManager.OnSpellPostCast.Publish(this);
             }
-
-            ApplyEffects(CastInfo.Targets[0].Unit, null);
 
             if (CastInfo.IsAutoAttack || CastInfo.UseAttackCastTime)
             {
@@ -1024,6 +941,10 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
                 }
                 else
                 {
+                    if (_spellScript.ScriptMetadata.MissileParameters == null)
+                    {
+                        ApplyEffects(CastInfo.Targets[0].Unit, null);
+                    }
                     CastInfo.Owner.AutoAttackHit(CastInfo.Targets[0].Unit);
                 }
 
@@ -1031,6 +952,11 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
             }
             else
             {
+                if (_spellScript.ScriptMetadata.MissileParameters == null)
+                {
+                    ApplyEffects(CastInfo.Targets[0].Unit, null);
+                }
+
                 if (SpellData.ChannelDuration[CastInfo.SpellLevel] <= 0)
                 {
                     State = SpellState.STATE_COOLDOWN;
@@ -1044,9 +970,14 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
                 }
             }
 
+            if (_spellScript.ScriptMetadata.MissileParameters != null)
+            {
+                AddProjectile(CastInfo);
+            }
+
             CastInfo.Owner.UpdateMoveOrder(OrderType.Hold);
 
-            if ((SpellData.Flags & (int)SpellFlag.SPELL_FLAG_INSTANT_CAST) != 0)
+            if (SpellData.Flags.HasFlag(SpellDataFlags.InstantCast))
             {
                 if (!CastInfo.Owner.IsPathEnded())
                 {
@@ -1060,7 +991,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
 
             if (CastInfo.Owner.SpellToCast != null)
             {
-                CastInfo.Owner.SetSpellToCast(null);
+                //CastInfo.Owner.SetSpellToCast(null);
             }
         }
 

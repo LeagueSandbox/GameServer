@@ -95,13 +95,13 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             }
 
             // TODO: Centralize this instead of letting it lay in the initialization.
-            if (CharData.PerceptionBubbleRadius > 0)
-            {
-                VisionRadius = CharData.PerceptionBubbleRadius;
-            }
-            else if (collisionRadius > 0)
+            if (visionRadius > 0)
             {
                 VisionRadius = visionRadius;
+            }
+            else if (CharData.PerceptionBubbleRadius > 0)
+            {
+                VisionRadius = CharData.PerceptionBubbleRadius;
             }
             else
             {
@@ -877,7 +877,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                     order = OrderType.AttackTo;
                 }
 
-                UpdateMoveOrder(order);
+                UpdateMoveOrder(order, false);
             }
 
             base.Update(diff);
@@ -1056,7 +1056,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         /// Sets this unit's move order to the given order.
         /// </summary>
         /// <param name="order">MoveOrder to set.</param>
-        public void UpdateMoveOrder(OrderType order)
+        public void UpdateMoveOrder(OrderType order, bool publish = true)
         {
             OrderType = order;
 
@@ -1068,7 +1068,10 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 StopMovement();
             }
 
-            ApiEventManager.OnUnitUpdateMoveOrder.Publish(this);
+            if (publish)
+            {
+                ApiEventManager.OnUnitUpdateMoveOrder.Publish(this);
+            }
         }
     }
 }

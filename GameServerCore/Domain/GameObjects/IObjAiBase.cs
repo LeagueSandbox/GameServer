@@ -142,6 +142,7 @@ namespace GameServerCore.Domain.GameObjects
         /// Sets this unit's move order to the given order type.
         /// </summary>
         /// <param name="order">OrderType to set.</param>
-        void UpdateMoveOrder(OrderType order);
+        /// <param name="publish">Whether or not to trigger the move order update event.</param>
+        void UpdateMoveOrder(OrderType order, bool publish = true);
     }
 }

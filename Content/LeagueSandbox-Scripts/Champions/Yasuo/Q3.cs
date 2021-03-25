@@ -63,7 +63,7 @@ namespace Spells
             }
             else
             {
-                spell.AddProjectile("YasuoQ3Mis", spell.CastInfo.Owner.Position, spell.CastInfo.Owner.Position, trueCoords);
+                //spell.AddProjectile("YasuoQ3Mis", spell.CastInfo.Owner.Position, spell.CastInfo.Owner.Position, trueCoords);
                 //spell.CastInfo.Owner.SpellAnimation("SPELL1C");
                 (spell.CastInfo.Owner as IChampion).SetSpell("YasuoQW", 0, true);
                 AddParticleTarget(spell.CastInfo.Owner, "Yasuo_Base_Q3_Hand.troy", spell.CastInfo.Owner);

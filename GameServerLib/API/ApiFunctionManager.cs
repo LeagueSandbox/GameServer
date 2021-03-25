@@ -610,7 +610,7 @@ namespace LeagueSandbox.GameServer.API
             unit.SetAnimStates(animPairs);
         }
 
-        public static void SpellCast(IObjAiBase caster, int slot, SpellSlotType slotType, Vector3 pos, Vector3 endPos, bool fireWithoutCasting, Vector3 overrideCastPos, List<ICastTarget> targets = null, bool isForceCastingOrChanneling = false, int overrideForceLevel = -1, bool updateAutoAttackTimer = false, bool useAutoAttackSpell = false)
+        public static void SpellCast(IObjAiBase caster, int slot, SpellSlotType slotType, Vector2 pos, Vector2 endPos, bool fireWithoutCasting, Vector2 overrideCastPos, List<ICastTarget> targets = null, bool isForceCastingOrChanneling = false, int overrideForceLevel = -1, bool updateAutoAttackTimer = false, bool useAutoAttackSpell = false)
         {
             if ((slotType == SpellSlotType.SpellSlots && slot < 0 || slot > 3)
                 || (slotType == SpellSlotType.InventorySlots && slot < 0 && slot > 6)
@@ -631,6 +631,11 @@ namespace LeagueSandbox.GameServer.API
 
             ISpell spell = caster.GetSpell((byte)slot);
 
+            if (targets == null)
+            {
+                targets = new List<ICastTarget> { new CastTarget(null, HitResult.HIT_Normal) };
+            }
+
             ICastInfo castInfo = new CastInfo()
             {
                 SpellHash = (uint)spell.GetId(),
@@ -642,8 +647,8 @@ namespace LeagueSandbox.GameServer.API
                 SpellChainOwnerNetID = caster.NetId,
                 PackageHash = caster.GetObjHash(),
                 MissileNetID = _game.NetworkIdManager.GetNewNetId(),
-                TargetPosition = pos,
-                TargetPositionEnd = endPos,
+                TargetPosition = new Vector3(pos.X, caster.GetHeight(), pos.Y),
+                TargetPositionEnd = new Vector3(endPos.X, caster.GetHeight(), endPos.Y),
 
                 Targets = targets,
 
@@ -657,20 +662,15 @@ namespace LeagueSandbox.GameServer.API
                 SpellCastLaunchPosition = caster.GetPosition3D()
             };
 
-            if (pos == Vector3.Zero)
-            {
-                castInfo.TargetPosition = caster.GetPosition3D();
-            }
-
-            if (endPos == Vector3.Zero && targets[0].Unit != null)
-            {
-                castInfo.TargetPositionEnd = targets[0].Unit.GetPosition3D();
-            }
-
-            if (overrideCastPos != Vector3.Zero)
+            if (overrideCastPos != Vector2.Zero)
             {
                 castInfo.IsOverrideCastPosition = true;
-                castInfo.SpellCastLaunchPosition = overrideCastPos;
+                castInfo.SpellCastLaunchPosition = new Vector3(overrideCastPos.X, caster.GetHeight(), overrideCastPos.Y);
+
+                if (endPos == Vector2.Zero)
+                {
+                    castInfo.TargetPositionEnd = new Vector3(pos.X, caster.GetHeight(), pos.Y);
+                }
             }
 
             if (overrideForceLevel >= 0)
@@ -681,11 +681,10 @@ namespace LeagueSandbox.GameServer.API
             spell.Cast(castInfo, !fireWithoutCasting);
         }
 
-        public static void SpellCast(IObjAiBase caster, int slot, SpellSlotType slotType, bool fireWithoutCasting, IAttackableUnit target, bool isForceCastingOrChanneling = false, int overrideForceLevel = -1, bool updateAutoAttackTimer = false, bool useAutoAttackSpell = false)
+        public static void SpellCast(IObjAiBase caster, int slot, SpellSlotType slotType, bool fireWithoutCasting, IAttackableUnit target, Vector2 overrideCastPos, bool isForceCastingOrChanneling = false, int overrideForceLevel = -1, bool updateAutoAttackTimer = false, bool useAutoAttackSpell = false)
         {
             ICastTarget castTarget = new CastTarget(target, CastTarget.GetHitResult(target, useAutoAttackSpell, caster.IsNextAutoCrit));
-            Vector3 targetPos = target.GetPosition3D();
-            SpellCast(caster, slot, slotType, targetPos, targetPos, fireWithoutCasting, caster.GetPosition3D(), new List<ICastTarget> { castTarget }, isForceCastingOrChanneling, overrideForceLevel, updateAutoAttackTimer, useAutoAttackSpell);
+            SpellCast(caster, slot, slotType, target.Position, target.Position, fireWithoutCasting, overrideCastPos, new List<ICastTarget> { castTarget }, isForceCastingOrChanneling, overrideForceLevel, updateAutoAttackTimer, useAutoAttackSpell);
         }
     }
 }

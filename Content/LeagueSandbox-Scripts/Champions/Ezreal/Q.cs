@@ -7,6 +7,7 @@ using GameServerCore.Domain.GameObjects.Spell;
 using GameServerCore.Domain.GameObjects.Spell.Missile;
 using LeagueSandbox.GameServer.GameObjects.Spells;
 using LeagueSandbox.GameServer.API;
+using System.Collections.Generic;
 
 namespace Spells
 {
@@ -14,11 +15,11 @@ namespace Spells
     {
         public ISpellScriptMetadata ScriptMetadata { get; private set; } = new SpellScriptMetadata()
         {
-            TriggersSpellCasts = true
-            // TODO
+            TriggersSpellCasts = true,
+            IsDamagingSpell = true
         };
 
-        Vector2 direction;
+        IParticle bow;
 
         public void OnActivate(IObjAiBase owner, ISpell spell)
         {
@@ -34,34 +35,90 @@ namespace Spells
 
         public void OnSpellCast(ISpell spell)
         {
-            var current = new Vector2(spell.CastInfo.Owner.Position.X, spell.CastInfo.Owner.Position.Y);
-            var spellPos = new Vector2(spell.CastInfo.TargetPosition.X, spell.CastInfo.TargetPosition.Z);
-            direction = Vector2.Normalize(spellPos - current);
-            if (float.IsNaN(direction.X) || float.IsNaN(direction.Y))
-            {
-                direction = new Vector2(1.0f, 0.0f);
-            }
-            spell.CastInfo.Owner.FaceDirection(new Vector3(direction.X, 0.0f, direction.Y), false);
-
-            AddParticleTarget(spell.CastInfo.Owner, "ezreal_bow.troy", spell.CastInfo.Owner, 1, "L_HAND", lifetime: 1.0f);
+            bow = AddParticleTarget(spell.CastInfo.Owner, "ezreal_bow.troy", spell.CastInfo.Owner, 1, "L_HAND", lifetime: 1.0f);
         }
 
         public void OnSpellPostCast(ISpell spell)
         {
-            spell.CastInfo.Owner.FaceDirection(new Vector3(direction.X, 0.0f, direction.Y));
-            //spell.AddProjectile("EzrealMysticShotMissile", current, current, trueCoords);
+            var owner = spell.CastInfo.Owner as IChampion;
+            var ownerSkinID = owner.Skin;
+            var targetPos = new Vector2(spell.CastInfo.TargetPosition.X, spell.CastInfo.TargetPosition.Z);
+            var ownerPos = owner.Position;
+            var distance = Vector2.Distance(ownerPos, targetPos);
+            FaceDirection(targetPos, owner);
+
+            if (distance > 1100.0)
+            {
+                targetPos = GetPointFromUnit(owner, 1050.0f);
+            }
+
+            if (ownerSkinID == 5)
+            {
+                SpellCast(owner, 3, SpellSlotType.ExtraSlots, targetPos, targetPos, false, Vector2.Zero);
+            }
+            else
+            {
+                SpellCast(owner, 0, SpellSlotType.ExtraSlots, targetPos, targetPos, false, Vector2.Zero);
+            }
+        }
+
+        public void OnUpdate(float diff)
+        {
+        }
+    }
+
+    public class EzrealMysticShotMissile : ISpellScript
+    {
+        public ISpellScriptMetadata ScriptMetadata { get; private set; } = new SpellScriptMetadata()
+        {
+            MissileParameters = new MissileParameters
+            {
+                CanHitEnemies = true,
+                Type = MissileType.CircleLine
+            },
+            IsDamagingSpell = true
+            // TODO
+        };
+
+        //Vector2 direction;
+
+        public void OnActivate(IObjAiBase owner, ISpell spell)
+        {
+            ApiEventManager.OnSpellHit.AddListener(this, new KeyValuePair<ISpell, IObjAiBase>(spell, owner), TargetExecute, false);
+        }
+
+        public void OnDeactivate(IObjAiBase owner, ISpell spell)
+        {
+        }
+
+        public void OnSpellPreCast(IObjAiBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
+        {
         }
 
         public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, ISpellMissile projectile)
         {
-            var ad = spell.CastInfo.Owner.Stats.AttackDamage.Total * spell.SpellData.AttackDamageCoefficient;
-            var ap = spell.CastInfo.Owner.Stats.AbilityPower.Total * spell.SpellData.MagicDamageCoefficient;
+            var owner = spell.CastInfo.Owner;
+            var ad = owner.Stats.AttackDamage.Total * spell.SpellData.AttackDamageCoefficient;
+            var ap = owner.Stats.AbilityPower.Total * spell.SpellData.MagicDamageCoefficient;
             var damage = 15 + spell.CastInfo.SpellLevel * 20 + ad + ap;
-            target.TakeDamage(spell.CastInfo.Owner, damage, DamageType.DAMAGE_TYPE_PHYSICAL, DamageSource.DAMAGE_SOURCE_ATTACK, false);
+            target.TakeDamage(owner, damage, DamageType.DAMAGE_TYPE_PHYSICAL, DamageSource.DAMAGE_SOURCE_ATTACK, false);
             for (byte i = 0; i < 4; i++)
             {
-                spell.CastInfo.Owner.Spells[i].LowerCooldown(1);
+                owner.Spells[i].LowerCooldown(1);
             }
+
+            AddParticleTarget(spell.CastInfo.Owner, "Ezreal_mysticshot_tar.troy", target);
+            projectile.SetToRemove();
+
+            // SpellBuffAdd EzrealRisingSpellForce
+        }
+
+        public void OnSpellCast(ISpell spell)
+        {
+        }
+
+        public void OnSpellPostCast(ISpell spell)
+        {
         }
 
         public void OnUpdate(float diff)
