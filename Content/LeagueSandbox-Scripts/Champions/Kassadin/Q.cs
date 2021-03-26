@@ -55,6 +55,18 @@ namespace Spells
             projectile.SetToRemove();
         }
 
+        public void OnSpellChannel(ISpell spell)
+        {
+        }
+
+        public void OnSpellChannelCancel(ISpell spell)
+        {
+        }
+
+        public void OnSpellPostChannel(ISpell spell)
+        {
+        }
+
         public void OnUpdate(float diff)
         {
         }

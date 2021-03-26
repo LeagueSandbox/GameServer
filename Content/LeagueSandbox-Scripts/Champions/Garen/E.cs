@@ -41,10 +41,6 @@ namespace Spells
             }
         }
 
-        public void OnSpellCast(ISpell spell)
-        {
-        }
-
         private void ApplySpinDamage(IObjAiBase owner, ISpell spell, IAttackableUnit target)
         {
             var units = GetUnitsInRange(owner.Position, 500, true);
@@ -63,11 +59,23 @@ namespace Spells
             }
         }
 
+        public void OnSpellCast(ISpell spell)
+        {
+        }
+
         public void OnSpellPostCast(ISpell spell)
         {
         }
 
-        public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, ISpellMissile projectile)
+        public void OnSpellChannel(ISpell spell)
+        {
+        }
+
+        public void OnSpellChannelCancel(ISpell spell)
+        {
+        }
+
+        public void OnSpellPostChannel(ISpell spell)
         {
         }
 

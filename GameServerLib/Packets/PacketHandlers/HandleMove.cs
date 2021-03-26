@@ -68,13 +68,13 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             {
                 case OrderType.AttackTo:
                     translatedWaypoints[0] = champion.Position;
-                    champion.UpdateMoveOrder(OrderType.AttackTo);
+                    champion.UpdateMoveOrder(OrderType.AttackTo, true);
                     // TODO: Verify if stopping movement is the correct thing to do.
                     champion.SetWaypoints(translatedWaypoints);
                     break;
                 case OrderType.Stop:
                     champion.StopMovement();
-                    champion.UpdateMoveOrder(OrderType.Stop);
+                    champion.UpdateMoveOrder(OrderType.Stop, true);
                     break;
                 case OrderType.Taunt:
                     champion.StopMovement();
@@ -82,12 +82,12 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                     return true;
                 case OrderType.AttackMove:
                     translatedWaypoints[0] = champion.Position;
-                    champion.UpdateMoveOrder(OrderType.AttackMove);
+                    champion.UpdateMoveOrder(OrderType.AttackMove, true);
                     champion.SetWaypoints(translatedWaypoints);
                     break;
                 case OrderType.MoveTo:
                     translatedWaypoints[0] = champion.Position;
-                    champion.UpdateMoveOrder(OrderType.MoveTo);
+                    champion.UpdateMoveOrder(OrderType.MoveTo, true);
                     champion.SetWaypoints(translatedWaypoints);
                     break;
             }

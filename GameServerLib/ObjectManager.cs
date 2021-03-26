@@ -405,8 +405,7 @@ namespace LeagueSandbox.GameServer
                     {
                         if (ai.TargetUnit == target)
                         {
-                            ai.SetTargetUnit(null);
-                            _game.PacketNotifier.NotifyAI_TargetS2C(ai, null);
+                            ai.SetTargetUnit(null, true);
                         }
                     }
                 }

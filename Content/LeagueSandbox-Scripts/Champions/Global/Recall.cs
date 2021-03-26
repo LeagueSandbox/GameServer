@@ -12,19 +12,18 @@ namespace Spells
     {
         public ISpellScriptMetadata ScriptMetadata { get; private set; } = new SpellScriptMetadata()
         {
-            ChannelDuration = 8.0f
+            CastingBreaksStealth = true,
+            ChannelDuration = 8.0f,
+            NotSingleTargetSpell = true
             // TODO
         };
 
         public void OnActivate(IObjAiBase owner, ISpell spell)
         {
-            ApiEventManager.OnTakeDamage.AddListener(this, owner, () =>
-            {
-                if (HasBuff(owner, "Recall"))
-                {
-                    RemoveBuff(owner, "Recall");
-                }
-            });
+        }
+
+        public void OnTakeDamage(IAttackableUnit unit, IAttackableUnit attacker)
+        {
         }
 
         public void OnDeactivate(IObjAiBase owner, ISpell spell)
@@ -34,7 +33,6 @@ namespace Spells
         public void OnSpellPreCast(IObjAiBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
         {
             owner.StopMovement();
-            // @TODO Interrupt the script when owner uses movement spells
             AddBuff("Recall", 8.0f, 1, spell, owner, owner);
         }
 
@@ -43,6 +41,18 @@ namespace Spells
         }
 
         public void OnSpellPostCast(ISpell spell)
+        {
+        }
+
+        public void OnSpellChannel(ISpell spell)
+        {
+        }
+
+        public void OnSpellChannelCancel(ISpell spell)
+        {
+        }
+
+        public void OnSpellPostChannel(ISpell spell)
         {
         }
 

@@ -66,7 +66,6 @@ namespace Spells
                     {
                         units[i].TakeDamage(c, damage, DamageType.DAMAGE_TYPE_MAGICAL, DamageSource.DAMAGE_SOURCE_SPELL, false);
                         AddParticleTarget(c, phitname, units[i]);
-                        //spell.AddProjectileTarget("AatroxRHeal", units[i].X, units[i].Y, owner, true);
                     }
                 }
 
@@ -74,9 +73,16 @@ namespace Spells
             }
         }
 
-        public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, ISpellMissile projectile)
+        public void OnSpellChannel(ISpell spell)
         {
-            //projectile.SetToRemove();
+        }
+
+        public void OnSpellChannelCancel(ISpell spell)
+        {
+        }
+
+        public void OnSpellPostChannel(ISpell spell)
+        {
         }
 
         public void OnUpdate(float diff)

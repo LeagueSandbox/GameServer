@@ -72,6 +72,12 @@ namespace GameServerCore.Domain.GameObjects.Spell
         /// Called when a script manually casts this spell.
         /// </summary>
         bool Cast(ICastInfo castInfo, bool cast);
+        /// <summary>
+        /// Forces this spell to stop channeling based on the given condition for the given reason.
+        /// </summary>
+        /// <param name="condition">Canceled or successful?</param>
+        /// <param name="reason">How it should be treated.</param>
+        void StopChanneling(ChannelingStopCondition condition, ChannelingStopSource reason);
         void Deactivate();
         int GetId();
         float GetCooldown();

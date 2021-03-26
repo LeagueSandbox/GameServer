@@ -73,7 +73,7 @@ namespace Spells
             {
                 if (!(target2 is IBaseTurret))
                 {
-                    spell.AddProjectileTarget("EzrealArcaneShiftMissile", new Vector3(trueCoords.X, owner.GetHeight() + 150.0f, trueCoords.Y), target2, overrideCastPosition: true);
+                    //spell.AddProjectileTarget("EzrealArcaneShiftMissile", new Vector3(trueCoords.X, owner.GetHeight() + 150.0f, trueCoords.Y), target2, overrideCastPosition: true);
                 }
             }
         }
@@ -83,6 +83,18 @@ namespace Spells
             target.TakeDamage(owner, 25f + spell.CastInfo.SpellLevel * 50f + owner.Stats.AbilityPower.Total * 0.75f,
                 DamageType.DAMAGE_TYPE_MAGICAL, DamageSource.DAMAGE_SOURCE_SPELL, false);
             projectile.SetToRemove();
+        }
+
+        public void OnSpellChannel(ISpell spell)
+        {
+        }
+
+        public void OnSpellChannelCancel(ISpell spell)
+        {
+        }
+
+        public void OnSpellPostChannel(ISpell spell)
+        {
         }
 
         public void OnUpdate(float diff)

@@ -106,14 +106,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 return;
             }
 
-            SetTargetUnit(nextTarget);
-
-            _game.PacketNotifier.NotifyAI_TargetS2C(this, nextTarget);
-
-            if (nextTarget is IChampion c)
-            {
-                _game.PacketNotifier.NotifyAI_TargetHeroS2C(this, c);
-            }
+            SetTargetUnit(nextTarget, true);
         }
 
         /// <summary>
@@ -197,8 +190,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             // Lose focus of the unit target if the target is out of range
             if (TargetUnit != null && Vector2.DistanceSquared(Position, TargetUnit.Position) > Stats.Range.Total * Stats.Range.Total)
             {
-                SetTargetUnit(null);
-                _game.PacketNotifier.NotifyAI_TargetS2C(this, null);
+                SetTargetUnit(null, true);
             }
 
             base.Update(diff);

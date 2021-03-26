@@ -49,12 +49,13 @@ using log4net;
 [OnResurrect]
 [OnSpellCast] - start casting
 [OnSpellChannel] - start channeling
+[OnSpellChannelCancel] - abrupt stop channeling
 [OnSpellPostCast] - finish casting
 [OnSpellPostChannel] - finish channeling
 [OnSpellPreCast] - setup cast info before casting (always performed)
 [OnSpellHit] - equivalent to "ApplyEffects".
 [OnTakeDamage]
-[OnUpdateActions] - buffs and spells (always performed)
+[OnUpdateActions] - move order probably
 [OnUpdateAmmo]
 [OnUpdateStats]
 [OnZombie]
@@ -93,6 +94,7 @@ namespace LeagueSandbox.GameServer.API
         public static EventOnPreAttack OnPreAttack = new EventOnPreAttack();
         public static EventOnSpellCast OnSpellCast = new EventOnSpellCast();
         public static EventOnSpellChannel OnSpellChannel = new EventOnSpellChannel();
+        public static EventOnSpellChannelCancel OnSpellChannelCancel = new EventOnSpellChannelCancel();
         public static EventOnSpellHit OnSpellHit = new EventOnSpellHit();
         public static EventOnSpellPostCast OnSpellPostCast = new EventOnSpellPostCast();
         public static EventOnSpellPostChannel OnSpellPostChannel = new EventOnSpellPostChannel();
@@ -282,6 +284,34 @@ namespace LeagueSandbox.GameServer.API
         }
     }
 
+    public class EventOnSpellChannelCancel
+    {
+        private readonly List<Tuple<object, ISpell, Action<ISpell>>> _listeners = new List<Tuple<object, ISpell, Action<ISpell>>>();
+        public void AddListener(object owner, ISpell spell, Action<ISpell> callback)
+        {
+            var listenerTuple = new Tuple<object, ISpell, Action<ISpell>>(owner, spell, callback);
+            _listeners.Add(listenerTuple);
+        }
+        public void RemoveListener(object owner, ISpell spell)
+        {
+            _listeners.RemoveAll((listener) => listener.Item1 == owner && listener.Item2 == spell);
+        }
+        public void RemoveListener(object owner)
+        {
+            _listeners.RemoveAll((listener) => listener.Item1 == owner);
+        }
+        public void Publish(ISpell spell)
+        {
+            _listeners.ForEach((listener) =>
+            {
+                if (listener.Item2 == spell)
+                {
+                    listener.Item3(spell);
+                }
+            });
+        }
+    }
+
     public class EventOnSpellHit
     {
         private readonly List<Tuple<object, KeyValuePair<ISpell, IObjAiBase>, Action<ISpell, IAttackableUnit, IProjectile>, bool>> _listeners = new List<Tuple<object, KeyValuePair<ISpell, IObjAiBase>, Action<ISpell, IAttackableUnit, IProjectile>, bool>>();
@@ -382,6 +412,13 @@ namespace LeagueSandbox.GameServer.API
     public class EventOnTakeDamage
     {
         private readonly List<Tuple<object, IAttackableUnit, Action<IAttackableUnit, IAttackableUnit>, bool>> _listeners = new List<Tuple<object, IAttackableUnit, Action<IAttackableUnit, IAttackableUnit>, bool>>();
+        /// <summary>
+        /// Adds a listener for this event, wherein, if the unit that took damage was the given unit, it will call the <paramref name="callback"/> function.
+        /// </summary>
+        /// <param name="owner">Object which will own this listener. Used in removal. Often times "this" will suffice.</param>
+        /// <param name="unit">Unit that should be checked when this event fires.</param>
+        /// <param name="callback">Function to call when this event fires.</param>
+        /// <param name="singleInstance">Whether or not to remove the event listener after calling the <paramref name="callback"/> function.</param>
         public void AddListener(object owner, IAttackableUnit unit, Action<IAttackableUnit, IAttackableUnit> callback, bool singleInstance)
         {
             var listenerTuple = new Tuple<object, IAttackableUnit, Action<IAttackableUnit, IAttackableUnit>, bool>(owner, unit, callback, singleInstance);

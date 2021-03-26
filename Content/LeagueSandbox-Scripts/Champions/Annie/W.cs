@@ -54,7 +54,18 @@ namespace Spells
             var damage = 70 + spell.CastInfo.SpellLevel * 45 + ap;
 
             target.TakeDamage(owner, damage, DamageType.DAMAGE_TYPE_MAGICAL, DamageSource.DAMAGE_SOURCE_SPELL, false);
+        }
 
+        public void OnSpellChannel(ISpell spell)
+        {
+        }
+
+        public void OnSpellChannelCancel(ISpell spell)
+        {
+        }
+
+        public void OnSpellPostChannel(ISpell spell)
+        {
         }
 
         public void OnUpdate(float diff)

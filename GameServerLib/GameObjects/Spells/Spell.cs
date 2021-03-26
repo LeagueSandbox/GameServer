@@ -74,7 +74,9 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
 
             if (_spellScript.ScriptMetadata.ChannelDuration > 0)
             {
-                // TODO: Implement OnSpellChannel and OnSpellPostChannel in ISpellScript and AddListener on both.
+                ApiEventManager.OnSpellChannel.AddListener(_spellScript, this, _spellScript.OnSpellChannel);
+                ApiEventManager.OnSpellChannelCancel.AddListener(_spellScript, this, _spellScript.OnSpellChannelCancel);
+                ApiEventManager.OnSpellPostChannel.AddListener(_spellScript, this, _spellScript.OnSpellPostChannel);
             }
 
             //Activate spell - Notes: Deactivate is never called as spell removal hasn't been added
@@ -279,6 +281,39 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
         }
 
         /// <summary>
+        /// Creates a single-target missile with the specified properties.
+        /// </summary>
+        public IProjectile AddProjectileTarget(ICastInfo castInfo)
+        {
+            var isServerOnly = false;
+
+            if (SpellData.MissileEffect != "")
+            {
+                isServerOnly = true;
+            }
+
+            var p = new Projectile(
+                _game,
+                (int)SpellData.LineWidth,
+                this,
+                castInfo,
+                SpellData.MissileSpeed,
+                SpellName,
+                SpellData.Flags,
+                castInfo.MissileNetID,
+                isServerOnly
+            );
+
+            _game.ObjectManager.AddObject(p);
+
+            _game.PacketNotifier.NotifyMissileReplication(p);
+
+            // TODO: Verify when NotifyForceCreateMissile should be used instead.
+
+            return p;
+        }
+
+        /// <summary>
         /// Creates a single-target missile at the specified cast position that will move as follows: Owner.Position -> target.Position. Despawns when Position = target.Position
         /// </summary>
         /// <param name="nameMissile">Internal name of the missile to spawn. Required for missile features.</param>
@@ -405,7 +440,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
         {
             if (SpellData.HaveHitEffect && !string.IsNullOrEmpty(SpellData.HitEffectName))
             {
-                ApiFunctionManager.AddParticleTarget(CastInfo.Owner, SpellData.HitEffectName, u, lifetime: 3.0f);
+                //ApiFunctionManager.AddParticleTarget(CastInfo.Owner, SpellData.HitEffectName, u, lifetime: 3.0f);
             }
 
             ApiEventManager.OnSpellHit.Publish(CastInfo.Owner, this, u, p);
@@ -443,25 +478,42 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
             }
 
             if (unit == null
-                && SpellData.TargetingType == TargetingType.Self
+                && (SpellData.TargetingType == TargetingType.Self
                 || SpellData.TargetingType == TargetingType.SelfAOE
-                || SpellData.TargetingType == TargetingType.TargetOrLocation)
+                || SpellData.TargetingType == TargetingType.TargetOrLocation))
             {
                 unit = CastInfo.Owner;
             }
 
-            var distance = Vector2.DistanceSquared(start, CastInfo.Owner.Position);
-            if (SpellData.TargetingType == TargetingType.Target)
+            var targetingType = SpellData.TargetingType;
+            var attackType = AttackType.ATTACK_TYPE_RADIAL;
+            if (!CastInfo.IsAutoAttack
+             && (targetingType == TargetingType.Target
+             || targetingType == TargetingType.Area
+             || targetingType == TargetingType.Location
+             || targetingType == TargetingType.DragDirection))
             {
-                distance = Vector2.DistanceSquared(start, unit.Position);
-            }
-            var castRange = GetCurrentCastRange();
-            if (distance > castRange * castRange)
-            {
-                return false;
-            }
+                var distance = Vector2.DistanceSquared(CastInfo.Owner.Position, start);
+                var castRange = GetCurrentCastRange();
 
-            _spellScript.OnSpellPreCast(CastInfo.Owner, this, unit, start, end);
+                if (targetingType == TargetingType.Target)
+                {
+                    attackType = AttackType.ATTACK_TYPE_TARGETED;
+                    distance = Vector2.DistanceSquared(CastInfo.Owner.Position, unit.Position);
+
+                    if (distance > castRange * castRange)
+                    {
+                        CastInfo.Owner.SetSpellToCast(this, Vector2.Zero, unit);
+                        return false;
+                    }
+                }
+
+                if (distance > castRange * castRange)
+                {
+                    CastInfo.Owner.SetSpellToCast(this, start);
+                    return false;
+                }
+            }
 
             var stats = CastInfo.Owner.Stats;
 
@@ -483,19 +535,16 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
 
             CastInfo.MissileNetID = _futureProjNetId;
 
-            if (Vector2.DistanceSquared(CastInfo.Owner.Position, start) > SpellData.CastRangeDisplayOverride * SpellData.CastRangeDisplayOverride)
-            {
-                start = Extensions.GetClosestCircleEdgePoint(start, CastInfo.Owner.Position, SpellData.CastRangeDisplayOverride);
-            }
-
             CastInfo.TargetPosition = new Vector3(start.X, _game.Map.NavigationGrid.GetHeightAtLocation(start.X, start.Y), start.Y);
             CastInfo.TargetPositionEnd = new Vector3(end.X, _game.Map.NavigationGrid.GetHeightAtLocation(end.X, end.Y), end.Y);
 
             CastInfo.Targets.Clear();
 
-            CastInfo.ExtraCastTime = 0.0f; // TODO: Unhardcode
+            // TODO: Unhardcode (wind down? If so, make it cancelable via casting a different spell and via changing move order to AttackTo or MoveTo.)
+            CastInfo.ExtraCastTime = 0.0f;
             CastInfo.Cooldown = GetCooldown();
-            CastInfo.StartCastTime = 0.0f; // TODO: Unhardcode
+            // TODO: Unhardcode (extra windup?)
+            CastInfo.StartCastTime = 0.0f;
 
             // For things like Garen Q, Leona Q, and TF W (and probably more)
             if (SpellData.ConsideredAsAutoAttack || SpellData.UseAutoattackCastTime || CastInfo.UseAttackCastDelay) // TODO: Verify
@@ -524,6 +573,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
             // Otherwise, use the normal auto attack setup
             if (CastInfo.IsAutoAttack)
             {
+                attackType = AttackType.ATTACK_TYPE_TARGETED;
                 CastInfo.UseAttackCastTime = true;
                 CastInfo.AmmoUsed = 0; // TODO: Verify
                 CastInfo.AmmoRechargeTime = 0; // TODO: Verify
@@ -548,24 +598,9 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
             // TODO: Verify
             CastInfo.SpellCastLaunchPosition = CastInfo.Owner.GetPosition3D();
 
-            var attackType = AttackType.ATTACK_TYPE_RADIAL;
+            CastInfo.Owner.UpdateMoveOrder(OrderType.TempCastSpell, true);
 
-            if (!CastInfo.IsAutoAttack
-                && (SpellData.TargetingType == TargetingType.Target && CastInfo.Targets[0].Unit != null
-                && Vector2.DistanceSquared(CastInfo.Targets[0].Unit.Position, CastInfo.Owner.Position) > SpellData.CastRange[CastInfo.SpellLevel] * SpellData.CastRange[CastInfo.SpellLevel])
-                || ((SpellData.TargetingType == TargetingType.Area
-                    || SpellData.TargetingType == TargetingType.Cone
-                    || SpellData.TargetingType == TargetingType.Direction
-                    || SpellData.TargetingType == TargetingType.Location
-                    || SpellData.TargetingType == TargetingType.TargetOrLocation
-                    || SpellData.TargetingType == TargetingType.DragDirection)
-                    && (Vector2.DistanceSquared(new Vector2(CastInfo.TargetPosition.X, CastInfo.TargetPosition.Z), CastInfo.Owner.Position) > SpellData.CastRange[CastInfo.SpellLevel] * SpellData.CastRange[CastInfo.SpellLevel]))
-                    || (!CastInfo.IsAutoAttack && CastInfo.Owner.IsAttacking))
-            {
-                attackType = AttackType.ATTACK_TYPE_TARGETED;
-                //CastInfo.Owner.SetSpellToCast(this);
-                return false;
-            }
+            _spellScript.OnSpellPreCast(CastInfo.Owner, this, unit, start, end);
 
             if (!CastInfo.IsAutoAttack && (!SpellData.IsToggleSpell && !SpellData.CanMoveWhileChanneling
                         && SpellData.CantCancelWhileChanneling)
@@ -590,7 +625,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
                     var dirTemp = Vector2.Normalize(goingTo);
                     CastInfo.Owner.FaceDirection(new Vector3(dirTemp.X, 0, dirTemp.Y), false);
                 }
-                CastInfo.Owner.UpdateMoveOrder(OrderType.CastSpell);
+                CastInfo.Owner.UpdateMoveOrder(OrderType.CastSpell, true);
             }
 
             if (CastInfo.IsAutoAttack && CastInfo.Owner.IsMelee)
@@ -600,15 +635,9 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
 
             if (CastInfo.Targets[0].Unit != null && CastInfo.Targets[0].Unit != CastInfo.Owner)
             {
-                if (CastInfo.Targets[0].Unit != CastInfo.Owner.TargetUnit)
-                {
-                    CastInfo.Owner.SetTargetUnit(CastInfo.Targets[0].Unit, false);
-                }
-
+                ApiFunctionManager.FaceDirection(CastInfo.Targets[0].Unit.Position, CastInfo.Owner);
                 _game.PacketNotifier.NotifyS2C_UnitSetLookAt(CastInfo.Owner, CastInfo.Targets[0].Unit, attackType);
             }
-
-            // TODO: Implement a default FaceDirection behavior and let scripts override it.
 
             if (CastInfo.IsAutoAttack || CastInfo.UseAttackCastTime)
             {
@@ -712,11 +741,6 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
 
             CastInfo.MissileNetID = _futureProjNetId;
 
-            //if (Vector2.DistanceSquared(CastInfo.Owner.Position, start) > SpellData.CastRangeDisplayOverride * SpellData.CastRangeDisplayOverride)
-            //{
-            //    start = Extensions.GetClosestCircleEdgePoint(start, CastInfo.Owner.Position, SpellData.CastRangeDisplayOverride);
-            //}
-
             CastInfo.ExtraCastTime = 0.0f; // TODO: Unhardcode
             CastInfo.Cooldown = GetCooldown();
             CastInfo.StartCastTime = 0.0f; // TODO: Unhardcode
@@ -769,25 +793,6 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
             // TODO: Verify
             var attackType = AttackType.ATTACK_TYPE_RADIAL;
 
-            /*
-            if (!CastInfo.IsAutoAttack
-                && (SpellData.TargetingType == TargetingType.Target && CastInfo.Targets[0].Unit != null
-                && Vector2.DistanceSquared(CastInfo.Targets[0].Unit.Position, CastInfo.Owner.Position) > SpellData.CastRange[CastInfo.SpellLevel] * SpellData.CastRange[CastInfo.SpellLevel])
-                || ((SpellData.TargetingType == TargetingType.Area
-                    || SpellData.TargetingType == TargetingType.Cone
-                    || SpellData.TargetingType == TargetingType.Direction
-                    || SpellData.TargetingType == TargetingType.Location
-                    || SpellData.TargetingType == TargetingType.TargetOrLocation
-                    || SpellData.TargetingType == TargetingType.DragDirection)
-                    && (Vector2.DistanceSquared(new Vector2(CastInfo.TargetPosition.X, CastInfo.TargetPosition.Z), CastInfo.Owner.Position) > SpellData.CastRange[CastInfo.SpellLevel] * SpellData.CastRange[CastInfo.SpellLevel]))
-                    || (!CastInfo.IsAutoAttack && CastInfo.Owner.IsAttacking))
-            {
-                //attackType = AttackType.ATTACK_TYPE_TARGETED;
-                CastInfo.Owner.SetSpellToCast(this);
-                return false;
-            }
-            */
-
             if (cast && !CastInfo.IsAutoAttack && (!SpellData.IsToggleSpell && !SpellData.CanMoveWhileChanneling
                         && SpellData.CantCancelWhileChanneling)
                         || (!SpellData.NoWinddownIfCancelled
@@ -801,17 +806,9 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
                         CastInfo.Owner.StopMovement();
                     }
 
-                    var goingTo = start - CastInfo.Owner.Position;
-
-                    if (castInfo.Targets[0].Unit != null)
-                    {
-                        goingTo = castInfo.Targets[0].Unit.Position - CastInfo.Owner.Position;
-                    }
-
-                    var dirTemp = Vector2.Normalize(goingTo);
-                    CastInfo.Owner.FaceDirection(new Vector3(dirTemp.X, 0, dirTemp.Y), false);
+                    ApiFunctionManager.FaceDirection(CastInfo.Targets[0].Unit.Position, CastInfo.Owner);
                 }
-                CastInfo.Owner.UpdateMoveOrder(OrderType.CastSpell);
+                CastInfo.Owner.UpdateMoveOrder(OrderType.CastSpell, true);
             }
 
             if (CastInfo.IsAutoAttack && CastInfo.Owner.IsMelee)
@@ -821,10 +818,16 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
 
             if (cast && CastInfo.Targets[0].Unit != null && CastInfo.Targets[0].Unit != CastInfo.Owner)
             {
+                /*
+                if (CastInfo.Targets[0].Unit != CastInfo.Owner.TargetUnit)
+                {
+                    CastInfo.Owner.SetTargetUnit(CastInfo.Targets[0].Unit, false);
+                }*/
+
+                ApiFunctionManager.FaceDirection(CastInfo.Targets[0].Unit.Position, CastInfo.Owner);
+
                 _game.PacketNotifier.NotifyS2C_UnitSetLookAt(CastInfo.Owner, CastInfo.Targets[0].Unit, attackType);
             }
-
-            // TODO: Implement a default FaceDirection behavior and let scripts override it.
 
             if (CastInfo.IsAutoAttack || CastInfo.UseAttackCastTime)
             {
@@ -902,7 +905,22 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
             {
                 if (_spellScript.ScriptMetadata.MissileParameters != null)
                 {
-                    AddProjectile(CastInfo);
+                    var missileType = _spellScript.ScriptMetadata.MissileParameters.Type;
+
+                    if (missileType == MissileType.Target)
+                    {
+                        AddProjectileTarget(CastInfo);
+                    }
+                    
+                    if (missileType == MissileType.CircleLine)
+                    {
+                        AddProjectile(CastInfo);
+                    }
+
+                    if (missileType == MissileType.Arc)
+                    {
+                        // TODO: Implement Arc projectiles.
+                    }
                 }
             }
 
@@ -920,6 +938,31 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
             {
                 CurrentChannelDuration = _spellScript.ScriptMetadata.ChannelDuration;
                 ApiEventManager.OnSpellChannel.Publish(this);
+            }
+
+            if (CurrentChannelDuration > 0)
+            {
+                CastInfo.Owner.SetChannelSpell(this);
+            }
+        }
+
+        /// <summary>
+        /// Forces this spell to stop channeling based on the given condition for the given reason.
+        /// </summary>
+        /// <param name="condition">Canceled or successful?</param>
+        /// <param name="reason">How it should be treated.</param>
+        public void StopChanneling(ChannelingStopCondition condition, ChannelingStopSource reason)
+        {
+            if (condition == ChannelingStopCondition.Cancel)
+            {
+                ApiEventManager.OnSpellChannelCancel.Publish(this);
+            }
+
+            State = SpellState.STATE_READY;
+
+            if (reason == ChannelingStopSource.TimeCompleted)
+            {
+                FinishChanneling();
             }
         }
 
@@ -993,26 +1036,44 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
 
             if (_spellScript.ScriptMetadata.MissileParameters != null)
             {
-                AddProjectile(CastInfo);
-            }
+                var missileType = _spellScript.ScriptMetadata.MissileParameters.Type;
 
-            CastInfo.Owner.UpdateMoveOrder(OrderType.Hold);
+                if (missileType == MissileType.Target)
+                {
+                    AddProjectileTarget(CastInfo);
+                }
+
+                if (missileType == MissileType.CircleLine)
+                {
+                    AddProjectile(CastInfo);
+                }
+
+                if (missileType == MissileType.Arc)
+                {
+                    // TODO: Implement Arc projectiles.
+                }
+            }
 
             if (SpellData.Flags.HasFlag(SpellDataFlags.InstantCast))
             {
                 if (!CastInfo.Owner.IsPathEnded())
                 {
-                    CastInfo.Owner.UpdateMoveOrder(OrderType.MoveTo);
+                    CastInfo.Owner.UpdateMoveOrder(OrderType.MoveTo, true);
                 }
                 if (CastInfo.Owner.TargetUnit != null)
                 {
-                    CastInfo.Owner.UpdateMoveOrder(OrderType.AttackTo);
+                    CastInfo.Owner.UpdateMoveOrder(OrderType.AttackTo, true);
                 }
+            }
+            else
+            {
+                // TODO: Verify
+                CastInfo.Owner.UpdateMoveOrder(OrderType.Hold, true);
             }
 
             if (CastInfo.Owner.SpellToCast != null)
             {
-                //CastInfo.Owner.SetSpellToCast(null);
+                CastInfo.Owner.SetSpellToCast(null, Vector2.Zero);
             }
         }
 
@@ -1023,7 +1084,9 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
         {
             ApiEventManager.OnSpellPostChannel.Publish(this);
 
-            CastInfo.Owner.UpdateMoveOrder(OrderType.Hold);
+            CastInfo.Owner.SetChannelSpell(null);
+
+            CastInfo.Owner.UpdateMoveOrder(OrderType.Hold, true);
 
             State = SpellState.STATE_COOLDOWN;
 

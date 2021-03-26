@@ -15,6 +15,14 @@ namespace Spells
             // TODO
         };
 
+        public void OnActivate(IObjAiBase owner, ISpell spell)
+        {
+        }
+
+        public void OnDeactivate(IObjAiBase owner, ISpell spell)
+        {
+        }
+
         public void OnSpellPreCast(IObjAiBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
         {
             //spell.AddProjectileTarget("DeathfireGraspSpell", spell.CastInfo.SpellCastLaunchPosition, target);
@@ -36,15 +44,19 @@ namespace Spells
             projectile.SetToRemove();
         }
 
+        public void OnSpellChannel(ISpell spell)
+        {
+        }
+
+        public void OnSpellChannelCancel(ISpell spell)
+        {
+        }
+
+        public void OnSpellPostChannel(ISpell spell)
+        {
+        }
+
         public void OnUpdate(float diff)
-        {
-        }
-
-        public void OnActivate(IObjAiBase owner, ISpell spell)
-        {
-        }
-
-        public void OnDeactivate(IObjAiBase owner, ISpell spell)
         {
         }
     }

@@ -2,6 +2,7 @@
 using GameServerCore.Enums;
 using LeagueSandbox.GameServer.Content;
 using System.Collections.Generic;
+using System.Numerics;
 
 namespace GameServerCore.Domain.GameObjects
 {
@@ -15,6 +16,10 @@ namespace GameServerCore.Domain.GameObjects
         /// This AI's current auto attack spell.
         /// </summary>
         ISpell AutoAttackSpell { get; }
+        /// <summary>
+        /// Spell this AI is currently channeling.
+        /// </summary>
+        ISpell ChannelSpell { get; }
         /// <summary>
         /// Variable containing all data about the AI's current character such as base health, base mana, whether or not they are melee, base movespeed, per level stats, etc.
         /// </summary>
@@ -91,8 +96,6 @@ namespace GameServerCore.Domain.GameObjects
         bool CanCast();
         ISpell GetSpell(byte slot);
         ISpell GetSpell(string name);
-        void SwapSpells(byte slot1, byte slot2);
-        ISpell SetSpell(string name, byte slot, bool enabled = false);
         /// <summary>
         /// Removes the spell instance from the given slot (replaces it with an empty BaseSpell).
         /// </summary>
@@ -122,11 +125,21 @@ namespace GameServerCore.Domain.GameObjects
         /// </summary>
         void SkipNextAutoAttack();
         /// <summary>
-        /// Sets the spell that this unit will cast when it gets in range of its target.
+        /// Sets the spell for the given slot to a new spell of the given name.
+        /// </summary>
+        /// <param name="name">Internal name of the spell to set.</param>
+        /// <param name="slot">Slot of the spell to replace.</param>
+        /// <param name="enabled">Whether or not the new spell should be enabled.</param>
+        /// <returns>Newly created spell set.</returns>
+        ISpell SetSpell(string name, byte slot, bool enabled);
+        /// <summary>
+        /// Sets the spell that this unit will cast when it gets in range of the spell's target.
         /// Overrides auto attack spell casting.
         /// </summary>
-        /// <param name="s"></param>
-        void SetSpellToCast(ISpell s);
+        /// <param name="s">Spell that will be cast.</param>
+        /// <param name="location">Location to cast the spell on. May set to Vector2.Zero if unit parameter is used.</param>
+        /// <param name="unit">Unit to cast the spell on.</param>
+        void SetSpellToCast(ISpell s, Vector2 location, IAttackableUnit unit = null);
         /// <summary>
         /// Forces this AI to perform the given internally named animation.
         /// </summary>
@@ -138,6 +151,24 @@ namespace GameServerCore.Domain.GameObjects
         /// <param name="target">Unit to target.</param>
         /// <param name="networked">Whether or not this change in target should be networked to clients.</param>
         void SetTargetUnit(IAttackableUnit target, bool networked = false);
+        /// <summary>
+        /// Swaps the spell in the given slot1 with the spell in the given slot2.
+        /// </summary>
+        /// <param name="slot1">Slot of the spell to put into slot2.</param>
+        /// <param name="slot2">Slot of the spell to put into slot1.</param>
+        void SwapSpells(byte slot1, byte slot2);
+        /// <summary>
+        /// Sets the spell that will be channeled by this unit. Used by Spell for manual stopping and networking.
+        /// </summary>
+        /// <param name="spell">Spell that is being channeled.</param>
+        /// <param name="network">Whether or not to send the channeling of this spell to clients.</param>
+        void SetChannelSpell(ISpell spell, bool network = true);
+        /// <summary>
+        /// Forces this AI to stop channeling based on the given condition with the given reason.
+        /// </summary>
+        /// <param name="condition">Canceled or successful?</param>
+        /// <param name="reason">How it should be treated.</param>
+        void StopChanneling(ChannelingStopCondition condition, ChannelingStopSource reason);
         /// <summary>
         /// Sets this unit's move order to the given order type.
         /// </summary>

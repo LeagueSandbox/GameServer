@@ -35,14 +35,6 @@ namespace Spells
             }
         }
 
-        public void OnSpellCast(ISpell spell)
-        {
-        }
-
-        public void OnSpellPostCast(ISpell spell)
-        {
-        }
-
         private void RestoreMana(IObjAiBase target)
         {
             var maxMp = target.Stats.ManaPoints.Total;
@@ -52,6 +44,26 @@ namespace Spells
             else
                 target.Stats.CurrentMana = maxMp;
             AddParticleTarget(target, "global_ss_clarity_02.troy", target);
+        }
+
+        public void OnSpellCast(ISpell spell)
+        {
+        }
+
+        public void OnSpellPostCast(ISpell spell)
+        {
+        }
+
+        public void OnSpellChannel(ISpell spell)
+        {
+        }
+
+        public void OnSpellChannelCancel(ISpell spell)
+        {
+        }
+
+        public void OnSpellPostChannel(ISpell spell)
+        {
         }
 
         public void OnUpdate(float diff)

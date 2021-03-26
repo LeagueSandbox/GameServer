@@ -25,20 +25,31 @@ namespace Spells
 
         public void OnSpellPreCast(IObjAiBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
         {
-            var units = GetChampionsInRange(owner.Position, 850, true);
             IChampion mostWoundedAlliedIChampion = null;
-            float lowestHealthPercentage = 100;
-            float maxHealth;
-            foreach (var value in units)
+
+            if (target != null
+                && target is IChampion ch
+                && IsUnitInRange(ch, owner.Position, spell.SpellData.CastRangeDisplayOverride, true))
             {
-                if (value != owner && owner.Team == value.Team)
+                mostWoundedAlliedIChampion = ch;
+            }
+
+            if (mostWoundedAlliedIChampion == null)
+            {
+                var units = GetChampionsInRange(owner.Position, spell.SpellData.CastRangeDisplayOverride, true);
+                float lowestHealthPercentage = 100;
+                float maxHealth;
+                foreach (var value in units)
                 {
-                    var currentHealth = value.Stats.CurrentHealth;
-                    maxHealth = value.Stats.HealthPoints.Total;
-                    if (currentHealth * 100 / maxHealth < lowestHealthPercentage && owner != value)
+                    if (value != owner && owner.Team == value.Team)
                     {
-                        lowestHealthPercentage = currentHealth * 100 / maxHealth;
-                        mostWoundedAlliedIChampion = value;
+                        var currentHealth = value.Stats.CurrentHealth;
+                        maxHealth = value.Stats.HealthPoints.Total;
+                        if (currentHealth * 100 / maxHealth < lowestHealthPercentage && owner != value)
+                        {
+                            lowestHealthPercentage = currentHealth * 100 / maxHealth;
+                            mostWoundedAlliedIChampion = value;
+                        }
                     }
                 }
             }
@@ -49,14 +60,6 @@ namespace Spells
             }
 
             PerformHeal(owner, spell, owner);
-        }
-
-        public void OnSpellCast(ISpell spell)
-        {
-        }
-
-        public void OnSpellPostCast(ISpell spell)
-        {
         }
 
         private void PerformHeal(IObjAiBase owner, ISpell spell, IAttackableUnit target)
@@ -70,8 +73,28 @@ namespace Spells
             target.Stats.CurrentHealth = Math.Min(newHealth, target.Stats.HealthPoints.Total);
             AddBuff("HealSpeed", 1.0f, 1, spell, target, owner);
             AddBuff("HealCheck", 35.0f, 1, spell, target, owner);
-            //AddParticleTarget(owner, "global_ss_heal_02.troy", target);
+            AddParticleTarget(owner, "global_ss_heal_02.troy", target);
             AddParticleTarget(owner, "global_ss_heal_speedboost.troy", target);
+        }
+
+        public void OnSpellCast(ISpell spell)
+        {
+        }
+
+        public void OnSpellPostCast(ISpell spell)
+        {
+        }
+
+        public void OnSpellChannel(ISpell spell)
+        { 
+        }
+
+        public void OnSpellChannelCancel(ISpell spell)
+        {
+        }
+
+        public void OnSpellPostChannel(ISpell spell)
+        {
         }
 
         public void OnUpdate(float diff)

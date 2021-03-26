@@ -1,11 +1,11 @@
 ﻿namespace GameServerCore.Packets.PacketDefinitions.Requests
 {
-    public class SkillUpRequest : ICoreRequest
+    public class UpgradeSpellReq : ICoreRequest
     {
         public byte Slot { get; }
         public bool IsEvolve { get; }
 
-        public SkillUpRequest(byte slot, bool isEvolve)
+        public UpgradeSpellReq(byte slot, bool isEvolve)
         {
             Slot = slot;
             IsEvolve = isEvolve;

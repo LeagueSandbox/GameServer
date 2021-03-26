@@ -686,5 +686,10 @@ namespace LeagueSandbox.GameServer.API
             ICastTarget castTarget = new CastTarget(target, CastTarget.GetHitResult(target, useAutoAttackSpell, caster.IsNextAutoCrit));
             SpellCast(caster, slot, slotType, target.Position, target.Position, fireWithoutCasting, overrideCastPos, new List<ICastTarget> { castTarget }, isForceCastingOrChanneling, overrideForceLevel, updateAutoAttackTimer, useAutoAttackSpell);
         }
+
+        public static void StopChanneling(IObjAiBase target, ChannelingStopCondition stopCondition, ChannelingStopSource stopSource)
+        {
+            target.StopChanneling(stopCondition, stopSource);
+        }
     }
 }

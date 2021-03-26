@@ -14,7 +14,7 @@ using EmotionPacketRequest = GameServerCore.Packets.PacketDefinitions.Requests.E
 using KeyCheckRequest = GameServerCore.Packets.PacketDefinitions.Requests.KeyCheckRequest;
 using MovementRequest = GameServerCore.Packets.PacketDefinitions.Requests.MovementRequest;
 using PingLoadInfoRequest = GameServerCore.Packets.PacketDefinitions.Requests.PingLoadInfoRequest;
-using SkillUpRequest = GameServerCore.Packets.PacketDefinitions.Requests.SkillUpRequest;
+using UpgradeSpellReq = GameServerCore.Packets.PacketDefinitions.Requests.UpgradeSpellReq;
 using SwapItemsRequest = GameServerCore.Packets.PacketDefinitions.Requests.SwapItemsRequest;
 using SynchVersionRequest = GameServerCore.Packets.PacketDefinitions.Requests.SynchVersionRequest;
 using ViewRequest = GameServerCore.Packets.PacketDefinitions.Requests.ViewRequest;
@@ -148,10 +148,11 @@ namespace PacketDefinitions420
         }
 
         [PacketType(PacketCmd.PKT_C2S_CURSOR_POSITION_ON_WORLD)]
-        public static CursorPositionOnWorldRequest ReadCursorPositionOnWorldRequest(byte[] data)
+        public static SpellChargeUpdateReq ReadSpellChargeUpdateReq(byte[] data)
         {
-            var rq = new CursorPositionOnWorld(data);
-            return new CursorPositionOnWorldRequest(rq.NetId, rq.Unk1, rq.X, rq.Z, rq.Y);
+            var rq = new C2S_SpellChargeUpdateReq();
+            rq.Read(data);
+            return new SpellChargeUpdateReq(rq.Slot, rq.IsSummonerSpellBook, rq.Position, rq.ForceStop);
         }
 
         [PacketType(PacketCmd.PKT_C2S_EMOTION)]
@@ -237,11 +238,11 @@ namespace PacketDefinitions420
         }
 
         [PacketType(PacketCmd.PKT_C2S_SKILL_UP)]
-        public static SkillUpRequest ReadSkillUpRequest(byte[] data)
+        public static UpgradeSpellReq ReadUpgradeSpellReq(byte[] data)
         {
             var rq = new NPC_UpgradeSpellReq();
             rq.Read(data);
-            return new SkillUpRequest(rq.Slot, rq.IsEvolve);
+            return new UpgradeSpellReq(rq.Slot, rq.IsEvolve);
         }
 
         [PacketType(PacketCmd.PKT_C2S_USE_OBJECT)]

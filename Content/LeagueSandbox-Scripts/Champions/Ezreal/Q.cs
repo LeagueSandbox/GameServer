@@ -19,8 +19,6 @@ namespace Spells
             IsDamagingSpell = true
         };
 
-        IParticle bow;
-
         public void OnActivate(IObjAiBase owner, ISpell spell)
         {
         }
@@ -35,7 +33,7 @@ namespace Spells
 
         public void OnSpellCast(ISpell spell)
         {
-            bow = AddParticleTarget(spell.CastInfo.Owner, "ezreal_bow.troy", spell.CastInfo.Owner, 1, "L_HAND", lifetime: 1.0f);
+            AddParticleTarget(spell.CastInfo.Owner, "ezreal_bow.troy", spell.CastInfo.Owner, 1, "L_HAND", lifetime: 1.0f);
         }
 
         public void OnSpellPostCast(ISpell spell)
@@ -60,6 +58,18 @@ namespace Spells
             {
                 SpellCast(owner, 0, SpellSlotType.ExtraSlots, targetPos, targetPos, false, Vector2.Zero);
             }
+        }
+
+        public void OnSpellChannel(ISpell spell)
+        {
+        }
+
+        public void OnSpellChannelCancel(ISpell spell)
+        {
+        }
+
+        public void OnSpellPostChannel(ISpell spell)
+        {
         }
 
         public void OnUpdate(float diff)
@@ -118,6 +128,18 @@ namespace Spells
         }
 
         public void OnSpellPostCast(ISpell spell)
+        {
+        }
+
+        public void OnSpellChannel(ISpell spell)
+        {
+        }
+
+        public void OnSpellChannelCancel(ISpell spell)
+        {
+        }
+
+        public void OnSpellPostChannel(ISpell spell)
         {
         }
 

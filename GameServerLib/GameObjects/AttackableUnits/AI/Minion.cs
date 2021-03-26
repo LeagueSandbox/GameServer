@@ -121,16 +121,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             if (nextTarget != null) // If we have a target
             {
                 // Set the new target and refresh waypoints
-                SetTargetUnit(nextTarget);
-
-                if (nextTarget is IChampion c)
-                {
-                    _game.PacketNotifier.NotifyAI_TargetHeroS2C(this, c);
-                }
-                else
-                {
-                    _game.PacketNotifier.NotifyAI_TargetS2C(this, nextTarget);
-                }
+                SetTargetUnit(nextTarget, true);
 
                 return true;
             }

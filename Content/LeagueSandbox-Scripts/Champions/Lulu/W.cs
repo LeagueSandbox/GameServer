@@ -36,7 +36,7 @@ namespace Spells
         {
             if (spell.CastInfo.Targets[0].Unit.Team != spell.CastInfo.Owner.Team)
             {
-                spell.AddProjectileTarget("LuluWTwo", spell.CastInfo.SpellCastLaunchPosition, spell.CastInfo.Targets[0].Unit);
+                //spell.AddProjectileTarget("LuluWTwo", spell.CastInfo.SpellCastLaunchPosition, spell.CastInfo.Targets[0].Unit);
             }
             else
             {
@@ -62,6 +62,18 @@ namespace Spells
                 champion.ChangeModel(model);
             });
             projectile.SetToRemove();
+        }
+
+        public void OnSpellChannel(ISpell spell)
+        {
+        }
+
+        public void OnSpellChannelCancel(ISpell spell)
+        {
+        }
+
+        public void OnSpellPostChannel(ISpell spell)
+        {
         }
 
         public void OnUpdate(float diff)

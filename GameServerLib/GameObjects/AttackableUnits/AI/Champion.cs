@@ -220,7 +220,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         {
             this.StopMovement();
             this.SetWaypoints(_game.Map.NavigationGrid.GetPath(Position, _game.Map.MapProperties.GetRespawnLocation(Team)));
-            this.UpdateMoveOrder(OrderType.MoveTo);
+            this.UpdateMoveOrder(OrderType.MoveTo, true);
 
             return true;
         }

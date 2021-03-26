@@ -42,6 +42,18 @@ namespace Spells
             ForceMovement(spell.CastInfo.Owner, trueCoords, 1500, 0, 0, 0);
         }
 
+        public void OnSpellChannel(ISpell spell)
+        {
+        }
+
+        public void OnSpellChannelCancel(ISpell spell)
+        {
+        }
+
+        public void OnSpellPostChannel(ISpell spell)
+        {
+        }
+
         public void OnUpdate(float diff)
         {
         }

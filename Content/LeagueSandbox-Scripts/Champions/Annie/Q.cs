@@ -4,6 +4,8 @@ using LeagueSandbox.GameServer.Scripting.CSharp;
 using GameServerCore.Domain.GameObjects.Spell;
 using GameServerCore.Domain.GameObjects.Spell.Missile;
 using System.Numerics;
+using LeagueSandbox.GameServer.API;
+using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 
 namespace Spells
 {
@@ -11,12 +13,38 @@ namespace Spells
     {
         public ISpellScriptMetadata ScriptMetadata => new SpellScriptMetadata()
         {
-            TriggersSpellCasts = true
+            TriggersSpellCasts = true,
+            IsDamagingSpell = true,
+            MissileParameters = new MissileParameters
+            {
+                CanHitEnemies = true,
+                Type = MissileType.Target
+            }
             // TODO
         };
 
         public void OnActivate(IObjAiBase owner, ISpell spell)
         {
+            ApiEventManager.OnSpellHit.AddListener(this, new System.Collections.Generic.KeyValuePair<ISpell, IObjAiBase>(spell, owner), TargetExecute, false);
+        }
+
+        public void TargetExecute(ISpell spell, IAttackableUnit target, IProjectile projectile)
+        {
+            var owner = spell.CastInfo.Owner as IChampion;
+            var ownerSkinID = owner.Skin;
+            var ap = owner.Stats.AbilityPower.Total * spell.SpellData.MagicDamageCoefficient;
+            var damage = 45 + spell.CastInfo.SpellLevel * 35 + ap;
+
+            target.TakeDamage(owner, damage, DamageType.DAMAGE_TYPE_MAGICAL, DamageSource.DAMAGE_SOURCE_SPELL, false);
+
+            if (ownerSkinID == 5)
+            {
+                AddParticleTarget(owner, "DisintegrateHit_tar_frost.troy", target, lifetime: 1.0f);
+            }
+            else
+            {
+                AddParticleTarget(owner, "DisintegrateHit_tar.troy", target, lifetime: 1.0f);
+            }
         }
 
         public void OnDeactivate(IObjAiBase owner, ISpell spell)
@@ -33,35 +61,20 @@ namespace Spells
 
         public void OnSpellPostCast(ISpell spell)
         {
-            //spell.AddProjectileTarget("Disintegrate", spell.CastInfo.SpellCastLaunchPosition, spell.CastInfo.Targets[0].Unit, HitResult.HIT_Normal, false);
+            LogDebug("Disintegrate DesignerCastTime: " + spell.CastInfo.DesignerCastTime);
+            LogDebug("Disintegrate DesignerTotalTime: " + spell.CastInfo.DesignerTotalTime);
         }
 
-        public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, ISpellMissile projectile)
+        public void OnSpellChannel(ISpell spell)
         {
-            var ap = owner.Stats.AbilityPower.Total * 0.8f;
-            var damage = 45 + spell.CastInfo.SpellLevel * 35 + ap;
-            if (target != null && !target.IsDead)
-            {
-                target.TakeDamage(owner, damage, DamageType.DAMAGE_TYPE_MAGICAL, DamageSource.DAMAGE_SOURCE_SPELL,
-                    false);
-                if (target.IsDead)
-                {
-                    spell.LowerCooldown(spell.GetCooldown());
-                    float manaToRecover = 55 + spell.CastInfo.SpellLevel * 5;
-                    var newMana = owner.Stats.CurrentMana + manaToRecover;
-                    var maxMana = owner.Stats.ManaPoints.Total;
-                    if (newMana >= maxMana)
-                    {
-                        owner.Stats.CurrentMana = maxMana;
-                    }
-                    else
-                    {
-                        owner.Stats.CurrentMana = newMana;
-                    }
-                }
-            }
+        }
 
-            projectile.SetToRemove();
+        public void OnSpellChannelCancel(ISpell spell)
+        {
+        }
+
+        public void OnSpellPostChannel(ISpell spell)
+        {
         }
 
         public void OnUpdate(float diff)

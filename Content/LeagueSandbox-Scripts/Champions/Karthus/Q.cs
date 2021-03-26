@@ -72,7 +72,15 @@ namespace Spells
             AddParticle(spell.CastInfo.Owner, "Karthus_Base_Q_Explosion_Sound.troy", spellPos);
         }
 
-        public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, ISpellMissile projectile)
+        public void OnSpellChannel(ISpell spell)
+        {
+        }
+
+        public void OnSpellChannelCancel(ISpell spell)
+        {
+        }
+
+        public void OnSpellPostChannel(ISpell spell)
         {
         }
 

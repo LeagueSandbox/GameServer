@@ -44,7 +44,19 @@ namespace Spells
         public void OnSpellPostCast(ISpell spell)
         {
         }
-               
+
+        public void OnSpellChannel(ISpell spell)
+        {
+        }
+
+        public void OnSpellChannelCancel(ISpell spell)
+        {
+        }
+
+        public void OnSpellPostChannel(ISpell spell)
+        {
+        }
+
         public void OnUpdate(float diff)
         {
             //here's empty because it's not working
