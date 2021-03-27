@@ -44,7 +44,7 @@ namespace Spells
             AddParticleTarget(spell.CastInfo.Owner, "akali_shadowDance_tar.troy", spell.CastInfo.Targets[0].Unit, 1, "");
         }
 
-        public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, ISpellMissile projectile)
+        public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, ISpellMissile missile)
         {
             var bonusAd = owner.Stats.AttackDamage.Total - owner.Stats.AttackDamage.BaseValue;
             var ap = owner.Stats.AbilityPower.Total * 0.9f;

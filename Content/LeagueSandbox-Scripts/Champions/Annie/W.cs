@@ -1,5 +1,7 @@
 ﻿using GameServerCore.Enums;
 using GameServerCore.Domain.GameObjects;
+using GameServerCore.Domain.GameObjects.Spell;
+using GameServerCore.Domain.GameObjects.Spell.Missile;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using System.Numerics;
@@ -12,7 +14,9 @@ namespace Spells
     {
         public ISpellScriptMetadata ScriptMetadata => new SpellScriptMetadata()
         {
-            TriggersSpellCasts = true
+            TriggersSpellCasts = true,
+            IsDamagingSpell = true,
+            NotSingleTargetSpell = true
             // TODO
         };
 
@@ -48,7 +52,7 @@ namespace Spells
             AddParticleTarget(owner, "Incinerate_cas.troy", owner);
         }
 
-        public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, ISpellMissile projectile)
+        public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, ISpellMissile missile)
         {
             var ap = owner.Stats.AbilityPower.Total * 0.8f;
             var damage = 70 + spell.CastInfo.SpellLevel * 45 + ap;

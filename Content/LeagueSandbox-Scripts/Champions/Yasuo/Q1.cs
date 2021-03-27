@@ -1,9 +1,9 @@
 using System.Numerics;
 using GameServerCore.Enums;
 using GameServerCore.Domain.GameObjects;
+using GameServerCore.Domain.GameObjects.Spell;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 using LeagueSandbox.GameServer.Scripting.CSharp;
-using GameServerCore.Domain.GameObjects.Spell;
 using GameServerCore.Domain.GameObjects.Spell.Missile;
 
 namespace Spells
@@ -62,13 +62,13 @@ namespace Spells
             else
             {
                 //spell.CastInfo.Owner.SpellAnimation("SPELL1A");
-                spell.AddLaser("YasuoQ", trueCoords);
+                //spell.AddLaser("YasuoQ", trueCoords);
                 AddParticleTarget(spell.CastInfo.Owner, "Yasuo_Q_Hand.troy", spell.CastInfo.Owner);
                 AddParticleTarget(spell.CastInfo.Owner, "Yasuo_Base_Q1_cast_sound.troy", spell.CastInfo.Owner);
             }
         }
 
-        public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, ISpellMissile projectile)
+        public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, ISpellMissile missile)
         {
             AddParticleTarget(owner, "Yasuo_Base_Q_hit_tar.troy", target);
             target.TakeDamage(owner, spell.CastInfo.SpellLevel * 20f + owner.Stats.AttackDamage.Total, DamageType.DAMAGE_TYPE_PHYSICAL, DamageSource.DAMAGE_SOURCE_ATTACK, false);

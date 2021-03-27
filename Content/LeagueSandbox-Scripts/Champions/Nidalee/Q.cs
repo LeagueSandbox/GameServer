@@ -45,11 +45,11 @@ namespace Spells
             //spell.AddProjectile("JavelinToss", castcoords, castcoords, trueCoords, HitResult.HIT_Normal, true);
         }
 
-        public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, ISpellMissile projectile)
+        public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, ISpellMissile missile)
         {
             var ap = owner.Stats.AbilityPower.Total;
             var basedamage = 25 + spell.CastInfo.SpellLevel * 55 + ap;
-            var hitcoords = new Vector2(projectile.Position.X, projectile.Position.Y);
+            var hitcoords = new Vector2(missile.Position.X, missile.Position.Y);
             var distance = Math.Sqrt(Math.Pow(castcoords.X - hitcoords.X, 2) + Math.Pow(castcoords.Y - hitcoords.Y, 2));
             if (Math.Abs(distance) <= 525f)
             {
@@ -70,7 +70,7 @@ namespace Spells
                 AddParticleTarget(owner, "Nidalee_Base_Q_Tar.troy", target, 1, "C_BUFFBONE_GLB_CHEST_LOC");
             }
 
-            projectile.SetToRemove();
+            missile.SetToRemove();
         }
 
         public void OnSpellChannel(ISpell spell)

@@ -1,11 +1,12 @@
 ﻿using GameServerCore.Enums;
 using GameServerCore.Domain.GameObjects;
+using GameServerCore.Domain.GameObjects.Spell;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
-using GameServerCore.Domain;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using System.Numerics;
 using LeagueSandbox.GameServer.API;
 using System.Collections.Generic;
+using GameServerCore.Domain.GameObjects.Spell.Missile;
 
 namespace Spells
 {
@@ -70,7 +71,7 @@ namespace Spells
             ApiEventManager.OnSpellHit.AddListener(this, new KeyValuePair<ISpell, IObjAiBase>(spell, owner), TargetExecute, false);
         }
 
-        public void TargetExecute(ISpell spell, IAttackableUnit target, IProjectile p)
+        public void TargetExecute(ISpell spell, IAttackableUnit target, ISpellMissile missile)
         {
             var owner = spell.CastInfo.Owner;
 

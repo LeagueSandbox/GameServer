@@ -36,14 +36,14 @@ namespace Spells
             //spell.AddProjectileTarget("ToxicShot", spell.CastInfo.SpellCastLaunchPosition, spell.CastInfo.Targets[0].Unit);
         }
 
-        public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, ISpellMissile projectile)
+        public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, ISpellMissile missile)
         {
             var ap = owner.Stats.AbilityPower.Total * 0.8f;
             var damage = 35 + spell.CastInfo.SpellLevel * 45 + ap;
             target.TakeDamage(owner, damage, DamageType.DAMAGE_TYPE_MAGICAL, DamageSource.DAMAGE_SOURCE_SPELL, false);
             var time = 1.25f + 0.25f * spell.CastInfo.SpellLevel;
             AddBuff("Blind", time, 1, spell, target, owner);
-            projectile.SetToRemove();
+            missile.SetToRemove();
         }
 
         public void OnSpellChannel(ISpell spell)

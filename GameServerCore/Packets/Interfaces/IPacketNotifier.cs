@@ -1,15 +1,15 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Numerics;
 using GameServerCore.Content;
 using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
+using GameServerCore.Domain.GameObjects.Spell;
+using GameServerCore.Domain.GameObjects.Spell.Missile;
 using GameServerCore.NetInfo;
 using GameServerCore.Enums;
 using GameServerCore.Packets.Enums;
 using GameServerCore.Packets.PacketDefinitions.Requests;
-using System;
-using GameServerCore.Domain.GameObjects.Spell;
-using GameServerCore.Domain.GameObjects.Spell.Missile;
 
 namespace GameServerCore.Packets.Interfaces
 {
@@ -602,7 +602,7 @@ namespace GameServerCore.Packets.Interfaces
         /// Sends a packet to all players with vision of the given projectile that it has changed targets (unit/position).
         /// </summary>
         /// <param name="p">Projectile that has changed target.</param>
-        void NotifyS2C_ChangeMissileTarget(IProjectile p);
+        void NotifyS2C_ChangeMissileTarget(ISpellMissile p);
         /// <summary>
         /// Sends a packet to all players with vision of the specified unit detailing that it is playing the specified animation.
         /// </summary>

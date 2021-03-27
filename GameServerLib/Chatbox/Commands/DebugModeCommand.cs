@@ -1,14 +1,12 @@
 ﻿using GameServerCore;
-using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
+using GameServerCore.Domain.GameObjects.Spell.Missile;
 using LeagueSandbox.GameServer.GameObjects;
-using LeagueSandbox.GameServer.GameObjects.Other;
 using LeagueSandbox.GameServer.Logging;
 using log4net;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
-using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 
 namespace LeagueSandbox.GameServer.Chatbox.Commands
 {
@@ -359,106 +357,106 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
 
             foreach (KeyValuePair<uint, IGameObject> obj in tempObjects)
             {
-                if (obj.Value is IProjectile projectile)
+                if (obj.Value is ISpellMissile missile)
                 {
                     // Arbitrary ratio is required for the DebugCircle particle to look accurate
-                    var circlesize = (1f / 100f) * projectile.CollisionRadius;
+                    var circlesize = (1f / 100f) * missile.CollisionRadius;
 
-                    if (projectile.CollisionRadius < 5)
+                    if (missile.CollisionRadius < 5)
                     {
                         circlesize = (1f / 100f) * 35;
                     }
 
                     // Clear circle particles every draw in case the unit changes its position
-                    if (_circleParticles.ContainsKey(projectile.NetId))
+                    if (_circleParticles.ContainsKey(missile.NetId))
                     {
-                        if (_circleParticles[projectile.NetId] != null)
+                        if (_circleParticles[missile.NetId] != null)
                         {
-                            _circleParticles.Remove(projectile.NetId);
+                            _circleParticles.Remove(missile.NetId);
                         }
                     }
 
-                    var circleparticle = new Particle(_game, projectile, projectile.Position, "DebugCircle_green.troy", circlesize, "", 0, default, 0.1f, false, false);
-                    _circleParticles.Add(projectile.NetId, circleparticle);
+                    var circleparticle = new Particle(_game, missile, missile.Position, "DebugCircle_green.troy", circlesize, "", 0, default, 0.1f, false, false);
+                    _circleParticles.Add(missile.NetId, circleparticle);
                     _game.PacketNotifier.NotifyFXCreateGroup(circleparticle, userId);
 
-                    if (projectile.CastInfo.Targets[0] != null || (projectile.CastInfo.TargetPosition != Vector3.Zero && projectile.CastInfo.TargetPositionEnd != Vector3.Zero))
+                    if (missile.CastInfo.Targets[0] != null || (missile.CastInfo.TargetPosition != Vector3.Zero && missile.CastInfo.TargetPositionEnd != Vector3.Zero))
                     {
                         // Clear arrow particles every draw in case the unit changes its waypoints
-                        if (_arrowParticlesList.ContainsKey(projectile.NetId))
+                        if (_arrowParticlesList.ContainsKey(missile.NetId))
                         {
-                            if (_arrowParticlesList[projectile.NetId].Count != 0)
+                            if (_arrowParticlesList[missile.NetId].Count != 0)
                             {
                                 lock (_particlesLock)
                                 {
-                                    _arrowParticlesList[projectile.NetId].Clear();
+                                    _arrowParticlesList[missile.NetId].Clear();
                                 }
-                                _arrowParticlesList.Remove(projectile.NetId);
+                                _arrowParticlesList.Remove(missile.NetId);
                             }
                         }
 
-                        if (projectile.CastInfo.Targets[0].Unit != null)
+                        if (missile.CastInfo.Targets[0].Unit != null)
                         {
-                            if (!_arrowParticlesList.ContainsKey(projectile.NetId))
+                            if (!_arrowParticlesList.ContainsKey(missile.NetId))
                             {
-                                _arrowParticlesList.Add(projectile.NetId, new List<Particle>());
+                                _arrowParticlesList.Add(missile.NetId, new List<Particle>());
                             }
 
-                            var current = projectile.Position;
+                            var current = missile.Position;
 
-                            var wpTarget = projectile.GetTargetPosition();
+                            var wpTarget = missile.GetTargetPosition();
 
                             // Makes the arrow point to the target
                             var to = Vector2.Normalize(new Vector2(wpTarget.X, wpTarget.Y) - current);
 
                             var direction = new Vector3(to.X, 0, to.Y);
-                            var arrowparticle = new Particle(_game, projectile, wpTarget, "DebugArrow_green.troy", 0.5f, "", 0, direction, 0.1f, false, false);
-                            _arrowParticlesList[projectile.NetId].Add(arrowparticle);
+                            var arrowparticle = new Particle(_game, missile, wpTarget, "DebugArrow_green.troy", 0.5f, "", 0, direction, 0.1f, false, false);
+                            _arrowParticlesList[missile.NetId].Add(arrowparticle);
 
                             _game.PacketNotifier.NotifyFXCreateGroup(arrowparticle, userId);
                         }
 
-                        if (projectile.CastInfo.Targets[0].Unit == null)
+                        if (missile.CastInfo.Targets[0].Unit == null)
                         {
-                            if (!_arrowParticlesList.ContainsKey(projectile.NetId))
+                            if (!_arrowParticlesList.ContainsKey(missile.NetId))
                             {
-                                _arrowParticlesList.Add(projectile.NetId, new List<Particle>());
+                                _arrowParticlesList.Add(missile.NetId, new List<Particle>());
                             }
 
-                            var current = new Vector2(projectile.CastInfo.SpellCastLaunchPosition.X, projectile.CastInfo.SpellCastLaunchPosition.Z);
+                            var current = new Vector2(missile.CastInfo.SpellCastLaunchPosition.X, missile.CastInfo.SpellCastLaunchPosition.Z);
 
-                            var wpTarget = projectile.GetTargetPosition();
+                            var wpTarget = missile.GetTargetPosition();
 
                             // Makes the arrow point to the target
                             var to = Vector2.Normalize(new Vector2(wpTarget.X, wpTarget.Y) - current);
 
                             var direction = new Vector3(to.X, 0, to.Y);
 
-                            var dirTangent = Extensions.Rotate(new Vector2(direction.X, direction.Z), 90.0f) * projectile.CollisionRadius;
-                            var dirTangent2 = Extensions.Rotate(new Vector2(direction.X, direction.Z), 270.0f) * projectile.CollisionRadius;
+                            var dirTangent = Extensions.Rotate(new Vector2(direction.X, direction.Z), 90.0f) * missile.CollisionRadius;
+                            var dirTangent2 = Extensions.Rotate(new Vector2(direction.X, direction.Z), 270.0f) * missile.CollisionRadius;
 
-                            var arrowParticleStart = new Particle(_game, projectile, current, "DebugArrow_green.troy", 0.5f, "", 0, direction, 0.1f, false, false);
-                            _arrowParticlesList[projectile.NetId].Add(arrowParticleStart);
+                            var arrowParticleStart = new Particle(_game, missile, current, "DebugArrow_green.troy", 0.5f, "", 0, direction, 0.1f, false, false);
+                            _arrowParticlesList[missile.NetId].Add(arrowParticleStart);
                             _game.PacketNotifier.NotifyFXCreateGroup(arrowParticleStart, userId);
 
-                            var arrowParticleEnd = new Particle(_game, projectile, wpTarget, "DebugArrow_green.troy", 0.5f, "", 0, direction, 0.1f, false, false);
-                            _arrowParticlesList[projectile.NetId].Add(arrowParticleEnd);
+                            var arrowParticleEnd = new Particle(_game, missile, wpTarget, "DebugArrow_green.troy", 0.5f, "", 0, direction, 0.1f, false, false);
+                            _arrowParticlesList[missile.NetId].Add(arrowParticleEnd);
                             _game.PacketNotifier.NotifyFXCreateGroup(arrowParticleEnd, userId);
 
-                            var arrowParticleEnd2Temp = new Particle(_game, projectile, new Vector2(wpTarget.X + dirTangent.X, wpTarget.Y + dirTangent.Y), "Global_Indicator_Line_Beam.troy", 0.0f, "", 0, direction, 0.1f, false, false);
-                            _arrowParticlesList[projectile.NetId].Add(arrowParticleEnd2Temp);
+                            var arrowParticleEnd2Temp = new Particle(_game, missile, new Vector2(wpTarget.X + dirTangent.X, wpTarget.Y + dirTangent.Y), "Global_Indicator_Line_Beam.troy", 0.0f, "", 0, direction, 0.1f, false, false);
+                            _arrowParticlesList[missile.NetId].Add(arrowParticleEnd2Temp);
                             _game.PacketNotifier.NotifyFXCreateGroup(arrowParticleEnd2Temp, userId);
 
                             var arrowParticleStart2 = new Particle(_game, arrowParticleEnd2Temp, new Vector2(current.X + dirTangent.X, current.Y + dirTangent.Y), "Global_Indicator_Line_Beam.troy", 1.0f, "", 0, direction, 0.1f, false, false);
-                            _arrowParticlesList[projectile.NetId].Add(arrowParticleStart2);
+                            _arrowParticlesList[missile.NetId].Add(arrowParticleStart2);
                             _game.PacketNotifier.NotifyFXCreateGroup(arrowParticleStart2, userId);
 
-                            var arrowParticleEnd3Temp = new Particle(_game, projectile, new Vector2(wpTarget.X + dirTangent2.X, wpTarget.Y + dirTangent2.Y), "Global_Indicator_Line_Beam.troy", 0.0f, "", 0, direction, 0.1f, false, false);
-                            _arrowParticlesList[projectile.NetId].Add(arrowParticleEnd3Temp);
+                            var arrowParticleEnd3Temp = new Particle(_game, missile, new Vector2(wpTarget.X + dirTangent2.X, wpTarget.Y + dirTangent2.Y), "Global_Indicator_Line_Beam.troy", 0.0f, "", 0, direction, 0.1f, false, false);
+                            _arrowParticlesList[missile.NetId].Add(arrowParticleEnd3Temp);
                             _game.PacketNotifier.NotifyFXCreateGroup(arrowParticleEnd3Temp, userId);
 
                             var arrowParticleStart3 = new Particle(_game, arrowParticleEnd3Temp, new Vector2(current.X + dirTangent2.X, current.Y + dirTangent2.Y), "Global_Indicator_Line_Beam.troy", 1.0f, "", 0, direction, 0.1f, false, false);
-                            _arrowParticlesList[projectile.NetId].Add(arrowParticleStart3);
+                            _arrowParticlesList[missile.NetId].Add(arrowParticleStart3);
                             _game.PacketNotifier.NotifyFXCreateGroup(arrowParticleStart3, userId);
                         }
                     }

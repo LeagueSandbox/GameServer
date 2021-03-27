@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
+using GameServerCore.Domain.GameObjects.Spell;
+using GameServerCore.Domain.GameObjects.Spell.Missile;
 using LeagueSandbox.GameServer.GameObjects.AttackableUnits;
 using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
 using LeagueSandbox.GameServer.Logging;
@@ -314,10 +315,10 @@ namespace LeagueSandbox.GameServer.API
 
     public class EventOnSpellHit
     {
-        private readonly List<Tuple<object, KeyValuePair<ISpell, IObjAiBase>, Action<ISpell, IAttackableUnit, IProjectile>, bool>> _listeners = new List<Tuple<object, KeyValuePair<ISpell, IObjAiBase>, Action<ISpell, IAttackableUnit, IProjectile>, bool>>();
-        public void AddListener(object owner, KeyValuePair<ISpell, IObjAiBase> spellWithOwner, Action<ISpell, IAttackableUnit, IProjectile> callback, bool singleInstance)
+        private readonly List<Tuple<object, KeyValuePair<ISpell, IObjAiBase>, Action<ISpell, IAttackableUnit, ISpellMissile>, bool>> _listeners = new List<Tuple<object, KeyValuePair<ISpell, IObjAiBase>, Action<ISpell, IAttackableUnit, ISpellMissile>, bool>>();
+        public void AddListener(object owner, KeyValuePair<ISpell, IObjAiBase> spellWithOwner, Action<ISpell, IAttackableUnit, ISpellMissile> callback, bool singleInstance)
         {
-            var listenerTuple = new Tuple<object, KeyValuePair<ISpell, IObjAiBase>, Action<ISpell, IAttackableUnit, IProjectile>, bool>(owner, spellWithOwner, callback, singleInstance);
+            var listenerTuple = new Tuple<object, KeyValuePair<ISpell, IObjAiBase>, Action<ISpell, IAttackableUnit, ISpellMissile>, bool>(owner, spellWithOwner, callback, singleInstance);
             _listeners.Add(listenerTuple);
         }
         public void RemoveListener(object owner, KeyValuePair<ISpell, IObjAiBase> spellWithOwner)
@@ -328,7 +329,7 @@ namespace LeagueSandbox.GameServer.API
         {
             _listeners.RemoveAll((listener) => listener.Item1 == owner);
         }
-        public void Publish(IObjAiBase unit, ISpell spell, IAttackableUnit target, IProjectile p)
+        public void Publish(IObjAiBase unit, ISpell spell, IAttackableUnit target, ISpellMissile p)
         {
             var count = _listeners.Count;
 

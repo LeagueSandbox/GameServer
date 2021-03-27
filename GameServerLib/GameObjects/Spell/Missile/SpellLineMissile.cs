@@ -2,47 +2,30 @@
 using System.Collections.Generic;
 using System.Numerics;
 using GameServerCore.Content;
+using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Domain.GameObjects.Spell;
 using GameServerCore.Domain.GameObjects.Spell.Missile;
 using GameServerCore.Enums;
+using LeagueSandbox.GameServer.Content;
 
 namespace LeagueSandbox.GameServer.GameObjects.Spell.Missile
 {
-    public class SpellMissile : GameObject, ISpellMissile
+    public class SpellLineMissile : SpellMissile
     {
         // Function Vars.
-        protected float _moveSpeed;
         private bool _atDestination;
-        private float _timeSinceCreation;
 
-        public ICastInfo CastInfo { get; protected set; }
         /// <summary>
         /// Number of objects this projectile has hit since it was created.
         /// </summary>
         public List<IGameObject> ObjectsHit { get; }
         /// <summary>
-        /// Projectile spell data, housing all information about this projectile's properties. Most projectiles are counted as ExtraSpells within a character's data.
-        /// </summary>
-        public ISpellData SpellData { get; protected set; }
-        /// <summary>
-        /// Current unit this projectile is homing in on and moving towards. Projectile is destroyed on contact with this unit unless it has more than one target.
-        /// </summary>
-        public IAttackableUnit TargetUnit { get; protected set; }
-        /// <summary>
         /// Position this projectile is moving towards. Projectile is destroyed once it reaches this destination. Equals Vector2.Zero if TargetUnit is not null.
         /// </summary>
         public Vector2 Destination { get; protected set; }
-        /// <summary>
-        /// Spell which created this projectile.
-        /// </summary>
-        public ISpell SpellOrigin { get; protected set; }
-        /// <summary>
-        /// Whether or not this projectile's visuals should not be networked to clients.
-        /// </summary>
-        public bool IsServerOnly { get; }
 
-        public SpellMissile(
+        public SpellLineMissile(
             Game game,
             int collisionRadius,
             ISpell originSpell,
@@ -52,75 +35,47 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Missile
             SpellDataFlags overrideFlags = 0, // TODO: Find a use for these
             uint netId = 0,
             bool serverOnly = false
-        ) : base(game, castInfo.Owner.Position, collisionRadius, 0, netId)
+        ) : base(game, collisionRadius, originSpell, castInfo, moveSpeed, projectileName, overrideFlags, netId, serverOnly)
         {
-            _moveSpeed = moveSpeed;
-            _atDestination = false;
-            _timeSinceCreation = 0.0f;
+            // TODO: Verify if there is a case which contradicts this.
+            // Line and Circle Missiles are location targeted only.
+            TargetUnit = null;
 
-            SpellOrigin = originSpell;
-            SpellData = _game.Config.ContentManager.GetSpellData(projectileName);
+            Position = new Vector2(castInfo.SpellCastLaunchPosition.X, castInfo.SpellCastLaunchPosition.Z);
 
-            CastInfo = castInfo;
-            
-            // TODO: Implemented full support for multiple targets.
-            if (!castInfo.Targets.Exists(t =>
+            var goingTo = new Vector2(castInfo.TargetPositionEnd.X, castInfo.TargetPositionEnd.Z) - Position;
+            var dirTemp = Vector2.Normalize(goingTo);
+            var endPos = Position + (dirTemp * SpellOrigin.GetCurrentCastRange());
+
+            // usually doesn't happen
+            if (float.IsNaN(dirTemp.X) || float.IsNaN(dirTemp.Y))
             {
-                if (t.Unit != null)
+                if (float.IsNaN(CastInfo.Owner.Direction.X) || float.IsNaN(CastInfo.Owner.Direction.Y))
                 {
-                    TargetUnit = t.Unit;
-                    Destination = Vector2.Zero;
-                    return true;
+                    dirTemp = new Vector2(1, 0);
                 }
-                return false;
-            }))
-            {
-                Position = new Vector2(castInfo.SpellCastLaunchPosition.X, castInfo.SpellCastLaunchPosition.Z);
-
-                var goingTo = new Vector2(castInfo.TargetPositionEnd.X, castInfo.TargetPositionEnd.Z) - Position;
-                var dirTemp = Vector2.Normalize(goingTo);
-                var endPos = Position + (dirTemp * SpellData.CastRangeDisplayOverride);
-
-                // usually doesn't happen
-                if (float.IsNaN(dirTemp.X) || float.IsNaN(dirTemp.Y))
+                else
                 {
-                    if (float.IsNaN(CastInfo.Owner.Direction.X) || float.IsNaN(CastInfo.Owner.Direction.Y))
-                    {
-                        dirTemp = new Vector2(1, 0);
-                    }
-                    else
-                    {
-                        dirTemp = new Vector2(CastInfo.Owner.Direction.X, CastInfo.Owner.Direction.Z);
-                    }
-
-                    endPos = Position + (dirTemp * SpellData.CastRangeDisplayOverride);
-                    CastInfo.TargetPositionEnd = new Vector3(endPos.X, 0, endPos.Y);
+                    dirTemp = new Vector2(CastInfo.Owner.Direction.X, CastInfo.Owner.Direction.Z);
                 }
 
-                // TODO: Verify if CastRangeDisplayOverride is the correct variable to use.
-                Destination = Position + (dirTemp * SpellData.CastRangeDisplayOverride);
+                endPos = Position + (dirTemp * SpellOrigin.GetCurrentCastRange());
+                CastInfo.TargetPositionEnd = new Vector3(endPos.X, 0, endPos.Y);
             }
 
-            if (!string.IsNullOrEmpty(projectileName))
-            {
-                VisionRadius = SpellData.MissilePerceptionBubbleRadius;
-            }
+            // TODO: Verify if CastRangeDisplayOverride is the correct variable to use.
+            Destination = endPos;
 
             ObjectsHit = new List<IGameObject>();
-
-            Team = CastInfo.Owner.Team;
-
-            IsServerOnly = serverOnly;
         }
 
         public override void Update(float diff)
         {
-            if (!HasTarget() || _atDestination)
+            if (!HasDestination() || _atDestination)
             {
                 SetToRemove();
                 return;
             }
-            _timeSinceCreation += diff;
 
             Move(diff);
         }
@@ -145,30 +100,12 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Missile
         }
 
         /// <summary>
-        /// Gets the server-side speed that this Projectile moves at in units/sec.
-        /// </summary>
-        /// <returns>Units travelled per second.</returns>
-        public float GetSpeed()
-        {
-            return _moveSpeed;
-        }
-
-        /// <summary>
-        /// Gets the time since this projectile was created.
-        /// </summary>
-        /// <returns></returns>
-        public float GetTimeSinceCreation()
-        {
-            return _timeSinceCreation;
-        }
-
-        /// <summary>
         /// Moves this projectile to either its target unit, or its destination, and updates its coordinates along the way.
         /// </summary>
         /// <param name="diff">The amount of milliseconds the AI is supposed to move</param>
         private void Move(float diff)
         {
-            if (!HasTarget())
+            if (!HasDestination())
             {
                 Direction = new Vector3();
 
@@ -178,7 +115,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Missile
             // current position
             var cur = new Vector2(Position.X, Position.Y);
 
-            var next = GetTargetPosition();
+            var next = Destination;
 
             var goingTo = new Vector3(next.X, _game.Map.NavigationGrid.GetHeightAtLocation(next.X, next.Y), next.Y) - new Vector3(cur.X, _game.Map.NavigationGrid.GetHeightAtLocation(cur.X, cur.Y), cur.Y);
             var dirTemp = Vector3.Normalize(goingTo);
@@ -215,15 +152,6 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Missile
             // REVIEW (of previous code): (deltaMovement * 2) being used here is problematic; if the server lags, the diff will be much greater than the usual values
             if ((cur - next).LengthSquared() < MOVEMENT_EPSILON * MOVEMENT_EPSILON)
             {
-                if (this is ISpellMissile && TargetUnit != null)
-                {
-                    if (Position == TargetUnit.Position)
-                    {
-                        CheckFlagsForUnit(TargetUnit);
-                    }
-                    return;
-                }
-
                 // remove this projectile because it has reached its destination
                 if (Position == Destination)
                 {
@@ -232,43 +160,28 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Missile
             }
         }
 
-        // TODO: refactor this
-        protected virtual void CheckFlagsForUnit(IAttackableUnit unit)
+        protected override void CheckFlagsForUnit(IAttackableUnit unit)
         {
-            if (!HasTarget())
+            if (!HasDestination())
             {
                 return;
             }
 
-            // TODO: Verify if this works in all cases, if not, then change to: if (TargetUnit == null)
-            if (!CastInfo.IsClickCasted)
+            if (!CheckIfValidTarget(unit))
             {
-                // Skillshot
-                if (!CheckIfValidTarget(unit))
-                {
-                    return;
-                }
-
-                ObjectsHit.Add(unit);
-                var attackableUnit = unit;
-                if (SpellOrigin != null)
-                {
-                    SpellOrigin.ApplyEffects(attackableUnit, this);
-                }
+                return;
             }
-            else
-            {
-                // Targeted Spell (including auto attack spells)
-                if (SpellOrigin != null)
-                {
-                    SpellOrigin.ApplyEffects(TargetUnit, this);
-                    if (CastInfo.Owner is IObjAiBase ai && SpellOrigin.CastInfo.IsAutoAttack)
-                    {
-                        ai.AutoAttackHit(TargetUnit);
-                    }
-                }
 
-                SetToRemove();
+            ObjectsHit.Add(unit);
+
+            if (SpellOrigin != null)
+            {
+                SpellOrigin.ApplyEffects(unit, this);
+            }
+
+            if (CastInfo.Owner is IObjAiBase ai && SpellOrigin.CastInfo.IsAutoAttack)
+            {
+                ai.AutoAttackHit(TargetUnit);
             }
         }
 
@@ -276,15 +189,10 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Missile
         {
             base.SetToRemove();
 
-            if (SpellOrigin != null)
-            {
-                SpellOrigin.RemoveProjectile(this);
-            }
-
             _game.PacketNotifier.NotifyDestroyClientMissile(this);
         }
-        
-        protected bool CheckIfValidTarget(IAttackableUnit unit)
+
+        protected override bool CheckIfValidTarget(IAttackableUnit unit)
         {
             if (TargetUnit != null || unit == null || ObjectsHit.Contains(unit))
             {
@@ -348,31 +256,12 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Missile
         }
 
         /// <summary>
-        /// Whether or not this projectile has a target unit or a destination; if it is a valid projectile.
+        /// Whether or not this projectile has a destination; if it is a valid projectile.
         /// </summary>
         /// <returns>True/False.</returns>
-        public bool HasTarget()
+        public bool HasDestination()
         {
-            return TargetUnit != null || Destination != Vector2.Zero;
-        }
-
-        /// <summary>
-        /// Gets the position of this projectile's target (unit or destination).
-        /// </summary>
-        /// <returns>Vector2 position of target. Vector2(float.NaN, float.NaN) if projectile has no target.</returns>
-        public Vector2 GetTargetPosition()
-        { 
-            if (!HasTarget())
-            {
-                return new Vector2(float.NaN, float.NaN);
-            }
-
-            if (TargetUnit != null)
-            {
-                return TargetUnit.Position;
-            }
-
-            return Destination;
+            return Destination != Vector2.Zero && Destination.X != float.NaN && Destination.Y != float.NaN;
         }
     }
 }

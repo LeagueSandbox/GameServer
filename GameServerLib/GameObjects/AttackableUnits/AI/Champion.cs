@@ -1,15 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Numerics;
 using GameServerCore;
 using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
+using GameServerCore.Domain.GameObjects.Spell;
 using GameServerCore.NetInfo;
 using GameServerCore.Enums;
-using LeagueSandbox.GameServer.API;
 using LeagueSandbox.GameServer.GameObjects.Stats;
 using LeagueSandbox.GameServer.Items;
-using GameServerCore.Domain.GameObjects.Spell;
 
 namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 {
@@ -59,10 +57,10 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
             //TODO: automaticaly rise spell levels with CharData.SpellLevelsUp
 
-            Spells[4] = new Spell(game, this, clientInfo.SummonerSkills[0], 4);
-            Spells[5] = new Spell(game, this, clientInfo.SummonerSkills[1], 5);
+            Spells[4] = new Spell.Spell(game, this, clientInfo.SummonerSkills[0], 4);
+            Spells[5] = new Spell.Spell(game, this, clientInfo.SummonerSkills[1], 5);
 
-            Spells[13] = new Spell(game, this, "Recall", 13);
+            Spells[13] = new Spell.Spell(game, this, "Recall", 13);
 
             Spells[4].LevelUp();
             Spells[5].LevelUp();

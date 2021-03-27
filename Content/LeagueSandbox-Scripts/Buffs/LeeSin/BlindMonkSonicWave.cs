@@ -1,6 +1,6 @@
 ﻿using GameServerCore.Enums;
 using GameServerCore.Domain.GameObjects;
-using LeagueSandbox.GameServer.GameObjects.Stats;
+using GameServerCore.Domain.GameObjects.Spell;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 using GameServerCore.Domain.GameObjects.Spell;

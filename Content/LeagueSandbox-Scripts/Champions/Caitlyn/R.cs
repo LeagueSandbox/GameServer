@@ -1,7 +1,8 @@
 using GameServerCore.Enums;
 using GameServerCore.Domain.GameObjects;
-using LeagueSandbox.GameServer.Scripting.CSharp;
 using GameServerCore.Domain.GameObjects.Spell;
+using LeagueSandbox.GameServer.Scripting.CSharp;
+using System.Numerics;
 using GameServerCore.Domain.GameObjects.Spell.Missile;
 
 namespace Spells
@@ -36,7 +37,7 @@ namespace Spells
             //spell.AddProjectileTarget("CaitlynAceintheHoleMissile", spell.CastInfo.SpellCastLaunchPosition, spell.CastInfo.Targets[0].Unit);
         }
 
-        public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, ISpellMissile projectile)
+        public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, ISpellMissile missile)
         {
             if (target != null && !target.IsDead)
             {
@@ -46,7 +47,7 @@ namespace Spells
                     false);
             }
 
-            projectile.SetToRemove();
+            missile.SetToRemove();
         }
 
         public void OnSpellChannel(ISpell spell)

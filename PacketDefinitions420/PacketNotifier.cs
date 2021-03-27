@@ -3,6 +3,8 @@ using GameServerCore;
 using GameServerCore.Content;
 using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
+using GameServerCore.Domain.GameObjects.Spell;
+using GameServerCore.Domain.GameObjects.Spell.Missile;
 using GameServerCore.Enums;
 using GameServerCore.NetInfo;
 using GameServerCore.Packets.Enums;
@@ -785,6 +787,8 @@ namespace PacketDefinitions420
                 {
                     charStackData.SkinID = (uint)c.Skin;
                 }
+                charStackDataList.Add(charStackData);
+                enterVis.CharacterDataStack = charStackDataList;
 
                 buffCountList = new List<KeyValuePair<byte, int>>();
                 var tempBuffs = a.GetParentBuffs();
@@ -2018,7 +2022,7 @@ namespace PacketDefinitions420
         /// Sends a packet to all players with vision of the given projectile that it has changed targets (unit/position).
         /// </summary>
         /// <param name="p">Projectile that has changed target.</param>
-        public void NotifyS2C_ChangeMissileTarget(IProjectile p)
+        public void NotifyS2C_ChangeMissileTarget(ISpellMissile p)
         {
             if (!p.HasTarget())
             {
@@ -2481,17 +2485,7 @@ namespace PacketDefinitions420
             {
                 SenderNetID = o.NetId,
                 SyncID = o.SyncId,
-                Movements = new List<MovementDataNormal>()
-            };
-
-            var tp = new MovementDataNormal
-            {
-                SyncID = o.SyncId,
-                // TODO: Implement teleportID (likely to be the index of a waypoint we want to TP to).
-                HasTeleportID = true,
-                TeleportID = 1,
-                TeleportNetID = o.NetId,
-                Waypoints = new List<CompressedWaypoint>()
+                Movements = new List<MovementDataNormal> { tp }
             };
 
             _packetHandlerManager.BroadcastPacketVision(o, packet.GetBytes(), Channel.CHL_S2C);

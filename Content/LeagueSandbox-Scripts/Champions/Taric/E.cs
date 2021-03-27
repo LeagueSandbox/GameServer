@@ -44,7 +44,7 @@ namespace Spells
             }
         }
 
-        public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, ISpellMissile projectile)
+        public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, ISpellMissile missile)
         {
             var time = 1.1f + 0.1f * spell.CastInfo.SpellLevel;
             var ap = owner.Stats.AbilityPower.Total;
@@ -71,7 +71,7 @@ namespace Spells
                 RemoveParticle(p103);
             });
 
-            projectile.SetToRemove();
+            missile.SetToRemove();
         }
 
         public void OnSpellChannel(ISpell spell)

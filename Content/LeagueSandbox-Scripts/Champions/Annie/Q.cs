@@ -1,8 +1,8 @@
 using GameServerCore.Enums;
 using GameServerCore.Domain.GameObjects;
-using LeagueSandbox.GameServer.Scripting.CSharp;
 using GameServerCore.Domain.GameObjects.Spell;
 using GameServerCore.Domain.GameObjects.Spell.Missile;
+using LeagueSandbox.GameServer.Scripting.CSharp;
 using System.Numerics;
 using LeagueSandbox.GameServer.API;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
@@ -28,7 +28,7 @@ namespace Spells
             ApiEventManager.OnSpellHit.AddListener(this, new System.Collections.Generic.KeyValuePair<ISpell, IObjAiBase>(spell, owner), TargetExecute, false);
         }
 
-        public void TargetExecute(ISpell spell, IAttackableUnit target, IProjectile projectile)
+        public void TargetExecute(ISpell spell, IAttackableUnit target, ISpellMissile missile)
         {
             var owner = spell.CastInfo.Owner as IChampion;
             var ownerSkinID = owner.Skin;
@@ -61,8 +61,6 @@ namespace Spells
 
         public void OnSpellPostCast(ISpell spell)
         {
-            LogDebug("Disintegrate DesignerCastTime: " + spell.CastInfo.DesignerCastTime);
-            LogDebug("Disintegrate DesignerTotalTime: " + spell.CastInfo.DesignerTotalTime);
         }
 
         public void OnSpellChannel(ISpell spell)

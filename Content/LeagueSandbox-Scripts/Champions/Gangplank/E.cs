@@ -3,10 +3,8 @@ using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using GameServerCore;
 using System.Linq;
-using GameServerCore.Domain.GameObjects.Spell;
-using GameServerCore.Domain.GameObjects.Spell.Missile;
-using LeagueSandbox.GameServer.GameObjects.Spells;
 using System.Numerics;
+using GameServerCore.Domain.GameObjects.Spell;
 
 namespace Spells
 {

@@ -6,8 +6,8 @@ using LeagueSandbox.GameServer.Scripting.CSharp;
 using GameServerCore.Domain.GameObjects.Spell;
 using GameServerCore.Domain.GameObjects.Spell.Missile;
 using System.Linq;
-using LeagueSandbox.GameServer.GameObjects.Spells;
 using System.Numerics;
+using GameServerCore.Domain.GameObjects.Spell;
 
 namespace Spells
 {

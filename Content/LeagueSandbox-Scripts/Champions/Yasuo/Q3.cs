@@ -75,7 +75,7 @@ namespace Spells
             }
         }
 
-        public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, ISpellMissile projectile)
+        public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, ISpellMissile missile)
         {
             AddParticleTarget(owner, "Yasuo_Base_Q_WindStrike.troy", target);
             AddParticleTarget(owner, "Yasuo_Base_Q_windstrike_02.troy", target);

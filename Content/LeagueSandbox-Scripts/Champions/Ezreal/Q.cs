@@ -3,11 +3,10 @@ using GameServerCore.Enums;
 using GameServerCore.Domain.GameObjects;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 using LeagueSandbox.GameServer.Scripting.CSharp;
-using GameServerCore.Domain.GameObjects.Spell;
-using GameServerCore.Domain.GameObjects.Spell.Missile;
-using LeagueSandbox.GameServer.GameObjects.Spells;
 using LeagueSandbox.GameServer.API;
 using System.Collections.Generic;
+using GameServerCore.Domain.GameObjects.Spell;
+using GameServerCore.Domain.GameObjects.Spell.Missile;
 
 namespace Spells
 {
@@ -45,9 +44,9 @@ namespace Spells
             var distance = Vector2.Distance(ownerPos, targetPos);
             FaceDirection(targetPos, owner);
 
-            if (distance > 1100.0)
+            if (distance > 1200.0)
             {
-                targetPos = GetPointFromUnit(owner, 1050.0f);
+                targetPos = GetPointFromUnit(owner, 1150.0f);
             }
 
             if (ownerSkinID == 5)
@@ -105,7 +104,7 @@ namespace Spells
         {
         }
 
-        public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, ISpellMissile projectile)
+        public void TargetExecute(ISpell spell, IAttackableUnit target, ISpellMissile missile)
         {
             var owner = spell.CastInfo.Owner;
             var ad = owner.Stats.AttackDamage.Total * spell.SpellData.AttackDamageCoefficient;
@@ -118,7 +117,7 @@ namespace Spells
             }
 
             AddParticleTarget(spell.CastInfo.Owner, "Ezreal_mysticshot_tar.troy", target);
-            projectile.SetToRemove();
+            missile.SetToRemove();
 
             // SpellBuffAdd EzrealRisingSpellForce
         }

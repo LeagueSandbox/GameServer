@@ -43,7 +43,7 @@ namespace Spells
             //spell.AddProjectile("RocketGrabMissile", current, current, trueCoords);
         }
 
-        public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, ISpellMissile projectile)
+        public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, ISpellMissile missile)
         {
             var ap = owner.Stats.AbilityPower.Total;
             var damage = 25 + spell.CastInfo.SpellLevel * 55 + ap;
@@ -59,7 +59,7 @@ namespace Spells
                 ForceMovement(target, "RUN", trueCoords, spell.SpellData.MissileSpeed, 0, 0, 0, movementOrdersFacing: ForceMovementOrdersFacing.KEEP_CURRENT_FACING);
             }
 
-            projectile.SetToRemove();
+            missile.SetToRemove();
         }
 
         public void OnSpellChannel(ISpell spell)

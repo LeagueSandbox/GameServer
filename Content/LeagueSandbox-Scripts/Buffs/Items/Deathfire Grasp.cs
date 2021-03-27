@@ -1,4 +1,4 @@
-﻿using GameServerCore.Domain;
+﻿using GameServerCore.Domain.GameObjects.Spell;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;

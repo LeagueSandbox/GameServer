@@ -1,8 +1,6 @@
 using GameServerCore.Domain.GameObjects;
-using LeagueSandbox.GameServer.Scripting.CSharp;
 using GameServerCore.Domain.GameObjects.Spell;
-using GameServerCore.Domain.GameObjects.Spell.Missile;
-using LeagueSandbox.GameServer.GameObjects.Spells;
+using LeagueSandbox.GameServer.Scripting.CSharp;
 using System.Numerics;
 
 namespace Spells

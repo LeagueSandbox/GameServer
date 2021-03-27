@@ -1,9 +1,9 @@
 ﻿using System.Numerics;
 using GameServerCore.Enums;
 using GameServerCore.Domain.GameObjects;
+using GameServerCore.Domain.GameObjects.Spell;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 using LeagueSandbox.GameServer.Scripting.CSharp;
-using GameServerCore.Domain.GameObjects.Spell;
 using GameServerCore.Domain.GameObjects.Spell.Missile;
 
 namespace Spells
@@ -42,7 +42,7 @@ namespace Spells
             //spell.AddProjectile("BlindMonkQOne", new Vector2(spell.CastInfo.SpellCastLaunchPosition.X, spell.CastInfo.SpellCastLaunchPosition.Z), current, trueCoords, HitResult.HIT_Normal, true);
         }
 
-        public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, ISpellMissile projectile)
+        public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, ISpellMissile missile)
         {
             var ad = owner.Stats.AttackDamage.Total * 0.9f;
             var damage = 50 + (spell.CastInfo.SpellLevel * 30) + ad;
@@ -54,7 +54,7 @@ namespace Spells
                 AddBuff("BlindMonkSonicWave", 3f, 1, spell, u, owner);
             }
 
-            projectile.SetToRemove();
+            missile.SetToRemove();
 
             // TODO: SetSpell("BlindMonkQTwo")
         }

@@ -40,13 +40,13 @@ namespace Spells
             //spell.AddProjectile("AkaliMota", current, current, trueCoords);
         }
 
-        public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, ISpellMissile projectile)
+        public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, ISpellMissile missile)
         {
             var ap = owner.Stats.AbilityPower.Total * 0.4f;
             var damage = 15 + spell.CastInfo.SpellLevel * 20 + ap;
             target.TakeDamage(owner, damage, DamageType.DAMAGE_TYPE_PHYSICAL, DamageSource.DAMAGE_SOURCE_ATTACK, false);
             AddParticleTarget(owner, "akali_markOftheAssasin_marker_tar_02.troy", target, 1, "");
-            projectile.SetToRemove();
+            missile.SetToRemove();
         }
 
         public void OnSpellChannel(ISpell spell)

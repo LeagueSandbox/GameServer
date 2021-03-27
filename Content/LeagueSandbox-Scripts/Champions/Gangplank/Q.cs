@@ -2,10 +2,9 @@ using System;
 using GameServerCore.Enums;
 using GameServerCore.Domain.GameObjects;
 using LeagueSandbox.GameServer.Scripting.CSharp;
+using System.Numerics;
 using GameServerCore.Domain.GameObjects.Spell;
 using GameServerCore.Domain.GameObjects.Spell.Missile;
-using LeagueSandbox.GameServer.GameObjects.Spells;
-using System.Numerics;
 
 namespace Spells
 {
@@ -38,7 +37,7 @@ namespace Spells
             //spell.AddProjectileTarget("pirate_parley_mis", spell.CastInfo.SpellCastLaunchPosition, target);
         }
 
-        public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, ISpellMissile projectile)
+        public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, ISpellMissile missile)
         {
             var isCrit = new Random().Next(0, 100) < owner.Stats.CriticalChance.Total;
             var baseDamage = new[] { 20, 45, 70, 95, 120 }[spell.CastInfo.SpellLevel - 1] + owner.Stats.AttackDamage.Total;
@@ -64,7 +63,7 @@ namespace Spells
                     }
                 }
 
-                projectile.SetToRemove();
+                missile.SetToRemove();
             }
         }
 

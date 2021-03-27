@@ -33,7 +33,6 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
         public float CurrentChannelDuration { get; protected set; }
         public float CurrentDelayTime { get; protected set; }
         public bool Toggle { get; protected set; }
-        public Dictionary<uint, IProjectile> Projectiles { get; protected set; }
 
         public ISpellData SpellData { get; private set; }
 
@@ -61,8 +60,6 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
 
             SpellData = game.Config.ContentManager.GetSpellData(spellName);
 
-            Projectiles = new Dictionary<uint, IProjectile>();
-
             //Set the game script for the spell
             _spellScript = _scriptEngine.CreateObject<ISpellScript>("Spells", spellName) ?? new SpellScriptEmpty();
 
@@ -84,359 +81,9 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
         }
 
         /// <summary>
-        /// Creates a area of effect cone at this spell's owner position pointing towards the given target position that will act as follows:
-        /// ApplyEffect for each unit that has not been affected yet within the area.
-        /// If affectAsCastIsOver = true: when the spell origin has finished casting, despawns after doing one area of effect check.
-        /// If false: performs continuous area of effect checks until manually SetToRemove.
-        /// </summary>
-        /// <param name="effectName">Internal name of the cone to spawn. Required for cone features.</param>
-        /// <param name="target">Position the area of effect will point towards (from the owner's position).</param>
-        /// <param name="hitResult">How the damage applied by this area of effect should be shown to clients.</param>
-        /// <param name="affectAsCastIsOver">Whether or not the area of effect will last until its origin spell is finished casting. False = lasts forever (or until something calls SetToRemove for it manually, likely via spell script).</param>
-        /// <returns>Newly created area of effect cone with the given functionality.</returns>
-        public IProjectile AddCone(string effectName, Vector2 target, float angleDeg, HitResult hitResult = HitResult.HIT_Normal, bool affectAsCastIsOver = true)
-        {
-            ISpellData projectileSpellData = _game.Config.ContentManager.GetSpellData(effectName);
-
-            var castInfo = new CastInfo
-            {
-                SpellHash = HashFunctions.HashString(effectName), // TODO: Verify
-                SpellNetID = _futureProjNetId,
-                SpellLevel = 1, // TODO: Verify
-                AttackSpeedModifier = CastInfo.Owner.Stats.AttackSpeedMultiplier.Total,
-                Owner = CastInfo.Owner,
-                SpellChainOwnerNetID = CastInfo.SpellChainOwnerNetID,
-                PackageHash = CastInfo.PackageHash,
-                MissileNetID = _futureProjNetId,
-                TargetPosition = CastInfo.Owner.GetPosition3D(), // TODO: Verify
-                TargetPositionEnd = new Vector3(target.X, _game.Map.NavigationGrid.GetHeightAtLocation(target.X, target.Y), target.Y),
-                DesignerCastTime = 0, // TODO: Verify
-                ExtraCastTime = 0, // TODO: Verify
-                DesignerTotalTime = 0, // TODO: Verify
-                Cooldown = projectileSpellData.Cooldown[0], // TODO: Verify
-                StartCastTime = 0, // TODO: Verify
-                IsAutoAttack = false,
-                IsSecondAutoAttack = false,
-                IsForceCastingOrChannel = false, // TODO: Verify
-                IsOverrideCastPosition = false, // TODO: Verify
-                IsClickCasted = false, // TODO: Verify
-                SpellSlot = 0x33, // TODO: Verify
-                ManaCost = projectileSpellData.ManaCost[0], // TODO: Verify
-                SpellCastLaunchPosition = CastInfo.SpellCastLaunchPosition, // TODO: Verify
-                AmmoUsed = 0, // TODO: Verify
-                AmmoRechargeTime = 0 // TODO: Verify
-            };
-
-            // TODO: implement check for IsForceCastingOrChannel and IsOverrideCastPosition
-            if (projectileSpellData.CastType == (int)CastType.CAST_TargetMissile)
-            {
-                castInfo.IsClickCasted = true; // TODO: Verify
-            }
-
-            for (var i = 0; i < CastInfo.Owner.CharData.SpellNames.Length; i++)
-            {
-                if (CastInfo.Owner.CharData.SpellNames[i] == effectName)
-                {
-                    castInfo.SpellSlot = (byte)(i + 51); // TODO: Verify
-                }
-            }
-
-            var castTargets = new List<ICastTarget>();
-            var castTarget = new CastTarget(null, hitResult); // TODO: Verify if 0 NetId is OK
-            castTargets.Add(castTarget);
-            castInfo.Targets = castTargets;
-
-            var c = new Cone(
-                _game,
-                // TODO: Change this to a parameter.
-                (int)SpellData.LineWidth,
-                this,
-                castInfo,
-                effectName,
-                SpellData.Flags,
-                affectAsCastIsOver,
-                angleDeg,
-                _futureProjNetId
-            );
-            Projectiles.Add(c.NetId, c);
-            _game.ObjectManager.AddObject(c);
-            _futureProjNetId = _networkIdManager.GetNewNetId();
-
-            return c;
-        }
-
-        /// <summary>
-        /// Creates a area of effect rectangle at this spell's owner position pointing towards the given target position that will act as follows:
-        /// ApplyEffect for each unit that has not been affected yet within the area.
-        /// If affectAsCastIsOver = true: when the spell origin has finished casting, despawns after doing one area of effect check.
-        /// If false: performs continuous area of effect checks until manually SetToRemove.
-        /// </summary>
-        /// <param name="effectName">Internal name of the laser to spawn. Required for laser features.</param>
-        /// <param name="target">Position the area of effect will point towards (from the owner's position).</param>
-        /// <param name="hitResult">How the damage applied by this area of effect should be shown to clients.</param>
-        /// <param name="affectAsCastIsOver">Whether or not the area of effect will last until its origin spell is finished casting. False = lasts forever (or until something calls SetToRemove for it manually, likely via spell script).</param>
-        /// <returns>Newly created area of effect rectangle with the given functionality.</returns>
-        public IProjectile AddLaser(string effectName, Vector2 target, HitResult hitResult = HitResult.HIT_Normal, bool affectAsCastIsOver = true)
-        {
-            ISpellData projectileSpellData = _game.Config.ContentManager.GetSpellData(effectName);
-
-            var castInfo = new CastInfo
-            {
-                SpellHash = HashFunctions.HashString(effectName), // TODO: Verify
-
-                SpellNetID = _futureProjNetId,
-                SpellLevel = 1, // TODO: Verify
-                AttackSpeedModifier = CastInfo.Owner.Stats.AttackSpeedMultiplier.Total,
-                Owner = CastInfo.Owner,
-                SpellChainOwnerNetID = CastInfo.SpellChainOwnerNetID,
-                PackageHash = CastInfo.PackageHash,
-                MissileNetID = _futureProjNetId,
-                TargetPosition = CastInfo.Owner.GetPosition3D(), // TODO: Verify
-                TargetPositionEnd = new Vector3(target.X, _game.Map.NavigationGrid.GetHeightAtLocation(target.X, target.Y), target.Y),
-                DesignerCastTime = 0, // TODO: Verify
-                ExtraCastTime = 0, // TODO: Verify
-                DesignerTotalTime = 0, // TODO: Verify
-                Cooldown = projectileSpellData.Cooldown[0], // TODO: Verify
-                StartCastTime = 0, // TODO: Verify
-                IsAutoAttack = false,
-                IsSecondAutoAttack = false,
-                IsForceCastingOrChannel = false, // TODO: Verify
-                IsOverrideCastPosition = false, // TODO: Verify
-                IsClickCasted = false, // TODO: Verify
-                SpellSlot = 0x33, // TODO: Verify
-                ManaCost = projectileSpellData.ManaCost[0], // TODO: Verify
-                SpellCastLaunchPosition = CastInfo.SpellCastLaunchPosition, // TODO: Verify
-                AmmoUsed = 0, // TODO: Verify
-                AmmoRechargeTime = 0 // TODO: Verify
-            };
-
-            // TODO: implement check for IsForceCastingOrChannel and IsOverrideCastPosition
-            if (projectileSpellData.CastType == (int)CastType.CAST_TargetMissile)
-            {
-                castInfo.IsClickCasted = true; // TODO: Verify
-            }
-
-            for (var i = 0; i < CastInfo.Owner.CharData.SpellNames.Length; i++)
-            {
-                if (CastInfo.Owner.CharData.SpellNames[i] == effectName)
-                {
-                    castInfo.SpellSlot = (byte)(i + 51); // TODO: Verify
-                }
-            }
-
-            var castTargets = new List<ICastTarget>();
-
-            var castTarget = new CastTarget(null, hitResult); // TODO: Verify if 0 NetId is OK
-            castTargets.Add(castTarget);
-            castInfo.Targets = castTargets;
-
-            var l = new Laser(
-                _game,
-                (int)SpellData.LineWidth, // TODO: Change this to a parameter.
-                this,
-                castInfo,
-                effectName,
-                SpellData.Flags,
-                affectAsCastIsOver, // TODO: Verify if this is needed.
-                _futureProjNetId
-            );
-            Projectiles.Add(l.NetId, l);
-            _game.ObjectManager.AddObject(l);
-            _futureProjNetId = _networkIdManager.GetNewNetId();
-
-            return l;
-        }
-
-        /// <summary>
-        /// Creates a line missile with the specified properties.
-        /// </summary>
-        public IProjectile AddProjectile(ICastInfo castInfo)
-        {
-            var isServerOnly = false;
-
-            if (SpellData.MissileEffect != "")
-            {
-                isServerOnly = true;
-            }
-
-            var p = new Projectile(
-                _game,
-                (int)SpellData.LineWidth,
-                this,
-                castInfo,
-                SpellData.MissileSpeed,
-                SpellName,
-                SpellData.Flags,
-                castInfo.MissileNetID,
-                isServerOnly
-            );
-
-            _game.ObjectManager.AddObject(p);
-
-            _game.PacketNotifier.NotifyMissileReplication(p);
-            
-            // TODO: Verify when NotifyForceCreateMissile should be used instead.
-
-            return p;
-        }
-
-        /// <summary>
-        /// Creates a single-target missile with the specified properties.
-        /// </summary>
-        public IProjectile AddProjectileTarget(ICastInfo castInfo)
-        {
-            var isServerOnly = false;
-
-            if (SpellData.MissileEffect != "")
-            {
-                isServerOnly = true;
-            }
-
-            var p = new Projectile(
-                _game,
-                (int)SpellData.LineWidth,
-                this,
-                castInfo,
-                SpellData.MissileSpeed,
-                SpellName,
-                SpellData.Flags,
-                castInfo.MissileNetID,
-                isServerOnly
-            );
-
-            _game.ObjectManager.AddObject(p);
-
-            _game.PacketNotifier.NotifyMissileReplication(p);
-
-            // TODO: Verify when NotifyForceCreateMissile should be used instead.
-
-            return p;
-        }
-
-        /// <summary>
-        /// Creates a single-target missile at the specified cast position that will move as follows: Owner.Position -> target.Position. Despawns when Position = target.Position
-        /// </summary>
-        /// <param name="nameMissile">Internal name of the missile to spawn. Required for missile features.</param>
-        /// <param name="castPos">Position the missile will spawn at.</param>
-        /// <param name="target">Unit the missile will move towards. Once hit, this missile will despawn (unless it has bounces left).</param>
-        /// <param name="hitResult">How the damage applied by this projectile should be shown to clients.</param>
-        /// <param name="isServerOnly">Whether or not this missile will only spawn server-side.</param>
-        /// <param name="overrideCastPosition">Whether or not to override default cast position behavior with the given cast position.</param>
-        /// <returns>Newly created missile with the given functionality.</returns>
-        public IProjectile AddProjectileTarget(string nameMissile, Vector3 castPos, IAttackableUnit target, HitResult hitResult = HitResult.HIT_Normal, bool isServerOnly = false, bool overrideCastPosition = false)
-        {
-            var castTargets = new List<ICastTarget>();
-            var castTarget = new CastTarget(target, hitResult); // TODO: Verify if 0 NetId is OK
-            castTargets.Add(castTarget);
-            ICastInfo castInfo = new CastInfo
-            {
-                SpellNetID = _futureProjNetId,
-                SpellLevel = 1, // TODO: Verify
-                AttackSpeedModifier = CastInfo.AttackSpeedModifier,
-                Owner = CastInfo.Owner,
-                SpellChainOwnerNetID = CastInfo.SpellChainOwnerNetID,
-                PackageHash = CastInfo.PackageHash,
-                MissileNetID = _futureProjNetId,
-                TargetPosition = target.GetPosition3D(),
-                TargetPositionEnd = target.GetPosition3D(),
-                Targets = castTargets,
-                DesignerCastTime = 0, // TODO: Verify
-                ExtraCastTime = 0, // TODO: Verify
-                DesignerTotalTime = 0, // TODO: Verify
-                Cooldown = 0, // TODO: Verify
-                StartCastTime = 0, // TODO: Verify
-                IsAutoAttack = true,
-                IsSecondAutoAttack = CastInfo.Owner.HasMadeInitialAttack,
-                IsForceCastingOrChannel = false, // TODO: Verify
-                IsOverrideCastPosition = overrideCastPosition, // TODO: Verify
-            };
-
-            IProjectile p;
-
-            if (nameMissile == "")
-            {
-                castInfo.SpellHash = HashFunctions.HashString(""); // TODO: Verify
-                castInfo.IsClickCasted = true; // TODO: Verify
-                castInfo.ManaCost = 0;
-                castInfo.SpellCastLaunchPosition = castInfo.Owner.GetPosition3D();
-                castInfo.AmmoUsed = 0; // TODO: Verify
-                castInfo.AmmoRechargeTime = 0; // TODO: Verify
-
-                p = new Projectile(
-                    _game,
-                    5,
-                    this,
-                    castInfo,
-                    SpellData.MissileSpeed,
-                    "",
-                    0,
-                    _futureProjNetId
-                );
-            }
-            else
-            {
-                ISpellData projectileSpellData = _game.Config.ContentManager.GetSpellData(nameMissile);
-
-                castInfo.SpellHash = HashFunctions.HashString(nameMissile); // TODO: Verify
-                castInfo.IsClickCasted = false; // TODO: Verify
-                castInfo.SpellSlot = 0x33; // TODO: Verify
-                castInfo.ManaCost = projectileSpellData.ManaCost[0]; // TODO: Verify
-                if (float.IsNaN(castPos.Y) || castPos.Y == 0.0f)
-                {
-                    castPos.Y = _game.Map.NavigationGrid.GetHeightAtLocation(castPos.X, castPos.Z);
-                }
-                castInfo.SpellCastLaunchPosition = castPos;
-                castInfo.AmmoUsed = 0; // TODO: Verify
-                castInfo.AmmoRechargeTime = 0; // TODO: Verify
-
-                // TODO: implement check for IsForceCastingOrChannel and IsOverrideCastPosition
-                if (projectileSpellData.CastType == (int)CastType.CAST_TargetMissile)
-                {
-                    castInfo.IsClickCasted = true; // TODO: Verify
-                }
-
-                for (var i = 0; i < CastInfo.Owner.CharData.SpellNames.Length; i++)
-                {
-                    if (CastInfo.Owner.CharData.SpellNames[i] == nameMissile)
-                    {
-                        castInfo.SpellSlot = (byte)(i + 51); // TODO: Verify
-                    }
-                }
-
-                p = new Projectile(
-                    _game,
-                    (int)projectileSpellData.LineWidth,
-                    this,
-                    castInfo,
-                    projectileSpellData.MissileSpeed,
-                    nameMissile,
-                    projectileSpellData.Flags,
-                    _futureProjNetId,
-                    isServerOnly
-                );
-            }
-
-            Projectiles.Add(p.NetId, p);
-            _game.ObjectManager.AddObject(p);
-
-            if (!isServerOnly && nameMissile != "")
-            {
-                _game.PacketNotifier.NotifyMissileReplication(p);
-            }
-            else if (nameMissile != "")
-            {
-                _game.PacketNotifier.NotifyForceCreateMissile(p);
-            }
-
-            _futureProjNetId = _networkIdManager.GetNewNetId();
-
-            return p;
-        }
-
-        /// <summary>
         /// Called by projectiles when they land / hit, this is where we apply damage/slows etc.
         /// </summary>
-        public void ApplyEffects(IAttackableUnit u, IProjectile p = null)
+        public void ApplyEffects(IAttackableUnit u, ISpellMissile p = null)
         {
             if (SpellData.HaveHitEffect && !string.IsNullOrEmpty(SpellData.HitEffectName))
             {
@@ -444,27 +91,6 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
             }
 
             ApiEventManager.OnSpellHit.Publish(CastInfo.Owner, this, u, p);
-
-            if (p != null && p.IsToRemove())
-            {
-                Projectiles.Remove(p.NetId);
-            }
-        }
-
-        /// <summary>
-        /// Removes the given projectile instance from this spell's dictionary of projectiles. Will automatically SetToRemove the projectile.
-        /// </summary>
-        /// <param name="p">Projectile to remove.</param>
-        public void RemoveProjectile(IProjectile p)
-        {
-            if (Projectiles.ContainsKey(p.NetId))
-            {
-                Projectiles.Remove(p.NetId);
-                if (!p.IsToRemove())
-                {
-                    p.SetToRemove();
-                }
-            }
         }
 
         /// <summary>
@@ -909,12 +535,12 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
 
                     if (missileType == MissileType.Target)
                     {
-                        AddProjectileTarget(CastInfo);
+                        CreateSpellMissile(CastInfo);
                     }
                     
                     if (missileType == MissileType.CircleLine)
                     {
-                        AddProjectile(CastInfo);
+                        CreateSpellLineMissile(CastInfo);
                     }
 
                     if (missileType == MissileType.Arc)
@@ -969,7 +595,6 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
         void ISpell.Deactivate()
         {
             CastInfo.Targets.Clear();
-            Projectiles.Clear();
             _spellScript.OnDeactivate(CastInfo.Owner, this);
         }
 
@@ -992,15 +617,9 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
                 }
                 if (!CastInfo.Owner.IsMelee)
                 {
-                    // TODO: Add checks for Dodge and Miss
-                    HitResult hitResult = HitResult.HIT_Normal;
-                    if (CastInfo.Owner.IsNextAutoCrit)
-                    {
-                        hitResult = HitResult.HIT_Critical;
-                    }
                     if (HasEmptyScript)
                     {
-                        AddProjectileTarget(SpellName, CastInfo.SpellCastLaunchPosition, CastInfo.Targets[0].Unit, hitResult);
+                        CreateSpellMissile(CastInfo);
                     }
                 }
                 else
@@ -1040,12 +659,12 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
 
                 if (missileType == MissileType.Target)
                 {
-                    AddProjectileTarget(CastInfo);
+                    CreateSpellMissile(CastInfo);
                 }
 
                 if (missileType == MissileType.CircleLine)
                 {
-                    AddProjectile(CastInfo);
+                    CreateSpellLineMissile(CastInfo);
                 }
 
                 if (missileType == MissileType.Arc)
@@ -1075,6 +694,72 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
             {
                 CastInfo.Owner.SetSpellToCast(null, Vector2.Zero);
             }
+        }
+
+        /// <summary>
+        /// Creates a single-target missile with the specified properties.
+        /// </summary>
+        public ISpellMissile CreateSpellMissile(ICastInfo castInfo)
+        {
+            var isServerOnly = false;
+
+            if (SpellData.MissileEffect != "")
+            {
+                isServerOnly = true;
+            }
+
+            var p = new SpellMissile(
+                _game,
+                (int)SpellData.LineWidth,
+                this,
+                castInfo,
+                SpellData.MissileSpeed,
+                SpellName,
+                SpellData.Flags,
+                castInfo.MissileNetID,
+                isServerOnly
+            );
+
+            _game.ObjectManager.AddObject(p);
+
+            _game.PacketNotifier.NotifyMissileReplication(p);
+
+            // TODO: Verify when NotifyForceCreateMissile should be used instead.
+
+            return p;
+        }
+
+        /// <summary>
+        /// Creates a line missile with the specified properties.
+        /// </summary>
+        public ISpellMissile CreateSpellLineMissile(ICastInfo castInfo)
+        {
+            var isServerOnly = false;
+
+            if (SpellData.MissileEffect != "")
+            {
+                isServerOnly = true;
+            }
+
+            var p = new SpellLineMissile(
+                _game,
+                (int)SpellData.LineWidth,
+                this,
+                castInfo,
+                SpellData.MissileSpeed,
+                SpellName,
+                SpellData.Flags,
+                castInfo.MissileNetID,
+                isServerOnly
+            );
+
+            _game.ObjectManager.AddObject(p);
+
+            _game.PacketNotifier.NotifyMissileReplication(p);
+
+            // TODO: Verify when NotifyForceCreateMissile should be used instead.
+
+            return p;
         }
 
         /// <summary>

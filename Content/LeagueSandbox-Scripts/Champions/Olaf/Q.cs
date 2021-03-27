@@ -53,7 +53,7 @@ namespace Spells
             //spell.AddProjectile("OlafAxeThrowDamage", new Vector2(spell.CastInfo.SpellCastLaunchPosition.X, spell.CastInfo.SpellCastLaunchPosition.Z), current, trueCoords);
         }
 
-        public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, ISpellMissile projectile)
+        public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, ISpellMissile missile)
         {
             AddParticleTarget(owner, "olaf_axeThrow_tar.troy", target, 1);
             var ad = owner.Stats.AttackDamage.Total * 1.1f;

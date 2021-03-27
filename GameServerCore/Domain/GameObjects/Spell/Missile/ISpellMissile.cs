@@ -7,10 +7,6 @@ namespace GameServerCore.Domain.GameObjects.Spell.Missile
     public interface ISpellMissile : IGameObject
     {
         /// <summary>
-        /// Number of objects this projectile has hit since it was created.
-        /// </summary>
-        List<IGameObject> ObjectsHit { get; }
-        /// <summary>
         /// Projectile spell data, housing all information about this projectile's properties. Most projectiles are counted as ExtraSpells within a character's data.
         /// </summary>
         ISpellData SpellData { get; }

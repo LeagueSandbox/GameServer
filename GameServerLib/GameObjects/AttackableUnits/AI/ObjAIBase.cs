@@ -129,7 +129,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 {
                     if (!string.IsNullOrEmpty(CharData.SpellNames[i]))
                     {
-                        Spells[i] = new Spell(game, this, CharData.SpellNames[i], (byte)i);
+                        Spells[i] = new Spell.Spell(game, this, CharData.SpellNames[i], (byte)i);
                     }
                 }
 
@@ -140,7 +140,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 // 6 - 12 (12 = TrinketSlot)
                 for (byte i = 6; i < 12; i++)
                 {
-                    Spells[i] = new Spell(game, this, "BaseSpell", i);
+                    Spells[i] = new Spell.Spell(game, this, "BaseSpell", i);
                 }
 
                 // BluePillSlot
@@ -159,7 +159,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                     if (!string.IsNullOrEmpty(CharData.ExtraSpells[i]))
                     {
                         var spellSlot = i + 45;
-                        Spells[(byte)(spellSlot)] = new Spell(game, this, CharData.ExtraSpells[i], (byte)(spellSlot));
+                        Spells[(byte)(spellSlot)] = new Spell.Spell(game, this, CharData.ExtraSpells[i], (byte)(spellSlot));
                         Spells[(byte)(spellSlot)].LevelUp();
                     }
                 }
@@ -174,7 +174,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 // 63
                 if (!string.IsNullOrEmpty(CharData.Passive.PassiveAbilityName))
                 {
-                    Spells[63] = new Spell(game, this, CharData.Passive.PassiveAbilityName, 63);
+                    Spells[63] = new Spell.Spell(game, this, CharData.Passive.PassiveAbilityName, 63);
                 }
 
                 // BasicAttackNormalSlots & BasicAttackCriticalSlots
@@ -183,7 +183,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 {
                     if (!string.IsNullOrEmpty(CharData.AttackNames[i]))
                     {
-                        Spells[(byte)(i + 64)] = new Spell(game, this, CharData.AttackNames[i], (byte)(i + 64));
+                        Spells[(byte)(i + 64)] = new Spell.Spell(game, this, CharData.AttackNames[i], (byte)(i + 64));
                     }
                 }
 
@@ -700,7 +700,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             {
                 Spells[slot].Deactivate();
             }
-            Spells[slot] = new Spell(_game, this, "BaseSpell", slot); // Replace previous spell with empty spell.
+            Spells[slot] = new Spell.Spell(_game, this, "BaseSpell", slot); // Replace previous spell with empty spell.
             Stats.SetSpellEnabled(slot, false);
         }
 
@@ -765,7 +765,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             {
                 return null;
             }
-            ISpell newSpell = new Spell(_game, this, name, slot);
+            ISpell newSpell = new Spell.Spell(_game, this, name, slot);
 
             if (Spells[slot] != null)
             {
@@ -819,7 +819,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             if (unit != null)
             {
                 // Unit targeted.
-                SetTargetUnit(unit);
+                SetTargetUnit(unit, true);
                 UpdateMoveOrder(OrderType.AttackTo, true);
             }
             else

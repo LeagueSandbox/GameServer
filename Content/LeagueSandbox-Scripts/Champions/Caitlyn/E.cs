@@ -1,6 +1,9 @@
 ﻿using System.Numerics;
 using GameServerCore.Enums;
 using GameServerCore.Domain.GameObjects;
+using GameServerCore.Domain.GameObjects.Spell;
+using GameServerCore.Domain.GameObjects.Spell.Missile;
+using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 using GameServerCore.Domain.GameObjects.Spell;
@@ -49,7 +52,7 @@ namespace Spells
             spell.AddProjectile("CaitlynEntrapmentMissile", current, trueCoords);
         }
 
-        public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, ISpellMissile projectile)
+        public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, ISpellMissile missile)
         {
             var ap = owner.Stats.AbilityPower.Total * 0.8f;
             var damage = 80 + (spell.CastInfo.SpellLevel - 1) * 50 + ap;
@@ -58,7 +61,8 @@ namespace Spells
             AddBuff("Slow", slowDuration, 1, spell, target, owner);
             AddParticleTarget(owner, "caitlyn_entrapment_tar.troy", target);
             AddParticleTarget(owner, "caitlyn_entrapment_slow.troy", target);
-            projectile.SetToRemove();
+
+            missile.SetToRemove();
         }
 
         public void OnSpellChannel(ISpell spell)
