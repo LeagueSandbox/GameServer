@@ -607,6 +607,29 @@ namespace LeagueSandbox.GameServer.API
             target.Stats.SetSpellEnabled((byte)slot, !seal);
         }
 
+        /// <summary>
+        /// Forces the given unit or object to perform the given animation.
+        /// </summary>
+        /// <param name="unit">Unit or object that will play the animation.</param>
+        /// <param name="animName">Internal name of an animation to play.</param>
+        /// <param name="timeScale">How fast the animation should play. Default 1x speed.</param>
+        /// <param name="startTime">Time in the animation to start at.</param>
+        /// TODO: Verify if this description is correct, if not, correct it.
+        /// <param name="speedScale">How much the speed of the GameObject should affect the animation.</param>
+        /// TODO: Implement AnimationFlags enum for this and fill it in.
+        /// <param name="flags">Animation flags. Possible values and functions unknown.</param>
+        public static void PlayAnimation(IGameObject unit, string animName, float timeScale = 1.0f, float startTime = 0, float speedScale = 0, byte flags = 0)
+        {
+            unit.PlayAnimation(animName, timeScale, startTime, speedScale, flags);
+        }
+
+        /// <summary>
+        /// Sets the specified unit's animation states to the given set of states.
+        /// Given state pairs are expected to follow a specific structure:
+        /// First string is the animation to override, second string is the animation to play in place of the first.
+        /// </summary>
+        /// <param name="unit">Unit to set animation states on.</param>
+        /// <param name="animPairs">Dictionary of animations to set.</param>
         public static void SetAnimStates(IAttackableUnit unit, Dictionary<string, string> animPairs)
         {
             unit.SetAnimStates(animPairs);

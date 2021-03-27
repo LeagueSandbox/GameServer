@@ -40,7 +40,7 @@ namespace Spells
             var range = to * spell.SpellData.CastRangeDisplayOverride;
             var trueCoords = current + range;
 
-            ForceMovement(spell.CastInfo.Owner, trueCoords, 1500, 0, 0, 0);
+            ForceMovement(spell.CastInfo.Owner, "", trueCoords, 1500, 0, 0, 0);
         }
 
         public void OnSpellChannel(ISpell spell)

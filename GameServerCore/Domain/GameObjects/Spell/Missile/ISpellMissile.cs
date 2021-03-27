@@ -1,4 +1,4 @@
-﻿using GameServerCore.Domain.GameObjects.Spell;
+﻿using GameServerCore.Enums;
 using System.Collections.Generic;
 using System.Numerics;
 
@@ -7,10 +7,20 @@ namespace GameServerCore.Domain.GameObjects.Spell.Missile
     public interface ISpellMissile : IGameObject
     {
         /// <summary>
-        /// Projectile spell data, housing all information about this projectile's properties. Most projectiles are counted as ExtraSpells within a character's data.
+        /// Information about this missile's path.
         /// </summary>
-        ISpellData SpellData { get; }
         ICastInfo CastInfo { get; }
+        /// <summary>
+        /// What kind of behavior this missile has.
+        /// </summary>
+        MissileType Type { get; }
+        /// <summary>
+        /// Current unit this projectile is homing in on and moving towards. Projectile is destroyed on contact with this unit unless it has more than one target.
+        /// </summary>
+        IAttackableUnit TargetUnit { get; }
+        /// <summary>
+        /// Spell which created this projectile.
+        /// </summary>
         ISpell SpellOrigin { get; }
         /// <summary>
         /// Whether or not this projectile's visuals should not be networked to clients.

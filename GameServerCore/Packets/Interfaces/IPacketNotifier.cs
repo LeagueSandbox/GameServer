@@ -604,7 +604,7 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="p">Projectile that has changed target.</param>
         void NotifyS2C_ChangeMissileTarget(ISpellMissile p);
         /// <summary>
-        /// Sends a packet to all players with vision of the specified unit detailing that it is playing the specified animation.
+        /// Sends a packet to all players with vision of the specified object detailing that it is playing the specified animation.
         /// </summary>
         /// <param name="obj">GameObject that is playing the animation.</param>
         /// <param name="animation">Internal name of the animation to play.</param>

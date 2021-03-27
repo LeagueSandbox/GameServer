@@ -2081,22 +2081,22 @@ namespace PacketDefinitions420
             _packetHandlerManager.SendPacket(userId, heroPacket.GetBytes(), Channel.CHL_S2C);
         }
 
-        // <summary>
-        /// Sends a packet to all players with vision of the specified unit detailing that it is playing the specified animation.
+        /// <summary>
+        /// Sends a packet to all players with vision of the specified object detailing that it is playing the specified animation.
         /// </summary>
-        /// <param name="u">Unit that is playing the animation.</param>
+        /// <param name="obj">GameObject that is playing the animation.</param>
         /// <param name="animation">Internal name of the animation to play.</param>
         /// TODO: Implement AnimationFlags enum for this and fill it in.
         /// <param name="flags">Animation flags. Possible values and functions unknown.</param>
         /// <param name="timeScale">How fast the animation should play. Default 1x speed.</param>
         /// <param name="startTime">Time in the animation to start at.</param>
         /// TODO: Verify if this description is correct, if not, correct it.
-        /// <param name="speedScale">How much the speed of the unit should affect the animation.</param>
-        public void NotifyS2C_PlayAnimation(IAttackableUnit u, string animation, byte flags = 0, float timeScale = 1.0f, float startTime = 0.0f, float speedScale = 1.0f)
+        /// <param name="speedScale">How much the speed of the GameObject should affect the animation.</param>
+        public void NotifyS2C_PlayAnimation(IGameObject obj, string animation, byte flags = 0, float timeScale = 1.0f, float startTime = 0.0f, float speedScale = 1.0f)
         {
             var animPacket = new S2C_PlayAnimation
             {
-                SenderNetID = u.NetId,
+                SenderNetID = obj.NetId,
                 AnimationFlags = flags, // TODO: figure out what these do, and probably make an enum for it
                 ScaleTime = timeScale,
                 StartProgress = startTime,
@@ -2104,7 +2104,7 @@ namespace PacketDefinitions420
                 AnimationName = animation
             };
 
-            _packetHandlerManager.BroadcastPacketVision(u, animPacket.GetBytes(), Channel.CHL_S2C);
+            _packetHandlerManager.BroadcastPacketVision(obj, animPacket.GetBytes(), Channel.CHL_S2C);
         }
 
         /// <summary>

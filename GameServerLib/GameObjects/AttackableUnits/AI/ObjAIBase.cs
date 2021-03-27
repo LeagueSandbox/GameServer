@@ -829,15 +829,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         }
 
         /// <summary>
-        /// Forces this AI to perform the given internally named animation.
-        /// </summary>
-        /// <param name="animName">Internal name of an animation to play.</param>
-        public void SpellAnimation(string animName)
-        {
-            _game.PacketNotifier.NotifyS2C_PlayAnimation(this, animName);
-        }
-
-        /// <summary>
         /// Sets this AI's current target unit. This relates to both auto attacks as well as general spell targeting.
         /// </summary>
         /// <param name="target">Unit to target.</param>

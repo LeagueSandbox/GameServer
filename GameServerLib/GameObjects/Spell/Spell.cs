@@ -716,7 +716,6 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
                 this,
                 castInfo,
                 SpellData.MissileSpeed,
-                SpellName,
                 SpellData.Flags,
                 castInfo.MissileNetID,
                 isServerOnly
@@ -749,7 +748,6 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
                 this,
                 castInfo,
                 SpellData.MissileSpeed,
-                SpellName,
                 SpellData.Flags,
                 castInfo.MissileNetID,
                 isServerOnly
@@ -782,7 +780,6 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
                 this,
                 castInfo,
                 SpellData.MissileSpeed,
-                SpellName,
                 SpellData.Flags,
                 castInfo.MissileNetID,
                 isServerOnly

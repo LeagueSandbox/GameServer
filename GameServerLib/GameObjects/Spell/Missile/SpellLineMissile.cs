@@ -16,6 +16,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Missile
         // Function Vars.
         private bool _atDestination;
 
+        public override MissileType Type { get; protected set; } = MissileType.Arc;
         /// <summary>
         /// Number of objects this projectile has hit since it was created.
         /// </summary>
@@ -31,11 +32,10 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Missile
             ISpell originSpell,
             ICastInfo castInfo,
             float moveSpeed,
-            string projectileName,
             SpellDataFlags overrideFlags = 0, // TODO: Find a use for these
             uint netId = 0,
             bool serverOnly = false
-        ) : base(game, collisionRadius, originSpell, castInfo, moveSpeed, projectileName, overrideFlags, netId, serverOnly)
+        ) : base(game, collisionRadius, originSpell, castInfo, moveSpeed, overrideFlags, netId, serverOnly)
         {
             // TODO: Verify if there is a case which contradicts this.
             // Line and Circle Missiles are location targeted only.
@@ -77,7 +77,16 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Missile
                 return;
             }
 
-            Move(diff);
+            if (!HasDestination())
+            {
+                Direction = new Vector3();
+
+                return;
+            }
+            else
+            {
+                Move(diff);
+            }
         }
 
         public override void OnCollision(IGameObject collider, bool isTerrain = false)
@@ -103,15 +112,8 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Missile
         /// Moves this projectile to either its target unit, or its destination, and updates its coordinates along the way.
         /// </summary>
         /// <param name="diff">The amount of milliseconds the AI is supposed to move</param>
-        private void Move(float diff)
+        public override void Move(float diff)
         {
-            if (!HasDestination())
-            {
-                Direction = new Vector3();
-
-                return;
-            }
-
             // current position
             var cur = new Vector2(Position.X, Position.Y);
 
@@ -199,22 +201,22 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Missile
                 return false;
             }
 
-            if (unit.Team == CastInfo.Owner.Team && !SpellData.Flags.HasFlag(SpellDataFlags.AffectFriends))
+            if (unit.Team == CastInfo.Owner.Team && !SpellOrigin.SpellData.Flags.HasFlag(SpellDataFlags.AffectFriends))
             {
                 return false;
             }
 
-            if (unit.Team == TeamId.TEAM_NEUTRAL && !SpellData.Flags.HasFlag(SpellDataFlags.AffectNeutral))
+            if (unit.Team == TeamId.TEAM_NEUTRAL && !SpellOrigin.SpellData.Flags.HasFlag(SpellDataFlags.AffectNeutral))
             {
                 return false;
             }
 
-            if (unit.Team != CastInfo.Owner.Team && unit.Team != TeamId.TEAM_NEUTRAL && !SpellData.Flags.HasFlag(SpellDataFlags.AffectEnemies))
+            if (unit.Team != CastInfo.Owner.Team && unit.Team != TeamId.TEAM_NEUTRAL && !SpellOrigin.SpellData.Flags.HasFlag(SpellDataFlags.AffectEnemies))
             {
                 return false;
             }
 
-            if (unit.IsDead && !SpellData.Flags.HasFlag(SpellDataFlags.AffectDead))
+            if (unit.IsDead && !SpellOrigin.SpellData.Flags.HasFlag(SpellDataFlags.AffectDead))
             {
                 return false;
             }
@@ -223,31 +225,31 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Missile
             {
                 // TODO: Verify all
                 // Order is important
-                case ILaneMinion _ when SpellData.Flags.HasFlag(SpellDataFlags.AffectMinions)
-                                    && !SpellData.Flags.HasFlag(SpellDataFlags.IgnoreLaneMinion):
+                case ILaneMinion _ when SpellOrigin.SpellData.Flags.HasFlag(SpellDataFlags.AffectMinions)
+                                    && !SpellOrigin.SpellData.Flags.HasFlag(SpellDataFlags.IgnoreLaneMinion):
                     return true;
-                case IMinion m when (!m.IsPet && SpellData.Flags.HasFlag(SpellDataFlags.AffectNotPet))
-                                || (m.IsPet && SpellData.Flags.HasFlag(SpellDataFlags.AffectUseable))
-                                || (m.IsWard && SpellData.Flags.HasFlag(SpellDataFlags.AffectWards))
-                                || (!m.IsClone && SpellData.Flags.HasFlag(SpellDataFlags.IgnoreClones))
-                                || (unit.Team == CastInfo.Owner.Team && !SpellData.Flags.HasFlag(SpellDataFlags.IgnoreAllyMinion))
-                                || (unit.Team != CastInfo.Owner.Team && unit.Team != TeamId.TEAM_NEUTRAL && !SpellData.Flags.HasFlag(SpellDataFlags.IgnoreEnemyMinion))
-                                || SpellData.Flags.HasFlag(SpellDataFlags.AffectMinions):
+                case IMinion m when (!m.IsPet && SpellOrigin.SpellData.Flags.HasFlag(SpellDataFlags.AffectNotPet))
+                                || (m.IsPet && SpellOrigin.SpellData.Flags.HasFlag(SpellDataFlags.AffectUseable))
+                                || (m.IsWard && SpellOrigin.SpellData.Flags.HasFlag(SpellDataFlags.AffectWards))
+                                || (!m.IsClone && SpellOrigin.SpellData.Flags.HasFlag(SpellDataFlags.IgnoreClones))
+                                || (unit.Team == CastInfo.Owner.Team && !SpellOrigin.SpellData.Flags.HasFlag(SpellDataFlags.IgnoreAllyMinion))
+                                || (unit.Team != CastInfo.Owner.Team && unit.Team != TeamId.TEAM_NEUTRAL && !SpellOrigin.SpellData.Flags.HasFlag(SpellDataFlags.IgnoreEnemyMinion))
+                                || SpellOrigin.SpellData.Flags.HasFlag(SpellDataFlags.AffectMinions):
                     if (!(unit is ILaneMinion))
                     {
                         return true;
                     }
                     return false; // already got checked in ILaneMinion
-                case IBaseTurret _ when SpellData.Flags.HasFlag(SpellDataFlags.AffectTurrets):
+                case IBaseTurret _ when SpellOrigin.SpellData.Flags.HasFlag(SpellDataFlags.AffectTurrets):
                     return true;
-                case IInhibitor _ when SpellData.Flags.HasFlag(SpellDataFlags.AffectBuildings):
+                case IInhibitor _ when SpellOrigin.SpellData.Flags.HasFlag(SpellDataFlags.AffectBuildings):
                     return true;
-                case INexus _ when SpellData.Flags.HasFlag(SpellDataFlags.AffectBuildings):
+                case INexus _ when SpellOrigin.SpellData.Flags.HasFlag(SpellDataFlags.AffectBuildings):
                     return true;
-                case IChampion _ when SpellData.Flags.HasFlag(SpellDataFlags.AffectHeroes):
+                case IChampion _ when SpellOrigin.SpellData.Flags.HasFlag(SpellDataFlags.AffectHeroes):
                     return true;
                 default:
-                    if (SpellData.Flags.HasFlag(SpellDataFlags.AffectAllUnitTypes))
+                    if (SpellOrigin.SpellData.Flags.HasFlag(SpellDataFlags.AffectAllUnitTypes))
                     {
                         return true;
                     }

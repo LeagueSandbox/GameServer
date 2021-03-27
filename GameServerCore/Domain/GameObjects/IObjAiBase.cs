@@ -141,11 +141,6 @@ namespace GameServerCore.Domain.GameObjects
         /// <param name="unit">Unit to cast the spell on.</param>
         void SetSpellToCast(ISpell s, Vector2 location, IAttackableUnit unit = null);
         /// <summary>
-        /// Forces this AI to perform the given internally named animation.
-        /// </summary>
-        /// <param name="animName">Internal name of an animation to play.</param>
-        void SpellAnimation(string animName);
-        /// <summary>
         /// Sets this AI's current target unit. This relates to both auto attacks as well as general spell targeting.
         /// </summary>
         /// <param name="target">Unit to target.</param>
