@@ -111,36 +111,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
                 unit = CastInfo.Owner;
             }
 
-            var targetingType = SpellData.TargetingType;
             var attackType = AttackType.ATTACK_TYPE_RADIAL;
-            if (!CastInfo.IsAutoAttack
-             && (targetingType == TargetingType.Target
-             || targetingType == TargetingType.Area
-             || targetingType == TargetingType.Location
-             || targetingType == TargetingType.DragDirection))
-            {
-                var distance = Vector2.DistanceSquared(CastInfo.Owner.Position, start);
-                var castRange = GetCurrentCastRange();
-
-                if (targetingType == TargetingType.Target)
-                {
-                    attackType = AttackType.ATTACK_TYPE_TARGETED;
-                    distance = Vector2.DistanceSquared(CastInfo.Owner.Position, unit.Position);
-
-                    if (distance > castRange * castRange)
-                    {
-                        CastInfo.Owner.SetSpellToCast(this, Vector2.Zero, unit);
-                        return false;
-                    }
-                }
-
-                if (distance > castRange * castRange)
-                {
-                    CastInfo.Owner.SetSpellToCast(this, start);
-                    return false;
-                }
-            }
-
             var stats = CastInfo.Owner.Stats;
 
             if ((SpellData.ManaCost[CastInfo.SpellLevel] * (1 - stats.SpellCostReduction) >= stats.CurrentMana && !CastInfo.IsAutoAttack) || State != SpellState.STATE_READY)
@@ -223,6 +194,35 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
 
             // TODO: Verify
             CastInfo.SpellCastLaunchPosition = CastInfo.Owner.GetPosition3D();
+
+            var targetingType = SpellData.TargetingType;
+            if (!CastInfo.IsAutoAttack
+             && (targetingType == TargetingType.Target
+             || targetingType == TargetingType.Area
+             || targetingType == TargetingType.Location
+             || targetingType == TargetingType.DragDirection))
+            {
+                var distance = Vector2.DistanceSquared(CastInfo.Owner.Position, start);
+                var castRange = GetCurrentCastRange();
+
+                if (targetingType == TargetingType.Target)
+                {
+                    attackType = AttackType.ATTACK_TYPE_TARGETED;
+                    distance = Vector2.DistanceSquared(CastInfo.Owner.Position, unit.Position);
+
+                    if (distance > castRange * castRange)
+                    {
+                        CastInfo.Owner.SetSpellToCast(this, Vector2.Zero, unit);
+                        return false;
+                    }
+                }
+
+                if (distance > castRange * castRange)
+                {
+                    CastInfo.Owner.SetSpellToCast(this, start);
+                    return false;
+                }
+            }
 
             CastInfo.Owner.UpdateMoveOrder(OrderType.TempCastSpell, true);
 
@@ -538,14 +538,15 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
                         CreateSpellMissile(CastInfo);
                     }
                     
-                    if (missileType == MissileType.CircleLine)
+                    if (missileType == MissileType.Circle)
                     {
-                        CreateSpellLineMissile(CastInfo);
+                        CreateSpellCircleMissile(CastInfo);
                     }
 
                     if (missileType == MissileType.Arc)
                     {
-                        // TODO: Implement Arc projectiles.
+                        // TODO: Implement Arc missile (line missile).
+                        //CreateSpellLineMissile(CastInfo);
                     }
                 }
             }
@@ -662,14 +663,15 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
                     CreateSpellMissile(CastInfo);
                 }
 
-                if (missileType == MissileType.CircleLine)
+                if (missileType == MissileType.Circle)
                 {
-                    CreateSpellLineMissile(CastInfo);
+                    CreateSpellCircleMissile(CastInfo);
                 }
 
                 if (missileType == MissileType.Arc)
                 {
-                    // TODO: Implement Arc projectiles.
+                    // TODO: Implement Arc missile (line missile).
+                    //CreateSpellLineMissile(CastInfo);
                 }
             }
 
@@ -709,6 +711,39 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
             }
 
             var p = new SpellMissile(
+                _game,
+                (int)SpellData.LineWidth,
+                this,
+                castInfo,
+                SpellData.MissileSpeed,
+                SpellName,
+                SpellData.Flags,
+                castInfo.MissileNetID,
+                isServerOnly
+            );
+
+            _game.ObjectManager.AddObject(p);
+
+            _game.PacketNotifier.NotifyMissileReplication(p);
+
+            // TODO: Verify when NotifyForceCreateMissile should be used instead.
+
+            return p;
+        }
+
+        /// <summary>
+        /// Creates a line missile with the specified properties.
+        /// </summary>
+        public ISpellMissile CreateSpellCircleMissile(ICastInfo castInfo)
+        {
+            var isServerOnly = false;
+
+            if (SpellData.MissileEffect != "")
+            {
+                isServerOnly = true;
+            }
+
+            var p = new SpellLineMissile(
                 _game,
                 (int)SpellData.LineWidth,
                 this,

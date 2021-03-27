@@ -45,15 +45,15 @@ namespace Spells
             //spell.AddProjectile("EzrealTrueshotBarrage", new Vector2(spell.CastInfo.SpellCastLaunchPosition.X, spell.CastInfo.SpellCastLaunchPosition.Z), current, trueCoords, HitResult.HIT_Normal, true);
         }
 
-        public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, ISpellMissile missile)
-        {
-            var reduc = Math.Min(missile.ObjectsHit.Count, 7);
-            var bonusAd = owner.Stats.AttackDamage.Total - owner.Stats.AttackDamage.BaseValue;
-            var ap = owner.Stats.AbilityPower.Total * 0.9f;
-            var damage = 200 + spell.CastInfo.SpellLevel * 150 + bonusAd + ap;
-            target.TakeDamage(owner, damage * (1 - reduc / 10), DamageType.DAMAGE_TYPE_MAGICAL,
-                DamageSource.DAMAGE_SOURCE_SPELL, false);
-        }
+        //public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, ISpellMissile missile)
+        //{
+        //    var reduc = Math.Min(missile.ObjectsHit.Count, 7);
+        //    var bonusAd = owner.Stats.AttackDamage.Total - owner.Stats.AttackDamage.BaseValue;
+        //    var ap = owner.Stats.AbilityPower.Total * 0.9f;
+        //    var damage = 200 + spell.CastInfo.SpellLevel * 150 + bonusAd + ap;
+        //    target.TakeDamage(owner, damage * (1 - reduc / 10), DamageType.DAMAGE_TYPE_MAGICAL,
+        //        DamageSource.DAMAGE_SOURCE_SPELL, false);
+        //}
 
         public void OnSpellChannel(ISpell spell)
         {

@@ -43,14 +43,14 @@ namespace Spells
             //spell.AddProjectile("CaitlynPiltoverPeacemaker", new Vector2(spell.CastInfo.SpellCastLaunchPosition.X, spell.CastInfo.SpellCastLaunchPosition.Z), current, trueCoords, HitResult.HIT_Normal, true);
         }
 
-        public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, ISpellMissile missile)
-        {
-            var reduc = Math.Min(missile.ObjectsHit.Count, 5);
-            var baseDamage = new[] { 20, 60, 100, 140, 180 }[spell.CastInfo.SpellLevel - 1] +
-                             1.3f * owner.Stats.AttackDamage.Total;
-            var damage = baseDamage * (1 - reduc / 10);
-            target.TakeDamage(owner, damage, DamageType.DAMAGE_TYPE_PHYSICAL, DamageSource.DAMAGE_SOURCE_SPELL, false);
-        }
+        //public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, ISpellMissile missile)
+        //{
+        //    var reduc = Math.Min(missile.ObjectsHit.Count, 5);
+        //    var baseDamage = new[] { 20, 60, 100, 140, 180 }[spell.CastInfo.SpellLevel - 1] +
+        //                     1.3f * owner.Stats.AttackDamage.Total;
+        //    var damage = baseDamage * (1 - reduc / 10);
+        //    target.TakeDamage(owner, damage, DamageType.DAMAGE_TYPE_PHYSICAL, DamageSource.DAMAGE_SOURCE_SPELL, false);
+        //}
 
         public void OnSpellChannel(ISpell spell)
         {
