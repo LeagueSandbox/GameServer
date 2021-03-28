@@ -646,6 +646,19 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="attackType">AttackType that the attacker is using to attack.</param>
         void NotifyS2C_UnitSetLookAt(IAttackableUnit attacker, IAttackableUnit attacked, AttackType attackType);
         /// <summary>
+        /// Sends a packet to all players detailing the attack speed cap overrides for this game.
+        /// </summary>
+        /// <param name="overrideMax">Whether or not to override the maximum attack speed cap.</param>
+        /// <param name="maxAttackSpeedOverride">Value to override the maximum attack speed cap.</param>
+        /// <param name="overrideMin">Whether or not to override the minimum attack speed cap.</param>
+        /// <param name="minAttackSpeedOverride">Value to override the minimum attack speed cap.</param>
+        void NotifyS2C_UpdateAttackSpeedCapOverrides(bool overrideMax, float maxAttackSpeedOverride, bool overrideMin, float minAttackSpeedOverride);
+        /// <summary>
+        /// Sends a packet to all players with vision of the given bounce missile that it has updated (unit/position).
+        /// </summary>
+        /// <param name="p">Missile that has been updated.</param>
+        void NotifyS2C_UpdateBounceMissile(ISpellMissile p);
+        /// <summary>
         /// Sends a packet to the specified user detailing that the specified spell's toggle state has been updated.
         /// </summary>
         /// <param name="userId">User to send the packet to.</param>

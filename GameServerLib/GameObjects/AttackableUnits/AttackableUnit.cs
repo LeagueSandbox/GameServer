@@ -938,7 +938,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                         b.DeactivateBuff();
                     }
 
-                    BuffList.RemoveAll(buff => buff.Elapsed());
+                    BuffList.RemoveAll(buff => buff.Elapsed() || buff == b);
                     RemoveBuff(b.Name);
                     RemoveBuffSlot(b);
                     if (!b.IsHidden)

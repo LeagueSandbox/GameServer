@@ -82,7 +82,6 @@ namespace Spells
         {
             MissileParameters = new MissileParameters
             {
-                CanHitEnemies = true,
                 Type = MissileType.Circle
             },
             IsDamagingSpell = true

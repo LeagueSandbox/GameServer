@@ -2,13 +2,13 @@
 
 namespace GameServerCore.Domain.GameObjects.Spell.Missile
 {
-    public interface ISectorParameters
-    {
-        bool CanHitSameTarget { get; }
-        bool CanHitSameTargetConsecutively { get; }
+public interface ISectorParameters
+{
+    bool CanHitSameTarget { get; }
+    bool CanHitSameTargetConsecutively { get; }
 
-        int MaximumHits { get; }
+    int MaximumHits { get; }
 
-        SectorType Type { get; }
-    }
+    SectorType Type { get; }
+}
 }

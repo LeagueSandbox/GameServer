@@ -11,7 +11,7 @@ using LeagueSandbox.GameServer.Content;
 
 namespace LeagueSandbox.GameServer.GameObjects.Spell.Missile
 {
-    public class SpellCircleMissile : SpellMissile
+    public class SpellCircleMissile : SpellMissile, ISpellCircleMissile
     {
         // Function Vars.
         private bool _atDestination;
@@ -162,14 +162,9 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Missile
             }
         }
 
-        protected override void CheckFlagsForUnit(IAttackableUnit unit)
+        public override void CheckFlagsForUnit(IAttackableUnit unit)
         {
-            if (!HasDestination())
-            {
-                return;
-            }
-
-            if (!CheckIfValidTarget(unit))
+            if (!HasDestination() || !IsValidTarget(unit))
             {
                 return;
             }
@@ -194,7 +189,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Missile
             _game.PacketNotifier.NotifyDestroyClientMissile(this);
         }
 
-        protected override bool CheckIfValidTarget(IAttackableUnit unit)
+        protected override bool IsValidTarget(IAttackableUnit unit)
         {
             if (unit == null || ObjectsHit.Contains(unit))
             {

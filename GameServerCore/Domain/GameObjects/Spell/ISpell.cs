@@ -79,6 +79,22 @@ namespace GameServerCore.Domain.GameObjects.Spell
         /// <param name="reason">How it should be treated.</param>
         void StopChanneling(ChannelingStopCondition condition, ChannelingStopSource reason);
         void Deactivate();
+        /// <summary>
+        /// Creates a single-target missile with the specified properties.
+        /// </summary>
+        ISpellMissile CreateSpellMissile();
+        /// <summary>
+        /// Creates a single-target bouncing missile with the specified properties.
+        /// </summary>
+        ISpellMissile CreateSpellChainMissile();
+        /// <summary>
+        /// Creates a line missile with the specified properties.
+        /// </summary>
+        ISpellMissile CreateSpellCircleMissile();
+        /// <summary>
+        /// Creates an arc missile with the specified properties.
+        /// </summary>
+        ISpellMissile CreateSpellLineMissile();
         int GetId();
         float GetCooldown();
         /// <summary>

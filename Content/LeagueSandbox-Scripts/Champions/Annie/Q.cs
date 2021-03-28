@@ -17,10 +17,8 @@ namespace Spells
             IsDamagingSpell = true,
             MissileParameters = new MissileParameters
             {
-                CanHitEnemies = true,
                 Type = MissileType.Target
             }
-            // TODO
         };
 
         public void OnActivate(IObjAiBase owner, ISpell spell)

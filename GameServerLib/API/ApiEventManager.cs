@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Domain.GameObjects.Spell;
 using GameServerCore.Domain.GameObjects.Spell.Missile;
-using LeagueSandbox.GameServer.GameObjects.AttackableUnits;
-using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
 using LeagueSandbox.GameServer.Logging;
 using log4net;
 
@@ -92,6 +90,7 @@ namespace LeagueSandbox.GameServer.API
 
         public static EventOnHitUnit OnHitUnit = new EventOnHitUnit();
         public static EventOnLaunchAttack OnLaunchAttack = new EventOnLaunchAttack();
+        public static EventOnLaunchMissile OnLaunchMissile = new EventOnLaunchMissile();
         public static EventOnPreAttack OnPreAttack = new EventOnPreAttack();
         public static EventOnSpellCast OnSpellCast = new EventOnSpellCast();
         public static EventOnSpellChannel OnSpellChannel = new EventOnSpellChannel();
@@ -177,6 +176,47 @@ namespace LeagueSandbox.GameServer.API
                 if (_listeners[i].Item2 == unit)
                 {
                     _listeners[i].Item3(spell);
+                    if (_listeners[i].Item4 == true)
+                    {
+                        _listeners.RemoveAt(i);
+                        i--;
+                        count--;
+                    }
+                }
+            }
+        }
+    }
+
+    public class EventOnLaunchMissile
+    {
+        private readonly List<Tuple<object, KeyValuePair<IObjAiBase, ISpell>, Action<ISpell, ISpellMissile>, bool>> _listeners = new List<Tuple<object, KeyValuePair<IObjAiBase, ISpell>, Action<ISpell, ISpellMissile>, bool>>();
+        public void AddListener(object owner, KeyValuePair<IObjAiBase, ISpell> casterSpellPair, Action<ISpell, ISpellMissile> callback, bool singleInstance)
+        {
+            var listenerTuple = new Tuple<object, KeyValuePair<IObjAiBase, ISpell>, Action<ISpell, ISpellMissile>, bool>(owner, casterSpellPair, callback, singleInstance);
+            _listeners.Add(listenerTuple);
+        }
+        public void RemoveListener(object owner, KeyValuePair<IObjAiBase, ISpell> casterSpellPair)
+        {
+            _listeners.RemoveAll((listener) => listener.Item1 == owner && listener.Item2.Key == casterSpellPair.Key && listener.Item2.Value == casterSpellPair.Value);
+        }
+        public void RemoveListener(object owner)
+        {
+            _listeners.RemoveAll((listener) => listener.Item1 == owner);
+        }
+        public void Publish(KeyValuePair<IObjAiBase, ISpell> casterSpellPair, ISpellMissile missile)
+        {
+            var count = _listeners.Count;
+
+            if (count == 0)
+            {
+                return;
+            }
+
+            for (int i = 0; i < count && count > 0; i++)
+            {
+                if (_listeners[i].Item2.Key == casterSpellPair.Key && _listeners[i].Item2.Value == casterSpellPair.Value)
+                {
+                    _listeners[i].Item3(casterSpellPair.Value, missile);
                     if (_listeners[i].Item4 == true)
                     {
                         _listeners.RemoveAt(i);

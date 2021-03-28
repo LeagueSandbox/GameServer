@@ -761,6 +761,7 @@ namespace PacketDefinitions420
         /// <param name="o">GameObject entering vision.</param>
         /// <param name="userId">User to send the packet to.</param>
         /// <param name="isChampion">Whether or not the GameObject entering vision is a Champion.</param>
+        /// <param name="useTeleportID">Whether or not to teleport the object to its current position.</param>
         /// TODO: Incomplete implementation.
         public void NotifyEnterVisibilityClient(IGameObject o, int userId = 0, bool isChampion = false, bool useTeleportID = false)
         {
@@ -1537,7 +1538,7 @@ namespace PacketDefinitions420
                 PackageHash = b.SourceUnit.GetObjHash(), // TODO: Verify
                 RunningTime = runningTime,
                 Duration = duration,
-                CasterNetID = b.OriginSpell.Owner.NetId
+                CasterNetID = b.SourceUnit.NetId
             };
             _packetHandlerManager.BroadcastPacketVision(b.TargetUnit, addPacket.GetBytes(), Channel.CHL_S2C);
         }
@@ -2201,6 +2202,55 @@ namespace PacketDefinitions420
             };
 
             _packetHandlerManager.BroadcastPacketVision(attacker, lookAtPacket.GetBytes(), Channel.CHL_S2C);
+        }
+
+        /// <summary>
+        /// Sends a packet to all players detailing the attack speed cap overrides for this game.
+        /// </summary>
+        /// <param name="overrideMax">Whether or not to override the maximum attack speed cap.</param>
+        /// <param name="maxAttackSpeedOverride">Value to override the maximum attack speed cap.</param>
+        /// <param name="overrideMin">Whether or not to override the minimum attack speed cap.</param>
+        /// <param name="minAttackSpeedOverride">Value to override the minimum attack speed cap.</param>
+        public void NotifyS2C_UpdateAttackSpeedCapOverrides(bool overrideMax, float maxAttackSpeedOverride, bool overrideMin, float minAttackSpeedOverride)
+        {
+            var overridePacket = new S2C_UpdateAttackSpeedCapOverrides
+            {
+                DoOverrideMax = overrideMax,
+                DoOverrideMin = overrideMin,
+                MaxAttackSpeedOverride = maxAttackSpeedOverride,
+                MinAttackSpeedOverride = minAttackSpeedOverride
+            };
+
+            _packetHandlerManager.BroadcastPacket(overridePacket.GetBytes(), Channel.CHL_S2C);
+        }
+
+        /// <summary>
+        /// Sends a packet to all players with vision of the given bounce missile that it has updated (unit/position).
+        /// </summary>
+        /// <param name="p">Missile that has been updated.</param>
+        public void NotifyS2C_UpdateBounceMissile(ISpellMissile p)
+        {
+            if (!p.HasTarget())
+            {
+                return;
+            }
+
+            var changePacket = new S2C_UpdateBounceMissile()
+            {
+                SenderNetID = p.NetId,
+                TargetNetID = 0,
+                CasterPosition = p.CastInfo.Owner.GetPosition3D()
+            };
+
+            if (p.CastInfo.Targets.Count > 0)
+            {
+                if (p.CastInfo.Targets[0].Unit != null)
+                {
+                    changePacket.TargetNetID = p.CastInfo.Targets[0].Unit.NetId;
+                }
+            }
+
+            _packetHandlerManager.BroadcastPacketVision(p, changePacket.GetBytes(), Channel.CHL_S2C);
         }
 
         /// <summary>

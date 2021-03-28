@@ -11,20 +11,12 @@ using LeagueSandbox.GameServer.Content;
 
 namespace LeagueSandbox.GameServer.GameObjects.Spell.Missile
 {
-    public class SpellLineMissile : SpellMissile
+    public class SpellLineMissile : SpellCircleMissile, ISpellLineMissile
     {
         // Function Vars.
         private bool _atDestination;
 
         public override MissileType Type { get; protected set; } = MissileType.Arc;
-        /// <summary>
-        /// Number of objects this projectile has hit since it was created.
-        /// </summary>
-        public List<IGameObject> ObjectsHit { get; }
-        /// <summary>
-        /// Position this projectile is moving towards. Projectile is destroyed once it reaches this destination. Equals Vector2.Zero if TargetUnit is not null.
-        /// </summary>
-        public Vector2 Destination { get; protected set; }
 
         public SpellLineMissile(
             Game game,
@@ -65,8 +57,6 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Missile
 
             // TODO: Verify if CastRangeDisplayOverride is the correct variable to use.
             Destination = endPos;
-
-            ObjectsHit = new List<IGameObject>();
         }
 
         public override void Update(float diff)
@@ -162,14 +152,9 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Missile
             }
         }
 
-        protected override void CheckFlagsForUnit(IAttackableUnit unit)
+        public override void CheckFlagsForUnit(IAttackableUnit unit)
         {
-            if (!HasDestination())
-            {
-                return;
-            }
-
-            if (!CheckIfValidTarget(unit))
+            if (!HasDestination() || !IsValidTarget(unit))
             {
                 return;
             }
@@ -194,9 +179,9 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Missile
             _game.PacketNotifier.NotifyDestroyClientMissile(this);
         }
 
-        protected override bool CheckIfValidTarget(IAttackableUnit unit)
+        protected override bool IsValidTarget(IAttackableUnit unit)
         {
-            if (TargetUnit != null || unit == null || ObjectsHit.Contains(unit))
+            if (unit == null || ObjectsHit.Contains(unit))
             {
                 return false;
             }

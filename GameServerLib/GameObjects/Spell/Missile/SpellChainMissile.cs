@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Numerics;
 using GameServerCore.Content;
 using GameServerCore.Domain;
@@ -8,91 +9,132 @@ using GameServerCore.Domain.GameObjects.Spell;
 using GameServerCore.Domain.GameObjects.Spell.Missile;
 using GameServerCore.Enums;
 using LeagueSandbox.GameServer.Content;
+using LeagueSandbox.GameServer.Scripting.CSharp;
 
 namespace LeagueSandbox.GameServer.GameObjects.Spell.Missile
 {
-    public class SpellChainMissile : SpellMissile
+    public class SpellChainMissile : SpellMissile, ISpellChainMissile
     {
         public override MissileType Type { get; protected set; } = MissileType.Chained;
+
+        /// <summary>
+        /// Number of objects this projectile has hit since it was created.
+        /// </summary>
+        public List<IGameObject> ObjectsHit { get; }
+        /// <summary>
+        /// Parameters for this chain missile, refer to IMissileParameters.
+        /// </summary>
+        public IMissileParameters Parameters { get; protected set; }
 
         public SpellChainMissile(
             Game game,
             int collisionRadius,
             ISpell originSpell,
             ICastInfo castInfo,
+            IMissileParameters parameters,
             float moveSpeed,
             SpellDataFlags overrideFlags = 0, // TODO: Find a use for these
             uint netId = 0,
             bool serverOnly = false
-        ) : base(game, collisionRadius, originSpell, castInfo, moveSpeed)
+        ) : base(game, collisionRadius, originSpell, castInfo, moveSpeed, overrideFlags, netId, serverOnly)
         {
-            // TODO: Implemented full support for multiple targets.
-            if (!castInfo.Targets.Exists(t =>
-            {
-                if (t.Unit != null)
-                {
-                    TargetUnit = t.Unit;
-                    return true;
-                }
-                return false;
-            }))
-            {
-                Position = new Vector2(castInfo.SpellCastLaunchPosition.X, castInfo.SpellCastLaunchPosition.Z);
-
-                var goingTo = new Vector2(castInfo.TargetPositionEnd.X, castInfo.TargetPositionEnd.Z) - Position;
-                var dirTemp = Vector2.Normalize(goingTo);
-                var endPos = Position + (dirTemp * SpellOrigin.SpellData.CastRangeDisplayOverride);
-
-                // usually doesn't happen
-                if (float.IsNaN(dirTemp.X) || float.IsNaN(dirTemp.Y))
-                {
-                    if (float.IsNaN(CastInfo.Owner.Direction.X) || float.IsNaN(CastInfo.Owner.Direction.Y))
-                    {
-                        dirTemp = new Vector2(1, 0);
-                    }
-                    else
-                    {
-                        dirTemp = new Vector2(CastInfo.Owner.Direction.X, CastInfo.Owner.Direction.Z);
-                    }
-
-                    endPos = Position + (dirTemp * SpellOrigin.SpellData.CastRangeDisplayOverride);
-                    CastInfo.TargetPositionEnd = new Vector3(endPos.X, 0, endPos.Y);
-                }
-            }
+            ObjectsHit = new List<IGameObject>();
+            Parameters = parameters;
         }
 
         public override void Update(float diff)
         {
-            if (!HasTarget())
+            base.Update(diff);
+
+            if (ObjectsHit.Count >= Parameters.MaximumHits)
             {
                 SetToRemove();
-                return;
             }
 
-            base.Update(diff);
-        }
-
-        public override void OnCollision(IGameObject collider, bool isTerrain = false)
-        {
-            if (IsToRemove() || (TargetUnit != null && collider != TargetUnit))
+            if (!IsToRemove() && IsValidTarget(TargetUnit))
             {
-                return;
-            }
-
-            if (isTerrain)
-            {
-                // TODO: Implement methods for isTerrain for projectiles such as Nautilus Q, ShyvanaDragon Q, or Ziggs Q.
-                return;
+                _game.PacketNotifier.NotifyS2C_UpdateBounceMissile(this);
+                _game.PacketNotifier.NotifyMissileReplication(this);
             }
         }
 
-        /// <summary>
-        /// Whether or not this projectile has a target unit or a destination; if it is a valid projectile.
-        /// </summary>
-        /// <returns>True/False.</returns>
-        public bool HasTarget()
+        public override void CheckFlagsForUnit(IAttackableUnit unit)
         {
-            return TargetUnit != null;
+            if (!IsValidTarget(unit))
+            {
+                if (!GetNextTarget())
+                {
+                    SetToRemove();
+                }
+
+                return;
+            }
+
+            ObjectsHit.Add(unit);
+
+            // Targeted Spell (including auto attack spells)
+            if (SpellOrigin != null)
+            {
+                SpellOrigin.ApplyEffects(TargetUnit, this);
+            }
+
+            if (CastInfo.Owner is IObjAiBase ai && SpellOrigin.CastInfo.IsAutoAttack)
+            {
+                ai.AutoAttackHit(TargetUnit);
+            }
+
+            if (!GetNextTarget())
+            {
+                SetToRemove();
+            }
+        }
+
+        public bool GetNextTarget()
+        {
+            var units = _game.ObjectManager.GetUnitsInRange(Position, SpellOrigin.SpellData.BounceRadius, true);
+
+            foreach (IAttackableUnit closestUnit in units.OrderBy(unit => Vector2.DistanceSquared(Position, unit.Position)))
+            {
+                if (IsValidTarget(closestUnit))
+                {
+                    TargetUnit = closestUnit;
+                    var castTarget = new CastTarget(TargetUnit, HitResult.HIT_Normal);
+                    CastInfo.Targets[0] = castTarget;
+                    CastInfo.TargetPosition = TargetUnit.GetPosition3D();
+                    CastInfo.TargetPositionEnd = CastInfo.TargetPosition;
+                    CastInfo.SpellCastLaunchPosition = GetPosition3D();
+
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        protected override bool IsValidTarget(IAttackableUnit unit)
+        {
+            bool valid = base.IsValidTarget(unit);
+            bool hit = ObjectsHit.Contains(unit);
+
+            if (hit)
+            {
+                // We can't hit this unit because we've hit it already.
+                valid = false;
+
+                // We can consecutively hit this same unit until we run out of bounces.
+                if (Parameters.CanHitSameTarget && Parameters.CanHitSameTargetConsecutively)
+                {
+                    valid = true;
+                }
+                // We can hit it again after we bounce once.
+                else if (Parameters.CanHitSameTarget)
+                {
+                    ObjectsHit.Remove(unit);
+                }
+            }
+            // Otherwise, we can hit this unit because we haven't hit it yet.
+
+            return valid;
         }
     }
 }

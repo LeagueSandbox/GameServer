@@ -939,9 +939,16 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 return;
             }
 
+            var idealRange = Stats.Range.Total;
+
+            if (TargetUnit is IObjBuilding)
+            {
+                idealRange = Stats.Range.Total + TargetUnit.CollisionRadius;
+            }
+
             if (SpellToCast != null && !IsAttacking)
             {
-                var idealRange = SpellToCast.GetCurrentCastRange();
+                idealRange = SpellToCast.GetCurrentCastRange();
 
                 if (OrderType == OrderType.AttackTo
                     && TargetUnit != null
@@ -994,12 +1001,14 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                             IsAttacking = false;
                         }
                     }
-                    else if (Vector2.DistanceSquared(Position, TargetUnit.Position) <= (Stats.Range.Total + TargetUnit.CollisionRadius) * (Stats.Range.Total + TargetUnit.CollisionRadius) && !IsDashing)
+                    else if (Vector2.DistanceSquared(Position, TargetUnit.Position) <= idealRange * idealRange && !IsDashing)
                     {
                         if (AutoAttackSpell.State == SpellState.STATE_READY)
                         {
+                            // Stops us from continuing to move towards the target.
                             RefreshWaypoints(Stats.Range.Total);
 
+                            // TODO: Implement CanAttack function and use BuffType instead of CrowdControl crap (which will be removed).
                             if (!HasCrowdControl(CrowdControlType.DISARM) && !HasCrowdControl(CrowdControlType.BLIND))
                             {
                                 IsNextAutoCrit = _random.Next(0, 100) < Stats.CriticalChance.Total * 100;
@@ -1015,7 +1024,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                     }
                     else
                     {
-                        RefreshWaypoints(Stats.Range.Total);
+                        RefreshWaypoints(idealRange);
                     }
                 }
                 else

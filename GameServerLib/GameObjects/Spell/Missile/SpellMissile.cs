@@ -45,7 +45,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Missile
             SpellDataFlags overrideFlags = 0, // TODO: Find a use for these
             uint netId = 0,
             bool serverOnly = false
-        ) : base(game, castInfo.Owner.Position, collisionRadius, 0, netId)
+        ) : base(game, new Vector2(castInfo.SpellCastLaunchPosition.X, castInfo.SpellCastLaunchPosition.Z), collisionRadius, 0, netId)
         {
             _moveSpeed = moveSpeed;
             _timeSinceCreation = 0.0f;
@@ -54,38 +54,10 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Missile
 
             CastInfo = castInfo;
             
-            // TODO: Implemented full support for multiple targets.
-            if (!castInfo.Targets.Exists(t =>
+            // TODO: Implement full support for multiple targets.
+            if (castInfo.Targets[0].Unit != null)
             {
-                if (t.Unit != null)
-                {
-                    TargetUnit = t.Unit;
-                    return true;
-                }
-                return false;
-            }))
-            {
-                Position = new Vector2(castInfo.SpellCastLaunchPosition.X, castInfo.SpellCastLaunchPosition.Z);
-
-                var goingTo = new Vector2(castInfo.TargetPositionEnd.X, castInfo.TargetPositionEnd.Z) - Position;
-                var dirTemp = Vector2.Normalize(goingTo);
-                var endPos = Position + (dirTemp * SpellOrigin.SpellData.CastRangeDisplayOverride);
-
-                // usually doesn't happen
-                if (float.IsNaN(dirTemp.X) || float.IsNaN(dirTemp.Y))
-                {
-                    if (float.IsNaN(CastInfo.Owner.Direction.X) || float.IsNaN(CastInfo.Owner.Direction.Y))
-                    {
-                        dirTemp = new Vector2(1, 0);
-                    }
-                    else
-                    {
-                        dirTemp = new Vector2(CastInfo.Owner.Direction.X, CastInfo.Owner.Direction.Z);
-                    }
-
-                    endPos = Position + (dirTemp * SpellOrigin.SpellData.CastRangeDisplayOverride);
-                    CastInfo.TargetPositionEnd = new Vector3(endPos.X, 0, endPos.Y);
-                }
+                TargetUnit = castInfo.Targets[0].Unit;
             }
 
             VisionRadius = SpellOrigin.SpellData.MissilePerceptionBubbleRadius;
@@ -99,21 +71,14 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Missile
         {
             if (!HasTarget())
             {
+                Direction = new Vector3();
+
                 SetToRemove();
                 return;
             }
             _timeSinceCreation += diff;
 
-            if (!HasTarget())
-            {
-                Direction = new Vector3();
-
-                return;
-            }
-            else
-            {
-                Move(diff);
-            }
+            Move(diff);
         }
 
         public override void OnCollision(IGameObject collider, bool isTerrain = false)
@@ -205,43 +170,25 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Missile
             }
         }
 
-        // TODO: refactor this
-        protected virtual void CheckFlagsForUnit(IAttackableUnit unit)
+        public virtual void CheckFlagsForUnit(IAttackableUnit unit)
         {
-            if (!HasTarget())
+            if (!HasTarget() || !IsValidTarget(unit) || TargetUnit != unit)
             {
                 return;
             }
 
-            // TODO: Verify if this works in all cases, if not, then change to: if (TargetUnit == null)
-            if (!CastInfo.IsClickCasted)
+            // Targeted Spell (including auto attack spells)
+            if (SpellOrigin != null)
             {
-                // Skillshot
-                if (!CheckIfValidTarget(unit))
-                {
-                    return;
-                }
-
-                var attackableUnit = unit;
-                if (SpellOrigin != null)
-                {
-                    SpellOrigin.ApplyEffects(attackableUnit, this);
-                }
+                SpellOrigin.ApplyEffects(TargetUnit, this);
             }
-            else
+
+            if (CastInfo.Owner is IObjAiBase ai && SpellOrigin.CastInfo.IsAutoAttack)
             {
-                // Targeted Spell (including auto attack spells)
-                if (SpellOrigin != null)
-                {
-                    SpellOrigin.ApplyEffects(TargetUnit, this);
-                    if (CastInfo.Owner is IObjAiBase ai && SpellOrigin.CastInfo.IsAutoAttack)
-                    {
-                        ai.AutoAttackHit(TargetUnit);
-                    }
-                }
-
-                SetToRemove();
+                ai.AutoAttackHit(TargetUnit);
             }
+
+            SetToRemove();
         }
 
         public override void SetToRemove()
@@ -251,13 +198,8 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Missile
             _game.PacketNotifier.NotifyDestroyClientMissile(this);
         }
         
-        protected virtual bool CheckIfValidTarget(IAttackableUnit unit)
+        protected virtual bool IsValidTarget(IAttackableUnit unit)
         {
-            if (TargetUnit != null || unit == null)
-            {
-                return false;
-            }
-
             if (unit.Team == CastInfo.Owner.Team && !SpellOrigin.SpellData.Flags.HasFlag(SpellDataFlags.AffectFriends))
             {
                 return false;
@@ -334,7 +276,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Missile
                 return TargetUnit.Position;
             }
 
-            return new Vector2(float.NaN, float.NaN);
+            return Vector2.Zero;
         }
     }
 }

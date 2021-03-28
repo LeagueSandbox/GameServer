@@ -85,9 +85,16 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
         /// </summary>
         public void ApplyEffects(IAttackableUnit u, ISpellMissile p = null)
         {
-            if (SpellData.HaveHitEffect && !string.IsNullOrEmpty(SpellData.HitEffectName))
+            if (SpellData.HaveHitEffect && !string.IsNullOrEmpty(SpellData.HitEffectName) && !CastInfo.IsAutoAttack && HasEmptyScript)
             {
-                //ApiFunctionManager.AddParticleTarget(CastInfo.Owner, SpellData.HitEffectName, u, lifetime: 3.0f);
+                if (SpellData.HaveHitBone)
+                {
+                    ApiFunctionManager.AddParticleTarget(CastInfo.Owner, SpellData.HitEffectName, u, bone: SpellData.HitBoneName, lifetime: 1.0f);
+                }
+                else
+                {
+                    ApiFunctionManager.AddParticleTarget(CastInfo.Owner, SpellData.HitEffectName, u, lifetime: 1.0f);
+                }
             }
 
             ApiEventManager.OnSpellHit.Publish(CastInfo.Owner, this, u, p);
@@ -186,7 +193,8 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
             CastInfo.Targets.Add(new CastTarget(unit, CastTarget.GetHitResult(unit, CastInfo.IsAutoAttack, CastInfo.Owner.IsNextAutoCrit)));
 
             // TODO: implement check for IsForceCastingOrChannel and IsOverrideCastPosition
-            if (SpellData.CastType == (int)CastType.CAST_TargetMissile)
+            if (SpellData.CastType == (int)CastType.CAST_TargetMissile 
+             || SpellData.CastType == (int)CastType.CAST_ChainMissile)
             {
                 // TODO: Verify
                 CastInfo.IsClickCasted = true;
@@ -304,7 +312,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
 
                 if (CastInfo.IsAutoAttack)
                 {
-                    ApiEventManager.OnLaunchAttack.Publish(CastInfo.Owner, this);
+                    ApiEventManager.OnPreAttack.Publish(CastInfo.Owner, this);
                 }
 
                 if (!CastInfo.UseAttackCastDelay)
@@ -410,7 +418,8 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
             }
 
             // TODO: implement check for IsForceCastingOrChannel and IsOverrideCastPosition
-            if (SpellData.CastType == (int)CastType.CAST_TargetMissile)
+            if (SpellData.CastType == (int)CastType.CAST_TargetMissile
+             || SpellData.CastType == (int)CastType.CAST_ChainMissile)
             {
                 // TODO: Verify
                 CastInfo.IsClickCasted = true;
@@ -497,7 +506,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
 
                     if (CastInfo.IsAutoAttack)
                     {
-                        ApiEventManager.OnLaunchAttack.Publish(CastInfo.Owner, this);
+                        ApiEventManager.OnPreAttack.Publish(CastInfo.Owner, this);
                     }
 
                     if (!CastInfo.UseAttackCastDelay)
@@ -535,18 +544,22 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
 
                     if (missileType == MissileType.Target)
                     {
-                        CreateSpellMissile(CastInfo);
+                        CreateSpellMissile();
+                    }
+
+                    if (missileType == MissileType.Chained)
+                    {
+                        CreateSpellChainMissile();
                     }
                     
                     if (missileType == MissileType.Circle)
                     {
-                        CreateSpellCircleMissile(CastInfo);
+                        CreateSpellCircleMissile();
                     }
 
                     if (missileType == MissileType.Arc)
                     {
-                        // TODO: Implement Arc missile (line missile).
-                        //CreateSpellLineMissile(CastInfo);
+                        CreateSpellLineMissile();
                     }
                 }
             }
@@ -609,6 +622,11 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
                 ApiEventManager.OnSpellPostCast.Publish(this);
             }
 
+            if (CastInfo.IsAutoAttack)
+            {
+                ApiEventManager.OnLaunchAttack.Publish(CastInfo.Owner, this);
+            }
+
             if (CastInfo.IsAutoAttack || CastInfo.UseAttackCastTime)
             {
                 CastInfo.Owner.HasAutoAttacked = true;
@@ -620,7 +638,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
                 {
                     if (HasEmptyScript)
                     {
-                        CreateSpellMissile(CastInfo);
+                        CreateSpellMissile();
                     }
                 }
                 else
@@ -660,18 +678,22 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
 
                 if (missileType == MissileType.Target)
                 {
-                    CreateSpellMissile(CastInfo);
+                    CreateSpellMissile();
+                }
+
+                if (missileType == MissileType.Chained)
+                {
+                    CreateSpellChainMissile();
                 }
 
                 if (missileType == MissileType.Circle)
                 {
-                    CreateSpellCircleMissile(CastInfo);
+                    CreateSpellCircleMissile();
                 }
 
                 if (missileType == MissileType.Arc)
                 {
-                    // TODO: Implement Arc missile (line missile).
-                    //CreateSpellLineMissile(CastInfo);
+                    CreateSpellLineMissile();
                 }
             }
 
@@ -701,8 +723,14 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
         /// <summary>
         /// Creates a single-target missile with the specified properties.
         /// </summary>
-        public ISpellMissile CreateSpellMissile(ICastInfo castInfo)
+        public ISpellMissile CreateSpellMissile()
         {
+            if (CastInfo.MissileNetID == 0)
+            {
+                //_game.PacketNotifier.NotifyDestroyClientMissile(p);
+                return null;
+            }
+
             var isServerOnly = false;
 
             if (SpellData.MissileEffect != "")
@@ -714,14 +742,57 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
                 _game,
                 (int)SpellData.LineWidth,
                 this,
-                castInfo,
+                CastInfo,
                 SpellData.MissileSpeed,
                 SpellData.Flags,
-                castInfo.MissileNetID,
+                CastInfo.MissileNetID,
                 isServerOnly
             );
 
             _game.ObjectManager.AddObject(p);
+
+            ApiEventManager.OnLaunchMissile.Publish(new KeyValuePair<IObjAiBase, ISpell>(CastInfo.Owner, this), p);
+
+            _game.PacketNotifier.NotifyMissileReplication(p);
+
+            // TODO: Verify when NotifyForceCreateMissile should be used instead.
+
+            return p;
+        }
+
+        /// <summary>
+        /// Creates a single-target bouncing missile with the specified properties.
+        /// </summary>
+        public ISpellMissile CreateSpellChainMissile()
+        {
+            if (CastInfo.MissileNetID == 0)
+            {
+                //_game.PacketNotifier.NotifyDestroyClientMissile(p);
+                return null;
+            }
+
+            var isServerOnly = false;
+
+            if (SpellData.MissileEffect != "")
+            {
+                isServerOnly = true;
+            }
+
+            var p = new SpellChainMissile(
+                _game,
+                (int)SpellData.LineWidth,
+                this,
+                CastInfo,
+                _spellScript.ScriptMetadata.MissileParameters,
+                SpellData.MissileSpeed,
+                SpellData.Flags,
+                CastInfo.MissileNetID,
+                isServerOnly
+            );
+
+            _game.ObjectManager.AddObject(p);
+
+            ApiEventManager.OnLaunchMissile.Publish(new KeyValuePair<IObjAiBase, ISpell>(CastInfo.Owner, this), p);
 
             _game.PacketNotifier.NotifyMissileReplication(p);
 
@@ -733,8 +804,14 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
         /// <summary>
         /// Creates a line missile with the specified properties.
         /// </summary>
-        public ISpellMissile CreateSpellCircleMissile(ICastInfo castInfo)
+        public ISpellMissile CreateSpellCircleMissile()
         {
+            if (CastInfo.MissileNetID == 0)
+            {
+                //_game.PacketNotifier.NotifyDestroyClientMissile(p);
+                return null;
+            }
+
             var isServerOnly = false;
 
             if (SpellData.MissileEffect != "")
@@ -746,14 +823,16 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
                 _game,
                 (int)SpellData.LineWidth,
                 this,
-                castInfo,
+                CastInfo,
                 SpellData.MissileSpeed,
                 SpellData.Flags,
-                castInfo.MissileNetID,
+                CastInfo.MissileNetID,
                 isServerOnly
             );
 
             _game.ObjectManager.AddObject(p);
+
+            ApiEventManager.OnLaunchMissile.Publish(new KeyValuePair<IObjAiBase, ISpell>(CastInfo.Owner, this), p);
 
             _game.PacketNotifier.NotifyMissileReplication(p);
 
@@ -763,10 +842,16 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
         }
 
         /// <summary>
-        /// Creates a line missile with the specified properties.
+        /// Creates an arc missile with the specified properties.
         /// </summary>
-        public ISpellMissile CreateSpellLineMissile(ICastInfo castInfo)
+        public ISpellMissile CreateSpellLineMissile()
         {
+            if (CastInfo.MissileNetID == 0)
+            {
+                //_game.PacketNotifier.NotifyDestroyClientMissile(p);
+                return null;
+            }
+
             var isServerOnly = false;
 
             if (SpellData.MissileEffect != "")
@@ -778,14 +863,16 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
                 _game,
                 (int)SpellData.LineWidth,
                 this,
-                castInfo,
+                CastInfo,
                 SpellData.MissileSpeed,
                 SpellData.Flags,
-                castInfo.MissileNetID,
+                CastInfo.MissileNetID,
                 isServerOnly
             );
 
             _game.ObjectManager.AddObject(p);
+
+            ApiEventManager.OnLaunchMissile.Publish(new KeyValuePair<IObjAiBase, ISpell>(CastInfo.Owner, this), p);
 
             _game.PacketNotifier.NotifyMissileReplication(p);
 
