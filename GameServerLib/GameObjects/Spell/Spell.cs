@@ -275,14 +275,16 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
 
             if (CastInfo.IsAutoAttack || CastInfo.UseAttackCastTime)
             {
-                int startIndex = 64;
-                if (CastInfo.SpellSlot >= 44 && CastInfo.SpellSlot < 51)
+                // We assume it is already an attack.
+                int index = CastInfo.SpellSlot - 64;
+                if (CastInfo.SpellSlot >= 45 && CastInfo.SpellSlot <= 60)
                 {
-                    startIndex = CastInfo.SpellSlot;
+                    // Extra Spells which UseAttackCastTime just use the base auto attack's cast time.
+                    index = 64;
                 }
 
                 float autoAttackTotalTime = CastInfo.Owner.CharData.GlobalCharData.AttackDelay * (1.0f + CastInfo.Owner.CharData.AttackDelayOffsetPercent[0]);
-                CastInfo.DesignerCastTime = autoAttackTotalTime * (CastInfo.Owner.CharData.GlobalCharData.AttackDelayCastPercent + CastInfo.Owner.CharData.AttackDelayCastOffsetPercent[CastInfo.SpellSlot - startIndex]);
+                CastInfo.DesignerCastTime = autoAttackTotalTime * (CastInfo.Owner.CharData.GlobalCharData.AttackDelayCastPercent + CastInfo.Owner.CharData.AttackDelayCastOffsetPercent[index]);
 
                 if (CastInfo.IsAutoAttack)
                 {
@@ -299,7 +301,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
                 if (CastInfo.UseAttackCastTime)
                 {
                     // TODO: Verify
-                    CastInfo.DesignerTotalTime = CurrentCastTime + SpellData.ChannelDuration[CastInfo.SpellLevel];
+                    CastInfo.DesignerTotalTime = CastInfo.DesignerCastTime + SpellData.ChannelDuration[CastInfo.SpellLevel];
                 }
             }
 
@@ -466,14 +468,16 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
 
             if (CastInfo.IsAutoAttack || CastInfo.UseAttackCastTime)
             {
-                int startIndex = 64;
-                if (CastInfo.SpellSlot >= 44 && CastInfo.SpellSlot < 51)
+                // We assume it is already an attack.
+                int index = CastInfo.SpellSlot - 64;
+                if (CastInfo.SpellSlot >= 45 && CastInfo.SpellSlot <= 60)
                 {
-                    startIndex = CastInfo.SpellSlot;
+                    // Extra Spells which UseAttackCastTime just use the base auto attack's cast time.
+                    index = 64;
                 }
 
                 float autoAttackTotalTime = CastInfo.Owner.CharData.GlobalCharData.AttackDelay * (1.0f + CastInfo.Owner.CharData.AttackDelayOffsetPercent[0]);
-                CastInfo.DesignerCastTime = autoAttackTotalTime * (CastInfo.Owner.CharData.GlobalCharData.AttackDelayCastPercent + CastInfo.Owner.CharData.AttackDelayCastOffsetPercent[CastInfo.SpellSlot - startIndex]);
+                CastInfo.DesignerCastTime = autoAttackTotalTime * (CastInfo.Owner.CharData.GlobalCharData.AttackDelayCastPercent + CastInfo.Owner.CharData.AttackDelayCastOffsetPercent[index]);
 
                 // TODO: Verify if this should be affected by cast variable.
                 if (CastInfo.IsAutoAttack)
@@ -491,7 +495,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
                 if (CastInfo.UseAttackCastTime)
                 {
                     // TODO: Verify
-                    CastInfo.DesignerTotalTime = CurrentCastTime + SpellData.ChannelDuration[CastInfo.SpellLevel];
+                    CastInfo.DesignerTotalTime = CastInfo.DesignerCastTime + SpellData.ChannelDuration[CastInfo.SpellLevel];
                 }
             }
 
@@ -1078,7 +1082,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
                         }
 
                         CurrentDelayTime += diff / 1000.0f;
-                        if (CurrentDelayTime >= CurrentCastTime / CastInfo.AttackSpeedModifier)
+                        if (CurrentDelayTime >= CastInfo.DesignerCastTime / CastInfo.AttackSpeedModifier)
                         {
                             FinishCasting();
                         }

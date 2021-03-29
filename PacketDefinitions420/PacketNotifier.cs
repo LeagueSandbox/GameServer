@@ -298,13 +298,14 @@ namespace PacketDefinitions420
             var basicAttackData = new BasicAttackData
             {
                 TargetNetID = target.NetId,
-                ExtraTime = 0, // TODO: Verify, maybe related to CastInfo.ExtraCastTime?
+                ExtraTime = attacker.AutoAttackSpell.CastInfo.ExtraCastTime, // TODO: Verify, maybe related to CastInfo.ExtraCastTime?
                 MissileNextID = futureProjNetId,
-                AttackSlot = attacker.AutoAttackSpell.CastInfo.SpellSlot, // TODO: Unhardcode (by using CastInfo)
+                AttackSlot = attacker.AutoAttackSpell.CastInfo.SpellSlot,
                 // TODO: Verify TargetPosition, taken from LS packet
                 TargetPosition = new Vector3(targetPos.X, _navGrid.GetHeightAtLocation(targetPos.X, targetPos.Y), targetPos.Y)
             };
-            if (!nextAttackFlag)
+
+            if (!attacker.HasMadeInitialAttack)
             {
                 basicAttackData.ExtraTime = -0.01f; // TODO: Verify, maybe related to CastInfo.ExtraCastTime?
             }
@@ -333,10 +334,9 @@ namespace PacketDefinitions420
             var basicAttackData = new BasicAttackData
             {
                 TargetNetID = target.NetId,
-                ExtraTime = 0, // TODO: Verify, maybe related to CastInfo.ExtraCastTime?
+                ExtraTime = attacker.AutoAttackSpell.CastInfo.ExtraCastTime, // TODO: Verify, maybe related to CastInfo.ExtraCastTime?
                 MissileNextID = futureProjNetId,
                 AttackSlot = attacker.AutoAttackSpell.CastInfo.SpellSlot,
-                // TODO: Verify TargetPosition, taken from LS packet
                 TargetPosition = new Vector3(targetPos.X, target.GetHeight(), targetPos.Y)
             };
 
