@@ -22,13 +22,13 @@ namespace GameServerCore.Enums
         AffectFriends = 1 << 11,
         AffectNeutral = 1 << 14,
         // 4000 + C00: 4C00
-        AffectAllSides = AffectNeutral + 3 * (1 << 10),
+        AffectAllSides = AffectEnemies + AffectFriends + AffectNeutral,
         AffectBuildings = 1 << 12,
         AffectMinions = 1 << 15,
         AffectHeroes = 1 << 16,
         AffectTurrets = 1 << 17,
         // 20000 + 18000: 38000
-        AffectAllUnitTypes = AffectTurrets + 3 * (1 << 15),
+        AffectAllUnitTypes = AffectMinions + AffectHeroes + AffectTurrets,
         NotAffectSelf = 1 << 13,
         AlwaysSelf = 1 << 18,
         AffectDead = 1 << 19,
@@ -38,7 +38,7 @@ namespace GameServerCore.Enums
         NonTargetableAlly = 1 << 23,
         NonTargetableEnemy = 1 << 24,
         // 1000000 + 800000: 1800000
-        NonTargetableAll = NonTargetableEnemy + 1 << 23,
+        NonTargetableAll = NonTargetableAlly + NonTargetableEnemy,
         TargetableToAll = 1 << 25,
         AffectWards = 1 << 26,
         AffectUseable = 1 << 27,
