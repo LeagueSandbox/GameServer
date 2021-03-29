@@ -65,6 +65,8 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
             //TODO: automaticaly rise spell levels with CharData.SpellLevelsUp
 
+            // SpellSlots
+            // 0 - 3
             for (short i = 0; i < CharData.SpellNames.Length; i++)
             {
                 if (!string.IsNullOrEmpty(CharData.SpellNames[i]))
@@ -73,37 +75,70 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 }
             }
 
+            // SummonerSpellSlots
+            // 4 - 5
+
             Spells[4] = new Spell(game, this, clientInfo.SummonerSkills[0], 4);
             Spells[5] = new Spell(game, this, clientInfo.SummonerSkills[1], 5);
 
+            // InventorySlots
+            // 6 - 12 (12 = TrinketSlot)
             for (byte i = 6; i < 13; i++)
             {
                 Spells[i] = new Spell(game, this, "BaseSpell", i);
             }
 
+            // BluePillSlot
             Spells[13] = new Spell(game, this, "Recall", 13);
 
-            for (short i = 0; i < CharData.Passives.Length; i++)
-            {
-                if (!string.IsNullOrEmpty(CharData.Passives[i].PassiveAbilityName))
-                {
-                    Spells[(byte)(i + 14)] = new Spell(game, this, CharData.Passives[i].PassiveAbilityName, (byte)(i + 14));
-                }
-            }
+            // TempItemSlot
+            // 14
 
+            // RuneSlots
+            // 15 - 44
+
+            // ExtraSpells
+            // 45 - 60
             for (short i = 0; i < CharData.ExtraSpells.Length; i++)
             {
                 if (!string.IsNullOrEmpty(CharData.ExtraSpells[i]))
                 {
-                    var spell = new Spell(game, this, CharData.ExtraSpells[i], (byte)(i + 45));
-                    Spells[(byte)(i + 45)] = spell;
-                    spell.LevelUp();
+                    var spellSlot = i + 45;
+                    Spells[(byte)(spellSlot)] = new Spell(game, this, CharData.ExtraSpells[i], (byte)(spellSlot));
+                    Spells[(byte)(spellSlot)].LevelUp();
+                }
+            }
+
+            // RespawnSpellSlot
+            // 61
+
+            // UseSpellSlot
+            // 62
+
+            // PassiveSpellSlot
+            // 63
+
+            if (!string.IsNullOrEmpty(CharData.Passive.PassiveAbilityName))
+            {
+                Spells[63] = new Spell(game, this, CharData.Passive.PassiveAbilityName, 63);
+            }
+
+            // BasicAttackNormalSlots & BasicAttackCriticalSlots
+            // 64 - 72 & 73 - 81
+
+            for (short i = 0; i < CharData.AttackNames.Length; i++)
+            {
+                if (!string.IsNullOrEmpty(CharData.AttackNames[i]))
+                {
+                    Spells[(byte)(i + 64)] = new Spell(game, this, CharData.AttackNames[i], (byte)(i + 64));
                 }
             }
 
             Spells[4].LevelUp();
             Spells[5].LevelUp();
+
             Replication = new ReplicationHero(this);
+
             Stats.SetSpellEnabled(13, true);
         }
 
@@ -157,7 +192,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             return 0;
         }
 
-        public override void UpdateMoveOrder(MoveOrder order)
+        public override void UpdateMoveOrder(OrderType order)
         {
             base.UpdateMoveOrder(order);
 
@@ -261,7 +296,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         {
             base.Update(diff);
 
-            if (!IsDead && MoveOrder == MoveOrder.MOVE_ORDER_ATTACKMOVE && TargetUnit != null)
+            if (!IsDead && MoveOrder == OrderType.AttackMove && TargetUnit != null)
             {
                 var objects = _game.ObjectManager.GetObjects();
                 var sqrDistanceToTarget = 25000f * 25000f;

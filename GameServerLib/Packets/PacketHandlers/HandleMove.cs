@@ -66,22 +66,27 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 
             switch (req.Type)
             {
-                case MoveType.STOP:
-                    champion.UpdateMoveOrder(MoveOrder.MOVE_ORDER_STOP);
-                    champion.StopMovement();
-                    break;
-                case MoveType.EMOTE:
-                    champion.UpdateMoveOrder(MoveOrder.MOVE_ORDER_TAUNT);
-                    champion.StopMovement();
-                    return true;
-                case MoveType.ATTACKMOVE:
+                case OrderType.AttackTo:
                     translatedWaypoints[0] = champion.Position;
-                    champion.UpdateMoveOrder(MoveOrder.MOVE_ORDER_ATTACKMOVE);
+                    champion.UpdateMoveOrder(OrderType.AttackTo);
                     champion.SetWaypoints(translatedWaypoints);
                     break;
-                case MoveType.MOVE:
+                case OrderType.Stop:
+                    champion.StopMovement();
+                    champion.UpdateMoveOrder(OrderType.Stop);
+                    break;
+                case OrderType.Taunt:
+                    champion.StopMovement();
+                    champion.UpdateMoveOrder(OrderType.Taunt);
+                    return true;
+                case OrderType.AttackMove:
                     translatedWaypoints[0] = champion.Position;
-                    champion.UpdateMoveOrder(MoveOrder.MOVE_ORDER_MOVETO);
+                    champion.UpdateMoveOrder(OrderType.AttackMove);
+                    champion.SetWaypoints(translatedWaypoints);
+                    break;
+                case OrderType.MoveTo:
+                    translatedWaypoints[0] = champion.Position;
+                    champion.UpdateMoveOrder(OrderType.MoveTo);
                     champion.SetWaypoints(translatedWaypoints);
                     break;
             }

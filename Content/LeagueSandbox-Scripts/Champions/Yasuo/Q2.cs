@@ -25,7 +25,7 @@ namespace Spells
         {
             var current = new Vector2(owner.Position.X, owner.Position.Y);
             var to = Vector2.Normalize(new Vector2(spell.X, spell.Y) - current);
-            var range = to * spell.SpellData.CastRangeDisplayOverride[0];
+            var range = to * spell.SpellData.CastRangeDisplayOverride;
             trueCoords = current + range;
 
             FaceDirection(owner, trueCoords, true, 0f);

@@ -34,7 +34,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Missiles
             Vector2 targetPos,
             ISpell originSpell,
             string effectName,
-            int flags,
+            SpellDataFlags flags,
             bool affectAsCastIsOver,
             uint netid) : base(game, position, collisionRadius, owner, targetPos, originSpell, 0, effectName, flags, netid)
         {

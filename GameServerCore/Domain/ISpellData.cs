@@ -1,4 +1,5 @@
-﻿using System.Numerics;
+﻿using GameServerCore.Enums;
+using System.Numerics;
 
 namespace GameServerCore.Domain
 {
@@ -9,6 +10,11 @@ namespace GameServerCore.Domain
         bool AlwaysSnapFacing { get; }
         float[] AmmoRechargeTime { get; }
         int[] AmmoUsed { get; }
+        string AnimationLeadOutName { get; }
+        string AnimationLoopName { get; }
+        string AnimationName { get; }
+        string AnimationWinddownName { get; }
+        float AttackDamageCoefficient { get; }
         bool BelongsToAvatar { get; }
         float BounceRadius { get; }
         bool CanCastWhileDisabled { get; }
@@ -26,7 +32,7 @@ namespace GameServerCore.Domain
         float[] CastRadius { get; }
         float[] CastRadiusSecondary { get; }
         float[] CastRange { get; }
-        float[] CastRangeDisplayOverride { get; }
+        float CastRangeDisplayOverride { get; }
         float[] CastRangeGrowthDuration { get; }
         float[] CastRangeGrowthMax { get; }
         bool CastRangeUseBoundingBoxes { get; }
@@ -36,13 +42,14 @@ namespace GameServerCore.Domain
         float ChargeUpdateInterval { get; }
         float CircleMissileAngularVelocity { get; }
         float CircleMissileRadialVelocity { get; }
+        bool ConsideredAsAutoAttack { get; }
         float[] Cooldown { get; }
         int DeathRecapPriority { get; }
         float DelayCastOffsetPercent { get; }
         float DelayTotalTimePercent { get; }
         bool DoesntBreakChannels { get; }
         bool DoNotNeedToFaceTarget { get; }
-        int Flags { get; }
+        SpellDataFlags Flags { get; }
         bool HaveAfterEffect { get; }
         bool HaveHitBone { get; }
         bool HaveHitEffect { get; }
@@ -69,6 +76,7 @@ namespace GameServerCore.Domain
         float[] LocationTargettingWidth { get; }
         bool LockConeToPlayer { get; }
         float LuaOnMissileUpdateDistanceInterval { get; }
+        float MagicDamageCoefficient { get; }
         float[] ManaCost { get; }
         int[] MaxAmmo { get; }
         float MissileAccel { get; }
@@ -98,7 +106,7 @@ namespace GameServerCore.Domain
         float SpellTotalTime { get; }
         float StartCooldown { get; }
         bool SubjectToGlobalCooldown { get; }
-        int TargettingType { get; }
+        TargetingType TargetingType { get; }
         string TextFlags { get; }
         bool TriggersGlobalCooldown { get; }
         bool UpdateRotationWhenCasting { get; }
@@ -111,6 +119,22 @@ namespace GameServerCore.Domain
 
         float GetCastTime();
         float GetCastTimeTotal();
+        float GetCharacterAttackDelay
+        (
+            float attackSpeedMod,
+            float attackDelayOffsetPercent,
+            float attackMinimumDelay = 0.4f,
+            float attackMaximumDelay = 5.0f
+        );
+        float GetCharacterAttackCastDelay
+        (
+            float attackSpeedMod,
+            float attackDelayOffsetPercent,
+            float attackDelayCastOffsetPercent,
+            float attackDelayCastOffsetPercentAttackSpeedRatio,
+            float attackMinimumDelay = 0.4f,
+            float attackMaximumDelay = 5.0f
+        );
         void Load(string name);
     }
 }
