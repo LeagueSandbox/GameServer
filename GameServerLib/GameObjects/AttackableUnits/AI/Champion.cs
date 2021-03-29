@@ -40,6 +40,8 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         private uint _playerTeamSpecialId;
         private uint _playerHitId;
 
+        public int PlayerId => (int)_playerId;
+
         public Champion(Game game,
                         string model,
                         uint playerId,
@@ -560,6 +562,8 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
             Spells[slot] = newSpell;
             Stats.SetSpellEnabled(slot, enabled);
+
+            _game.PacketNotifier.NotifySpellChangeResponse(this, name, slot);
 
             return newSpell;
         }

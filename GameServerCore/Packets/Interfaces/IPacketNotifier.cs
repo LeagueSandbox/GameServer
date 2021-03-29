@@ -767,5 +767,22 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="request">ViewRequest housing information about the camera's view.</param>
         /// TODO: Verify if this is the correct implementation.
         void NotifyViewResponse(int userId, ViewRequest request);
+
+        /// <summary>
+        /// Notifies client that spell in <paramref name="slot"/> must be replaced with a <paramref name="newSpell"/>
+        /// </summary>
+        /// <param name="playerId">User to send the packet to.</param>
+        /// <param name="player">User to send the packe</param>
+        /// <param name="newSpell"></param>
+        /// <param name="slot"></param>
+        void NotifySpellChangeResponse(IChampion player, string newSpell, byte slot);
+
+        /// <summary>
+        /// Broadcasts request to play sound client-side
+        /// </summary>
+        /// <param name="sfxName">Sound name (can be found by "Play" or "SFX" keywords, or "Play_sfx" prefix)</param>
+        /// <param name="ownerNetId">NetId of the sound source (champion, minion, etc). 
+        /// Client depends on it to adjust sound direction according to the Camera position</param>
+        void NotifySfxCreated(string sfxName, uint ownerNetId);
     }
 }

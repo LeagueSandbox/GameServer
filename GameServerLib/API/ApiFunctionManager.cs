@@ -413,6 +413,18 @@ namespace LeagueSandbox.GameServer.API
             unit.DashToTarget(target, dashSpeed, animation, leapGravity, keepFacingLastDirection, followTargetMaxDistance, backDistance, travelTime);
         }
 
+
+        /// <summary>
+        /// Broadcasts request to play sound client-side
+        /// </summary>
+        /// <param name="owner">Sound source (champion, minion, etc). 
+        /// Client depends on it to adjust sound direction according to the Camera position</param>
+        /// <param name="soundName">Sound name as in game files (can be found by "Play" or "SFX" keywords, or "Play_sfx" prefix)</param>
+        public static void PlaySFX(IObjAiBase owner, string soundName)
+        {
+            _game.PacketNotifier.NotifySfxCreated(soundName, owner.NetId);
+        }
+
         /// <summary>
         /// Forces the specified unit to perform a dash which ends at the given position.
         /// </summary>
