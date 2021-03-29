@@ -7,17 +7,6 @@ namespace LeagueSandbox.GameServer.Scripting.CSharp
     {
         public string AutoAuraBuffName { get; set; } = "";
 
-        public string AutoBuffActivateAttachBoneName { get; set; } = "";
-        public string AutoBuffActivateAttachBoneName2 { get; set; } = "";
-        public string AutoBuffActivateAttachBoneName3 { get; set; } = "";
-        public string AutoBuffActivateAttachBoneName4 { get; set; } = "";
-
-        public string AutoBuffActivateEffect { get; set; } = "";
-        public string AutoBuffActivateEffect2 { get; set; } = "";
-        public string AutoBuffActivateEffect3 { get; set; } = "";
-        public string AutoBuffActivateEffect4 { get; set; } = "";
-        public string AutoBuffActivateEffectFlags { get; set; } = "";
-
         // TODO: Replace string with empty event class.
         public string AutoBuffActivateEvent { get; set; } = "";
 

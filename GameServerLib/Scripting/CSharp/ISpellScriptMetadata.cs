@@ -6,17 +6,6 @@ namespace LeagueSandbox.GameServer.Scripting.CSharp
     {
         string AutoAuraBuffName { get; }
 
-        string AutoBuffActivateAttachBoneName { get; }
-        string AutoBuffActivateAttachBoneName2 { get; }
-        string AutoBuffActivateAttachBoneName3 { get; }
-        string AutoBuffActivateAttachBoneName4 { get; }
-
-        string AutoBuffActivateEffect { get; }
-        string AutoBuffActivateEffect2 { get; }
-        string AutoBuffActivateEffect3 { get; }
-        string AutoBuffActivateEffect4 { get; }
-        string AutoBuffActivateEffectFlags { get; }
-
         string AutoBuffActivateEvent { get; }
 
         float[] AutoCooldownByLevel { get; }
