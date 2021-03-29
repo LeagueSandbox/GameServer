@@ -164,11 +164,12 @@ namespace LeagueSandbox.GameServer.Content
                 ExtraSpells[i] = file.GetString("Data", $"ExtraSpell{i + 1}", "");
             }
 
-            MaxLevels = file.GetIntArray("Data", "MaxLevels", MaxLevels);
-            for (var i = 0; i < 8; i++)
+            for (var i = 0; i < 4; i++)
             {
-                ExtraSpells[i] = file.GetString("Data", $"ExtraSpell{i + 1}", ExtraSpells[i]);
+                SpellsUpLevels[i] = file.GetIntArray("Data", $"SpellsUpLevels{i + 1}", SpellsUpLevels[i]);
             }
+
+            MaxLevels = file.GetIntArray("Data", "MaxLevels", MaxLevels);
 
             for (var i = 0; i < 18; i++)
             {
