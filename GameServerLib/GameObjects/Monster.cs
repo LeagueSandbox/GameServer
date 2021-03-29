@@ -35,7 +35,7 @@ namespace LeagueSandbox.GameServer.GameObjects
                 SetVisibleByTeam(team, true);
             }
 
-            MoveOrder = MoveOrder.MOVE_ORDER_MOVETO;
+            MoveOrder = OrderType.MoveTo;
             Facing = facing;
             Name = name;
             SpawnAnimation = spawnAnimation;

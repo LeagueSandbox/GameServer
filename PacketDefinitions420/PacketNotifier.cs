@@ -1178,7 +1178,7 @@ namespace PacketDefinitions420
                 IsBot = minion.IsBot,
                 IsTargetable = true, // TODO: Unhardcode
 
-                IsTargetableToTeamSpellFlags = (uint)SpellFlags.TargetableToAll, // TODO: Unhardcode
+                IsTargetableToTeamSpellFlags = (uint)SpellDataFlags.TargetableToAll, // TODO: Unhardcode
                 VisibilitySize = minion.VisionRadius, // TODO: Verify
                 Name = minion.Name,
                 SkinName = minion.Model,

@@ -1,4 +1,5 @@
-﻿using GameServerCore.Packets.Enums;
+﻿using GameServerCore.Enums;
+using GameServerCore.Packets.Enums;
 using GameServerCore.Packets.PacketDefinitions.Requests;
 using LeaguePackets;
 using LeaguePackets.Game;
@@ -209,7 +210,7 @@ namespace PacketDefinitions420
             var rq = new NPC_IssueOrderReq();
             rq.Read(data);
             // TODO: Verify if the MoveType cast works correctly.
-            return new MovementRequest(rq.SenderNetID, rq.TargetNetID, rq.Position, (MoveType)rq.OrderType, rq.MovementData.Waypoints.ConvertAll(Convertors.WaypointToVector2));
+            return new MovementRequest(rq.SenderNetID, rq.TargetNetID, rq.Position, (OrderType)rq.OrderType, rq.MovementData.Waypoints.ConvertAll(Convertors.WaypointToVector2));
         }
 
         [PacketType(PacketCmd.PKT_C2S_QUEST_CLICKED)]

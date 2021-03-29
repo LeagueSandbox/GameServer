@@ -69,7 +69,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         /// Current order this AI is performing. *NOTE*: Does not contain all possible values.
         /// </summary>
         /// TODO: Rework AI so this enum can be finished.
-        public MoveOrder MoveOrder { get; set; }
+        public OrderType MoveOrder { get; set; }
         /// <summary>
         /// Unit this AI will auto attack when it is in auto attack range.
         /// </summary>
@@ -122,9 +122,9 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
             if (!string.IsNullOrEmpty(model))
             {
-                AaSpellData = _game.Config.ContentManager.GetSpellData(model + "BasicAttack");
-                float baseAttackCooldown = 1.6f * (1.0f + CharData.AttackDelayOffsetPercent);
-                AutoAttackCastTime = baseAttackCooldown * (0.3f + CharData.AttackDelayCastOffsetPercent);
+                AaSpellData = _game.Config.ContentManager.GetSpellData(CharData.AttackNames[0]);
+                float baseAttackCooldown = 1.6f * (1.0f + CharData.AttackDelayOffsetPercent[0]); // [0] is used as a placeholder until spells rework.
+                AutoAttackCastTime = baseAttackCooldown * (0.3f + CharData.AttackDelayCastOffsetPercent[0]);
                 AutoAttackProjectileSpeed = AaSpellData.MissileSpeed;
                 IsMelee = CharData.IsMelee;
             }
@@ -485,7 +485,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         /// </summary>
         public void ResetAutoAttackSpellData()
         {
-            AaSpellData = _game.Config.ContentManager.GetSpellData(Model + "BasicAttack");
+            AaSpellData = _game.Config.ContentManager.GetSpellData(CharData.AttackNames[0]);
         }
 
         /// <summary>
@@ -636,7 +636,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         /// Sets this unit's move order to the given order.
         /// </summary>
         /// <param name="order">MoveOrder to set.</param>
-        public virtual void UpdateMoveOrder(MoveOrder order)
+        public virtual void UpdateMoveOrder(OrderType order)
         {
             MoveOrder = order;
         }

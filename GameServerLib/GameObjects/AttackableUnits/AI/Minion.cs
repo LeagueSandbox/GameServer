@@ -46,7 +46,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
             SetVisibleByTeam(Team, true);
 
-            MoveOrder = MoveOrder.MOVE_ORDER_MOVETO;
+            MoveOrder = OrderType.MoveTo;
 
             Replication = new ReplicationMinion(this);
         }

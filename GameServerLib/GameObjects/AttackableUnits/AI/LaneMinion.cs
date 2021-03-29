@@ -51,7 +51,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 StopMovement();
             }
 
-            MoveOrder = MoveOrder.MOVE_ORDER_ATTACKMOVE;
+            MoveOrder = OrderType.AttackMove;
             Replication = new ReplicationLaneMinion(this);
         }
 

@@ -1,50 +1,13 @@
 ﻿using System.IO;
 using System.Numerics;
 using GameServerCore.Domain;
+using GameServerCore.Enums;
 using LeagueSandbox.GameServer.Logging;
 using log4net;
 using Newtonsoft.Json;
 
 namespace LeagueSandbox.GameServer.Content
 {
-    public enum SpellFlag : uint
-    {
-        SPELL_FLAG_AUTO_CAST = 0x00000002,
-        SPELL_FLAG_INSTANT_CAST = 0x00000004,
-        SPELL_FLAG_PERSIST_THROUGH_DEATH = 0x00000008,
-        SPELL_FLAG_NON_DISPELLABLE = 0x00000010,
-        SPELL_FLAG_NO_CLICK = 0x00000020,
-        SPELL_FLAG_AFFECT_IMPORTANT_BOT_TARGETS = 0x00000040,
-        SPELL_FLAG_ALLOW_WHILE_TAUNTED = 0x00000080,
-        SPELL_FLAG_NOT_AFFECT_ZOMBIE = 0x00000100,
-        SPELL_FLAG_AFFECT_UNTARGETABLE = 0x00000200,
-        SPELL_FLAG_AFFECT_ENEMIES = 0x00000400,
-        SPELL_FLAG_AFFECT_FRIENDS = 0x00000800,
-        SPELL_FLAG_AFFECT_BUILDINGS = 0x00001000,
-        SPELL_FLAG_NOT_AFFECT_SELF = 0x00002000,
-        SPELL_FLAG_AFFECT_NEUTRAL = 0x00004000,
-        SPELL_FLAG_AFFECT_ALL_SIDES = 0x00004C00,
-        SPELL_FLAG_AFFECT_MINIONS = 0x00008000,
-        SPELL_FLAG_AFFECT_HEROES = 0x00010000,
-        SPELL_FLAG_AFFECT_TURRETS = 0x00020000,
-        SPELL_FLAG_AFFECT_ALL_UNIT_TYPES = 0x00038000,
-        SPELL_FLAG_ALWAYS_SELF = 0x00040000,
-        SPELL_FLAG_AFFECT_DEAD = 0x00080000,
-        SPELL_FLAG_AFFECT_NOT_PET = 0x00100000,
-        SPELL_FLAG_AFFECT_BARRACKS_ONLY = 0x00200000,
-        SPELL_FLAG_IGNORE_VISIBILITY_CHECK = 0x00400000,
-        SPELL_FLAG_NON_TARGETABLE_ALLY = 0x00800000,
-        SPELL_FLAG_NON_TARGETABLE_ENEMY = 0x01000000,
-        SPELL_FLAG_NON_TARGETABLE_ALL = 0x01800000,
-        SPELL_FLAG_TARGETABLE_TO_ALL = 0x02000000,
-        SPELL_FLAG_AFFECT_WARDS = 0x04000000,
-        SPELL_FLAG_AFFECT_USEABLE = 0x08000000,
-        SPELL_FLAG_IGNORE_ALLY_MINION = 0x10000000,
-        SPELL_FLAG_IGNORE_ENEMY_MINION = 0x20000000,
-        SPELL_FLAG_IGNORE_LANE_MINION = 0x40000000,
-        SPELL_FLAG_IGNORE_CLONES = 0x80000000
-    }
-
     public enum SpellTargetType
     {
         TARGET_SELF = 0, // teemo W ; xin Q
@@ -79,10 +42,11 @@ namespace LeagueSandbox.GameServer.Content
         //AmmoCountHiddenInUI
         public float[] AmmoRechargeTime { get; set; } = { 0, 0, 0, 0, 0, 0, 0 };
         public int[] AmmoUsed { get; set; } = { 1, 1, 1, 1, 1, 1, 1 };
-        //AnimationLeadOutName
-        //AnimationLoopName
-        //AnimationName
-        //AnimationWinddownName
+        public string AnimationLeadOutName { get; set; } = "";
+        public string AnimationLoopName { get; set; } = "";
+        public string AnimationName { get; set; } = "";
+        public string AnimationWinddownName { get; set; } = "";
+        public float AttackDamageCoefficient { get; set; }
         //ApplyAttackDamage
         //ApplyAttackEffect
         //ApplyMaterialOnHitSound
@@ -105,7 +69,7 @@ namespace LeagueSandbox.GameServer.Content
         //CastRadiusSecondaryTexture
         //CastRadiusTexture
         public float[] CastRange { get; set; } = { 400, 400, 400, 400, 400, 400, 400 };
-        public float[] CastRangeDisplayOverride { get; set; } = { 0, 0, 0, 0, 0, 0, 0 };
+        public float CastRangeDisplayOverride { get; set; }
         public float[] CastRangeGrowthDuration { get; set; } = { 0, 0, 0, 0, 0, 0, 0 };
         public float[] CastRangeGrowthMax { get; set; } = { 0, 0, 0, 0, 0, 0, 0 };
         //CastRangeTextureOverrideName
@@ -117,9 +81,7 @@ namespace LeagueSandbox.GameServer.Content
         public float CircleMissileAngularVelocity { get; set; }
         public float CircleMissileRadialVelocity { get; set; }
         //ClientOnlyMissileTargetBoneName
-        //Coefficient
-        //Coefficient2
-        //ConsideredAsAutoAttack
+        public bool ConsideredAsAutoAttack { get; set; }
         public float[] Cooldown { get; set; } = { 10, 10, 10, 10, 10, 10, 10 };
         //CursorChangesInGrass
         //CursorChangesInTerrain
@@ -135,7 +97,7 @@ namespace LeagueSandbox.GameServer.Content
         //DynamicExtended
         //string DynamicTooltip
         //EffectXLevelYAmmount
-        public int Flags { get; set; }
+        public SpellDataFlags Flags { get; set; }
         //FloatStaticsDecimalsX
         //FloatVarsDecimalsX
         public bool HaveAfterEffect { get; set; }
@@ -172,6 +134,7 @@ namespace LeagueSandbox.GameServer.Content
         public bool LockConeToPlayer { get; set; }
         //LookAtPolicy
         public float LuaOnMissileUpdateDistanceInterval { get; set; }
+        public float MagicDamageCoefficient { get; set; }
         public float[] ManaCost { get; set; } = { 0, 0, 0, 0, 0, 0, 0 };
         //Map_X_EffectYLevelZAmmount
         public int[] MaxAmmo { get; set; } = { 0, 0, 0, 0, 0, 0, 0 };
@@ -216,7 +179,7 @@ namespace LeagueSandbox.GameServer.Content
         public float StartCooldown { get; set; }
         public bool SubjectToGlobalCooldown { get; set; } = true;
         //TargeterConstrainedToRange
-        public int TargettingType { get; set; } = 1;
+        public TargetingType TargetingType { get; set; } = TargetingType.Target;
         public string TextFlags { get; set; } = "";
         public bool TriggersGlobalCooldown { get; set; } = true;
         public bool UpdateRotationWhenCasting { get; set; } = true;
@@ -234,9 +197,34 @@ namespace LeagueSandbox.GameServer.Content
             return (1.0f + DelayCastOffsetPercent) * 0.5f;
         }
 
+        // TODO: Implement this (where it is verified to be needed)
         public float GetCastTimeTotal()
         {
             return (1.0f + DelayTotalTimePercent) * 2.0f;
+        }
+
+        // TODO: read Global Character Data constants from constants.var (gcd_AttackDelay = 1.600f, gcd_AttackDelayCastPercent = 0.300f)
+        public float GetCharacterAttackDelay(float attackSpeedMod,
+                                             float attackDelayOffsetPercent,
+                                             float attackMinimumDelay = 0.4f,
+                                             float attackMaximumDelay = 5.0f)
+        {
+            float result = ((attackDelayOffsetPercent + 1.0f) * 1.600f) / attackSpeedMod;
+            return System.Math.Clamp(result, attackMinimumDelay, attackMaximumDelay);
+        }
+
+        public float GetCharacterAttackCastDelay(float attackSpeedMod,
+                                                 float attackDelayOffsetPercent,
+                                                 float attackDelayCastOffsetPercent,
+                                                 float attackDelayCastOffsetPercentAttackSpeedRatio,
+                                                 float attackMinimumDelay = 0.4f,
+                                                 float attackMaximumDelay = 5.0f)
+        {
+            float castPercent = System.Math.Min(0.300f + attackDelayCastOffsetPercent, 0.0f);
+            float percentDelay = GetCharacterAttackDelay(1.0f, attackDelayOffsetPercent, attackMinimumDelay, attackMaximumDelay) * castPercent;
+            float attackDelay = GetCharacterAttackDelay(attackSpeedMod, attackDelayCastOffsetPercent, attackMinimumDelay, attackMaximumDelay);
+            float result = (((attackDelay * castPercent) - percentDelay) * attackDelayCastOffsetPercentAttackSpeedRatio) + percentDelay;
+            return System.Math.Min(result, attackDelay);
         }
 
         public void Load(string name)
@@ -270,10 +258,11 @@ namespace LeagueSandbox.GameServer.Content
             //AmmoCountHiddenInUI
             AmmoRechargeTime = file.GetMultiFloat("SpellData", "AmmoRechargeTime", 6, AmmoRechargeTime[0]);
             AmmoUsed = file.GetMultiInt("SpellData", "AmmoUsed", 6, AmmoUsed[0]);
-            //AnimationLeadOutName
-            //AnimationLoopName
-            //AnimationName
-            //AnimationWinddownName
+            AnimationLeadOutName = file.GetString("SpellData", "AnimationLeadOutName", name);
+            AnimationLoopName = file.GetString("SpellData", "AnimationLoopName", name);
+            AnimationName = file.GetString("SpellData", "AnimationName", name);
+            AnimationWinddownName = file.GetString("SpellData", "AnimationWinddownName", name);
+            AttackDamageCoefficient = file.GetFloat("SpellData", "Coefficient", AttackDamageCoefficient);
             //ApplyAttackDamage
             //ApplyAttackEffect
             //ApplyMaterialOnHitSound
@@ -296,7 +285,7 @@ namespace LeagueSandbox.GameServer.Content
             //CastRadiusSecondaryTexture
             //CastRadiusTexture
             CastRange = file.GetMultiFloat("SpellData", "CastRange", 6, CastRange[0]);
-            CastRangeDisplayOverride = file.GetMultiFloat("SpellData", "CastRangeDisplayOverride", 6, CastRangeDisplayOverride[0]);
+            CastRangeDisplayOverride = file.GetFloat("SpellData", "CastRangeDisplayOverride");
             CastRangeGrowthDuration = file.GetMultiFloat("SpellData", "CastRangeGrowthDuration", 6, CastRangeGrowthDuration[0]);
             CastRangeGrowthMax = file.GetMultiFloat("SpellData", "CastRangeGrowthMax", 6, CastRangeGrowthMax[0]);
             //CastRangeTextureOverrideName
@@ -308,9 +297,7 @@ namespace LeagueSandbox.GameServer.Content
             CircleMissileAngularVelocity = file.GetFloat("SpellData", "CircleMissileAngularVelocity", CircleMissileAngularVelocity);
             CircleMissileRadialVelocity = file.GetFloat("SpellData", "CircleMissileRadialVelocity", CircleMissileRadialVelocity);
             //ClientOnlyMissileTargetBoneName
-            //Coefficient
-            //Coefficient2
-            //ConsideredAsAutoAttack
+            ConsideredAsAutoAttack = file.GetBool("SpellData", "ConsideredAsAutoAttack", ConsideredAsAutoAttack);
             Cooldown = file.GetMultiFloat("SpellData", "Cooldown", 6, Cooldown[0]);
             //CursorChangesInGrass
             //CursorChangesInTerrain
@@ -326,7 +313,7 @@ namespace LeagueSandbox.GameServer.Content
             //DynamicExtended
             //string DynamicTooltip
             //EffectXLevelYAmmount
-            Flags = file.GetInt("SpellData", "Flags", Flags);
+            Flags = (SpellDataFlags)file.GetInt("SpellData", "Flags");
             //FloatStaticsDecimalsX
             //FloatVarsDecimalsX
             HaveAfterEffect = file.GetBool("SpellData", "HaveAfterEffect", HaveAfterEffect);
@@ -363,6 +350,7 @@ namespace LeagueSandbox.GameServer.Content
             LockConeToPlayer = file.GetBool("SpellData", "LockConeToPlayer", LockConeToPlayer);
             //LookAtPolicy
             LuaOnMissileUpdateDistanceInterval = file.GetFloat("SpellData", "LuaOnMissileUpdateDistanceInterval", LuaOnMissileUpdateDistanceInterval);
+            MagicDamageCoefficient = file.GetFloat("SpellData", "Coefficient2", MagicDamageCoefficient);
             ManaCost = file.GetMultiFloat("SpellData", "ManaCost", 6, ManaCost[0]);
             //Map_X_EffectYLevelZAmmount
             MaxAmmo = file.GetMultiInt("SpellData", "MaxAmmo", 6, MaxAmmo[0]);
@@ -410,7 +398,7 @@ namespace LeagueSandbox.GameServer.Content
             StartCooldown = file.GetFloat("SpellData", "StartCooldown", StartCooldown);
             SubjectToGlobalCooldown = file.GetBool("SpellData", "SubjectToGlobalCooldown", SubjectToGlobalCooldown);
             //TargeterConstrainedToRange
-            TargettingType = file.GetInt("SpellData", "TargettingType", TargettingType);
+            TargetingType = (TargetingType)file.GetInt("SpellData", "TargettingType", (int)TargetingType);
             TextFlags = file.GetString("SpellData", "TextFlags", TextFlags);
             TriggersGlobalCooldown = file.GetBool("SpellData", "TriggersGlobalCooldown", TriggersGlobalCooldown);
             UpdateRotationWhenCasting = file.GetBool("SpellData", "UpdateRotationWhenCasting", UpdateRotationWhenCasting);

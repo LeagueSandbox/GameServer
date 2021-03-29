@@ -50,7 +50,7 @@ namespace GameServerCore.Domain.GameObjects
         /// Current order this AI is performing.
         /// </summary>
         /// TODO: Rework AI so this enum can be used fully.
-        MoveOrder MoveOrder { get; }
+        OrderType MoveOrder { get; }
         /// <summary>
         /// Unit this AI will auto attack when it is in auto attack range.
         /// </summary>
@@ -102,7 +102,7 @@ namespace GameServerCore.Domain.GameObjects
         /// Sets this unit's move order to the given order.
         /// </summary>
         /// <param name="order">MoveOrder to set.</param>
-        void UpdateMoveOrder(MoveOrder order);
+        void UpdateMoveOrder(OrderType order);
         /// <summary>
         /// Sets this AI's current target unit.
         /// </summary>
