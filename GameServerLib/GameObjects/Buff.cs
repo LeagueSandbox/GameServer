@@ -76,7 +76,7 @@ namespace LeagueSandbox.GameServer.GameObjects
             _buffGameScript = _scriptEngine.CreateObject<IBuffGameScript>(buffName, buffName);
 
             BuffAddType = _buffGameScript.BuffAddType;
-            if (BuffAddType == (BuffAddType.STACKS_AND_OVERLAPS | BuffAddType.STACKS_AND_RENEWS) && _buffGameScript.MaxStacks < 2)
+            if (BuffAddType == (BuffAddType.STACKS_AND_RENEWS | BuffAddType.STACKS_AND_CONTINUE | BuffAddType.STACKS_AND_OVERLAPS) && _buffGameScript.MaxStacks < 2)
             {
                 throw new ArgumentException("Error: Tried to create Stackable Buff, but MaxStacks was less than 2.");
             }
@@ -125,7 +125,12 @@ namespace LeagueSandbox.GameServer.GameObjects
             }
             _remove = true; // To prevent infinite loop with OnDeactivate calling events
 
-            _buffGameScript.OnDeactivate(TargetUnit);
+            _buffGameScript.OnDeactivate(TargetUnit, this, OriginSpell);
+
+            if (_buffGameScript.StatsModifier != null)
+            {
+                TargetUnit.RemoveStatModifier(_buffGameScript.StatsModifier);
+            }
         }
 
         public bool Elapsed()

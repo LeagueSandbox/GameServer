@@ -24,16 +24,15 @@ namespace Highlander
             // TODO: add immunity to slows
         }
 
-        public void OnDeactivate(IAttackableUnit unit)
+        public void OnDeactivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
-            unit.RemoveStatModifier(StatsModifier);
         }
 
         private void OnAutoAttack(IAttackableUnit target, bool isCrit)
         {
         }
 
-        public void OnUpdate(double diff)
+        public void OnUpdate(float diff)
         {
         }
     }

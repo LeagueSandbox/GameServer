@@ -97,8 +97,15 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             {
                 if (Waypoints.Count == 1 || IsPathEnded() && ++_curMainWaypoint < _mainWaypoints.Count)
                 {
-                    //CORE_INFO("Minion reached a point! Going to %f; %f", mainWaypoints[curMainWaypoint].X, mainWaypoints[curMainWaypoint].Y);
-                    SetWaypoints(new List<Vector2>() { Position, _mainWaypoints[_curMainWaypoint] });
+                    // Pathfind to the next waypoint.
+                    var path = new List<Vector2>() { Position, _mainWaypoints[_curMainWaypoint] };
+                    var tempPath = _game.Map.NavigationGrid.GetPath(Position, _mainWaypoints[_curMainWaypoint]);
+                    if (tempPath != null)
+                    {
+                        path = tempPath;
+                    }
+
+                    SetWaypoints(path);
 
                     //TODO: Here we need a certain way to tell if the Minion is in the path/lane, else use pathfinding to return to the lane.
                     //I think in league when minion start chasing they save Current Position and

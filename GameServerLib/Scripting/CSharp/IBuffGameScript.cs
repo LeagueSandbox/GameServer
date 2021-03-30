@@ -13,7 +13,7 @@ namespace LeagueSandbox.GameServer.Scripting.CSharp
         IStatsModifier StatsModifier { get; }
 
         void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell);
-        void OnDeactivate(IAttackableUnit unit);
-        void OnUpdate(double diff);
+        void OnDeactivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell);
+        void OnUpdate(float diff);
     }
 }

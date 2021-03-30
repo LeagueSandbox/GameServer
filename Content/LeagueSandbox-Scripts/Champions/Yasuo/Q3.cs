@@ -28,7 +28,7 @@ namespace Spells
             var range = to * spell.SpellData.CastRangeDisplayOverride;
             trueCoords = current + range;
 
-            FaceDirection(owner, trueCoords, true, 0f);
+            FaceDirection(trueCoords, owner, true, 0f);
         }
 
         public void OnFinishCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
@@ -46,7 +46,7 @@ namespace Spells
                         AddParticleTarget(owner, "Yasuo_Base_Q_WindStrike.troy", affectEnemys);
                         AddParticleTarget(owner, "Yasuo_Base_Q_windstrike_02.troy", affectEnemys);
                         AddParticleTarget(owner, "Yasuo_Base_Q_hit_tar.troy", affectEnemys);
-                        DashToLocation(affectEnemys, new Vector2(affectEnemys.Position.X + 10f, affectEnemys.Position.Y + 10f), 13f, "RUN", 16.5f, true);
+                        ForceMovement(affectEnemys, "RUN", new Vector2(affectEnemys.Position.X + 10f, affectEnemys.Position.Y + 10f), 13f, 0, 16.5f, 0, movementOrdersFacing: ForceMovementOrdersFacing.KEEP_CURRENT_FACING);
                     }
                 }
             }
@@ -70,7 +70,7 @@ namespace Spells
             AddParticleTarget(owner, "Yasuo_Base_Q_windstrike_02.troy", target);
             AddParticleTarget(owner, "Yasuo_Base_Q_hit_tar.troy", target);
             target.TakeDamage(owner, spell.Level * 20f + owner.Stats.AttackDamage.Total,DamageType.DAMAGE_TYPE_PHYSICAL, DamageSource.DAMAGE_SOURCE_ATTACK, false);
-            DashToLocation(target, new Vector2(target.Position.X + 10f, target.Position.Y + 10f), 13f, "RUN", 16.5f);
+            ForceMovement(target, "RUN", new Vector2(target.Position.X + 10f, target.Position.Y + 10f), 13f, 0, 16.5f, 0);
         }
 
         public void OnUpdate(double diff)

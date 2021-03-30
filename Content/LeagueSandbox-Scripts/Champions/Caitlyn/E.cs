@@ -38,7 +38,7 @@ namespace Spells
             // Calculate dash coords/vector
             var dash = Vector2.Negate(to) * 500;
             var dashCoords = current + dash;
-            DashToLocation(owner, dashCoords, 1000, "Spell3b");
+            ForceMovement(owner, "Spell3", dashCoords, 1000, 0, 0, 0, movementOrdersFacing: ForceMovementOrdersFacing.KEEP_CURRENT_FACING);
             spell.AddProjectile("CaitlynEntrapmentMissile", current, trueCoords);
         }
 

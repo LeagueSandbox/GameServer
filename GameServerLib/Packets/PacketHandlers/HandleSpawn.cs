@@ -103,7 +103,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                 {
                     if (champion.IsVisibleByTeam(peerInfo.Champion.Team))
                     {
-                        _game.PacketNotifier.NotifyEnterVisibilityClient(champion, userId);
+                        _game.PacketNotifier.NotifyEnterVisibilityClient(champion, userId, true);
                     }
                 }
                 else if (kv.Value is IInhibitor || kv.Value is INexus)
@@ -112,11 +112,11 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                      _game.PacketNotifier.NotifyStaticObjectSpawn(userId, inhibtor.NetId);
                     _game.PacketNotifier.NotifyEnterLocalVisibilityClient(userId, inhibtor.NetId);
                 }
-                else if (kv.Value is ISpellMissile projectile)
+                else if (kv.Value is ISpellMissile missile)
                 {
-                    if (projectile.IsVisibleByTeam(peerInfo.Champion.Team))
+                    if (missile.IsVisibleByTeam(peerInfo.Champion.Team))
                     {
-                         _game.PacketNotifier.NotifyMissileReplication(projectile);
+                         _game.PacketNotifier.NotifyMissileReplication(missile);
                     }
                 }
                 else

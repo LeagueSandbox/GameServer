@@ -348,8 +348,8 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 animation = "RUN";
             }
 
-            var animList = new List<string> { "RUN", animation };
-            _game.PacketNotifier.NotifySetAnimation(this, animList);
+            var animPairs = new Dictionary<string, string> { { "RUN", animation } };
+            SetAnimStates(animPairs);
         }
 
         /// <summary>

@@ -38,15 +38,13 @@ namespace GangplankE
             Particles.Add(AddParticleTarget(ownerSpell.Owner, "pirate_raiseMorale_tar.troy", unit, 1));
         }
 
-        public void OnDeactivate(IAttackableUnit unit)
+        public void OnDeactivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
-            unit.RemoveStatModifier(StatsModifier);
-            
             //RemoveBuffHudVisual(_hudvisual);
             Particles.ForEach(particle => RemoveParticle(particle));
         }
 
-        public void OnUpdate(double diff)
+        public void OnUpdate(float diff)
         {
             
         }

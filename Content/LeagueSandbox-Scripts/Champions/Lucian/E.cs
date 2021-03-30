@@ -28,7 +28,7 @@ namespace Spells
             var range = to * spell.SpellData.CastRangeDisplayOverride;
             var trueCoords = current + range;
 
-            DashToLocation(owner, trueCoords, 1500, "SPELL3", 0, false);
+            ForceMovement(owner, "", trueCoords, 1500, 0, 0, 0);
         }
 
         public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, ISpellMissile projectile)

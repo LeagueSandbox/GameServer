@@ -9,7 +9,6 @@ namespace LeagueSandbox.GameServer.GameObjects
         public string Name { get; }
         public string Model { get; }
         public float Height { get; }
-        public Vector3 Direction { get; }
         public float Unk1 { get; }
         public float Unk2 { get; }
         public byte SkinId { get; }

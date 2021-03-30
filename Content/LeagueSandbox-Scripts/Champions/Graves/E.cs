@@ -28,7 +28,7 @@ namespace Spells
             var range = to * 425;
             var trueCoords = current + range;
 
-            DashToLocation(owner, trueCoords, 1200, "Spell3", 0, false);
+            ForceMovement(owner, "Spell3", trueCoords, 1200, 0, 0, 0);
             AddBuff("Quickdraw", 4.0f, 1, spell, owner, owner);
             var p = AddParticleTarget(owner, "Graves_Move_OnBuffActivate.troy", owner);
             CreateTimer(4.0f, () =>

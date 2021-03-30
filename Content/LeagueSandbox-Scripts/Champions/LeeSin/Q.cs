@@ -46,7 +46,7 @@ namespace Spells
             projectile.SetToRemove();
             if (Vector2.DistanceSquared(owner.Position, target.Position) <= 800 * 800 && !target.IsDead)
             {
-                DashToTarget(owner, target, 2200, "Spell1b", 0, false, 20000, 0, 0);
+                ForceMovement(owner, target, "Spell1b", 2200, 0, 0, 0, 20000);
             }
         }
 

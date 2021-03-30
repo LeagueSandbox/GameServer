@@ -28,7 +28,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
             var dirMsg = "Not moving anywhere";
             if (!champion.IsPathEnded())
             {
-                Vector2 dir = champion.GetDirection();
+                Vector2 dir = new Vector2(champion.Direction.X, champion.Direction.Z);
                 // Angle measured between [1, 0] and player direction vectors (to X axis)
                 double ang = Math.Acos(dir.X / dir.Length()) * (180 / Math.PI); 
                 dirMsg = $"dirX: {dir.X} dirY: {dir.Y} dirAngle (to X axis): {ang}";

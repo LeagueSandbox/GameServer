@@ -16,7 +16,7 @@ namespace Quickdraw
 
         public IStatsModifier StatsModifier { get; private set; } = new StatsModifier();
 
-        public void OnUpdate(double diff)
+        public void OnUpdate(float diff)
         {
         }
 
@@ -26,9 +26,8 @@ namespace Quickdraw
             unit.AddStatModifier(StatsModifier);
         }
 
-        public void OnDeactivate(IAttackableUnit unit)
+        public void OnDeactivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
-            unit.RemoveStatModifier(StatsModifier);
         }
     }
 }

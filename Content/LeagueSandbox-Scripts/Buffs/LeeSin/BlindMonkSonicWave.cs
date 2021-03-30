@@ -25,11 +25,11 @@ namespace BlindMonkSonicWave
             thisBuff = buff;
         }
 
-        public void OnDeactivate(IAttackableUnit unit)
+        public void OnDeactivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
         }
 
-        public void OnUpdate(double diff)
+        public void OnUpdate(float diff)
         {
             if (thisBuff == null || originSpell == null || thisBuff.Elapsed())
             {

@@ -36,6 +36,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
                 {
                     ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.SYNTAXERROR);
                     ShowSyntax();
+                    return;
                 }
 
                 SpawnMinionsForTeam(team, userId);
@@ -66,6 +67,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
                 minion.SetPosition(championPos.X + random.Next(-X, X), championPos.Y + random.Next(-X, X));
                 minion.PauseAi(true);
                 minion.StopMovement();
+                minion.UpdateMoveOrder(OrderType.Hold);
                 Game.ObjectManager.AddObject(minion);
             }
         }

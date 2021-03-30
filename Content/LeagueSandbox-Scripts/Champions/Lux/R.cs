@@ -27,7 +27,7 @@ namespace Spells
 
             spell.AddLaser("LuxMaliceCannon", trueCoords);
             AddParticle(owner, "LuxMaliceCannon_beam.troy", trueCoords);
-            FaceDirection(owner, trueCoords, false);
+            FaceDirection(trueCoords, owner, false);
             spell.SpellAnimation("SPELL4", owner);
             AddParticleTarget(owner, "LuxMaliceCannon_cas.troy", owner);
         }

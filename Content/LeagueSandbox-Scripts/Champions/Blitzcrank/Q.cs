@@ -44,7 +44,7 @@ namespace Spells
                 var to = Vector2.Normalize(new Vector2(spell.X, spell.Y) - current);
                 var range = to * 50;
                 var trueCoords = current + range;
-                DashToLocation(target, trueCoords, spell.SpellData.MissileSpeed);
+                ForceMovement(target, "RUN", trueCoords, spell.SpellData.MissileSpeed, 0, 0, 0, movementOrdersFacing: ForceMovementOrdersFacing.KEEP_CURRENT_FACING);
             }
 
             projectile.SetToRemove();

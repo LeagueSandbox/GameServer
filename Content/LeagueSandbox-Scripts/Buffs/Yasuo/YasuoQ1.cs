@@ -20,7 +20,7 @@ namespace YasuoQ01
             ((IChampion)unit).SetSpell("YasuoQ2W", 0, true);
         }
 
-        public void OnDeactivate(IAttackableUnit unit)
+        public void OnDeactivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
             if (((IChampion)unit).Spells[0].SpellName == "YasuoQ2W")
             {
@@ -28,7 +28,7 @@ namespace YasuoQ01
             }
         }
 
-        public void OnUpdate(double diff)
+        public void OnUpdate(float diff)
         {
             //nothing!
         }

@@ -23,12 +23,12 @@ namespace GarenE
             // TODO: allow garen move through units
         }
 
-        public void OnDeactivate(IAttackableUnit unit)
+        public void OnDeactivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
             // TODO: disallow garen move through units
         }
 
-        public void OnUpdate(double diff)
+        public void OnUpdate(float diff)
         {
             
         }

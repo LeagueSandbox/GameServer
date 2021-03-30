@@ -28,7 +28,7 @@ namespace Spells
             var range = to * spell.SpellData.CastRangeDisplayOverride;
             trueCoords = current + range;
 
-            FaceDirection(owner, trueCoords, true, 0f);
+            FaceDirection(trueCoords, owner, true, 0f);
         }
 
         public void OnFinishCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)

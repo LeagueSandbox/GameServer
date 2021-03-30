@@ -31,7 +31,7 @@ namespace Spells
 
             spell.AddCone("Incinerate", trueCoords, 24.76f);
             AddParticle(owner, "IIncinerate_buf.troy", trueCoords);
-            FaceDirection(owner, trueCoords, false);
+            FaceDirection(trueCoords, owner, false);
             spell.SpellAnimation("SPELL2", owner);
             AddParticleTarget(owner, "Incinerate_cas.troy", owner);
         }

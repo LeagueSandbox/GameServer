@@ -139,7 +139,7 @@ namespace LeagueSandbox.GameServer
                     if (!u.IsVisibleByTeam(team) && TeamHasVisionOn(team, u) && !u.IsDead)
                     {
                         u.SetVisibleByTeam(team, true);
-                        _game.PacketNotifier.NotifyEnterVisibilityClient(u);
+                        _game.PacketNotifier.NotifyEnterVisibilityClient(u, useTeleportID: true);
                         // TODO: send this in one place only
                         _game.PacketNotifier.NotifyUpdatedStats(u, false);
                     }

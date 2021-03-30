@@ -17,13 +17,6 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 
         public override bool HandlePacket(int userId, AutoAttackOptionRequest req)
         {
-            var state = "Deactivated";
-            if (req.Activated)
-            {
-                state = "Activated";
-            }
-
-            _chatCommandManager.SendDebugMsgFormatted(DebugMsgType.NORMAL, $"Auto attack: {state}");
             return true;
         }
     }
