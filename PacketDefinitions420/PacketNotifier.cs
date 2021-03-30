@@ -499,7 +499,7 @@ namespace PacketDefinitions420
         /// <param name="netId">NetID of the GameObject coming into vision.</param>
         public void NotifyEnterLocalVisibilityClient(int userId, uint netId)
         {
-            var enterLocalVis = new OnEnterLocalVisiblityClient
+            var enterLocalVis = new OnEnterLocalVisibilityClient
             {
                 SenderNetID = netId
             };
@@ -515,7 +515,7 @@ namespace PacketDefinitions420
         /// <param name="userId">User to send the packet to.</param>
         public void NotifyEnterLocalVisibilityClient(IGameObject o, int userId = 0)
         {
-            var enterLocalVis = new OnEnterLocalVisiblityClient
+            var enterLocalVis = new OnEnterLocalVisibilityClient
             {
                 SenderNetID = o.NetId,
             };
@@ -585,7 +585,7 @@ namespace PacketDefinitions420
 
             var md = PacketExtensions.CreateMovementData(o, _navGrid, MovementDataType.Normal, useTeleportID: useTeleportID);
 
-            var enterVis = new OnEnterVisiblityClient // TYPO >:(
+            var enterVis = new OnEnterVisibilityClient // TYPO >:(
             {
                 SenderNetID = o.NetId,
                 Items = itemData,
@@ -760,7 +760,7 @@ namespace PacketDefinitions420
         /// <param name="team">TeamId to send the packet to; BLUE/PURPLE/NEUTRAL.</param>
         public void NotifyFXEnterTeamVisibility(IParticle particle, TeamId team)
         {
-            var fxVisPacket = new S2C_FX_OnEnterTeamVisiblity
+            var fxVisPacket = new S2C_FX_OnEnterTeamVisibility
             {
                 SenderNetID = particle.NetId,
                 NetID = particle.NetId,
@@ -791,7 +791,7 @@ namespace PacketDefinitions420
         /// <param name="team">TeamId to send the packet to; BLUE/PURPLE/NEUTRAL.</param>
         public void NotifyFXLeaveTeamVisibility(IParticle particle, TeamId team)
         {
-            var fxVisPacket = new S2C_FX_OnLeaveTeamVisiblity
+            var fxVisPacket = new S2C_FX_OnLeaveTeamVisibility
             {
                 SenderNetID = particle.NetId,
                 NetID = particle.NetId,
@@ -960,7 +960,7 @@ namespace PacketDefinitions420
         /// TODO: Verify where this should be used.
         public void NotifyLeaveLocalVisibilityClient(int userId, uint netId)
         {
-            var leaveLocalVis = new OnLeaveLocalVisiblityClient
+            var leaveLocalVis = new OnLeaveLocalVisibilityClient
             {
                 SenderNetID = netId
             };
@@ -977,7 +977,7 @@ namespace PacketDefinitions420
         /// TODO: Verify where this should be used.
         public void NotifyLeaveLocalVisibilityClient(IGameObject o, TeamId team, int userId = 0)
         {
-            var leaveLocalVis = new OnLeaveLocalVisiblityClient
+            var leaveLocalVis = new OnLeaveLocalVisibilityClient
             {
                 SenderNetID = o.NetId
             };
@@ -1000,7 +1000,7 @@ namespace PacketDefinitions420
         /// TODO: Verify where this should be used.
         public void NotifyLeaveVisibilityClient(IGameObject o, TeamId team, int userId = 0)
         {
-            var leaveVis = new OnLeaveVisiblityClient
+            var leaveVis = new OnLeaveVisibilityClient
             {
                 SenderNetID = o.NetId
             };
