@@ -416,7 +416,14 @@ namespace LeagueSandbox.GameServer.API
         /// <returns>Closest AttackableUnit.</returns>
         public static IAttackableUnit GetClosestUnitInRange(IAttackableUnit target, float range, bool isAlive)
         {
-            return GetClosestUnitInRange(target.Position, range, isAlive);
+            var units = _game.ObjectManager.GetUnitsInRange(target.Position, range, isAlive);
+            var orderedUnits = units.OrderBy(unit => Vector2.DistanceSquared(target.Position, unit.Position));
+            if (orderedUnits.First() == target)
+            {
+                return orderedUnits.ElementAt(1);
+            }
+
+            return orderedUnits.First();
         }
 
         /// <summary>
