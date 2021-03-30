@@ -1,11 +1,11 @@
-﻿using GameServerCore.Domain.GameObjects;
+﻿using GameServerCore.Domain.GameObjects.Spell.Missile;
 
 namespace GameServerCore.Packets.PacketDefinitions.Responses
 {
     public class ProjectileShowResponse : ICoreResponse
     {
-        public IProjectile Projectile { get; }
-        public ProjectileShowResponse(IProjectile projectile)
+        public ISpellMissile Projectile { get; }
+        public ProjectileShowResponse(ISpellMissile projectile)
         {
             Projectile = projectile;
         }

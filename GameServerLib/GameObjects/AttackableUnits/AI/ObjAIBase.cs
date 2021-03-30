@@ -5,9 +5,10 @@ using System.Numerics;
 using GameMaths.Geometry.Polygons;
 using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
+using GameServerCore.Domain.GameObjects.Spell;
 using GameServerCore.Enums;
 using LeagueSandbox.GameServer.Content;
-using LeagueSandbox.GameServer.GameObjects.Missiles;
+using LeagueSandbox.GameServer.GameObjects.Spell.Missile;
 using LeagueSandbox.GameServer.Items;
 
 namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
@@ -551,7 +552,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                     {
                         if (!IsMelee)
                         {
-                            var p = new Projectile(
+                            var p = new SpellMissile(
                                 _game,
                                 Position,
                                 5,

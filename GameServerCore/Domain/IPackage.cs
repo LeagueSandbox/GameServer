@@ -1,6 +1,6 @@
 ﻿using GameServerCore.Content;
+using GameServerCore.Domain.GameObjects.Spell;
 using LeagueSandbox.GameServer.Content;
-using Newtonsoft.Json.Linq;
 
 namespace GameServerCore.Domain
 {

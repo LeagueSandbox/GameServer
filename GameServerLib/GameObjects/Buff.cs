@@ -1,13 +1,12 @@
 using System;
-using GameServerCore.Domain;
 using GameServerCore;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
-using LeagueSandbox.GameServer.API;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using LeagueSandbox.GameServer.GameObjects.Other;
+using GameServerCore.Domain.GameObjects.Spell;
 
-namespace LeagueSandbox.GameServer.GameObjects.Spells
+namespace LeagueSandbox.GameServer.GameObjects
 {
     public class Buff : Stackable, IBuff
     {

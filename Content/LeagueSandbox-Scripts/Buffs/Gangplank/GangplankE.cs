@@ -2,9 +2,9 @@ using GameServerCore.Domain.GameObjects;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 using GameServerCore.Enums;
-using GameServerCore.Domain;
 using System.Collections.Generic;
 using LeagueSandbox.GameServer.GameObjects.Stats;
+using GameServerCore.Domain.GameObjects.Spell;
 
 namespace GangplankE
 {

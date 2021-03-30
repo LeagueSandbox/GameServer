@@ -1,9 +1,9 @@
-﻿using GameServerCore.Domain.GameObjects;
+﻿using GameServerCore.Domain.GameObjects.Spell.Missile;
 using GameServerCore.Enums;
 using System.Collections.Generic;
 using System.Numerics;
 
-namespace GameServerCore.Domain
+namespace GameServerCore.Domain.GameObjects.Spell
 {
     public interface ISpell: IUpdate
     {
@@ -16,7 +16,7 @@ namespace GameServerCore.Domain
         float CurrentCooldown { get; }
         float CurrentCastTime { get; }
         float CurrentChannelDuration { get; }
-        Dictionary<uint, IProjectile> Projectiles { get; }
+        Dictionary<uint, ISpellMissile> Projectiles { get; }
         uint SpellNetId { get; }
         IAttackableUnit Target { get; }
         float X { get; }
@@ -30,7 +30,7 @@ namespace GameServerCore.Domain
         float GetCooldown();
         void LowerCooldown(float lowerValue);
         void Deactivate();
-        void ApplyEffects(IAttackableUnit u, IProjectile p);
+        void ApplyEffects(IAttackableUnit u, ISpellMissile p);
         void LevelUp();
         void SetLevel(byte toLevel);
         void AddProjectile(string nameMissile, Vector2 startPos, Vector2 endPos, bool isServerOnly = false);

@@ -1,24 +1,18 @@
-﻿using System;
-using System.Numerics;
+﻿using System.Numerics;
 using GameServerCore;
-using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
+using GameServerCore.Domain.GameObjects.Spell;
 using GameServerCore.Enums;
-using LeagueSandbox.GameServer.Content;
-using LeagueSandbox.GameServer.GameObjects.AttackableUnits;
-using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
-using LeagueSandbox.GameServer.GameObjects.AttackableUnits.Buildings.AnimatedBuildings;
-using LeagueSandbox.GameServer.GameObjects.Other;
-using LeagueSandbox.GameServer.GameObjects.Spells;
+using LeagueSandbox.GameServer.GameObjects.Spell.Missile;
 
-namespace LeagueSandbox.GameServer.GameObjects.Missiles
+namespace LeagueSandbox.GameServer.GameObjects.Spell.Sector
 {
     /// <summary>
     /// Class representing rectangular spell hitboxes.
     /// </summary>
     /// TODO: Create a generalized class for spell based hitboxes instead of inheriting Projectile.
     /// TODO: Refactor the collision detection method for this class.
-    internal class Laser : Projectile
+    internal class Laser : SpellMissile
     {
         private bool _affectAsCastIsOver;
         private Vector2 _rectangleCornerBegin1;

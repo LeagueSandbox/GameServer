@@ -3,7 +3,7 @@ using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 using LeagueSandbox.GameServer.Scripting.CSharp;
-using LeagueSandbox.GameServer.GameObjects;
+using GameServerCore.Domain.GameObjects.Spell;
 
 namespace YasuoQ02
 {

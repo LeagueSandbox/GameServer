@@ -1,7 +1,7 @@
-﻿using GameServerCore.Domain.GameObjects;
+﻿using GameServerCore.Domain.GameObjects.Spell;
 using GameServerCore.Enums;
 
-namespace GameServerCore.Domain
+namespace GameServerCore.Domain.GameObjects
 {
     public interface IBuff : IStackable, IUpdate
     {

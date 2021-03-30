@@ -1,7 +1,7 @@
 ﻿using GameServerCore.Enums;
 using System.Numerics;
 
-namespace GameServerCore.Domain
+namespace GameServerCore.Domain.GameObjects.Spell
 {
     public interface ISpellData
     {

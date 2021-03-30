@@ -6,9 +6,9 @@ using GameServerCore;
 using GameServerCore.Content;
 using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
+using GameServerCore.Domain.GameObjects.Spell.Missile;
 using GameServerCore.Enums;
 using LeagueSandbox.GameServer.API;
-using LeagueSandbox.GameServer.GameObjects.Spells;
 using LeagueSandbox.GameServer.Logging;
 using log4net;
 
@@ -243,7 +243,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
 
             base.OnCollision(collider, isTerrain);
 
-            if (collider is IObjMissile || collider is IObjBuilding)
+            if (collider is ISpellMissile || collider is IObjBuilding)
             {
                 // TODO: Implement OnProjectileCollide/Hit here.
                 return;

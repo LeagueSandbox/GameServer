@@ -1,6 +1,7 @@
 ﻿using GameServerCore;
 using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
+using GameServerCore.Domain.GameObjects.Spell.Missile;
 using GameServerCore.Enums;
 using GameServerCore.Packets.Handlers;
 using GameServerCore.Packets.PacketDefinitions.Requests;
@@ -111,7 +112,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                      _game.PacketNotifier.NotifyStaticObjectSpawn(userId, inhibtor.NetId);
                     _game.PacketNotifier.NotifyEnterLocalVisibilityClient(userId, inhibtor.NetId);
                 }
-                else if (kv.Value is IProjectile projectile)
+                else if (kv.Value is ISpellMissile projectile)
                 {
                     if (projectile.IsVisibleByTeam(peerInfo.Champion.Team))
                     {

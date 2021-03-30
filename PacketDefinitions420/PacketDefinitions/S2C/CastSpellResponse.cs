@@ -1,7 +1,5 @@
-using System;
 using GameServerCore.Content;
-using GameServerCore.Domain;
-using GameServerCore.Packets.Enums;
+using GameServerCore.Domain.GameObjects.Spell;
 
 namespace PacketDefinitions420.PacketDefinitions.S2C
 {

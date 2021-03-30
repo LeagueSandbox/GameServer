@@ -8,6 +8,8 @@ using GameServerCore.Enums;
 using GameServerCore.Packets.Enums;
 using GameServerCore.Packets.PacketDefinitions.Requests;
 using System;
+using GameServerCore.Domain.GameObjects.Spell;
+using GameServerCore.Domain.GameObjects.Spell.Missile;
 
 namespace GameServerCore.Packets.Interfaces
 {
@@ -185,13 +187,13 @@ namespace GameServerCore.Packets.Interfaces
         /// Sends a packet to all players detailing the destruction of (usually) an auto attack missile.
         /// </summary>
         /// <param name="p">Projectile that is being destroyed.</param>
-        void NotifyDestroyClientMissile(IProjectile p);
+        void NotifyDestroyClientMissile(ISpellMissile p);
         /// <summary>
         /// Sends a packet to the specified team detailing the destruction of (usually) an auto attack missile.
         /// </summary>
         /// <param name="p">Projectile that is being destroyed.</param>
         /// <param name="team">TeamId to send the packet to.</param>
-        void NotifyDestroyClientMissile(IProjectile p, TeamId team);
+        void NotifyDestroyClientMissile(ISpellMissile p, TeamId team);
         /// <summary>
         /// Sends a packet to either all players with vision of a target, or the specified player.
         /// The packet displays the specified message of the specified type as floating text over a target.
@@ -240,7 +242,7 @@ namespace GameServerCore.Packets.Interfaces
         /// Sends a packet to all players that (usually) an auto attack missile has been created.
         /// </summary>
         /// <param name="p">Projectile that was created.</param>
-        void NotifyForceCreateMissile(IProjectile p);
+        void NotifyForceCreateMissile(ISpellMissile p);
         /// <summary>
         /// Sends a packet to, optionally, a specified player, all players with vision of the particle, or all players (given the particle is set as globally visible).
         /// </summary>
@@ -382,7 +384,7 @@ namespace GameServerCore.Packets.Interfaces
         /// Sends a packet to either all players with vision (given the projectile is networked to the client) of the projectile, or all players. The packet contains all details regarding the specified projectile's creation.
         /// </summary>
         /// <param name="p">Projectile that was created.</param>
-        void NotifyMissileReplication(IProjectile p);
+        void NotifyMissileReplication(ISpellMissile p);
         /// <summary>
         /// Sends a packet to all players that updates the specified unit's model.
         /// </summary>

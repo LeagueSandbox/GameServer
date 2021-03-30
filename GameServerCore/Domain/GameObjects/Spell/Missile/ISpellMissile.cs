@@ -1,9 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using GameServerCore.Domain.GameObjects.Spell;
+using System.Collections.Generic;
 using System.Numerics;
 
-namespace GameServerCore.Domain.GameObjects
+namespace GameServerCore.Domain.GameObjects.Spell.Missile
 {
-    public interface IProjectile : IObjMissile
+    public interface ISpellMissile : IGameObject
     {
         /// <summary>
         /// Number of objects this projectile has hit since it was created.

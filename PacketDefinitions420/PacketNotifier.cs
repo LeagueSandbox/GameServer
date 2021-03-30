@@ -20,10 +20,11 @@ using PingLoadInfoRequest = GameServerCore.Packets.PacketDefinitions.Requests.Pi
 using ViewRequest = GameServerCore.Packets.PacketDefinitions.Requests.ViewRequest;
 using LeaguePackets.Game.Common;
 using LeaguePackets.Common;
-using System.Linq;
 using static GameServerCore.Content.HashFunctions;
 using System.Text;
 using Force.Crc32;
+using GameServerCore.Domain.GameObjects.Spell;
+using GameServerCore.Domain.GameObjects.Spell.Missile;
 
 namespace PacketDefinitions420
 {
@@ -488,7 +489,7 @@ namespace PacketDefinitions420
         /// Sends a packet to all players detailing the destruction of (usually) an auto attack missile.
         /// </summary>
         /// <param name="p">Projectile that is being destroyed.</param>
-        public void NotifyDestroyClientMissile(IProjectile p)
+        public void NotifyDestroyClientMissile(ISpellMissile p)
         {
             var misPacket = new S2C_DestroyClientMissile
             {
@@ -502,7 +503,7 @@ namespace PacketDefinitions420
         /// </summary>
         /// <param name="p">Projectile that is being destroyed.</param>
         /// <param name="team">TeamId to send the packet to.</param>
-        public void NotifyDestroyClientMissile(IProjectile p, TeamId team)
+        public void NotifyDestroyClientMissile(ISpellMissile p, TeamId team)
         {
             var misPacket = new S2C_DestroyClientMissile
             {
@@ -720,7 +721,7 @@ namespace PacketDefinitions420
         /// Sends a packet to all players that (usually) an auto attack missile has been created.
         /// </summary>
         /// <param name="p">Projectile that was created.</param>
-        public void NotifyForceCreateMissile(IProjectile p)
+        public void NotifyForceCreateMissile(ISpellMissile p)
         {
             var misPacket = new S2C_ForceCreateMissile();
             misPacket.SenderNetID = p.Owner.NetId;
@@ -1198,7 +1199,7 @@ namespace PacketDefinitions420
         /// Sends a packet to either all players with vision (given the projectile is networked to the client) of the projectile, or all players. The packet contains all details regarding the specified projectile's creation.
         /// </summary>
         /// <param name="p">Projectile that was created.</param>
-        public void NotifyMissileReplication(IProjectile p)
+        public void NotifyMissileReplication(ISpellMissile p)
         {
             var targetPos = p.GetTargetPosition();
             if (targetPos == new Vector2(float.NaN, float.NaN))

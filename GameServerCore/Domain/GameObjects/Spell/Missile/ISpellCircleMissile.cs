@@ -3,7 +3,7 @@ using System.Numerics;
 
 namespace GameServerCore.Domain.GameObjects.Spell.Missile
 {
-    public interface ISpellCircleMissile : IObjMissile // TODO: Change to ISpellMissile for spells rework.
+    public interface ISpellCircleMissile : ISpellMissile // TODO: Change to ISpellMissile for spells rework.
     {
         /// <summary>
         /// Number of objects this projectile has hit since it was created.

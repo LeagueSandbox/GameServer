@@ -21,4 +21,8 @@
     <ProjectReference Include="..\PacketDefinitions420\PacketDefinitions420.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="GameObjects\Missiles\" />
+  </ItemGroup>
+
 </Project>
