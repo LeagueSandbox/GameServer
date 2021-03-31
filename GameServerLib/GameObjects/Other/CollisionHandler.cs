@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using GameServerCore;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Maps;
@@ -15,8 +16,9 @@ namespace LeagueSandbox.GameServer.GameObjects.Other
 
         private readonly List<IGameObject> _objects = new List<IGameObject>();
         // This is the 'dynamic map', updated every update of the game.
-        private QuadTree<IGameObject> _quadDynamic;
         private readonly IQuadTreeObjectBounds<IGameObject> _objectBounds = new CollisionObject();
+
+        public QuadTree<IGameObject> QuadDynamic { get; private set; }
 
         public CollisionHandler(IMap map)
         {
@@ -24,7 +26,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Other
 
             // Initializes a dynamic map using NavigationGrid properties and a CollisionObject which takes into account an object's CollisionRadius (+1 for insurance).
             // It will contain all GameObjects that should be able to collide with eachother, refer to IsCollisionObject.
-            _quadDynamic = new QuadTree<IGameObject>(
+            QuadDynamic = new QuadTree<IGameObject>(
                 _map.NavigationGrid.MinGridPosition.X,
                 _map.NavigationGrid.MinGridPosition.Z,
                 // Subtract one cell's size from the max so we never reach the CellCountX/Y (since Cells is an array).
@@ -73,7 +75,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Other
             if (IsCollisionObject(obj))
             {
                 // Returns false when out of bounds and fails.
-                _quadDynamic.Insert(obj);
+                QuadDynamic.Insert(obj);
             }
         }
 
@@ -88,7 +90,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Other
             // Remove dynamic objects
             if (IsCollisionObject(obj))
             {
-                _quadDynamic.Remove(obj);
+                QuadDynamic.Remove(obj);
             }
         }
 
@@ -111,7 +113,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Other
                     obj.OnCollision(null, true);
                 }
 
-                var nearest = _quadDynamic.GetNearestObjects(obj);
+                var nearest = QuadDynamic.GetNearestObjects(obj);
                 foreach (var obj2 in nearest)
                 {
                     if (obj == obj2 || !IsCollisionObject(obj2))
@@ -137,14 +139,14 @@ namespace LeagueSandbox.GameServer.GameObjects.Other
         /// </summary>
         private void UpdateQuadTree()
         {
-            _quadDynamic = new QuadTree<IGameObject>(
-                _quadDynamic.MainRect.Left,
-                _quadDynamic.MainRect.Top,
-                _quadDynamic.MainRect.Width,
-                _quadDynamic.MainRect.Height,
+            QuadDynamic = new QuadTree<IGameObject>(
+                QuadDynamic.MainRect.Left,
+                QuadDynamic.MainRect.Top,
+                QuadDynamic.MainRect.Width,
+                QuadDynamic.MainRect.Height,
                 _objectBounds
             );
-            _quadDynamic.InsertRange(_objects.FindAll(o => IsCollisionObject(o)));
+            QuadDynamic.InsertRange(_objects.FindAll(o => IsCollisionObject(o)));
         }
     }
 }

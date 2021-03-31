@@ -512,10 +512,13 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
         public override void OnCollision(IGameObject collider, bool isTerrain = false)
         {
-            if (IsDashing)
+            // TODO: Pathfinding should be responsible for pathing around units so collisions with other units never occur (or at least very little).
+            // Collisions only occur between buildings.
+            if (IsDashing || !(collider is IObjBuilding || collider is IBaseTurret))
             {
                 return;
             }
+
             base.OnCollision(collider, isTerrain);
             if (isTerrain)
             {

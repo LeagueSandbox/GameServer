@@ -249,7 +249,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                 onCollide?.Invoke(this, collider);
 
                 // Teleport out of other objects (+1 for insurance).
-                Vector2 exit = Extensions.GetCircleEscapePoint(Position, CollisionRadius * 2, collider.Position, collider.CollisionRadius);
+                Vector2 exit = Extensions.GetCircleEscapePoint(Position, CollisionRadius + 1, collider.Position, collider.CollisionRadius);
                 TeleportTo(exit.X, exit.Y);
             }
         }
@@ -1089,7 +1089,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                 // stop moving because we have reached our last waypoint
                 if (nextIndex >= Waypoints.Count)
                 {
-                    CurrentWaypoint = new KeyValuePair<int, Vector2>(nextIndex, Position);
+                    CurrentWaypoint = new KeyValuePair<int, Vector2>(1, Position);
                     return true;
                 }
                 // start moving to our next waypoint

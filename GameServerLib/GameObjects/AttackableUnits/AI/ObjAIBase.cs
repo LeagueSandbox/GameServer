@@ -271,16 +271,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         /// <param name="isTerrain">Whether or not this AI collided with terrain.</param>
         public override void OnCollision(IGameObject collider, bool isTerrain = false)
         {
-            if (!isTerrain)
-            {
-                // Champions do not teleport out of lower level GameObjects.
-                // TODO: Implement Collision Priority in CollisionHandler?
-                if (!(collider is IChampion || collider is IBaseTurret))
-                {
-                    return;
-                }
-            }
-
             base.OnCollision(collider, isTerrain);
 
             // If we were trying to path somewhere before colliding, then repath from our new position.

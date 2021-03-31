@@ -98,6 +98,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             {
                 return true;
             }
+
             IAttackableUnit nextTarget = null;
             var nextTargetPriority = 14;
             var objects = _game.ObjectManager.GetObjects();
