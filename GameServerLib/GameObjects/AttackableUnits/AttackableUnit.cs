@@ -6,9 +6,9 @@ using GameServerCore;
 using GameServerCore.Content;
 using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
+using GameServerCore.Domain.GameObjects.Spell.Missile;
 using GameServerCore.Enums;
 using LeagueSandbox.GameServer.API;
-using LeagueSandbox.GameServer.GameObjects.Spells;
 using LeagueSandbox.GameServer.Logging;
 using log4net;
 
@@ -183,7 +183,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             var onUpdate = _game.ScriptEngine.GetStaticMethod<Action<IAttackableUnit, double>>(Model, "Passive", "OnUpdate");
             onUpdate?.Invoke(this, diff);
 
-            if (IsMoving())
+            if (Waypoints.Count > 1)
             {
                 Move(diff);
             }
@@ -218,17 +218,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         }
 
         /// <summary>
-        /// Sets the position of this unit to the specified position and stops its movements.
-        /// </summary>
-        /// <param name="x">X coordinate to set.</param>
-        /// <param name="y">Y coordinate to set.</param>
-        public override void TeleportTo(float x, float y)
-        {
-            StopMovement();
-            base.TeleportTo(x, y);
-        }
-
-        /// <summary>
         /// Called when this unit collides with the terrain or with another GameObject. Refer to CollisionHandler for exact cases.
         /// </summary>
         /// <param name="collider">GameObject that collided with this AI. Null if terrain.</param>
@@ -243,9 +232,9 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
 
             base.OnCollision(collider, isTerrain);
 
-            if (collider is IObjMissile || collider is IObjBuilding)
+            if (collider is ISpellMissile || collider is IObjBuilding)
             {
-                // TODO: Implement OnProjectileCollide/Hit here.
+                // TODO: Implement OnMissileCollide/Hit here.
                 return;
             }
 
@@ -260,7 +249,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                 onCollide?.Invoke(this, collider);
 
                 // Teleport out of other objects (+1 for insurance).
-                Vector2 exit = Extensions.GetCircleEscapePoint(Position, CollisionRadius * 2, collider.Position, collider.CollisionRadius);
+                Vector2 exit = Extensions.GetCircleEscapePoint(Position, CollisionRadius + 1, collider.Position, collider.CollisionRadius);
                 TeleportTo(exit.X, exit.Y);
             }
         }
@@ -568,7 +557,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                     // Add the buff to the visual hud.
                     if (!b.IsHidden)
                     {
-                        _game.PacketNotifier.NotifyNPC_BuffAdd2(b);
+                        _game.PacketNotifier.NotifyNPC_BuffAdd2(b, b.Duration, b.TimeElapsed);
                     }
                     // Activate the buff for BuffScripts
                     b.ActivateBuff();
@@ -610,11 +599,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                     {
                         _game.PacketNotifier.NotifyNPC_BuffReplace(ParentBuffs[b.Name]);
                     }
-                    // Attempt to remove any stats or modifiers applied by the pre-existing buff instance's BuffScript.
-                    // TODO: Replace with a better method that unloads and reloads all data of a script
-                    RemoveStatModifier(ParentBuffs[b.Name].GetStatsModifier());
-                    // Re-activate the buff's BuffScript.
-                    ParentBuffs[b.Name].ActivateBuff();
                 }
                 // If the buff is supposed to be a single stackable buff with a timer = Duration * StackCount
                 else if (b.BuffAddType == BuffAddType.STACKS_AND_CONTINUE)
@@ -731,9 +715,9 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                             _game.PacketNotifier.NotifyNPC_BuffUpdateCount(ParentBuffs[b.Name], ParentBuffs[b.Name].Duration, ParentBuffs[b.Name].TimeElapsed);
                         }
                     }
-                    // Attempt to remove any stats or modifiers applied by the pre-existing buff instance's BuffScript.
-                    // TODO: Replace with a better method that unloads and reloads all data of a script
-                    RemoveStatModifier(ParentBuffs[b.Name].GetStatsModifier());
+
+                    // TODO: Unload and reload all data of buff script here.
+
                     ParentBuffs[b.Name].ActivateBuff();
                 }
             }
@@ -756,6 +740,11 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// <returns>True/False.</returns>
         public bool HasBuff(string buffName)
         {
+            if (BuffList == null)
+            {
+                return false;
+            }
+
             return !(BuffList.Find(b => b.IsBuffSame(buffName)) == null);
         }
 
@@ -787,6 +776,15 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             }
 
             throw new Exception("No slot found with requested value"); // If no open slot or no corresponding slot
+        }
+
+        /// <summary>
+        /// Gets the list of parent buffs applied to this unit.
+        /// </summary>
+        /// <returns>List of parent buffs.</returns>
+        public Dictionary<string, IBuff> GetParentBuffs()
+        {
+            return ParentBuffs;
         }
 
         /// <summary>
@@ -845,6 +843,11 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// <param name="b">Buff to remove.</param>
         public void RemoveBuff(IBuff b)
         {
+            if (!HasBuff(b))
+            {
+                return;
+            }
+
             lock (_buffsLock)
             {
                 // If the buff is supposed to be a single stackable buff with a timer = Duration * StackCount, and their are more than one already present.
@@ -871,10 +874,19 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                     // Add the buff to the visual hud.
                     if (!b.IsHidden)
                     {
-                        _game.PacketNotifier.NotifyNPC_BuffAdd2(tempBuff);
+                        _game.PacketNotifier.NotifyNPC_BuffAdd2(tempBuff, tempBuff.Duration, tempBuff.TimeElapsed);
                     }
                     // Activate the buff for BuffScripts
                     tempBuff.ActivateBuff();
+                }
+                else if (b.BuffAddType == BuffAddType.STACKS_AND_RENEWS && b.StackCount > 1 && !b.Elapsed())
+                {
+                    b.DecrementStackCount();
+
+                    if (!b.IsHidden)
+                    {
+                        _game.PacketNotifier.NotifyNPC_BuffUpdateCount(b, b.Duration - b.TimeElapsed, b.TimeElapsed);
+                    }
                 }
                 // If the buff is supposed to be applied alongside other buffs of the same name, and their are more than one already present.
                 else if (b.BuffAddType == BuffAddType.STACKS_AND_OVERLAPS && b.StackCount > 1)
@@ -919,6 +931,11 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                 // Only other case where RemoveBuff should be called is when there is one stack remaining on the buff.
                 else
                 {
+                    if (!b.Elapsed())
+                    {
+                        b.DeactivateBuff();
+                    }
+
                     BuffList.RemoveAll(buff => buff.Elapsed());
                     RemoveBuff(b.Name);
                     RemoveBuffSlot(b);
@@ -996,13 +1013,12 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// </summary>
         /// <param name="diff">The amount of milliseconds the unit is supposed to move</param>
         /// TODO: Implement interpolation (assuming all other desync related issues are already fixed).
-        private bool Move(float diff)
+        public virtual bool Move(float diff)
         {
             // no waypoints remained - clear the Waypoints
             if (CurrentWaypoint.Key >= Waypoints.Count)
             {
-                Waypoints.RemoveAll(v => v != Waypoints[0]);
-                CurrentWaypoint = new KeyValuePair<int, Vector2>(1, Waypoints[0]);
+                ClearWaypoints();
                 return false;
             }
 
@@ -1011,13 +1027,26 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             var next = CurrentWaypoint.Value;
 
             var goingTo = next - cur;
-            _direction = Vector2.Normalize(goingTo);
+
+            var dirTemp = Vector2.Normalize(goingTo);
 
             // usually doesn't happen
-            if (float.IsNaN(_direction.X) || float.IsNaN(_direction.Y))
+            if (float.IsNaN(dirTemp.X) || float.IsNaN(dirTemp.Y))
             {
-                _direction = new Vector2(0, 0);
+                dirTemp = new Vector2(0, 0);
             }
+
+            if (!HasCrowdControl(CrowdControlType.AIRBORNE) && !HasCrowdControl(CrowdControlType.STASIS) && !HasCrowdControl(CrowdControlType.STUN))
+            {
+                //FaceDirection(new Vector3(dirTemp.X, 0.0f, dirTemp.Y), false);
+                Direction = new Vector3(dirTemp.X, 0.0f, dirTemp.Y);
+            }
+            else
+            {
+                Direction = new Vector3(dirTemp.X, 0.0f, dirTemp.Y);
+            }
+
+            FaceDirection(Direction, false);
 
             var moveSpeed = GetMoveSpeed();
 
@@ -1031,8 +1060,8 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                 deltaMovement = MathF.Sqrt(distSqr);
             }
 
-            var xx = _direction.X * deltaMovement;
-            var yy = _direction.Y * deltaMovement;
+            var xx = Direction.X * deltaMovement;
+            var yy = Direction.Z * deltaMovement;
 
             Vector2 nextPos = new Vector2(Position.X + xx, Position.Y + yy);
             // TODO: Implement ForceMovementType so this specifically applies to dashes that can't move past walls.
@@ -1060,7 +1089,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                 // stop moving because we have reached our last waypoint
                 if (nextIndex >= Waypoints.Count)
                 {
-                    CurrentWaypoint = new KeyValuePair<int, Vector2>(nextIndex, Position);
+                    CurrentWaypoint = new KeyValuePair<int, Vector2>(1, Position);
                     return true;
                 }
                 // start moving to our next waypoint
@@ -1074,15 +1103,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         }
 
         /// <summary>
-        /// Whether or not this unit's position is being updated towards its waypoints.
-        /// </summary>
-        /// <returns>True/False</returns>
-        public bool IsMoving()
-        {
-            return Waypoints.Count > 1;
-        }
-
-        /// <summary>
         /// Returns the next waypoint. If all waypoints have been reached then this returns a -inf Vector2
         /// </summary>
         public Vector2 GetNextWaypoint()
@@ -1092,6 +1112,12 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                 return CurrentWaypoint.Value;
             }
             return new Vector2(float.NegativeInfinity, float.NegativeInfinity);
+        }
+
+        public virtual void ClearWaypoints()
+        {
+            Waypoints.RemoveAll(v => v != Waypoints[0]);
+            CurrentWaypoint = new KeyValuePair<int, Vector2>(1, Waypoints[0]);
         }
 
         /// <summary>
@@ -1217,7 +1243,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// TODO: Find a good way to grab these variables from spell data.
         /// TODO: Verify if we should count Dashing as a form of Crowd Control.
         /// TODO: Implement Dash class which houses these parameters, then have that as the only parameter to this function (and other Dash-based functions).
-        public void DashToLocation(Vector2 endPos, float dashSpeed, string animation = "RUN", float leapGravity = 0.0f, bool keepFacingLastDirection = true)
+        public void DashToLocation(Vector2 endPos, float dashSpeed, string animation = "", float leapGravity = 0.0f, bool keepFacingLastDirection = true)
         {
             var newCoords = _game.Map.NavigationGrid.GetClosestTerrainExit(endPos, CollisionRadius + 1.0f);
             // TODO: Take into account the rest of the arguments
@@ -1232,13 +1258,13 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             // Movement is networked this way instead.
             _game.PacketNotifier.NotifyWaypointGroupWithSpeed(this, dashSpeed, leapGravity, keepFacingLastDirection);
 
-            if (animation == null)
+            if (animation == null || animation == "")
             {
-                animation = "RUN";
+                return;
             }
 
-            var animList = new List<string> { "RUN", animation };
-            _game.PacketNotifier.NotifySetAnimation(this, animList);
+            var animPairs = new Dictionary<string, string> { { "RUN", animation } };
+            SetAnimStates(animPairs);
         }
 
         /// <summary>
@@ -1253,11 +1279,24 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                 DashTime = 0;
                 DashElapsedTime = 0;
 
-                var animList = new List<string> { "RUN" };
-                _game.PacketNotifier.NotifySetAnimation(this, animList);
+                var animPairs = new Dictionary<string, string> { { "RUN", "" } };
+                SetAnimStates(animPairs);
             }
 
             IsDashing = state;
+        }
+
+        /// <summary>
+        /// Sets this unit's animation states to the given set of states.
+        /// Given state pairs are expected to follow a specific structure:
+        /// First string is the animation to override, second string is the animation to play in place of the first.
+        /// <param name="animPairs">Dictionary of animations to set.</param>
+        public void SetAnimStates(Dictionary<string, string> animPairs)
+        {
+            if (animPairs != null)
+            {
+                _game.PacketNotifier.NotifyS2C_SetAnimStates(this, animPairs);
+            }
         }
     }
 }

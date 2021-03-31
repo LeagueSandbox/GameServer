@@ -5,9 +5,6 @@ using System.Numerics;
 using GameServerCore;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
-using LeagueSandbox.GameServer.GameObjects.AttackableUnits;
-using LeagueSandbox.GameServer.GameObjects.Missiles;
-using LeagueSandbox.GameServer.GameObjects.Other;
 using LeagueSandbox.GameServer.Packets;
 
 namespace LeagueSandbox.GameServer.GameObjects
@@ -49,9 +46,13 @@ namespace LeagueSandbox.GameServer.GameObjects
         /// </summary>
         public Vector2 Position { get; protected set; }
         /// <summary>
+        /// 3D orientation of this GameObject (based on ground-level).
+        /// </summary>
+        public Vector3 Direction { get; protected set; }
+        /// <summary>
         /// Used to synchronize movement between client and server. Is currently assigned Env.TickCount.
         /// </summary>
-        public uint SyncId { get; }
+        public int SyncId { get; }
         /// <summary>
         /// Team identifier, refer to TeamId enum.
         /// </summary>
@@ -77,7 +78,8 @@ namespace LeagueSandbox.GameServer.GameObjects
                 NetId = _networkIdManager.GetNewNetId(); // base class assigns a netId
             }
             Position = position;
-            SyncId = (uint)Environment.TickCount; // TODO: use movement manager to generate this
+            Direction = new Vector3();
+            SyncId = Environment.TickCount; // TODO: use movement manager to generate this
             CollisionRadius = collisionRadius;
             VisionRadius = visionRadius;
 
@@ -168,11 +170,20 @@ namespace LeagueSandbox.GameServer.GameObjects
         }
 
         /// <summary>
-        /// Returns the current direction (from 2D top-down perspective) used in movement.
+        /// Sets this GameObject's current orientation (only X and Z are used in movement).
         /// </summary>
-        public Vector2 GetDirection()
+        public void FaceDirection(Vector3 newDirection, bool isInstant = true, float turnTime = 0.08333f)
         {
-            return _direction;
+            if (newDirection == Vector3.Zero || float.IsNaN(newDirection.X) || float.IsNaN(newDirection.Y) || float.IsNaN(newDirection.Z))
+            {
+                return;
+            }
+
+            Direction = newDirection;
+            if (_game.ObjectManager.GetObjectById(NetId) != null)
+            {
+                _game.PacketNotifier.NotifyFaceDirection(this, newDirection, isInstant, turnTime);
+            }
         }
 
         /// <summary>
@@ -262,6 +273,21 @@ namespace LeagueSandbox.GameServer.GameObjects
             }
 
             _game.PacketNotifier.NotifyTeleport(this, new Vector2(x, y));
+        }
+
+        /// <summary>
+        /// Forces this GameObject to perform the given internally named animation.
+        /// </summary>
+        /// <param name="animName">Internal name of an animation to play.</param>
+        /// <param name="timeScale">How fast the animation should play. Default 1x speed.</param>
+        /// <param name="startTime">Time in the animation to start at.</param>
+        /// TODO: Verify if this description is correct, if not, correct it.
+        /// <param name="speedScale">How much the speed of the GameObject should affect the animation.</param>
+        /// TODO: Implement AnimationFlags enum for this and fill it in.
+        /// <param name="flags">Animation flags. Possible values and functions unknown.</param>
+        public void PlayAnimation(string animName, float timeScale = 1.0f, float startTime = 0, float speedScale = 0, byte flags = 0)
+        {
+            _game.PacketNotifier.NotifyS2C_PlayAnimation(this, animName, flags, timeScale, startTime, speedScale);
         }
     }
 }

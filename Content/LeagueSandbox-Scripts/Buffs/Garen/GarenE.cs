@@ -1,10 +1,8 @@
 ﻿using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
+using GameServerCore.Domain.GameObjects.Spell;
 using GameServerCore.Enums;
 using LeagueSandbox.GameServer.Scripting.CSharp;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace GarenE
 {
@@ -25,12 +23,12 @@ namespace GarenE
             // TODO: allow garen move through units
         }
 
-        public void OnDeactivate(IAttackableUnit unit)
+        public void OnDeactivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
             // TODO: disallow garen move through units
         }
 
-        public void OnUpdate(double diff)
+        public void OnUpdate(float diff)
         {
             
         }

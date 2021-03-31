@@ -169,6 +169,11 @@ namespace GameServerCore.Domain.GameObjects
         /// <returns>Parent buff instance.</returns>
         IBuff GetBuffWithName(string name);
         /// <summary>
+        /// Gets a dictionary of all parent buff instances and their names.
+        /// </summary>
+        /// <returns></returns>
+        Dictionary<string, IBuff> GetParentBuffs();
+        /// <summary>
         /// Gets a list of all buffs applied to this unit (parent and children).
         /// </summary>
         /// <returns>List of buff instances.</returns>
@@ -207,11 +212,6 @@ namespace GameServerCore.Domain.GameObjects
         /// </summary>
         /// <returns></returns>
         bool CanMove();
-        /// <summary>
-        /// Whether or not this unit's position is being updated towards its waypoints.
-        /// </summary>
-        /// <returns>True/False</returns>
-        bool IsMoving();
         /// <summary>
         /// Returns the next waypoint. If all waypoints have been reached then this returns a -inf Vector2
         /// </summary>
@@ -283,5 +283,11 @@ namespace GameServerCore.Domain.GameObjects
         /// <param name="state">State to set. True = dashing, false = not dashing.</param>
         /// TODO: Implement ForcedMovement methods and enumerators to handle different kinds of dashes.
         void SetDashingState(bool state);
+        /// <summary>
+        /// Sets this unit's animation states to the given set of states.
+        /// Given state pairs are expected to follow a specific structure:
+        /// First string is the animation to override, second string is the animation to play in place of the first.
+        /// <param name="animPairs">Dictionary of animations to set.</param>
+        void SetAnimStates(Dictionary<string, string> animPairs);
     }
 }

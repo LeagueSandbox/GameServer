@@ -2,15 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
-using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
+using GameServerCore.Domain.GameObjects.Spell;
 using GameServerCore.Enums;
-using GameServerCore.Packets.Enums;
 using LeagueSandbox.GameServer.GameObjects;
-using LeagueSandbox.GameServer.GameObjects.AttackableUnits;
 using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
-using LeagueSandbox.GameServer.GameObjects.Other;
-using LeagueSandbox.GameServer.GameObjects.Spells;
 using LeagueSandbox.GameServer.Logging;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using log4net;
@@ -144,6 +140,37 @@ namespace LeagueSandbox.GameServer.API
                 CancelDash(unit);
             }
             unit.TeleportTo(x, y);
+            unit.StopMovement();
+        }
+
+        public static void FaceDirection(Vector2 location, IGameObject target, bool isInstant = false, float turnTime = 0.08333f)
+        {
+            if (location == target.Position)
+            {
+                return;
+            }
+
+            var goingTo = location - target.Position;
+            var direction = Vector2.Normalize(goingTo);
+
+            target.FaceDirection(new Vector3(direction.X, 0, direction.Y), isInstant, turnTime);
+        }
+
+        /// <summary>
+        /// Gets a point that is in the direction the specified unit is facing, given it is a specified distance away from the unit.
+        /// </summary>
+        /// <param name="obj">Unit to base the point off of.</param>
+        /// <param name="offsetAngle">Offset angle from the unit's facing angle (in degrees, clockwise). Must be > 0 to have an effect.</param>
+        /// <returns>Vector2 point.</returns>
+        public static Vector2 GetPointFromUnit(IGameObject obj, float distance, float offsetAngle = 0)
+        {
+            Vector2 pos = new Vector2(obj.Position.X, obj.Position.Y);
+            Vector2 dir = new Vector2(obj.Direction.X, obj.Direction.Z);
+            if (offsetAngle > 0)
+            {
+                GameServerCore.Extensions.Rotate(dir, offsetAngle);
+            }
+            return pos + (dir * distance);
         }
 
         /// <summary>
@@ -170,7 +197,7 @@ namespace LeagueSandbox.GameServer.API
         /// <param name="from">Owner of the buff.</param>
         /// <param name="infiniteduration">Whether or not the buff should last forever.</param>
         /// <returns>New buff instance.</returns>
-        public static IBuff AddBuff(string buffName, float duration, byte stacks, ISpell originspell, IObjAiBase onto, IObjAiBase from, bool infiniteduration = false)
+        public static IBuff AddBuff(string buffName, float duration, byte stacks, ISpell originspell, IAttackableUnit onto, IObjAiBase from, bool infiniteduration = false)
         {
             IBuff buff;
 
@@ -244,7 +271,7 @@ namespace LeagueSandbox.GameServer.API
         /// <summary>
         /// Creates a new particle with the specified parameters.
         /// </summary>
-        /// <param name="unit">AI unit that should own this particle.</param>
+        /// <param name="obj">GameObject that should own this particle.</param>
         /// <param name="particle">Internal name of the particle.</param>
         /// <param name="position">Position to spawn at.</param>
         /// <param name="size">Scale.</param>
@@ -253,9 +280,9 @@ namespace LeagueSandbox.GameServer.API
         /// <param name="lifetime">Time in seconds the particle should last.</param>
         /// <param name="reqVision">Whether or not the particle can be obstructed by terrain.</param>
         /// <returns>New particle instance.</returns>
-        public static IParticle AddParticle(IObjAiBase unit, string particle, Vector2 position, float size = 1.0f, string bone = "", Vector3 direction = new Vector3(), float lifetime = 0, bool reqVision = true)
+        public static IParticle AddParticle(IGameObject obj, string particle, Vector2 position, float size = 1.0f, string bone = "", Vector3 direction = new Vector3(), float lifetime = 0, bool reqVision = true)
         {
-            var p = new Particle(_game, unit, position, particle, size, bone, 0, direction, lifetime, reqVision);
+            var p = new Particle(_game, obj, position, particle, size, bone, 0, direction, lifetime, reqVision);
             return p;
         }
 
@@ -263,7 +290,7 @@ namespace LeagueSandbox.GameServer.API
         /// Creates a new particle with the specified parameters.
         /// This particle will be attached to a target.
         /// </summary>
-        /// <param name="unit">Unit that should own this particle.</param>
+        /// <param name="obj">GameObject that should own this particle.</param>
         /// <param name="particle">Internal name of the particle.</param>
         /// <param name="target">GameObject to attach this particle to.</param>
         /// <param name="size">Scale.</param>
@@ -272,9 +299,9 @@ namespace LeagueSandbox.GameServer.API
         /// <param name="lifetime">Time in seconds the particle should last.</param>
         /// <param name="reqVision">Whether or not the particle can be obstructed by terrain.</param>
         /// <returns>New particle instance.</returns>
-        public static IParticle AddParticleTarget(IObjAiBase unit, string particle, IGameObject target, float size = 1.0f, string bone = "", Vector3 direction = new Vector3(), float lifetime = 0, bool reqVision = true)
+        public static IParticle AddParticleTarget(IGameObject obj, string particle, IGameObject target, float size = 1.0f, string bone = "", Vector3 direction = new Vector3(), float lifetime = 0, bool reqVision = true)
         {
-            var p = new Particle(_game, unit, target, particle, size, bone, 0, direction, lifetime, reqVision);
+            var p = new Particle(_game, obj, target, particle, size, bone, 0, direction, lifetime, reqVision);
             return p;
         }
 
@@ -284,7 +311,10 @@ namespace LeagueSandbox.GameServer.API
         /// <param name="p">Particle to remove.</param>
         public static void RemoveParticle(IParticle p)
         {
-            p.SetToRemove();
+            if (p != null)
+            {
+                p.SetToRemove();
+            }
         }
 
         /// <summary>
@@ -333,16 +363,21 @@ namespace LeagueSandbox.GameServer.API
         }
 
         /// <summary>
-        /// Forces the specified unit to face the specified 2D direction.
+        /// Checks if the AttackableUnit is within the specified range of a target position.
         /// </summary>
-        /// <param name="unit">Unit to set.</param>
-        /// <param name="direction">2D direction to face.</param>
-        /// <param name="instant">Whether or not the unit should face the direction instantly.</param>
-        /// <param name="turnTime">Time in seconds until the unit finishes turning towards the new direction.</param>
-        public static void FaceDirection(IAttackableUnit unit, Vector2 direction, bool instant = true, float turnTime = 0.0833f)
+        /// <param name="unit">Unit to check.</param>
+        /// <param name="targetPos">Position to check from.</param>
+        /// <param name="range">Range around the position to check.</param>
+        /// <param name="isAlive">Whether or not the unit should be alive.</param>
+        /// <returns></returns>
+        public static bool IsUnitInRange(IAttackableUnit unit, Vector2 targetPos, float range, bool isAlive)
         {
-            _game.PacketNotifier.NotifyFaceDirection(unit, direction, instant, turnTime); // TODO: Move PacketNotifier usage to less abstract classes (in this case GameObject)
-            // TODO: Change direction of actual GameObject
+            if (unit.IsDead == isAlive)
+            {
+                return false;
+            }
+
+            return GameServerCore.Extensions.IsVectorWithinRange(unit.Position, targetPos, range);
         }
 
         /// <summary>
@@ -355,6 +390,40 @@ namespace LeagueSandbox.GameServer.API
         public static List<IAttackableUnit> GetUnitsInRange(Vector2 targetPos, float range, bool isAlive)
         {
             return _game.ObjectManager.GetUnitsInRange(targetPos, range, isAlive);
+        }
+
+        /// <summary>
+        /// Acquires the closest alive or dead AttackableUnit within the specified range of a target position.
+        /// </summary>
+        /// <param name="targetPos">Origin of the range to check.</param>
+        /// <param name="range">Range to check from the target position.</param>
+        /// <param name="isAlive">Whether or not to return alive AttackableUnits.</param>
+        /// <returns>Closest AttackableUnit.</returns>
+        public static IAttackableUnit GetClosestUnitInRange(Vector2 targetPos, float range, bool isAlive)
+        {
+            var units = _game.ObjectManager.GetUnitsInRange(targetPos, range, isAlive);
+            var orderedUnits = units.OrderBy(unit => Vector2.DistanceSquared(targetPos, unit.Position));
+
+            return orderedUnits.First();
+        }
+
+        /// <summary>
+        /// Acquires the closest alive or dead AttackableUnit within the specified range of another unit.
+        /// </summary>
+        /// <param name="target">Origin of the range to check.</param>
+        /// <param name="range">Range to check from the target position.</param>
+        /// <param name="isAlive">Whether or not to return alive AttackableUnits.</param>
+        /// <returns>Closest AttackableUnit.</returns>
+        public static IAttackableUnit GetClosestUnitInRange(IAttackableUnit target, float range, bool isAlive)
+        {
+            var units = _game.ObjectManager.GetUnitsInRange(target.Position, range, isAlive);
+            var orderedUnits = units.OrderBy(unit => Vector2.DistanceSquared(target.Position, unit.Position));
+            if (orderedUnits.First() == target)
+            {
+                return orderedUnits.ElementAt(1);
+            }
+
+            return orderedUnits.First();
         }
 
         /// <summary>
@@ -377,63 +446,106 @@ namespace LeagueSandbox.GameServer.API
         {
             // Allow the user to move the champion
             unit.SetDashingState(false);
-
-            // Reset the default run animation
-            var animList = new List<string> { "RUN", "" };
-            // TODO: Move PacketNotifier usage to less abstract classes (in this case ObjAiBase)
-            _game.PacketNotifier.NotifySetAnimation(unit, animList);
         }
 
         /// <summary>
-        /// Forces the specified AI unit to perform a dash which follows the specified AttackableUnit.
+        /// Forces the specified unit to perform a forced movement which ends at a specified position.
         /// </summary>
-        /// <param name="unit">AI unit that is dashing.</param>
-        /// <param name="animation">Internal name of the dash animation.</param>
-        /// <param name="dashSpeed">Constant speed that the unit will have during the dash.</param>
-        /// <param name="leapGravity">How much gravity the unit will experience when above the ground while dashing.</param>
-        /// <param name="keepFacingLastDirection">Whether or not the unit should maintain the direction they were facing before dashing.</param>
-        /// <param name="target">Unit to follow.</param>
-        /// <param name="followTargetMaxDistance">Maximum distance the unit will follow the Target before stopping the dash or reaching to the Target.</param>
-        /// <param name="backDistance">Unknown parameter.</param>
-        /// <param name="travelTime">Total time the dash will follow the GameObject before stopping or reaching the Target.</param>
-        /// TODO: Implement Dash class which houses these parameters, then have that as the only parameter to this function (and other Dash-based functions).
-        public static void DashToTarget
+        /// <param name="unit">Unit that will perform the forced movement.</param>
+        /// <param name="animation">Internally named animation to play during the forced movement.</param>
+        /// <param name="target">End position of the forced movement.</param>
+        /// <param name="speed">How fast the forced movement should travel.</param>
+        /// <param name="idealDistance">How far the forced movement should travel from the unit's position.</param>
+        /// <param name="gravity">How high the force movement should reach at the mid point of the force movement.</param>
+        /// <param name="moveBackBy">How far behind the end point the force movement should go before finishing.</param>
+        /// <param name="movementType">Type of force movement to perform. Refer to ForceMovementType enum.</param>
+        /// <param name="movementOrdersType">How should the force movement affect the orders of the unit?</param>
+        /// <param name="movementOrdersFacing">How should the force movement affect the facing direction of the unit?</param>
+        /// TODO: Fully implement new ForceMovement functionality in AttackableUnit.
+        public static void ForceMovement
+        (
+            IAttackableUnit unit,
+            string animation,
+            Vector2 target,
+            float speed,
+            float idealDistance,
+            float gravity,
+            float moveBackBy,
+            ForceMovementType movementType = ForceMovementType.FURTHEST_WITHIN_RANGE,
+            ForceMovementOrdersType movementOrdersType = ForceMovementOrdersType.POSTPONE_CURRENT_ORDER,
+            ForceMovementOrdersFacing movementOrdersFacing = ForceMovementOrdersFacing.FACE_MOVEMENT_DIRECTION)
+        {
+            var keepFacingLastDirection = false;
+            if (movementOrdersFacing == ForceMovementOrdersFacing.KEEP_CURRENT_FACING)
+            {
+                keepFacingLastDirection = true;
+            }
+            unit.DashToLocation(target, speed, animation, gravity, keepFacingLastDirection);
+        }
+
+        /// <summary>
+        /// Forces the specified unit to perform a forced movement which follows a specified target unit.
+        /// </summary>
+        /// <param name="unit">Unit that will perform the forced movement.</param>
+        /// <param name="animation">Internally named animation to play during the forced movement.</param>
+        /// <param name="target">Target unit the forced movement will follow.</param>
+        /// <param name="speed">How fast the forced movement should travel.</param>
+        /// <param name="idealDistance">How far the forced movement should travel from the unit's position.</param>
+        /// <param name="gravity">How high the force movement should reach at the mid point of the force movement.</param>
+        /// <param name="moveBackBy">How far behind the end point the force movement should go before finishing.</param>
+        /// <param name="maxTravelTime">Maximum amount of time the forced movement is allowed to last.</param>
+        /// <param name="movementType">Type of force movement to perform. Refer to ForceMovementType enum.</param>
+        /// <param name="movementOrdersType">How should the force movement affect the orders of the unit?</param>
+        /// <param name="movementOrdersFacing">How should the force movement affect the facing direction of the unit?</param>
+        /// TODO: Fully implement new ForceMovement functionality in AttackableUnit.
+        public static void ForceMovement
         (
             IObjAiBase unit,
             IAttackableUnit target,
-            float dashSpeed,
             string animation,
-            float leapGravity,
-            bool keepFacingLastDirection,
-            float followTargetMaxDistance,
-            float backDistance,
-            float travelTime
-        )
+            float speed,
+            float idealDistance,
+            float gravity,
+            float moveBackBy,
+            float maxTravelTime,
+            ForceMovementType movementType = ForceMovementType.FURTHEST_WITHIN_RANGE,
+            ForceMovementOrdersType movementOrdersType = ForceMovementOrdersType.POSTPONE_CURRENT_ORDER,
+            ForceMovementOrdersFacing movementOrdersFacing = ForceMovementOrdersFacing.FACE_MOVEMENT_DIRECTION)
         {
-            unit.DashToTarget(target, dashSpeed, animation, leapGravity, keepFacingLastDirection, followTargetMaxDistance, backDistance, travelTime);
+            var keepFacingLastDirection = false;
+            if (movementOrdersFacing == ForceMovementOrdersFacing.KEEP_CURRENT_FACING)
+            {
+                keepFacingLastDirection = true;
+            }
+            unit.DashToTarget(target, speed, animation, gravity, keepFacingLastDirection, idealDistance, moveBackBy, maxTravelTime);
         }
 
         /// <summary>
-        /// Forces the specified unit to perform a dash which ends at the given position.
+        /// Forces the given unit or object to perform the given animation.
         /// </summary>
-        /// <param name="unit">Unit that will perform the dash.</param>
-        /// <param name="animation">Internal name of the dash animation.</param>
-        /// <param name="endPos">Position to end the dash at.</param>
-        /// <param name="dashSpeed">Amount of units the dash should travel in a second (movespeed).</param>
-        /// <param name="leapGravity">Optionally how much gravity the unit will experience when above the ground while dashing.</param>
-        /// <param name="keepFacingLastDirection">Whether or not the AI unit should face the direction they were facing before the dash.</param>
-        /// TODO: Implement Dash class which houses these parameters, then have that as the only parameter to this function (and other Dash-based functions).
-        public static void DashToLocation
-        (
-            IAttackableUnit unit,
-            Vector2 endPos,
-            float dashSpeed,
-            string animation = "RUN",
-            float leapGravity = 0.0f,
-            bool keepFacingLastDirection = true
-        )
+        /// <param name="unit">Unit or object that will play the animation.</param>
+        /// <param name="animName">Internal name of an animation to play.</param>
+        /// <param name="timeScale">How fast the animation should play. Default 1x speed.</param>
+        /// <param name="startTime">Time in the animation to start at.</param>
+        /// TODO: Verify if this description is correct, if not, correct it.
+        /// <param name="speedScale">How much the speed of the GameObject should affect the animation.</param>
+        /// TODO: Implement AnimationFlags enum for this and fill it in.
+        /// <param name="flags">Animation flags. Possible values and functions unknown.</param>
+        public static void PlayAnimation(IGameObject unit, string animName, float timeScale = 1.0f, float startTime = 0, float speedScale = 0, byte flags = 0)
         {
-            unit.DashToLocation(endPos, dashSpeed, animation, leapGravity, keepFacingLastDirection);
+            unit.PlayAnimation(animName, timeScale, startTime, speedScale, flags);
+        }
+
+        /// <summary>
+        /// Sets the specified unit's animation states to the given set of states.
+        /// Given state pairs are expected to follow a specific structure:
+        /// First string is the animation to override, second string is the animation to play in place of the first.
+        /// </summary>
+        /// <param name="unit">Unit to set animation states on.</param>
+        /// <param name="animPairs">Dictionary of animations to set.</param>
+        public static void SetAnimStates(IAttackableUnit unit, Dictionary<string, string> animPairs)
+        {
+            unit.SetAnimStates(animPairs);
         }
     }
 }

@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using GameServerCore.Content;
 using GameServerCore.Domain;
+using GameServerCore.Domain.GameObjects.Spell;
 using LeagueSandbox.GameServer.Logging;
 using log4net;
 using Newtonsoft.Json.Linq;

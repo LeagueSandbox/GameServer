@@ -2,8 +2,9 @@
 using GameServerCore.Enums;
 using GameServerCore.Domain.GameObjects;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
-using GameServerCore.Domain;
 using LeagueSandbox.GameServer.Scripting.CSharp;
+using GameServerCore.Domain.GameObjects.Spell;
+using GameServerCore.Domain.GameObjects.Spell.Missile;
 
 namespace Spells
 {
@@ -30,7 +31,7 @@ namespace Spells
             spell.AddProjectile("BlindMonkQOne", current, trueCoords);
         }
 
-        public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, IProjectile projectile)
+        public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, ISpellMissile projectile)
         {
             var ad = owner.Stats.AttackDamage.Total * 0.9f;
             var damage = 50 + (spell.Level * 30) + ad;
@@ -45,7 +46,7 @@ namespace Spells
             projectile.SetToRemove();
             if (Vector2.DistanceSquared(owner.Position, target.Position) <= 800 * 800 && !target.IsDead)
             {
-                DashToTarget(owner, target, 2200, "Spell1b", 0, false, 20000, 0, 0);
+                ForceMovement(owner, target, "Spell1b", 2200, 0, 0, 0, 20000);
             }
         }
 

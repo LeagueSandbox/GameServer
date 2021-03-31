@@ -139,7 +139,7 @@ namespace LeagueSandbox.GameServer
                     if (!u.IsVisibleByTeam(team) && TeamHasVisionOn(team, u) && !u.IsDead)
                     {
                         u.SetVisibleByTeam(team, true);
-                        _game.PacketNotifier.NotifyEnterVisibilityClient(u);
+                        _game.PacketNotifier.NotifyEnterVisibilityClient(u, useTeleportID: true);
                         // TODO: send this in one place only
                         _game.PacketNotifier.NotifyUpdatedStats(u, false);
                     }
@@ -153,7 +153,7 @@ namespace LeagueSandbox.GameServer
                 var ai = u as IObjAiBase;
                 if (ai != null)
                 {
-                    var tempBuffs = new List<GameServerCore.Domain.IBuff>(ai.GetBuffs());
+                    var tempBuffs = new List<IBuff>(ai.GetBuffs());
                     for (int i = tempBuffs.Count - 1; i >= 0; i--)
                     {
                         if (tempBuffs[i].Elapsed())

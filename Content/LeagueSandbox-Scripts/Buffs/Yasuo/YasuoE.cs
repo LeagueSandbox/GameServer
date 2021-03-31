@@ -1,10 +1,9 @@
-﻿using GameServerCore.Domain;
-using GameServerCore.Domain.GameObjects;
+﻿using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
-using LeagueSandbox.GameServer.GameObjects.Stats;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using System.Numerics;
+using GameServerCore.Domain.GameObjects.Spell;
 
 namespace YasuoE
 {
@@ -26,16 +25,16 @@ namespace YasuoE
             AddParticleTarget(ownerSpell.Owner, "Yasuo_Base_E_Dash.troy", unit);
             AddParticleTarget(ownerSpell.Owner, "Yasuo_Base_E_dash_hit.troy", target);
             var to = Vector2.Normalize(target.Position - unit.Position);
-            DashToLocation(unit, new Vector2(target.Position.X + to.X * 175f, target.Position.Y + to.Y * 175f), 750f + unit.Stats.MoveSpeed.Total * 0.6f, "SPELL3", 0, false);
+            ForceMovement(unit, "Spell3", new Vector2(target.Position.X + to.X * 175f, target.Position.Y + to.Y * 175f), 750f + unit.Stats.MoveSpeed.Total * 0.6f, 0, 0, 0);
             target.TakeDamage(unit, damage, DamageType.DAMAGE_TYPE_MAGICAL, DamageSource.DAMAGE_SOURCE_SPELL, false);
         }
 
-        public void OnDeactivate(IAttackableUnit unit)
+        public void OnDeactivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
             CancelDash(unit);
         }
 
-        public void OnUpdate(double diff)
+        public void OnUpdate(float diff)
         {
             //empty
         }

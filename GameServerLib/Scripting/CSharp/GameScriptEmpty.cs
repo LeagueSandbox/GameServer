@@ -1,5 +1,6 @@
-﻿using GameServerCore.Domain;
-using GameServerCore.Domain.GameObjects;
+﻿using GameServerCore.Domain.GameObjects;
+using GameServerCore.Domain.GameObjects.Spell;
+using GameServerCore.Domain.GameObjects.Spell.Missile;
 
 namespace LeagueSandbox.GameServer.Scripting.CSharp
 {
@@ -21,7 +22,7 @@ namespace LeagueSandbox.GameServer.Scripting.CSharp
         {
         }
 
-        public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, IProjectile projectile)
+        public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, ISpellMissile projectile)
         {
         }
     }

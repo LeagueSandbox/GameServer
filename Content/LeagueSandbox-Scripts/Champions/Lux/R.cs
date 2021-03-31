@@ -2,8 +2,9 @@ using System.Numerics;
 using GameServerCore.Enums;
 using GameServerCore.Domain.GameObjects;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
-using GameServerCore.Domain;
 using LeagueSandbox.GameServer.Scripting.CSharp;
+using GameServerCore.Domain.GameObjects.Spell;
+using GameServerCore.Domain.GameObjects.Spell.Missile;
 
 namespace Spells
 {
@@ -26,7 +27,7 @@ namespace Spells
 
             spell.AddLaser("LuxMaliceCannon", trueCoords);
             AddParticle(owner, "LuxMaliceCannon_beam.troy", trueCoords);
-            FaceDirection(owner, trueCoords, false);
+            FaceDirection(trueCoords, owner, false);
             spell.SpellAnimation("SPELL4", owner);
             AddParticleTarget(owner, "LuxMaliceCannon_cas.troy", owner);
         }
@@ -35,7 +36,7 @@ namespace Spells
         {
         }
 
-        public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, IProjectile projectile)
+        public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, ISpellMissile projectile)
         {
             target.TakeDamage(owner, 200f + spell.Level * 100f + owner.Stats.AbilityPower.Total * 0.75f,
                 DamageType.DAMAGE_TYPE_MAGICAL, DamageSource.DAMAGE_SOURCE_SPELL, false);

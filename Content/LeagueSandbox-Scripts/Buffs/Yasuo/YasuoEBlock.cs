@@ -1,8 +1,8 @@
-﻿using GameServerCore.Domain;
-using GameServerCore.Domain.GameObjects;
+﻿using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 using LeagueSandbox.GameServer.Scripting.CSharp;
+using GameServerCore.Domain.GameObjects.Spell;
 
 namespace YasuoEBlock
 {
@@ -24,11 +24,11 @@ namespace YasuoEBlock
             AddParticleTarget(ownerSpell.Owner, "Yasuo_base_E_timer1.troy", unit);
         }
 
-        public void OnDeactivate(IAttackableUnit unit)
+        public void OnDeactivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
         }
 
-        public void OnUpdate(double diff)
+        public void OnUpdate(float diff)
         {
             //empty!
         }

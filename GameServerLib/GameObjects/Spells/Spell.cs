@@ -1,24 +1,20 @@
-﻿using GameServerCore;
-using GameServerCore.Content;
-using GameServerCore.Domain;
+﻿using GameServerCore.Content;
 using GameServerCore.Domain.GameObjects;
+using GameServerCore.Domain.GameObjects.Spell;
+using GameServerCore.Domain.GameObjects.Spell.Missile;
 using GameServerCore.Enums;
 using LeagueSandbox.GameServer.API;
-using LeagueSandbox.GameServer.Content;
-using LeagueSandbox.GameServer.GameObjects.AttackableUnits;
-using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
-using LeagueSandbox.GameServer.GameObjects.Missiles;
-using LeagueSandbox.GameServer.GameObjects.Other;
+using LeagueSandbox.GameServer.GameObjects.Spell.Missile;
+using LeagueSandbox.GameServer.GameObjects.Spell.Sector;
 using LeagueSandbox.GameServer.Packets;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using System.Collections.Generic;
 using System.Numerics;
 
-namespace LeagueSandbox.GameServer.GameObjects.Spells
+namespace LeagueSandbox.GameServer.GameObjects.Spell
 {
     public class Spell : ISpell
     {
-
         public IObjAiBase Owner { get; private set; }
         public byte Level { get; private set; }
         public byte Slot { get; set; }
@@ -31,7 +27,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
         public float CurrentCooldown { get; protected set; }
         public float CurrentCastTime { get; protected set; }
         public float CurrentChannelDuration { get; protected set; }
-        public Dictionary<uint, IProjectile> Projectiles { get; protected set; }
+        public Dictionary<uint, ISpellMissile> Projectiles { get; protected set; }
         public uint SpellNetId { get; protected set; }
 
         public IAttackableUnit Target { get; private set; }
@@ -99,7 +95,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
             Y2 = y2;
             Target = u;
             _futureProjNetId = _networkIdManager.GetNewNetId();
-            Projectiles = new Dictionary<uint, IProjectile>();
+            Projectiles = new Dictionary<uint, ISpellMissile>();
             SpellNetId = _networkIdManager.GetNewNetId();
 
             if (SpellData.TargetingType == TargetingType.Target && Target != null && Vector2.DistanceSquared(Target.Position, Owner.Position) > SpellData.CastRange[Level] * SpellData.CastRange[Level])
@@ -219,7 +215,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
         /// <summary>
         /// Called by projectiles when they land / hit, this is where we apply damage/slows etc.
         /// </summary>
-        public void ApplyEffects(IAttackableUnit u, IProjectile p = null)
+        public void ApplyEffects(IAttackableUnit u, ISpellMissile p = null)
         {
             if (SpellData.HaveHitEffect && !string.IsNullOrEmpty(SpellData.HitEffectName))
             {
@@ -237,7 +233,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
         {
             ISpellData projectileSpellData = this._game.Config.ContentManager.GetSpellData(nameMissile);
 
-            var p = new Projectile(
+            var p = new SpellMissile(
                     _game,
                     startPos,
                     (int)projectileSpellData.LineWidth,
@@ -267,7 +263,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spells
         {
             ISpellData projectileSpellData = this._game.Config.ContentManager.GetSpellData(nameMissile);
 
-            var p = new Projectile(
+            var p = new SpellMissile(
                 _game,
                 Owner.Position,
                 (int)projectileSpellData.LineWidth,

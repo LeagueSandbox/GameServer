@@ -2,18 +2,14 @@
 using System.Collections.Generic;
 using System.Numerics;
 using GameServerCore.Content;
-using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
+using GameServerCore.Domain.GameObjects.Spell;
+using GameServerCore.Domain.GameObjects.Spell.Missile;
 using GameServerCore.Enums;
-using LeagueSandbox.GameServer.Content;
-using LeagueSandbox.GameServer.GameObjects.AttackableUnits;
-using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
-using LeagueSandbox.GameServer.GameObjects.AttackableUnits.Buildings.AnimatedBuildings;
-using LeagueSandbox.GameServer.GameObjects.Other;
 
-namespace LeagueSandbox.GameServer.GameObjects.Missiles
+namespace LeagueSandbox.GameServer.GameObjects.Spell.Missile
 {
-    public class Projectile : ObjMissile, IProjectile
+    public class SpellMissile : GameObject, ISpellMissile
     {
         // Function Vars.
         protected float _moveSpeed;
@@ -52,7 +48,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Missiles
         /// </summary>
         public bool IsServerOnly { get; }
 
-        public Projectile(
+        public SpellMissile(
             Game game,
             Vector2 position,
             int collisionRadius,
@@ -84,7 +80,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Missiles
             _atDestination = false;
         }
 
-        public Projectile(
+        public SpellMissile(
             Game game,
             Vector2 startPosition,
             int collisionRadius,
@@ -197,7 +193,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Missiles
             // REVIEW (of previous code): (deltaMovement * 2) being used here is problematic; if the server lags, the diff will be much greater than the usual values
             if ((cur - next).LengthSquared() < MOVEMENT_EPSILON * MOVEMENT_EPSILON)
             {
-                if (this is IProjectile && TargetUnit != null)
+                if (this is ISpellMissile && TargetUnit != null)
                 {
                     return;
                 }

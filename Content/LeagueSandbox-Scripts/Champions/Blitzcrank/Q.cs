@@ -2,9 +2,9 @@ using System.Numerics;
 using GameServerCore.Enums;
 using GameServerCore.Domain.GameObjects;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
-using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
-using GameServerCore.Domain;
 using LeagueSandbox.GameServer.Scripting.CSharp;
+using GameServerCore.Domain.GameObjects.Spell;
+using GameServerCore.Domain.GameObjects.Spell.Missile;
 
 namespace Spells
 {
@@ -32,7 +32,7 @@ namespace Spells
             spell.AddProjectile("RocketGrabMissile", current, trueCoords);
         }
 
-        public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, IProjectile projectile)
+        public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, ISpellMissile projectile)
         {
             var ap = owner.Stats.AbilityPower.Total;
             var damage = 25 + spell.Level * 55 + ap;
@@ -44,7 +44,7 @@ namespace Spells
                 var to = Vector2.Normalize(new Vector2(spell.X, spell.Y) - current);
                 var range = to * 50;
                 var trueCoords = current + range;
-                DashToLocation(target, trueCoords, spell.SpellData.MissileSpeed);
+                ForceMovement(target, "RUN", trueCoords, spell.SpellData.MissileSpeed, 0, 0, 0, movementOrdersFacing: ForceMovementOrdersFacing.KEEP_CURRENT_FACING);
             }
 
             projectile.SetToRemove();

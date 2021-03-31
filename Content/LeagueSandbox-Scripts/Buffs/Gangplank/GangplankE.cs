@@ -2,9 +2,9 @@ using GameServerCore.Domain.GameObjects;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 using GameServerCore.Enums;
-using GameServerCore.Domain;
 using System.Collections.Generic;
 using LeagueSandbox.GameServer.GameObjects.Stats;
+using GameServerCore.Domain.GameObjects.Spell;
 
 namespace GangplankE
 {
@@ -38,15 +38,13 @@ namespace GangplankE
             Particles.Add(AddParticleTarget(ownerSpell.Owner, "pirate_raiseMorale_tar.troy", unit, 1));
         }
 
-        public void OnDeactivate(IAttackableUnit unit)
+        public void OnDeactivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
-            unit.RemoveStatModifier(StatsModifier);
-            
             //RemoveBuffHudVisual(_hudvisual);
             Particles.ForEach(particle => RemoveParticle(particle));
         }
 
-        public void OnUpdate(double diff)
+        public void OnUpdate(float diff)
         {
             
         }

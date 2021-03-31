@@ -25,9 +25,13 @@ namespace GameServerCore.Domain.GameObjects
         /// </summary>
         Vector2 Position { get; }
         /// <summary>
+        /// 3D orientation of this GameObject (based on ground-level).
+        /// </summary>
+        Vector3 Direction { get; }
+        /// <summary>
         /// Used to synchronize movement between client and server. Is currently assigned Env.TickCount.
         /// </summary>
-        uint SyncId { get; }
+        int SyncId { get; }
         /// <summary>
         /// Team identifier, refer to TeamId enum.
         /// </summary>
@@ -95,11 +99,11 @@ namespace GameServerCore.Domain.GameObjects
         /// </summary>
         /// <param name="team">TeamId.BLUE/PURPLE/NEUTRAL</param>
         void SetTeam(TeamId team);
-		
-		/// <summary>
-		/// Returns the vector which represents the 2d orientation that the object is moving in.
-		/// </summary>
-        Vector2 GetDirection();
+
+        /// <summary>
+        /// Sets this GameObject's current orientation (only X and Z are used in movement).
+        /// </summary>
+        void FaceDirection(Vector3 newDirection, bool isInstant = true, float turnTime = 0.08333f);
 
         /// <summary>
         /// Whether or not the object is networked to a specified team.
@@ -120,5 +124,16 @@ namespace GameServerCore.Domain.GameObjects
         /// <param name="x">X coordinate to set.</param>
         /// <param name="y">Y coordinate to set.</param>
         void TeleportTo(float x, float y);
+        /// <summary>
+        /// Forces this GameObject to perform the given internally named animation.
+        /// </summary>
+        /// <param name="animName">Internal name of an animation to play.</param>
+        /// <param name="timeScale">How fast the animation should play. Default 1x speed.</param>
+        /// <param name="startTime">Time in the animation to start at.</param>
+        /// TODO: Verify if this description is correct, if not, correct it.
+        /// <param name="speedScale">How much the speed of the GameObject should affect the animation.</param>
+        /// TODO: Implement AnimationFlags enum for this and fill it in.
+        /// <param name="flags">Animation flags. Possible values and functions unknown.</param>
+        void PlayAnimation(string animName, float timeScale = 1.0f, float startTime = 0, float speedScale = 0, byte flags = 0);
     }
 }

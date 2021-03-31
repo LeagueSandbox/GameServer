@@ -1,11 +1,11 @@
-﻿using GameServerCore.Domain.GameObjects;
+﻿using GameServerCore.Domain.GameObjects.Spell.Missile;
 
 namespace GameServerCore.Packets.PacketDefinitions.Responses
 {
     public class ProjectileDestroyResponse : ICoreResponse
     {
-        public IProjectile Projectile { get; }
-        public ProjectileDestroyResponse(IProjectile p)
+        public ISpellMissile Projectile { get; }
+        public ProjectileDestroyResponse(ISpellMissile p)
         {
             Projectile = p;
         }

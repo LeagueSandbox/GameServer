@@ -8,6 +8,8 @@ using GameServerCore.Enums;
 using GameServerCore.Packets.Enums;
 using GameServerCore.Packets.PacketDefinitions.Requests;
 using System;
+using GameServerCore.Domain.GameObjects.Spell;
+using GameServerCore.Domain.GameObjects.Spell.Missile;
 
 namespace GameServerCore.Packets.Interfaces
 {
@@ -185,13 +187,13 @@ namespace GameServerCore.Packets.Interfaces
         /// Sends a packet to all players detailing the destruction of (usually) an auto attack missile.
         /// </summary>
         /// <param name="p">Projectile that is being destroyed.</param>
-        void NotifyDestroyClientMissile(IProjectile p);
+        void NotifyDestroyClientMissile(ISpellMissile p);
         /// <summary>
         /// Sends a packet to the specified team detailing the destruction of (usually) an auto attack missile.
         /// </summary>
         /// <param name="p">Projectile that is being destroyed.</param>
         /// <param name="team">TeamId to send the packet to.</param>
-        void NotifyDestroyClientMissile(IProjectile p, TeamId team);
+        void NotifyDestroyClientMissile(ISpellMissile p, TeamId team);
         /// <summary>
         /// Sends a packet to either all players with vision of a target, or the specified player.
         /// The packet displays the specified message of the specified type as floating text over a target.
@@ -226,21 +228,22 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="o">GameObject entering vision.</param>
         /// <param name="userId">User to send the packet to.</param>
         /// <param name="isChampion">Whether or not the GameObject entering vision is a Champion.</param>
-        /// TODO: Incomplete implementation.
-        void NotifyEnterVisibilityClient(IGameObject o, int userId = 0, bool isChampion = false);
+        /// <param name="useTeleportID">Whether or not to teleport the object to its current position.</param>
+        /// TODO: Full implementation (items & shields)
+        void NotifyEnterVisibilityClient(IGameObject o, int userId = 0, bool isChampion = false, bool useTeleportID = false);
         /// <summary>
-        /// Sends a packet to all players with vision of the specified unit detailing that the unit is facing the specified direction.
+        /// Sends a packet to all players with vision of the specified unit detailing that the unit has begun facing the specified direction.
         /// </summary>
-        /// <param name="u">Unit that is changing their facing direction.</param>
-        /// <param name="direction">2D, top-down direction the unit will face.</param>
+        /// <param name="obj">GameObject that is changing their orientation.</param>
+        /// <param name="direction">3D direction the unit will face.</param>
         /// <param name="isInstant">Whether or not the unit should instantly turn to the direction.</param>
         /// <param name="turnTime">The amount of time (seconds) the turn should take.</param>
-        void NotifyFaceDirection(IAttackableUnit u, Vector2 direction, bool isInstant = true, float turnTime = 0.0833F);
+        void NotifyFaceDirection(IGameObject obj, Vector3 direction, bool isInstant = true, float turnTime = 0.0833f);
         /// <summary>
         /// Sends a packet to all players that (usually) an auto attack missile has been created.
         /// </summary>
         /// <param name="p">Projectile that was created.</param>
-        void NotifyForceCreateMissile(IProjectile p);
+        void NotifyForceCreateMissile(ISpellMissile p);
         /// <summary>
         /// Sends a packet to, optionally, a specified player, all players with vision of the particle, or all players (given the particle is set as globally visible).
         /// </summary>
@@ -382,7 +385,7 @@ namespace GameServerCore.Packets.Interfaces
         /// Sends a packet to either all players with vision (given the projectile is networked to the client) of the projectile, or all players. The packet contains all details regarding the specified projectile's creation.
         /// </summary>
         /// <param name="p">Projectile that was created.</param>
-        void NotifyMissileReplication(IProjectile p);
+        void NotifyMissileReplication(ISpellMissile p);
         /// <summary>
         /// Sends a packet to all players that updates the specified unit's model.
         /// </summary>
@@ -438,7 +441,7 @@ namespace GameServerCore.Packets.Interfaces
         /// Sends a packet to all players who have vision of the specified buff's target detailing that the buff has been added to the target.
         /// </summary>
         /// <param name="b">Buff being added.</param>
-        void NotifyNPC_BuffAdd2(IBuff b);
+        void NotifyNPC_BuffAdd2(IBuff b, float duration, float runningTime);
         /// <summary>
         /// Sends a packet to all players with vision of the specified ObjAiBase detailing that the specified group of buffs has been added to the ObjAiBase.
         /// </summary>
@@ -580,16 +583,29 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="showWindow">Whether or not to show a window before unpausing (delay).</param>
         void NotifyResumeGame(IAttackableUnit unpauser, bool showWindow);
         /// <summary>
+        /// Sends a packet to all players with vision of the specified object detailing that it is playing the specified animation.
+        /// </summary>
+        /// <param name="obj">GameObject that is playing the animation.</param>
+        /// <param name="animation">Internal name of the animation to play.</param>
+        /// TODO: Implement AnimationFlags enum for this and fill it in.
+        /// <param name="flags">Animation flags. Possible values and functions unknown.</param>
+        /// <param name="timeScale">How fast the animation should play. Default 1x speed.</param>
+        /// <param name="startTime">Time in the animation to start at.</param>
+        /// TODO: Verify if this description is correct, if not, correct it.
+        /// <param name="speedScale">How much the speed of the GameObject should affect the animation.</param>
+        void NotifyS2C_PlayAnimation(IGameObject obj, string animation, byte flags = 0, float timeScale = 1.0f, float startTime = 0.0f, float speedScale = 1.0f);
+        /// <summary>
+        /// Sends a packet to all players with vision of the specified unit detailing that its animation states have changed to the specified animation pairs.
+        /// Replaces the unit's normal animation behaviors with the given animation pairs. Structure of the animationPairs is expected to follow the same structure from before the replacement.
+        /// </summary>
+        /// <param name="u">AttackableUnit to change.</param>
+        /// <param name="animationPairs">Dictionary of animations to set.</param>
+        void NotifyS2C_SetAnimStates(IAttackableUnit u, Dictionary<string, string> animationPairs);
+        /// <summary>
         /// Sends a packet to all players detailing that the server has ticked within the specified time delta.
         /// </summary>
         /// <param name="delta">Time it took to tick.</param>
         void NotifyServerTick(float delta);
-        /// <summary>
-        /// Sends a packet to all players with vision of the specified unit detailing that the unit's animations have been set.
-        /// </summary>
-        /// <param name="u">AttackableUnit to set the animations of.</param>
-        /// <param name="animationPairs">Animations to apply.</param>
-        void NotifySetAnimation(IAttackableUnit u, List<string> animationPairs);
         /// <summary>
         /// Sends a packet to all players on the specified team detailing whether the team has become able to surrender.
         /// </summary>

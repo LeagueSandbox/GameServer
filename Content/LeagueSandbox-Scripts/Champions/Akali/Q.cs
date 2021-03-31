@@ -2,8 +2,9 @@ using System.Numerics;
 using GameServerCore.Enums;
 using GameServerCore.Domain.GameObjects;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
-using GameServerCore.Domain;
 using LeagueSandbox.GameServer.Scripting.CSharp;
+using GameServerCore.Domain.GameObjects.Spell;
+using GameServerCore.Domain.GameObjects.Spell.Missile;
 
 namespace Spells
 {
@@ -30,7 +31,7 @@ namespace Spells
             spell.AddProjectile("AkaliMota", current, trueCoords);
         }
 
-        public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, IProjectile projectile)
+        public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, ISpellMissile projectile)
         {
             var ap = owner.Stats.AbilityPower.Total * 0.4f;
             var damage = 15 + spell.Level * 20 + ap;

@@ -1,10 +1,9 @@
 using GameServerCore.Enums;
-using LeagueSandbox.GameServer.API;
-using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 using LeagueSandbox.GameServer.GameObjects.Stats;
 using LeagueSandbox.GameServer.Scripting.CSharp;
+using GameServerCore.Domain.GameObjects.Spell;
 
 namespace LuluWDebuff
 {
@@ -24,12 +23,11 @@ namespace LuluWDebuff
             var time = 1 + 0.25f * ownerSpell.Level;
         }
 
-        public void OnDeactivate(IAttackableUnit unit)
+        public void OnDeactivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
-            unit.RemoveStatModifier(StatsModifier);
         }
 
-        public void OnUpdate(double diff)
+        public void OnUpdate(float diff)
         {
 
         }

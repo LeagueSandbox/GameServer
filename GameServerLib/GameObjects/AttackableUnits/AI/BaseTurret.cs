@@ -1,11 +1,8 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Numerics;
+﻿using System.Numerics;
 using System.Text;
 using Force.Crc32;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
-using LeagueSandbox.GameServer.GameObjects.AttackableUnits.Buildings.AnimatedBuildings;
 using LeagueSandbox.GameServer.GameObjects.Stats;
 using LeagueSandbox.GameServer.Items;
 
@@ -58,7 +55,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         /// TODO: Verify if this needs a rewrite or additions to account for special cases.
         public void CheckForTargets()
         {
-            var units = _game.ObjectManager.GetUnitsInRange(Position, Stats.Range.Total, true); ;
+            var units = _game.ObjectManager.GetUnitsInRange(Position, Stats.Range.Total, true);
             IAttackableUnit nextTarget = null;
             var nextTargetPriority = ClassifyUnit.DEFAULT;
 
@@ -83,7 +80,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 else
                 {
                     // Is the current target a champion? If it is, don't do anything
-                    if (!(TargetUnit is IChampion))
+                    if (TargetUnit is IChampion)
                     {
                         continue;
                     }

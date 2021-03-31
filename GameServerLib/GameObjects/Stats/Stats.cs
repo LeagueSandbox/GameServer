@@ -2,7 +2,6 @@
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
 using LeagueSandbox.GameServer.Content;
-using LeagueSandbox.GameServer.GameObjects.Spells;
 
 namespace LeagueSandbox.GameServer.GameObjects.Stats
 {

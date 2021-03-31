@@ -1,10 +1,10 @@
 ﻿using System.Numerics;
 using GameServerCore.Enums;
 using GameServerCore.Domain.GameObjects;
-using static LeagueSandbox.GameServer.API.ApiFunctionManager;
-using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
-using GameServerCore.Domain;
 using LeagueSandbox.GameServer.Scripting.CSharp;
+using static LeagueSandbox.GameServer.API.ApiFunctionManager;
+using GameServerCore.Domain.GameObjects.Spell;
+using GameServerCore.Domain.GameObjects.Spell.Missile;
 
 namespace Spells
 {
@@ -38,11 +38,11 @@ namespace Spells
             // Calculate dash coords/vector
             var dash = Vector2.Negate(to) * 500;
             var dashCoords = current + dash;
-            DashToLocation(owner, dashCoords, 1000, "Spell3b");
+            ForceMovement(owner, "Spell3", dashCoords, 1000, 0, 0, 0, movementOrdersFacing: ForceMovementOrdersFacing.KEEP_CURRENT_FACING);
             spell.AddProjectile("CaitlynEntrapmentMissile", current, trueCoords);
         }
 
-        public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, IProjectile projectile)
+        public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, ISpellMissile projectile)
         {
             var ap = owner.Stats.AbilityPower.Total * 0.8f;
             var damage = 80 + (spell.Level - 1) * 50 + ap;

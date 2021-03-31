@@ -42,7 +42,7 @@ namespace LeagueSandbox.GameServer
         private Timer _pauseTimer;
         private bool _autoResumeCheck;
         private float _nextSyncTime = 10 * 1000;
-        protected const double REFRESH_RATE = 1000.0 / 30.0; // 33.3... fps
+        protected const double REFRESH_RATE = 1000.0 / 60.0; // GameLoop called 60 times a second.
 
         // Server
 

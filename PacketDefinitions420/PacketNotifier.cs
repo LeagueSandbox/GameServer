@@ -20,10 +20,12 @@ using PingLoadInfoRequest = GameServerCore.Packets.PacketDefinitions.Requests.Pi
 using ViewRequest = GameServerCore.Packets.PacketDefinitions.Requests.ViewRequest;
 using LeaguePackets.Game.Common;
 using LeaguePackets.Common;
-using System.Linq;
 using static GameServerCore.Content.HashFunctions;
 using System.Text;
 using Force.Crc32;
+using GameServerCore.Domain.GameObjects.Spell;
+using GameServerCore.Domain.GameObjects.Spell.Missile;
+using System.Linq;
 
 namespace PacketDefinitions420
 {
@@ -361,88 +363,6 @@ namespace PacketDefinitions420
         }
 
         /// <summary>
-        /// Sends a packet to all players that have vision of the specified unit.
-        /// The packet details a group of waypoints with speed parameters which determine what kind of movement will be done to reach the waypoints, or optionally a GameObject.
-        /// Functionally referred to as a dash in-game.
-        /// </summary>
-        /// <param name="u">Unit that is dashing.</param>
-        /// <param name="dashSpeed">Constant speed that the unit will have during the dash.</param>
-        /// <param name="leapGravity">Optionally how much gravity the unit will experience when above the ground while dashing.</param>
-        /// <param name="keepFacingLastDirection">Optionally whether or not the unit should maintain the direction they were facing before dashing.</param>
-        /// <param name="target">Optional GameObject to follow.</param>
-        /// <param name="followTargetMaxDistance">Optional maximum distance the unit will follow the Target before stopping the dash or reaching to the Target.</param>
-        /// <param name="backDistance">Optional unknown parameter.</param>
-        /// <param name="travelTime">Optional total time the dash will follow the GameObject before stopping or reaching the Target.</param>
-        /// TODO: Implement Dash class which houses these parameters, then have that as the only parameter to this function (and other Dash-based functions).
-        public void NotifyWaypointGroupWithSpeed
-        (
-            IAttackableUnit u,
-            float dashSpeed,
-            float leapGravity = 0,
-            bool keepFacingLastDirection = false,
-            IGameObject target = null,
-            float followTargetMaxDistance = 0,
-            float backDistance = 0,
-            float travelTime = 0
-        )
-        {
-            // Prevent 0 waypoints packet error.
-            if (u.Waypoints.Count < 1)
-            {
-                return;
-            }
-
-            var waypoints = new List<CompressedWaypoint>();
-
-            foreach (Vector2 v in u.Waypoints)
-            {
-                var vec = MovementVector.ToCenteredScaledCoordinates(v, _navGrid);
-                waypoints.Add(new CompressedWaypoint((short)vec.X, (short)vec.Y));
-            }
-
-            // TODO: Implement Dash class and house a List of these and waypoints.
-            var speeds = new SpeedParams
-            {
-                PathSpeedOverride = dashSpeed,
-                ParabolicGravity = leapGravity,
-                // TODO: Implement as parameter (ex: Aatrox Q).
-                ParabolicStartPoint = u.Position,
-                Facing = keepFacingLastDirection,
-                FollowNetID = 0,
-                FollowDistance = followTargetMaxDistance,
-                FollowBackDistance = backDistance,
-                FollowTravelTime = travelTime
-            };
-
-            if (target != null)
-            {
-                speeds.FollowNetID = target.NetId;
-            }
-
-            var md = new MovementDataWithSpeed
-            {
-                SyncID = (int)u.SyncId,
-                // TODO: Verify
-                TeleportNetID = u.NetId,
-                // TODO: Implement teleportID (likely to be the index of a waypoint we want to TP to).
-                HasTeleportID = true,
-                TeleportID = 1,
-                Waypoints = waypoints,
-                SpeedParams = speeds
-            };
-
-            var speedWpGroup = new WaypointGroupWithSpeed
-            {
-                SenderNetID = u.NetId,
-                SyncID = (int)u.SyncId,
-                // TOOD: Implement support for multiple speed-based movements (functionally known as dashes).
-                Movements = new List<MovementDataWithSpeed> { md }
-            };
-
-            _packetHandlerManager.BroadcastPacketVision(u, speedWpGroup.GetBytes(), Channel.CHL_S2C);
-        }
-
-        /// <summary>
         /// Sends a packet to all players detailing a debug message.
         /// </summary>
         /// <param name="htmlDebugMessage">Debug message to send.</param>
@@ -488,7 +408,7 @@ namespace PacketDefinitions420
         /// Sends a packet to all players detailing the destruction of (usually) an auto attack missile.
         /// </summary>
         /// <param name="p">Projectile that is being destroyed.</param>
-        public void NotifyDestroyClientMissile(IProjectile p)
+        public void NotifyDestroyClientMissile(ISpellMissile p)
         {
             var misPacket = new S2C_DestroyClientMissile
             {
@@ -502,7 +422,7 @@ namespace PacketDefinitions420
         /// </summary>
         /// <param name="p">Projectile that is being destroyed.</param>
         /// <param name="team">TeamId to send the packet to.</param>
-        public void NotifyDestroyClientMissile(IProjectile p, TeamId team)
+        public void NotifyDestroyClientMissile(ISpellMissile p, TeamId team)
         {
             var misPacket = new S2C_DestroyClientMissile
             {
@@ -579,7 +499,7 @@ namespace PacketDefinitions420
         /// <param name="netId">NetID of the GameObject coming into vision.</param>
         public void NotifyEnterLocalVisibilityClient(int userId, uint netId)
         {
-            var enterLocalVis = new OnEnterLocalVisiblityClient
+            var enterLocalVis = new OnEnterLocalVisibilityClient
             {
                 SenderNetID = netId
             };
@@ -595,7 +515,7 @@ namespace PacketDefinitions420
         /// <param name="userId">User to send the packet to.</param>
         public void NotifyEnterLocalVisibilityClient(IGameObject o, int userId = 0)
         {
-            var enterLocalVis = new OnEnterLocalVisiblityClient
+            var enterLocalVis = new OnEnterLocalVisibilityClient
             {
                 SenderNetID = o.NetId,
             };
@@ -623,14 +543,11 @@ namespace PacketDefinitions420
         /// <param name="userId">User to send the packet to.</param>
         /// <param name="isChampion">Whether or not the GameObject entering vision is a Champion.</param>
         /// TODO: Incomplete implementation.
-        public void NotifyEnterVisibilityClient(IGameObject o, int userId = 0, bool isChampion = false)
+        public void NotifyEnterVisibilityClient(IGameObject o, int userId = 0, bool isChampion = false, bool useTeleportID = false)
         {
-            var enterVis = new OnEnterVisiblityClient(); // TYPO >:(
-            enterVis.SenderNetID = o.NetId;
             var itemData = new List<ItemData>(); //TODO: Fix item system so this can be finished
-            enterVis.Items = itemData;
             var shields = new ShieldValues(); //TODO: Implement shields so this can be finished
-            enterVis.ShieldValues = shields;
+
             var charStackDataList = new List<CharacterStackData>();
             var charStackData = new CharacterStackData
             {
@@ -640,6 +557,9 @@ namespace PacketDefinitions420
                 ReplaceCharacterPackage = false,
                 ID = 0
             };
+
+            var buffCountList = new List<KeyValuePair<byte, int>>();
+
             if (o is IAttackableUnit a)
             {
                 charStackData.SkinName = a.Model;
@@ -648,47 +568,35 @@ namespace PacketDefinitions420
                 {
                     charStackData.SkinID = (uint)c.Skin;
                 }
-            }
-            charStackDataList.Add(charStackData);
-            enterVis.CharacterDataStack = charStackDataList;
 
-            enterVis.LookAtPosition = new Vector3(1, 0, 0);
-            if (o is IObjAiBase)
-            {
-                //TODO: Use a non-empty buff list here
-                var emptyBuffCountList = new List<KeyValuePair<byte, int>>();
-                enterVis.BuffCount = emptyBuffCountList;
-            }
-            enterVis.UnknownIsHero = isChampion; // TODO: Verify
+                buffCountList = new List<KeyValuePair<byte, int>>();
+                var tempBuffs = a.GetParentBuffs();
 
-            // TODO: Verify if this fixes movement for enemy units that are coming into vision while moving to waypoints.
-            if (o is IObjAiBase ai && ai.Waypoints.Count > 1)
-            {
-                var md = new MovementDataNormal();
-                var waypoint = new List<CompressedWaypoint>();
-                //var curPos = MovementVector.ToCenteredScaledCoordinates(o.GetPosition(), _navGrid);
-                //waypoint.Add(new CompressedWaypoint((short)curPos.X, (short)curPos.Y));
-                //TODO: optimize this by saving these lists in the ObjAiBase class
-                foreach (Vector2 v in ai.Waypoints)
+                for (var i = 0; i < tempBuffs.Count; i++)
                 {
-                    var vec = MovementVector.ToCenteredScaledCoordinates(v, _navGrid);
-                    waypoint.Add(new CompressedWaypoint((short)vec.X, (short)vec.Y));
+                    var buff = tempBuffs.ElementAt(i).Value;
+                    buffCountList.Add(new KeyValuePair<byte, int>(buff.Slot, buff.StackCount));
                 }
-                md.Waypoints = waypoint;
-                md.HasTeleportID = false;
-                md.SyncID = (int)o.SyncId;
-                enterVis.MovementData = md;
+
+                // TODO: if (a.IsDashing), requires SpeedParams, add it to AttackableUnit so it can be accessed outside of initialization
             }
-            else
+
+            charStackDataList.Add(charStackData);
+
+            var md = PacketExtensions.CreateMovementData(o, _navGrid, MovementDataType.Normal, useTeleportID: useTeleportID);
+
+            var enterVis = new OnEnterVisibilityClient // TYPO >:(
             {
-                var md = new MovementDataStop
-                {
-                    Position = o.Position,
-                    Forward = o.GetDirection(),
-                    SyncID = (int)o.SyncId
-                };
-                enterVis.MovementData = md;
-            }
+                SenderNetID = o.NetId,
+                Items = itemData,
+                ShieldValues = shields,
+                CharacterDataStack = charStackDataList,
+                BuffCount = buffCountList,
+                LookAtPosition = new Vector3(1, 0, 0),
+                // TODO: Verify
+                UnknownIsHero = isChampion,
+                MovementData = md
+            };
 
             if (userId != 0)
             {
@@ -703,24 +611,30 @@ namespace PacketDefinitions420
         }
 
         /// <summary>
-        /// Sends a packet to all players with vision of the specified unit detailing that the unit is facing the specified direction.
+        /// Sends a packet to all players with vision of the specified unit detailing that the unit has begun facing the specified direction.
         /// </summary>
-        /// <param name="u">Unit that is changing their facing direction.</param>
-        /// <param name="direction">2D, top-down direction the unit will face.</param>
+        /// <param name="obj">GameObject that is changing their orientation.</param>
+        /// <param name="direction">3D direction the unit will face.</param>
         /// <param name="isInstant">Whether or not the unit should instantly turn to the direction.</param>
         /// <param name="turnTime">The amount of time (seconds) the turn should take.</param>
-        public void NotifyFaceDirection(IAttackableUnit u, Vector2 direction, bool isInstant = true, float turnTime = 0.0833f)
+        public void NotifyFaceDirection(IGameObject obj, Vector3 direction, bool isInstant = true, float turnTime = 0.0833f)
         {
-            var height = _navGrid.GetHeightAtLocation(direction);
-            var fd = new FaceDirection(u, direction.X, direction.Y, height, isInstant, turnTime);
-            _packetHandlerManager.BroadcastPacketVision(u, fd, Channel.CHL_S2C);
+            var facePacket = new S2C_FaceDirection()
+            {
+                SenderNetID = obj.NetId,
+                Direction = direction,
+                DoLerpTime = !isInstant,
+                LerpTime = turnTime
+            };
+
+            _packetHandlerManager.BroadcastPacketVision(obj, facePacket.GetBytes(), Channel.CHL_S2C);
         }
 
         /// <summary>
         /// Sends a packet to all players that (usually) an auto attack missile has been created.
         /// </summary>
         /// <param name="p">Projectile that was created.</param>
-        public void NotifyForceCreateMissile(IProjectile p)
+        public void NotifyForceCreateMissile(ISpellMissile p)
         {
             var misPacket = new S2C_ForceCreateMissile();
             misPacket.SenderNetID = p.Owner.NetId;
@@ -846,7 +760,7 @@ namespace PacketDefinitions420
         /// <param name="team">TeamId to send the packet to; BLUE/PURPLE/NEUTRAL.</param>
         public void NotifyFXEnterTeamVisibility(IParticle particle, TeamId team)
         {
-            var fxVisPacket = new S2C_FX_OnEnterTeamVisiblity
+            var fxVisPacket = new S2C_FX_OnEnterTeamVisibility
             {
                 SenderNetID = particle.NetId,
                 NetID = particle.NetId,
@@ -877,7 +791,7 @@ namespace PacketDefinitions420
         /// <param name="team">TeamId to send the packet to; BLUE/PURPLE/NEUTRAL.</param>
         public void NotifyFXLeaveTeamVisibility(IParticle particle, TeamId team)
         {
-            var fxVisPacket = new S2C_FX_OnLeaveTeamVisiblity
+            var fxVisPacket = new S2C_FX_OnLeaveTeamVisibility
             {
                 SenderNetID = particle.NetId,
                 NetID = particle.NetId,
@@ -1046,7 +960,7 @@ namespace PacketDefinitions420
         /// TODO: Verify where this should be used.
         public void NotifyLeaveLocalVisibilityClient(int userId, uint netId)
         {
-            var leaveLocalVis = new OnLeaveLocalVisiblityClient
+            var leaveLocalVis = new OnLeaveLocalVisibilityClient
             {
                 SenderNetID = netId
             };
@@ -1063,7 +977,7 @@ namespace PacketDefinitions420
         /// TODO: Verify where this should be used.
         public void NotifyLeaveLocalVisibilityClient(IGameObject o, TeamId team, int userId = 0)
         {
-            var leaveLocalVis = new OnLeaveLocalVisiblityClient
+            var leaveLocalVis = new OnLeaveLocalVisibilityClient
             {
                 SenderNetID = o.NetId
             };
@@ -1086,7 +1000,7 @@ namespace PacketDefinitions420
         /// TODO: Verify where this should be used.
         public void NotifyLeaveVisibilityClient(IGameObject o, TeamId team, int userId = 0)
         {
-            var leaveVis = new OnLeaveVisiblityClient
+            var leaveVis = new OnLeaveVisibilityClient
             {
                 SenderNetID = o.NetId
             };
@@ -1198,7 +1112,7 @@ namespace PacketDefinitions420
         /// Sends a packet to either all players with vision (given the projectile is networked to the client) of the projectile, or all players. The packet contains all details regarding the specified projectile's creation.
         /// </summary>
         /// <param name="p">Projectile that was created.</param>
-        public void NotifyMissileReplication(IProjectile p)
+        public void NotifyMissileReplication(ISpellMissile p)
         {
             var targetPos = p.GetTargetPosition();
             if (targetPos == new Vector2(float.NaN, float.NaN))
@@ -1364,23 +1278,14 @@ namespace PacketDefinitions420
         /// <param name="u">AttackableUnit that is moving.</param>
         public void NotifyMovement(IAttackableUnit u)
         {
-            var l = new List<Vector2>();
-            l.AddRange(u.Waypoints);
-            var waypoints = l.ConvertAll(v => Convertors.Vector2ToWaypoint(Convertors.TranslateToCenteredCoordinates(v, _navGrid)));
-
-            var move = new MovementDataNormal
-            {
-                SyncID = (int)u.SyncId,
-                TeleportNetID = u.NetId,
-                HasTeleportID = false,
-                Waypoints = waypoints
-            };
+            // TODO: Verify if casts correctly
+            var move = (MovementDataNormal)PacketExtensions.CreateMovementData(u, _navGrid, MovementDataType.Normal);
 
             // TODO: Implement support for multiple movements.
             var packet = new WaypointGroup
             {
                 SenderNetID = u.NetId,
-                SyncID = (int)u.SyncId,
+                SyncID = u.SyncId,
                 Movements = new List<MovementDataNormal>() { move }
             };
 
@@ -1406,7 +1311,7 @@ namespace PacketDefinitions420
         /// Sends a packet to all players who have vision of the specified buff's target detailing that the buff has been added to the target.
         /// </summary>
         /// <param name="b">Buff being added.</param>
-        public void NotifyNPC_BuffAdd2(IBuff b)
+        public void NotifyNPC_BuffAdd2(IBuff b, float duration, float runningTime)
         {
             var addPacket = new NPC_BuffAdd2
             {
@@ -1416,9 +1321,9 @@ namespace PacketDefinitions420
                 Count = (byte)b.StackCount,
                 IsHidden = b.IsHidden,
                 BuffNameHash = HashFunctions.HashString(b.Name),
-                PackageHash = b.OriginSpell.Owner.GetObjHash(), // TODO: Verify
-                RunningTime = b.TimeElapsed,
-                Duration = b.Duration,
+                PackageHash = b.SourceUnit.GetObjHash(), // TODO: Verify
+                RunningTime = runningTime,
+                Duration = duration,
                 CasterNetID = b.OriginSpell.Owner.NetId
             };
             _packetHandlerManager.BroadcastPacketVision(b.TargetUnit, addPacket.GetBytes(), Channel.CHL_S2C);
@@ -1475,7 +1380,7 @@ namespace PacketDefinitions420
                 BuffNameHash = HashFunctions.HashString(b.Name),
                 RunTimeRemove = b.Duration - b.TimeElapsed
             };
-            _packetHandlerManager.BroadcastPacketVision(b.TargetUnit, removePacket.GetBytes(), Channel.CHL_S2C);
+            _packetHandlerManager.BroadcastPacket(removePacket.GetBytes(), Channel.CHL_S2C);
         }
 
         /// <summary>
@@ -1504,7 +1409,7 @@ namespace PacketDefinitions420
             }
             removeGroupPacket.Entries = entries;
 
-            _packetHandlerManager.BroadcastPacketVision(target, removeGroupPacket.GetBytes(), Channel.CHL_S2C);
+            _packetHandlerManager.BroadcastPacket(removeGroupPacket.GetBytes(), Channel.CHL_S2C);
         }
 
         /// <summary>
@@ -1853,6 +1758,49 @@ namespace PacketDefinitions420
         }
 
         /// <summary>
+        /// Sends a packet to all players with vision of the specified object detailing that it is playing the specified animation.
+        /// </summary>
+        /// <param name="obj">GameObject that is playing the animation.</param>
+        /// <param name="animation">Internal name of the animation to play.</param>
+        /// TODO: Implement AnimationFlags enum for this and fill it in.
+        /// <param name="flags">Animation flags. Possible values and functions unknown.</param>
+        /// <param name="timeScale">How fast the animation should play. Default 1x speed.</param>
+        /// <param name="startTime">Time in the animation to start at.</param>
+        /// TODO: Verify if this description is correct, if not, correct it.
+        /// <param name="speedScale">How much the speed of the GameObject should affect the animation.</param>
+        public void NotifyS2C_PlayAnimation(IGameObject obj, string animation, byte flags = 0, float timeScale = 1.0f, float startTime = 0.0f, float speedScale = 1.0f)
+        {
+            var animPacket = new S2C_PlayAnimation
+            {
+                SenderNetID = obj.NetId,
+                AnimationFlags = flags, // TODO: figure out what these do, and probably make an enum for it
+                ScaleTime = timeScale,
+                StartProgress = startTime,
+                SpeedRatio = speedScale,
+                AnimationName = animation
+            };
+
+            _packetHandlerManager.BroadcastPacketVision(obj, animPacket.GetBytes(), Channel.CHL_S2C);
+        }
+
+        /// <summary>
+        /// Sends a packet to all players with vision of the specified unit detailing that its animation states have changed to the specified animation pairs.
+        /// Replaces the unit's normal animation behaviors with the given animation pairs. Structure of the animationPairs is expected to follow the same structure from before the replacement.
+        /// </summary>
+        /// <param name="u">AttackableUnit to change.</param>
+        /// <param name="animationPairs">Dictionary of animations to set.</param>
+        public void NotifyS2C_SetAnimStates(IAttackableUnit u, Dictionary<string, string> animationPairs)
+        {
+            var setAnimPacket = new S2C_SetAnimStates
+            {
+                SenderNetID = u.NetId,
+                AnimationOverrides = animationPairs
+            };
+
+            _packetHandlerManager.BroadcastPacketVision(u, setAnimPacket.GetBytes(), Channel.CHL_S2C);
+        }
+
+        /// <summary>
         /// Sends a packet to all players detailing that the server has ticked within the specified time delta.
         /// Unused.
         /// </summary>
@@ -2018,7 +1966,7 @@ namespace PacketDefinitions420
                     NotifyLaneMinionSpawned(m);
                     break;
                 case IChampion c:
-                    NotifyEnterVisibilityClient(c, 0, true);
+                    NotifyEnterVisibilityClient(c, isChampion: true);
                     return;
                 case IMonster monster:
                     NotifyMonsterSpawned(monster);
@@ -2150,29 +2098,15 @@ namespace PacketDefinitions420
         /// TODO: Take into account any movements (waypoints) that should carry over after the teleport.
         public void NotifyTeleport(IGameObject o, Vector2 pos)
         {
+            var tp = (MovementDataNormal)PacketExtensions.CreateMovementData(o, _navGrid, MovementDataType.Normal, useTeleportID: true);
+
             // position is already in centered format
             var packet = new WaypointGroup
             {
                 SenderNetID = o.NetId,
-                SyncID = (int)o.SyncId,
-                Movements = new List<MovementDataNormal>()
+                SyncID = o.SyncId,
+                Movements = new List<MovementDataNormal> { tp }
             };
-
-            var tp = new MovementDataNormal
-            {
-                SyncID = (int)o.SyncId,
-                // TODO: Implement teleportID (likely to be the index of a waypoint we want to TP to).
-                HasTeleportID = true,
-                TeleportID = 1,
-                TeleportNetID = o.NetId,
-                Waypoints = new List<CompressedWaypoint>()
-            };
-            // Not needed
-            //var npos = MovementVector.ToCenteredScaledCoordinates(pos, _navGrid);
-            var way = new CompressedWaypoint((short)pos.X, (short)pos.Y);
-            tp.Waypoints.Add(way);
-
-            packet.Movements.Add(tp);
 
             _packetHandlerManager.BroadcastPacketVision(o, packet.GetBytes(), Channel.CHL_S2C);
         }
@@ -2343,6 +2277,65 @@ namespace PacketDefinitions420
             }
 
             _packetHandlerManager.SendPacket(userId, answer, Channel.CHL_S2C, PacketFlags.None);
+        }
+
+        /// <summary>
+        /// Sends a packet to all players that have vision of the specified unit.
+        /// The packet details a group of waypoints with speed parameters which determine what kind of movement will be done to reach the waypoints, or optionally a GameObject.
+        /// Functionally referred to as a dash in-game.
+        /// </summary>
+        /// <param name="u">Unit that is dashing.</param>
+        /// <param name="dashSpeed">Constant speed that the unit will have during the dash.</param>
+        /// <param name="leapGravity">Optionally how much gravity the unit will experience when above the ground while dashing.</param>
+        /// <param name="keepFacingLastDirection">Optionally whether or not the unit should maintain the direction they were facing before dashing.</param>
+        /// <param name="target">Optional GameObject to follow.</param>
+        /// <param name="followTargetMaxDistance">Optional maximum distance the unit will follow the Target before stopping the dash or reaching to the Target.</param>
+        /// <param name="backDistance">Optional unknown parameter.</param>
+        /// <param name="travelTime">Optional total time the dash will follow the GameObject before stopping or reaching the Target.</param>
+        /// TODO: Implement Dash class which houses these parameters, then have that as the only parameter to this function (and other Dash-based functions).
+        public void NotifyWaypointGroupWithSpeed
+        (
+            IAttackableUnit u,
+            float dashSpeed,
+            float leapGravity = 0,
+            bool keepFacingLastDirection = false,
+            IGameObject target = null,
+            float followTargetMaxDistance = 0,
+            float backDistance = 0,
+            float travelTime = 0
+        )
+        {
+            // TODO: Implement Dash class and house a List of these with waypoints.
+            var speeds = new SpeedParams
+            {
+                PathSpeedOverride = dashSpeed,
+                ParabolicGravity = leapGravity,
+                // TODO: Implement as parameter (ex: Aatrox Q).
+                ParabolicStartPoint = u.Position,
+                Facing = keepFacingLastDirection,
+                FollowNetID = 0,
+                FollowDistance = followTargetMaxDistance,
+                FollowBackDistance = backDistance,
+                FollowTravelTime = travelTime
+            };
+
+            if (target != null)
+            {
+                speeds.FollowNetID = target.NetId;
+            }
+
+            // TODO: Verify if cast works.
+            var md = (MovementDataWithSpeed)PacketExtensions.CreateMovementData(u, _navGrid, MovementDataType.WithSpeed, speeds);
+
+            var speedWpGroup = new WaypointGroupWithSpeed
+            {
+                SenderNetID = u.NetId,
+                SyncID = u.SyncId,
+                // TOOD: Implement support for multiple speed-based movements (functionally known as dashes).
+                Movements = new List<MovementDataWithSpeed> { md }
+            };
+
+            _packetHandlerManager.BroadcastPacketVision(u, speedWpGroup.GetBytes(), Channel.CHL_S2C);
         }
     }
 }

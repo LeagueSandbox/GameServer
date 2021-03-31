@@ -1,8 +1,9 @@
 using System.Numerics;
 using GameServerCore.Domain.GameObjects;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
-using GameServerCore.Domain;
 using LeagueSandbox.GameServer.Scripting.CSharp;
+using GameServerCore.Domain.GameObjects.Spell;
+using GameServerCore.Domain.GameObjects.Spell.Missile;
 
 namespace Spells
 {
@@ -27,10 +28,10 @@ namespace Spells
             var range = to * spell.SpellData.CastRangeDisplayOverride;
             var trueCoords = current + range;
 
-            DashToLocation(owner, trueCoords, 1500, "SPELL3", 0, false);
+            ForceMovement(owner, "", trueCoords, 1500, 0, 0, 0);
         }
 
-        public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, IProjectile projectile)
+        public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, ISpellMissile projectile)
         {
         }
 

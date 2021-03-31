@@ -1,5 +1,5 @@
 ﻿using GameServerCore.Content;
-using GameServerCore.Domain;
+using GameServerCore.Domain.GameObjects.Spell;
 using System.Numerics;
 
 namespace GameServerCore.Packets.PacketDefinitions.Responses

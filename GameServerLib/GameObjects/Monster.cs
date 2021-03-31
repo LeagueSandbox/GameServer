@@ -10,7 +10,6 @@ namespace LeagueSandbox.GameServer.GameObjects
     public class Monster : Minion, IMonster
     {
         public Vector2 Facing { get; private set; }
-        public string Name { get; private set; }
         public string SpawnAnimation { get; private set; }
         public byte CampId { get; private set; }
         public byte CampUnk { get; private set; }

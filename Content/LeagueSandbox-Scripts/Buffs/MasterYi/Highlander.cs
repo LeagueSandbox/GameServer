@@ -1,10 +1,9 @@
 using GameServerCore.Enums;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
-using LeagueSandbox.GameServer.GameObjects.AttackableUnits;
-using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
 using LeagueSandbox.GameServer.GameObjects.Stats;
 using LeagueSandbox.GameServer.Scripting.CSharp;
+using GameServerCore.Domain.GameObjects.Spell;
 
 namespace Highlander
 {
@@ -25,16 +24,15 @@ namespace Highlander
             // TODO: add immunity to slows
         }
 
-        public void OnDeactivate(IAttackableUnit unit)
+        public void OnDeactivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
-            unit.RemoveStatModifier(StatsModifier);
         }
 
         private void OnAutoAttack(IAttackableUnit target, bool isCrit)
         {
         }
 
-        public void OnUpdate(double diff)
+        public void OnUpdate(float diff)
         {
         }
     }

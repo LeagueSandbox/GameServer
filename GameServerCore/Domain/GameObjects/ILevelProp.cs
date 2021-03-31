@@ -7,7 +7,6 @@ namespace GameServerCore.Domain.GameObjects
         string Name { get; }
         string Model { get; }
         float Height { get; }
-        Vector3 Direction { get; }
         float Unk1 { get; }
         float Unk2 { get; }
         byte SkinId { get; }

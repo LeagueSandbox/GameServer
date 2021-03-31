@@ -13,13 +13,14 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         public LaneTurret(
             Game game,
             string name,
+            string model,
             Vector2 position,
             TeamId team = TeamId.TEAM_BLUE,
             TurretType type = TurretType.OUTER_TURRET,
             int[] items = null,
             uint netId = 0,
             LaneID lane = LaneID.NONE
-        ) : base(game, name, "", position, team, netId)
+        ) : base(game, name, model, position, team, netId, lane)
         {
             Type = type;
 
@@ -136,7 +137,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                     AutoAttackProjectileSpeed = 1200.0f;
                     break;
                 case TurretType.FOUNTAIN_TURRET:
-                    IsMelee = false;
+                    IsMelee = true;
                     Stats.AttackSpeedFlat = 1.6f;
                     Stats.GrowthAttackSpeed = 2.125f;
                     Stats.CurrentHealth = 9999;

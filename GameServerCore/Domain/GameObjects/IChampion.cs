@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using GameServerCore.Enums;
+using GameServerCore.Domain.GameObjects.Spell;
 
 namespace GameServerCore.Domain.GameObjects
 {

@@ -1,5 +1,5 @@
-using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
+using GameServerCore.Domain.GameObjects.Spell;
 using GameServerCore.Enums;
 using LeagueSandbox.GameServer.GameObjects.Stats;
 using LeagueSandbox.GameServer.Scripting.CSharp;
@@ -24,12 +24,11 @@ namespace GangplankW
             unit.AddStatModifier(StatsModifier);
         }
 
-        public void OnDeactivate(IAttackableUnit unit)
+        public void OnDeactivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
-            unit.RemoveStatModifier(StatsModifier);
         }
 
-        public void OnUpdate(double diff)
+        public void OnUpdate(float diff)
         {
 
         }

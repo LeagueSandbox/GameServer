@@ -1,9 +1,9 @@
 ﻿using GameServerCore.Enums;
-using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
 using LeagueSandbox.GameServer.GameObjects.Stats;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
+using GameServerCore.Domain.GameObjects.Spell;
 
 namespace BlindMonkSonicWave
 {
@@ -25,11 +25,11 @@ namespace BlindMonkSonicWave
             thisBuff = buff;
         }
 
-        public void OnDeactivate(IAttackableUnit unit)
+        public void OnDeactivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
         }
 
-        public void OnUpdate(double diff)
+        public void OnUpdate(float diff)
         {
             if (thisBuff == null || originSpell == null || thisBuff.Elapsed())
             {

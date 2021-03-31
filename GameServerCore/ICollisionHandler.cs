@@ -1,4 +1,5 @@
 using GameServerCore.Domain.GameObjects;
+using UltimateQuadTree;
 
 namespace GameServerCore
 {
@@ -7,6 +8,8 @@ namespace GameServerCore
     /// </summary>
     public interface ICollisionHandler
     {
+        QuadTree<IGameObject> QuadDynamic { get; }
+
         /// <summary>
         /// Adds the specified GameObject to the list of GameObjects to check for collisions. *NOTE*: Will fail to fully add the GameObject if it is out of the map's bounds.
         /// </summary>

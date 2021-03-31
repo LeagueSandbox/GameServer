@@ -1,4 +1,5 @@
-﻿using GameServerCore.Enums;
+﻿using GameServerCore.Domain.GameObjects.Spell;
+using GameServerCore.Enums;
 using LeagueSandbox.GameServer.Content;
 
 namespace GameServerCore.Domain.GameObjects

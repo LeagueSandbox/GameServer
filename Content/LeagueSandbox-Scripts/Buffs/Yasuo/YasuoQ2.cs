@@ -3,7 +3,7 @@ using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 using LeagueSandbox.GameServer.Scripting.CSharp;
-using LeagueSandbox.GameServer.GameObjects;
+using GameServerCore.Domain.GameObjects.Spell;
 
 namespace YasuoQ02
 {
@@ -30,7 +30,7 @@ namespace YasuoQ02
             p4 = AddParticleTarget((IChampion)unit, "Yasuo_Base_Q_strike_build_up_test.troy", unit);
         }
 
-        public void OnDeactivate(IAttackableUnit unit)
+        public void OnDeactivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
             if (((IChampion)unit).Spells[0].SpellName == "YasuoQ3W")
             {
@@ -42,7 +42,7 @@ namespace YasuoQ02
             RemoveParticle(p4);
         }
 
-        public void OnUpdate(double diff)
+        public void OnUpdate(float diff)
         {
             //empty!
         }

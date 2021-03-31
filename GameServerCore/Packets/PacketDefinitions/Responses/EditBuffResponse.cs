@@ -1,4 +1,4 @@
-﻿using GameServerCore.Domain;
+﻿using GameServerCore.Domain.GameObjects;
 
 namespace GameServerCore.Packets.PacketDefinitions.Responses
 {

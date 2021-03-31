@@ -1,8 +1,7 @@
-using LeagueSandbox.GameServer.API;
-using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
 using LeagueSandbox.GameServer.Scripting.CSharp;
+using GameServerCore.Domain.GameObjects.Spell;
 
 namespace Disarm
 {
@@ -19,11 +18,11 @@ namespace Disarm
         {
         }
 
-        public void OnDeactivate(IAttackableUnit unit)
+        public void OnDeactivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
         }
 
-        public void OnUpdate(double diff)
+        public void OnUpdate(float diff)
         {
 
         }

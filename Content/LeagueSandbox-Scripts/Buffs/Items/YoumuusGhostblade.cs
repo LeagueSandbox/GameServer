@@ -1,9 +1,9 @@
-﻿using GameServerCore.Domain;
-using GameServerCore.Domain.GameObjects;
+﻿using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 using LeagueSandbox.GameServer.GameObjects.Stats;
 using LeagueSandbox.GameServer.Scripting.CSharp;
+using GameServerCore.Domain.GameObjects.Spell;
 
 namespace YoumuusGhostblade
 {
@@ -23,12 +23,11 @@ namespace YoumuusGhostblade
             unit.AddStatModifier(StatsModifier);
         }
 
-        public void OnDeactivate(IAttackableUnit unit)
+        public void OnDeactivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
-            unit.RemoveStatModifier(StatsModifier);
         }
 
-        public void OnUpdate(double diff)
+        public void OnUpdate(float diff)
         {
 
         }

@@ -4,6 +4,7 @@ using GameServerCore.Domain.GameObjects;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 using LeagueSandbox.GameServer.GameObjects.Stats;
 using LeagueSandbox.GameServer.Scripting.CSharp;
+using GameServerCore.Domain.GameObjects.Spell;
 
 namespace LuluR
 {
@@ -31,19 +32,18 @@ namespace LuluR
             unit.AddStatModifier(StatsModifier);
         }
 
-        public void OnDeactivate(IAttackableUnit unit)
+        public void OnDeactivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
             _healthNow = unit.Stats.CurrentHealth - _healthBonus;
             _meantimeDamage = _healthBefore - _healthNow;
             var bonusDamage = _healthBonus - _meantimeDamage;
-            unit.RemoveStatModifier(StatsModifier);
             if (unit.Stats.CurrentHealth > unit.Stats.HealthPoints.Total)
             {
                 unit.Stats.CurrentHealth = unit.Stats.CurrentHealth - bonusDamage;
             }
         }
 
-        public void OnUpdate(double diff)
+        public void OnUpdate(float diff)
         {
 
         }

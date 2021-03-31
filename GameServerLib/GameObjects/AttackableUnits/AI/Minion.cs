@@ -9,7 +9,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 {
     public class Minion : ObjAiBase, IMinion
     {
-        public string Name { get; }
+        public string Name { get; protected set; }
         public IObjAiBase Owner { get; } // We'll probably want to change this in the future
         public bool IsWard { get; protected set; }
         public bool IsPet { get; protected set; }
@@ -98,6 +98,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             {
                 return true;
             }
+
             IAttackableUnit nextTarget = null;
             var nextTargetPriority = 14;
             var objects = _game.ObjectManager.GetObjects();

@@ -5,9 +5,10 @@ using System.Numerics;
 using GameMaths.Geometry.Polygons;
 using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
+using GameServerCore.Domain.GameObjects.Spell;
 using GameServerCore.Enums;
 using LeagueSandbox.GameServer.Content;
-using LeagueSandbox.GameServer.GameObjects.Missiles;
+using LeagueSandbox.GameServer.GameObjects.Spell.Missile;
 using LeagueSandbox.GameServer.Items;
 
 namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
@@ -270,16 +271,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         /// <param name="isTerrain">Whether or not this AI collided with terrain.</param>
         public override void OnCollision(IGameObject collider, bool isTerrain = false)
         {
-            if (!isTerrain)
-            {
-                // Champions do not teleport out of lower level GameObjects.
-                // TODO: Implement Collision Priority in CollisionHandler?
-                if (!(collider is IChampion || collider is IBaseTurret))
-                {
-                    return;
-                }
-            }
-
             base.OnCollision(collider, isTerrain);
 
             // If we were trying to path somewhere before colliding, then repath from our new position.
@@ -347,8 +338,8 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 animation = "RUN";
             }
 
-            var animList = new List<string> { "RUN", animation };
-            _game.PacketNotifier.NotifySetAnimation(this, animList);
+            var animPairs = new Dictionary<string, string> { { "RUN", animation } };
+            SetAnimStates(animPairs);
         }
 
         /// <summary>
@@ -551,7 +542,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                     {
                         if (!IsMelee)
                         {
-                            var p = new Projectile(
+                            var p = new SpellMissile(
                                 _game,
                                 Position,
                                 5,

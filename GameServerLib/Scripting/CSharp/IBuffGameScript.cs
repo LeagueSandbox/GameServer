@@ -1,8 +1,6 @@
-﻿using GameServerCore.Domain;
-using GameServerCore.Domain.GameObjects;
+﻿using GameServerCore.Domain.GameObjects;
+using GameServerCore.Domain.GameObjects.Spell;
 using GameServerCore.Enums;
-using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
-using LeagueSandbox.GameServer.GameObjects.Spells;
 
 namespace LeagueSandbox.GameServer.Scripting.CSharp
 {
@@ -15,7 +13,7 @@ namespace LeagueSandbox.GameServer.Scripting.CSharp
         IStatsModifier StatsModifier { get; }
 
         void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell);
-        void OnDeactivate(IAttackableUnit unit);
-        void OnUpdate(double diff);
+        void OnDeactivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell);
+        void OnUpdate(float diff);
     }
 }

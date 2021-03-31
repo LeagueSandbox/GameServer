@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Numerics;
 using GameServerCore;
 using GameServerCore.Domain;
@@ -8,11 +7,9 @@ using GameServerCore.Domain.GameObjects;
 using GameServerCore.NetInfo;
 using GameServerCore.Enums;
 using LeagueSandbox.GameServer.API;
-using LeagueSandbox.GameServer.Content;
-using LeagueSandbox.GameServer.GameObjects.Spells;
 using LeagueSandbox.GameServer.GameObjects.Stats;
 using LeagueSandbox.GameServer.Items;
-using LeagueSandbox.GameServer.Content.Navigation;
+using GameServerCore.Domain.GameObjects.Spell;
 
 namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 {
@@ -71,25 +68,25 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             {
                 if (!string.IsNullOrEmpty(CharData.SpellNames[i]))
                 {
-                    Spells[i] = new Spell(game, this, CharData.SpellNames[i], (byte)i);
+                    Spells[i] = new Spell.Spell(game, this, CharData.SpellNames[i], (byte)i);
                 }
             }
 
             // SummonerSpellSlots
             // 4 - 5
 
-            Spells[4] = new Spell(game, this, clientInfo.SummonerSkills[0], 4);
-            Spells[5] = new Spell(game, this, clientInfo.SummonerSkills[1], 5);
+            Spells[4] = new Spell.Spell(game, this, clientInfo.SummonerSkills[0], 4);
+            Spells[5] = new Spell.Spell(game, this, clientInfo.SummonerSkills[1], 5);
 
             // InventorySlots
             // 6 - 12 (12 = TrinketSlot)
             for (byte i = 6; i < 13; i++)
             {
-                Spells[i] = new Spell(game, this, "BaseSpell", i);
+                Spells[i] = new Spell.Spell(game, this, "BaseSpell", i);
             }
 
             // BluePillSlot
-            Spells[13] = new Spell(game, this, "Recall", 13);
+            Spells[13] = new Spell.Spell(game, this, "Recall", 13);
 
             // TempItemSlot
             // 14
@@ -104,7 +101,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 if (!string.IsNullOrEmpty(CharData.ExtraSpells[i]))
                 {
                     var spellSlot = i + 45;
-                    Spells[(byte)(spellSlot)] = new Spell(game, this, CharData.ExtraSpells[i], (byte)(spellSlot));
+                    Spells[(byte)(spellSlot)] = new Spell.Spell(game, this, CharData.ExtraSpells[i], (byte)(spellSlot));
                     Spells[(byte)(spellSlot)].LevelUp();
                 }
             }
@@ -120,7 +117,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
             if (!string.IsNullOrEmpty(CharData.Passive.PassiveAbilityName))
             {
-                Spells[63] = new Spell(game, this, CharData.Passive.PassiveAbilityName, 63);
+                Spells[63] = new Spell.Spell(game, this, CharData.Passive.PassiveAbilityName, 63);
             }
 
             // BasicAttackNormalSlots & BasicAttackCriticalSlots
@@ -130,7 +127,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             {
                 if (!string.IsNullOrEmpty(CharData.AttackNames[i]))
                 {
-                    Spells[(byte)(i + 64)] = new Spell(game, this, CharData.AttackNames[i], (byte)(i + 64));
+                    Spells[(byte)(i + 64)] = new Spell.Spell(game, this, CharData.AttackNames[i], (byte)(i + 64));
                 }
             }
 
@@ -515,10 +512,13 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
         public override void OnCollision(IGameObject collider, bool isTerrain = false)
         {
-            if (IsDashing)
+            // TODO: Pathfinding should be responsible for pathing around units so collisions with other units never occur (or at least very little).
+            // Collisions only occur between buildings.
+            if (IsDashing || !(collider is IObjBuilding || collider is IBaseTurret))
             {
                 return;
             }
+
             base.OnCollision(collider, isTerrain);
             if (isTerrain)
             {
@@ -551,7 +551,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
         public ISpell SetSpell(string name, byte slot, bool enabled)
         {
-            ISpell newSpell = new Spell(_game, this, name, slot);
+            ISpell newSpell = new Spell.Spell(_game, this, name, slot);
 
             if (Spells[slot] != null)
             {
@@ -577,7 +577,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         public void RemoveSpell(byte slot)
         {
             Spells[slot].Deactivate();
-            Spells[slot] = new Spell(_game, this, "BaseSpell", slot); // Replace previous spell with empty spell.
+            Spells[slot] = new Spell.Spell(_game, this, "BaseSpell", slot); // Replace previous spell with empty spell.
             Stats.SetSpellEnabled(slot, false);
         }
 

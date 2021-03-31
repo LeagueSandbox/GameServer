@@ -1,23 +1,17 @@
 ﻿using System;
 using System.Numerics;
-using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
+using GameServerCore.Domain.GameObjects.Spell;
 using GameServerCore.Enums;
-using LeagueSandbox.GameServer.Content;
-using LeagueSandbox.GameServer.GameObjects.AttackableUnits;
-using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
-using LeagueSandbox.GameServer.GameObjects.AttackableUnits.Buildings.AnimatedBuildings;
-using LeagueSandbox.GameServer.GameObjects.Other;
-using LeagueSandbox.GameServer.GameObjects.Spells;
+using LeagueSandbox.GameServer.GameObjects.Spell.Missile;
 
-
-namespace LeagueSandbox.GameServer.GameObjects.Missiles
+namespace LeagueSandbox.GameServer.GameObjects.Spell.Sector
 {
     /// <summary>
     /// Class representing cone based spells.
     /// </summary>
     /// TODO: Create a generalized class for spell based hitboxes instead of inheriting Projectile.
-    internal class Cone : Projectile
+    internal class Cone : SpellMissile
     {
         private bool _affectAsCastIsOver;
         private float _radius;

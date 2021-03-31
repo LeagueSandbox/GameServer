@@ -2,7 +2,7 @@
 
 namespace GameServerCore.Domain.GameObjects.Spell.Missile
 {
-    public interface ISpellChainMissile : IObjMissile // TODO: Change to ISpellMissile for spells rework.
+    public interface ISpellChainMissile : ISpellMissile // TODO: Change to ISpellMissile for spells rework.
     {
         /// <summary>
         /// Number of objects this projectile has hit since it was created.
