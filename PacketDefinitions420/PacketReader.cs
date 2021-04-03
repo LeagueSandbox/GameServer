@@ -24,7 +24,7 @@ namespace PacketDefinitions420
     /// <summary>
     /// Class which contains all functions which are called when handling packets sent from clients to the server (C2S).
     /// </summary>
-    /// TODO: Remove all LeagueSandbox based PacketCmd usage and replace with LeaguePackets' GamPacketID enum.
+    /// TODO: Remove all LeagueSandbox based PacketCmd usage and replace with LeaguePackets' GamePacketID enum.
     public class PacketReader
     {
         [PacketType(PacketCmd.PKT_C2S_EXIT)]
@@ -147,7 +147,7 @@ namespace PacketDefinitions420
             return new ClickRequest(rq.TargetNetId);
         }
 
-        [PacketType(PacketCmd.PKT_C2S_CURSOR_POSITION_ON_WORLD)]
+        [PacketType(PacketCmd.PKT_C2S_SPELL_CHARGE_UPDATE)]
         public static SpellChargeUpdateReq ReadSpellChargeUpdateReq(byte[] data)
         {
             var rq = new C2S_SpellChargeUpdateReq();
