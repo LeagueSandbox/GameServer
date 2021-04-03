@@ -4,55 +4,38 @@ using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using GameServerCore.Domain.GameObjects.Spell;
 using GameServerCore.Domain.GameObjects.Spell.Missile;
-using System.Numerics;
 
 namespace Spells
 {
-    public class SummonerExhaust : ISpellScript
+    public class SummonerExhaust : IGameScript
     {
-        public ISpellScriptMetadata ScriptMetadata { get; private set; } = new SpellScriptMetadata()
-        {
-            // TODO
-        };
-
-        public void OnActivate(IObjAiBase owner, ISpell spell)
+        public void OnStartCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
         {
         }
 
-        public void OnDeactivate(IObjAiBase owner, ISpell spell)
+        public void OnFinishCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
         {
-        }
-
-        public void OnSpellPreCast(IObjAiBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
-        {
-            if (target != null)
+            var ai = target as ObjAiBase;
+            if (ai != null)
             {
                 AddParticleTarget(owner, "Global_SS_Exhaust.troy", target);
-                AddBuff("SummonerExhaustDebuff", 2.5f, 1, spell, target, owner);
+                AddBuff("SummonerExhaustDebuff", 2.5f, 1, spell, ai, owner);
             }
         }
 
-        public void OnSpellCast(ISpell spell)
+        public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, ISpellMissile projectile)
         {
         }
 
-        public void OnSpellPostCast(ISpell spell)
+        public void OnUpdate(double diff)
         {
         }
 
-        public void OnSpellChannel(ISpell spell)
+        public void OnActivate(IObjAiBase owner)
         {
         }
 
-        public void OnSpellChannelCancel(ISpell spell)
-        {
-        }
-
-        public void OnSpellPostChannel(ISpell spell)
-        {
-        }
-
-        public void OnUpdate(float diff)
+        public void OnDeactivate(IObjAiBase owner)
         {
         }
     }

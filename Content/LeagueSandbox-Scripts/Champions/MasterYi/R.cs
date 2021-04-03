@@ -1,54 +1,46 @@
 using GameServerCore.Domain.GameObjects;
-using GameServerCore.Domain.GameObjects.Spell;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using GameServerCore.Domain.GameObjects.Spell;
 using GameServerCore.Domain.GameObjects.Spell.Missile;
-using System.Numerics;
 
 namespace Spells
 {
-    public class MasterYiHighlander : ISpellScript
+    public class MasterYiHighlander : IGameScript
     {
-        public ISpellScriptMetadata ScriptMetadata { get; private set; } = new SpellScriptMetadata()
-        {
-            // TODO
-        };
-
-        public void OnActivate(IObjAiBase owner, ISpell spell)
+        public void OnActivate(IObjAiBase owner)
         {
         }
 
-        public void OnDeactivate(IObjAiBase owner, ISpell spell)
+        private void ReduceCooldown(IAttackableUnit unit, bool isCrit)
+        {
+            //No Cooldown reduction on the other skills yet
+        }
+
+        public void OnDeactivate(IObjAiBase owner)
         {
         }
 
-        public void OnSpellPreCast(IObjAiBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
+        public void OnStartCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
         {
-            AddBuff("Highlander", 10.0f, 1, spell, target, owner);
+            var p = AddParticleTarget(owner, "Highlander_buf.troy", target, 1);
+            AddBuff("Highlander", 10.0f, 1, spell, (IObjAiBase)target, owner);
+            CreateTimer(10.0f, () =>
+            {
+                RemoveParticle(p);
+            });
+            //No increased durations on kills and assists yet
         }
 
-        public void OnSpellCast(ISpell spell)
-        {
-        }
-
-        public void OnSpellPostCast(ISpell spell)
-        {
-        }
-
-        public void OnSpellChannel(ISpell spell)
+        public void OnFinishCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
         {
         }
 
-        public void OnSpellChannelCancel(ISpell spell)
+        public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, ISpellMissile projectile)
         {
         }
 
-        public void OnSpellPostChannel(ISpell spell)
-        {
-        }
-
-        public void OnUpdate(float diff)
+        public void OnUpdate(double diff)
         {
         }
     }

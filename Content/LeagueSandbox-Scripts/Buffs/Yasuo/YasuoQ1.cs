@@ -1,8 +1,8 @@
 ﻿using GameServerCore.Domain.GameObjects;
-using GameServerCore.Domain.GameObjects.Spell;
 using GameServerCore.Enums;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 using LeagueSandbox.GameServer.Scripting.CSharp;
+using GameServerCore.Domain.GameObjects.Spell;
 
 namespace YasuoQ01
 {
@@ -17,14 +17,14 @@ namespace YasuoQ01
 
         public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
-            ((IObjAiBase)unit).SetSpell("YasuoQ2W", 0, true);
+            ((IChampion)unit).SetSpell("YasuoQ2W", 0, true);
         }
 
         public void OnDeactivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
-            if (((IObjAiBase)unit).Spells[0].SpellName == "YasuoQ2W")
+            if (((IChampion)unit).Spells[0].SpellName == "YasuoQ2W")
             {
-                ((IObjAiBase)unit).SetSpell("YasuoQW", 0, true);
+                ((IChampion)unit).SetSpell("YasuoQW", 0, true);
             }
         }
 

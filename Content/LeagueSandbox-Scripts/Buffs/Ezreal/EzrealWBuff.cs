@@ -1,8 +1,11 @@
-﻿using GameServerCore.Domain.GameObjects;
+﻿using System;
+using System.Collections.Generic;
+using GameServerCore.Domain.GameObjects;
 using GameServerCore.Domain.GameObjects.Spell;
 using GameServerCore.Enums;
 using LeagueSandbox.GameServer.GameObjects.Stats;
 using LeagueSandbox.GameServer.Scripting.CSharp;
+using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 
 namespace EzrealWBuff
 {
@@ -17,7 +20,7 @@ namespace EzrealWBuff
 
         public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
-            StatsModifier.AttackSpeed.PercentBonus = StatsModifier.AttackSpeed.PercentBonus + (0.15f + 0.05f * ownerSpell.CastInfo.SpellLevel);
+            StatsModifier.AttackSpeed.PercentBonus = StatsModifier.AttackSpeed.PercentBonus + (0.15f + 0.05f * ownerSpell.Level);
 
             unit.AddStatModifier(StatsModifier);
         }

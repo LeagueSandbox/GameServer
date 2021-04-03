@@ -1,8 +1,8 @@
 ﻿using GameServerCore.Domain.GameObjects;
-using GameServerCore.Domain.GameObjects.Spell;
 using GameServerCore.Enums;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 using LeagueSandbox.GameServer.Scripting.CSharp;
+using GameServerCore.Domain.GameObjects.Spell;
 
 namespace YasuoEBlock
 {
@@ -15,16 +15,17 @@ namespace YasuoEBlock
 
         public IStatsModifier StatsModifier { get; private set; }
 
-        private IParticle timer;
+        private readonly IChampion owner = Spells.YasuoDashWrapper._owner;
+        private IBuff _visualBuff;
 
         public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
-            timer = AddParticleTarget(ownerSpell.CastInfo.Owner, "Yasuo_base_E_timer1.troy", unit);
+            var time = 11f - ownerSpell.Level * 1f;
+            AddParticleTarget(ownerSpell.Owner, "Yasuo_base_E_timer1.troy", unit);
         }
 
         public void OnDeactivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
-            RemoveParticle(timer);
         }
 
         public void OnUpdate(float diff)

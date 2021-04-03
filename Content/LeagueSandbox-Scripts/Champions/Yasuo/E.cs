@@ -1,64 +1,48 @@
 using GameServerCore.Domain.GameObjects;
-using GameServerCore.Domain.GameObjects.Spell;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using GameServerCore.Domain.GameObjects.Spell;
 using GameServerCore.Domain.GameObjects.Spell.Missile;
-using System.Numerics;
 
 namespace Spells
 {
-    public class YasuoDashWrapper : ISpellScript
+    public class YasuoDashWrapper : IGameScript
     {
-        public ISpellScriptMetadata ScriptMetadata { get; private set; } = new SpellScriptMetadata()
-        {
-            // TODO
-        };
-
-        public static IAttackableUnit _target = null;
-
-        public void OnActivate(IObjAiBase owner, ISpell spell)
+        public static IObjAiBase _target = null;
+        public static IChampion _owner = null;
+        public void OnActivate(IObjAiBase owner)
         {
             //here's nothing yet
         }
 
-        public void OnDeactivate(IObjAiBase owner, ISpell spell)
+        public void OnDeactivate(IObjAiBase owner)
         {
             //here's empty
         }
 
-        public void OnSpellPreCast(IObjAiBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
-        {
-            _target = target;
-            if (!target.HasBuff("YasuoEBlock"))
-            {
-                AddBuff("YasuoE", 0.395f - spell.CastInfo.SpellLevel * 0.012f, 1, spell, owner, owner);
-                AddBuff("YasuoEBlock", 11f - spell.CastInfo.SpellLevel * 1f, 1, spell, target, owner);
-            }
-        }
-
-        public void OnSpellCast(ISpell spell)
+        public void OnStartCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
         {
             //here's empty, maybe will add some functions?
         }
 
-        public void OnSpellPostCast(ISpell spell)
+        public void OnFinishCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
         {
+            _target = (IObjAiBase)target;
+            _owner = (IChampion)owner;
+
+            if (!_target.HasBuff("YasuoEBlock"))
+            {
+                AddBuff("YasuoE", 0.395f - spell.Level * 0.012f, 1, spell, _owner, _owner);            
+                AddBuff("YasuoEBlock", 11f - spell.Level * 1f, 1, spell, _target, _owner);
+            }
         }
 
-        public void OnSpellChannel(ISpell spell)
+        public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, ISpellMissile projectile)
         {
+            //here's empty because no needed to add things here
         }
-
-        public void OnSpellChannelCancel(ISpell spell)
-        {
-        }
-
-        public void OnSpellPostChannel(ISpell spell)
-        {
-        }
-
-        public void OnUpdate(float diff)
+               
+        public void OnUpdate(double diff)
         {
             //here's empty because it's not working
         }

@@ -8,35 +8,24 @@ using GameServerCore.Domain.GameObjects.Spell.Missile;
 
 namespace Spells
 {
-    public class OlafAxeThrow : ISpellScript
+    public class OlafAxeThrowCast : IGameScript
     {
-        public ISpellScriptMetadata ScriptMetadata { get; private set; } = new SpellScriptMetadata()
-        {
-            TriggersSpellCasts = true
-            // TODO
-        };
-
-        public void OnActivate(IObjAiBase owner, ISpell spell)
+        public void OnActivate(IObjAiBase owner)
         {
         }
 
-        public void OnDeactivate(IObjAiBase owner, ISpell spell)
+        public void OnDeactivate(IObjAiBase owner)
         {
         }
 
-        public void OnSpellPreCast(IObjAiBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
+        public void OnStartCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
         {
         }
 
-        public void OnSpellCast(ISpell spell)
+        public void OnFinishCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
         {
-        }
-
-        public void OnSpellPostCast(ISpell spell)
-        {
-            var current = new Vector2(spell.CastInfo.Owner.Position.X, spell.CastInfo.Owner.Position.Y);
-            var spellPos = new Vector2(spell.CastInfo.TargetPosition.X, spell.CastInfo.TargetPosition.Z);
-            var to = spellPos - current;
+            var current = new Vector2(owner.Position.X, owner.Position.Y);
+            var to = new Vector2(spell.X, spell.Y) - current;
             Vector2 trueCoords;
 
             if (to.Length() > 1651)
@@ -47,34 +36,22 @@ namespace Spells
             }
             else
             {
-                trueCoords = spellPos;
+                trueCoords = new Vector2(spell.X, spell.Y);
             }
 
-            //spell.AddProjectile("OlafAxeThrowDamage", new Vector2(spell.CastInfo.SpellCastLaunchPosition.X, spell.CastInfo.SpellCastLaunchPosition.Z), current, trueCoords);
+            spell.AddProjectile("OlafAxeThrowDamage", current, trueCoords);
         }
 
-        public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, ISpellMissile missile)
+        public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, ISpellMissile projectile)
         {
             AddParticleTarget(owner, "olaf_axeThrow_tar.troy", target, 1);
             var ad = owner.Stats.AttackDamage.Total * 1.1f;
             var ap = owner.Stats.AttackDamage.Total * 0.0f;
-            var damage = 15 + spell.CastInfo.SpellLevel * 20 + ad + ap;
+            var damage = 15 + spell.Level * 20 + ad + ap;
             target.TakeDamage(owner, damage, DamageType.DAMAGE_TYPE_PHYSICAL, DamageSource.DAMAGE_SOURCE_ATTACK, false);
         }
 
-        public void OnSpellChannel(ISpell spell)
-        {
-        }
-
-        public void OnSpellChannelCancel(ISpell spell)
-        {
-        }
-
-        public void OnSpellPostChannel(ISpell spell)
-        {
-        }
-
-        public void OnUpdate(float diff)
+        public void OnUpdate(double diff)
         {
         }
     }

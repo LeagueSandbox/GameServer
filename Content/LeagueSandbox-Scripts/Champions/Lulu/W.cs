@@ -1,57 +1,53 @@
 using GameServerCore.Domain.GameObjects;
-using GameServerCore.Domain.GameObjects.Spell;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
-using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
 using LeagueSandbox.GameServer.Scripting.CSharp;
-using System.Numerics;
+using GameServerCore.Domain.GameObjects.Spell;
 using GameServerCore.Domain.GameObjects.Spell.Missile;
 
 namespace Spells
 {
-    public class LuluW : ISpellScript
+    public class LuluW : IGameScript
     {
-        public ISpellScriptMetadata ScriptMetadata { get; private set; } = new SpellScriptMetadata()
-        {
-            TriggersSpellCasts = true
-            // TODO
-        };
-
-        public void OnActivate(IObjAiBase owner, ISpell spell)
+        public void OnActivate(IObjAiBase owner)
         {
         }
 
-        public void OnDeactivate(IObjAiBase owner, ISpell spell)
+        public void OnDeactivate(IObjAiBase owner)
         {
         }
 
-        public void OnSpellPreCast(IObjAiBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
+        public void OnStartCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
         {
-            //owner.SpellAnimation("SPELL2");
+            spell.SpellAnimation("SPELL2", owner);
         }
 
-        public void OnSpellCast(ISpell spell)
+        public void OnFinishCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
         {
-        }
-
-        public void OnSpellPostCast(ISpell spell)
-        {
-            if (spell.CastInfo.Targets[0].Unit.Team != spell.CastInfo.Owner.Team)
+            var IChampion = (IChampion)target;
+            if (IChampion.Team != owner.Team)
             {
-                //spell.AddProjectileTarget("LuluWTwo", spell.CastInfo.SpellCastLaunchPosition, spell.CastInfo.Targets[0].Unit);
+                spell.AddProjectileTarget("LuluWTwo", target);
             }
             else
             {
-                var time = 2.5f + 0.5f * spell.CastInfo.SpellLevel;
-                AddBuff("LuluWBuff", time, 1, spell, spell.CastInfo.Targets[0].Unit, spell.CastInfo.Owner);
+                var p1 = AddParticleTarget(owner, "Lulu_W_buf_02.troy", target, 1);
+                var p2 = AddParticleTarget(owner, "Lulu_W_buf_01.troy", target, 1);
+                var time = 2.5f + 0.5f * spell.Level;
+                AddBuff("LuluWBuff", time, 1, spell, (IObjAiBase)target, owner);
+                CreateTimer(time, () =>
+                {
+                    RemoveParticle(p1);
+                    RemoveParticle(p2);
+                });
             }
         }
 
-        public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, ISpellMissile missile)
+        public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, ISpellMissile projectile)
         {
             var champion = target as IChampion;
             if (champion == null)
                 return;
-            var time = 1 + 0.25f * spell.CastInfo.SpellLevel;
+            var time = 1 + 0.25f * spell.Level;
             AddBuff("LuluWDebuff", time, 1, spell, champion, owner);
             var model = champion.Model;
             ChangeModel((owner as IChampion).Skin, target);
@@ -62,22 +58,10 @@ namespace Spells
                 RemoveParticle(p);
                 champion.ChangeModel(model);
             });
-            missile.SetToRemove();
+            projectile.SetToRemove();
         }
 
-        public void OnSpellChannel(ISpell spell)
-        {
-        }
-
-        public void OnSpellChannelCancel(ISpell spell)
-        {
-        }
-
-        public void OnSpellPostChannel(ISpell spell)
-        {
-        }
-
-        public void OnUpdate(float diff)
+        public void OnUpdate(double diff)
         {
         }
 

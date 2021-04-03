@@ -1,25 +1,17 @@
 ﻿using GameServerCore.Enums;
 using GameServerCore.Domain.GameObjects;
-using GameServerCore.Domain.GameObjects.Spell;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using GameServerCore.Domain.GameObjects.Spell;
 using GameServerCore.Domain.GameObjects.Spell.Missile;
-using System.Numerics;
 
 namespace Spells
 {
-    public class AatroxR : ISpellScript
+    public class AatroxR : IGameScript
     {
-        public ISpellScriptMetadata ScriptMetadata { get; private set; } = new SpellScriptMetadata()
-        {
-            TriggersSpellCasts = true
-            // TODO
-        };
-
         string pcastname;
         string phitname;
-        public void OnActivate(IObjAiBase owner, ISpell spell)
+        public void OnActivate(IObjAiBase owner)
         {
             if (owner is IChampion c)
             {
@@ -41,24 +33,20 @@ namespace Spells
             }
         }
 
-        public void OnDeactivate(IObjAiBase owner, ISpell spell)
+        public void OnDeactivate(IObjAiBase owner)
         {
         }
 
-        public void OnSpellPreCast(IObjAiBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
+        public void OnStartCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
         {
+            AddParticleTarget(owner, pcastname, owner);
         }
 
-        public void OnSpellCast(ISpell spell)
+        public void OnFinishCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
         {
-            AddParticleTarget(spell.CastInfo.Owner, pcastname, spell.CastInfo.Owner);
-        }
-
-        public void OnSpellPostCast(ISpell spell)
-        {
-            if (spell.CastInfo.Owner is IChampion c)
+            if (owner is IChampion c)
             {
-                var damage = 200 + (100 * (spell.CastInfo.SpellLevel - 1)) + (c.Stats.AbilityPower.Total);
+                var damage = 200 + (100 * (spell.Level - 1)) + (c.Stats.AbilityPower.Total);
 
                 var units = GetUnitsInRange(c.Position, 550f, true);
                 for (int i = 0; i < units.Count; i++)
@@ -67,26 +55,20 @@ namespace Spells
                     {
                         units[i].TakeDamage(c, damage, DamageType.DAMAGE_TYPE_MAGICAL, DamageSource.DAMAGE_SOURCE_SPELL, false);
                         AddParticleTarget(c, phitname, units[i]);
+                        //spell.AddProjectileTarget("AatroxRHeal", units[i].X, units[i].Y, owner, true);
                     }
                 }
 
-                AddBuff("AatroxR", 12f, 1, spell, spell.CastInfo.Owner, spell.CastInfo.Owner);
+                AddBuff("AatroxR", 12f, 1, spell, owner, owner);
             }
         }
 
-        public void OnSpellChannel(ISpell spell)
+        public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, ISpellMissile projectile)
         {
+            //projectile.SetToRemove();
         }
 
-        public void OnSpellChannelCancel(ISpell spell)
-        {
-        }
-
-        public void OnSpellPostChannel(ISpell spell)
-        {
-        }
-
-        public void OnUpdate(float diff)
+        public void OnUpdate(double diff)
         {
         }
     }

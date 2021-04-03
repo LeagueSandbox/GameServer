@@ -1,65 +1,46 @@
 using GameServerCore.Domain.GameObjects;
 using LeagueSandbox.GameServer.API;
-using LeagueSandbox.GameServer.API;
-using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 using GameServerCore.Domain.GameObjects.Spell;
 using GameServerCore.Domain.GameObjects.Spell.Missile;
-using System.Numerics;
 
 namespace Spells
 {
-    public class Recall : ISpellScript
+    public class Recall : IGameScript
     {
-        public ISpellScriptMetadata ScriptMetadata { get; private set; } = new SpellScriptMetadata()
-        {
-            CastingBreaksStealth = true,
-            ChannelDuration = 8.0f,
-            NotSingleTargetSpell = true
-            // TODO
-        };
-
-        public void OnActivate(IObjAiBase owner, ISpell spell)
+        public void OnStartCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
         {
         }
 
-        public void OnTakeDamage(IAttackableUnit unit, IAttackableUnit attacker)
+        public void OnFinishCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
         {
-        }
-
-        public void OnDeactivate(IObjAiBase owner, ISpell spell)
-        {
-        }
-
-        public void OnSpellPreCast(IObjAiBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
-        {
-            owner.StopMovement();
+            // @TODO Interrupt the script when owner uses movement spells
             AddBuff("Recall", 8.0f, 1, spell, owner, owner);
         }
 
-        public void OnSpellCast(ISpell spell)
+        public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, ISpellMissile projectile)
         {
         }
 
-        public void OnSpellPostCast(ISpell spell)
+        public void OnUpdate(double diff)
         {
         }
 
-        public void OnSpellChannel(ISpell spell)
+        public void OnActivate(IObjAiBase owner)
         {
+            ApiEventManager.OnChampionDamageTaken.AddListener(this, (IChampion)owner, () =>
+            {
+                if (HasBuff(owner, "Recall"))
+                {
+                    RemoveBuff(owner, "Recall");
+                }
+            });
         }
 
-        public void OnSpellChannelCancel(ISpell spell)
+        public void OnDeactivate(IObjAiBase owner)
         {
-        }
 
-        public void OnSpellPostChannel(ISpell spell)
-        {
-        }
-
-        public void OnUpdate(float diff)
-        {
         }
     }
 }
