@@ -149,10 +149,5 @@ namespace LeagueSandbox.GameServer.GameObjects
             base.SetToRemove();
             _game.PacketNotifier.NotifyFXKill(this);
         }
-
-        public void SilentSetToRemove()
-        {
-            base.SetToRemove();
-        }
     }
 }

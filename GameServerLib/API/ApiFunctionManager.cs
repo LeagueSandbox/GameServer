@@ -319,14 +319,6 @@ namespace LeagueSandbox.GameServer.API
             }
         }
 
-        public static void RemoveParticleSilent(IParticle p)
-        {
-            if (p != null)
-            {
-                p.SilentSetToRemove();
-            }
-        }
-
         /// <summary>
         /// Creates a new Minion with the specified parameters.
         /// </summary>

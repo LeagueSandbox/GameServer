@@ -43,10 +43,6 @@ namespace GameServerCore.Domain.GameObjects
         bool VisionAffected { get; }
 
         /// <summary>
-        /// Silently sets this particle to remove.
-        /// </summary>
-        void SilentSetToRemove();
-        /// <summary>
         /// Returns the total game-time passed since the particle was added to ObjectManager
         /// </summary>
         float GetTimeAlive();
