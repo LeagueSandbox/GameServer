@@ -259,16 +259,10 @@ namespace LeagueSandbox.GameServer.GameObjects
             {
                 var walkableSpot = _game.Map.NavigationGrid.GetClosestTerrainExit(new Vector2(x, y), CollisionRadius + 1.0f);
                 SetPosition(walkableSpot);
-
-                //x = MovementVector.TargetXToNormalFormat(_game.Map.NavigationGrid, walkableSpot.X);
-                //y = MovementVector.TargetYToNormalFormat(_game.Map.NavigationGrid, walkableSpot.Y);
             }
             else
             {
                 SetPosition(x, y);
-
-                //x = MovementVector.TargetXToNormalFormat(_game.Map.NavigationGrid, x);
-                //y = MovementVector.TargetYToNormalFormat(_game.Map.NavigationGrid, y);
             }
 
             // TODO: Verify which one we want to use. WaypointList does not require conversions, however WaypointGroup does (and it has TeleportID functionality).
