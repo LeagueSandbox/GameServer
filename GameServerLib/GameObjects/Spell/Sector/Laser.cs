@@ -12,7 +12,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Sector
     /// </summary>
     /// TODO: Create a generalized class for spell based hitboxes instead of inheriting Projectile.
     /// TODO: Refactor the collision detection method for this class.
-    internal class Laser : SpellMissile
+    internal class Laser : SpellCircleMissile
     {
         private bool _affectAsCastIsOver;
         private Vector2 _rectangleCornerBegin1;
@@ -28,7 +28,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Sector
             string effectName,
             SpellDataFlags flags,
             bool affectAsCastIsOver,
-            uint netid) : base(game, collisionRadius, originSpell, castInfo, 0, effectName, flags, netid)
+            uint netid) : base(game, collisionRadius, originSpell, castInfo, 0, flags, netid)
         {
             CreateRectangle(new Vector2(castInfo.TargetPosition.X, castInfo.TargetPosition.Z), new Vector2(castInfo.TargetPositionEnd.X, castInfo.TargetPositionEnd.Z));
             _affectAsCastIsOver = affectAsCastIsOver;
@@ -42,7 +42,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Sector
                 foreach (var obj in objects)
                 {
                     var u = obj as IAttackableUnit;
-                    if (u != null && CheckIfValidTarget(u))
+                    if (u != null && IsValidTarget(u))
                     {
                         if (TargetIsInRectangle(u))
                         {
@@ -60,7 +60,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Sector
                 foreach (var obj in objects)
                 {
                     var u = obj as IAttackableUnit;
-                    if (u != null && CheckIfValidTarget(u))
+                    if (u != null && IsValidTarget(u))
                     {
                         if (TargetIsInRectangle(u))
                         {

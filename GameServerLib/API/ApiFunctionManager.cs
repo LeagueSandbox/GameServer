@@ -8,7 +8,6 @@ using GameServerCore.Enums;
 using LeagueSandbox.GameServer.GameObjects;
 using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
 using LeagueSandbox.GameServer.GameObjects.Spell;
-using LeagueSandbox.GameServer.GameObjects.Spells;
 using LeagueSandbox.GameServer.Logging;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using log4net;
@@ -137,7 +136,7 @@ namespace LeagueSandbox.GameServer.API
         /// <param name="y">Y coordinate.</param>
         public static void TeleportTo(IObjAiBase unit, float x, float y)
         {
-            if (unit.IsDashing)
+            if (unit.MovementParameters != null)
             {
                 CancelDash(unit);
             }
@@ -157,23 +156,6 @@ namespace LeagueSandbox.GameServer.API
             var direction = Vector2.Normalize(goingTo);
 
             target.FaceDirection(new Vector3(direction.X, 0, direction.Y), isInstant, turnTime);
-        }
-
-        /// <summary>
-        /// Gets a point that is in the direction the specified unit is facing, given it is a specified distance away from the unit.
-        /// </summary>
-        /// <param name="obj">Unit to base the point off of.</param>
-        /// <param name="offsetAngle">Offset angle from the unit's facing angle (in degrees, clockwise). Must be > 0 to have an effect.</param>
-        /// <returns>Vector2 point.</returns>
-        public static Vector2 GetPointFromUnit(IGameObject obj, float distance, float offsetAngle = 0)
-        {
-            Vector2 pos = new Vector2(obj.Position.X, obj.Position.Y);
-            Vector2 dir = new Vector2(obj.Direction.X, obj.Direction.Z);
-            if (offsetAngle > 0)
-            {
-                GameServerCore.Extensions.Rotate(dir, offsetAngle);
-            }
-            return pos + (dir * distance);
         }
 
         /// <summary>
@@ -605,34 +587,6 @@ namespace LeagueSandbox.GameServer.API
             }
 
             target.Stats.SetSpellEnabled((byte)slot, !seal);
-        }
-
-        /// <summary>
-        /// Forces the given unit or object to perform the given animation.
-        /// </summary>
-        /// <param name="unit">Unit or object that will play the animation.</param>
-        /// <param name="animName">Internal name of an animation to play.</param>
-        /// <param name="timeScale">How fast the animation should play. Default 1x speed.</param>
-        /// <param name="startTime">Time in the animation to start at.</param>
-        /// TODO: Verify if this description is correct, if not, correct it.
-        /// <param name="speedScale">How much the speed of the GameObject should affect the animation.</param>
-        /// TODO: Implement AnimationFlags enum for this and fill it in.
-        /// <param name="flags">Animation flags. Possible values and functions unknown.</param>
-        public static void PlayAnimation(IGameObject unit, string animName, float timeScale = 1.0f, float startTime = 0, float speedScale = 0, byte flags = 0)
-        {
-            unit.PlayAnimation(animName, timeScale, startTime, speedScale, flags);
-        }
-
-        /// <summary>
-        /// Sets the specified unit's animation states to the given set of states.
-        /// Given state pairs are expected to follow a specific structure:
-        /// First string is the animation to override, second string is the animation to play in place of the first.
-        /// </summary>
-        /// <param name="unit">Unit to set animation states on.</param>
-        /// <param name="animPairs">Dictionary of animations to set.</param>
-        public static void SetAnimStates(IAttackableUnit unit, Dictionary<string, string> animPairs)
-        {
-            unit.SetAnimStates(animPairs);
         }
 
         public static void SpellCast(IObjAiBase caster, int slot, SpellSlotType slotType, Vector2 pos, Vector2 endPos, bool fireWithoutCasting, Vector2 overrideCastPos, List<ICastTarget> targets = null, bool isForceCastingOrChanneling = false, int overrideForceLevel = -1, bool updateAutoAttackTimer = false, bool useAutoAttackSpell = false)

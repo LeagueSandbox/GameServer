@@ -240,7 +240,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         public override bool CanMove()
         {
             // False if any are true.
-            return !(IsDead || OrderType == OrderType.CastSpell || IsDashing
+            return !(IsDead || MoveOrder == OrderType.CastSpell
                     // TODO: Remove these and implement them as buffs, then just check the BuffType here.
                     || HasCrowdControl(CrowdControlType.AIRBORNE)
                     || HasCrowdControl(CrowdControlType.ROOT)
@@ -339,13 +339,11 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         /// <param name="isTerrain">Whether or not this AI collided with terrain.</param>
         public override void OnCollision(IGameObject collider, bool isTerrain = false)
         {
-            List<Vector2> safePath = _game.Map.NavigationGrid.GetPath(Position, _game.Map.NavigationGrid.GetClosestTerrainExit(Waypoints.Last()));
-
-            base.OnCollision(collider, isTerrain);
-
             // If we were trying to path somewhere before colliding, then repath from our new position.
             if (!IsPathEnded())
             {
+                List<Vector2> safePath = _game.Map.NavigationGrid.GetPath(Position, _game.Map.NavigationGrid.GetClosestTerrainExit(Waypoints.Last()));
+
                 // TODO: When using this safePath, sometimes we collide with the terrain again, so we use an unsafe path the next collision, however,
                 // sometimes we collide again before we can finish the unsafe path, so we end up looping collisions between safe and unsafe paths, never actually escaping (ex: sharp corners).
                 // Edit the current method to fix the above problem.
@@ -354,26 +352,22 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                     SetWaypoints(safePath);
                 }
             }
+
+            base.OnCollision(collider, isTerrain);
         }
 
         public override bool Move(float diff)
         {
-            if (OrderType == OrderType.CastSpell
-                || OrderType == OrderType.OrderNone
-                || OrderType == OrderType.Stop
-                || OrderType == OrderType.Taunt)
+            // If we have waypoints, but our move order is one of these, we shouldn't move.
+            if (MoveOrder == OrderType.CastSpell
+                || MoveOrder == OrderType.OrderNone
+                || MoveOrder == OrderType.Stop
+                || MoveOrder == OrderType.Taunt)
             {
                 return false;
             }
 
             return base.Move(diff);
-        }
-
-        public override void ClearWaypoints()
-        {
-            base.ClearWaypoints();
-
-            UpdateMoveOrder(OrderType.Hold, true);
         }
 
         /// <summary>
@@ -401,7 +395,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         /// <param name="keepFacingLastDirection">Whether or not the unit should maintain the direction they were facing before dashing.</param>
         /// <param name="followTargetMaxDistance">Maximum distance the unit will follow the Target before stopping the dash or reaching to the Target.</param>
         /// <param name="backDistance">Unknown parameter.</param>
-        /// <param name="travelTime">Total time the dash will follow the GameObject before stopping or reaching the Target.</param>
+        /// <param name="travelTime">Total time (in seconds) the dash will follow the GameObject before stopping or reaching the Target.</param>
         /// TODO: Implement Dash class which houses these parameters, then have that as the only parameter to this function (and other Dash-based functions).
         public void DashToTarget
         (
@@ -416,33 +410,37 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         )
         {
             // TODO: Take into account the rest of the arguments
-            IsDashing = true;
-            DashTime = Vector2.Distance(target.Position, Position) / (dashSpeed * 0.001f);
-            DashElapsedTime = 0;
-            DashSpeed = dashSpeed;
-
-            SetWaypoints(new List<Vector2> { Position, target.Position }, false);
-            SetTargetUnit(target);
-
-            _game.PacketNotifier.NotifyWaypointGroupWithSpeed
-            (
-                this,
-                dashSpeed,
-                leapGravity,
-                keepFacingLastDirection,
-                target,
-                followTargetMaxDistance,
-                backDistance,
-                travelTime
-            );
-
-            if (animation == null)
+            MovementParameters = new ForceMovementParameters
             {
-                animation = "RUN";
+                PathSpeedOverride = dashSpeed,
+                ParabolicGravity = leapGravity,
+                ParabolicStartPoint = Position,
+                KeepFacingDirection = keepFacingLastDirection,
+                FollowNetID = target.NetId,
+                FollowDistance = followTargetMaxDistance,
+                FollowBackDistance = backDistance,
+                FollowTravelTime = travelTime
+            };
+            DashElapsedTime = 0;
+
+            // TODO: Verify if this should be a parameter
+            Stats.SetActionState(ActionState.CAN_ATTACK, false);
+            Stats.SetActionState(ActionState.CAN_NOT_ATTACK, true);
+            Stats.SetActionState(ActionState.CAN_MOVE, false);
+            Stats.SetActionState(ActionState.CAN_NOT_MOVE, true);
+
+            if (animation != null && animation != "")
+            {
+                var animPairs = new Dictionary<string, string> { { "RUN", animation } };
+                SetAnimStates(animPairs);
             }
 
-            var animPairs = new Dictionary<string, string> { { "RUN", animation } };
-            SetAnimStates(animPairs);
+            SetWaypoints(new List<Vector2> { Position, target.Position }, false);
+
+            SetTargetUnit(target, true);
+            _game.PacketNotifier.NotifyWaypointGroupWithSpeed(this);
+
+            // TODO: Verify if we want to use NotifyWaypointListWithSpeed instead as it does not require conversions.
         }
 
         /// <summary>
@@ -521,15 +519,34 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         /// </summary>
         public virtual void RefreshWaypoints(float idealRange)
         {
-            if (OrderType == OrderType.AttackMove
-                || OrderType == OrderType.AttackTo
-                || OrderType == OrderType.AttackTerrainOnce
-                || OrderType == OrderType.AttackTerrainSustained)
+            // Stop dashing to target if we reached them.
+            // TODO: Implement events so we can centralize things like this.
+            if (MovementParameters != null)
+            {
+                if (TargetUnit != null)
+                {
+                    if (IsCollidingWith(TargetUnit))
+                    {
+                        SetDashingState(false);
+                    }
+                    else
+                    {
+                        SetWaypoints(new List<Vector2> { Position, TargetUnit.Position });
+                    }
+                }
+
+                return;
+            }
+
+            if (MoveOrder == OrderType.AttackMove
+                || MoveOrder == OrderType.AttackTo
+                || MoveOrder == OrderType.AttackTerrainOnce
+                || MoveOrder == OrderType.AttackTerrainSustained)
             {
                 idealRange = Stats.Range.Total;
             }
 
-            if (OrderType != OrderType.AttackTo && TargetUnit != null)
+            if (MoveOrder != OrderType.AttackTo && TargetUnit != null)
             {
                 UpdateMoveOrder(OrderType.AttackTo, true);
                 idealRange = Stats.Range.Total;
@@ -537,12 +554,12 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
             if (SpellToCast != null)
             {
-                idealRange = SpellToCast.SpellData.CastRange[SpellToCast.CastInfo.SpellLevel];
+                idealRange = SpellToCast.GetCurrentCastRange();
             }
 
             Vector2 targetPos = Vector2.Zero;
 
-            if ((OrderType == OrderType.AttackTo)
+            if ((MoveOrder == OrderType.AttackTo)
                 && TargetUnit != null)
             {
                 if (!TargetUnit.IsDead)
@@ -551,9 +568,9 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 }
             }
 
-            if (OrderType == OrderType.AttackMove
-                || OrderType == OrderType.AttackTerrainOnce
-                || OrderType == OrderType.AttackTerrainSustained
+            if (MoveOrder == OrderType.AttackMove
+                || MoveOrder == OrderType.AttackTerrainOnce
+                || MoveOrder == OrderType.AttackTerrainSustained
                 && !IsPathEnded())
             {
                 targetPos = Waypoints.LastOrDefault();
@@ -566,9 +583,9 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             }
 
             // If the target is already in range, stay where we are.
-            if (OrderType == OrderType.AttackMove && targetPos != Vector2.Zero)
+            if (MoveOrder == OrderType.AttackMove && targetPos != Vector2.Zero)
             {
-                if (!IsDashing && Vector2.DistanceSquared(Position, targetPos) <= idealRange * idealRange)
+                if (MovementParameters == null && Vector2.DistanceSquared(Position, targetPos) <= idealRange * idealRange)
                 {
                     UpdateMoveOrder(OrderType.Stop, true);
                 }
@@ -579,9 +596,9 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 return;
             }
 
-            if (OrderType == OrderType.AttackTo && targetPos != Vector2.Zero)
+            if (MoveOrder == OrderType.AttackTo && targetPos != Vector2.Zero)
             {
-                if (!IsDashing)
+                if (MovementParameters == null)
                 {
                     if (Vector2.DistanceSquared(Position, targetPos) <= idealRange * idealRange)
                     {
@@ -601,13 +618,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                         }
                     }
                 }
-            }
-
-            // Stop dashing to target if we reached them.
-            // TODO: Implement events so we can centralize things like this.
-            if (IsDashing && IsCollidingWith(TargetUnit))
-            {
-                SetDashingState(false);
             }
         }
 
@@ -878,11 +888,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             }
         }
 
-        public override void SetDashingState(bool state)
-        {
-            base.SetDashingState(state);
-        }
-
         /// <summary>
         /// Sets the spell that will be channeled by this unit. Used by Spell for manual stopping and networking.
         /// </summary>
@@ -912,7 +917,10 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 s.Update(diff);
             }
 
-            UpdateAttackTarget(diff);
+            if (CanMove())
+            {
+                UpdateAttackTarget(diff);
+            }
         }
 
         /// <summary>
@@ -939,6 +947,12 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 return;
             }
 
+            if (MovementParameters != null)
+            {
+                RefreshWaypoints(0);
+                return;
+            }
+
             var idealRange = Stats.Range.Total;
 
             if (TargetUnit is IObjBuilding)
@@ -950,13 +964,13 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             {
                 idealRange = SpellToCast.GetCurrentCastRange();
 
-                if (OrderType == OrderType.AttackTo
+                if (MoveOrder == OrderType.AttackTo
                     && TargetUnit != null
                     && Vector2.DistanceSquared(TargetUnit.Position, SpellToCast.CastInfo.Owner.Position) <= idealRange * idealRange)
                 {
                     SpellToCast.Cast(new Vector2(SpellToCast.CastInfo.TargetPosition.X, SpellToCast.CastInfo.TargetPosition.Z), new Vector2(SpellToCast.CastInfo.TargetPositionEnd.X, SpellToCast.CastInfo.TargetPositionEnd.Z), TargetUnit);
                 }
-                else if (OrderType == OrderType.MoveTo
+                else if (MoveOrder == OrderType.MoveTo
                         && Vector2.DistanceSquared(new Vector2(SpellToCast.CastInfo.TargetPosition.X, SpellToCast.CastInfo.TargetPosition.Z), SpellToCast.CastInfo.Owner.Position) <= idealRange * idealRange)
                 {
                     SpellToCast.Cast(new Vector2(SpellToCast.CastInfo.TargetPosition.X, SpellToCast.CastInfo.TargetPosition.Z), new Vector2(SpellToCast.CastInfo.TargetPositionEnd.X, SpellToCast.CastInfo.TargetPositionEnd.Z));
@@ -968,15 +982,15 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             }
             else
             {
-                if (TargetUnit != null && OrderType != OrderType.CastSpell)
+                if (TargetUnit != null && MoveOrder != OrderType.CastSpell)
                 {
-                    if (TargetUnit.IsDead || (!_game.ObjectManager.TeamHasVisionOn(Team, TargetUnit) && !(TargetUnit is IBaseTurret) && !(TargetUnit is IObjBuilding) && !IsDashing))
+                    if (TargetUnit.IsDead || (!_game.ObjectManager.TeamHasVisionOn(Team, TargetUnit) && !(TargetUnit is IBaseTurret) && !(TargetUnit is IObjBuilding) && MovementParameters == null))
                     {
                         SetTargetUnit(null);
                         IsAttacking = false;
                         HasMadeInitialAttack = false;
                     }
-                    else if (IsAttacking && !IsDashing)
+                    else if (IsAttacking && MovementParameters == null)
                     {
                         if (AutoAttackSpell.HasEmptyScript || (AutoAttackSpell.CastInfo.SpellSlot - 64 < 9 && IsNextAutoCrit) || (AutoAttackSpell.CastInfo.SpellSlot - 64 >= 9 && !IsNextAutoCrit))
                         {
@@ -1001,7 +1015,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                             IsAttacking = false;
                         }
                     }
-                    else if (Vector2.DistanceSquared(Position, TargetUnit.Position) <= idealRange * idealRange && !IsDashing)
+                    else if (Vector2.DistanceSquared(Position, TargetUnit.Position) <= idealRange * idealRange && MovementParameters == null)
                     {
                         if (AutoAttackSpell.State == SpellState.STATE_READY)
                         {
@@ -1030,7 +1044,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 else
                 {
                     // Acquires the closest target.
-                    if (OrderType == OrderType.AttackMove)
+                    if (MoveOrder == OrderType.AttackMove)
                     {
                         var objects = _game.ObjectManager.GetObjects();
                         var distanceSqrToTarget = 25000f * 25000f;
@@ -1087,11 +1101,11 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         /// <param name="order">MoveOrder to set.</param>
         public void UpdateMoveOrder(OrderType order, bool publish = true)
         {
-            OrderType = order;
+            MoveOrder = order;
 
-            if ((OrderType == OrderType.OrderNone
-                || OrderType == OrderType.Taunt
-                || OrderType == OrderType.Stop)
+            if ((MoveOrder == OrderType.OrderNone
+                || MoveOrder == OrderType.Taunt
+                || MoveOrder == OrderType.Stop)
                 && !IsPathEnded())
             {
                 StopMovement();

@@ -5,8 +5,6 @@ using GameServerCore.Domain.GameObjects.Spell.Missile;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using System.Numerics;
-using GameServerCore.Domain.GameObjects.Spell;
-using GameServerCore.Domain.GameObjects.Spell.Missile;
 
 namespace Spells
 {
@@ -48,7 +46,7 @@ namespace Spells
             //spell.AddCone("Incinerate", trueCoords, 24.76f);
             AddParticle(owner, "IIncinerate_buf.troy", trueCoords);
             FaceDirection(trueCoords, owner, false);
-            spell.SpellAnimation("SPELL2", owner);
+            PlayAnimation(owner, "SPELL2");
             AddParticleTarget(owner, "Incinerate_cas.troy", owner);
         }
 

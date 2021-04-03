@@ -73,11 +73,9 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                     champion.SetWaypoints(translatedWaypoints);
                     break;
                 case OrderType.Stop:
-                    champion.StopMovement();
                     champion.UpdateMoveOrder(OrderType.Stop, true);
                     break;
                 case OrderType.Taunt:
-                    champion.StopMovement();
                     champion.UpdateMoveOrder(OrderType.Taunt);
                     return true;
                 case OrderType.AttackMove:

@@ -168,21 +168,6 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="unit">GameObject to highlght.</param>
         void NotifyCreateUnitHighlight(int userId, IGameObject unit);
         /// <summary>
-        /// Sends a packet to all players that have vision of the specified unit.
-        /// The packet details a group of waypoints with speed parameters which determine what kind of movement will be done to reach the waypoints, or optionally a GameObject.
-        /// Functionally referred to as a dash in-game.
-        /// </summary>
-        /// <param name="u">Unit that is dashing.</param>
-        /// <param name="dashSpeed">Constant speed that the unit will have during the dash.</param>
-        /// <param name="leapGravity">Optionally how much gravity the unit will experience when above the ground while dashing.</param>
-        /// <param name="keepFacingLastDirection">Optionally whether or not the unit should maintain the direction they were facing before dashing.</param>
-        /// <param name="target">Optional GameObject to follow.</param>
-        /// <param name="followTargetMaxDistance">Optional maximum distance the unit will follow the Target before stopping the dash or reaching to the Target.</param>
-        /// <param name="backDistance">Optional unknown parameter.</param>
-        /// <param name="travelTime">Optional total time the dash will follow the GameObject before stopping or reaching the Target.</param>
-        /// TODO: Implement Dash class which has these parameters, then have that as the only parameter to this function (and other Dash-based functions).
-        void NotifyWaypointGroupWithSpeed(IAttackableUnit u, float dashSpeed, float leapGravity = 0, bool keepFacingLastDirection = false, IGameObject target = null, float followTargetMaxDistance = 0, float backDistance = 0, float travelTime = 0);
-        /// <summary>
         /// Sends a packet to all players detailing a debug message.
         /// </summary>
         /// <param name="htmlDebugMessage">Debug message to send.</param>
@@ -442,10 +427,11 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="m">GameObject of type Monster that spawned.</param>
         void NotifyMonsterSpawned(IMonster m);
         /// <summary>
-        /// Sends a packet to all players that have vision of the specified unit that it has made a movement.
+        /// Sends a packet to all players detailing the movement driver homing data for the given unit.
+        /// Used to sync homing (target-based) dashes between client and server.
         /// </summary>
-        /// <param name="u">AttackableUnit that is moving.</param>
-        void NotifyMovement(IAttackableUnit u);
+        /// <param name="unit">Unit to sync.</param>
+        void NotifyMovementDriverReplication(IObjAiBase unit);
         /// <summary>
         /// Sends a packet to all players who have vision of the specified buff's target detailing that the buff has been added to the target.
         /// </summary>
@@ -825,5 +811,63 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="request">ViewRequest housing information about the camera's view.</param>
         /// TODO: Verify if this is the correct implementation.
         void NotifyViewResponse(int userId, ViewRequest request);
+        /// <summary>
+        /// Sends a packet to all players that have vision of the specified unit that it has made a movement.
+        /// </summary>
+        /// <param name="u">AttackableUnit that is moving.</param>
+        void NotifyWaypointGroup(IAttackableUnit u);
+        /// <summary>
+        /// Sends a packet to all players that have vision of the specified unit.
+        /// The packet details a group of waypoints with speed parameters which determine what kind of movement will be done to reach the waypoints, or optionally a GameObject.
+        /// Functionally referred to as a dash in-game.
+        /// </summary>
+        /// <param name="u">Unit that is dashing.</param>
+        /// <param name="dashSpeed">Constant speed that the unit will have during the dash.</param>
+        /// <param name="leapGravity">Optionally how much gravity the unit will experience when above the ground while dashing.</param>
+        /// <param name="keepFacingLastDirection">Optionally whether or not the unit should maintain the direction they were facing before dashing.</param>
+        /// <param name="target">Optional GameObject to follow.</param>
+        /// <param name="followTargetMaxDistance">Optional maximum distance the unit will follow the Target before stopping the dash or reaching to the Target.</param>
+        /// <param name="backDistance">Optional unknown parameter.</param>
+        /// <param name="travelTime">Optional total time the dash will follow the GameObject before stopping or reaching the Target.</param>
+        /// TODO: Implement Dash class which has these parameters, then have that as the only parameter to this function (and other Dash-based functions).
+        void NotifyWaypointGroupWithSpeed
+        (
+            IAttackableUnit u
+        );
+        /// <summary>
+        /// Sends a packet to all players with vision of the given unit detailing its waypoints.
+        /// </summary>
+        /// <param name="unit">Unit to send.</param>
+        void NotifyWaypointList(IAttackableUnit unit);
+        /// <summary>
+        /// Sends a packet to all players with vision of the given GameObject detailing its waypoints.
+        /// </summary>
+        /// <param name="obj">GameObject to send.</param>
+        void NotifyWaypointList(IGameObject obj, List<Vector2> waypoints);
+        /// <summary>
+        /// Sends a packet to all players that have vision of the specified unit.
+        /// The packet details a list of waypoints with speed parameters which determine what kind of movement will be done to reach the waypoints, or optionally a GameObject.
+        /// Functionally referred to as a dash in-game.
+        /// </summary>
+        /// <param name="u">Unit that is dashing.</param>
+        /// <param name="dashSpeed">Constant speed that the unit will have during the dash.</param>
+        /// <param name="leapGravity">Optionally how much gravity the unit will experience when above the ground while dashing.</param>
+        /// <param name="keepFacingLastDirection">Optionally whether or not the unit should maintain the direction they were facing before dashing.</param>
+        /// <param name="target">Optional GameObject to follow.</param>
+        /// <param name="followTargetMaxDistance">Optional maximum distance the unit will follow the Target before stopping the dash or reaching to the Target.</param>
+        /// <param name="backDistance">Optional unknown parameter.</param>
+        /// <param name="travelTime">Optional total time the dash will follow the GameObject before stopping or reaching the Target.</param>
+        /// TODO: Implement ForceMovement class which houses these parameters, then have that as the only parameter to this function (and other Dash-based functions).
+        public void NotifyWaypointListWithSpeed
+        (
+            IAttackableUnit u,
+            float dashSpeed,
+            float leapGravity = 0,
+            bool keepFacingLastDirection = false,
+            IGameObject target = null,
+            float followTargetMaxDistance = 0,
+            float backDistance = 0,
+            float travelTime = 0
+        );
     }
 }

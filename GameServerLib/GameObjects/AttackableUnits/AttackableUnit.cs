@@ -89,25 +89,12 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// List of all crowd control (movement enhancing/dehancing) based effects applied to this unit.
         /// </summary>
         public List<ICrowdControl> CrowdControls { get; protected set; }
-        /// <summary>
-        /// Speed of the unit's current dash.
-        /// </summary>
-        /// TODO: Implement a dash class so dash based variables and functions can be separate from units.
-        public float DashSpeed { get; set; }
+        public IForceMovementParameters MovementParameters { get; protected set; }
         /// <summary>
         /// Amount of time passed since the unit started dashing.
         /// </summary>
         /// TODO: Implement a dash class so dash based variables and functions can be separate from units.
         public float DashElapsedTime { get; set; }
-        /// <summary>
-        /// Total amount of time the unit will dash.
-        /// </summary>
-        /// TODO: Implement a dash class so dash based variables and functions can be separate from units.
-        public float DashTime { get; set; }
-        /// <summary>
-        /// Whether or not this unit is currently dashing.
-        /// </summary>
-        public bool IsDashing { get; protected set; }
 
         public AttackableUnit(
             Game game,
@@ -127,7 +114,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             Waypoints = new List<Vector2> { Position };
             CurrentWaypoint = new KeyValuePair<int, Vector2>(1, Position);
             CrowdControls = new List<ICrowdControl>();
-            IsDashing = false;
+            MovementParameters = null;
             Stats.AttackSpeedMultiplier.BaseValue = 1.0f;
 
             _buffsLock = new object();
@@ -195,16 +182,16 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
 
             CrowdControls.RemoveAll(cc => cc.IsRemoved);
 
-            if (IsDashing)
+            if (MovementParameters != null && MovementParameters.FollowNetID > 0)
             {
-                if (DashTime <= 0)
+                if (MovementParameters.FollowTravelTime <= 0)
                 {
                     SetDashingState(false);
                     return;
                 }
 
                 DashElapsedTime += diff;
-                if (DashElapsedTime >= DashTime)
+                if (DashElapsedTime >= MovementParameters.FollowTravelTime)
                 {
                     SetDashingState(false);
                 }
@@ -225,7 +212,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         public override void OnCollision(IGameObject collider, bool isTerrain = false)
         {
             // TODO: Account for dashes that collide with terrain.
-            if (IsDashing)
+            if (MovementParameters != null)
             {
                 return;
             }
@@ -993,9 +980,9 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// <returns>Float units/sec.</returns>
         public float GetMoveSpeed()
         {
-            if (IsDashing)
+            if (MovementParameters != null)
             {
-                return DashSpeed;
+                return MovementParameters.PathSpeedOverride;
             }
 
             return Stats.MoveSpeed.Total;
@@ -1017,13 +1004,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// TODO: Implement interpolation (assuming all other desync related issues are already fixed).
         public virtual bool Move(float diff)
         {
-            // no waypoints remained - clear the Waypoints
-            if (CurrentWaypoint.Key >= Waypoints.Count)
-            {
-                ClearWaypoints();
-                return false;
-            }
-
             // current -> next positions
             var cur = new Vector2(Position.X, Position.Y);
             var next = CurrentWaypoint.Value;
@@ -1067,7 +1047,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
 
             Vector2 nextPos = new Vector2(Position.X + xx, Position.Y + yy);
             // TODO: Implement ForceMovementType so this specifically applies to dashes that can't move past walls.
-            if (!IsDashing)
+            if (MovementParameters == null)
             {
                 // Prevent moving past obstacles. TODO: Verify if works at high speeds.
                 // TODO: Implement range based (CollisionRadius) pathfinding so we don't keep getting stuck because of IsAnythingBetween.
@@ -1091,7 +1071,15 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                 // stop moving because we have reached our last waypoint
                 if (nextIndex >= Waypoints.Count)
                 {
-                    CurrentWaypoint = new KeyValuePair<int, Vector2>(1, Position);
+                    if (MovementParameters != null)
+                    {
+                        SetDashingState(false);
+                        Waypoints = new List<Vector2> { Position };
+                        CurrentWaypoint = new KeyValuePair<int, Vector2>(1, Position);
+                        return true;
+                    }
+
+                    StopMovement();
                     return true;
                 }
                 // start moving to our next waypoint
@@ -1116,12 +1104,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             return new Vector2(float.NegativeInfinity, float.NegativeInfinity);
         }
 
-        public virtual void ClearWaypoints()
-        {
-            Waypoints.RemoveAll(v => v != Waypoints[0]);
-            CurrentWaypoint = new KeyValuePair<int, Vector2>(1, Waypoints[0]);
-        }
-
         /// <summary>
         /// Returns whether this unit has reached the last waypoint in its path of waypoints.
         /// </summary>
@@ -1139,7 +1121,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         {
             // Waypoints should always have an origin at the current position.
             // Can't set waypoints if we can't move. However, dashes override this.
-            if (newWaypoints.Count <= 1 || newWaypoints[0] != Position || (!CanMove() && !IsDashing))
+            if (newWaypoints.Count <= 1 || newWaypoints[0] != Position || (!CanMove() && MovementParameters == null))
             {
                 return;
             }
@@ -1160,7 +1142,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             // Stop movements are always networked.
             _movementUpdated = true;
 
-            if (IsDashing)
+            if (MovementParameters != null)
             {
                 SetDashingState(false);
                 return;
@@ -1249,24 +1231,39 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         {
             var newCoords = _game.Map.NavigationGrid.GetClosestTerrainExit(endPos, CollisionRadius + 1.0f);
             // TODO: Take into account the rest of the arguments
-            IsDashing = true;
-            DashSpeed = dashSpeed;
-            DashTime = Vector2.Distance(endPos, Position) / (dashSpeed * 0.001f);
+            MovementParameters = new ForceMovementParameters
+            {
+                PathSpeedOverride = dashSpeed,
+                ParabolicGravity = leapGravity,
+                ParabolicStartPoint = Position,
+                KeepFacingDirection = keepFacingLastDirection,
+                FollowNetID = 0,
+                FollowDistance = 0,
+                FollowBackDistance = 0,
+                FollowTravelTime = 0
+            };
             DashElapsedTime = 0;
-            
+
+            // TODO: Verify if this should be a parameter
+            Stats.SetActionState(ActionState.CAN_ATTACK, false);
+            Stats.SetActionState(ActionState.CAN_NOT_ATTACK, true);
+            Stats.SetActionState(ActionState.CAN_MOVE, false);
+            Stats.SetActionState(ActionState.CAN_NOT_MOVE, true);
+
+            if (animation != null && animation != "")
+            {
+                var animPairs = new Dictionary<string, string> { { "RUN", animation } };
+                SetAnimStates(animPairs);
+            }
+
             // False because we don't want this to be networked as a normal movement.
             SetWaypoints(new List<Vector2> { Position, newCoords }, false);
 
+            _game.PacketNotifier.NotifyWaypointGroupWithSpeed(this);
+
             // Movement is networked this way instead.
-            _game.PacketNotifier.NotifyWaypointGroupWithSpeed(this, dashSpeed, leapGravity, keepFacingLastDirection);
-
-            if (animation == null || animation == "")
-            {
-                return;
-            }
-
-            var animPairs = new Dictionary<string, string> { { "RUN", animation } };
-            SetAnimStates(animPairs);
+            // TODO: Verify if we want to use NotifyWaypointListWithSpeed instead as it does not require conversions.
+            //_game.PacketNotifier.NotifyWaypointListWithSpeed(this, dashSpeed, leapGravity, keepFacingLastDirection, null, 0, 0, 20000.0f);
         }
 
         /// <summary>
@@ -1276,16 +1273,18 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// TODO: Implement ForcedMovement methods and enumerators to handle different kinds of dashes.
         public virtual void SetDashingState(bool state)
         {
-            if (IsDashing && state == false)
+            if (MovementParameters != null && state == false)
             {
-                DashTime = 0;
+                Stats.SetActionState(ActionState.CAN_ATTACK, true);
+                Stats.SetActionState(ActionState.CAN_NOT_ATTACK, false);
+                Stats.SetActionState(ActionState.CAN_MOVE, true);
+                Stats.SetActionState(ActionState.CAN_NOT_MOVE, false);
+                MovementParameters = null;
                 DashElapsedTime = 0;
 
                 var animPairs = new Dictionary<string, string> { { "RUN", "" } };
                 SetAnimStates(animPairs);
             }
-
-            IsDashing = state;
         }
 
         /// <summary>

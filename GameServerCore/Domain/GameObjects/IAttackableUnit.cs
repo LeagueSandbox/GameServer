@@ -41,25 +41,12 @@ namespace GameServerCore.Domain.GameObjects
         /// Index of the waypoint in the list of waypoints that the object is currently on.
         /// </summary>
         KeyValuePair<int, Vector2> CurrentWaypoint { get; }
-        /// <summary>
-        /// Whether or not this unit is currently dashing.
-        /// </summary>
-        bool IsDashing { get; }
-        /// <summary>
-        /// Speed of the unit's current dash.
-        /// </summary>
-        /// TODO: Implement a dash class so dash based variables and functions can be separate from units.
-        float DashSpeed { get; set; }
+        IForceMovementParameters MovementParameters { get; }
         /// <summary>
         /// Amount of time passed since the unit started dashing.
         /// </summary>
         /// TODO: Implement a dash class so dash based variables and functions can be separate from units.
         float DashElapsedTime { get; set; }
-        /// <summary>
-        /// Total amount of time the unit will dash.
-        /// </summary>
-        /// TODO: Implement a dash class so dash based variables and functions can be separate from units.
-        public float DashTime { get; set; }
         /// <summary>
         /// Stats used purely in networking the accompishments or status of units and their gameplay affecting stats.
         /// </summary>

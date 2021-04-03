@@ -193,7 +193,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
             CastInfo.Targets.Add(new CastTarget(unit, CastTarget.GetHitResult(unit, CastInfo.IsAutoAttack, CastInfo.Owner.IsNextAutoCrit)));
 
             // TODO: implement check for IsForceCastingOrChannel and IsOverrideCastPosition
-            if (SpellData.CastType == (int)CastType.CAST_TargetMissile 
+            if (SpellData.CastType == (int)CastType.CAST_TargetMissile
              || SpellData.CastType == (int)CastType.CAST_ChainMissile)
             {
                 // TODO: Verify
@@ -259,7 +259,11 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
                     var dirTemp = Vector2.Normalize(goingTo);
                     CastInfo.Owner.FaceDirection(new Vector3(dirTemp.X, 0, dirTemp.Y), false);
                 }
-                CastInfo.Owner.UpdateMoveOrder(OrderType.CastSpell, true);
+
+                if (!SpellData.Flags.HasFlag(SpellDataFlags.InstantCast))
+                {
+                    CastInfo.Owner.UpdateMoveOrder(OrderType.CastSpell, true);
+                }
             }
 
             if (CastInfo.IsAutoAttack && CastInfo.Owner.IsMelee)
@@ -445,7 +449,11 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
 
                     ApiFunctionManager.FaceDirection(CastInfo.Targets[0].Unit.Position, CastInfo.Owner);
                 }
-                CastInfo.Owner.UpdateMoveOrder(OrderType.CastSpell, true);
+
+                if (!SpellData.Flags.HasFlag(SpellDataFlags.InstantCast))
+                {
+                    CastInfo.Owner.UpdateMoveOrder(OrderType.CastSpell, true);
+                }
             }
 
             if (CastInfo.IsAutoAttack && CastInfo.Owner.IsMelee)

@@ -3,8 +3,6 @@ using GameServerCore.Domain.GameObjects;
 using GameServerCore.Domain.GameObjects.Spell;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 using LeagueSandbox.GameServer.Scripting.CSharp;
-using GameServerCore.Domain.GameObjects.Spell;
-using GameServerCore.Domain.GameObjects.Spell.Missile;
 
 namespace Spells
 {
@@ -40,7 +38,8 @@ namespace Spells
             var range = to * spell.SpellData.CastRangeDisplayOverride;
             var trueCoords = current + range;
 
-            ForceMovement(spell.CastInfo.Owner, "", trueCoords, 1500, 0, 0, 0);
+            FaceDirection(trueCoords, spell.CastInfo.Owner, true);
+            ForceMovement(spell.CastInfo.Owner, "Spell3", trueCoords, 1350, 0, 0, 0, movementOrdersFacing: GameServerCore.Enums.ForceMovementOrdersFacing.KEEP_CURRENT_FACING);
         }
 
         public void OnSpellChannel(ISpell spell)

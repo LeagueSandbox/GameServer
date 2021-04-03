@@ -25,8 +25,6 @@ using LeaguePackets.Common;
 using static GameServerCore.Content.HashFunctions;
 using System.Text;
 using Force.Crc32;
-using GameServerCore.Domain.GameObjects.Spell;
-using GameServerCore.Domain.GameObjects.Spell.Missile;
 using System.Linq;
 
 namespace PacketDefinitions420
@@ -788,8 +786,6 @@ namespace PacketDefinitions420
                 {
                     charStackData.SkinID = (uint)c.Skin;
                 }
-                charStackDataList.Add(charStackData);
-                enterVis.CharacterDataStack = charStackDataList;
 
                 buffCountList = new List<KeyValuePair<byte, int>>();
                 var tempBuffs = a.GetParentBuffs();
@@ -805,7 +801,14 @@ namespace PacketDefinitions420
 
             charStackDataList.Add(charStackData);
 
-            var md = PacketExtensions.CreateMovementData(o, _navGrid, MovementDataType.Normal, useTeleportID: useTeleportID);
+            var type = MovementDataType.Normal;
+
+            if (o is IAttackableUnit unit && unit.Waypoints.Count <= 1)
+            {
+                type = MovementDataType.Stop;
+            }
+
+            var md = PacketExtensions.CreateMovementData(o, _navGrid, type, useTeleportID: useTeleportID);
 
             var enterVis = new OnEnterVisibilityClient // TYPO >:(
             {
@@ -819,13 +822,6 @@ namespace PacketDefinitions420
                 UnknownIsHero = isChampion,
                 MovementData = md
             };
-
-            charStackDataList.Add(charStackData);
-            enterVis.CharacterDataStack = charStackDataList;
-
-            enterVis.LookAtPosition = new Vector3(1, 0, 0);
-            // TODO: Verify
-            enterVis.UnknownIsHero = isChampion;
 
             if (userId != 0)
             {
@@ -1502,23 +1498,44 @@ namespace PacketDefinitions420
         }
 
         /// <summary>
-        /// Sends a packet to all players that have vision of the specified unit that it has made a movement.
+        /// Sends a packet to all players detailing the movement driver homing data for the given unit.
+        /// Used to sync homing (target-based) dashes between client and server.
         /// </summary>
-        /// <param name="u">AttackableUnit that is moving.</param>
-        public void NotifyMovement(IAttackableUnit u)
+        /// <param name="unit">Unit to sync.</param>
+        public void NotifyMovementDriverReplication(IObjAiBase unit)
         {
-            // TODO: Verify if casts correctly
-            var move = (MovementDataNormal)PacketExtensions.CreateMovementData(u, _navGrid, MovementDataType.Normal);
-
-            // TODO: Implement support for multiple movements.
-            var packet = new WaypointGroup
+            var targetPos = unit.TargetUnit.Position;
+            if (targetPos == new Vector2(float.NaN, float.NaN))
             {
-                SenderNetID = u.NetId,
-                SyncID = u.SyncId,
-                Movements = new List<MovementDataNormal>() { move }
+                return;
+            }
+
+            var current = unit.GetPosition3D();
+            var to = Vector3.Normalize(new Vector3(targetPos.X, _navGrid.GetHeightAtLocation(targetPos.X, targetPos.Y), targetPos.Y) - current);
+
+            var hd = new MovementDriverHomingData
+            {
+                TargetNetID = unit.TargetUnit.NetId,
+                TargetHeightModifier = 0, // TODO: Verify
+                TargetPosition = unit.TargetUnit.GetPosition3D(),
+                Speed = unit.MovementParameters.PathSpeedOverride,
+                Gravity = 0, // TODO: Implement gravity for AttackableUnits.
+                RateOfTurn = 1.0f, // TODO: Implement TurnRate.
+                Duration = unit.MovementParameters.FollowTravelTime,
+                MovementPropertyFlags = 0 // TODO: Implement MovementPropertyFlags.
             };
 
-            _packetHandlerManager.BroadcastPacketVision(u, packet.GetBytes(), Channel.CHL_LOW_PRIORITY);
+            var replication = new MovementDriverReplication
+            {
+                SenderNetID = unit.NetId,
+                MovementTypeID = 0, // TODO: Find out these values and place in GameServerCore.Enums.MovementTypeID
+                Position = unit.GetPosition3D(),
+                Velocity = new Vector3(to.X * unit.MovementParameters.PathSpeedOverride, 0, to.Y * unit.MovementParameters.PathSpeedOverride),
+                MovementDriverHomingData = hd
+            };
+
+            // Homing projectiles are visible regardless of vision.
+            _packetHandlerManager.BroadcastPacket(replication.GetBytes(), Channel.CHL_S2C);
         }
 
         /// <summary>
@@ -2122,7 +2139,7 @@ namespace PacketDefinitions420
                 AnimationOverrides = animationPairs
             };
 
-            _packetHandlerManager.BroadcastPacketVision(u, setAnimPacket.GetBytes(), Channel.CHL_S2C);
+            _packetHandlerManager.BroadcastPacket(setAnimPacket.GetBytes(), Channel.CHL_S2C);
         }
 
         public void NotifyS2C_SetInputLockFlag(int userId, InputLockFlags flags, bool enabled)
@@ -2268,49 +2285,6 @@ namespace PacketDefinitions420
             };
 
             _packetHandlerManager.SendPacket(userId, spellTogglePacket.GetBytes(), Channel.CHL_S2C);
-        }
-
-        /// <summary>
-        /// Sends a packet to all players with vision of the specified object detailing that it is playing the specified animation.
-        /// </summary>
-        /// <param name="obj">GameObject that is playing the animation.</param>
-        /// <param name="animation">Internal name of the animation to play.</param>
-        /// TODO: Implement AnimationFlags enum for this and fill it in.
-        /// <param name="flags">Animation flags. Possible values and functions unknown.</param>
-        /// <param name="timeScale">How fast the animation should play. Default 1x speed.</param>
-        /// <param name="startTime">Time in the animation to start at.</param>
-        /// TODO: Verify if this description is correct, if not, correct it.
-        /// <param name="speedScale">How much the speed of the GameObject should affect the animation.</param>
-        public void NotifyS2C_PlayAnimation(IGameObject obj, string animation, byte flags = 0, float timeScale = 1.0f, float startTime = 0.0f, float speedScale = 1.0f)
-        {
-            var animPacket = new S2C_PlayAnimation
-            {
-                SenderNetID = obj.NetId,
-                AnimationFlags = flags, // TODO: figure out what these do, and probably make an enum for it
-                ScaleTime = timeScale,
-                StartProgress = startTime,
-                SpeedRatio = speedScale,
-                AnimationName = animation
-            };
-
-            _packetHandlerManager.BroadcastPacketVision(obj, animPacket.GetBytes(), Channel.CHL_S2C);
-        }
-
-        /// <summary>
-        /// Sends a packet to all players with vision of the specified unit detailing that its animation states have changed to the specified animation pairs.
-        /// Replaces the unit's normal animation behaviors with the given animation pairs. Structure of the animationPairs is expected to follow the same structure from before the replacement.
-        /// </summary>
-        /// <param name="u">AttackableUnit to change.</param>
-        /// <param name="animationPairs">Dictionary of animations to set.</param>
-        public void NotifyS2C_SetAnimStates(IAttackableUnit u, Dictionary<string, string> animationPairs)
-        {
-            var setAnimPacket = new S2C_SetAnimStates
-            {
-                SenderNetID = u.NetId,
-                AnimationOverrides = animationPairs
-            };
-
-            _packetHandlerManager.BroadcastPacketVision(u, setAnimPacket.GetBytes(), Channel.CHL_S2C);
         }
 
         /// <summary>
@@ -2710,6 +2684,26 @@ namespace PacketDefinitions420
         }
 
         /// <summary>
+        /// Sends a packet to all players that have vision of the specified unit that it has made a movement.
+        /// </summary>
+        /// <param name="u">AttackableUnit that is moving.</param>
+        public void NotifyWaypointGroup(IAttackableUnit u)
+        {
+            // TODO: Verify if casts correctly
+            var move = (MovementDataNormal)PacketExtensions.CreateMovementData(u, _navGrid, MovementDataType.Normal);
+
+            // TODO: Implement support for multiple movements.
+            var packet = new WaypointGroup
+            {
+                SenderNetID = u.NetId,
+                SyncID = u.SyncId,
+                Movements = new List<MovementDataNormal>() { move }
+            };
+
+            _packetHandlerManager.BroadcastPacketVision(u, packet.GetBytes(), Channel.CHL_LOW_PRIORITY);
+        }
+
+        /// <summary>
         /// Sends a packet to all players that have vision of the specified unit.
         /// The packet details a group of waypoints with speed parameters which determine what kind of movement will be done to reach the waypoints, or optionally a GameObject.
         /// Functionally referred to as a dash in-game.
@@ -2722,8 +2716,87 @@ namespace PacketDefinitions420
         /// <param name="followTargetMaxDistance">Optional maximum distance the unit will follow the Target before stopping the dash or reaching to the Target.</param>
         /// <param name="backDistance">Optional unknown parameter.</param>
         /// <param name="travelTime">Optional total time the dash will follow the GameObject before stopping or reaching the Target.</param>
-        /// TODO: Implement Dash class which houses these parameters, then have that as the only parameter to this function (and other Dash-based functions).
+        /// TODO: Implement ForceMovement class which houses these parameters, then have that as the only parameter to this function (and other Dash-based functions).
         public void NotifyWaypointGroupWithSpeed
+        (
+            IAttackableUnit u
+        )
+        {
+            // TODO: Implement Dash class and house a List of these with waypoints.
+            var speeds = new SpeedParams
+            {
+                PathSpeedOverride = u.MovementParameters.PathSpeedOverride,
+                ParabolicGravity = u.MovementParameters.ParabolicGravity,
+                // TODO: Implement as parameter (ex: Aatrox Q).
+                ParabolicStartPoint = u.MovementParameters.ParabolicStartPoint,
+                Facing = u.MovementParameters.KeepFacingDirection,
+                FollowNetID = u.MovementParameters.FollowNetID,
+                FollowDistance = u.MovementParameters.FollowDistance,
+                FollowBackDistance = u.MovementParameters.FollowBackDistance,
+                FollowTravelTime = u.MovementParameters.FollowTravelTime
+            };
+
+            // TODO: Verify if cast works.
+            var md = (MovementDataWithSpeed)PacketExtensions.CreateMovementData(u, _navGrid, MovementDataType.WithSpeed, speeds);
+
+            var speedWpGroup = new WaypointGroupWithSpeed
+            {
+                SenderNetID = 0,
+                SyncID = u.SyncId,
+                // TOOD: Implement support for multiple speed-based movements (functionally known as dashes).
+                Movements = new List<MovementDataWithSpeed> { md }
+            };
+
+            _packetHandlerManager.BroadcastPacketVision(u, speedWpGroup.GetBytes(), Channel.CHL_S2C);
+        }
+
+        /// <summary>
+        /// Sends a packet to all players with vision of the given unit detailing its waypoints.
+        /// </summary>
+        /// <param name="unit">Unit to send.</param>
+        public void NotifyWaypointList(IAttackableUnit unit)
+        {
+            var wpList = new WaypointList
+            {
+                SenderNetID = unit.NetId,
+                SyncID = unit.SyncId,
+                Waypoints = unit.Waypoints
+            };
+
+            _packetHandlerManager.BroadcastPacketVision(unit, wpList.GetBytes(), Channel.CHL_S2C);
+        }
+
+        /// <summary>
+        /// Sends a packet to all players with vision of the given GameObject detailing its waypoints.
+        /// </summary>
+        /// <param name="obj">GameObject to send.</param>
+        public void NotifyWaypointList(IGameObject obj, List<Vector2> waypoints)
+        {
+            var wpList = new WaypointList
+            {
+                SenderNetID = obj.NetId,
+                SyncID = obj.SyncId,
+                Waypoints = waypoints
+            };
+
+            _packetHandlerManager.BroadcastPacketVision(obj, wpList.GetBytes(), Channel.CHL_S2C);
+        }
+
+        /// <summary>
+        /// Sends a packet to all players that have vision of the specified unit.
+        /// The packet details a list of waypoints with speed parameters which determine what kind of movement will be done to reach the waypoints, or optionally a GameObject.
+        /// Functionally referred to as a dash in-game.
+        /// </summary>
+        /// <param name="u">Unit that is dashing.</param>
+        /// <param name="dashSpeed">Constant speed that the unit will have during the dash.</param>
+        /// <param name="leapGravity">Optionally how much gravity the unit will experience when above the ground while dashing.</param>
+        /// <param name="keepFacingLastDirection">Optionally whether or not the unit should maintain the direction they were facing before dashing.</param>
+        /// <param name="target">Optional GameObject to follow.</param>
+        /// <param name="followTargetMaxDistance">Optional maximum distance the unit will follow the Target before stopping the dash or reaching to the Target.</param>
+        /// <param name="backDistance">Optional unknown parameter.</param>
+        /// <param name="travelTime">Optional total time the dash will follow the GameObject before stopping or reaching the Target.</param>
+        /// TODO: Implement ForceMovement class which houses these parameters, then have that as the only parameter to this function (and other Dash-based functions).
+        public void NotifyWaypointListWithSpeed
         (
             IAttackableUnit u,
             float dashSpeed,
@@ -2735,7 +2808,7 @@ namespace PacketDefinitions420
             float travelTime = 0
         )
         {
-            // TODO: Implement Dash class and house a List of these with waypoints.
+            // TODO: Implement ForceMovement class/interface and house a List of these with waypoints.
             var speeds = new SpeedParams
             {
                 PathSpeedOverride = dashSpeed,
@@ -2754,15 +2827,13 @@ namespace PacketDefinitions420
                 speeds.FollowNetID = target.NetId;
             }
 
-            // TODO: Verify if cast works.
-            var md = (MovementDataWithSpeed)PacketExtensions.CreateMovementData(u, _navGrid, MovementDataType.WithSpeed, speeds);
-
-            var speedWpGroup = new WaypointGroupWithSpeed
+            var speedWpGroup = new WaypointListHeroWithSpeed
             {
                 SenderNetID = u.NetId,
                 SyncID = u.SyncId,
                 // TOOD: Implement support for multiple speed-based movements (functionally known as dashes).
-                Movements = new List<MovementDataWithSpeed> { md }
+                WaypointSpeedParams = speeds,
+                Waypoints = u.Waypoints
             };
 
             _packetHandlerManager.BroadcastPacketVision(u, speedWpGroup.GetBytes(), Channel.CHL_S2C);

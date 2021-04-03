@@ -67,7 +67,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             base.Update(diff);
             if (!IsDead)
             {
-                if (IsDashing || _aiPaused)
+                if (MovementParameters != null || _aiPaused)
                 {
                     Replication.Update();
                     return;

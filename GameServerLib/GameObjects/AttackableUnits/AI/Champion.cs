@@ -358,7 +358,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         {
             // TODO: Pathfinding should be responsible for pathing around units so collisions with other units never occur (or at least very little).
             // Collisions only occur between buildings.
-            if (IsDashing || !(collider is IObjBuilding || collider is IBaseTurret))
+            if (MovementParameters != null || !(collider is IObjBuilding || collider is IBaseTurret || isTerrain == true))
             {
                 return;
             }

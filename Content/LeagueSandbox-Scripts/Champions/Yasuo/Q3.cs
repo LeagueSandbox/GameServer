@@ -39,7 +39,7 @@ namespace Spells
             var range = to * spell.SpellData.CastRangeDisplayOverride;
             trueCoords = current + range;
 
-            FaceDirection(trueCoords, owner, true, 0f);
+            FaceDirection(trueCoords, spell.CastInfo.Owner, true, 0f);
         }
 
         public void OnSpellPostCast(ISpell spell)

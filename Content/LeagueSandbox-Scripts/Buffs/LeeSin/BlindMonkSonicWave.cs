@@ -3,7 +3,6 @@ using GameServerCore.Domain.GameObjects;
 using GameServerCore.Domain.GameObjects.Spell;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
-using GameServerCore.Domain.GameObjects.Spell;
 
 namespace BlindMonkSonicWave
 {
@@ -38,7 +37,7 @@ namespace BlindMonkSonicWave
 
             var owner = originSpell.CastInfo.Owner;
             var target = thisBuff.TargetUnit;
-            if (owner.IsDashing && owner.IsCollidingWith(target))
+            if (owner.MovementParameters != null && owner.IsCollidingWith(target))
             {
                 owner.SetDashingState(false);
                 var ad = owner.Stats.AttackDamage.Total * 1.0f;
