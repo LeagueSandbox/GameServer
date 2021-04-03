@@ -267,7 +267,7 @@ namespace LeagueSandbox.GameServer.GameObjects
 
             // TODO: Verify which one we want to use. WaypointList does not require conversions, however WaypointGroup does (and it has TeleportID functionality).
             //_game.PacketNotifier.NotifyWaypointList(this, new List<Vector2> { Position });
-            _game.PacketNotifier.NotifyTeleport(this, new Vector2(x, y));
+            _game.PacketNotifier.NotifyTeleport(this, Position);
         }
 
         /// <summary>
