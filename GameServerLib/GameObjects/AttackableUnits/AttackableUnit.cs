@@ -556,7 +556,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                     var prevbuff = ParentBuffs[b.Name];
 
                     prevbuff.DeactivateBuff();
-                    RemoveBuff(b.Name);
+                    RemoveBuff(b.Name, false);
                     BuffList.Remove(prevbuff);
 
                     // Clear the newly given buff's slot since we will move it into the previous buff's slot.
@@ -626,16 +626,13 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                     if (ParentBuffs[b.Name].StackCount >= ParentBuffs[b.Name].MaxStacks)
                     {
                         // Get and remove the oldest buff of the same name so we can free up space for the newly given buff instance.
-                        var tempbuffs = GetBuffsWithName(b.Name);
-                        var oldestbuff = tempbuffs[0];
+                        var oldestbuff = ParentBuffs[b.Name];
 
                         oldestbuff.DeactivateBuff();
-                        RemoveBuff(b.Name);
-                        BuffList.Remove(oldestbuff);
-                        RemoveBuffSlot(oldestbuff);
+                        RemoveBuff(b.Name, true);
 
                         // Move the next oldest buff of the same name into the position of the removed oldest buff.
-                        tempbuffs = GetBuffsWithName(b.Name);
+                        var tempbuffs = GetBuffsWithName(b.Name);
 
                         BuffSlots[oldestbuff.Slot] = tempbuffs[0];
                         ParentBuffs.Add(oldestbuff.Name, tempbuffs[0]);
@@ -844,9 +841,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
 
                     IBuff tempBuff = new Buff(_game, b.Name, b.Duration, b.StackCount, b.OriginSpell, b.TargetUnit, b.SourceUnit, b.IsBuffInfinite());
 
-                    RemoveBuff(b.Name);
-                    BuffList.Remove(b);
-                    RemoveBuffSlot(b);
+                    RemoveBuff(b.Name, true);
 
                     if (!b.IsHidden)
                     {
@@ -883,9 +878,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
 
                     // TODO: Unload and reload all data of buff scripts here.
 
-                    RemoveBuff(b.Name);
-                    BuffList.Remove(b);
-                    RemoveBuffSlot(b);
+                    RemoveBuff(b.Name, true);
 
                     var tempbuffs = GetBuffsWithName(b.Name);
 
@@ -925,9 +918,8 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                         b.DeactivateBuff();
                     }
 
-                    BuffList.RemoveAll(buff => buff.Elapsed() || buff == b);
-                    RemoveBuff(b.Name);
-                    RemoveBuffSlot(b);
+                    RemoveBuff(b.Name, true);
+                    BuffList.RemoveAll(buff => buff.Elapsed());
                     if (!b.IsHidden)
                     {
                         _game.PacketNotifier.NotifyNPC_BuffRemove2(b);
@@ -951,10 +943,15 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// Removes the parent buff of the given internal name from this unit.
         /// </summary>
         /// <param name="b">Internal buff name to remove.</param>
-        private void RemoveBuff(string b)
+        private void RemoveBuff(string b, bool removeSlot)
         {
+            if (removeSlot && ParentBuffs[b] != null)
+            {
+                RemoveBuffSlot(ParentBuffs[b]);
+            }
             lock (_buffsLock)
             {
+                BuffList.Remove(ParentBuffs[b]);
                 ParentBuffs.Remove(b);
             }
         }
