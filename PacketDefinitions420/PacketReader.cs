@@ -237,7 +237,7 @@ namespace PacketDefinitions420
             return new SellItemRequest(rq.NetId, rq.SlotId);
         }
 
-        [PacketType(PacketCmd.PKT_C2S_SKILL_UP)]
+        [PacketType(PacketCmd.PKT_C2S_SKILL_UPGRADE)]
         public static UpgradeSpellReq ReadUpgradeSpellReq(byte[] data)
         {
             var rq = new NPC_UpgradeSpellReq();
