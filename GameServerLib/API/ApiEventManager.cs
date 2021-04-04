@@ -131,7 +131,7 @@ namespace LeagueSandbox.GameServer.API
             }
 
             // TODO: Replace this method with a single function and just pass in count as a parameter (do this for all events which use this method).
-            for (int i = count; i > 0; i--)
+            for (int i = count - 1; i >= 0; i--)
             {
                 if (_listeners[i].Item2 == unit)
                 {
@@ -170,7 +170,7 @@ namespace LeagueSandbox.GameServer.API
                 return;
             }
 
-            for (int i = count; i > 0; i--)
+            for (int i = count - 1; i >= 0; i--)
             {
                 if (_listeners[i].Item2 == unit)
                 {
@@ -209,7 +209,7 @@ namespace LeagueSandbox.GameServer.API
                 return;
             }
 
-            for (int i = count; i > 0; i--)
+            for (int i = count - 1; i >= 0; i--)
             {
                 if (_listeners[i].Item2.Key == casterSpellPair.Key && _listeners[i].Item2.Value == casterSpellPair.Value)
                 {
@@ -248,7 +248,7 @@ namespace LeagueSandbox.GameServer.API
                 return;
             }
 
-            for (int i = count; i > 0; i--)
+            for (int i = count - 1; i >= 0; i--)
             {
                 if (_listeners[i].Item2 == unit)
                 {
@@ -371,7 +371,7 @@ namespace LeagueSandbox.GameServer.API
                 return;
             }
 
-            for (int i = count; i > 0; i--)
+            for (int i = count - 1; i >= 0; i--)
             {
                 if (_listeners[i].Item2.Key == spell && _listeners[i].Item2.Value == unit)
                 {
@@ -476,7 +476,7 @@ namespace LeagueSandbox.GameServer.API
                 return;
             }
 
-            for (int i = count; i > 0; i--)
+            for (int i = count - 1; i >= 0; i--)
             {
                 if (_listeners[i].Item2 == unit)
                 {
@@ -543,7 +543,7 @@ namespace LeagueSandbox.GameServer.API
                 return;
             }
 
-            for (int i = count; i > 0; i--)
+            for (int i = count - 1; i >= 0; i--)
             {
                 if (_listeners[i].Item2 == unit)
                 {
