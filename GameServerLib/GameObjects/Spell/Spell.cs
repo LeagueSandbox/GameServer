@@ -249,7 +249,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
                         CastInfo.Owner.StopMovement();
                     }
 
-                    var goingTo = start - CastInfo.Owner.Position;
+                    var goingTo = new Vector2(CastInfo.TargetPosition.X, CastInfo.TargetPosition.Z) - CastInfo.Owner.Position;
 
                     if (unit != null)
                     {
@@ -264,6 +264,14 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
                 {
                     CastInfo.Owner.UpdateMoveOrder(OrderType.CastSpell, true);
                 }
+            }
+
+            // If we are supposed to automatically cast a skillshot for this spell, then calculate the proper end position before casting.
+            if (_spellScript.ScriptMetadata.MissileParameters != null && _spellScript.ScriptMetadata.MissileParameters.Type == MissileType.Circle)
+            {
+                var targetPos = ApiFunctionManager.GetPointFromUnit(CastInfo.Owner, GetCurrentCastRange());
+                CastInfo.TargetPosition = new Vector3(targetPos.X, _game.Map.NavigationGrid.GetHeightAtLocation(targetPos.X, targetPos.Y), targetPos.Y);
+                // TODO: Verify if we should also override TargetPositionEnd (probably not due to things like Viktor E).
             }
 
             if (CastInfo.IsAutoAttack && CastInfo.Owner.IsMelee)
@@ -831,7 +839,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
                 isServerOnly = true;
             }
 
-            var p = new SpellLineMissile(
+            var p = new SpellCircleMissile(
                 _game,
                 (int)SpellData.LineWidth,
                 this,
@@ -1003,8 +1011,12 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
             if (newCd <= 0)
             {
                 _game.PacketNotifier.NotifyCHAR_SetCooldown(CastInfo.Owner, CastInfo.SpellSlot, 0, 0);
-                State = SpellState.STATE_READY;
-                CurrentCooldown = 0;
+                // Changing the state of the spell to READY during casting prevents the spell from finishing casting, thus locking the player in the move order CastSpell.
+                if (State != SpellState.STATE_CASTING && State != SpellState.STATE_CHANNELING)
+                {
+                    State = SpellState.STATE_READY;
+                    CurrentCooldown = 0;
+                }
             }
             else
             {

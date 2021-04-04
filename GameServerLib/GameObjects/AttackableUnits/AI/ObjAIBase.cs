@@ -138,7 +138,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
                 // InventorySlots
                 // 6 - 12 (12 = TrinketSlot)
-                for (byte i = 6; i < 12; i++)
+                for (byte i = 6; i < 13; i++)
                 {
                     Spells[i] = new Spell.Spell(game, this, "BaseSpell", i);
                 }
@@ -771,16 +771,14 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         /// <returns>Newly created spell set.</returns>
         public ISpell SetSpell(string name, byte slot, bool enabled)
         {
-            if (Spells[slot].CastInfo.IsAutoAttack)
+            if (!Spells.ContainsKey(slot) || Spells[slot].CastInfo.IsAutoAttack)
             {
                 return null;
             }
+
             ISpell newSpell = new Spell.Spell(_game, this, name, slot);
 
-            if (Spells[slot] != null)
-            {
-                newSpell.SetLevel(Spells[slot].CastInfo.SpellLevel);
-            }
+            newSpell.SetLevel(Spells[slot].CastInfo.SpellLevel);
 
             Spells[slot] = newSpell;
             Stats.SetSpellEnabled(slot, enabled);

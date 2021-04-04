@@ -1,12 +1,12 @@
-using System.Numerics;
-using GameServerCore.Enums;
-using GameServerCore.Domain.GameObjects;
-using static LeagueSandbox.GameServer.API.ApiFunctionManager;
-using LeagueSandbox.GameServer.Scripting.CSharp;
-using LeagueSandbox.GameServer.API;
 using System.Collections.Generic;
+using System.Numerics;
+using GameServerCore.Domain.GameObjects;
 using GameServerCore.Domain.GameObjects.Spell;
 using GameServerCore.Domain.GameObjects.Spell.Missile;
+using GameServerCore.Enums;
+using LeagueSandbox.GameServer.API;
+using static LeagueSandbox.GameServer.API.ApiFunctionManager;
+using LeagueSandbox.GameServer.Scripting.CSharp;
 
 namespace Spells
 {

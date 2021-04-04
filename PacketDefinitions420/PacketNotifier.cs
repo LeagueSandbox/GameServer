@@ -556,7 +556,7 @@ namespace PacketDefinitions420
                 Cooldown = currentCd,
                 MaxCooldownForDisplay = totalCd
             };
-            if (u is IChampion && (slotId == 0 || slotId == 1))
+            if (u is IChampion && (slotId == 4 || slotId == 5))
             {
                 cdPacket.IsSummonerSpell = true; // TODO: Verify functionality
             }
