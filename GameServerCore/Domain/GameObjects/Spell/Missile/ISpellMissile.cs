@@ -1,4 +1,4 @@
-﻿using GameServerCore.Domain.GameObjects.Spell;
+﻿using GameServerCore.Enums;
 using System.Collections.Generic;
 using System.Numerics;
 
@@ -7,33 +7,21 @@ namespace GameServerCore.Domain.GameObjects.Spell.Missile
     public interface ISpellMissile : IGameObject
     {
         /// <summary>
-        /// Number of objects this projectile has hit since it was created.
+        /// Information about this missile's path.
         /// </summary>
-        List<IGameObject> ObjectsHit { get; }
+        ICastInfo CastInfo { get; }
         /// <summary>
-        /// Unit which owns the spell that created this projectile.
+        /// What kind of behavior this missile has.
         /// </summary>
-        IAttackableUnit Owner { get; }
+        MissileType Type { get; }
         /// <summary>
-        /// Unique identification of this projectile.
-        /// </summary>
-        int ProjectileId { get; }
-        /// <summary>
-        /// Projectile spell data, housing all information about this projectile's properties. Most projectiles are counted as ExtraSpells within a character's data.
-        /// </summary>
-        ISpellData SpellData { get; }
-        /// <summary>
-        /// Current unit this projectile is homing in on and moving towards. Projectile is destroyed on contact with this unit.
+        /// Current unit this projectile is homing in on and moving towards. Projectile is destroyed on contact with this unit unless it has more than one target.
         /// </summary>
         IAttackableUnit TargetUnit { get; }
         /// <summary>
-        /// Position this projectile is moving towards. Projectile is destroyed once it reaches this destination. Equals Vector2.Zero if TargetUnit is not null.
-        /// </summary>
-        Vector2 Destination { get; }
-        /// <summary>
         /// Spell which created this projectile.
         /// </summary>
-        ISpell OriginSpell { get; }
+        ISpell SpellOrigin { get; }
         /// <summary>
         /// Whether or not this projectile's visuals should not be networked to clients.
         /// </summary>
@@ -44,6 +32,11 @@ namespace GameServerCore.Domain.GameObjects.Spell.Missile
         /// </summary>
         /// <returns>Units travelled per second.</returns>
         float GetSpeed();
+        /// <summary>
+        /// Gets the time since this projectile was created.
+        /// </summary>
+        /// <returns></returns>
+        float GetTimeSinceCreation();
         /// <summary>
         /// Whether or not this projectile has a target unit or a destination; if it is a valid projectile.
         /// </summary>

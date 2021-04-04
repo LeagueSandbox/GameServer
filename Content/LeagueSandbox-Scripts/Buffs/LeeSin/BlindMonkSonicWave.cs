@@ -1,9 +1,8 @@
 ﻿using GameServerCore.Enums;
 using GameServerCore.Domain.GameObjects;
-using LeagueSandbox.GameServer.GameObjects.Stats;
+using GameServerCore.Domain.GameObjects.Spell;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
-using GameServerCore.Domain.GameObjects.Spell;
 
 namespace BlindMonkSonicWave
 {
@@ -14,7 +13,7 @@ namespace BlindMonkSonicWave
         public bool IsHidden => false;
         public int MaxStacks => 1;
 
-        public IStatsModifier StatsModifier { get; private set; } = new StatsModifier();
+        public IStatsModifier StatsModifier { get; private set; }
 
         ISpell originSpell;
         IBuff thisBuff;
@@ -36,13 +35,13 @@ namespace BlindMonkSonicWave
                 return;
             }
 
-            var owner = originSpell.Owner;
+            var owner = originSpell.CastInfo.Owner;
             var target = thisBuff.TargetUnit;
-            if (owner.IsCollidingWith(target))
+            if (owner.MovementParameters != null && owner.IsCollidingWith(target))
             {
                 owner.SetDashingState(false);
                 var ad = owner.Stats.AttackDamage.Total * 1.0f;
-                var damage = 50 + (originSpell.Level * 30) + ad + (0.08f * (target.Stats.HealthPoints.Total - target.Stats.CurrentHealth));
+                var damage = 50 + (originSpell.CastInfo.SpellLevel * 30) + ad + (0.08f * (target.Stats.HealthPoints.Total - target.Stats.CurrentHealth));
                 target.TakeDamage(owner, damage, DamageType.DAMAGE_TYPE_PHYSICAL, DamageSource.DAMAGE_SOURCE_REACTIVE, false);
                 AddParticleTarget(owner, "GlobalHit_Yellow_tar.troy", target, 1);
 
@@ -51,4 +50,3 @@ namespace BlindMonkSonicWave
         }
     }
 }
-

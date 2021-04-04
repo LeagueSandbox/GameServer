@@ -575,7 +575,6 @@ namespace LeagueSandbox.GameServer.Maps
                     m.Stats.AttackDamage.BaseValue = 12.0f + 1.0f * (int)(_game.GameTime / (180 * 1000));
                     m.Stats.Range.BaseValue = 180.0f;
                     m.Stats.AttackSpeedFlat = 1.250f;
-                    m.AutoAttackCastTime = 11.8f / 30.0f;
                     m.IsMelee = true;
                     break;
                 case MinionSpawnType.MINION_TYPE_CASTER:
@@ -584,8 +583,6 @@ namespace LeagueSandbox.GameServer.Maps
                     m.Stats.AttackDamage.BaseValue = 23.0f + 1.0f * (int)(_game.GameTime / (90 * 1000));
                     m.Stats.Range.BaseValue = 600.0f;
                     m.Stats.AttackSpeedFlat = 0.670f;
-                    m.AutoAttackCastTime = 14.1f / 30.0f;
-                    m.AutoAttackProjectileSpeed = 650.0f;
                     break;
                 case MinionSpawnType.MINION_TYPE_CANNON:
                     m.Stats.CurrentHealth = 700.0f + 27.0f * (int)(_game.GameTime / (180 * 1000));
@@ -593,8 +590,6 @@ namespace LeagueSandbox.GameServer.Maps
                     m.Stats.AttackDamage.BaseValue = 40.0f + 3.0f * (int)(_game.GameTime / (180 * 1000));
                     m.Stats.Range.BaseValue = 450.0f;
                     m.Stats.AttackSpeedFlat = 1.0f;
-                    m.AutoAttackCastTime = 9.0f / 30.0f;
-                    m.AutoAttackProjectileSpeed = 1200.0f;
                     break;
                 case MinionSpawnType.MINION_TYPE_SUPER:
                     m.Stats.CurrentHealth = 1500.0f + 200.0f * (int)(_game.GameTime / (180 * 1000));
@@ -605,7 +600,6 @@ namespace LeagueSandbox.GameServer.Maps
                     m.Stats.Armor.BaseValue = 30.0f;
                     m.Stats.MagicResist.BaseValue = -30.0f;
                     m.IsMelee = true;
-                    m.AutoAttackCastTime = 15.0f / 30.0f;
                     break;
             }
         }

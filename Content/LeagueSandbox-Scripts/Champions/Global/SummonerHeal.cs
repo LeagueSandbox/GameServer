@@ -1,34 +1,55 @@
 using System;
 using GameServerCore.Domain.GameObjects;
-using static LeagueSandbox.GameServer.API.ApiFunctionManager;
-using LeagueSandbox.GameServer.Scripting.CSharp;
 using GameServerCore.Domain.GameObjects.Spell;
 using GameServerCore.Domain.GameObjects.Spell.Missile;
+using static LeagueSandbox.GameServer.API.ApiFunctionManager;
+using LeagueSandbox.GameServer.Scripting.CSharp;
+using System.Numerics;
 
 namespace Spells
 {
-    public class SummonerHeal : IGameScript
+    public class SummonerHeal : ISpellScript
     {
-        public void OnStartCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
+        public ISpellScriptMetadata ScriptMetadata { get; private set; } = new SpellScriptMetadata()
+        {
+            // TODO
+        };
+
+        public void OnActivate(IObjAiBase owner, ISpell spell)
         {
         }
 
-        public void OnFinishCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
+        public void OnDeactivate(IObjAiBase owner, ISpell spell)
         {
-            var units = GetChampionsInRange(owner.Position, 850, true);
+        }
+
+        public void OnSpellPreCast(IObjAiBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
+        {
             IChampion mostWoundedAlliedIChampion = null;
-            float lowestHealthPercentage = 100;
-            float maxHealth;
-            foreach (var value in units)
+
+            if (target != null
+                && target is IChampion ch
+                && IsUnitInRange(ch, owner.Position, spell.SpellData.CastRangeDisplayOverride, true))
             {
-                if (value != owner && owner.Team == value.Team)
+                mostWoundedAlliedIChampion = ch;
+            }
+
+            if (mostWoundedAlliedIChampion == null)
+            {
+                var units = GetChampionsInRange(owner.Position, spell.SpellData.CastRangeDisplayOverride, true);
+                float lowestHealthPercentage = 100;
+                float maxHealth;
+                foreach (var value in units)
                 {
-                    var currentHealth = value.Stats.CurrentHealth;
-                    maxHealth = value.Stats.HealthPoints.Total;
-                    if (currentHealth * 100 / maxHealth < lowestHealthPercentage && owner != value)
+                    if (value != owner && owner.Team == value.Team)
                     {
-                        lowestHealthPercentage = currentHealth * 100 / maxHealth;
-                        mostWoundedAlliedIChampion = value;
+                        var currentHealth = value.Stats.CurrentHealth;
+                        maxHealth = value.Stats.HealthPoints.Total;
+                        if (currentHealth * 100 / maxHealth < lowestHealthPercentage && owner != value)
+                        {
+                            lowestHealthPercentage = currentHealth * 100 / maxHealth;
+                            mostWoundedAlliedIChampion = value;
+                        }
                     }
                 }
             }
@@ -38,14 +59,10 @@ namespace Spells
                 PerformHeal(owner, spell, mostWoundedAlliedIChampion);
             }
 
-            PerformHeal(owner, spell, (IChampion)owner);
+            PerformHeal(owner, spell, owner);
         }
 
-        public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, ISpellMissile projectile)
-        {
-        }
-
-        private void PerformHeal(IObjAiBase owner, ISpell spell, IChampion target)
+        private void PerformHeal(IObjAiBase owner, ISpell spell, IAttackableUnit target)
         {
             float healthGain = 75 + (target.Stats.Level * 15);
             if (target.HasBuff("HealCheck"))
@@ -60,15 +77,27 @@ namespace Spells
             AddParticleTarget(owner, "global_ss_heal_speedboost.troy", target);
         }
 
-        public void OnUpdate(double diff)
+        public void OnSpellCast(ISpell spell)
         {
         }
 
-        public void OnActivate(IObjAiBase owner)
+        public void OnSpellPostCast(ISpell spell)
         {
         }
 
-        public void OnDeactivate(IObjAiBase owner)
+        public void OnSpellChannel(ISpell spell)
+        { 
+        }
+
+        public void OnSpellChannelCancel(ISpell spell)
+        {
+        }
+
+        public void OnSpellPostChannel(ISpell spell)
+        {
+        }
+
+        public void OnUpdate(float diff)
         {
         }
     }

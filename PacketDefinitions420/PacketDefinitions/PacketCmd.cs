@@ -42,7 +42,7 @@
         PKT_S2C_DELETE_OBJECT = 0x35, // not sure what this is, happens when turret leaves vision
         PKT_S2C_MESSAGE_BOX_TOP = 0x36,
         PKT_S2C_DESTROY_OBJECT = 0x38,
-        PKT_C2S_SKILL_UP = 0x39,
+        PKT_C2S_SKILL_UPGRADE = 0x39,
         PKT_C2S_USE_OBJECT = 0x3A,
         PKT_S2C_SPAWN_PROJECTILE = 0x3B,
         PKT_S2C_SWAP_ITEMS = 0x3E,
@@ -144,7 +144,7 @@
         PKT_S2C_DOMINION_POINTS = 0xD9,
         PKT_S2C_SET_SCREEN_TINT = 0xDB,
         PKT_S2C_CLOSE_GAME = 0xE5,
-        PKT_C2S_CURSOR_POSITION_ON_WORLD = 0xE6,
+        PKT_C2S_SPELL_CHARGE_UPDATE = 0xE6,
         PKT_S2C_DEBUG_MESSAGE = 0xF7,
         PKT_S2C_MESSAGES_AVAILABLE = 0xF9,
         PKT_S2C_SET_ITEM_STACKS2 = 0xFD,

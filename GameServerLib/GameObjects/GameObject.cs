@@ -22,7 +22,6 @@ namespace LeagueSandbox.GameServer.GameObjects
         // Function Vars
         protected bool _toRemove;
         protected bool _movementUpdated;
-        protected Vector2 _direction;
         private Dictionary<TeamId, bool> _visibleByTeam;
 
         /// <summary>
@@ -260,19 +259,15 @@ namespace LeagueSandbox.GameServer.GameObjects
             {
                 var walkableSpot = _game.Map.NavigationGrid.GetClosestTerrainExit(new Vector2(x, y), CollisionRadius + 1.0f);
                 SetPosition(walkableSpot);
-
-                x = MovementVector.TargetXToNormalFormat(_game.Map.NavigationGrid, walkableSpot.X);
-                y = MovementVector.TargetYToNormalFormat(_game.Map.NavigationGrid, walkableSpot.Y);
             }
             else
             {
                 SetPosition(x, y);
-
-                x = MovementVector.TargetXToNormalFormat(_game.Map.NavigationGrid, x);
-                y = MovementVector.TargetYToNormalFormat(_game.Map.NavigationGrid, y);
             }
 
-            _game.PacketNotifier.NotifyTeleport(this, new Vector2(x, y));
+            // TODO: Verify which one we want to use. WaypointList does not require conversions, however WaypointGroup does (and it has TeleportID functionality).
+            //_game.PacketNotifier.NotifyWaypointList(this, new List<Vector2> { Position });
+            _game.PacketNotifier.NotifyTeleport(this, Position);
         }
 
         /// <summary>

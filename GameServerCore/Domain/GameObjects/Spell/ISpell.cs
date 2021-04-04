@@ -7,36 +7,63 @@ namespace GameServerCore.Domain.GameObjects.Spell
 {
     public interface ISpell: IUpdate
     {
-        IObjAiBase Owner { get; }
-        byte Level { get; }
-        byte Slot { get; }
-        float CastTime { get; }
-        string SpellName { get; }
-        SpellState State { get; }
+        ICastInfo CastInfo { get; }
         float CurrentCooldown { get; }
         float CurrentCastTime { get; }
         float CurrentChannelDuration { get; }
-        Dictionary<uint, ISpellMissile> Projectiles { get; }
-        uint SpellNetId { get; }
-        IAttackableUnit Target { get; }
-        float X { get; }
-        float Y { get; }
-        float X2 { get; }
-        float Y2 { get; }
+        float CurrentDelayTime { get; }
+        bool HasEmptyScript { get; }
+        bool Toggle { get; }
         ISpellData SpellData { get; }
+        string SpellName { get; }
+        SpellState State { get; }
 
-        bool Cast(float x, float y, float x2, float y2, IAttackableUnit u);
+        void ApplyEffects(IAttackableUnit u, ISpellMissile p);
+        /// <summary>
+        /// Called when the character casts this spell. Initializes the CastInfo for this spell and begins casting.
+        /// </summary>
+        bool Cast(Vector2 start, Vector2 end, IAttackableUnit unit = null);
+        /// <summary>
+        /// Called when a script manually casts this spell.
+        /// </summary>
+        bool Cast(ICastInfo castInfo, bool cast);
+        /// <summary>
+        /// Forces this spell to stop channeling based on the given condition for the given reason.
+        /// </summary>
+        /// <param name="condition">Canceled or successful?</param>
+        /// <param name="reason">How it should be treated.</param>
+        void StopChanneling(ChannelingStopCondition condition, ChannelingStopSource reason);
+        void Deactivate();
+        /// <summary>
+        /// Creates a single-target missile with the specified properties.
+        /// </summary>
+        ISpellMissile CreateSpellMissile();
+        /// <summary>
+        /// Creates a single-target bouncing missile with the specified properties.
+        /// </summary>
+        ISpellMissile CreateSpellChainMissile();
+        /// <summary>
+        /// Creates a line missile with the specified properties.
+        /// </summary>
+        ISpellMissile CreateSpellCircleMissile();
+        /// <summary>
+        /// Creates an arc missile with the specified properties.
+        /// </summary>
+        ISpellMissile CreateSpellLineMissile();
         int GetId();
         float GetCooldown();
-        void LowerCooldown(float lowerValue);
-        void Deactivate();
-        void ApplyEffects(IAttackableUnit u, ISpellMissile p);
+        /// <summary>
+        /// Gets the cast range for this spell (based on level).
+        /// </summary>
+        /// <returns>Cast range based on level.</returns>
+        float GetCurrentCastRange();
+        string GetStringForSlot();
         void LevelUp();
+        void LowerCooldown(float lowerValue);
+        void ResetSpellDelay();
+        void SetCooldown(float newCd);
         void SetLevel(byte toLevel);
-        void AddProjectile(string nameMissile, Vector2 startPos, Vector2 endPos, bool isServerOnly = false);
-        void AddProjectileTarget(string nameMissile, IAttackableUnit target, bool isServerOnly = false);
-        void AddLaser(string effectName, Vector2 targetPos, bool affectAsCastIsOver = true);
-        void AddCone(string effectName, Vector2 targetPos, float angleDeg, bool affectAsCastIsOver = true);
-        void SpellAnimation(string animName, IAttackableUnit target);
+        void SetSpellState(SpellState state);
+        void SetSpellToggle(bool toggle);
     }
 }

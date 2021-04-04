@@ -1,40 +1,56 @@
 using LeagueSandbox.GameServer.API;
 using GameServerCore.Domain.GameObjects;
 using LeagueSandbox.GameServer.Scripting.CSharp;
+using System.Numerics;
 using GameServerCore.Domain.GameObjects.Spell;
-using GameServerCore.Domain.GameObjects.Spell.Missile;
 
 namespace Spells
 {
-    public class EvelynnPassive : IGameScript
+    public class EvelynnPassive : ISpellScript
     {
-        public void OnActivate(IObjAiBase owner)
+        public ISpellScriptMetadata ScriptMetadata { get; private set; } = new SpellScriptMetadata()
         {
-            ApiEventManager.OnChampionDamageTaken.AddListener(this, (IChampion)owner, SelfWasDamaged);
+            // TODO
+        };
+
+        public void OnActivate(IObjAiBase owner, ISpell spell)
+        {
+            ApiEventManager.OnTakeDamage.AddListener(this, owner, SelfWasDamaged, false);
         }
 
-        private void SelfWasDamaged()
-        {
-        }
-
-        public void OnDeactivate(IObjAiBase owner)
-        {
-            //Listeners are automatically removed when GameScripts deactivate
-        }
-
-        public void OnStartCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
+        private void SelfWasDamaged(IAttackableUnit unit, IAttackableUnit source)
         {
         }
 
-        public void OnFinishCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
+        public void OnDeactivate(IObjAiBase owner, ISpell spell)
         {
         }
 
-        public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, ISpellMissile projectile)
+        public void OnSpellPreCast(IObjAiBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
         {
         }
 
-        public void OnUpdate(double diff)
+        public void OnSpellCast(ISpell spell)
+        {
+        }
+
+        public void OnSpellPostCast(ISpell spell)
+        {
+        }
+
+        public void OnSpellChannel(ISpell spell)
+        {
+        }
+
+        public void OnSpellChannelCancel(ISpell spell)
+        {
+        }
+
+        public void OnSpellPostChannel(ISpell spell)
+        {
+        }
+
+        public void OnUpdate(float diff)
         {
         }
     }

@@ -206,7 +206,7 @@ namespace LeagueSandbox.GameServer
             RequestHandler.Register<CastSpellRequest>(new HandleCastSpell(this).HandlePacket);
             RequestHandler.Register<ChatMessageRequest>(new HandleChatBoxMessage(this).HandlePacket);
             RequestHandler.Register<ClickRequest>(new HandleClick(this).HandlePacket);
-            RequestHandler.Register<CursorPositionOnWorldRequest>(new HandleCursorPositionOnWorld(this).HandlePacket);
+            RequestHandler.Register<SpellChargeUpdateReq>(new HandleSpellChargeUpdateReq(this).HandlePacket);
             RequestHandler.Register<EmotionPacketRequest>(new HandleEmotion(this).HandlePacket);
             RequestHandler.Register<ExitRequest>(new HandleExit(this).HandlePacket);
             RequestHandler.Register<HeartbeatRequest>(new HandleHeartBeat(this).HandlePacket);
@@ -220,7 +220,7 @@ namespace LeagueSandbox.GameServer
             RequestHandler.Register<QuestClickedRequest>(new HandleQuestClicked(this).HandlePacket);
             RequestHandler.Register<ScoreboardRequest>(new HandleScoreboard(this).HandlePacket);
             RequestHandler.Register<SellItemRequest>(new HandleSellItem(this).HandlePacket);
-            RequestHandler.Register<SkillUpRequest>(new HandleSkillUp(this).HandlePacket);
+            RequestHandler.Register<UpgradeSpellReq>(new HandleUpgradeSpellReq(this).HandlePacket);
             RequestHandler.Register<SpawnRequest>(new HandleSpawn(this).HandlePacket);
             RequestHandler.Register<StartGameRequest>(new HandleStartGame(this).HandlePacket);
             RequestHandler.Register<StatsConfirmRequest>(new HandleStatsConfirm(this).HandlePacket);
@@ -291,6 +291,7 @@ namespace LeagueSandbox.GameServer
             ObjectManager.Update(diff);
             ProtectionManager.Update(diff);
             Map.Update(diff);
+            ChatCommandManager.GetCommands().ForEach(command => command.Update(diff));
             _gameScriptTimers.ForEach(gsTimer => gsTimer.Update(diff));
             _gameScriptTimers.RemoveAll(gsTimer => gsTimer.IsDead());
 

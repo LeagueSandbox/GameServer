@@ -1,0 +1,57 @@
+﻿using GameServerCore.Enums;
+using GameServerCore.Domain.GameObjects;
+using GameServerCore.Domain.GameObjects.Spell;
+using static LeagueSandbox.GameServer.API.ApiFunctionManager;
+using LeagueSandbox.GameServer.GameObjects.Stats;
+using LeagueSandbox.GameServer.Scripting.CSharp;
+
+namespace SummonerDot
+{
+    internal class SummonerDot : IBuffGameScript
+    {
+        public BuffType BuffType => BuffType.DAMAGE;
+        public BuffAddType BuffAddType => BuffAddType.REPLACE_EXISTING;
+        public int MaxStacks => 1;
+        public bool IsHidden => false;
+
+        public IStatsModifier StatsModifier { get; private set; } = new StatsModifier();
+
+        IParticle ignite;
+        IObjAiBase Owner;
+        IAttackableUnit Target;
+
+        float timeSinceLastTick = 1000.0f;
+        float damage;
+
+        public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
+        {
+            Owner = ownerSpell.CastInfo.Owner;
+            Target = unit;
+            damage = 10 + Owner.Stats.Level * 4;
+            ignite = AddParticleTarget(Owner, "Global_SS_Ignite.troy", unit, 1, "C_BUFFBONE_GLB_CHEST_LOC", lifetime: buff.Duration);
+        }
+
+        public void OnDeactivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
+        {
+            Owner = null;
+            Target = null;
+            ignite.SetToRemove();
+        }
+
+        public void OnUpdate(float diff)
+        {
+            if (Target == null || Owner == null)
+            {
+                return;
+            }
+
+            timeSinceLastTick += diff;
+
+            if (timeSinceLastTick >= 1000.0f)
+            {
+                Target.TakeDamage(Owner, damage, DamageType.DAMAGE_TYPE_TRUE, DamageSource.DAMAGE_SOURCE_SPELL, false);
+                timeSinceLastTick = 0;
+            }
+        }
+    }
+}

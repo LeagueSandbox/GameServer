@@ -1,59 +1,79 @@
 using GameServerCore.Enums;
 using GameServerCore.Domain.GameObjects;
-using LeagueSandbox.GameServer.Scripting.CSharp;
 using GameServerCore.Domain.GameObjects.Spell;
 using GameServerCore.Domain.GameObjects.Spell.Missile;
+using LeagueSandbox.GameServer.Scripting.CSharp;
+using System.Numerics;
+using LeagueSandbox.GameServer.API;
+using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 
 namespace Spells
 {
-    public class Disintegrate : IGameScript
+    public class Disintegrate : ISpellScript
     {
-        public void OnActivate(IObjAiBase owner)
+        public ISpellScriptMetadata ScriptMetadata => new SpellScriptMetadata()
         {
-        }
-
-        public void OnDeactivate(IObjAiBase owner)
-        {
-        }
-
-        public void OnStartCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
-        {
-        }
-
-        public void OnFinishCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
-        {
-            spell.AddProjectileTarget("Disintegrate", target, false);
-        }
-
-        public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, ISpellMissile projectile)
-        {
-            var ap = owner.Stats.AbilityPower.Total * 0.8f;
-            var damage = 45 + spell.Level * 35 + ap;
-            if (target != null && !target.IsDead)
+            TriggersSpellCasts = true,
+            IsDamagingSpell = true,
+            MissileParameters = new MissileParameters
             {
-                target.TakeDamage(owner, damage, DamageType.DAMAGE_TYPE_MAGICAL, DamageSource.DAMAGE_SOURCE_SPELL,
-                    false);
-                if (target.IsDead)
-                {
-                    spell.LowerCooldown(spell.GetCooldown());
-                    float manaToRecover = 55 + spell.Level * 5;
-                    var newMana = owner.Stats.CurrentMana + manaToRecover;
-                    var maxMana = owner.Stats.ManaPoints.Total;
-                    if (newMana >= maxMana)
-                    {
-                        owner.Stats.CurrentMana = maxMana;
-                    }
-                    else
-                    {
-                        owner.Stats.CurrentMana = newMana;
-                    }
-                }
+                Type = MissileType.Target
             }
+        };
 
-            projectile.SetToRemove();
+        public void OnActivate(IObjAiBase owner, ISpell spell)
+        {
+            ApiEventManager.OnSpellHit.AddListener(this, new System.Collections.Generic.KeyValuePair<ISpell, IObjAiBase>(spell, owner), TargetExecute, false);
         }
 
-        public void OnUpdate(double diff)
+        public void TargetExecute(ISpell spell, IAttackableUnit target, ISpellMissile missile)
+        {
+            var owner = spell.CastInfo.Owner as IChampion;
+            var ownerSkinID = owner.Skin;
+            var ap = owner.Stats.AbilityPower.Total * spell.SpellData.MagicDamageCoefficient;
+            var damage = 45 + spell.CastInfo.SpellLevel * 35 + ap;
+
+            target.TakeDamage(owner, damage, DamageType.DAMAGE_TYPE_MAGICAL, DamageSource.DAMAGE_SOURCE_SPELL, false);
+
+            if (ownerSkinID == 5)
+            {
+                AddParticleTarget(owner, "DisintegrateHit_tar_frost.troy", target, lifetime: 1.0f);
+            }
+            else
+            {
+                AddParticleTarget(owner, "DisintegrateHit_tar.troy", target, lifetime: 1.0f);
+            }
+        }
+
+        public void OnDeactivate(IObjAiBase owner, ISpell spell)
+        {
+        }
+
+        public void OnSpellPreCast(IObjAiBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
+        {
+        }
+
+        public void OnSpellCast(ISpell spell)
+        {
+        }
+
+        public void OnSpellPostCast(ISpell spell)
+        {
+        }
+
+        public void OnSpellChannel(ISpell spell)
+        {
+        }
+
+        public void OnSpellChannelCancel(ISpell spell)
+        {
+        }
+
+        public void OnSpellPostChannel(ISpell spell)
+        {
+        }
+
+        public void OnUpdate(float diff)
         {
         }
     }

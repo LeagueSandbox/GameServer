@@ -1,52 +1,57 @@
 using GameServerCore.Enums;
 using GameServerCore.Domain.GameObjects;
-using static LeagueSandbox.GameServer.API.ApiFunctionManager;
-using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
-using LeagueSandbox.GameServer.Scripting.CSharp;
 using GameServerCore.Domain.GameObjects.Spell;
 using GameServerCore.Domain.GameObjects.Spell.Missile;
+using static LeagueSandbox.GameServer.API.ApiFunctionManager;
+using LeagueSandbox.GameServer.Scripting.CSharp;
+using System.Numerics;
 
 namespace Spells
 {
-    public class SummonerDot : IGameScript
+    public class SummonerDot : ISpellScript
     {
-        public void OnStartCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
+        public ISpellScriptMetadata ScriptMetadata { get; private set; } = new SpellScriptMetadata()
         {
-            AddBuff("SummonerDot", 4.0f, 1, spell, (ObjAiBase)target, owner);
-            var p = AddParticleTarget(owner, "Global_SS_Ignite.troy", target, 1);
-            var damage = 10 + owner.Stats.Level * 4;
-            target.TakeDamage(owner, damage, DamageType.DAMAGE_TYPE_TRUE, DamageSource.DAMAGE_SOURCE_SPELL, false);
-            for (float i = 1.0f; i < 5; ++i)
+            TriggersSpellCasts = false
+        };
+
+        public void OnActivate(IObjAiBase owner, ISpell spell)
+        {
+        }
+
+        public void OnDeactivate(IObjAiBase owner, ISpell spell)
+        {
+        }
+
+        public void OnSpellPreCast(IObjAiBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
+        {
+            if (target != null)
             {
-                CreateTimer(1.0f * i, () =>
-                {
-                    target.TakeDamage(owner, damage, DamageType.DAMAGE_TYPE_TRUE, DamageSource.DAMAGE_SOURCE_SPELL,
-                        false);
-                });
+                AddBuff("SummonerDot", 5.0f, 1, spell, target, owner);
             }
-            CreateTimer(4.0f, () =>
-            {
-                RemoveParticle(p);
-            });
         }
 
-        public void OnFinishCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
+        public void OnSpellCast(ISpell spell)
         {
         }
 
-        public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, ISpellMissile projectile)
+        public void OnSpellPostCast(ISpell spell)
         {
         }
 
-        public void OnUpdate(double diff)
+        public void OnSpellChannel(ISpell spell)
         {
         }
 
-        public void OnActivate(IObjAiBase owner)
+        public void OnSpellChannelCancel(ISpell spell)
         {
         }
 
-        public void OnDeactivate(IObjAiBase owner)
+        public void OnSpellPostChannel(ISpell spell)
+        {
+        }
+
+        public void OnUpdate(float diff)
         {
         }
     }

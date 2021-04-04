@@ -1,8 +1,7 @@
 using GameServerCore.Enums;
-using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 using GameServerCore.Domain.GameObjects;
-using LeagueSandbox.GameServer.Scripting.CSharp;
 using GameServerCore.Domain.GameObjects.Spell;
+using LeagueSandbox.GameServer.Scripting.CSharp;
 
 namespace TaricWDis
 {

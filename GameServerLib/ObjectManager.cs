@@ -178,7 +178,9 @@ namespace LeagueSandbox.GameServer
 
                 if (u.IsMovementUpdated())
                 {
-                    _game.PacketNotifier.NotifyMovement(u);
+                    // TODO: Verify which one we want to use. WaypointList does not require conversions, however WaypointGroup does (and it has TeleportID functionality).
+                    //_game.PacketNotifier.NotifyWaypointList(u);
+                    _game.PacketNotifier.NotifyWaypointGroup(u);
                     u.ClearMovementUpdated();
                 }
             }
@@ -405,8 +407,7 @@ namespace LeagueSandbox.GameServer
                     {
                         if (ai.TargetUnit == target)
                         {
-                            ai.SetTargetUnit(null);
-                            _game.PacketNotifier.NotifySetTarget(u, null);
+                            ai.SetTargetUnit(null, true);
                         }
                     }
                 }

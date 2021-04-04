@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using GameServerCore.Domain.GameObjects;
+﻿using GameServerCore.Domain.GameObjects;
 using GameServerCore.Domain.GameObjects.Spell;
 using GameServerCore.Enums;
 using LeagueSandbox.GameServer.GameObjects.Stats;
@@ -44,7 +39,7 @@ namespace AatroxR
                 pmodel = AddParticleTarget(c, pmodelname, c);
                 pmodel.SetToRemove();
 
-                StatsModifier.AttackSpeed.PercentBonus = (0.4f + (0.1f * (ownerSpell.Level - 1))) * buff.StackCount; // StackCount included here as an example
+                StatsModifier.AttackSpeed.PercentBonus = (0.4f + (0.1f * (ownerSpell.CastInfo.SpellLevel - 1))) * buff.StackCount; // StackCount included here as an example
                 StatsModifier.Range.FlatBonus = 175f * buff.StackCount;
 
                 unit.AddStatModifier(StatsModifier);

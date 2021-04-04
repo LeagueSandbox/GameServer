@@ -5,23 +5,30 @@ using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using GameServerCore.Domain.GameObjects.Spell;
 using GameServerCore.Domain.GameObjects.Spell.Missile;
+using System.Linq;
+using System.Numerics;
 
 namespace Spells
 {
-    public class GarenE : IGameScript
+    public class GarenE : ISpellScript
     {
-        public void OnActivate(IObjAiBase owner)
+        public ISpellScriptMetadata ScriptMetadata { get; private set; } = new SpellScriptMetadata()
+        {
+            // TODO
+        };
+
+        public void OnActivate(IObjAiBase owner, ISpell spell)
         {
         }
 
-        public void OnDeactivate(IObjAiBase owner)
+        public void OnDeactivate(IObjAiBase owner, ISpell spell)
         {
         }
 
-        public void OnStartCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
+        public void OnSpellPreCast(IObjAiBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
         {
-            spell.SpellAnimation("SPELL3", owner);
-            var p = AddParticleTarget(owner, "Garen_Base_E_Spin.troy", owner, 1, "", default(System.Numerics.Vector3), 3.0f);
+            //owner.SpellAnimation("SPELL3");
+            var p = AddParticleTarget(owner, "Garen_Base_E_Spin.troy", owner, lifetime: 3.0f);
             AddBuff("GarenE", 3.0f, 1, spell, owner, owner);
             CreateTimer(3.0f, () =>
             {
@@ -41,9 +48,9 @@ namespace Spells
                 if (unit.Team != owner.Team)
                 {
                     //PHYSICAL DAMAGE PER SECOND: 20 / 45 / 70 / 95 / 120 (+ 70 / 80 / 90 / 100 / 110% AD)
-                    var ad = new[] { .7f, .8f, .9f, 1f, 1.1f }[spell.Level - 1] * owner.Stats.AttackDamage.Total *
+                    var ad = new[] { .7f, .8f, .9f, 1f, 1.1f }[spell.CastInfo.SpellLevel - 1] * owner.Stats.AttackDamage.Total *
                                0.5f;
-                    var damage = new[] { 20, 45, 70, 95, 120 }[spell.Level - 1] * 0.5f + ad;
+                    var damage = new[] { 20, 45, 70, 95, 120 }[spell.CastInfo.SpellLevel - 1] * 0.5f + ad;
                     if (unit is Minion) damage *= 0.75f;
                     unit.TakeDamage(owner, damage, DamageType.DAMAGE_TYPE_PHYSICAL, DamageSource.DAMAGE_SOURCE_SPELL,
                         false);
@@ -51,15 +58,27 @@ namespace Spells
             }
         }
 
-        public void OnFinishCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
+        public void OnSpellCast(ISpell spell)
         {
         }
 
-        public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, ISpellMissile projectile)
+        public void OnSpellPostCast(ISpell spell)
         {
         }
 
-        public void OnUpdate(double diff)
+        public void OnSpellChannel(ISpell spell)
+        {
+        }
+
+        public void OnSpellChannelCancel(ISpell spell)
+        {
+        }
+
+        public void OnSpellPostChannel(ISpell spell)
+        {
+        }
+
+        public void OnUpdate(float diff)
         {
         }
     }

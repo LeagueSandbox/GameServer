@@ -80,7 +80,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 
                             /* This is probably not the best way
                              * of updating a champion's level, but it works */
-                             _game.PacketNotifier.NotifyLevelUp(player.Item2.Champion);
+                             _game.PacketNotifier.NotifyNPC_LevelUp(player.Item2.Champion);
                             if (_game.IsPaused)
                             {
                                  _game.PacketNotifier.NotifyPauseGame((int)_game.PauseTimeLeft, true);

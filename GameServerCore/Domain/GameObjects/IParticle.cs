@@ -32,10 +32,6 @@ namespace GameServerCore.Domain.GameObjects
         /// </summary>
         float Scale { get; }
         /// <summary>
-        /// 3 dimensional forward vector (where the particle faces) used in networking
-        /// </summary>
-        Vector3 Direction { get; }
-        /// <summary>
         /// Total game-time that this particle should exist for
         /// </summary>
         float Lifetime { get; }

@@ -1,9 +1,8 @@
 using GameServerCore.Enums;
 using GameServerCore.Domain.GameObjects;
-using static LeagueSandbox.GameServer.API.ApiFunctionManager;
+using GameServerCore.Domain.GameObjects.Spell;
 using LeagueSandbox.GameServer.GameObjects.Stats;
 using LeagueSandbox.GameServer.Scripting.CSharp;
-using GameServerCore.Domain.GameObjects.Spell;
 
 namespace LuluWDebuff
 {
@@ -20,7 +19,7 @@ namespace LuluWDebuff
         {
             StatsModifier.MoveSpeed.BaseBonus = StatsModifier.MoveSpeed.BaseBonus - 60;
             unit.AddStatModifier(StatsModifier);
-            var time = 1 + 0.25f * ownerSpell.Level;
+            var time = 1 + 0.25f * ownerSpell.CastInfo.SpellLevel;
         }
 
         public void OnDeactivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)

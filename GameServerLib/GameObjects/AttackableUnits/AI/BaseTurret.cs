@@ -105,8 +105,8 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             {
                 return;
             }
-            TargetUnit = nextTarget;
-            _game.PacketNotifier.NotifySetTarget(this, nextTarget);
+
+            SetTargetUnit(nextTarget, true);
         }
 
         /// <summary>
@@ -155,7 +155,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         /// <summary>
         /// Overridden function unused by turrets.
         /// </summary>
-        public override void RefreshWaypoints()
+        public override void RefreshWaypoints(float idealRange)
         {
         }
 
@@ -190,8 +190,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             // Lose focus of the unit target if the target is out of range
             if (TargetUnit != null && Vector2.DistanceSquared(Position, TargetUnit.Position) > Stats.Range.Total * Stats.Range.Total)
             {
-                SetTargetUnit(null);
-                _game.PacketNotifier.NotifySetTarget(this, null);
+                SetTargetUnit(null, true);
             }
 
             base.Update(diff);

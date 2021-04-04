@@ -7,6 +7,7 @@ using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Domain.GameObjects.Spell;
 using GameServerCore.Enums;
+using LeagueSandbox.GameServer.API;
 using LeagueSandbox.GameServer.Content;
 using LeagueSandbox.GameServer.GameObjects.Spell.Missile;
 using LeagueSandbox.GameServer.Items;
@@ -21,30 +22,24 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
     {
         // Crucial Vars
         private float _autoAttackCurrentCooldown;
-        private float _autoAttackCurrentDelay;
-        private uint _autoAttackProjId;
-        private bool _isNextAutoCrit;
+        private bool _skipNextAutoAttack;
         protected ItemManager _itemManager;
-        private bool _nextAttackFlag;
         private Random _random = new Random();
 
         /// <summary>
         /// Variable storing all the data related to this AI's current auto attack. *NOTE*: Will be deprecated as the spells system gets finished.
         /// </summary>
-        public ISpellData AaSpellData { get; private set; }
+        public ISpell AutoAttackSpell { get; protected set; }
         /// <summary>
-        /// Variable for the cast time of this AI's current auto attack.
+        /// Spell this AI is currently channeling.
         /// </summary>
-        public float AutoAttackCastTime { get; set; }
-        /// <summary>
-        /// Variable for the projectile speed of this AI's current auto attack projectile.
-        /// </summary>
-        public float AutoAttackProjectileSpeed { get; set; }
+        public ISpell ChannelSpell { get; protected set; }
         /// <summary>
         /// Variable containing all data about the AI's current character such as base health, base mana, whether or not they are melee, base movespeed, per level stats, etc.
         /// </summary>
         /// TODO: Move to AttackableUnit as it relates to stats.
         public ICharData CharData { get; }
+        public bool HasAutoAttacked { get; set; }
         /// <summary>
         /// Whether or not this AI has made their first auto attack against their current target. Refreshes after untargeting or targeting another unit.
         /// </summary>
@@ -59,26 +54,25 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         /// </summary>
         public bool IsAttacking { get; set; }
         /// <summary>
-        /// Whether or not this AI is currently casting a spell. *NOTE*: Not to be confused with channeling (which isn't implemented yet).
+        /// Spell this unit will cast when in range of its target.
+        /// Overrides auto attack spell casting.
         /// </summary>
-        public bool IsCastingSpell { get; set; }
+        public ISpell SpellToCast { get; protected set; }
         /// <summary>
         /// Whether or not this AI's auto attacks apply damage to their target immediately after their cast time ends.
         /// </summary>
         public bool IsMelee { get; set; }
+        public bool IsNextAutoCrit { get; protected set; }
         /// <summary>
-        /// Current order this AI is performing. *NOTE*: Does not contain all possible values.
+        /// Current order this AI is performing.
         /// </summary>
         /// TODO: Rework AI so this enum can be finished.
         public OrderType MoveOrder { get; set; }
         /// <summary>
-        /// Unit this AI will auto attack when it is in auto attack range.
+        /// Unit this AI will auto attack or use a spell on when in range.
         /// </summary>
         public IAttackableUnit TargetUnit { get; set; }
-        /// <summary>
-        /// Unit this AI will dash to (assuming they are performing a targeted dash).
-        /// </summary>
-        public IAttackableUnit DashTarget { get; private set; }
+        public Dictionary<short, ISpell> Spells { get; }
 
         public ObjAiBase(Game game, string model, Stats.Stats stats, int collisionRadius = 40,
             Vector2 position = new Vector2(), int visionRadius = 0, uint netId = 0, TeamId team = TeamId.TEAM_NEUTRAL) :
@@ -105,13 +99,13 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             }
 
             // TODO: Centralize this instead of letting it lay in the initialization.
-            if (CharData.PerceptionBubbleRadius > 0)
-            {
-                VisionRadius = CharData.PerceptionBubbleRadius;
-            }
-            else if (collisionRadius > 0)
+            if (visionRadius > 0)
             {
                 VisionRadius = visionRadius;
+            }
+            else if (CharData.PerceptionBubbleRadius > 0)
+            {
+                VisionRadius = CharData.PerceptionBubbleRadius;
             }
             else
             {
@@ -121,32 +115,100 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             Stats.CurrentMana = stats.ManaPoints.Total;
             Stats.CurrentHealth = stats.HealthPoints.Total;
 
+            SpellToCast = null;
+
+            Spells = new Dictionary<short, ISpell>();
+
             if (!string.IsNullOrEmpty(model))
             {
-                AaSpellData = _game.Config.ContentManager.GetSpellData(CharData.AttackNames[0]);
-                float baseAttackCooldown = 1.6f * (1.0f + CharData.AttackDelayOffsetPercent[0]); // [0] is used as a placeholder until spells rework.
-                AutoAttackCastTime = baseAttackCooldown * (0.3f + CharData.AttackDelayCastOffsetPercent[0]);
-                AutoAttackProjectileSpeed = AaSpellData.MissileSpeed;
                 IsMelee = CharData.IsMelee;
+
+                // SpellSlots
+                // 0 - 3
+                for (short i = 0; i < CharData.SpellNames.Length; i++)
+                {
+                    if (!string.IsNullOrEmpty(CharData.SpellNames[i]))
+                    {
+                        Spells[i] = new Spell.Spell(game, this, CharData.SpellNames[i], (byte)i);
+                    }
+                }
+
+                // SummonerSpellSlots
+                // 4 - 5
+
+                // InventorySlots
+                // 6 - 12 (12 = TrinketSlot)
+                for (byte i = 6; i < 12; i++)
+                {
+                    Spells[i] = new Spell.Spell(game, this, "BaseSpell", i);
+                }
+
+                // BluePillSlot
+                // 13
+
+                // TempItemSlot
+                // 14
+
+                // RuneSlots
+                // 15 - 44
+
+                // ExtraSpells
+                // 45 - 60
+                for (short i = 0; i < CharData.ExtraSpells.Length; i++)
+                {
+                    if (!string.IsNullOrEmpty(CharData.ExtraSpells[i]))
+                    {
+                        var spellSlot = i + 45;
+                        Spells[(byte)(spellSlot)] = new Spell.Spell(game, this, CharData.ExtraSpells[i], (byte)(spellSlot));
+                        Spells[(byte)(spellSlot)].LevelUp();
+                    }
+                }
+
+                // RespawnSpellSlot
+                // 61
+
+                // UseSpellSlot
+                // 62
+
+                // PassiveSpellSlot
+                // 63
+                if (!string.IsNullOrEmpty(CharData.Passive.PassiveAbilityName))
+                {
+                    Spells[63] = new Spell.Spell(game, this, CharData.Passive.PassiveAbilityName, 63);
+                }
+
+                // BasicAttackNormalSlots & BasicAttackCriticalSlots
+                // 64 - 72 & 73 - 81
+                for (short i = 0; i < CharData.AttackNames.Length; i++)
+                {
+                    if (!string.IsNullOrEmpty(CharData.AttackNames[i]))
+                    {
+                        Spells[(byte)(i + 64)] = new Spell.Spell(game, this, CharData.AttackNames[i], (byte)(i + 64));
+                    }
+                }
+
+                AutoAttackSpell = GetNewAutoAttack();
             }
             else
             {
-                AutoAttackCastTime = 0;
-                AutoAttackProjectileSpeed = 500;
                 IsMelee = true;
             }
         }
 
-        public override bool CanMove()
+        public override void SetPosition(Vector2 vec)
         {
-            // False if any are true.
-            return !(IsDead || IsCastingSpell || IsDashing
-                    // TODO: Remove these and implement them as buffs, then just check the BuffType here.
-                    || HasCrowdControl(CrowdControlType.AIRBORNE)
-                    || HasCrowdControl(CrowdControlType.ROOT)
-                    || HasCrowdControl(CrowdControlType.STASIS)
-                    || HasCrowdControl(CrowdControlType.STUN)
-                    || HasCrowdControl(CrowdControlType.SNARE));
+            Position = vec;
+
+            // Reevaluate our current path to account for the starting position being changed.
+            if (!IsPathEnded())
+            {
+                List<Vector2> safePath = _game.Map.NavigationGrid.GetPath(Position, _game.Map.NavigationGrid.GetClosestTerrainExit(Waypoints.Last(), CollisionRadius));
+
+                if (safePath != null)
+                {
+                    SetWaypoints(safePath);
+                }
+            }
         }
 
         /// <summary>
@@ -154,6 +216,8 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         /// </summary>
         public virtual void AutoAttackHit(IAttackableUnit target)
         {
+            ApiEventManager.OnHitUnit.Publish(this, target, IsNextAutoCrit);
+
             if (HasCrowdControl(CrowdControlType.BLIND))
             {
                 target.TakeDamage(this, 0, DamageType.DAMAGE_TYPE_PHYSICAL,
@@ -163,35 +227,39 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             }
 
             var damage = Stats.AttackDamage.Total;
-            if (_isNextAutoCrit)
+            if (IsNextAutoCrit)
             {
                 damage *= Stats.CriticalDamage.Total;
             }
 
-            var onAutoAttack = _game.ScriptEngine.GetStaticMethod<Action<IAttackableUnit, IAttackableUnit>>(Model, "Passive", "OnAutoAttack");
-            onAutoAttack?.Invoke(this, target);
-
             target.TakeDamage(this, damage, DamageType.DAMAGE_TYPE_PHYSICAL,
                 DamageSource.DAMAGE_SOURCE_ATTACK,
-                _isNextAutoCrit);
+                IsNextAutoCrit);
+        }
+
+        public override bool CanMove()
+        {
+            // False if any are true.
+            return !(IsDead || MoveOrder == OrderType.CastSpell
+                    // TODO: Remove these and implement them as buffs, then just check the BuffType here.
+                    || HasCrowdControl(CrowdControlType.AIRBORNE)
+                    || HasCrowdControl(CrowdControlType.ROOT)
+                    || HasCrowdControl(CrowdControlType.STASIS)
+                    || HasCrowdControl(CrowdControlType.STUN)
+                    || HasCrowdControl(CrowdControlType.SNARE));
         }
 
         /// <summary>
-        /// Sets this AI's current auto attack to the given auto attack. *NOTE*: Will be deprecated when spells are fully implemented.
+        /// Whether or not this AI is able to cast spells.
         /// </summary>
-        /// <param name="newAutoAttackSpellData">Auto attack spell data to use.</param>
-        public void ChangeAutoAttackSpellData(ISpellData newAutoAttackSpellData)
+        public bool CanCast()
         {
-            AaSpellData = newAutoAttackSpellData;
+            return !HasCrowdControl(CrowdControlType.STUN) && !HasCrowdControl(CrowdControlType.SILENCE);
         }
 
-        /// <summary>
-        /// Sets this AI's current auto attack to the given auto attack. *NOTE*: Will be deprecated when spells are fully implemented.
-        /// </summary>
-        /// <param name="newAutoAttackSpellDataName">Name of the auto attack to use.</param>
-        public void ChangeAutoAttackSpellData(string newAutoAttackSpellDataName)
+        public bool CanLevelUpSpell(ISpell s)
         {
-            AaSpellData = _game.Config.ContentManager.GetSpellData(newAutoAttackSpellDataName);
+            return CharData.SpellsUpLevels[s.CastInfo.SpellSlot][s.CastInfo.SpellLevel] <= Stats.Level;
         }
 
         /// <summary>
@@ -203,7 +271,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         /// TODO: Move to AttackableUnit.
         public ClassifyUnit ClassifyTarget(IAttackableUnit target)
         {
-            if (target is IObjAiBase ai && ai.TargetUnit != null && ai.TargetUnit.IsInDistress()) // If an ally is in distress, target this unit. (Priority 1~5)
+            if (target is IObjAiBase ai && ai.TargetUnit != null && (ai.TargetUnit.Team == Team && ai.TargetUnit.IsInDistress())) // If an ally is in distress, target this unit. (Priority 1~5)
             {
                 switch (target)
                 {
@@ -271,20 +339,50 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         /// <param name="isTerrain">Whether or not this AI collided with terrain.</param>
         public override void OnCollision(IGameObject collider, bool isTerrain = false)
         {
-            base.OnCollision(collider, isTerrain);
-
             // If we were trying to path somewhere before colliding, then repath from our new position.
             if (!IsPathEnded())
             {
+                List<Vector2> safePath = _game.Map.NavigationGrid.GetPath(Position, _game.Map.NavigationGrid.GetClosestTerrainExit(Waypoints.Last()));
+
                 // TODO: When using this safePath, sometimes we collide with the terrain again, so we use an unsafe path the next collision, however,
                 // sometimes we collide again before we can finish the unsafe path, so we end up looping collisions between safe and unsafe paths, never actually escaping (ex: sharp corners).
                 // Edit the current method to fix the above problem.
-                List<Vector2> safePath = _game.Map.NavigationGrid.GetPath(Position, _game.Map.NavigationGrid.GetClosestTerrainExit(Waypoints.Last()));
                 if (safePath != null)
                 {
                     SetWaypoints(safePath);
                 }
             }
+
+            base.OnCollision(collider, isTerrain);
+        }
+
+        public override bool Move(float diff)
+        {
+            // If we have waypoints, but our move order is one of these, we shouldn't move.
+            if (MoveOrder == OrderType.CastSpell
+                || MoveOrder == OrderType.OrderNone
+                || MoveOrder == OrderType.Stop
+                || MoveOrder == OrderType.Taunt)
+            {
+                return false;
+            }
+
+            return base.Move(diff);
+        }
+
+        /// <summary>
+        /// Cancels any auto attacks this AI is performing and resets the time between the next auto attack if specified.
+        /// </summary>
+        /// <param name="reset">Whether or not to reset the delay between the next auto attack.</param>
+        public void CancelAutoAttack(bool reset)
+        {
+            AutoAttackSpell.SetSpellState(SpellState.STATE_READY);
+            if (reset)
+            {
+                _autoAttackCurrentCooldown = 0;
+                AutoAttackSpell.ResetSpellDelay();
+            }
+            _game.PacketNotifier.NotifyNPC_InstantStop_Attack(this, false);
         }
 
         /// <summary>
@@ -297,7 +395,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         /// <param name="keepFacingLastDirection">Whether or not the unit should maintain the direction they were facing before dashing.</param>
         /// <param name="followTargetMaxDistance">Maximum distance the unit will follow the Target before stopping the dash or reaching to the Target.</param>
         /// <param name="backDistance">Unknown parameter.</param>
-        /// <param name="travelTime">Total time the dash will follow the GameObject before stopping or reaching the Target.</param>
+        /// <param name="travelTime">Total time (in seconds) the dash will follow the GameObject before stopping or reaching the Target.</param>
         /// TODO: Implement Dash class which houses these parameters, then have that as the only parameter to this function (and other Dash-based functions).
         public void DashToTarget
         (
@@ -312,34 +410,37 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         )
         {
             // TODO: Take into account the rest of the arguments
-            IsDashing = true;
-            DashTime = Vector2.Distance(target.Position, Position) / (dashSpeed * 0.001f);
-            DashElapsedTime = 0;
-            DashSpeed = dashSpeed;
-
-            SetWaypoints(new List<Vector2> { Position, target.Position }, false);
-            DashTarget = target;
-            SetTargetUnit(target);
-
-            _game.PacketNotifier.NotifyWaypointGroupWithSpeed
-            (
-                this,
-                dashSpeed,
-                leapGravity,
-                keepFacingLastDirection,
-                target,
-                followTargetMaxDistance,
-                backDistance,
-                travelTime
-            );
-
-            if (animation == null)
+            MovementParameters = new ForceMovementParameters
             {
-                animation = "RUN";
+                PathSpeedOverride = dashSpeed,
+                ParabolicGravity = leapGravity,
+                ParabolicStartPoint = Position,
+                KeepFacingDirection = keepFacingLastDirection,
+                FollowNetID = target.NetId,
+                FollowDistance = followTargetMaxDistance,
+                FollowBackDistance = backDistance,
+                FollowTravelTime = travelTime
+            };
+            DashElapsedTime = 0;
+
+            // TODO: Verify if this should be a parameter
+            Stats.SetActionState(ActionState.CAN_ATTACK, false);
+            Stats.SetActionState(ActionState.CAN_NOT_ATTACK, true);
+            Stats.SetActionState(ActionState.CAN_MOVE, false);
+            Stats.SetActionState(ActionState.CAN_NOT_MOVE, true);
+
+            if (animation != null && animation != "")
+            {
+                var animPairs = new Dictionary<string, string> { { "RUN", animation } };
+                SetAnimStates(animPairs);
             }
 
-            var animPairs = new Dictionary<string, string> { { "RUN", animation } };
-            SetAnimStates(animPairs);
+            SetWaypoints(new List<Vector2> { Position, target.Position }, false);
+
+            SetTargetUnit(target, true);
+            _game.PacketNotifier.NotifyWaypointGroupWithSpeed(this);
+
+            // TODO: Verify if we want to use NotifyWaypointListWithSpeed instead as it does not require conversions.
         }
 
         /// <summary>
@@ -416,67 +517,325 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         /// <summary>
         /// Function which refreshes this AI's waypoints if they have a target.
         /// </summary>
-        public virtual void RefreshWaypoints()
+        public virtual void RefreshWaypoints(float idealRange)
         {
-            if (TargetUnit == null || TargetUnit.IsDead || (Vector2.DistanceSquared(Position, TargetUnit.Position) <= Stats.Range.Total * Stats.Range.Total && Waypoints.Count == 1)
-                || (IsDashing && DashTarget == null))
+            // Stop dashing to target if we reached them.
+            // TODO: Implement events so we can centralize things like this.
+            if (MovementParameters != null)
+            {
+                if (TargetUnit != null)
+                {
+                    if (IsCollidingWith(TargetUnit))
+                    {
+                        SetDashingState(false);
+                    }
+                    else
+                    {
+                        SetWaypoints(new List<Vector2> { Position, TargetUnit.Position });
+                    }
+                }
+
+                return;
+            }
+
+            if (MoveOrder == OrderType.AttackMove
+                || MoveOrder == OrderType.AttackTo
+                || MoveOrder == OrderType.AttackTerrainOnce
+                || MoveOrder == OrderType.AttackTerrainSustained)
+            {
+                idealRange = Stats.Range.Total;
+            }
+
+            if (MoveOrder != OrderType.AttackTo && TargetUnit != null)
+            {
+                UpdateMoveOrder(OrderType.AttackTo, true);
+                idealRange = Stats.Range.Total;
+            }
+
+            if (SpellToCast != null)
+            {
+                idealRange = SpellToCast.GetCurrentCastRange();
+            }
+
+            Vector2 targetPos = Vector2.Zero;
+
+            if ((MoveOrder == OrderType.AttackTo)
+                && TargetUnit != null)
+            {
+                if (!TargetUnit.IsDead)
+                {
+                    targetPos = TargetUnit.Position;
+                }
+            }
+
+            if (MoveOrder == OrderType.AttackMove
+                || MoveOrder == OrderType.AttackTerrainOnce
+                || MoveOrder == OrderType.AttackTerrainSustained
+                && !IsPathEnded())
+            {
+                targetPos = Waypoints.LastOrDefault();
+
+                if (targetPos == Vector2.Zero)
+                {
+                    // Neither AttackTo nor AttackMove (etc.) were successful.
+                    return;
+                }
+            }
+
+            // If the target is already in range, stay where we are.
+            if (MoveOrder == OrderType.AttackMove && targetPos != Vector2.Zero)
+            {
+                if (MovementParameters == null && Vector2.DistanceSquared(Position, targetPos) <= idealRange * idealRange)
+                {
+                    UpdateMoveOrder(OrderType.Stop, true);
+                }
+            }
+            // No TargetUnit
+            else if (targetPos == Vector2.Zero)
             {
                 return;
             }
 
-            // If the target is already in range, stay where we are.
-            if (!IsDashing && Vector2.DistanceSquared(Position, TargetUnit.Position) <= (Stats.Range.Total - 2f) * (Stats.Range.Total - 2f))
+            if (MoveOrder == OrderType.AttackTo && targetPos != Vector2.Zero)
             {
-                StopMovement();
-            }
-            // Stop dashing to target if we reached them.
-            // TODO: Implement events so we can centralize things like this.
-            else if (IsDashing && IsCollidingWith(DashTarget))
-            {
-                SetDashingState(false);
-            }
-
-            // Otherwise, move to the target.
-            else
-            {
-                var target = TargetUnit;
-                if (IsDashing)
+                if (MovementParameters == null)
                 {
-                    target = DashTarget;
-                    DashElapsedTime = 0;
-                }
-                Vector2 targetPos = target.Position;
-                var newWaypoints = new List<Vector2> { Position, targetPos };
-                if (!IsDashing)
-                {
-                    if (!_game.Map.NavigationGrid.IsWalkable(targetPos, target.CollisionRadius))
+                    if (Vector2.DistanceSquared(Position, targetPos) <= idealRange * idealRange)
                     {
-                        targetPos = _game.Map.NavigationGrid.GetClosestTerrainExit(targetPos, CollisionRadius);
+                        UpdateMoveOrder(OrderType.Stop, true);
                     }
-
-                    newWaypoints = _game.Map.NavigationGrid.GetPath(Position, targetPos);
-                    
-                    if (newWaypoints == null)
+                    else
                     {
-                        newWaypoints = new List<Vector2> { Position, targetPos };
+                        if (!_game.Map.NavigationGrid.IsWalkable(targetPos, CollisionRadius))
+                        {
+                            targetPos = _game.Map.NavigationGrid.GetClosestTerrainExit(targetPos, CollisionRadius);
+                        }
+
+                        var newWaypoints = _game.Map.NavigationGrid.GetPath(Position, targetPos);
+                        if (newWaypoints.Count > 1)
+                        {
+                            SetWaypoints(newWaypoints);
+                        }
                     }
-                }
-
-
-                if (newWaypoints.Count > 1)
-                {
-                    SetWaypoints(newWaypoints);
                 }
             }
         }
 
         /// <summary>
-        /// Sets this AI's current auto attack to their base auto attack.
-        /// *NOTE*: Will be depricated when spell systems are fully implemented.
+        /// Gets a random auto attack spell from the list of auto attacks available for this AI.
+        /// Will only select crit auto attacks if the next auto attack is going to be a crit, otherwise normal auto attacks will be selected.
         /// </summary>
-        public void ResetAutoAttackSpellData()
+        /// <returns>Random auto attack spell.</returns>
+        public ISpell GetNewAutoAttack()
         {
-            AaSpellData = _game.Config.ContentManager.GetSpellData(CharData.AttackNames[0]);
+            if (IsNextAutoCrit)
+            {
+                // TODO: Verify if we want these explicitly defined instead of taken via iteration of all spells.
+                var critAttackSpells = Spells.Where(s =>
+                {
+                    if (s.Key - 64 >= 9 && s.Key - 64 < 18)
+                    {
+                        if (CharData.AttackProbabilities[s.Key - 64] > 0.0f)
+                        {
+                            return true;
+                        }
+                    }
+                    return false;
+                });
+                return critAttackSpells.ElementAt(_random.Next(0, Math.Max(0, critAttackSpells.Count() - 1))).Value;
+            }
+            // TODO: Verify if we want these explicitly defined instead of taken via iteration of all spells.
+            var basicAttackSpells = Spells.Where(s =>
+            {
+                if (s.Key - 64 >= 0 && s.Key - 64 < 9)
+                {
+                    if (CharData.AttackProbabilities[s.Key - 64] > 0.0f)
+                    {
+                        return true;
+                    }
+                }
+                return false;
+            });
+            return basicAttackSpells.ElementAt(_random.Next(0, Math.Max(0, basicAttackSpells.Count() - 1))).Value;
+        }
+
+        public ISpell GetSpell(byte slot)
+        {
+            return Spells[slot];
+        }
+
+        public ISpell GetSpell(string name)
+        {
+            foreach (var s in Spells.Values)
+            {
+                if (s == null)
+                {
+                    continue;
+                }
+
+                if (s.SpellName == name)
+                {
+                    return s;
+                }
+            }
+
+            return null;
+        }
+
+        public virtual ISpell LevelUpSpell(byte slot)
+        {
+            var s = Spells[slot];
+
+            if (s == null || !CanLevelUpSpell(s))
+            {
+                return null;
+            }
+
+            s.LevelUp();
+
+            return s;
+        }
+
+        /// <summary>
+        /// Removes the spell instance from the given slot (replaces it with an empty BaseSpell).
+        /// </summary>
+        /// <param name="slot">Byte slot of the spell to remove.</param>
+        public void RemoveSpell(byte slot)
+        {
+            if (Spells[slot].CastInfo.IsAutoAttack)
+            {
+                return;
+            }
+            else
+            {
+                Spells[slot].Deactivate();
+            }
+            Spells[slot] = new Spell.Spell(_game, this, "BaseSpell", slot); // Replace previous spell with empty spell.
+            Stats.SetSpellEnabled(slot, false);
+        }
+
+        /// <summary>
+        /// Sets this AI's current auto attack to their base auto attack.
+        /// </summary>
+        public void ResetAutoAttackSpell()
+        {
+            AutoAttackSpell = GetNewAutoAttack();
+        }
+
+        /// <summary>
+        /// Sets this unit's auto attack spell that they will use when in range of their target (unless they are going to cast a spell first).
+        /// </summary>
+        /// <param name="spell">ISpell instance to set.</param>
+        /// <param name="isReset">Whether or not setting this spell causes auto attacks to be reset (cooldown).</param>
+        public void SetAutoAttackSpell(ISpell spell, bool isReset)
+        {
+            AutoAttackSpell = spell;
+            if (isReset)
+            {
+                _autoAttackCurrentCooldown = 0;
+                AutoAttackSpell.SetSpellState(SpellState.STATE_READY);
+            }
+        }
+
+        /// <summary>
+        /// Sets this unit's auto attack spell that they will use when in range of their target (unless they are going to cast a spell first).
+        /// </summary>
+        /// <param name="name">Internal name of the spell to set.</param>
+        /// <param name="isReset">Whether or not setting this spell causes auto attacks to be reset (cooldown).</param>
+        /// <returns>ISpell set.</returns>
+        public ISpell SetAutoAttackSpell(string name, bool isReset)
+        {
+            AutoAttackSpell = GetSpell(name);
+            if (isReset)
+            {
+                _autoAttackCurrentCooldown = 0;
+                AutoAttackSpell.SetSpellState(SpellState.STATE_READY);
+            }
+            return AutoAttackSpell;
+        }
+
+        /// <summary>
+        /// Forces this AI to skip its next auto attack. Usually used when spells intend to override the next auto attack with another spell.
+        /// </summary>
+        public void SkipNextAutoAttack()
+        {
+            _skipNextAutoAttack = true;
+        }
+
+        /// <summary>
+        /// Sets the spell for the given slot to a new spell of the given name.
+        /// </summary>
+        /// <param name="name">Internal name of the spell to set.</param>
+        /// <param name="slot">Slot of the spell to replace.</param>
+        /// <param name="enabled">Whether or not the new spell should be enabled.</param>
+        /// <returns>Newly created spell set.</returns>
+        public ISpell SetSpell(string name, byte slot, bool enabled)
+        {
+            if (Spells[slot].CastInfo.IsAutoAttack)
+            {
+                return null;
+            }
+            ISpell newSpell = new Spell.Spell(_game, this, name, slot);
+
+            if (Spells[slot] != null)
+            {
+                newSpell.SetLevel(Spells[slot].CastInfo.SpellLevel);
+            }
+
+            Spells[slot] = newSpell;
+            Stats.SetSpellEnabled(slot, enabled);
+
+            if (this is IChampion champion)
+            {
+                _game.PacketNotifier.NotifyS2C_SetSpellData((int)_game.PlayerManager.GetClientInfoByChampion(champion).PlayerId, NetId, name, slot);
+            }
+
+            return newSpell;
+        }
+
+        /// <summary>
+        /// Sets the spell that this unit will cast when it gets in range of the spell's target.
+        /// Overrides auto attack spell casting.
+        /// </summary>
+        /// <param name="s">Spell that will be cast.</param>
+        /// <param name="location">Location to cast the spell on. May set to Vector2.Zero if unit parameter is used.</param>
+        /// <param name="unit">Unit to cast the spell on.</param>
+        public void SetSpellToCast(ISpell s, Vector2 location, IAttackableUnit unit = null)
+        {
+            SpellToCast = s;
+
+            if (s == null)
+            {
+                return;
+            }
+
+            if (location != Vector2.Zero)
+            {
+                var exit = _game.Map.NavigationGrid.GetClosestTerrainExit(location, CollisionRadius);
+                var path = _game.Map.NavigationGrid.GetPath(Position, exit);
+
+                if (path != null)
+                {
+                    SetWaypoints(path);
+                }
+                else
+                {
+                    SetWaypoints(new List<Vector2> { Position, exit });
+                }
+
+                UpdateMoveOrder(OrderType.MoveTo, true);
+            }
+
+            if (unit != null)
+            {
+                // Unit targeted.
+                SetTargetUnit(unit, true);
+                UpdateMoveOrder(OrderType.AttackTo, true);
+            }
+            else
+            {
+                SetTargetUnit(null, true);
+            }
         }
 
         /// <summary>
@@ -484,32 +843,95 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         /// </summary>
         /// <param name="target">Unit to target.</param>
         /// TODO: Remove Target class.
-        public void SetTargetUnit(IAttackableUnit target)
+        public void SetTargetUnit(IAttackableUnit target, bool networked = false)
         {
             TargetUnit = target;
-            RefreshWaypoints();
+
+            if (networked)
+            {
+                _game.PacketNotifier.NotifyAI_TargetS2C(this, target);
+
+                if (target is IChampion c)
+                {
+                    _game.PacketNotifier.NotifyAI_TargetHeroS2C(this, c);
+                }
+            }
         }
 
-        public override void SetDashingState(bool state)
+        /// <summary>
+        /// Swaps the spell in the given slot1 with the spell in the given slot2.
+        /// </summary>
+        /// <param name="slot1">Slot of the spell to put into slot2.</param>
+        /// <param name="slot2">Slot of the spell to put into slot1.</param>
+        public void SwapSpells(byte slot1, byte slot2)
         {
-            base.SetDashingState(state);
+            if (Spells[slot1].CastInfo.IsAutoAttack || Spells[slot2].CastInfo.IsAutoAttack)
+            {
+                return;
+            }
 
-            DashTarget = null;
+            var slot1Name = Spells[slot1].SpellName;
+            var slot2Name = Spells[slot2].SpellName;
+
+            var enabledBuffer = Stats.GetSpellEnabled(slot1);
+            var buffer = Spells[slot1];
+            Spells[slot1] = Spells[slot2];
+
+            Spells[slot2] = buffer;
+            Stats.SetSpellEnabled(slot1, Stats.GetSpellEnabled(slot2));
+            Stats.SetSpellEnabled(slot2, enabledBuffer);
+
+            if (this is IChampion champion)
+            {
+                _game.PacketNotifier.NotifyS2C_SetSpellData((int)_game.PlayerManager.GetClientInfoByChampion(champion).PlayerId, NetId, slot2Name, slot1);
+                _game.PacketNotifier.NotifyS2C_SetSpellData((int)_game.PlayerManager.GetClientInfoByChampion(champion).PlayerId, NetId, slot1Name, slot2);
+            }
+        }
+
+        /// <summary>
+        /// Sets the spell that will be channeled by this unit. Used by Spell for manual stopping and networking.
+        /// </summary>
+        /// <param name="spell">Spell that is being channeled.</param>
+        /// <param name="network">Whether or not to send the channeling of this spell to clients.</param>
+        public void SetChannelSpell(ISpell spell, bool network = true)
+        {
+            ChannelSpell = spell;
+        }
+
+        /// <summary>
+        /// Forces this AI to stop channeling based on the given condition with the given reason.
+        /// </summary>
+        /// <param name="condition">Canceled or successful?</param>
+        /// <param name="reason">How it should be treated.</param>
+        public void StopChanneling(ChannelingStopCondition condition, ChannelingStopSource reason)
+        {
+            ChannelSpell.StopChanneling(condition, reason);
         }
 
         public override void Update(float diff)
         {
             base.Update(diff);
-            UpdateAutoAttackTarget(diff);
+
+            foreach (var s in Spells.Values)
+            {
+                s.Update(diff);
+            }
+
+            if (CanMove())
+            {
+                UpdateAttackTarget(diff);
+            }
         }
 
         /// <summary>
-        /// Updates this AI's current target and auto attack actions depending on conditions such as crowd control, death state, vision, distance to target, etc.
+        /// Updates this AI's current target and attack actions depending on conditions such as crowd control, death state, vision, distance to target, etc.
+        /// Used for both auto and spell attacks.
         /// </summary>
         /// <param name="diff">Number of milliseconds that passed before this tick occurred.</param>
-        private void UpdateAutoAttackTarget(float diff)
+        private void UpdateAttackTarget(float diff)
         {
-            if (HasCrowdControl(CrowdControlType.DISARM) || HasCrowdControl(CrowdControlType.STUN))
+            if (HasCrowdControl(CrowdControlType.STUN) || HasCrowdControl(CrowdControlType.AIRBORNE) ||
+                HasCrowdControl(CrowdControlType.STASIS))
             {
                 return;
             }
@@ -518,108 +940,158 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             {
                 if (TargetUnit != null)
                 {
-                    SetTargetUnit(null);
+                    SetTargetUnit(null, true);
                     IsAttacking = false;
-                    _game.PacketNotifier.NotifySetTarget(this, null);
                     HasMadeInitialAttack = false;
                 }
                 return;
             }
 
-            if (TargetUnit != null)
+            if (MovementParameters != null)
             {
-                if (TargetUnit.IsDead || (!_game.ObjectManager.TeamHasVisionOn(Team, TargetUnit) && !(TargetUnit is IBaseTurret) && !(TargetUnit is IObjBuilding) && !IsDashing))
+                RefreshWaypoints(0);
+                return;
+            }
+
+            var idealRange = Stats.Range.Total;
+
+            if (TargetUnit is IObjBuilding)
+            {
+                idealRange = Stats.Range.Total + TargetUnit.CollisionRadius;
+            }
+
+            if (SpellToCast != null && !IsAttacking)
+            {
+                idealRange = SpellToCast.GetCurrentCastRange();
+
+                if (MoveOrder == OrderType.AttackTo
+                    && TargetUnit != null
+                    && Vector2.DistanceSquared(TargetUnit.Position, SpellToCast.CastInfo.Owner.Position) <= idealRange * idealRange)
                 {
-                    SetTargetUnit(null);
-                    IsAttacking = false;
-                    _game.PacketNotifier.NotifySetTarget(this, null);
-                    HasMadeInitialAttack = false;
+                    SpellToCast.Cast(new Vector2(SpellToCast.CastInfo.TargetPosition.X, SpellToCast.CastInfo.TargetPosition.Z), new Vector2(SpellToCast.CastInfo.TargetPositionEnd.X, SpellToCast.CastInfo.TargetPositionEnd.Z), TargetUnit);
                 }
-                else if (IsAttacking && TargetUnit != null && !IsDashing)
+                else if (MoveOrder == OrderType.MoveTo
+                        && Vector2.DistanceSquared(new Vector2(SpellToCast.CastInfo.TargetPosition.X, SpellToCast.CastInfo.TargetPosition.Z), SpellToCast.CastInfo.Owner.Position) <= idealRange * idealRange)
                 {
-                    _autoAttackCurrentDelay += diff / 1000.0f;
-                    if (_autoAttackCurrentDelay >= AutoAttackCastTime / Stats.AttackSpeedMultiplier.Total)
-                    {
-                        if (!IsMelee)
-                        {
-                            var p = new SpellMissile(
-                                _game,
-                                Position,
-                                5,
-                                this,
-                                TargetUnit,
-                                null,
-                                AutoAttackProjectileSpeed,
-                                "",
-                                0,
-                                _autoAttackProjId
-                            );
-                            _game.ObjectManager.AddObject(p);
-                            _game.PacketNotifier.NotifyForceCreateMissile(p);
-                        }
-                        else
-                        {
-                            AutoAttackHit(TargetUnit);
-                        }
-                        _autoAttackCurrentCooldown = 1.0f / Stats.GetTotalAttackSpeed();
-                        IsAttacking = false;
-                    }
-
-                }
-                else if (Vector2.DistanceSquared(Position, TargetUnit.Position) <= Stats.Range.Total * Stats.Range.Total && !IsDashing)
-                {
-                    RefreshWaypoints();
-                    _isNextAutoCrit = _random.Next(0, 100) < Stats.CriticalChance.Total * 100;
-                    if (_autoAttackCurrentCooldown <= 0)
-                    {
-                        IsAttacking = true;
-                        _autoAttackCurrentDelay = 0;
-                        _autoAttackProjId = _networkIdManager.GetNewNetId();
-
-                        if (!HasMadeInitialAttack)
-                        {
-                            HasMadeInitialAttack = true;
-                            _game.PacketNotifier.NotifyBeginAutoAttack(
-                                this,
-                                TargetUnit,
-                                _autoAttackProjId,
-                                _isNextAutoCrit
-                            );
-                        }
-                        else
-                        {
-                            _nextAttackFlag = !_nextAttackFlag; // The first auto attack frame has occurred
-                            _game.PacketNotifier.NotifyNextAutoAttack(
-                                this,
-                                TargetUnit,
-                                _autoAttackProjId,
-                                _isNextAutoCrit,
-                                _nextAttackFlag
-                                );
-                        }
-
-                        var attackType = IsMelee ? AttackType.ATTACK_TYPE_MELEE : AttackType.ATTACK_TYPE_TARGETED;
-                        _game.PacketNotifier.NotifyOnAttack(this, TargetUnit, attackType);
-                    }
-
+                    SpellToCast.Cast(new Vector2(SpellToCast.CastInfo.TargetPosition.X, SpellToCast.CastInfo.TargetPosition.Z), new Vector2(SpellToCast.CastInfo.TargetPositionEnd.X, SpellToCast.CastInfo.TargetPositionEnd.Z));
                 }
                 else
                 {
-                    RefreshWaypoints();
+                    RefreshWaypoints(idealRange);
                 }
-
             }
             else
             {
-                IsAttacking = false;
-                HasMadeInitialAttack = false;
-                _autoAttackCurrentDelay = 0;
-                _game.PacketNotifier.NotifyNPC_InstantStopAttack(this, false);
-            }
+                if (TargetUnit != null && MoveOrder != OrderType.CastSpell)
+                {
+                    if (TargetUnit.IsDead || (!_game.ObjectManager.TeamHasVisionOn(Team, TargetUnit) && !(TargetUnit is IBaseTurret) && !(TargetUnit is IObjBuilding) && MovementParameters == null))
+                    {
+                        SetTargetUnit(null);
+                        IsAttacking = false;
+                        HasMadeInitialAttack = false;
+                    }
+                    else if (IsAttacking && MovementParameters == null)
+                    {
+                        if (AutoAttackSpell.HasEmptyScript || (AutoAttackSpell.CastInfo.SpellSlot - 64 < 9 && IsNextAutoCrit) || (AutoAttackSpell.CastInfo.SpellSlot - 64 >= 9 && !IsNextAutoCrit))
+                        {
+                            AutoAttackSpell = GetNewAutoAttack();
+                        }
 
-            if (_autoAttackCurrentCooldown > 0)
-            {
-                _autoAttackCurrentCooldown -= diff / 1000.0f;
+                        if (AutoAttackSpell.State == SpellState.STATE_READY)
+                        {
+                            ApiEventManager.OnPreAttack.Publish(this, AutoAttackSpell);
+
+                            if (!_skipNextAutoAttack)
+                            {
+                                AutoAttackSpell.Cast(TargetUnit.Position, TargetUnit.Position, TargetUnit);
+
+                                _autoAttackCurrentCooldown = 1.0f / Stats.GetTotalAttackSpeed();
+                            }
+                            else
+                            {
+                                _skipNextAutoAttack = false;
+                            }
+
+                            IsAttacking = false;
+                        }
+                    }
+                    else if (Vector2.DistanceSquared(Position, TargetUnit.Position) <= idealRange * idealRange && MovementParameters == null)
+                    {
+                        if (AutoAttackSpell.State == SpellState.STATE_READY)
+                        {
+                            // Stops us from continuing to move towards the target.
+                            RefreshWaypoints(Stats.Range.Total);
+
+                            // TODO: Implement CanAttack function and use BuffType instead of CrowdControl crap (which will be removed).
+                            if (!HasCrowdControl(CrowdControlType.DISARM) && !HasCrowdControl(CrowdControlType.BLIND))
+                            {
+                                IsNextAutoCrit = _random.Next(0, 100) < Stats.CriticalChance.Total * 100;
+                                if (_autoAttackCurrentCooldown <= 0)
+                                {
+                                    HasAutoAttacked = false;
+                                    AutoAttackSpell.ResetSpellDelay();
+                                    // TODO: ApiEventManager.OnUnitPreAttack.Publish(this);
+                                    IsAttacking = true;
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        RefreshWaypoints(idealRange);
+                    }
+                }
+                else
+                {
+                    // Acquires the closest target.
+                    if (MoveOrder == OrderType.AttackMove)
+                    {
+                        var objects = _game.ObjectManager.GetObjects();
+                        var distanceSqrToTarget = 25000f * 25000f;
+                        IAttackableUnit nextTarget = null;
+                        var range = Math.Max(Stats.Range.Total, DETECT_RANGE);
+
+                        foreach (var it in objects)
+                        {
+                            if (!(it.Value is IAttackableUnit u) ||
+                                u.IsDead ||
+                                u.Team == Team ||
+                                Vector2.DistanceSquared(Position, u.Position) > range * range)
+                                continue;
+
+                            if (!(Vector2.DistanceSquared(Position, u.Position) < distanceSqrToTarget))
+                                continue;
+                            distanceSqrToTarget = Vector2.DistanceSquared(Position, u.Position);
+                            nextTarget = u;
+                        }
+
+                        if (nextTarget != null)
+                        {
+                            SetTargetUnit(nextTarget, true);
+                        }
+                    }
+
+                    IsAttacking = false;
+
+                    if (AutoAttackSpell != null && AutoAttackSpell.State != SpellState.STATE_READY)
+                    {
+                        if (!HasAutoAttacked)
+                        {
+                            _autoAttackCurrentCooldown = 0;
+                        }
+
+                        AutoAttackSpell.SetSpellState(SpellState.STATE_READY);
+                        AutoAttackSpell.ResetSpellDelay();
+                        _game.PacketNotifier.NotifyNPC_InstantStop_Attack(this, false);
+                    }
+
+                    HasMadeInitialAttack = false;
+                }
+
+                if (_autoAttackCurrentCooldown > 0)
+                {
+                    _autoAttackCurrentCooldown -= diff / 1000.0f;
+                }
             }
         }
 
@@ -627,18 +1099,22 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         /// Sets this unit's move order to the given order.
         /// </summary>
         /// <param name="order">MoveOrder to set.</param>
-        public virtual void UpdateMoveOrder(OrderType order)
+        public void UpdateMoveOrder(OrderType order, bool publish = true)
         {
             MoveOrder = order;
-        }
 
-        /// <summary>
-        /// Sets this AI's current target unit.
-        /// </summary>
-        /// <param name="unit">Unit to target.</param>
-        public void UpdateTargetUnit(IAttackableUnit unit)
-        {
-            TargetUnit = unit;
+            if ((MoveOrder == OrderType.OrderNone
+                || MoveOrder == OrderType.Taunt
+                || MoveOrder == OrderType.Stop)
+                && !IsPathEnded())
+            {
+                StopMovement();
+            }
+
+            if (publish)
+            {
+                ApiEventManager.OnUnitUpdateMoveOrder.Publish(this);
+            }
         }
     }
 }

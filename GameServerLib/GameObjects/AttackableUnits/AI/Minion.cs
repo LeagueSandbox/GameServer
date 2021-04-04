@@ -67,7 +67,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             base.Update(diff);
             if (!IsDead)
             {
-                if (IsDashing || _aiPaused)
+                if (MovementParameters != null || _aiPaused)
                 {
                     Replication.Update();
                     return;
@@ -120,11 +120,12 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             }
             if (nextTarget != null) // If we have a target
             {
-                TargetUnit = nextTarget; // Set the new target and refresh waypoints
-                _game.PacketNotifier.NotifySetTarget(this, nextTarget);
+                // Set the new target and refresh waypoints
+                SetTargetUnit(nextTarget, true);
+
                 return true;
             }
-            _game.PacketNotifier.NotifyNPC_InstantStopAttack(this, false);
+            _game.PacketNotifier.NotifyNPC_InstantStop_Attack(this, false);
             IsAttacking = false;
             return false;
         }
@@ -134,7 +135,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             if (IsAttacking && (TargetUnit == null || TargetUnit.IsDead || Vector2.DistanceSquared(Position, TargetUnit.Position) > Stats.Range.Total * Stats.Range.Total))
             // If target is dead or out of range
             {
-                _game.PacketNotifier.NotifyNPC_InstantStopAttack(this, false);
+                _game.PacketNotifier.NotifyNPC_InstantStop_Attack(this, false);
                 IsAttacking = false;
             }
         }

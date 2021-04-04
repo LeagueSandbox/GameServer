@@ -1,5 +1,6 @@
 ﻿using GameServerCore;
 using GameServerCore.Domain.GameObjects;
+using GameServerCore.Enums;
 using GameServerCore.Packets.Handlers;
 using GameServerCore.Packets.PacketDefinitions.Requests;
 
@@ -34,7 +35,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                 return false;
             }
 
-            return s.Cast(req.X, req.Y, req.X2, req.Y2, targetUnit);
+            return s.Cast(req.Position, req.EndPosition, targetUnit);
         }
     }
 }

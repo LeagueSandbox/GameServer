@@ -25,7 +25,7 @@ namespace LeagueSandbox.GameServer.Scripting.CSharp
         /// Determines how how long the spell should be channeled (overrides content based channel duration). Triggers on channel (and post) if value is above 0.
         /// </summary>
         float ChannelDuration { get; }
-
+        
         bool DoOnPreDamageInExpirationOrder { get; }
         bool DoesntBreakShields { get; }
         bool IsDamagingSpell { get; }
@@ -35,7 +35,7 @@ namespace LeagueSandbox.GameServer.Scripting.CSharp
         bool IsNonDispellable { get; }
 
         bool NotSingleTargetSpell { get; }
-
+        
         int OnPreDamagePriority { get; }
 
         bool OverrideCooldownCheck { get; }
@@ -43,7 +43,7 @@ namespace LeagueSandbox.GameServer.Scripting.CSharp
         bool PersistsThroughDeath { get; }
 
         string PopupMessage1 { get; }
-
+        
         float SetSpellDamageRatio { get; }
         float SpellDamageRatio { get; }
 

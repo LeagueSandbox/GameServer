@@ -7,6 +7,7 @@ using GameServerCore.Domain.GameObjects.Spell;
 using GameServerCore.Enums;
 using LeagueSandbox.GameServer.GameObjects;
 using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
+using LeagueSandbox.GameServer.GameObjects.Spell;
 using LeagueSandbox.GameServer.Logging;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using log4net;
@@ -135,10 +136,11 @@ namespace LeagueSandbox.GameServer.API
         /// <param name="y">Y coordinate.</param>
         public static void TeleportTo(IObjAiBase unit, float x, float y)
         {
-            if (unit.IsDashing)
+            if (unit.MovementParameters != null)
             {
                 CancelDash(unit);
             }
+
             unit.TeleportTo(x, y);
             unit.StopMovement();
         }
@@ -327,7 +329,7 @@ namespace LeagueSandbox.GameServer.API
         /// <param name="isVisible">Whether or not this minion should be visible.</param>
         /// <param name="aiPaused">Whether or not this minion's AI is inactive.</param>
         /// <returns>New Minion instance.</returns>
-        public static IMinion AddMinion(IObjAiBase owner, string model, string name, Vector2 position, bool isVisible = true, bool aiPaused = true)
+        public static IMinion AddMinion(IObjAiBase owner, string model, string name, Vector2 position, Vector2 facingDirection = new Vector2(), bool isVisible = true, bool aiPaused = true)
         {
             var m = new Minion(_game, owner, position, model, name, 0, owner.Team);
             _game.ObjectManager.AddObject(m);
@@ -350,7 +352,7 @@ namespace LeagueSandbox.GameServer.API
         public static IMinion AddMinionTarget(IObjAiBase owner, string model, string name, IGameObject target, bool isVisible = true, bool aiPaused = true)
         {
             // TODO: Implement attachable Minions/GameObjects.
-            return AddMinion(owner, model, name, target.Position, isVisible, aiPaused);
+            return AddMinion(owner, model, name, target.Position, isVisible: isVisible, aiPaused: aiPaused);
         }
 
         /// <summary>
@@ -546,6 +548,120 @@ namespace LeagueSandbox.GameServer.API
         public static void SetAnimStates(IAttackableUnit unit, Dictionary<string, string> animPairs)
         {
             unit.SetAnimStates(animPairs);
+        }
+
+        public static void SealSpellSlot(IObjAiBase target, SpellSlotType slotType, int slot, SpellbookType spellbookType, bool seal)
+        {
+            if (spellbookType == SpellbookType.SPELLBOOK_UNKNOWN
+                || (spellbookType == SpellbookType.SPELLBOOK_SUMMONER && (slotType != SpellSlotType.SpellSlots)
+                || (spellbookType == SpellbookType.SPELLBOOK_CHAMPION
+                    && ((slotType == SpellSlotType.SpellSlots && slot < 0 || slot > 3)
+                        || (slotType == SpellSlotType.InventorySlots && slot < 0 && slot > 6)
+                        || (slotType == SpellSlotType.ExtraSlots && slot < 0 && slot > 15)))))
+            {
+                return;
+            }
+
+            if (spellbookType == SpellbookType.SPELLBOOK_CHAMPION)
+            {
+                if (slotType == SpellSlotType.InventorySlots)
+                {
+                    slot += 6;
+                }
+                if (slotType == SpellSlotType.ExtraSlots)
+                {
+                    slot += 45;
+                }
+            }
+            else
+            {
+                slot += 4;
+            }
+
+            target.Stats.SetSpellEnabled((byte)slot, !seal);
+        }
+
+        public static void SpellCast(IObjAiBase caster, int slot, SpellSlotType slotType, Vector2 pos, Vector2 endPos, bool fireWithoutCasting, Vector2 overrideCastPos, List<ICastTarget> targets = null, bool isForceCastingOrChanneling = false, int overrideForceLevel = -1, bool updateAutoAttackTimer = false, bool useAutoAttackSpell = false)
+        {
+            if ((slotType == SpellSlotType.SpellSlots && slot < 0 || slot > 3)
+                || (slotType == SpellSlotType.InventorySlots && slot < 0 && slot > 6)
+                || (slotType == SpellSlotType.ExtraSlots && slot < 0 && slot > 15))
+            {
+                return;
+            }
+
+            if (slotType == SpellSlotType.InventorySlots)
+            {
+                slot += 4;
+            }
+
+            if (slotType == SpellSlotType.ExtraSlots)
+            {
+                slot += 45;
+            }
+
+            ISpell spell = caster.GetSpell((byte)slot);
+
+            if (targets == null)
+            {
+                targets = new List<ICastTarget> { new CastTarget(null, HitResult.HIT_Normal) };
+            }
+
+            ICastInfo castInfo = new CastInfo()
+            {
+                SpellHash = (uint)spell.GetId(),
+                SpellNetID = _game.NetworkIdManager.GetNewNetId(),
+                SpellLevel = spell.CastInfo.SpellLevel,
+                AttackSpeedModifier = caster.Stats.AttackSpeedMultiplier.Total,
+                Owner = caster,
+                // TODO: Verify
+                SpellChainOwnerNetID = caster.NetId,
+                PackageHash = caster.GetObjHash(),
+                MissileNetID = _game.NetworkIdManager.GetNewNetId(),
+                TargetPosition = new Vector3(pos.X, caster.GetHeight(), pos.Y),
+                TargetPositionEnd = new Vector3(endPos.X, caster.GetHeight(), endPos.Y),
+
+                Targets = targets,
+
+                IsAutoAttack = updateAutoAttackTimer,
+                // TODO: Verify the differences between these two and make separate options for them.
+                UseAttackCastTime = useAutoAttackSpell,
+                UseAttackCastDelay = false,
+                IsForceCastingOrChannel = isForceCastingOrChanneling,
+                
+                SpellSlot = (byte)slot,
+                SpellCastLaunchPosition = caster.GetPosition3D()
+            };
+
+            if (overrideCastPos != Vector2.Zero)
+            {
+                castInfo.IsOverrideCastPosition = true;
+                castInfo.SpellCastLaunchPosition = new Vector3(overrideCastPos.X, caster.GetHeight(), overrideCastPos.Y);
+
+                if (endPos == Vector2.Zero)
+                {
+                    castInfo.TargetPositionEnd = new Vector3(pos.X, caster.GetHeight(), pos.Y);
+                }
+            }
+
+            if (overrideForceLevel >= 0)
+            {
+                castInfo.SpellLevel = (byte)overrideForceLevel;
+            }
+
+            spell.Cast(castInfo, !fireWithoutCasting);
+        }
+
+        public static void SpellCast(IObjAiBase caster, int slot, SpellSlotType slotType, bool fireWithoutCasting, IAttackableUnit target, Vector2 overrideCastPos, bool isForceCastingOrChanneling = false, int overrideForceLevel = -1, bool updateAutoAttackTimer = false, bool useAutoAttackSpell = false)
+        {
+            ICastTarget castTarget = new CastTarget(target, CastTarget.GetHitResult(target, useAutoAttackSpell, caster.IsNextAutoCrit));
+
+            SpellCast(caster, slot, slotType, target.Position, target.Position, fireWithoutCasting, overrideCastPos, new List<ICastTarget> { castTarget }, isForceCastingOrChanneling, overrideForceLevel, updateAutoAttackTimer, useAutoAttackSpell);
+        }
+
+        public static void StopChanneling(IObjAiBase target, ChannelingStopCondition stopCondition, ChannelingStopSource stopSource)
+        {
+            target.StopChanneling(stopCondition, stopSource);
         }
     }
 }

@@ -14,7 +14,7 @@ using EmotionPacketRequest = GameServerCore.Packets.PacketDefinitions.Requests.E
 using KeyCheckRequest = GameServerCore.Packets.PacketDefinitions.Requests.KeyCheckRequest;
 using MovementRequest = GameServerCore.Packets.PacketDefinitions.Requests.MovementRequest;
 using PingLoadInfoRequest = GameServerCore.Packets.PacketDefinitions.Requests.PingLoadInfoRequest;
-using SkillUpRequest = GameServerCore.Packets.PacketDefinitions.Requests.SkillUpRequest;
+using UpgradeSpellReq = GameServerCore.Packets.PacketDefinitions.Requests.UpgradeSpellReq;
 using SwapItemsRequest = GameServerCore.Packets.PacketDefinitions.Requests.SwapItemsRequest;
 using SynchVersionRequest = GameServerCore.Packets.PacketDefinitions.Requests.SynchVersionRequest;
 using ViewRequest = GameServerCore.Packets.PacketDefinitions.Requests.ViewRequest;
@@ -24,7 +24,7 @@ namespace PacketDefinitions420
     /// <summary>
     /// Class which contains all functions which are called when handling packets sent from clients to the server (C2S).
     /// </summary>
-    /// TODO: Remove all LeagueSandbox based PacketCmd usage and replace with LeaguePackets' GamPacketID enum.
+    /// TODO: Remove all LeagueSandbox based PacketCmd usage and replace with LeaguePackets' GamePacketID enum.
     public class PacketReader
     {
         [PacketType(PacketCmd.PKT_C2S_EXIT)]
@@ -80,7 +80,8 @@ namespace PacketDefinitions420
         [PacketType(PacketCmd.PKT_C2S_SURRENDER)]
         public static SurrenderRequest ReadSurrenderRequest(byte[] data)
         {
-            var rq = (C2S_TeamSurrenderVote)GamePacket.Create( data);
+            var rq = new C2S_TeamSurrenderVote();
+            rq.Read(data);
             return new SurrenderRequest(rq.VotedYes);
         }
         [PacketType(PacketCmd.PKT_UNPAUSE_GAME)]
@@ -127,8 +128,9 @@ namespace PacketDefinitions420
         [PacketType(PacketCmd.PKT_C2S_CAST_SPELL)]
         public static CastSpellRequest ReadCastSpellRequest(byte[] data)
         {
-            var rq = new PacketDefinitions.C2S.CastSpellRequest(data);
-            return new CastSpellRequest(rq.NetId, rq.SpellSlot, rq.X, rq.Y, rq.X2, rq.Y2, rq.TargetNetId);
+            var rq = new NPC_CastSpellReq();
+            rq.Read(data);
+            return new CastSpellRequest(rq.Slot, rq.IsSummonerSpellBook, rq.IsHudClickCast, rq.Position, rq.EndPosition, rq.TargetNetID);
         }
 
         [PacketType(PacketCmd.PKT_CHAT_BOX_MESSAGE, Channel.CHL_COMMUNICATION)]
@@ -145,11 +147,12 @@ namespace PacketDefinitions420
             return new ClickRequest(rq.TargetNetId);
         }
 
-        [PacketType(PacketCmd.PKT_C2S_CURSOR_POSITION_ON_WORLD)]
-        public static CursorPositionOnWorldRequest ReadCursorPositionOnWorldRequest(byte[] data)
+        [PacketType(PacketCmd.PKT_C2S_SPELL_CHARGE_UPDATE)]
+        public static SpellChargeUpdateReq ReadSpellChargeUpdateReq(byte[] data)
         {
-            var rq = new CursorPositionOnWorld(data);
-            return new CursorPositionOnWorldRequest(rq.NetId, rq.Unk1, rq.X, rq.Z, rq.Y);
+            var rq = new C2S_SpellChargeUpdateReq();
+            rq.Read(data);
+            return new SpellChargeUpdateReq(rq.Slot, rq.IsSummonerSpellBook, rq.Position, rq.ForceStop);
         }
 
         [PacketType(PacketCmd.PKT_C2S_EMOTION)]
@@ -234,11 +237,12 @@ namespace PacketDefinitions420
             return new SellItemRequest(rq.NetId, rq.SlotId);
         }
 
-        [PacketType(PacketCmd.PKT_C2S_SKILL_UP)]
-        public static SkillUpRequest ReadSkillUpRequest(byte[] data)
+        [PacketType(PacketCmd.PKT_C2S_SKILL_UPGRADE)]
+        public static UpgradeSpellReq ReadUpgradeSpellReq(byte[] data)
         {
-            var rq = new PacketDefinitions.C2S.SkillUpRequest(data);
-            return new SkillUpRequest(rq.NetId, rq.Skill);
+            var rq = new NPC_UpgradeSpellReq();
+            rq.Read(data);
+            return new UpgradeSpellReq(rq.Slot, rq.IsEvolve);
         }
 
         [PacketType(PacketCmd.PKT_C2S_USE_OBJECT)]
