@@ -8,31 +8,42 @@ using GameServerCore.Domain.GameObjects.Spell.Missile;
 
 namespace Spells
 {
-    public class EzrealEssenceFlux : IGameScript
+    public class EzrealEssenceFlux : ISpellScript
     {
-        public void OnActivate(IObjAiBase owner)
+        public ISpellScriptMetadata ScriptMetadata { get; private set; } = new SpellScriptMetadata()
+        {
+            TriggersSpellCasts = true
+            // TODO
+        };
+
+        public void OnActivate(IObjAiBase owner, ISpell spell)
         {
         }
 
-        public void OnDeactivate(IObjAiBase owner)
+        public void OnDeactivate(IObjAiBase owner, ISpell spell)
         {
         }
 
-        public void OnStartCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
+        public void OnSpellPreCast(IObjAiBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
         {
-            AddParticleTarget(owner, "ezreal_bow_yellow.troy", owner, 1, "L_HAND");
         }
 
-        public void OnFinishCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
+        public void OnSpellCast(ISpell spell)
         {
-            var current = new Vector2(owner.Position.X, owner.Position.Y);
-            var to = Vector2.Normalize(new Vector2(spell.X, spell.Y) - current);
+            AddParticleTarget(spell.CastInfo.Owner, "ezreal_bow_yellow.troy", spell.CastInfo.Owner, 1, "L_HAND");
+        }
+
+        public void OnSpellPostCast(ISpell spell)
+        {
+            var current = new Vector2(spell.CastInfo.Owner.Position.X, spell.CastInfo.Owner.Position.Y);
+            var spellPos = new Vector2(spell.CastInfo.TargetPosition.X, spell.CastInfo.TargetPosition.Z);
+            var to = Vector2.Normalize(spellPos - current);
             var range = to * 1000;
             var trueCoords = current + range;
-            spell.AddProjectile("EzrealEssenceFluxMissile", current, trueCoords);
+            //spell.AddProjectile("EzrealEssenceFluxMissile", new Vector2(spell.CastInfo.SpellCastLaunchPosition.X, spell.CastInfo.SpellCastLaunchPosition.Z), trueCoords, trueCoords, overrideCastPosition: true);
         }
 
-        public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, ISpellMissile projectile)
+        public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, ISpellMissile missile)
         {
             var champion = target as IChampion;
 
@@ -50,13 +61,25 @@ namespace Spells
             }
             else
             {
-                var damage = 25 + (45 * spell.Level) + (ownerAbilityPowerTotal * 0.8f);
+                var damage = 25 + (45 * spell.CastInfo.SpellLevel) + (ownerAbilityPowerTotal * 0.8f);
 
                 target.TakeDamage(owner, damage, DamageType.DAMAGE_TYPE_MAGICAL, DamageSource.DAMAGE_SOURCE_SPELL, DamageResultType.RESULT_NORMAL);
             }
         }
 
-        public void OnUpdate(double diff)
+        public void OnSpellChannel(ISpell spell)
+        {
+        }
+
+        public void OnSpellChannelCancel(ISpell spell)
+        {
+        }
+
+        public void OnSpellPostChannel(ISpell spell)
+        {
+        }
+
+        public void OnUpdate(float diff)
         {
         }
     }

@@ -1,15 +1,14 @@
-using GameServerCore.Enums;
+﻿using GameServerCore.Enums;
 using GameServerCore.Domain.GameObjects;
-using static LeagueSandbox.GameServer.API.ApiFunctionManager;
+using GameServerCore.Domain.GameObjects.Spell;
 using LeagueSandbox.GameServer.GameObjects.Stats;
 using LeagueSandbox.GameServer.Scripting.CSharp;
-using GameServerCore.Domain.GameObjects.Spell;
 
-namespace LuluWDebuff
+namespace HealSpeed
 {
-    internal class LuluWDebuff : IBuffGameScript
+    internal class HealSpeed : IBuffGameScript
     {
-        public BuffType BuffType => BuffType.COMBAT_DEHANCER;
+        public BuffType BuffType => BuffType.HEAL;
         public BuffAddType BuffAddType => BuffAddType.REPLACE_EXISTING;
         public int MaxStacks => 1;
         public bool IsHidden => false;
@@ -18,9 +17,8 @@ namespace LuluWDebuff
 
         public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
-            StatsModifier.MoveSpeed.BaseBonus = StatsModifier.MoveSpeed.BaseBonus - 60;
+            StatsModifier.MoveSpeed.PercentBonus = 0.3f;
             unit.AddStatModifier(StatsModifier);
-            var time = 1 + 0.25f * ownerSpell.Level;
         }
 
         public void OnDeactivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)

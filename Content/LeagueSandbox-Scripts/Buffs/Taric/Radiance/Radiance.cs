@@ -1,9 +1,8 @@
 ﻿using GameServerCore.Enums;
 using GameServerCore.Domain.GameObjects;
-using static LeagueSandbox.GameServer.API.ApiFunctionManager;
+using GameServerCore.Domain.GameObjects.Spell;
 using LeagueSandbox.GameServer.GameObjects.Stats;
 using LeagueSandbox.GameServer.Scripting.CSharp;
-using GameServerCore.Domain.GameObjects.Spell;
 
 namespace Radiance
 {
@@ -18,8 +17,8 @@ namespace Radiance
 
         public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
-            StatsModifier.AttackDamage.FlatBonus += 10f + ownerSpell.Level * 20;
-            StatsModifier.AbilityPower.FlatBonus += 10f + ownerSpell.Level * 20;
+            StatsModifier.AttackDamage.FlatBonus += 10f + ownerSpell.CastInfo.SpellLevel * 20;
+            StatsModifier.AbilityPower.FlatBonus += 10f + ownerSpell.CastInfo.SpellLevel * 20;
             unit.AddStatModifier(StatsModifier);
         }
 

@@ -24,7 +24,6 @@ namespace Silence
 
         public void OnUpdate(float diff)
         {
-
         }
     }
 }

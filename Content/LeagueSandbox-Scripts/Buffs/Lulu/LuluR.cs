@@ -1,10 +1,9 @@
 ﻿using GameServerCore.Enums;
-using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
+using GameServerCore.Domain.GameObjects.Spell;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 using LeagueSandbox.GameServer.GameObjects.Stats;
 using LeagueSandbox.GameServer.Scripting.CSharp;
-using GameServerCore.Domain.GameObjects.Spell;
 
 namespace LuluR
 {
@@ -22,18 +21,26 @@ namespace LuluR
         private float _healthNow;
         private float _healthBonus;
 
+        ISpell OwnerSpell;
+        IParticle cast;
+
         public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
+            OwnerSpell = ownerSpell;
+            cast = AddParticleTarget(ownerSpell.CastInfo.Owner, "Lulu_R_cas.troy", unit, 1);
+
             StatsModifier.Size.PercentBonus = StatsModifier.Size.PercentBonus + 1;
             _healthBefore = unit.Stats.CurrentHealth;
-            _healthBonus = 150 + 150 * ownerSpell.Level;
-            StatsModifier.HealthPoints.BaseBonus = StatsModifier.HealthPoints.BaseBonus + 150 + 150 * ownerSpell.Level;
-            unit.Stats.CurrentHealth = unit.Stats.CurrentHealth + 150 + 150 * ownerSpell.Level;
+            _healthBonus = 150 + 150 * ownerSpell.CastInfo.SpellLevel;
+            StatsModifier.HealthPoints.BaseBonus = StatsModifier.HealthPoints.BaseBonus + 150 + 150 * ownerSpell.CastInfo.SpellLevel;
+            unit.Stats.CurrentHealth = unit.Stats.CurrentHealth + 150 + 150 * ownerSpell.CastInfo.SpellLevel;
             unit.AddStatModifier(StatsModifier);
         }
 
         public void OnDeactivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
+            RemoveParticle(cast);
+            AddParticleTarget(OwnerSpell.CastInfo.Owner, "Lulu_R_expire.troy", unit, 1);
             _healthNow = unit.Stats.CurrentHealth - _healthBonus;
             _meantimeDamage = _healthBefore - _healthNow;
             var bonusDamage = _healthBonus - _meantimeDamage;

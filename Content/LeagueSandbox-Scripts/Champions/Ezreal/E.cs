@@ -1,31 +1,43 @@
 using System.Numerics;
 using GameServerCore.Domain.GameObjects;
+using GameServerCore.Domain.GameObjects.Spell;
 using GameServerCore.Enums;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 using LeagueSandbox.GameServer.Scripting.CSharp;
-using GameServerCore.Domain.GameObjects.Spell;
 using GameServerCore.Domain.GameObjects.Spell.Missile;
 
 namespace Spells
 {
-    public class EzrealArcaneShift : IGameScript
+    public class EzrealArcaneShift : ISpellScript
     {
-        public void OnActivate(IObjAiBase owner)
+        public ISpellScriptMetadata ScriptMetadata => new SpellScriptMetadata()
+        {
+            TriggersSpellCasts = true
+            // TODO
+        };
+
+        public void OnActivate(IObjAiBase owner, ISpell spell)
         {
         }
 
-        public void OnDeactivate(IObjAiBase owner)
+        public void OnDeactivate(IObjAiBase owner, ISpell spell)
         {
         }
 
-        public void OnStartCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
+        public void OnSpellPreCast(IObjAiBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
         {
         }
 
-        public void OnFinishCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
+        public void OnSpellCast(ISpell spell)
         {
+        }
+
+        public void OnSpellPostCast(ISpell spell)
+        {
+            var owner = spell.CastInfo.Owner;
             var current = new Vector2(owner.Position.X, owner.Position.Y);
-            var to = new Vector2(spell.X, spell.Y) - current;
+            var spellPos = new Vector2(spell.CastInfo.TargetPosition.X, spell.CastInfo.TargetPosition.Z);
+            var to = spellPos - current;
             Vector2 trueCoords;
             if (to.Length() > 475)
             {
@@ -35,7 +47,7 @@ namespace Spells
             }
             else
             {
-                trueCoords = new Vector2(spell.X, spell.Y);
+                trueCoords = spellPos;
             }
 
             AddParticle(owner, "Ezreal_arcaneshift_cas.troy", owner.Position);
@@ -61,19 +73,31 @@ namespace Spells
             {
                 if (!(target2 is IBaseTurret))
                 {
-                    spell.AddProjectileTarget("EzrealArcaneShiftMissile", target2);
+                    //spell.AddProjectileTarget("EzrealArcaneShiftMissile", new Vector3(trueCoords.X, owner.GetHeight() + 150.0f, trueCoords.Y), target2, overrideCastPosition: true);
                 }
             }
         }
 
-        public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, ISpellMissile projectile)
+        public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, ISpellMissile missile)
         {
-            target.TakeDamage(owner, 25f + spell.Level * 50f + owner.Stats.AbilityPower.Total * 0.75f,
+            target.TakeDamage(owner, 25f + spell.CastInfo.SpellLevel * 50f + owner.Stats.AbilityPower.Total * 0.75f,
                 DamageType.DAMAGE_TYPE_MAGICAL, DamageSource.DAMAGE_SOURCE_SPELL, false);
-            projectile.SetToRemove();
+            missile.SetToRemove();
         }
 
-        public void OnUpdate(double diff)
+        public void OnSpellChannel(ISpell spell)
+        {
+        }
+
+        public void OnSpellChannelCancel(ISpell spell)
+        {
+        }
+
+        public void OnSpellPostChannel(ISpell spell)
+        {
+        }
+
+        public void OnUpdate(float diff)
         {
         }
     }

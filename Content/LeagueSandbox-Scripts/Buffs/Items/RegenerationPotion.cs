@@ -1,9 +1,9 @@
-﻿using GameServerCore.Domain.GameObjects;
+﻿using GameServerCore.Domain.GameObjects.Spell;
+using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 using LeagueSandbox.GameServer.GameObjects.Stats;
 using LeagueSandbox.GameServer.Scripting.CSharp;
-using GameServerCore.Domain.GameObjects.Spell;
 
 namespace RegenerationPotion
 {
@@ -22,11 +22,12 @@ namespace RegenerationPotion
         {
             StatsModifier.HealthRegeneration.FlatBonus = 10f;
             unit.AddStatModifier(StatsModifier);
-            potion = AddParticleTarget(ownerSpell.Owner, "GLOBAL_Item_HealthPotion.troy", unit, 1, "Buffbone_Glb_Ground_Loc", lifetime: buff.Duration);
+            potion = AddParticleTarget(ownerSpell.CastInfo.Owner, "GLOBAL_Item_HealthPotion.troy", unit, 1, "Buffbone_Glb_Ground_Loc", lifetime: buff.Duration);
         }
 
         public void OnDeactivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
+            unit.RemoveStatModifier(StatsModifier);
             potion.SetToRemove();
         }
 

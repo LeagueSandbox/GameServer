@@ -16,18 +16,22 @@ namespace Quickdraw
 
         public IStatsModifier StatsModifier { get; private set; } = new StatsModifier();
 
+        IParticle activate;
+
         public void OnUpdate(float diff)
         {
         }
 
         public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
-            StatsModifier.AttackSpeed.PercentBonus = 0.2f + (0.1f * ownerSpell.Level);
+            activate = AddParticleTarget(ownerSpell.CastInfo.Owner, "Graves_Move_OnBuffActivate.troy", unit);
+            StatsModifier.AttackSpeed.PercentBonus = 0.2f + (0.1f * ownerSpell.CastInfo.SpellLevel);
             unit.AddStatModifier(StatsModifier);
         }
 
         public void OnDeactivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
+            RemoveParticle(activate);
         }
     }
 }

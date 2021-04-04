@@ -1,34 +1,50 @@
 using GameServerCore.Domain.GameObjects;
-using LeagueSandbox.GameServer.Scripting.CSharp;
 using GameServerCore.Domain.GameObjects.Spell;
-using GameServerCore.Domain.GameObjects.Spell.Missile;
+using LeagueSandbox.GameServer.Scripting.CSharp;
+using System.Numerics;
 
 namespace Spells
 {
-    public class EzrealRisingSpellForce : IGameScript
+    public class EzrealRisingSpellForce : ISpellScript
     {
-        public void OnActivate(IObjAiBase owner)
+        public ISpellScriptMetadata ScriptMetadata { get; private set; } = new SpellScriptMetadata()
         {
+            // TODO
+        };
 
-        }
-
-        public void OnDeactivate(IObjAiBase owner)
-        {
-        }
-
-        public void OnStartCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
+        public void OnActivate(IObjAiBase owner, ISpell spell)
         {
         }
 
-        public void OnFinishCasting(IObjAiBase owner, ISpell spell, IAttackableUnit target)
+        public void OnDeactivate(IObjAiBase owner, ISpell spell)
         {
         }
 
-        public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, ISpellMissile projectile)
+        public void OnSpellPreCast(IObjAiBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
         {
         }
 
-        public void OnUpdate(double diff)
+        public void OnSpellCast(ISpell spell)
+        {
+        }
+
+        public void OnSpellPostCast(ISpell spell)
+        {
+        }
+
+        public void OnSpellChannel(ISpell spell)
+        {
+        }
+
+        public void OnSpellChannelCancel(ISpell spell)
+        {
+        }
+
+        public void OnSpellPostChannel(ISpell spell)
+        {
+        }
+
+        public void OnUpdate(float diff)
         {
         }
     }
