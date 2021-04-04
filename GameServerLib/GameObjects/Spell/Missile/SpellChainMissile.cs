@@ -22,6 +22,11 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Missile
         /// </summary>
         public List<IGameObject> ObjectsHit { get; }
         /// <summary>
+        /// Total number of times this missile has hit any units.
+        /// </summary>
+        /// TODO: Verify if we want this to be an array for different MaximumHit counts for: CanHitCaster, CanHitEnemies, CanHitFriends, CanHitSameTarget, and CanHitSameTargetConsecutively.
+        public int HitCount { get; protected set; }
+        /// <summary>
         /// Parameters for this chain missile, refer to IMissileParameters.
         /// </summary>
         public IMissileParameters Parameters { get; protected set; }
@@ -39,6 +44,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Missile
         ) : base(game, collisionRadius, originSpell, castInfo, moveSpeed, overrideFlags, netId, serverOnly)
         {
             ObjectsHit = new List<IGameObject>();
+            HitCount = 0;
             Parameters = parameters;
         }
 
@@ -46,12 +52,13 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Missile
         {
             base.Update(diff);
 
-            if (ObjectsHit.Count >= Parameters.MaximumHits)
+            // TODO: Verify if we can move this into CheckFlagsForUnit instead of checking every Update.
+            if (HitCount >= Parameters.MaximumHits)
             {
                 SetToRemove();
             }
 
-            if (!IsToRemove() && IsValidTarget(TargetUnit))
+            if (!IsToRemove() && IsValidTarget(TargetUnit, true))
             {
                 _game.PacketNotifier.NotifyS2C_UpdateBounceMissile(this);
                 _game.PacketNotifier.NotifyMissileReplication(this);
@@ -71,6 +78,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Missile
             }
 
             ObjectsHit.Add(unit);
+            HitCount++;
 
             // Targeted Spell (including auto attack spells)
             if (SpellOrigin != null)
@@ -111,7 +119,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Missile
             return false;
         }
 
-        protected override bool IsValidTarget(IAttackableUnit unit)
+        protected bool IsValidTarget(IAttackableUnit unit, bool checkOnly = false)
         {
             bool valid = base.IsValidTarget(unit);
             bool hit = ObjectsHit.Contains(unit);
@@ -127,7 +135,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Missile
                     valid = true;
                 }
                 // We can hit it again after we bounce once.
-                else if (Parameters.CanHitSameTarget)
+                else if (Parameters.CanHitSameTarget && !checkOnly)
                 {
                     ObjectsHit.Remove(unit);
                 }
