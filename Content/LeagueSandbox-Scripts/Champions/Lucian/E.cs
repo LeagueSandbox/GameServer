@@ -38,7 +38,8 @@ namespace Spells
             var range = to * spell.SpellData.CastRangeDisplayOverride;
             var trueCoords = current + range;
 
-            ForceMovement(spell.CastInfo.Owner, "", trueCoords, 1500, 0, 0, 0);
+            FaceDirection(trueCoords, spell.CastInfo.Owner, true);
+            ForceMovement(spell.CastInfo.Owner, "Spell3", trueCoords, 1350, 0, 0, 0, movementOrdersFacing: GameServerCore.Enums.ForceMovementOrdersFacing.KEEP_CURRENT_FACING);
         }
 
         public void OnSpellChannel(ISpell spell)

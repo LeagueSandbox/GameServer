@@ -37,7 +37,7 @@ namespace BlindMonkSonicWave
 
             var owner = originSpell.CastInfo.Owner;
             var target = thisBuff.TargetUnit;
-            if (owner.IsDashing && owner.IsCollidingWith(target))
+            if (owner.MovementParameters != null && owner.IsCollidingWith(target))
             {
                 owner.SetDashingState(false);
                 var ad = owner.Stats.AttackDamage.Total * 1.0f;

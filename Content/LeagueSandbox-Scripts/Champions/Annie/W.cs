@@ -45,8 +45,8 @@ namespace Spells
 
             //spell.AddCone("Incinerate", trueCoords, 24.76f);
             AddParticle(owner, "IIncinerate_buf.troy", trueCoords);
-            owner.FaceDirection(new Vector3(to.X, 0.0f, to.Y), false);
-            //owner.SpellAnimation("SPELL2");
+            FaceDirection(trueCoords, owner, false);
+            PlayAnimation(owner, "SPELL2");
             AddParticleTarget(owner, "Incinerate_cas.troy", owner);
         }
 

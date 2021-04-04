@@ -2,10 +2,9 @@ using System.Numerics;
 using GameServerCore.Enums;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Domain.GameObjects.Spell;
-using static LeagueSandbox.GameServer.API.ApiFunctionManager;
-using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
-using LeagueSandbox.GameServer.Scripting.CSharp;
 using GameServerCore.Domain.GameObjects.Spell.Missile;
+using static LeagueSandbox.GameServer.API.ApiFunctionManager;
+using LeagueSandbox.GameServer.Scripting.CSharp;
 
 namespace Spells
 {
@@ -40,7 +39,7 @@ namespace Spells
             var range = to * spell.SpellData.CastRangeDisplayOverride;
             trueCoords = current + range;
 
-            //spell.CastInfo.Owner.FaceDirection(new Vector3(to.X, 0.0f, to.Y), true);
+            FaceDirection(trueCoords, spell.CastInfo.Owner, true);
         }
 
         public void OnSpellPostCast(ISpell spell)
