@@ -138,7 +138,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
                 // InventorySlots
                 // 6 - 12 (12 = TrinketSlot)
-                for (byte i = 6; i < 12; i++)
+                for (byte i = 6; i < 13; i++)
                 {
                     Spells[i] = new Spell.Spell(game, this, "BaseSpell", i);
                 }

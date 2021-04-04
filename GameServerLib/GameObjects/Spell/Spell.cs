@@ -1011,8 +1011,12 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
             if (newCd <= 0)
             {
                 _game.PacketNotifier.NotifyCHAR_SetCooldown(CastInfo.Owner, CastInfo.SpellSlot, 0, 0);
-                State = SpellState.STATE_READY;
-                CurrentCooldown = 0;
+                // Changing the state of the spell to READY during casting prevents the spell from finishing casting, thus locking the player in the move order CastSpell.
+                if (State != SpellState.STATE_CASTING && State != SpellState.STATE_CHANNELING)
+                {
+                    State = SpellState.STATE_READY;
+                    CurrentCooldown = 0;
+                }
             }
             else
             {
