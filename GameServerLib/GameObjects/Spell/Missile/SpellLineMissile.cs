@@ -67,16 +67,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Missile
                 return;
             }
 
-            if (!HasDestination())
-            {
-                Direction = new Vector3();
-
-                return;
-            }
-            else
-            {
-                Move(diff);
-            }
+            Move(diff);
         }
 
         public override void OnCollision(IGameObject collider, bool isTerrain = false)
