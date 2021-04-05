@@ -45,7 +45,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
 
         public void SpawnMinionsForTeam(TeamId team, int userId)
         {
-            var championPos = _playerManager.GetPeerInfo((ulong)userId).Champion.Position;
+            var championPos = _playerManager.GetPeerInfo(userId).Champion.Position;
             var random = new Random();
 
             var casterModel = Game.Map.MapProperties.GetMinionModel(team, MinionSpawnType.MINION_TYPE_CASTER);

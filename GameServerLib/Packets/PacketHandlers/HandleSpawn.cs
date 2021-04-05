@@ -33,7 +33,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
              _game.PacketNotifier.NotifySpawnStart(userId);
             _logger.Debug("Spawning map");
 
-            var peerInfo = _playerManager.GetPeerInfo((ulong)userId);
+            var peerInfo = _playerManager.GetPeerInfo(userId);
             var bluePill = _itemManager.GetItemType(_game.Map.MapProperties.BluePillId);
             var itemInstance = peerInfo.Champion.Inventory.SetExtraItem(7, bluePill);
 
@@ -51,7 +51,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             {
                 var runeItem = _itemManager.GetItemType(rune.Value);
                 var newRune = peerInfo.Champion.Inventory.SetExtraItem(runeItemSlot, runeItem);
-                _playerManager.GetPeerInfo((ulong)userId).Champion.Stats.AddModifier(runeItem);
+                _playerManager.GetPeerInfo(userId).Champion.Stats.AddModifier(runeItem);
                 runeItemSlot++;
             }
 

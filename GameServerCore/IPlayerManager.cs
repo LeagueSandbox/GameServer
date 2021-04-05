@@ -8,7 +8,7 @@ namespace GameServerCore
     public interface IPlayerManager
     {
         ClientInfo GetClientInfoByChampion(IChampion champ);
-        ClientInfo GetPeerInfo(ulong playerId);
+        ClientInfo GetPeerInfo(long playerId);
         List<Tuple<uint, ClientInfo>> GetPlayers();
     }
 }

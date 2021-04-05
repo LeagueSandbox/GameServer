@@ -1,5 +1,5 @@
 ﻿using GameServerCore.Packets.Enums;
-using PacketDefinitions420.PacketDefinitions;
+using LeaguePackets;
 using System;
 
 namespace PacketDefinitions420
@@ -7,14 +7,21 @@ namespace PacketDefinitions420
     [AttributeUsage(AttributeTargets.Method)]
     public class PacketType : Attribute
     {
-        public PacketCmd PacketId { get; }
+        public GamePacketID GamePacketId { get; }
+        public LoadScreenPacketID LoadScreenPacketId { get; }
         public Channel ChannelId { get; }
 
-        public PacketType(PacketCmd packetId, Channel channel)
+        public PacketType(GamePacketID packetId, Channel channel)
         {
-            PacketId = packetId;
+            GamePacketId = packetId;
             ChannelId = channel;
         }
-        public PacketType(PacketCmd packetId) : this(packetId, Channel.CHL_C2S) { }
+        public PacketType(GamePacketID packetId) : this(packetId, Channel.CHL_C2S) { }
+        public PacketType(LoadScreenPacketID packetId, Channel channel)
+        {
+            LoadScreenPacketId = packetId;
+            ChannelId = channel;
+        }
+        public PacketType(LoadScreenPacketID packetId) : this (packetId, Channel.CHL_LOADING_SCREEN) { }
     }
 }

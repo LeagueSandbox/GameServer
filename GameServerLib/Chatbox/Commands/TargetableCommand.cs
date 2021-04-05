@@ -25,7 +25,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
             }
             else
             {
-                _playerManager.GetPeerInfo((ulong)userId).Champion.SetIsTargetable(userInput);
+                _playerManager.GetPeerInfo(userId).Champion.SetIsTargetable(userInput);
             }
         }
     }

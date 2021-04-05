@@ -17,7 +17,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 
         public override bool HandlePacket(int userId, PingLoadInfoRequest req)
         {
-            var peerInfo = _playerManager.GetPeerInfo((ulong)userId);
+            var peerInfo = _playerManager.GetPeerInfo(userId);
             if (peerInfo == null)
             {
                 return false;

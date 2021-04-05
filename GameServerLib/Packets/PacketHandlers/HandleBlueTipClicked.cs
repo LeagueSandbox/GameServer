@@ -21,7 +21,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
         public override bool HandlePacket(int userId, BlueTipClickedRequest req)
         {
             // TODO: can we use player net id from request?
-            var playerNetId = _playerManager.GetPeerInfo((ulong)userId).Champion.NetId;
+            var playerNetId = _playerManager.GetPeerInfo(userId).Champion.NetId;
              _game.PacketNotifier.NotifyBlueTip(userId, "", "", "", 0, playerNetId, req.NetId);
 
             var msg = $"Clicked blue tip with netid: {req.NetId}";

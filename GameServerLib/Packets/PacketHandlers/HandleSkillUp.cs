@@ -20,7 +20,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             // TODO: Check if can up skill
             // TODO: Implement usage of req.IsEvolve
 
-            var champion = _playerManager.GetPeerInfo((ulong)userId).Champion;
+            var champion = _playerManager.GetPeerInfo(userId).Champion;
             var s = champion.LevelUpSpell(req.Slot);
             if (s == null)
             {

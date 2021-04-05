@@ -140,7 +140,7 @@ namespace LeagueSandbox.GameServer
 
     public class PlayerConfig
     {
-        public ulong PlayerID => (ulong)_playerData.SelectToken("playerId");
+        public long PlayerID => (long)_playerData.SelectToken("playerId");
         public string Rank => (string)_playerData.SelectToken("rank");
         public string Name => (string)_playerData.SelectToken("name");
         public string Champion => (string)_playerData.SelectToken("champion");

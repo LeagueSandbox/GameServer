@@ -23,7 +23,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
         {
             var targetObj = _game.ObjectManager.GetObjectById(req.TargetNetId);
             var targetUnit = targetObj as IAttackableUnit;
-            var owner = _playerManager.GetPeerInfo((ulong)userId).Champion;
+            var owner = _playerManager.GetPeerInfo(userId).Champion;
             if (owner == null || !owner.CanCast())
             {
                 return false;

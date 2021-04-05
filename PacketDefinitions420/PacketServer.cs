@@ -37,13 +37,13 @@ namespace PacketDefinitions420
         /// <param name="game">Game instance.</param>
         /// <param name="netReq">Network request handler instance.</param>
         /// <param name="netResp">Network response handler instance.</param>
-        public void InitServer(ushort port, Dictionary<ulong, string> blowfishKeys, IGame game, NetworkHandler<ICoreRequest> netReq, NetworkHandler<ICoreResponse> netResp)
+        public void InitServer(ushort port, Dictionary<long, string> blowfishKeys, IGame game, NetworkHandler<ICoreRequest> netReq, NetworkHandler<ICoreResponse> netResp)
         {
             _game = game;
             _server = new Host();
             _server.Create(new Address(_serverHost,port), 32, 32, 0, 0);
 
-            Dictionary<ulong, BlowFish> blowfishes = new Dictionary<ulong, BlowFish>();
+            Dictionary<long, BlowFish> blowfishes = new Dictionary<long, BlowFish>();
             foreach(var rawKey in blowfishKeys)
             {
                 var key = Convert.FromBase64String(rawKey.Value);

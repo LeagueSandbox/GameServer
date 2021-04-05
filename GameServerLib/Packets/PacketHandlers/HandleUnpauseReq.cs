@@ -26,7 +26,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 
             IChampion unpauser = null;
 
-            unpauser = _playerManager.GetPeerInfo((ulong)userId).Champion;
+            unpauser = _playerManager.GetPeerInfo(userId).Champion;
 
             _game.PacketNotifier.NotifyResumeGame(unpauser, true);
             var timer = new Timer

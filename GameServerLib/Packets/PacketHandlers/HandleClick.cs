@@ -23,7 +23,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 
         public override bool HandlePacket(int userId, ClickRequest req)
         {
-            var msg = $"Object {_playerManager.GetPeerInfo((ulong)userId).Champion.NetId} clicked on {req.TargetNetId}";
+            var msg = $"Object {_playerManager.GetPeerInfo(userId).Champion.NetId} clicked on {req.TargetNetId}";
             _logger.Debug(msg);
 
             return true;

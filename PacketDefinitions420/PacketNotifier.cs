@@ -1060,8 +1060,11 @@ namespace PacketDefinitions420
         /// </summary>
         public void NotifyGameStart()
         {
-            var start = new StatePacket(PacketCmd.PKT_S2C_START_GAME);
-            _packetHandlerManager.BroadcastPacket(start, Channel.CHL_S2C);
+            var start = new S2C_StartGame
+            {
+                EnablePause = true
+            };
+            _packetHandlerManager.BroadcastPacket(start.GetBytes(), Channel.CHL_S2C);
         }
 
         /// <summary>
@@ -2403,8 +2406,8 @@ namespace PacketDefinitions420
         /// <param name="userId">User to send the packet to.</param>
         public void NotifySpawnEnd(int userId)
         {
-            var endSpawnPacket = new StatePacket(PacketCmd.PKT_S2C_END_SPAWN);
-            _packetHandlerManager.SendPacket(userId, endSpawnPacket, Channel.CHL_S2C);
+            var endSpawnPacket = new S2C_EndSpawn();
+            _packetHandlerManager.SendPacket(userId, endSpawnPacket.GetBytes(), Channel.CHL_S2C);
         }
 
         /// <summary>

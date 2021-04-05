@@ -21,9 +21,9 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 
         public override bool HandlePacket(int userId, ScoreboardRequest req)
         {
-            _logger.Debug($"Player {_playerManager.GetPeerInfo((ulong)userId).Name} has looked at the scoreboard.");
+            _logger.Debug($"Player {_playerManager.GetPeerInfo(userId).Name} has looked at the scoreboard.");
             // Send to that player stats packet
-            var champion = _playerManager.GetPeerInfo((ulong)userId).Champion;
+            var champion = _playerManager.GetPeerInfo(userId).Champion;
              _game.PacketNotifier.NotifyPlayerStats(champion);
             return true;
         }

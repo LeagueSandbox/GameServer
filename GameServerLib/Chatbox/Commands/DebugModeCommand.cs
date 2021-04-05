@@ -40,7 +40,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
         public override void Execute(int userId, bool hasReceivedArguments, string arguments = "")
         {
             _userId = userId;
-            _userChampion = _playerManager.GetPeerInfo((ulong)userId).Champion;
+            _userChampion = _playerManager.GetPeerInfo(userId).Champion;
             if (_debugMode != 0)
             {
                 if (_debugMode == 1)
