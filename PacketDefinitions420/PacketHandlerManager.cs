@@ -6,7 +6,6 @@ using GameServerCore.Packets.Enums;
 using GameServerCore.Packets.Handlers;
 using GameServerCore.Packets.PacketDefinitions;
 using LeaguePackets;
-using PacketDefinitions420.PacketDefinitions;
 using PacketDefinitions420.PacketDefinitions.S2C;
 using System;
 using System.Collections.Generic;
