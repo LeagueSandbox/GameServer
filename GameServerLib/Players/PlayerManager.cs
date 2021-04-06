@@ -15,7 +15,7 @@ namespace LeagueSandbox.GameServer.Players
         private Game _game;
 
         private List<Tuple<uint, ClientInfo>> _players = new List<Tuple<uint, ClientInfo>>();
-        private ulong _currentId = 1;
+        private long _currentId = 1;
         private Dictionary<TeamId, uint> _userIdsPerTeam = new Dictionary<TeamId, uint>
         {
             { TeamId.TEAM_BLUE, 0 },
@@ -71,7 +71,7 @@ namespace LeagueSandbox.GameServer.Players
         }
 
         // GetPlayerFromPeer
-        public ClientInfo GetPeerInfo(ulong playerId)
+        public ClientInfo GetPeerInfo(long playerId)
         {
             foreach (var player in _players)
             {

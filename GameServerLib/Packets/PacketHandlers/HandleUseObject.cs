@@ -21,7 +21,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 
         public override bool HandlePacket(int userId, UseObjectRequest req)
         {
-            var champion = _playerManager.GetPeerInfo((ulong)userId).Champion;
+            var champion = _playerManager.GetPeerInfo(userId).Champion;
             var msg = $"Object {champion.NetId} is trying to use (right clicked) {req.TargetNetId}";
             _logger.Debug(msg);
 

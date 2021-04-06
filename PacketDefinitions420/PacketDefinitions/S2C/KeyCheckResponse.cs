@@ -5,7 +5,7 @@ namespace PacketDefinitions420.PacketDefinitions.S2C
 {
     public class KeyCheckResponse : Packet
     {
-        public KeyCheckResponse(ulong playerId, uint clientId)
+        public KeyCheckResponse(long playerId, uint clientId)
             : base(PacketCmd.PKT_KEY_CHECK)
         {
             Write((byte)0x2A);

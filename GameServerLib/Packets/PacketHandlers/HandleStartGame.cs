@@ -18,7 +18,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 
         public override bool HandlePacket(int userId, StartGameRequest req)
         {
-            var peerInfo = _playerManager.GetPeerInfo((ulong)userId);
+            var peerInfo = _playerManager.GetPeerInfo(userId);
 
             if (!peerInfo.IsDisconnected)
             {
@@ -44,7 +44,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                         _game.PacketNotifier.NotifyAvatarInfo((int)player.Item2.PlayerId, p.Item2);
                     }
 
-                    if (player.Item2.PlayerId == (ulong)userId && !player.Item2.IsMatchingVersion)
+                    if (player.Item2.PlayerId == userId && !player.Item2.IsMatchingVersion)
                     {
                         var msg = "Your client version does not match the server. " +
                                   "Check the server log for more information.";

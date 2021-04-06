@@ -17,7 +17,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 
         public override bool HandlePacket(int userId, SellItemRequest req)
         {
-            var champion = _playerManager.GetPeerInfo((ulong)userId).Champion;
+            var champion = _playerManager.GetPeerInfo(userId).Champion;
             return champion.Shop.HandleItemSellRequest(req.SlotId);
         }
     }

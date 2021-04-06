@@ -24,7 +24,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                 return false;
             }
 
-            var champion = _playerManager.GetPeerInfo((ulong)userId).Champion;
+            var champion = _playerManager.GetPeerInfo(userId).Champion;
 
             // "Holy shit this needs refactoring" - Mythic, April 13th 2016
             champion.Inventory.SwapItems(req.SlotFrom, req.SlotTo);
