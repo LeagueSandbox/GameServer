@@ -10,6 +10,7 @@ using PacketDefinitions420.PacketDefinitions.S2C;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 
@@ -258,16 +259,31 @@ namespace PacketDefinitions420
 
         public bool HandlePacket(Peer peer, byte[] data, Channel channelId)
         {
-            var header = new PacketHeader(data);
-            var convertor = GetConvertor(header.Cmd, channelId);
+            var reader = new BinaryReader(new MemoryStream(data));
+            RequestConvertor convertor;
 
-            switch (header.Cmd)
+            if (channelId == Channel.CHL_COMMUNICATION || channelId == Channel.CHL_LOADING_SCREEN)
             {
-                case GamePacketID.World_SendCamera_Server:
-                case GamePacketID.Waypoint_Acc:
-                case GamePacketID.OnReplication_Acc:
-                    break;
+                var loadScreenPacketId = (LoadScreenPacketID)reader.ReadByte();
+
+                convertor = GetConvertor(loadScreenPacketId);
             }
+            else
+            {
+                var gamePacketId = (GamePacketID)reader.ReadByte();
+
+                convertor = GetConvertor(gamePacketId, channelId);
+
+                switch (gamePacketId)
+                {
+                    case GamePacketID.World_SendCamera_Server:
+                    case GamePacketID.Waypoint_Acc:
+                    case GamePacketID.OnReplication_Acc:
+                        break;
+                }
+            }
+
+            reader.Close();
 
             if (convertor != null)
             {
@@ -320,6 +336,7 @@ namespace PacketDefinitions420
                 long playerId = _peers.First(x => x.Value.Address.Equals(peer.Address)).Key;
                 data = _blowfishes[playerId].Decrypt(data);
             }
+
             return HandlePacket(peer, data, channelId);
         }
 
