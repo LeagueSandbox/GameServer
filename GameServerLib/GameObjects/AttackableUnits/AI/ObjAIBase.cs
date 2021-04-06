@@ -982,7 +982,8 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             {
                 if (TargetUnit != null && MoveOrder != OrderType.CastSpell)
                 {
-                    if (TargetUnit.IsDead || (!_game.ObjectManager.TeamHasVisionOn(Team, TargetUnit) && !(TargetUnit is IBaseTurret) && !(TargetUnit is IObjBuilding) && MovementParameters == null))
+                    // TODO: Implement True Sight for turrets instead of using exception for turret targeting in relation to vision here.
+                    if (TargetUnit.IsDead || (!_game.ObjectManager.TeamHasVisionOn(Team, TargetUnit) && !(this is IBaseTurret) && !(TargetUnit is IBaseTurret) && !(TargetUnit is IObjBuilding) && MovementParameters == null))
                     {
                         SetTargetUnit(null);
                         IsAttacking = false;
