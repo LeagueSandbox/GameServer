@@ -62,7 +62,7 @@ namespace PacketDefinitions420
                 {
                     if (attr is PacketType)
                     {
-                        if (((PacketType)attr).ChannelId == Channel.CHL_LOADING_SCREEN)
+                        if (((PacketType)attr).ChannelId == Channel.CHL_LOADING_SCREEN || ((PacketType)attr).ChannelId == Channel.CHL_COMMUNICATION)
                         {
                             var method = (RequestConvertor)Delegate.CreateDelegate(typeof(RequestConvertor), m);
                             _loadScreenConvertorTable.Add(((PacketType)attr).LoadScreenPacketId, method);
