@@ -2,12 +2,13 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using GameServerCore.Packets.Enums;
+using LeaguePackets;
 
 namespace PacketDefinitions420.PacketDefinitions.C2S
 {
     public class ChatMessage
     {
-        public PacketCmd Cmd;
+        public LoadScreenPacketID Cmd;
         public int ClientId;
         public int BotNetId;
         public byte IsBotMessage;
@@ -22,7 +23,7 @@ namespace PacketDefinitions420.PacketDefinitions.C2S
         {
             using (var reader = new BinaryReader(new MemoryStream(data)))
             {
-                Cmd = (PacketCmd)reader.ReadByte();
+                Cmd = (LoadScreenPacketID)reader.ReadByte();
                 ClientId = reader.ReadInt32();
                 BotNetId = reader.ReadInt32();
                 IsBotMessage = reader.ReadByte();
