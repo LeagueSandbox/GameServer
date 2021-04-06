@@ -271,8 +271,6 @@ namespace PacketDefinitions420
             else
             {
                 var gamePacketId = (GamePacketID)reader.ReadByte();
-                // TODO: Verify if this is needed.
-                var netID = reader.ReadInt32();
 
                 convertor = GetConvertor(gamePacketId, channelId);
 
