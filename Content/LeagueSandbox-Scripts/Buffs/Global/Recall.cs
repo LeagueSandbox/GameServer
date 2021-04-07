@@ -3,6 +3,7 @@ using GameServerCore.Domain.GameObjects.Spell;
 using GameServerCore.Enums;
 using LeagueSandbox.GameServer.API;
 using LeagueSandbox.GameServer.Scripting.CSharp;
+using System;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 
 namespace Recall
@@ -27,7 +28,7 @@ namespace Recall
             sourceBuff = buff;
 
             ApiEventManager.OnTakeDamage.AddListener(this, unit, OnTakeDamage, true);
-            ApiEventManager.OnUnitUpdateMoveOrder.AddListener(this, champion, OnUpdateMoveOrder, true);
+            ApiEventManager.OnUnitUpdateMoveOrder.AddListener(this, champion, OnUpdateMoveOrder, false);
 
             _createdParticle = AddParticleTarget(champion, "TeleportHome.troy", champion, lifetime: buff.Duration);
         }
@@ -50,21 +51,23 @@ namespace Recall
             }
         }
 
-        public void OnUpdateMoveOrder(IObjAiBase unit)
+        public void OnUpdateMoveOrder(IObjAiBase unit, OrderType order)
         {
+            if (order == OrderType.Stop || order == OrderType.Hold)
+            {
+                // Only OrderType.Hold order types are usually get here.
+                return;
+            }
             var buff = unit.GetBuffWithName("Recall");
             if (buff != null)
             {
                 buff.DeactivateBuff();
             }
+            // TODO: Remomve Listener at the end. Currently the system doesn't support specific listeners removal.
         }
 
         public void OnUpdate(float diff)
         {
-            if (owner.IsMovementUpdated())
-            {
-                sourceBuff.DeactivateBuff();
-            }
         }
     }
 }

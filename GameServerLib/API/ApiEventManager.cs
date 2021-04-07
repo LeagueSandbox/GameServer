@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Domain.GameObjects.Spell;
 using GameServerCore.Domain.GameObjects.Spell.Missile;
+using GameServerCore.Enums;
 using LeagueSandbox.GameServer.Logging;
 using log4net;
 
@@ -517,10 +518,10 @@ namespace LeagueSandbox.GameServer.API
 
     public class EventOnUnitUpdateMoveOrder
     {
-        private readonly List<Tuple<object, IObjAiBase, Action<IObjAiBase>, bool>> _listeners = new List<Tuple<object, IObjAiBase, Action<IObjAiBase>, bool>>();
-        public void AddListener(object owner, IObjAiBase unit, Action<IObjAiBase> callback, bool singleInstance)
+        private readonly List<Tuple<object, IObjAiBase, Action<IObjAiBase, OrderType>, bool>> _listeners = new List<Tuple<object, IObjAiBase, Action<IObjAiBase, OrderType>, bool>>();
+        public void AddListener(object owner, IObjAiBase unit, Action<IObjAiBase,OrderType> callback, bool singleInstance)
         {
-            var listenerTuple = new Tuple<object, IObjAiBase, Action<IObjAiBase>, bool>(owner, unit, callback, singleInstance);
+            var listenerTuple = new Tuple<object, IObjAiBase, Action<IObjAiBase, OrderType>, bool>(owner, unit, callback, singleInstance);
             _listeners.Add(listenerTuple);
         }
 
@@ -534,7 +535,7 @@ namespace LeagueSandbox.GameServer.API
             _listeners.RemoveAll(listener => listener.Item1 == owner);
         }
 
-        public void Publish(IObjAiBase unit)
+        public void Publish(IObjAiBase unit, OrderType order)
         {
             var count = _listeners.Count;
 
@@ -547,7 +548,7 @@ namespace LeagueSandbox.GameServer.API
             {
                 if (_listeners[i].Item2 == unit)
                 {
-                    _listeners[i].Item3(unit);
+                    _listeners[i].Item3(unit,order);
                     if (_listeners[i].Item4 == true)
                     {
                         _listeners.RemoveAt(i);
