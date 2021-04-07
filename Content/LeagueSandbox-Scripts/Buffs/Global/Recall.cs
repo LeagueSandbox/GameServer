@@ -36,6 +36,9 @@ namespace Recall
         {
             if (sourceBuff.TimeElapsed >= sourceBuff.Duration)
             {
+                // This is the only case where removing the listener works. Outside of this if statement will crash the server due to the listener being removed before it completes the callback.
+                ApiEventManager.OnTakeDamage.RemoveListener(this, ownerSpell.CastInfo.Owner);
+                ApiEventManager.OnUnitUpdateMoveOrder.RemoveListener(this, ownerSpell.CastInfo.Owner);
                 owner.Recall();
             }
             RemoveParticle(_createdParticle);
@@ -55,16 +58,20 @@ namespace Recall
             var buff = unit.GetBuffWithName("Recall");
             if (buff != null)
             {
-                buff.DeactivateBuff();
+                if (unit.MoveOrder != OrderType.Hold && unit.MoveOrder != OrderType.Stop)
+                {
+                    buff.DeactivateBuff();
+                }
+                else
+                {
+                    // After the callback ends, it will remove the listener, so we make a new one before the callback ends.
+                    ApiEventManager.OnUnitUpdateMoveOrder.AddListener(this, unit, OnUpdateMoveOrder, true);
+                }
             }
         }
 
         public void OnUpdate(float diff)
         {
-            if (owner.IsMovementUpdated())
-            {
-                sourceBuff.DeactivateBuff();
-            }
         }
     }
 }

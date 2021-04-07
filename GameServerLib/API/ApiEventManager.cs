@@ -105,6 +105,8 @@ namespace LeagueSandbox.GameServer.API
         public static EventOnUnitUpdateMoveOrder OnUnitUpdateMoveOrder = new EventOnUnitUpdateMoveOrder();
     }
 
+    // TODO: Make listeners support removal at any point in code execution.
+
     public class EventOnHitUnit
     {
         private readonly List<Tuple<object, IObjAiBase, Action<IAttackableUnit, bool>, bool>> _listeners = new List<Tuple<object, IObjAiBase, Action<IAttackableUnit, bool>, bool>>();
