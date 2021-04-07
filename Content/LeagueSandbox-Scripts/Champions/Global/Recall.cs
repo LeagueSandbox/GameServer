@@ -2,10 +2,7 @@ using GameServerCore.Domain.GameObjects;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 using GameServerCore.Domain.GameObjects.Spell;
-using GameServerCore.Domain.GameObjects.Spell.Missile;
 using System.Numerics;
-using log4net.Repository.Hierarchy;
-using System;
 
 namespace Spells
 {
