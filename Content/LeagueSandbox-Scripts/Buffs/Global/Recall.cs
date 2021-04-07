@@ -3,7 +3,6 @@ using GameServerCore.Domain.GameObjects.Spell;
 using GameServerCore.Enums;
 using LeagueSandbox.GameServer.API;
 using LeagueSandbox.GameServer.Scripting.CSharp;
-using System;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 
 namespace Recall
