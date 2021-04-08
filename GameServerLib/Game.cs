@@ -247,16 +247,10 @@ namespace LeagueSandbox.GameServer
 
             void ScriptsChanged(object _, FileSystemEventArgs ea)
             {
-                // try/finally used to avoid triggering LoadScripts() many times in a row after the first event
-                try
-                {
-                    ScriptsHotReloadWatcher.EnableRaisingEvents = false;
-                    ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.INFO, LoadScripts() ? "Scripts reloaded." : "Scripts failed to reload.");
-                }
-                finally
-                {
-                    ScriptsHotReloadWatcher.EnableRaisingEvents = true;
-                }
+                // Disable raising events to avoid triggering LoadScripts() many times in a row after the first event
+                ScriptsHotReloadWatcher.EnableRaisingEvents = false;
+                ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.INFO, LoadScripts() ? "Scripts reloaded." : "Scripts failed to reload.");
+                ScriptsHotReloadWatcher.EnableRaisingEvents = true;
             }
 
             if (status && ScriptsHotReloadWatcher == null)
