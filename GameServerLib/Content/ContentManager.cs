@@ -14,11 +14,11 @@ namespace LeagueSandbox.GameServer.Content
     {
         private readonly ILog _logger;
         private readonly Game _game;
-        private readonly string _contentPath;
 
         private readonly List<Package> _loadedPackages;
         private readonly List<string> _dataPackageNames;
 
+        public string ContentPath { get; }
         public string PackageName { get; }
         public string PackagePath { get; }
 
@@ -26,7 +26,7 @@ namespace LeagueSandbox.GameServer.Content
         {
             _game = game;
 
-            _contentPath = contentPath;
+            ContentPath = contentPath;
 
             _loadedPackages = new List<Package>();
             _dataPackageNames = new List<string>{dataPackageName};
@@ -96,7 +96,7 @@ namespace LeagueSandbox.GameServer.Content
 
         private string GetPackagePath(string packageName)
         {
-            return $"{_contentPath}/{packageName}";
+            return $"{ContentPath}/{packageName}";
         }
 
         public bool LoadScripts()

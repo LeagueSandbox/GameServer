@@ -243,7 +243,7 @@ namespace LeagueSandbox.GameServer
         /// </summary>
         public void EnableHotReload(bool status)
         {
-            string scriptsPath = Config.ContentManager.GetLoadedPackage("LeagueSandbox-Scripts").PackagePath;
+            string scriptsPath = Config.ContentManager.ContentPath;
 
             void ScriptsChanged(object _, FileSystemEventArgs ea)
             {
