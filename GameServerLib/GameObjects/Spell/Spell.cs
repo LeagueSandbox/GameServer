@@ -18,10 +18,9 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
         // Crucial Vars.
         private readonly Game _game;
         private readonly CSharpScriptEngine _scriptEngine;
+        private readonly NetworkIdManager _networkIdManager;
         private uint _futureProjNetId;
         private ISpellScript _spellScript;
-
-        protected NetworkIdManager NetworkIdManager;
 
         public ICastInfo CastInfo { get; private set; } = new CastInfo();
         public string SpellName { get; }
@@ -38,8 +37,8 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
         {
             _game = game;
             _scriptEngine = game.ScriptEngine;
-            NetworkIdManager = game.NetworkIdManager;
-            _futureProjNetId = NetworkIdManager.GetNewNetId();
+            _networkIdManager = game.NetworkIdManager;
+            _futureProjNetId = _networkIdManager.GetNewNetId();
 
             CastInfo.Owner = owner;
             SpellName = spellName;
@@ -125,7 +124,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
                 return false;
             }
 
-            CastInfo.SpellNetID = NetworkIdManager.GetNewNetId();
+            CastInfo.SpellNetID = _networkIdManager.GetNewNetId();
 
             CastInfo.AttackSpeedModifier = stats.AttackSpeedMultiplier.Total;
 
@@ -134,7 +133,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
                 stats.CurrentMana -= SpellData.ManaCost[CastInfo.SpellLevel] * (1 - stats.SpellCostReduction);
             }
 
-            _futureProjNetId = NetworkIdManager.GetNewNetId();
+            _futureProjNetId = _networkIdManager.GetNewNetId();
 
             CastInfo.MissileNetID = _futureProjNetId;
 
@@ -381,7 +380,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
                 }
             }
 
-            _futureProjNetId = NetworkIdManager.GetNewNetId();
+            _futureProjNetId = _networkIdManager.GetNewNetId();
 
             CastInfo.MissileNetID = _futureProjNetId;
 

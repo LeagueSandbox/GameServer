@@ -12,13 +12,13 @@ namespace LeagueSandbox.GameServer.GameObjects
     public class Buff : Stackable, IBuff
     {
         // Crucial Vars.
-        protected Game Game;
-        protected CSharpScriptEngine ScriptEngine;
+        private readonly Game _game;
+        private readonly CSharpScriptEngine _scriptEngine;
         private IBuffGameScript _buffGameScript;
 
         // Function Vars.
-        protected bool InfiniteDuration;
-        protected bool Remove;
+        private readonly bool _infiniteDuration;
+        private bool _remove;
 
         public BuffAddType BuffAddType { get; }
         public BuffType BuffType { get; } /// TODO: Add comments to BuffType enum.
@@ -38,10 +38,10 @@ namespace LeagueSandbox.GameServer.GameObjects
                 throw new ArgumentException("Error: Duration was set to under 0.");
             }
 
-            InfiniteDuration = infiniteDuration;
-            Game = game;
-            Remove = false;
-            ScriptEngine = game.ScriptEngine;
+            _infiniteDuration = infiniteDuration;
+            _game = game;
+            _remove = false;
+            _scriptEngine = game.ScriptEngine;
             Name = buffName;
 
             LoadScript();
@@ -83,23 +83,23 @@ namespace LeagueSandbox.GameServer.GameObjects
         public void LoadScript()
         {
             ApiEventManager.RemoveAllListenersForOwner(_buffGameScript);
-            _buffGameScript = ScriptEngine.CreateObject<IBuffGameScript>(Name, Name);
+            _buffGameScript = _scriptEngine.CreateObject<IBuffGameScript>(Name, Name);
         }
 
         public void ActivateBuff()
         {
             _buffGameScript.OnActivate(TargetUnit, this, OriginSpell);
 
-            Remove = false;
+            _remove = false;
         }
 
         public void DeactivateBuff()
         {
-            if (Remove)
+            if (_remove)
             {
                 return;
             }
-            Remove = true; // To prevent infinite loop with OnDeactivate calling events
+            _remove = true; // To prevent infinite loop with OnDeactivate calling events
 
             _buffGameScript.OnDeactivate(TargetUnit, this, OriginSpell);
 
@@ -111,7 +111,7 @@ namespace LeagueSandbox.GameServer.GameObjects
 
         public bool Elapsed()
         {
-            return Remove;
+            return _remove;
         }
 
         public IStatsModifier GetStatsModifier()
@@ -121,7 +121,7 @@ namespace LeagueSandbox.GameServer.GameObjects
 
         public bool IsBuffInfinite()
         {
-            return InfiniteDuration;
+            return _infiniteDuration;
         }
 
         public bool IsBuffSame(string buffName)
@@ -141,7 +141,7 @@ namespace LeagueSandbox.GameServer.GameObjects
 
         public void Update(float diff)
         {
-            if (InfiniteDuration)
+            if (_infiniteDuration)
             {
                 return;
             }
