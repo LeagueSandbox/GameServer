@@ -5,76 +5,46 @@ using GameServerCore.Domain.GameObjects.Spell;
 using GameServerCore.Enums;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using LeagueSandbox.GameServer.GameObjects.Other;
-using GameServerCore.Domain.GameObjects.Spell;
+using LeagueSandbox.GameServer.API;
 
 namespace LeagueSandbox.GameServer.GameObjects
 {
     public class Buff : Stackable, IBuff
     {
         // Crucial Vars.
-        protected Game _game;
+        protected Game Game;
+        protected CSharpScriptEngine ScriptEngine;
         private IBuffGameScript _buffGameScript;
-        protected CSharpScriptEngine _scriptEngine;
 
         // Function Vars.
-        protected bool _infiniteDuration;
-        protected bool _remove;
+        protected bool InfiniteDuration;
+        protected bool Remove;
 
-        /// <summary>
-        /// How this buff should be added and treated when adding new buffs of the same name.
-        /// </summary>
-        public BuffAddType BuffAddType { get; private set; }
-        /// <summary>
-        /// Type of buff to add. Determines how this buff interacts with mechanics of the game. Refer to BuffType.
-        /// </summary>
-        /// TODO: Add comments to BuffType enum.
-        public BuffType BuffType { get; private set; }
-        /// <summary>
-        /// Total time this buff should be applied to its target.
-        /// </summary>
-        public float Duration { get; private set; }
-        /// <summary>
-        /// Whether or not this buff should be shown on clients' buff bar (HUD).
-        /// </summary>
-        public bool IsHidden { get; private set; }
-        /// <summary>
-        /// Internal name of this buff.
-        /// </summary>
-        public string Name { get; private set; }
-        /// <summary>
-        /// Spell which caused this buff to be applied.
-        /// </summary>
-        public ISpell OriginSpell { get; private set; }
-        /// <summary>
-        /// Slot of this buff instance. Maximum allowed is 255 due to packets.
-        /// </summary>
+        public BuffAddType BuffAddType { get; }
+        public BuffType BuffType { get; } /// TODO: Add comments to BuffType enum.
+        public float Duration { get; }
+        public bool IsHidden { get; }
+        public string Name { get; }
+        public ISpell OriginSpell { get; }
         public byte Slot { get; private set; }
-        /// <summary>
-        /// Unit which applied this buff to its target.
-        /// </summary>
-        public IObjAiBase SourceUnit { get; private set; }
-        /// <summary>
-        /// Unit which has this buff applied to it.
-        /// </summary>
-        public IAttackableUnit TargetUnit { get; private set; }
-        /// <summary>
-        /// Time since this buff's timer started.
-        /// </summary>
+        public IObjAiBase SourceUnit { get; }
+        public IAttackableUnit TargetUnit { get; }
         public float TimeElapsed { get; private set; }
 
-        public Buff(Game game, string buffName, float duration, int stacks, ISpell originspell, IAttackableUnit onto, IObjAiBase from, bool infiniteDuration = false)
+        public Buff(Game game, string buffName, float duration, int stacks, ISpell originSpell, IAttackableUnit onto, IObjAiBase from, bool infiniteDuration = false)
         {
             if (duration < 0)
             {
                 throw new ArgumentException("Error: Duration was set to under 0.");
             }
 
-            _infiniteDuration = infiniteDuration;
-            _game = game;
-            _remove = false;
-            _scriptEngine = game.ScriptEngine;
+            InfiniteDuration = infiniteDuration;
+            Game = game;
+            Remove = false;
+            ScriptEngine = game.ScriptEngine;
+            Name = buffName;
 
-            _buffGameScript = _scriptEngine.CreateObject<IBuffGameScript>(buffName, buffName);
+            LoadScript();
 
             BuffAddType = _buffGameScript.BuffAddType;
             if (BuffAddType == (BuffAddType.STACKS_AND_RENEWS | BuffAddType.STACKS_AND_CONTINUE | BuffAddType.STACKS_AND_OVERLAPS) && _buffGameScript.MaxStacks < 2)
@@ -85,7 +55,7 @@ namespace LeagueSandbox.GameServer.GameObjects
             BuffType = _buffGameScript.BuffType;
             Duration = duration;
             IsHidden = _buffGameScript.IsHidden;
-            if (_buffGameScript.MaxStacks > 254 && !(BuffType == BuffType.COUNTER))
+            if (_buffGameScript.MaxStacks > 254 && BuffType != BuffType.COUNTER)
             {
                 MaxStacks = 254;
             }
@@ -93,8 +63,7 @@ namespace LeagueSandbox.GameServer.GameObjects
             {
                 MaxStacks = Math.Min(_buffGameScript.MaxStacks, int.MaxValue);
             }
-            Name = buffName;
-            OriginSpell = originspell;
+            OriginSpell = originSpell;
             if (onto.HasBuff(Name) && BuffAddType == BuffAddType.STACKS_AND_OVERLAPS)
             {
                 // Put parent buff data into children buffs
@@ -111,20 +80,26 @@ namespace LeagueSandbox.GameServer.GameObjects
             TargetUnit = onto;
         }
 
+        public void LoadScript()
+        {
+            ApiEventManager.RemoveAllListenersForOwner(_buffGameScript);
+            _buffGameScript = ScriptEngine.CreateObject<IBuffGameScript>(Name, Name);
+        }
+
         public void ActivateBuff()
         {
             _buffGameScript.OnActivate(TargetUnit, this, OriginSpell);
 
-            _remove = false;
+            Remove = false;
         }
 
         public void DeactivateBuff()
         {
-            if (_remove)
+            if (Remove)
             {
                 return;
             }
-            _remove = true; // To prevent infinite loop with OnDeactivate calling events
+            Remove = true; // To prevent infinite loop with OnDeactivate calling events
 
             _buffGameScript.OnDeactivate(TargetUnit, this, OriginSpell);
 
@@ -136,7 +111,7 @@ namespace LeagueSandbox.GameServer.GameObjects
 
         public bool Elapsed()
         {
-            return _remove;
+            return Remove;
         }
 
         public IStatsModifier GetStatsModifier()
@@ -146,7 +121,7 @@ namespace LeagueSandbox.GameServer.GameObjects
 
         public bool IsBuffInfinite()
         {
-            return _infiniteDuration;
+            return InfiniteDuration;
         }
 
         public bool IsBuffSame(string buffName)
@@ -166,7 +141,7 @@ namespace LeagueSandbox.GameServer.GameObjects
 
         public void Update(float diff)
         {
-            if (_infiniteDuration)
+            if (InfiniteDuration)
             {
                 return;
             }
@@ -174,10 +149,7 @@ namespace LeagueSandbox.GameServer.GameObjects
             TimeElapsed += diff / 1000.0f;
             if (Math.Abs(Duration) > Extensions.COMPARE_EPSILON)
             {
-                if (_buffGameScript != null)
-                {
-                    _buffGameScript.OnUpdate(diff);
-                }
+                _buffGameScript?.OnUpdate(diff);
                 if (TimeElapsed >= Duration)
                 {
                     DeactivateBuff();
