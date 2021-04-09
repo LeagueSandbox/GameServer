@@ -1112,7 +1112,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
             if (publish)
             {
-                ApiEventManager.OnUnitUpdateMoveOrder.Publish(this);
+                ApiEventManager.OnUnitUpdateMoveOrder.Publish(this, order);
             }
         }
     }

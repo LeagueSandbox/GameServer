@@ -53,12 +53,12 @@ namespace Recall
             }
         }
 
-        public void OnUpdateMoveOrder(IObjAiBase unit)
+        public void OnUpdateMoveOrder(IObjAiBase unit, OrderType order)
         {
             var buff = unit.GetBuffWithName("Recall");
             if (buff != null)
             {
-                if (unit.MoveOrder != OrderType.Hold && unit.MoveOrder != OrderType.Stop)
+                if (order != OrderType.Hold && order != OrderType.Stop)
                 {
                     buff.DeactivateBuff();
                 }
