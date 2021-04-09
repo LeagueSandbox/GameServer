@@ -77,9 +77,11 @@ namespace LeagueSandbox.GameServer.API
         {
             OnHitUnit.RemoveListener(owner);
             OnLaunchAttack.RemoveListener(owner);
+            OnLaunchMissile.RemoveListener(owner);
             OnPreAttack.RemoveListener(owner);
             OnSpellCast.RemoveListener(owner);
             OnSpellChannel.RemoveListener(owner);
+            OnSpellChannelCancel.RemoveListener(owner);
             OnSpellHit.RemoveListener(owner);
             OnSpellPostCast.RemoveListener(owner);
             OnSpellPostChannel.RemoveListener(owner);
