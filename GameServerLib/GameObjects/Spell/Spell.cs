@@ -16,25 +16,22 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
     public class Spell : ISpell
     {
         // Crucial Vars.
-        private CSharpScriptEngine _scriptEngine;
-        private Game _game;
-        protected NetworkIdManager _networkIdManager;
+        private readonly Game _game;
+        private readonly CSharpScriptEngine _scriptEngine;
+        private readonly NetworkIdManager _networkIdManager;
         private uint _futureProjNetId;
         private ISpellScript _spellScript;
 
         public ICastInfo CastInfo { get; private set; } = new CastInfo();
-
-        public string SpellName { get; private set; }
+        public string SpellName { get; }
         public bool HasEmptyScript => _spellScript.GetType() == typeof(SpellScriptEmpty);
-
         public SpellState State { get; protected set; } = SpellState.STATE_READY;
         public float CurrentCooldown { get; protected set; }
         public float CurrentCastTime { get; protected set; }
         public float CurrentChannelDuration { get; protected set; }
         public float CurrentDelayTime { get; protected set; }
         public bool Toggle { get; protected set; }
-
-        public ISpellData SpellData { get; private set; }
+        public ISpellData SpellData { get; }
 
         public Spell(Game game, IObjAiBase owner, string spellName, byte slot)
         {
@@ -61,7 +58,14 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
             SpellData = game.Config.ContentManager.GetSpellData(spellName);
 
             //Set the game script for the spell
-            _spellScript = _scriptEngine.CreateObject<ISpellScript>("Spells", spellName) ?? new SpellScriptEmpty();
+            LoadScript();
+        }
+
+        public void LoadScript()
+        {
+            ApiEventManager.RemoveAllListenersForOwner(_spellScript);
+
+            _spellScript = _scriptEngine.CreateObject<ISpellScript>("Spells", SpellName) ?? new SpellScriptEmpty();
 
             if (_spellScript.ScriptMetadata.TriggersSpellCasts)
             {
@@ -77,12 +81,9 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
             }
 
             //Activate spell - Notes: Deactivate is never called as spell removal hasn't been added
-            _spellScript.OnActivate(owner, this);
+            _spellScript.OnActivate(CastInfo.Owner, this);
         }
 
-        /// <summary>
-        /// Called by projectiles when they land / hit, this is where we apply damage/slows etc.
-        /// </summary>
         public void ApplyEffects(IAttackableUnit u, ISpellMissile p = null)
         {
             if (SpellData.HaveHitEffect && !string.IsNullOrEmpty(SpellData.HitEffectName) && !CastInfo.IsAutoAttack && HasEmptyScript)
@@ -100,9 +101,6 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
             ApiEventManager.OnSpellHit.Publish(CastInfo.Owner, this, u, p);
         }
 
-        /// <summary>
-        /// Called when the character casts this spell. Initializes the CastInfo for this spell and begins casting.
-        /// </summary>
         public bool Cast(Vector2 start, Vector2 end, IAttackableUnit unit = null)
         {
             if (unit == null && SpellData.TargetingType == TargetingType.Target)
@@ -359,9 +357,6 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
             return true;
         }
 
-        /// <summary>
-        /// Called when a script manually casts this spell.
-        /// </summary>
         public bool Cast(ICastInfo castInfo, bool cast)
         {
             CastInfo = castInfo;
@@ -587,9 +582,6 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
             return true;
         }
 
-        /// <summary>
-        /// Called after the spell has finished casting and is beginning a channel.
-        /// </summary>
         public void Channel()
         {
             State = SpellState.STATE_CHANNELING;
@@ -606,11 +598,6 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
             }
         }
 
-        /// <summary>
-        /// Forces this spell to stop channeling based on the given condition for the given reason.
-        /// </summary>
-        /// <param name="condition">Canceled or successful?</param>
-        /// <param name="reason">How it should be treated.</param>
         public void StopChanneling(ChannelingStopCondition condition, ChannelingStopSource reason)
         {
             if (condition == ChannelingStopCondition.Cancel)
@@ -632,9 +619,6 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
             _spellScript.OnDeactivate(CastInfo.Owner, this);
         }
 
-        /// <summary>
-        /// Called when the spell is finished casting and we're supposed to do things such as projectile spawning, etc.
-        /// </summary>
         public void FinishCasting()
         {
             if (_spellScript.ScriptMetadata.TriggersSpellCasts)
@@ -740,9 +724,6 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
             }
         }
 
-        /// <summary>
-        /// Creates a single-target missile with the specified properties.
-        /// </summary>
         public ISpellMissile CreateSpellMissile()
         {
             if (CastInfo.MissileNetID == 0)
@@ -751,12 +732,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
                 return null;
             }
 
-            var isServerOnly = false;
-
-            if (SpellData.MissileEffect != "")
-            {
-                isServerOnly = true;
-            }
+            bool isServerOnly = SpellData.MissileEffect != "";
 
             var p = new SpellMissile(
                 _game,
@@ -780,9 +756,6 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
             return p;
         }
 
-        /// <summary>
-        /// Creates a single-target bouncing missile with the specified properties.
-        /// </summary>
         public ISpellMissile CreateSpellChainMissile()
         {
             if (CastInfo.MissileNetID == 0)
@@ -791,12 +764,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
                 return null;
             }
 
-            var isServerOnly = false;
-
-            if (SpellData.MissileEffect != "")
-            {
-                isServerOnly = true;
-            }
+            bool isServerOnly = SpellData.MissileEffect != "";
 
             var p = new SpellChainMissile(
                 _game,
@@ -821,9 +789,6 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
             return p;
         }
 
-        /// <summary>
-        /// Creates a line missile with the specified properties.
-        /// </summary>
         public ISpellMissile CreateSpellCircleMissile()
         {
             if (CastInfo.MissileNetID == 0)
@@ -832,12 +797,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
                 return null;
             }
 
-            var isServerOnly = false;
-
-            if (SpellData.MissileEffect != "")
-            {
-                isServerOnly = true;
-            }
+            bool isServerOnly = SpellData.MissileEffect != "";
 
             var p = new SpellCircleMissile(
                 _game,
@@ -861,9 +821,6 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
             return p;
         }
 
-        /// <summary>
-        /// Creates an arc missile with the specified properties.
-        /// </summary>
         public ISpellMissile CreateSpellLineMissile()
         {
             if (CastInfo.MissileNetID == 0)
@@ -872,12 +829,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
                 return null;
             }
 
-            var isServerOnly = false;
-
-            if (SpellData.MissileEffect != "")
-            {
-                isServerOnly = true;
-            }
+            bool isServerOnly = SpellData.MissileEffect != "";
 
             var p = new SpellLineMissile(
                 _game,
@@ -901,9 +853,6 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
             return p;
         }
 
-        /// <summary>
-        /// Called when the character finished channeling
-        /// </summary>
         public void FinishChanneling()
         {
             ApiEventManager.OnSpellPostChannel.Publish(this);
@@ -927,13 +876,9 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
             return _game.Config.CooldownsEnabled ? SpellData.Cooldown[CastInfo.SpellLevel] * (1 - CastInfo.Owner.Stats.CooldownReduction.Total) : 0;
         }
 
-        /// <summary>
-        /// Gets the cast range for this spell (based on level).
-        /// </summary>
-        /// <returns>Cast range based on level.</returns>
         public float GetCurrentCastRange()
         {
-            var castRange = SpellData.CastRange[0];
+            float castRange = SpellData.CastRange[0];
 
             if (CastInfo.SpellLevel == 0)
             {
@@ -954,7 +899,6 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
             return castRange;
         }
 
-        /// <returns>spell's unique ID</returns>
         public int GetId()
         {
             return (int)HashFunctions.HashString(SpellName);
@@ -962,25 +906,16 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
 
         public string GetStringForSlot()
         {
-            switch (CastInfo.SpellSlot)
+            return CastInfo.SpellSlot switch
             {
-                case 0:
-                    return "Q";
-                case 1:
-                    return "W";
-                case 2:
-                    return "E";
-                case 3:
-                    return "R";
-                case 62:
-                    return "Passive";
-                case var n when (n <= 81 && n >= 64):
-                {
-                    return "Attack";
-                }
-            }
-
-            return "undefined";
+                0 => "Q",
+                1 => "W",
+                2 => "E",
+                3 => "R",
+                62 => "Passive",
+                var n when (n <= 81 && n >= 64) => "Attack",
+                _ => "undefined"
+            };
         }
 
         public void LevelUp()
@@ -1039,19 +974,12 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
             }
         }
 
-        /// <summary>
-        /// Sets the state of the spell to the specified state. Often used when reseting time between spell casts.
-        /// </summary>
-        /// <param name="state"></param>
         public void SetSpellState(SpellState state)
         {
             State = state;
         }
 
-        /// <summary>
-        /// Sets the toggle state of this spell to the specified state. True = usable, false = sealed, unusable.
-        /// </summary>
-        /// <param name="toggle">True/False.</param>
+
         public void SetSpellToggle(bool toggle)
         {
             Toggle = toggle;

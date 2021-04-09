@@ -166,7 +166,7 @@ namespace LeagueSandbox.GameServer.Content
 
         public bool LoadScripts()
         {
-            var scriptLoadResult = _game.ScriptEngine.LoadSubdirectoryScripts(PackagePath);
+            var scriptLoadResult = _game.ScriptEngine.LoadSubDirectoryScripts(PackagePath);
             switch (scriptLoadResult)
             {
                 case Scripting.CSharp.CompilationStatus.Compiled:

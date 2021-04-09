@@ -17,12 +17,16 @@ using PacketDefinitions420;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
+using System.Threading.Tasks;
 using Timer = System.Timers.Timer;
 using GameServerCore.Packets.PacketDefinitions;
 using GameServerCore.Packets.PacketDefinitions.Requests;
+using LeagueSandbox.GameServer.GameObjects;
+using LeagueSandbox.GameServer.GameObjects.Spell;
 using LeagueSandbox.GameServer.Packets.PacketHandlers;
 
 namespace LeagueSandbox.GameServer
@@ -38,7 +42,7 @@ namespace LeagueSandbox.GameServer
         private List<GameScriptTimer> _gameScriptTimers;
 
         // Function Vars
-        private ILog _logger;
+        private readonly ILog _logger;
         private Timer _pauseTimer;
         private bool _autoResumeCheck;
         private float _nextSyncTime = 10 * 1000;
@@ -125,6 +129,8 @@ namespace LeagueSandbox.GameServer
         /// Class that compiles and loads all scripts which will be used for the game (ex: spells, items, AI, maps, etc).
         /// </summary>
         internal CSharpScriptEngine ScriptEngine { get; private set; }
+
+        internal FileSystemWatcher ScriptsHotReloadWatcher { get; private set; }
 
         /// <summary>
         /// Instantiates all game managers and handlers.
@@ -233,18 +239,61 @@ namespace LeagueSandbox.GameServer
         }
 
         /// <summary>
+        /// Enables or disables the hot reloading of scripts. Used only for development.
+        /// </summary>
+        public void EnableHotReload(bool status)
+        {
+            string scriptsPath = Config.ContentManager.ContentPath;
+
+            void ScriptsChanged(object _, FileSystemEventArgs ea)
+            {
+                // Disable raising events to avoid triggering LoadScripts() many times in a row after the first event
+                ScriptsHotReloadWatcher.EnableRaisingEvents = false;
+                ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.INFO, LoadScripts() ? "Scripts reloaded." : "Scripts failed to reload.");
+                ScriptsHotReloadWatcher.EnableRaisingEvents = true;
+            }
+
+            if (status && ScriptsHotReloadWatcher == null)
+            {
+                ScriptsHotReloadWatcher = new FileSystemWatcher
+                {
+                    Path = scriptsPath,
+                    IncludeSubdirectories = true,
+                    EnableRaisingEvents = true,
+                    NotifyFilter = NotifyFilters.LastWrite,
+                    Filter = "*.*",
+                };
+                ScriptsHotReloadWatcher.Changed += ScriptsChanged;
+            }
+            else
+            {
+                ScriptsHotReloadWatcher.Changed -= ScriptsChanged;
+                ScriptsHotReloadWatcher = null;
+            }
+        }
+
+        /// <summary>
         /// Loads the scripts contained in every content package.
         /// </summary>
         /// <returns>Whether all scripts were loaded successfully or not.</returns>
         public bool LoadScripts()
         {
-            var scriptLoadingResults = Config.ContentManager.LoadScripts();
+            bool scriptLoadingResults = Config.ContentManager.LoadScripts();
+
+            if (scriptLoadingResults)
+            {
+                foreach (var champion in ObjectManager.GetAllChampions())
+                {
+                    champion.GetBuffs().ForEach(buff => buff.LoadScript());
+                    champion.Spells.Values.ToList().ForEach(spell => spell.LoadScript());
+                }
+            }
 
             return scriptLoadingResults;
         }
 
         /// <summary>
-        /// Function which initates ticking of the game's logic.
+        /// Function which initiates ticking of the game's logic.
         /// </summary>
         public void GameLoop()
         {
@@ -268,7 +317,7 @@ namespace LeagueSandbox.GameServer
                 if (_lastMapDurationWatch.Elapsed.TotalMilliseconds + 1.0 > REFRESH_RATE)
                 {
                     // Sets last tick time (diff).
-                    var sinceLastMapTime = _lastMapDurationWatch.Elapsed.TotalMilliseconds;
+                    double sinceLastMapTime = _lastMapDurationWatch.Elapsed.TotalMilliseconds;
                     _lastMapDurationWatch.Restart();
                     if (IsRunning)
                     {

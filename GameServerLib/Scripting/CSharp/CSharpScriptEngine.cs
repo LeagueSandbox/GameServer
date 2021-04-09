@@ -23,33 +23,26 @@ namespace LeagueSandbox.GameServer.Scripting.CSharp
     public class CSharpScriptEngine
     {
         private readonly ILog _logger;
-        private List<Assembly> _scriptAssembly = new List<Assembly>();
-        private readonly Dictionary<string, Type> types = new Dictionary<string, Type>();
+        private readonly List<Assembly> _scriptAssembly = new List<Assembly>();
+        private readonly Dictionary<string, Type> _types = new Dictionary<string, Type>();
 
         public CSharpScriptEngine()
         {
             _logger = LoggerProvider.GetLogger();
         }
 
-        public CompilationStatus LoadSubdirectoryScripts(string folder)
+        public CompilationStatus LoadSubDirectoryScripts(string folder)
         {
-            var basePath = Path.GetFullPath(folder);
-            var allfiles = Directory.GetFiles(folder, "*.cs", SearchOption.AllDirectories).Where(pathString =>
+            string basePath = Path.GetFullPath(folder);
+            var allFiles = Directory.GetFiles(folder, "*.cs", SearchOption.AllDirectories).Where(pathString =>
             {
-                var fileBasePath = Path.GetFullPath(pathString);
-                var trimmedPath = fileBasePath.Remove(0, basePath.Length);
+                string fileBasePath = Path.GetFullPath(pathString);
+                string trimmedPath = fileBasePath.Remove(0, basePath.Length);
                 var directories = trimmedPath.ToLower().Split(Path.DirectorySeparatorChar);
-                if (directories.Contains("bin") || directories.Contains("obj") || pathString.Contains("AssemblyInfo.cs"))
-                {
-                    return false;
-                }
-                return true;
-            });
-            if (allfiles.Count() == 0)
-            {
-                return CompilationStatus.NoScripts;
-            }
-            return Load(new List<string>(allfiles));
+                return !directories.Contains("bin") && !directories.Contains("obj") && !pathString.Contains("AssemblyInfo.cs");
+            }).ToList();
+
+            return allFiles.Any() ? Load(allFiles) : CompilationStatus.NoScripts;
         }
 
         /// <summary>
@@ -71,7 +64,7 @@ namespace LeagueSandbox.GameServer.Scripting.CSharp
                     treeList[i] = syntaxTree;
                 }
             });
-            var assemblyName = Path.GetRandomFileName();
+            string assemblyName = Path.GetRandomFileName();
 
             var references = new List<MetadataReference>();
             foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
@@ -85,6 +78,8 @@ namespace LeagueSandbox.GameServer.Scripting.CSharp
             references.Add(MetadataReference.CreateFromFile(typeof(Vector2).Assembly.Location));
             //Now add game reference
             references.Add(MetadataReference.CreateFromFile(typeof(Game).Assembly.Location));
+            //Add MathExtensions reference to enable usage of extension methods in scripts
+            references.Add(MetadataReference.CreateFromFile(typeof(GameMaths.MathExtension).Assembly.Location));
             var compilationOptions = new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary)
                 .WithOptimizationLevel(OptimizationLevel.Release).WithConcurrentBuild(true);
 
@@ -109,20 +104,18 @@ namespace LeagueSandbox.GameServer.Scripting.CSharp
                         _scriptAssembly.Add(assembly);
                         foreach (var type in assembly.GetTypes())
                         {
-                            types[type.FullName] = type;
+                            if (type.FullName != null) _types[type.FullName] = type;
                         }
                         return state;
                     }
-                    else
+
+                    state = CompilationStatus.SomeCompiled;
+                    var invalidSourceTrees = GetInvalidSourceTrees(result);
+                    compilation = compilation.RemoveSyntaxTrees(invalidSourceTrees);
+                    if (invalidSourceTrees.Count == 0 || compilation.SyntaxTrees.Length == 0)
                     {
-                        state = CompilationStatus.SomeCompiled;
-                        var invalidSourceTrees = GetInvalidSourceTrees(result);
-                        compilation = compilation.RemoveSyntaxTrees(invalidSourceTrees);
-                        if (invalidSourceTrees.Count == 0 || compilation.SyntaxTrees.Length == 0)
-                        {
-                            _logger.Error("Script compilation failed");
-                            return CompilationStatus.NoneCompiled;
-                        }
+                        _logger.Error("Script compilation failed");
+                        return CompilationStatus.NoneCompiled;
                     }
                 }
             }
@@ -148,13 +141,13 @@ namespace LeagueSandbox.GameServer.Scripting.CSharp
         {
             if (_scriptAssembly == null || _scriptAssembly.Count <= 0)
             {
-                return default(T);
+                return default;
             }
 
             var fullClassName = scriptNamespace + "." + scriptClass;
-            if (types.ContainsKey(fullClassName))
+            if (_types.ContainsKey(fullClassName))
             {
-                Type classType = (Type)types[fullClassName];
+                Type classType = _types[fullClassName];
                 var desiredFunction = classType.GetMethod(scriptFunction, BindingFlags.Public | BindingFlags.Static);
 
                 if (desiredFunction != null)
@@ -163,28 +156,28 @@ namespace LeagueSandbox.GameServer.Scripting.CSharp
                 }
             }
 
-            return default(T);
+            return default;
         }
 
         public T CreateObject<T>(string scriptNamespace, string scriptClass)
         {
             if (_scriptAssembly == null || _scriptAssembly.Count <= 0)
             {
-                return default(T);
+                return default;
             }
 
             scriptNamespace = scriptNamespace.Replace(" ", "_");
             scriptClass = scriptClass.Replace(" ", "_");
-            var fullClassName = scriptNamespace + "." + scriptClass;
+            string fullClassName = scriptNamespace + "." + scriptClass;
 
-            if (types.ContainsKey(fullClassName))
+            if (_types.ContainsKey(fullClassName))
             {
-                Type classType = (Type)types[fullClassName];
+                Type classType = _types[fullClassName];
                 return (T)Activator.CreateInstance(classType);
             }
 
             _logger.Warn($"Could not find script: {scriptNamespace}.{scriptClass}");
-            return default(T);
+            return default;
         }
 
         public static object RunFunctionOnObject(object obj, string method, params object[] args)
