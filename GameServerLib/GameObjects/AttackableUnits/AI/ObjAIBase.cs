@@ -133,49 +133,51 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                     }
                 }
 
-                // SummonerSpellSlots
-                // 4 - 5
+                Spells[(int)SpellSlotType.SummonerSpellSlots] = new Spell.Spell(game, this, "BaseSpell", (int)SpellSlotType.SummonerSpellSlots);
+                Spells[(int)SpellSlotType.SummonerSpellSlots + 1] = new Spell.Spell(game, this, "BaseSpell", (int)SpellSlotType.SummonerSpellSlots + 1);
 
                 // InventorySlots
                 // 6 - 12 (12 = TrinketSlot)
-                for (byte i = 6; i < 13; i++)
+                for (byte i = (int)SpellSlotType.InventorySlots; i < (int)SpellSlotType.BluePillSlot; i++)
                 {
                     Spells[i] = new Spell.Spell(game, this, "BaseSpell", i);
                 }
 
-                // BluePillSlot
-                // 13
-
-                // TempItemSlot
-                // 14
+                Spells[(int)SpellSlotType.BluePillSlot] = new Spell.Spell(game, this, "BaseSpell", (int)SpellSlotType.BluePillSlot);
+                Spells[(int)SpellSlotType.TempItemSlot] = new Spell.Spell(game, this, "BaseSpell", (int)SpellSlotType.TempItemSlot);
 
                 // RuneSlots
                 // 15 - 44
+                for (short i = (int)SpellSlotType.RuneSlots; i < (int)SpellSlotType.ExtraSlots; i++)
+                {
+                    Spells[(byte)i] = new Spell.Spell(game, this, "BaseSpell", (byte)i);
+                }
 
                 // ExtraSpells
                 // 45 - 60
                 for (short i = 0; i < CharData.ExtraSpells.Length; i++)
                 {
+                    var extraSpellName = "BaseSpell";
                     if (!string.IsNullOrEmpty(CharData.ExtraSpells[i]))
                     {
-                        var spellSlot = i + 45;
-                        Spells[(byte)(spellSlot)] = new Spell.Spell(game, this, CharData.ExtraSpells[i], (byte)(spellSlot));
-                        Spells[(byte)(spellSlot)].LevelUp();
+                        extraSpellName = CharData.ExtraSpells[i];
                     }
+
+                    var slot = i + (int)SpellSlotType.ExtraSlots;
+                    Spells[(byte)slot] = new Spell.Spell(game, this, extraSpellName, (byte)slot);
+                    Spells[(byte)slot].LevelUp();
                 }
 
-                // RespawnSpellSlot
-                // 61
+                Spells[(int)SpellSlotType.RespawnSpellSlot] = new Spell.Spell(game, this, "BaseSpell", (int)SpellSlotType.RespawnSpellSlot);
+                Spells[(int)SpellSlotType.UseSpellSlot] = new Spell.Spell(game, this, "BaseSpell", (int)SpellSlotType.UseSpellSlot);
 
-                // UseSpellSlot
-                // 62
-
-                // PassiveSpellSlot
-                // 63
+                var passiveSpellName = "BaseSpell";
                 if (!string.IsNullOrEmpty(CharData.Passive.PassiveAbilityName))
                 {
-                    Spells[63] = new Spell.Spell(game, this, CharData.Passive.PassiveAbilityName, 63);
+                    passiveSpellName = CharData.Passive.PassiveAbilityName;
                 }
+
+                Spells[(int)SpellSlotType.PassiveSpellSlot] = new Spell.Spell(game, this, passiveSpellName, (int)SpellSlotType.PassiveSpellSlot);
 
                 // BasicAttackNormalSlots & BasicAttackCriticalSlots
                 // 64 - 72 & 73 - 81
@@ -183,7 +185,8 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 {
                     if (!string.IsNullOrEmpty(CharData.AttackNames[i]))
                     {
-                        Spells[(byte)(i + 64)] = new Spell.Spell(game, this, CharData.AttackNames[i], (byte)(i + 64));
+                        int slot = i + (int)SpellSlotType.BasicAttackNormalSlots;
+                        Spells[(byte)slot] = new Spell.Spell(game, this, CharData.AttackNames[i], (byte)slot);
                     }
                 }
 

@@ -56,18 +56,16 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             Stats.IsGeneratingGold = false;
 
             //TODO: automaticaly rise spell levels with CharData.SpellLevelsUp
+            
+            Spells[(int)SpellSlotType.SummonerSpellSlots] = new Spell.Spell(game, this, clientInfo.SummonerSkills[0], (int)SpellSlotType.SummonerSpellSlots);
+            Spells[(int)SpellSlotType.SummonerSpellSlots].LevelUp();
+            Spells[(int)SpellSlotType.SummonerSpellSlots + 1] = new Spell.Spell(game, this, clientInfo.SummonerSkills[1], (int)SpellSlotType.SummonerSpellSlots + 1);
+            Spells[(int)SpellSlotType.SummonerSpellSlots + 1].LevelUp();
 
-            Spells[4] = new Spell.Spell(game, this, clientInfo.SummonerSkills[0], 4);
-            Spells[5] = new Spell.Spell(game, this, clientInfo.SummonerSkills[1], 5);
-
-            Spells[13] = new Spell.Spell(game, this, "Recall", 13);
-
-            Spells[4].LevelUp();
-            Spells[5].LevelUp();
+            Spells[(int)SpellSlotType.BluePillSlot] = new Spell.Spell(game, this, "Recall", (int)SpellSlotType.BluePillSlot);
+            Stats.SetSpellEnabled((byte)SpellSlotType.BluePillSlot, true);
 
             Replication = new ReplicationHero(this);
-
-            Stats.SetSpellEnabled(13, true);
         }
 
         private string GetPlayerIndex()
