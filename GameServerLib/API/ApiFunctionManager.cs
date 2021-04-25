@@ -553,11 +553,11 @@ namespace LeagueSandbox.GameServer.API
         public static void SealSpellSlot(IObjAiBase target, SpellSlotType slotType, int slot, SpellbookType spellbookType, bool seal)
         {
             if (spellbookType == SpellbookType.SPELLBOOK_UNKNOWN
-                || (spellbookType == SpellbookType.SPELLBOOK_SUMMONER && (slotType != SpellSlotType.SpellSlots)
+                || spellbookType == SpellbookType.SPELLBOOK_SUMMONER && (slotType != SpellSlotType.SpellSlots)
                 || (spellbookType == SpellbookType.SPELLBOOK_CHAMPION
-                    && ((slotType == SpellSlotType.SpellSlots && slot < 0 || slot > 3)
-                        || (slotType == SpellSlotType.InventorySlots && slot < 0 && slot > 6)
-                        || (slotType == SpellSlotType.ExtraSlots && slot < 0 && slot > 15)))))
+                    && ((slotType == SpellSlotType.SpellSlots && (slot < 0 || slot > 3))
+                        || (slotType == SpellSlotType.InventorySlots && (slot < 0 || slot > 6))
+                        || (slotType == SpellSlotType.ExtraSlots && (slot < 0 || slot > 15)))))
             {
                 return;
             }
@@ -566,16 +566,16 @@ namespace LeagueSandbox.GameServer.API
             {
                 if (slotType == SpellSlotType.InventorySlots)
                 {
-                    slot += 6;
+                    slot += (int)SpellSlotType.InventorySlots;
                 }
                 if (slotType == SpellSlotType.ExtraSlots)
                 {
-                    slot += 45;
+                    slot += (int)SpellSlotType.ExtraSlots;
                 }
             }
             else
             {
-                slot += 4;
+                slot += (int)SpellSlotType.SummonerSpellSlots;
             }
 
             target.Stats.SetSpellEnabled((byte)slot, !seal);
@@ -583,21 +583,26 @@ namespace LeagueSandbox.GameServer.API
 
         public static void SpellCast(IObjAiBase caster, int slot, SpellSlotType slotType, Vector2 pos, Vector2 endPos, bool fireWithoutCasting, Vector2 overrideCastPos, List<ICastTarget> targets = null, bool isForceCastingOrChanneling = false, int overrideForceLevel = -1, bool updateAutoAttackTimer = false, bool useAutoAttackSpell = false)
         {
-            if ((slotType == SpellSlotType.SpellSlots && slot < 0 || slot > 3)
-                || (slotType == SpellSlotType.InventorySlots && slot < 0 && slot > 6)
-                || (slotType == SpellSlotType.ExtraSlots && slot < 0 && slot > 15))
+            if ((slotType == SpellSlotType.SpellSlots && (slot < 0 || slot > 3))
+                || (slotType == SpellSlotType.InventorySlots && (slot < 0 || slot > 6))
+                || (slotType == SpellSlotType.ExtraSlots && (slot < 0 || slot > 15)))
             {
                 return;
             }
 
             if (slotType == SpellSlotType.InventorySlots)
             {
-                slot += 4;
+                slot += (int)SpellSlotType.InventorySlots;
+            }
+
+            if (slotType == SpellSlotType.TempItemSlot)
+            {
+                slot = (int)SpellSlotType.TempItemSlot;
             }
 
             if (slotType == SpellSlotType.ExtraSlots)
             {
-                slot += 45;
+                slot += (int)SpellSlotType.ExtraSlots;
             }
 
             ISpell spell = caster.GetSpell((byte)slot);
@@ -657,6 +662,20 @@ namespace LeagueSandbox.GameServer.API
             ICastTarget castTarget = new CastTarget(target, CastTarget.GetHitResult(target, useAutoAttackSpell, caster.IsNextAutoCrit));
 
             SpellCast(caster, slot, slotType, target.Position, target.Position, fireWithoutCasting, overrideCastPos, new List<ICastTarget> { castTarget }, isForceCastingOrChanneling, overrideForceLevel, updateAutoAttackTimer, useAutoAttackSpell);
+        }
+
+        public static void SpellCastItem(IObjAiBase caster, string itemSpellName, bool fireWithoutCasting, IAttackableUnit target, Vector2 overrideCastPos, bool isForceCastingOrChanneling = false, int overrideForceLevel = -1, bool updateAutoAttackTimer = false, bool useAutoAttackSpell = false)
+        {
+            // Apply the spell to the TempItemSlot.
+            caster.SetSpell(itemSpellName, (byte)SpellSlotType.TempItemSlot, true);
+            SpellCast(caster, 0, SpellSlotType.TempItemSlot, fireWithoutCasting, target, overrideCastPos, isForceCastingOrChanneling, overrideForceLevel, updateAutoAttackTimer, useAutoAttackSpell);
+        }
+
+        public static void SpellCastItem(IObjAiBase caster, string itemSpellName, Vector2 pos, Vector2 endPos, bool fireWithoutCasting, Vector2 overrideCastPos, bool isForceCastingOrChanneling = false, int overrideForceLevel = -1, bool updateAutoAttackTimer = false, bool useAutoAttackSpell = false)
+        {
+            // Apply the spell to the TempItemSlot.
+            caster.SetSpell(itemSpellName, (byte)SpellSlotType.TempItemSlot, true);
+            SpellCast(caster, 0, SpellSlotType.TempItemSlot, pos, endPos, fireWithoutCasting, overrideCastPos, null, isForceCastingOrChanneling, overrideForceLevel, updateAutoAttackTimer, useAutoAttackSpell);
         }
 
         public static void StopChanneling(IObjAiBase target, ChannelingStopCondition stopCondition, ChannelingStopSource stopSource)

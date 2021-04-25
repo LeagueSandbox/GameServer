@@ -344,7 +344,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
 
                     break;
                 case DamageType.DAMAGE_TYPE_MAGICAL:
-                    defense = Stats.MagicPenetration.Total;
+                    defense = Stats.MagicResist.Total;
                     defense = (1 - attackerStats.MagicPenetration.PercentBonus) * defense -
                               attackerStats.MagicPenetration.FlatBonus;
                     break;

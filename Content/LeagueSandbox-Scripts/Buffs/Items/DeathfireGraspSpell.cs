@@ -5,9 +5,9 @@ using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 using LeagueSandbox.GameServer.GameObjects.Stats;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 
-namespace Deathfire_Grasp
+namespace DeathfireGraspSpell
 {
-    internal class Deathfire_Grasp : IBuffGameScript
+    internal class DeathfireGraspSpell : IBuffGameScript
     {
         public BuffType BuffType => BuffType.COMBAT_DEHANCER;
         public BuffAddType BuffAddType => BuffAddType.REPLACE_EXISTING;
@@ -16,20 +16,17 @@ namespace Deathfire_Grasp
 
         public IStatsModifier StatsModifier { get; private set; } = new StatsModifier();
 
-        IParticle target;
         IParticle debuff;
 
         public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
-            target = AddParticleTarget(ownerSpell.CastInfo.Owner, "deathFireGrasp_tar.troy", target);
-            debuff = AddParticleTarget(ownerSpell.CastInfo.Owner, "obj_DeathfireGrasp_debuff.troy", target);
+            debuff = AddParticleTarget(ownerSpell.CastInfo.Owner, "obj_DeathfireGrasp_debuff.troy", unit);
 
-            // TODO: Implement damage amp. stat modifier
+            // TODO: Implement damage amp. stat modifier or OnTakeDamage listener
         }
 
         public void OnDeactivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
-            RemoveParticle(target);
             RemoveParticle(debuff);
         }
 
