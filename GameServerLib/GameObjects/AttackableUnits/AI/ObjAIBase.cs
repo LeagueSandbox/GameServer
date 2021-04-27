@@ -456,7 +456,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         public bool RecalculateAttackPosition()
         {
             // If we are already where we should be, which means we are in attack range, then keep our current position.
-            if (TargetUnit != null && !TargetUnit.IsDead && Vector2.DistanceSquared(Position, TargetUnit.Position) <= Stats.Range.Total * Stats.Range.Total)
+            if (TargetUnit == null || TargetUnit.IsDead || Vector2.DistanceSquared(Position, TargetUnit.Position) <= Stats.Range.Total * Stats.Range.Total)
             {
                 return false;
             }

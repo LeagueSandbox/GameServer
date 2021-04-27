@@ -101,10 +101,9 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
             IAttackableUnit nextTarget = null;
             var nextTargetPriority = 14;
-            // TODO: Verify if we still need to order this by distance (if it is ordered by time created).
             var nearestObjects = _game.Map.CollisionHandler.QuadDynamic.GetNearestObjects(this);
             //Find target closest to max attack range.
-            foreach (var it in nearestObjects)
+            foreach (var it in nearestObjects.OrderBy(x => Vector2.DistanceSquared(Position, x.Position) - (Stats.Range.Total * Stats.Range.Total)))
             {
                 if (!(it is IAttackableUnit u) ||
                     u.IsDead ||
