@@ -462,7 +462,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             }
 
             var nearestObjects = _game.Map.CollisionHandler.QuadDynamic.GetNearestObjects(this);
-            var isCurrentlyOverlapping = false;
 
             foreach (var gameObject in nearestObjects)
             {
