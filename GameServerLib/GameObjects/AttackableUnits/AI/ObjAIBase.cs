@@ -455,65 +455,37 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         /// TODO: Re-implement this for LaneMinions and add a patience or distance threshold so they don't follow forever.
         public bool RecalculateAttackPosition()
         {
-            // If we are already where we should be, which means we are in attack range and not colliding, then keep our current position.
-            if (TargetUnit != null && !TargetUnit.IsDead && Vector2.DistanceSquared(Position, TargetUnit.Position) > CollisionRadius * CollisionRadius
-                && Vector2.DistanceSquared(Position, TargetUnit.Position) <= Stats.Range.Total * Stats.Range.Total)
+            // If we are already where we should be, which means we are in attack range, then keep our current position.
+            if (TargetUnit == null || TargetUnit.IsDead || Vector2.DistanceSquared(Position, TargetUnit.Position) <= Stats.Range.Total * Stats.Range.Total)
             {
                 return false;
             }
-            var objects = _game.ObjectManager.GetObjects();
-            List<CirclePoly> usedPositions = new List<CirclePoly>();
-            var isCurrentlyOverlapping = false;
 
-            var thisCollisionCircle = new CirclePoly(TargetUnit?.Position ?? Position, CollisionRadius + 10);
+            var nearestObjects = _game.Map.CollisionHandler.QuadDynamic.GetNearestObjects(this);
 
-            foreach (var gameObject in objects)
+            foreach (var gameObject in nearestObjects)
             {
-                var unit = gameObject.Value as IAttackableUnit;
+                var unit = gameObject as IAttackableUnit;
                 if (unit == null ||
                     unit.NetId == NetId ||
                     unit.IsDead ||
-                    unit.Team != Team ||
                     Vector2.DistanceSquared(Position, TargetUnit.Position) > DETECT_RANGE * DETECT_RANGE
                 )
                 {
                     continue;
                 }
-                var targetCollisionCircle = new CirclePoly(unit.Position, unit.CollisionRadius + 10);
-                if (targetCollisionCircle.CheckForOverLaps(thisCollisionCircle))
-                {
-                    isCurrentlyOverlapping = true;
-                }
-                usedPositions.Add(targetCollisionCircle);
-            }
-            if (isCurrentlyOverlapping)
-            {
-                // TODO: Optimize this, preferably without things like CirclePoly.
-                var targetCircle = new CirclePoly(TargetUnit.Position, Stats.Range.Total, 72);
-                //Find optimal position...
-                foreach (var point in targetCircle.Points.OrderBy(x => Vector2.DistanceSquared(Position, x)))
-                {
-                    if (!_game.Map.NavigationGrid.IsVisible(point))
-                    {
-                        continue;
-                    }
-                    var positionUsed = false;
-                    foreach (var circlePoly in usedPositions)
-                    {
-                        if (circlePoly.CheckForOverLaps(new CirclePoly(point, CollisionRadius + 10, 20)))
-                        {
-                            positionUsed = true;
-                        }
-                    }
 
-                    if (positionUsed)
-                    {
-                        continue;
-                    }
-                    SetWaypoints(new List<Vector2> { Position, point });
+                var closestPoint = GameServerCore.Extensions.GetClosestCircleEdgePoint(Position, gameObject.Position, gameObject.CollisionRadius);
+
+                // If this unit is colliding with gameObject
+                if (GameServerCore.Extensions.IsVectorWithinRange(closestPoint, Position, CollisionRadius))
+                {
+                    var exitPoint = GameServerCore.Extensions.GetCircleEscapePoint(Position, CollisionRadius + 1, gameObject.Position, gameObject.CollisionRadius);
+                    SetWaypoints(new List<Vector2> { Position, exitPoint });
                     return true;
                 }
             }
+
             return false;
         }
 

@@ -101,23 +101,27 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
             IAttackableUnit nextTarget = null;
             var nextTargetPriority = 14;
-            var objects = _game.ObjectManager.GetObjects();
+            var nearestObjects = _game.Map.CollisionHandler.QuadDynamic.GetNearestObjects(this);
             //Find target closest to max attack range.
-            foreach (var it in objects.OrderBy(x => Vector2.DistanceSquared(Position, x.Value.Position) - (Stats.Range.Total * Stats.Range.Total)))
+            foreach (var it in nearestObjects.OrderBy(x => Vector2.DistanceSquared(Position, x.Position) - (Stats.Range.Total * Stats.Range.Total)))
             {
-                if (!(it.Value is IAttackableUnit u) ||
+                if (!(it is IAttackableUnit u) ||
                     u.IsDead ||
                     u.Team == Team ||
                     Vector2.DistanceSquared(Position, u.Position) > DETECT_RANGE * DETECT_RANGE ||
                     !_game.ObjectManager.TeamHasVisionOn(Team, u))
+                {
                     continue;
+                }
+
                 var priority = (int)ClassifyTarget(u);  // get the priority.
                 if (priority < nextTargetPriority) // if the priority is lower than the target we checked previously
                 {
-                    nextTarget = u;                // make him a potential target.
+                    nextTarget = u;                // make it a potential target.
                     nextTargetPriority = priority;
                 }
             }
+
             if (nextTarget != null) // If we have a target
             {
                 // Set the new target and refresh waypoints
@@ -125,8 +129,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
                 return true;
             }
-            _game.PacketNotifier.NotifyNPC_InstantStop_Attack(this, false);
-            IsAttacking = false;
+
             return false;
         }
 
