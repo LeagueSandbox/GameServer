@@ -273,18 +273,19 @@ namespace LeagueSandbox.GameServer.API
         /// <summary>
         /// Creates a new particle with the specified parameters.
         /// </summary>
-        /// <param name="obj">GameObject that should own this particle.</param>
+        /// <param name="bindObj">GameObject that the particle should bind to.</param>
         /// <param name="particle">Internal name of the particle.</param>
         /// <param name="position">Position to spawn at.</param>
         /// <param name="size">Scale.</param>
-        /// <param name="bone">Bone the particle should be attached to.</param>
+        /// <param name="bone">Bone on the owner the particle should be attached to.</param>
+        /// <param name="targetBone">Bone on the target the particle should be attached to.</param>
         /// <param name="direction">3D direction the particle should face.</param>
         /// <param name="lifetime">Time in seconds the particle should last.</param>
         /// <param name="reqVision">Whether or not the particle can be obstructed by terrain.</param>
         /// <returns>New particle instance.</returns>
-        public static IParticle AddParticle(IGameObject obj, string particle, Vector2 position, float size = 1.0f, string bone = "", Vector3 direction = new Vector3(), float lifetime = 0, bool reqVision = true)
+        public static IParticle AddParticle(IGameObject bindObj, string particle, Vector2 position, float size = 1.0f, string bone = "", string targetBone = "", Vector3 direction = new Vector3(), float lifetime = 0, bool reqVision = true)
         {
-            var p = new Particle(_game, obj, position, particle, size, bone, 0, direction, lifetime, reqVision);
+            var p = new Particle(_game, bindObj, position, particle, size, bone, targetBone, 0, direction, lifetime, reqVision);
             return p;
         }
 
@@ -292,18 +293,19 @@ namespace LeagueSandbox.GameServer.API
         /// Creates a new particle with the specified parameters.
         /// This particle will be attached to a target.
         /// </summary>
-        /// <param name="obj">GameObject that should own this particle.</param>
+        /// <param name="bindObj">GameObject that the particle should bind to (prioritized over target).</param>
         /// <param name="particle">Internal name of the particle.</param>
-        /// <param name="target">GameObject to attach this particle to.</param>
+        /// <param name="target">GameObject that the particle should bind to after the bindObj.</param>
         /// <param name="size">Scale.</param>
-        /// <param name="bone">Bone the particle should be attached to.</param>
+        /// <param name="bone">Bone on the owner the particle should be attached to.</param>
+        /// <param name="targetBone">Bone on the target the particle should be attached to.</param>
         /// <param name="direction">3D direction the particle should face.</param>
         /// <param name="lifetime">Time in seconds the particle should last.</param>
         /// <param name="reqVision">Whether or not the particle can be obstructed by terrain.</param>
         /// <returns>New particle instance.</returns>
-        public static IParticle AddParticleTarget(IGameObject obj, string particle, IGameObject target, float size = 1.0f, string bone = "", Vector3 direction = new Vector3(), float lifetime = 0, bool reqVision = true)
+        public static IParticle AddParticleTarget(IGameObject bindObj, string particle, IGameObject target, float size = 1.0f, string bone = "", string targetBone = "", Vector3 direction = new Vector3(), float lifetime = 0, bool reqVision = true)
         {
-            var p = new Particle(_game, obj, target, particle, size, bone, 0, direction, lifetime, reqVision);
+            var p = new Particle(_game, bindObj, target, particle, size, bone, targetBone, 0, direction, lifetime, reqVision);
             return p;
         }
 
@@ -553,7 +555,7 @@ namespace LeagueSandbox.GameServer.API
         public static void SealSpellSlot(IObjAiBase target, SpellSlotType slotType, int slot, SpellbookType spellbookType, bool seal)
         {
             if (spellbookType == SpellbookType.SPELLBOOK_UNKNOWN
-                || spellbookType == SpellbookType.SPELLBOOK_SUMMONER && (slotType != SpellSlotType.SpellSlots)
+                || spellbookType == SpellbookType.SPELLBOOK_SUMMONER && (slotType != SpellSlotType.SummonerSpellSlots)
                 || (spellbookType == SpellbookType.SPELLBOOK_CHAMPION
                     && ((slotType == SpellSlotType.SpellSlots && (slot < 0 || slot > 3))
                         || (slotType == SpellSlotType.InventorySlots && (slot < 0 || slot > 6))
@@ -573,9 +575,11 @@ namespace LeagueSandbox.GameServer.API
                     slot += (int)SpellSlotType.ExtraSlots;
                 }
             }
-            else
+
+            if (spellbookType == SpellbookType.SPELLBOOK_SUMMONER)
             {
-                slot += (int)SpellSlotType.SummonerSpellSlots;
+                target.Stats.SetSummonerSpellEnabled((byte)slot, !seal);
+                return;
             }
 
             target.Stats.SetSpellEnabled((byte)slot, !seal);

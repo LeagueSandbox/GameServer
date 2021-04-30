@@ -90,7 +90,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
             {
                 if (SpellData.HaveHitBone)
                 {
-                    ApiFunctionManager.AddParticleTarget(CastInfo.Owner, SpellData.HitEffectName, u, bone: SpellData.HitBoneName, lifetime: 1.0f);
+                    ApiFunctionManager.AddParticleTarget(CastInfo.Owner, SpellData.HitEffectName, u, targetBone: SpellData.HitBoneName, lifetime: 1.0f);
                 }
                 else
                 {
@@ -234,8 +234,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
 
             _spellScript.OnSpellPreCast(CastInfo.Owner, this, unit, start, end);
 
-            if (!CastInfo.IsAutoAttack && (!SpellData.IsToggleSpell && !SpellData.CanMoveWhileChanneling
-                        && SpellData.CantCancelWhileChanneling)
+            if (!CastInfo.IsAutoAttack && (!SpellData.IsToggleSpell)
                         || (!SpellData.NoWinddownIfCancelled
                         && !SpellData.Flags.HasFlag(SpellDataFlags.InstantCast)
                         && SpellData.CantCancelWhileWindingUp))
@@ -247,7 +246,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
                         CastInfo.Owner.StopMovement();
                     }
 
-                    var goingTo = new Vector2(CastInfo.TargetPosition.X, CastInfo.TargetPosition.Z) - CastInfo.Owner.Position;
+                    var goingTo = end - CastInfo.Owner.Position;
 
                     if (unit != null)
                     {
@@ -315,6 +314,11 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
                 }
             }
 
+            if (!CastInfo.IsAutoAttack)
+            {
+                _game.PacketNotifier.NotifyNPC_CastSpellAns(this);
+            }
+
             if (CastInfo.DesignerCastTime > 0)
             {
                 if (_spellScript.ScriptMetadata.TriggersSpellCasts)
@@ -347,11 +351,6 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
             else
             {
                 FinishCasting();
-            }
-
-            if (!CastInfo.IsAutoAttack)
-            {
-                _game.PacketNotifier.NotifyNPC_CastSpellAns(this);
             }
 
             return true;
@@ -437,11 +436,10 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
             // TODO: Verify
             var attackType = AttackType.ATTACK_TYPE_RADIAL;
 
-            if (cast && !CastInfo.IsAutoAttack && (!SpellData.IsToggleSpell && !SpellData.CanMoveWhileChanneling
-                        && SpellData.CantCancelWhileChanneling)
+            if (cast && (!CastInfo.IsAutoAttack && (!SpellData.IsToggleSpell)
                         || (!SpellData.NoWinddownIfCancelled
                         && !SpellData.Flags.HasFlag(SpellDataFlags.InstantCast)
-                        && SpellData.CantCancelWhileWindingUp))
+                        && SpellData.CantCancelWhileWindingUp)))
             {
                 if (_spellScript.ScriptMetadata.TriggersSpellCasts)
                 {
@@ -450,7 +448,15 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
                         CastInfo.Owner.StopMovement();
                     }
 
-                    ApiFunctionManager.FaceDirection(CastInfo.Targets[0].Unit.Position, CastInfo.Owner);
+                    var goingTo = end - CastInfo.Owner.Position;
+
+                    if (CastInfo.Targets[0].Unit != null)
+                    {
+                        goingTo = CastInfo.Targets[0].Unit.Position - CastInfo.Owner.Position;
+                    }
+
+                    var dirTemp = Vector2.Normalize(goingTo);
+                    CastInfo.Owner.FaceDirection(new Vector3(dirTemp.X, 0, dirTemp.Y), false);
                 }
 
                 if (!SpellData.Flags.HasFlag(SpellDataFlags.InstantCast))
@@ -466,12 +472,6 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
 
             if (cast && CastInfo.Targets[0].Unit != null && CastInfo.Targets[0].Unit != CastInfo.Owner)
             {
-                /*
-                if (CastInfo.Targets[0].Unit != CastInfo.Owner.TargetUnit)
-                {
-                    CastInfo.Owner.SetTargetUnit(CastInfo.Targets[0].Unit, false);
-                }*/
-
                 ApiFunctionManager.FaceDirection(CastInfo.Targets[0].Unit.Position, CastInfo.Owner);
 
                 _game.PacketNotifier.NotifyS2C_UnitSetLookAt(CastInfo.Owner, CastInfo.Targets[0].Unit, attackType);
@@ -512,6 +512,11 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
 
             if (cast)
             {
+                if (!CastInfo.IsAutoAttack)
+                {
+                    _game.PacketNotifier.NotifyNPC_CastSpellAns(this);
+                }
+
                 if (CastInfo.DesignerCastTime > 0)
                 {
                     if (_spellScript.ScriptMetadata.TriggersSpellCasts)
@@ -544,11 +549,6 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
                 else
                 {
                     FinishCasting();
-                }
-
-                if (!CastInfo.IsAutoAttack)
-                {
-                    _game.PacketNotifier.NotifyNPC_CastSpellAns(this);
                 }
             }
             else

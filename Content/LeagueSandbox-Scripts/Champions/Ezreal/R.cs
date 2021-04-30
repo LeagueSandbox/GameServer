@@ -6,6 +6,8 @@ using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using GameServerCore.Domain.GameObjects.Spell;
 using GameServerCore.Domain.GameObjects.Spell.Missile;
+using LeagueSandbox.GameServer.API;
+using System.Collections.Generic;
 
 namespace Spells
 {
@@ -13,12 +15,17 @@ namespace Spells
     {
         public ISpellScriptMetadata ScriptMetadata { get; private set; } = new SpellScriptMetadata()
         {
-            TriggersSpellCasts = true
+            TriggersSpellCasts = true,
+            MissileParameters = new MissileParameters
+            {
+                Type = MissileType.Circle
+            }
             // TODO
         };
 
         public void OnActivate(IObjAiBase owner, ISpell spell)
         {
+            ApiEventManager.OnSpellHit.AddListener(this, new KeyValuePair<ISpell, IObjAiBase>(spell, owner), TargetExecute, false);
         }
 
         public void OnDeactivate(IObjAiBase owner, ISpell spell)
@@ -36,24 +43,20 @@ namespace Spells
 
         public void OnSpellPostCast(ISpell spell)
         {
-            var current = new Vector2(spell.CastInfo.Owner.Position.X, spell.CastInfo.Owner.Position.Y);
-            var spellPos = new Vector2(spell.CastInfo.TargetPosition.X, spell.CastInfo.TargetPosition.Z);
-            var to = Vector2.Normalize(spellPos - current);
-            var range = to * 20000;
-            var trueCoords = current + range;
-
-            //spell.AddProjectile("EzrealTrueshotBarrage", new Vector2(spell.CastInfo.SpellCastLaunchPosition.X, spell.CastInfo.SpellCastLaunchPosition.Z), current, trueCoords, HitResult.HIT_Normal, true);
         }
 
-        //public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, ISpellMissile missile)
-        //{
-        //    var reduc = Math.Min(missile.ObjectsHit.Count, 7);
-        //    var bonusAd = owner.Stats.AttackDamage.Total - owner.Stats.AttackDamage.BaseValue;
-        //    var ap = owner.Stats.AbilityPower.Total * 0.9f;
-        //    var damage = 200 + spell.CastInfo.SpellLevel * 150 + bonusAd + ap;
-        //    target.TakeDamage(owner, damage * (1 - reduc / 10), DamageType.DAMAGE_TYPE_MAGICAL,
-        //        DamageSource.DAMAGE_SOURCE_SPELL, false);
-        //}
+        public void TargetExecute(ISpell spell, IAttackableUnit target, ISpellMissile missile)
+        {
+            var owner = spell.CastInfo.Owner;
+            if (missile is ISpellCircleMissile skillshot)
+            {
+                var reduc = Math.Min(skillshot.ObjectsHit.Count, 7);
+                var bonusAd = owner.Stats.AttackDamage.Total - owner.Stats.AttackDamage.BaseValue;
+                var ap = owner.Stats.AbilityPower.Total * 0.9f;
+                var damage = 200f + (150f * (spell.CastInfo.SpellLevel - 1)) + bonusAd + ap;
+                target.TakeDamage(owner, damage * (1f - (reduc - 1f) / 10f), DamageType.DAMAGE_TYPE_MAGICAL, DamageSource.DAMAGE_SOURCE_SPELL, false);
+            }
+        }
 
         public void OnSpellChannel(ISpell spell)
         {

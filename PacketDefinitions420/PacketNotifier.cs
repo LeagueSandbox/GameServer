@@ -543,17 +543,17 @@ namespace PacketDefinitions420
         /// <param name="u">ObjAiBase who owns the spell going on cooldown.</param>
         /// <param name="slotId">Slot of the spell.</param>
         /// <param name="currentCd">Amount of time the spell has already been on cooldown (if applicable).</param>
-        /// <param name="totalCd">Amount of time that the spell should have be in cooldown before going off cooldown.</param>
+        /// <param name="totalCd">Maximum amount of time the spell's cooldown can be.</param>
         public void NotifyCHAR_SetCooldown(IObjAiBase u, byte slotId, float currentCd, float totalCd)
         {
             var cdPacket = new CHAR_SetCooldown
             {
                 SenderNetID = u.NetId,
                 Slot = slotId,
-                PlayVOWhenCooldownReady = true, // TODO: Unhardcode
+                PlayVOWhenCooldownReady = false, // TODO: Unhardcode
                 IsSummonerSpell = false, // TODO: Unhardcode
                 Cooldown = currentCd,
-                MaxCooldownForDisplay = totalCd
+                MaxCooldownForDisplay = 0 // TODO: Verify (packet loses functionality otherwise)
             };
             if (u is IChampion && (slotId == 4 || slotId == 5))
             {
@@ -877,11 +877,11 @@ namespace PacketDefinitions420
         public void NotifyFXCreateGroup(IParticle particle, int userId = 0)
         {
             var fxPacket = new FX_Create_Group();
-            fxPacket.SenderNetID = particle.Owner.NetId;
+            fxPacket.SenderNetID = particle.BindObject.NetId;
 
             var fxDataList = new List<FXCreateData>();
 
-            var ownerPos = particle.Owner.GetPosition3D();
+            var bindPos = particle.BindObject.GetPosition3D();
             var targetHeight = _navGrid.GetHeightAtLocation(particle.TargetPosition.X, particle.TargetPosition.Y);
             var higherValue = Math.Max(targetHeight, particle.GetHeight());
 
@@ -889,7 +889,7 @@ namespace PacketDefinitions420
             var fxData1 = new FXCreateData
             {
                 NetAssignedNetID = particle.NetId,
-                CasterNetID = particle.Owner.NetId,
+                CasterNetID = particle.BindObject.NetId,
                 KeywordNetID = 0, // Not sure what this is
 
                 PositionX = (short)((particle.Position.X - _navGrid.MapWidth / 2) / 2),
@@ -898,9 +898,9 @@ namespace PacketDefinitions420
 
                 TargetPositionY = targetHeight,
 
-                OwnerPositionX = (short)((ownerPos.X - _navGrid.MapWidth / 2) / 2),
-                OwnerPositionY = ownerPos.Y,
-                OwnerPositionZ = (short)((ownerPos.Z - _navGrid.MapHeight / 2) / 2),
+                OwnerPositionX = (short)((bindPos.X - _navGrid.MapWidth / 2) / 2),
+                OwnerPositionY = bindPos.Y,
+                OwnerPositionZ = (short)((bindPos.Z - _navGrid.MapHeight / 2) / 2),
 
                 TimeSpent = particle.GetTimeAlive(),
                 ScriptScale = particle.Scale
@@ -908,8 +908,8 @@ namespace PacketDefinitions420
 
             if (particle.TargetObject == null) // Non-object target (usually a position)
             {
-                fxData1.TargetNetID = particle.Owner.NetId; // Probably not correct, but it works
-                fxData1.BindNetID = 0; // Not sure what this is
+                fxData1.TargetNetID = particle.BindObject.NetId; // Probably not correct, but it works
+                fxData1.BindNetID = 0;
 
                 fxData1.TargetPositionX = (short)((particle.TargetPosition.X - _navGrid.MapWidth / 2) / 2);
                 fxData1.TargetPositionZ = (short)((particle.TargetPosition.Y - _navGrid.MapHeight / 2) / 2);
@@ -917,7 +917,7 @@ namespace PacketDefinitions420
             else
             {
                 fxData1.TargetNetID = particle.TargetObject.NetId;
-                fxData1.BindNetID = particle.TargetObject.NetId; // Not sure what this is
+                fxData1.BindNetID = particle.BindObject.NetId;
 
                 fxData1.TargetPositionX = (short)particle.TargetObject.Position.X;
                 fxData1.TargetPositionZ = (short)particle.TargetObject.Position.Y;
@@ -942,14 +942,14 @@ namespace PacketDefinitions420
                 EffectNameHash = HashString(particle.Name),
                 //TODO: un-hardcode flags
                 Flags = 0x20, // Taken from SpawnParticle packet
-                TargetBoneNameHash = 0,
+                TargetBoneNameHash = HashString(particle.TargetBoneName),
                 // TODO: Verify if the above is the same as below (most likely relate to bone of origin and bone of end point)
                 BoneNameHash = HashString(particle.BoneName),
 
                 FXCreateData = fxDataList
             };
 
-            if (particle.Owner is IObjAiBase o)
+            if (particle.BindObject is IObjAiBase o)
             {
                 fxGroupData1.PackageHash = o.GetObjHash();
             }

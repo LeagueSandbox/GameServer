@@ -14,15 +14,15 @@ namespace LeagueSandbox.GameServer.GameObjects
         private float _currentTime;
 
         /// <summary>
-        /// Object which spawned or caused the particle to be instanced
+        /// Primary bind target.
         /// </summary>
-        public IGameObject Owner { get; }
+        public IGameObject BindObject { get; }
         /// <summary>
         /// Client-sided, internal name of the particle used in networking, usually always ends in .troy
         /// </summary>
         public string Name { get; }
         /// <summary>
-        /// GameObject this particle is currently attached to. Null when not attached to anything.
+        /// Secondary bind target. Null when not attached to anything.
         /// </summary>
         public IGameObject TargetObject { get; }
         /// <summary>
@@ -30,9 +30,13 @@ namespace LeagueSandbox.GameServer.GameObjects
         /// </summary>
         public Vector2 TargetPosition { get; private set; }
         /// <summary>
-        /// Client-sided, internal name of the bone that this particle should be attached to for networking
+        /// Client-sided, internal name of the bone that this particle should be attached to on the owner, for networking.
         /// </summary>
         public string BoneName { get; }
+        /// <summary>
+        /// Client-sided, internal name of the bone that this particle should be attached to on the target, for networking.
+        /// </summary>
+        public string TargetBoneName { get; }
         /// <summary>
         /// Scale of the particle used in networking
         /// </summary>
@@ -53,8 +57,8 @@ namespace LeagueSandbox.GameServer.GameObjects
         /// This particle will spawn and stay on the specified GameObject target.
         /// </summary>
         /// <param name="game">Game instance.</param>
-        /// <param name="owner">Owner of this Particle instance.</param>
-        /// <param name="t">GameObject this particle should be attached to. Leave null if target is position.</param>
+        /// <param name="bindObj">Primary bind target.</param>
+        /// <param name="target">Secondary bind target.</param>
         /// <param name="particleName">Name used by League of Legends interally (ex: DebugCircle.troy).</param>
         /// <param name="scale">Scale of the Particle.</param>
         /// <param name="boneName">Name used by League of Legends internally where the Particle should be attached. Only useful when the target is a GameObject.</param>
@@ -63,14 +67,15 @@ namespace LeagueSandbox.GameServer.GameObjects
         /// <param name="lifetime">Number of seconds the Particle should exist.</param>
         /// <param name="reqVision">Whether or not the Particle is affected by vision checks.</param>
         /// <param name="autoSend">Whether or not to automatically send the Particle packet to clients.</param>
-        public Particle(Game game, IGameObject owner, IGameObject t, string particleName, float scale = 1.0f, string boneName = "", uint netId = 0, Vector3 direction = new Vector3(), float lifetime = 0, bool reqVision = true, bool autoSend = true)
-               : base(game, t.Position, 0, 0, netId, owner.Team)
+        public Particle(Game game, IGameObject bindObj, IGameObject target, string particleName, float scale = 1.0f, string boneName = "", string targetBoneName = "", uint netId = 0, Vector3 direction = new Vector3(), float lifetime = 0, bool reqVision = true, bool autoSend = true)
+               : base(game, target.Position, 0, 0, netId, bindObj.Team)
         {
-            Owner = owner;
-            TargetObject = t;
+            BindObject = bindObj;
+            TargetObject = target;
             TargetPosition = TargetObject.Position;
             Name = particleName;
             BoneName = boneName;
+            TargetBoneName = targetBoneName;
             Scale = scale;
             Direction = direction;
             Lifetime = lifetime;
@@ -89,7 +94,7 @@ namespace LeagueSandbox.GameServer.GameObjects
         /// This particle will spawn and stay at the specified position.
         /// </summary>
         /// <param name="game">Game instance.</param>
-        /// <param name="owner">Owner of this Particle instance.</param>
+        /// <param name="bindObj">GameObject that the particle should be bound to.</param>
         /// <param name="targetPos">Target position of this particle.</param>
         /// <param name="particleName">Name used by League of Legends interally (ex: DebugCircle.troy).</param>
         /// <param name="scale">Scale of the Particle.</param>
@@ -99,14 +104,15 @@ namespace LeagueSandbox.GameServer.GameObjects
         /// <param name="lifetime">Number of seconds the Particle should exist.</param>
         /// <param name="reqVision">Whether or not the Particle is affected by vision checks.</param>
         /// <param name="autoSend">Whether or not to automatically send the Particle packet to clients.</param>
-        public Particle(Game game, IGameObject owner, Vector2 targetPos, string particleName, float scale = 1.0f, string boneName = "", uint netId = 0, Vector3 direction = new Vector3(), float lifetime = 0, bool reqVision = true, bool autoSend = true)
-               : base(game, targetPos, 0, 0, netId, owner.Team)
+        public Particle(Game game, IGameObject bindObj, Vector2 targetPos, string particleName, float scale = 1.0f, string boneName = "", string targetBoneName = "", uint netId = 0, Vector3 direction = new Vector3(), float lifetime = 0, bool reqVision = true, bool autoSend = true)
+               : base(game, targetPos, 0, 0, netId, bindObj.Team)
         {
-            Owner = owner;
+            BindObject = bindObj;
             TargetObject = null;
             TargetPosition = targetPos;
             Name = particleName;
             BoneName = boneName;
+            TargetBoneName = targetBoneName;
             Scale = scale;
             Direction = direction;
             Lifetime = lifetime;

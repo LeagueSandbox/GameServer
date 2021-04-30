@@ -110,12 +110,13 @@ namespace Spells
             var ap = owner.Stats.AbilityPower.Total * spell.SpellData.MagicDamageCoefficient;
             var damage = 15 + spell.CastInfo.SpellLevel * 20 + ad + ap;
             target.TakeDamage(owner, damage, DamageType.DAMAGE_TYPE_PHYSICAL, DamageSource.DAMAGE_SOURCE_ATTACK, false);
+
             for (byte i = 0; i < 4; i++)
             {
                 owner.Spells[i].LowerCooldown(1);
             }
 
-            AddParticleTarget(spell.CastInfo.Owner, "Ezreal_mysticshot_tar.troy", target);
+            AddParticleTarget(target, "Ezreal_mysticshot_tar.troy", target);
             missile.SetToRemove();
 
             // SpellBuffAdd EzrealRisingSpellForce
