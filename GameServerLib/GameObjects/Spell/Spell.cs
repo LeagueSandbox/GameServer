@@ -244,6 +244,9 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
                     if (!SpellData.Flags.HasFlag(SpellDataFlags.InstantCast))
                     {
                         CastInfo.Owner.StopMovement();
+
+                        // TODO: Verify if we should move this outside of this TriggersSpellCasts if statement.
+                        CastInfo.Owner.UpdateMoveOrder(OrderType.CastSpell, true);
                     }
 
                     var goingTo = end - CastInfo.Owner.Position;
@@ -255,12 +258,6 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
 
                     var dirTemp = Vector2.Normalize(goingTo);
                     CastInfo.Owner.FaceDirection(new Vector3(dirTemp.X, 0, dirTemp.Y), false);
-                }
-
-                // TODO: Verify if we should move this into the above if statement.
-                if (!SpellData.Flags.HasFlag(SpellDataFlags.InstantCast))
-                {
-                    CastInfo.Owner.UpdateMoveOrder(OrderType.CastSpell, true);
                 }
             }
 
@@ -447,6 +444,9 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
                     if (!SpellData.Flags.HasFlag(SpellDataFlags.InstantCast))
                     {
                         CastInfo.Owner.StopMovement();
+
+                        // TODO: Verify if we should move this outside of this TriggersSpellCasts if statement.
+                        CastInfo.Owner.UpdateMoveOrder(OrderType.CastSpell, true);
                     }
 
                     var goingTo = end - CastInfo.Owner.Position;
@@ -458,12 +458,6 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
 
                     var dirTemp = Vector2.Normalize(goingTo);
                     CastInfo.Owner.FaceDirection(new Vector3(dirTemp.X, 0, dirTemp.Y), false);
-                }
-
-                // TODO: Verify if we should move this into the above if statement.
-                if (!SpellData.Flags.HasFlag(SpellDataFlags.InstantCast))
-                {
-                    CastInfo.Owner.UpdateMoveOrder(OrderType.CastSpell, true);
                 }
             }
 
