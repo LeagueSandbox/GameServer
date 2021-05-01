@@ -1386,7 +1386,7 @@ namespace PacketDefinitions420
             var misPacket = new MissileReplication
             {
                 SenderNetID = p.CastInfo.Owner.NetId,
-                Position = p.CastInfo.SpellCastLaunchPosition,
+                Position = p.GetPosition3D(),
                 CasterPosition = p.CastInfo.Owner.GetPosition3D(),
                 // Not sure if we want to add height for these, but i did it anyway
                 Direction = p.Direction,
@@ -2497,27 +2497,6 @@ namespace PacketDefinitions420
         }
 
         /// <summary>
-        /// Sends a packet to all players with vision of the specified unit detailing that the unit has teleported to the specified position.
-        /// </summary>
-        /// <param name="o">GameObject that teleported.</param>
-        /// <param name="pos">2D top-down position that the unit teleported to.</param>
-        /// TODO: Take into account any movements (waypoints) that should carry over after the teleport.
-        public void NotifyTeleport(IGameObject o, Vector2 pos)
-        {
-            var tp = (MovementDataNormal)PacketExtensions.CreateMovementData(o, _navGrid, MovementDataType.Normal, useTeleportID: true);
-
-            // position is already in centered format
-            var packet = new WaypointGroup
-            {
-                SenderNetID = o.NetId,
-                SyncID = o.SyncId,
-                Movements = new List<MovementDataNormal> { tp }
-            };
-
-            _packetHandlerManager.BroadcastPacketVision(o, packet.GetBytes(), Channel.CHL_S2C);
-        }
-
-        /// <summary>
         /// Sends a packet to all players detailing that their screen's tint is shifting to the specified color.
         /// </summary>
         /// <param name="team">TeamID to apply the tint to.</param>
@@ -2689,10 +2668,11 @@ namespace PacketDefinitions420
         /// Sends a packet to all players that have vision of the specified unit that it has made a movement.
         /// </summary>
         /// <param name="u">AttackableUnit that is moving.</param>
-        public void NotifyWaypointGroup(IAttackableUnit u)
+        /// <param name="useTeleportID">Whether or not to teleport the unit to its current position in its path.</param>
+        public void NotifyWaypointGroup(IAttackableUnit u, bool useTeleportID = true)
         {
             // TODO: Verify if casts correctly
-            var move = (MovementDataNormal)PacketExtensions.CreateMovementData(u, _navGrid, MovementDataType.Normal);
+            var move = (MovementDataNormal)PacketExtensions.CreateMovementData(u, _navGrid, MovementDataType.Normal, useTeleportID: useTeleportID);
 
             // TODO: Implement support for multiple movements.
             var packet = new WaypointGroup
@@ -2711,13 +2691,6 @@ namespace PacketDefinitions420
         /// Functionally referred to as a dash in-game.
         /// </summary>
         /// <param name="u">Unit that is dashing.</param>
-        /// <param name="dashSpeed">Constant speed that the unit will have during the dash.</param>
-        /// <param name="leapGravity">Optionally how much gravity the unit will experience when above the ground while dashing.</param>
-        /// <param name="keepFacingLastDirection">Optionally whether or not the unit should maintain the direction they were facing before dashing.</param>
-        /// <param name="target">Optional GameObject to follow.</param>
-        /// <param name="followTargetMaxDistance">Optional maximum distance the unit will follow the Target before stopping the dash or reaching to the Target.</param>
-        /// <param name="backDistance">Optional unknown parameter.</param>
-        /// <param name="travelTime">Optional total time the dash will follow the GameObject before stopping or reaching the Target.</param>
         /// TODO: Implement ForceMovement class which houses these parameters, then have that as the only parameter to this function (and other Dash-based functions).
         public void NotifyWaypointGroupWithSpeed
         (

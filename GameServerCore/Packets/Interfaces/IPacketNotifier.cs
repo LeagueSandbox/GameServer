@@ -735,13 +735,6 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="timeOut">Time until voting becomes unavailable.</param>
         void NotifyTeamSurrenderVote(IChampion starter, bool open, bool votedYes, byte yesVotes, byte noVotes, byte maxVotes, float timeOut);
         /// <summary>
-        /// Sends a packet to all players with vision of the specified unit detailing that the unit has teleported to the specified position.
-        /// </summary>
-        /// <param name="o">GameObject that teleported.</param>
-        /// <param name="pos">2D top-down position that the unit teleported to.</param>
-        /// TODO: Take into account any movements (waypoints) that should carry over after the teleport.
-        void NotifyTeleport(IGameObject o, Vector2 pos);
-        /// <summary>
         /// Sends a packet to all players detailing that their screen's tint is shifting to the specified color.
         /// </summary>
         /// <param name="team">TeamID to apply the tint to.</param>
@@ -815,7 +808,8 @@ namespace GameServerCore.Packets.Interfaces
         /// Sends a packet to all players that have vision of the specified unit that it has made a movement.
         /// </summary>
         /// <param name="u">AttackableUnit that is moving.</param>
-        void NotifyWaypointGroup(IAttackableUnit u);
+        /// <param name="useTeleportID">Whether or not to teleport the unit to its current position in its path.</param>
+        void NotifyWaypointGroup(IAttackableUnit u, bool useTeleportID = true);
         /// <summary>
         /// Sends a packet to all players that have vision of the specified unit.
         /// The packet details a group of waypoints with speed parameters which determine what kind of movement will be done to reach the waypoints, or optionally a GameObject.

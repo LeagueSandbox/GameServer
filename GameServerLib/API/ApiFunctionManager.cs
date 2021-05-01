@@ -142,7 +142,6 @@ namespace LeagueSandbox.GameServer.API
             }
 
             unit.TeleportTo(x, y);
-            unit.StopMovement();
         }
 
         public static void FaceDirection(Vector2 location, IGameObject target, bool isInstant = false, float turnTime = 0.08333f)
@@ -422,7 +421,8 @@ namespace LeagueSandbox.GameServer.API
         {
             var units = _game.ObjectManager.GetUnitsInRange(target.Position, range, isAlive);
             var orderedUnits = units.OrderBy(unit => Vector2.DistanceSquared(target.Position, unit.Position));
-            if (orderedUnits.First() == target)
+
+            if (orderedUnits.First() == target && orderedUnits.Count() > 1)
             {
                 return orderedUnits.ElementAt(1);
             }

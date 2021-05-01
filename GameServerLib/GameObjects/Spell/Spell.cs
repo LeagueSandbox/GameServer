@@ -257,6 +257,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
                     CastInfo.Owner.FaceDirection(new Vector3(dirTemp.X, 0, dirTemp.Y), false);
                 }
 
+                // TODO: Verify if we should move this into the above if statement.
                 if (!SpellData.Flags.HasFlag(SpellDataFlags.InstantCast))
                 {
                     CastInfo.Owner.UpdateMoveOrder(OrderType.CastSpell, true);
@@ -459,6 +460,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
                     CastInfo.Owner.FaceDirection(new Vector3(dirTemp.X, 0, dirTemp.Y), false);
                 }
 
+                // TODO: Verify if we should move this into the above if statement.
                 if (!SpellData.Flags.HasFlag(SpellDataFlags.InstantCast))
                 {
                     CastInfo.Owner.UpdateMoveOrder(OrderType.CastSpell, true);
@@ -621,6 +623,24 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
 
         public void FinishCasting()
         {
+            // Updates move order before script PostCast so teleports are sent to clients correctly (not sent if MoveOrder == CastSpell).
+            if (SpellData.Flags.HasFlag(SpellDataFlags.InstantCast))
+            {
+                if (!CastInfo.Owner.IsPathEnded())
+                {
+                    CastInfo.Owner.UpdateMoveOrder(OrderType.MoveTo, true);
+                }
+                if (CastInfo.Owner.TargetUnit != null)
+                {
+                    CastInfo.Owner.UpdateMoveOrder(OrderType.AttackTo, true);
+                }
+            }
+            else
+            {
+                // TODO: Verify
+                CastInfo.Owner.UpdateMoveOrder(OrderType.Hold, true);
+            }
+
             if (_spellScript.ScriptMetadata.TriggersSpellCasts)
             {
                 ApiEventManager.OnSpellPostCast.Publish(this);
@@ -699,23 +719,6 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
                 {
                     CreateSpellLineMissile();
                 }
-            }
-
-            if (SpellData.Flags.HasFlag(SpellDataFlags.InstantCast))
-            {
-                if (!CastInfo.Owner.IsPathEnded())
-                {
-                    CastInfo.Owner.UpdateMoveOrder(OrderType.MoveTo, true);
-                }
-                if (CastInfo.Owner.TargetUnit != null)
-                {
-                    CastInfo.Owner.UpdateMoveOrder(OrderType.AttackTo, true);
-                }
-            }
-            else
-            {
-                // TODO: Verify
-                CastInfo.Owner.UpdateMoveOrder(OrderType.Hold, true);
             }
 
             if (CastInfo.Owner.SpellToCast != null)
