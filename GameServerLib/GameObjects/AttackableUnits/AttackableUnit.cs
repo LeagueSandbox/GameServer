@@ -994,6 +994,21 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             return false;
         }
 
+        public override void TeleportTo(float x, float y)
+        {
+            var position = new Vector2(x, y);
+
+            if (!_game.Map.NavigationGrid.IsWalkable(x, y, CollisionRadius))
+            {
+                position = _game.Map.NavigationGrid.GetClosestTerrainExit(new Vector2(x, y), CollisionRadius + 1.0f);
+            }
+
+            // TODO: Verify if we should move this to ApiFunctionManager as an optional parameter.
+            SetWaypoints(new List<Vector2> { Position, position });
+
+            SetPosition(position);
+        }
+
         /// <summary>
         /// Moves this unit to its specified waypoints, updating its position along the way.
         /// </summary>
@@ -1241,12 +1256,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             };
             DashElapsedTime = 0;
 
-            // TODO: Verify if this should be a parameter
-            Stats.SetActionState(ActionState.CAN_ATTACK, false);
-            Stats.SetActionState(ActionState.CAN_NOT_ATTACK, true);
-            Stats.SetActionState(ActionState.CAN_MOVE, false);
-            Stats.SetActionState(ActionState.CAN_NOT_MOVE, true);
-
             if (animation != null && animation != "")
             {
                 var animPairs = new Dictionary<string, string> { { "RUN", animation } };
@@ -1272,10 +1281,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         {
             if (MovementParameters != null && state == false)
             {
-                Stats.SetActionState(ActionState.CAN_ATTACK, true);
-                Stats.SetActionState(ActionState.CAN_NOT_ATTACK, false);
-                Stats.SetActionState(ActionState.CAN_MOVE, true);
-                Stats.SetActionState(ActionState.CAN_NOT_MOVE, false);
                 MovementParameters = null;
                 DashElapsedTime = 0;
 

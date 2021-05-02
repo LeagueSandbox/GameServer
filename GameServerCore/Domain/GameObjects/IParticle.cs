@@ -8,9 +8,9 @@ namespace GameServerCore.Domain.GameObjects
     public interface IParticle : IGameObject
     {
         /// <summary>
-        /// Object which spawned or caused the particle to be instanced
+        /// Primary bind object.
         /// </summary>
-        IGameObject Owner { get; }
+        public IGameObject BindObject { get; }
         /// <summary>
         /// Client-sided, internal name of the particle used in networking, usually always ends in .troy
         /// </summary>
@@ -27,6 +27,10 @@ namespace GameServerCore.Domain.GameObjects
         /// Client-sided, internal name of the bone that this particle should be attached to for networking
         /// </summary>
         string BoneName { get; }
+        /// <summary>
+        /// Client-sided, internal name of the bone that this particle should be attached to on the target, for networking.
+        /// </summary>
+        string TargetBoneName { get; }
         /// <summary>
         /// Scale of the particle used in networking
         /// </summary>
