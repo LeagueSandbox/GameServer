@@ -221,7 +221,8 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         {
             ApiEventManager.OnHitUnit.Publish(this, target, IsNextAutoCrit);
 
-            if (HasCrowdControl(CrowdControlType.BLIND))
+            // TODO: Verify if we should instead use MissChance.
+            if (HasBuffType(BuffType.BLIND))
             {
                 target.TakeDamage(this, 0, DamageType.DAMAGE_TYPE_PHYSICAL,
                                              DamageSource.DAMAGE_SOURCE_ATTACK,
@@ -242,14 +243,33 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
         public override bool CanMove()
         {
-            // False if any are true.
+            // TODO: Verify if Dashes should bypass this.
             return !(IsDead || MoveOrder == OrderType.CastSpell
-                    // TODO: Remove these and implement them as buffs, then just check the BuffType here.
-                    || HasCrowdControl(CrowdControlType.AIRBORNE)
-                    || HasCrowdControl(CrowdControlType.ROOT)
-                    || HasCrowdControl(CrowdControlType.STASIS)
-                    || HasCrowdControl(CrowdControlType.STUN)
-                    || HasCrowdControl(CrowdControlType.SNARE));
+                    || !(Status.HasFlag(StatusFlags.CanMove) || Status.HasFlag(StatusFlags.CanMoveEver))
+                    || Status.HasFlag(StatusFlags.Immovable)
+                    || Status.HasFlag(StatusFlags.Netted)
+                    || Status.HasFlag(StatusFlags.Rooted)
+                    || Status.HasFlag(StatusFlags.Sleep)
+                    || Status.HasFlag(StatusFlags.Stunned)
+                    || Status.HasFlag(StatusFlags.Suppressed));
+        }
+
+        /// <summary>
+        /// Whether or not this AI is able to auto attack.
+        /// </summary>
+        /// <returns></returns>
+        public bool CanAttack()
+        {
+            // TODO: Verify if all cases are accounted for.
+            return Status.HasFlag(StatusFlags.CanAttack)
+                && !Status.HasFlag(StatusFlags.Charmed)
+                && !Status.HasFlag(StatusFlags.Disarmed)
+                && !Status.HasFlag(StatusFlags.Feared)
+                // TODO: Verify
+                && !Status.HasFlag(StatusFlags.Pacified)
+                && !Status.HasFlag(StatusFlags.Sleep)
+                && !Status.HasFlag(StatusFlags.Stunned)
+                && !Status.HasFlag(StatusFlags.Suppressed);
         }
 
         /// <summary>
@@ -257,7 +277,17 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         /// </summary>
         public bool CanCast()
         {
-            return !HasCrowdControl(CrowdControlType.STUN) && !HasCrowdControl(CrowdControlType.SILENCE);
+            // TODO: Verify if all cases are accounted for.
+            return Status.HasFlag(StatusFlags.CanCast)
+                && !Status.HasFlag(StatusFlags.Charmed)
+                && !Status.HasFlag(StatusFlags.Feared)
+                // TODO: Verify
+                && !Status.HasFlag(StatusFlags.Pacified)
+                && !Status.HasFlag(StatusFlags.Silenced)
+                && !Status.HasFlag(StatusFlags.Sleep)
+                && !Status.HasFlag(StatusFlags.Stunned)
+                && !Status.HasFlag(StatusFlags.Suppressed)
+                && !Status.HasFlag(StatusFlags.Taunted);
         }
 
         public bool CanLevelUpSpell(ISpell s)
@@ -903,12 +933,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         /// <param name="diff">Number of milliseconds that passed before this tick occurred.</param>
         private void UpdateAttackTarget(float diff)
         {
-            if (HasCrowdControl(CrowdControlType.STUN) || HasCrowdControl(CrowdControlType.AIRBORNE) ||
-                HasCrowdControl(CrowdControlType.STASIS))
-            {
-                return;
-            }
-
             if (IsDead)
             {
                 if (TargetUnit != null)
@@ -957,7 +981,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             {
                 if (TargetUnit != null && MoveOrder != OrderType.CastSpell)
                 {
-                    // TODO: Implement True Sight for turrets instead of using exception for turret targeting in relation to vision here.
+                    // TODO: Implement True Sight for turrets instead of using an exception for turret targeting in relation to vision here.
                     if (TargetUnit.IsDead || (!_game.ObjectManager.TeamHasVisionOn(Team, TargetUnit) && !(this is IBaseTurret) && !(TargetUnit is IBaseTurret) && !(TargetUnit is IObjBuilding) && MovementParameters == null))
                     {
                         SetTargetUnit(null);
@@ -996,8 +1020,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                             // Stops us from continuing to move towards the target.
                             RefreshWaypoints(Stats.Range.Total);
 
-                            // TODO: Implement CanAttack function and use BuffType instead of CrowdControl crap (which will be removed).
-                            if (!HasCrowdControl(CrowdControlType.DISARM) && !HasCrowdControl(CrowdControlType.BLIND))
+                            if (CanAttack())
                             {
                                 IsNextAutoCrit = _random.Next(0, 100) < Stats.CriticalChance.Total * 100;
                                 if (_autoAttackCurrentCooldown <= 0)
