@@ -187,7 +187,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Missile
                 return false;
             }
 
-            bool valid = false;
+            bool valid = true;
 
             if (unit.Team == CastInfo.Owner.Team && !SpellOrigin.SpellData.Flags.HasFlag(SpellDataFlags.AffectFriends))
             {
@@ -204,56 +204,60 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Missile
                 valid = false;
             }
 
-            if (SpellOrigin.SpellData.Flags.HasFlag(SpellDataFlags.AffectAllUnitTypes))
+            // Assuming all of the team-based checks passed, we move onto unit-based checks.
+            if (valid)
             {
-                valid = true;
-            }
-            else
-            {
-                switch (unit)
+                if (SpellOrigin.SpellData.Flags.HasFlag(SpellDataFlags.AffectAllUnitTypes))
                 {
-                    // TODO: Verify all
-                    // Order is important
-                    case ILaneMinion _ when SpellOrigin.SpellData.Flags.HasFlag(SpellDataFlags.AffectMinions)
-                                    && !SpellOrigin.SpellData.Flags.HasFlag(SpellDataFlags.IgnoreLaneMinion):
-                        valid = true;
-                        break;
-                    case IMinion m when (!m.IsPet && SpellOrigin.SpellData.Flags.HasFlag(SpellDataFlags.AffectNotPet))
-                                || (m.IsPet && SpellOrigin.SpellData.Flags.HasFlag(SpellDataFlags.AffectUseable))
-                                || (m.IsWard && SpellOrigin.SpellData.Flags.HasFlag(SpellDataFlags.AffectWards))
-                                || (!m.IsClone && SpellOrigin.SpellData.Flags.HasFlag(SpellDataFlags.IgnoreClones))
-                                || (unit.Team == CastInfo.Owner.Team && !SpellOrigin.SpellData.Flags.HasFlag(SpellDataFlags.IgnoreAllyMinion))
-                                || (unit.Team != CastInfo.Owner.Team && unit.Team != TeamId.TEAM_NEUTRAL && !SpellOrigin.SpellData.Flags.HasFlag(SpellDataFlags.IgnoreEnemyMinion))
-                                || SpellOrigin.SpellData.Flags.HasFlag(SpellDataFlags.AffectMinions):
-                        if (!(unit is ILaneMinion))
-                        {
+                    valid = true;
+                }
+                else
+                {
+                    switch (unit)
+                    {
+                        // TODO: Verify all
+                        // Order is important
+                        case ILaneMinion _ when SpellOrigin.SpellData.Flags.HasFlag(SpellDataFlags.AffectMinions)
+                                        && !SpellOrigin.SpellData.Flags.HasFlag(SpellDataFlags.IgnoreLaneMinion):
                             valid = true;
                             break;
-                        }
-                        // already got checked in ILaneMinion
-                        valid = false;
-                        break;
-                    case IBaseTurret _ when SpellOrigin.SpellData.Flags.HasFlag(SpellDataFlags.AffectTurrets):
-                        valid = true;
-                        break;
-                    case IInhibitor _ when SpellOrigin.SpellData.Flags.HasFlag(SpellDataFlags.AffectBuildings):
-                        valid = true;
-                        break;
-                    case INexus _ when SpellOrigin.SpellData.Flags.HasFlag(SpellDataFlags.AffectBuildings):
-                        valid = true;
-                        break;
-                    case IChampion _ when SpellOrigin.SpellData.Flags.HasFlag(SpellDataFlags.AffectHeroes):
-                        valid = true;
-                        break;
-                    default:
-                        valid = false;
-                        break;
-                }
+                        case IMinion m when (!m.IsPet && SpellOrigin.SpellData.Flags.HasFlag(SpellDataFlags.AffectNotPet))
+                                    || (m.IsPet && SpellOrigin.SpellData.Flags.HasFlag(SpellDataFlags.AffectUseable))
+                                    || (m.IsWard && SpellOrigin.SpellData.Flags.HasFlag(SpellDataFlags.AffectWards))
+                                    || (!m.IsClone && SpellOrigin.SpellData.Flags.HasFlag(SpellDataFlags.IgnoreClones))
+                                    || (unit.Team == CastInfo.Owner.Team && !SpellOrigin.SpellData.Flags.HasFlag(SpellDataFlags.IgnoreAllyMinion))
+                                    || (unit.Team != CastInfo.Owner.Team && unit.Team != TeamId.TEAM_NEUTRAL && !SpellOrigin.SpellData.Flags.HasFlag(SpellDataFlags.IgnoreEnemyMinion))
+                                    || SpellOrigin.SpellData.Flags.HasFlag(SpellDataFlags.AffectMinions):
+                            if (!(unit is ILaneMinion))
+                            {
+                                valid = true;
+                                break;
+                            }
+                            // already got checked in ILaneMinion
+                            valid = false;
+                            break;
+                        case IBaseTurret _ when SpellOrigin.SpellData.Flags.HasFlag(SpellDataFlags.AffectTurrets):
+                            valid = true;
+                            break;
+                        case IInhibitor _ when SpellOrigin.SpellData.Flags.HasFlag(SpellDataFlags.AffectBuildings):
+                            valid = true;
+                            break;
+                        case INexus _ when SpellOrigin.SpellData.Flags.HasFlag(SpellDataFlags.AffectBuildings):
+                            valid = true;
+                            break;
+                        case IChampion _ when SpellOrigin.SpellData.Flags.HasFlag(SpellDataFlags.AffectHeroes):
+                            valid = true;
+                            break;
+                        default:
+                            valid = false;
+                            break;
+                    }
 
-                // TODO: Verify if placing this here is okay.
-                if (unit.Team == TeamId.TEAM_NEUTRAL && !SpellOrigin.SpellData.Flags.HasFlag(SpellDataFlags.AffectNeutral))
-                {
-                    valid = false;
+                    // TODO: Verify if placing this here is okay.
+                    if (unit.Team == TeamId.TEAM_NEUTRAL && !SpellOrigin.SpellData.Flags.HasFlag(SpellDataFlags.AffectNeutral))
+                    {
+                        valid = false;
+                    }
                 }
             }
 
