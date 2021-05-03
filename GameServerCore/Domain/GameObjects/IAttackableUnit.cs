@@ -41,6 +41,9 @@ namespace GameServerCore.Domain.GameObjects
         /// Index of the waypoint in the list of waypoints that the object is currently on.
         /// </summary>
         KeyValuePair<int, Vector2> CurrentWaypoint { get; }
+        /// <summary>
+        /// Parameters of any forced movements (dashes) this unit is performing.
+        /// </summary>
         IForceMovementParameters MovementParameters { get; }
         /// <summary>
         /// Amount of time passed since the unit started dashing.
@@ -144,6 +147,12 @@ namespace GameServerCore.Domain.GameObjects
         /// <returns>True/False.</returns>
         bool HasBuff(string buffName);
         /// <summary>
+        /// Whether or not this unit has a buff of the given type.
+        /// </summary>
+        /// <param name="type">BuffType to check for.</param>
+        /// <returns>True/False.</returns>
+        bool HasBuffType(BuffType type);
+        /// <summary>
         /// Gets a new buff slot for the given buff instance.
         /// </summary>
         /// <param name="b">Buff instance to add.</param>
@@ -228,30 +237,11 @@ namespace GameServerCore.Domain.GameObjects
         /// </summary>
         void ClearMovementUpdated();
         /// <summary>
-        /// Applies the specified crowd control to this unit, refer to CrowdControlType for examples.
+        /// Enables or disables the given status on this unit.
         /// </summary>
-        /// <param name="cc">Crowd control to apply.</param>
-        /// <param name="applier">AI which applied the Crowd Control.</param>
-        /// TODO: Replace CrowdControl with buffs of the same type and remove all of these CrowdControl based functions.
-        void ApplyCrowdControl(ICrowdControl cc, IAttackableUnit applier);
-        /// <summary>
-        /// Whether or not this unit is affected by the given crowd control.
-        /// </summary>
-        /// <param name="ccType">Crowd control to check for.</param>
-        /// <returns>True/False.</returns>
-        /// TODO: Replace CrowdControl with buffs of the same type and remove all of these CrowdControl based functions.
-        bool HasCrowdControl(CrowdControlType ccType);
-        /// <summary>
-        /// Removes the given crowd control instance from this unit.
-        /// </summary>
-        /// <param name="cc">Crowd control instance to remove.</param>
-        /// TODO: Replace CrowdControl with buffs of the same type and remove all of these CrowdControl based functions.
-        void RemoveCrowdControl(ICrowdControl cc);
-        /// <summary>
-        /// Clears all crowd control from this unit.
-        /// </summary>
-        /// TODO: Replace CrowdControl with buffs of the same type and remove all of these CrowdControl based functions.
-        void ClearAllCrowdControl();
+        /// <param name="status">StatusFlag to enable/disable.</param>
+        /// <param name="enabled">Whether or not to enable the flag.</param>
+        void SetStatus(StatusFlags status, bool enabled);
         /// <summary>
         /// Forces this unit to perform a dash which ends at the given position.
         /// </summary>

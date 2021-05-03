@@ -86,9 +86,12 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// </summary>
         public KeyValuePair<int, Vector2> CurrentWaypoint { get; protected set; }
         /// <summary>
-        /// List of all crowd control (movement enhancing/dehancing) based effects applied to this unit.
+        /// Status effects enabled on this unit. Refer to StatusFlags enum.
         /// </summary>
-        public List<ICrowdControl> CrowdControls { get; protected set; }
+        public StatusFlags Status { get; protected set; }
+        /// <summary>
+        /// Parameters of any forced movements (dashes) this unit is performing.
+        /// </summary>
         public IForceMovementParameters MovementParameters { get; protected set; }
         /// <summary>
         /// Amount of time passed since the unit started dashing.
@@ -113,7 +116,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             Model = model;
             Waypoints = new List<Vector2> { Position };
             CurrentWaypoint = new KeyValuePair<int, Vector2>(1, Position);
-            CrowdControls = new List<ICrowdControl>();
+            Status = StatusFlags.CanAttack | StatusFlags.CanCast | StatusFlags.CanMove | StatusFlags.CanMoveEver;
             MovementParameters = null;
             Stats.AttackSpeedMultiplier.BaseValue = 1.0f;
 
@@ -174,13 +177,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             {
                 Move(diff);
             }
-
-            foreach (var cc in CrowdControls)
-            {
-                cc.Update(diff);
-            }
-
-            CrowdControls.RemoveAll(cc => cc.IsRemoved);
 
             if (MovementParameters != null && MovementParameters.FollowNetID > 0)
             {
@@ -714,6 +710,11 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// <returns>True/False.</returns>
         public bool HasBuff(IBuff buff)
         {
+            if (BuffList == null)
+            {
+                return false;
+            }
+
             return !(BuffList.Find(b => b == buff) == null);
         }
 
@@ -730,6 +731,21 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             }
 
             return !(BuffList.Find(b => b.IsBuffSame(buffName)) == null);
+        }
+
+        /// <summary>
+        /// Whether or not this unit has a buff of the given type.
+        /// </summary>
+        /// <param name="type">BuffType to check for.</param>
+        /// <returns>True/False.</returns>
+        public bool HasBuffType(BuffType type)
+        {
+            if (BuffList == null)
+            {
+                return false;
+            }
+
+            return !(BuffList.Find(b => b.BuffType == type) == null);
         }
 
         /// <summary>
@@ -991,7 +1007,8 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// <returns></returns>
         public virtual bool CanMove()
         {
-            return false;
+            // Only case where AttackableUnit should move is if it is forced.
+            return MovementParameters != null;
         }
 
         public override void TeleportTo(float x, float y)
@@ -1030,7 +1047,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                 dirTemp = new Vector2(0, 0);
             }
 
-            if (!HasCrowdControl(CrowdControlType.AIRBORNE) && !HasCrowdControl(CrowdControlType.STASIS) && !HasCrowdControl(CrowdControlType.STUN))
+            if (CanMove())
             {
                 //FaceDirection(new Vector3(dirTemp.X, 0.0f, dirTemp.Y), false);
                 Direction = new Vector3(dirTemp.X, 0.0f, dirTemp.Y);
@@ -1183,49 +1200,20 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         }
 
         /// <summary>
-        /// Applies the specified crowd control to this unit, refer to CrowdControlType for examples.
+        /// Enables or disables the given status on this unit.
         /// </summary>
-        /// <param name="cc">Crowd control to apply.</param>
-        /// <param name="applier">AI which applied the Crowd Control.</param>
-        /// TODO: Replace CrowdControl with buffs of the same type and remove all of these CrowdControl based functions.
-        public void ApplyCrowdControl(ICrowdControl cc, IAttackableUnit applier)
+        /// <param name="status">StatusFlag to enable/disable.</param>
+        /// <param name="enabled">Whether or not to enable the flag.</param>
+        public void SetStatus(StatusFlags status, bool enabled)
         {
-            if (applier != null)
+            if (enabled)
             {
-                ApiEventManager.OnUnitCrowdControlled.Publish(applier);
+                Status |= status;
             }
-
-            CrowdControls.Add(cc);
-        }
-
-        /// <summary>
-        /// Whether or not this unit is affected by the given crowd control.
-        /// </summary>
-        /// <param name="ccType">Crowd control to check for.</param>
-        /// <returns>True/False.</returns>
-        /// TODO: Replace CrowdControl with buffs of the same type and remove all of these CrowdControl based functions.
-        public bool HasCrowdControl(CrowdControlType ccType)
-        {
-            return CrowdControls.FirstOrDefault(cc => cc.IsTypeOf(ccType)) != null;
-        }
-
-        /// <summary>
-        /// Removes the given crowd control instance from this unit.
-        /// </summary>
-        /// <param name="cc">Crowd control instance to remove.</param>
-        /// TODO: Replace CrowdControl with buffs of the same type and remove all of these CrowdControl based functions.
-        public void RemoveCrowdControl(ICrowdControl cc)
-        {
-            CrowdControls.Remove(cc);
-        }
-
-        /// <summary>
-        /// Clears all crowd control from this unit.
-        /// </summary>
-        /// TODO: Replace CrowdControl with buffs of the same type and remove all of these CrowdControl based functions.
-        public void ClearAllCrowdControl()
-        {
-            CrowdControls.Clear();
+            else
+            {
+                Status &= ~status;
+            }
         }
 
         /// <summary>

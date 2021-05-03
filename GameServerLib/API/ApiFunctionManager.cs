@@ -167,9 +167,9 @@ namespace LeagueSandbox.GameServer.API
         {
             Vector2 pos = new Vector2(obj.Position.X, obj.Position.Y);
             Vector2 dir = new Vector2(obj.Direction.X, obj.Direction.Z);
-            if (offsetAngle > 0)
+            if (offsetAngle != 0)
             {
-                GameServerCore.Extensions.Rotate(dir, offsetAngle);
+                dir = GameServerCore.Extensions.Rotate(dir, offsetAngle);
             }
             return pos + (dir * distance);
         }
@@ -540,18 +540,6 @@ namespace LeagueSandbox.GameServer.API
             unit.PlayAnimation(animName, timeScale, startTime, speedScale, flags);
         }
 
-        /// <summary>
-        /// Sets the specified unit's animation states to the given set of states.
-        /// Given state pairs are expected to follow a specific structure:
-        /// First string is the animation to override, second string is the animation to play in place of the first.
-        /// </summary>
-        /// <param name="unit">Unit to set animation states on.</param>
-        /// <param name="animPairs">Dictionary of animations to set.</param>
-        public static void SetAnimStates(IAttackableUnit unit, Dictionary<string, string> animPairs)
-        {
-            unit.SetAnimStates(animPairs);
-        }
-
         public static void SealSpellSlot(IObjAiBase target, SpellSlotType slotType, int slot, SpellbookType spellbookType, bool seal)
         {
             if (spellbookType == SpellbookType.SPELLBOOK_UNKNOWN
@@ -583,6 +571,23 @@ namespace LeagueSandbox.GameServer.API
             }
 
             target.Stats.SetSpellEnabled((byte)slot, !seal);
+        }
+
+        /// <summary>
+        /// Sets the specified unit's animation states to the given set of states.
+        /// Given state pairs are expected to follow a specific structure:
+        /// First string is the animation to override, second string is the animation to play in place of the first.
+        /// </summary>
+        /// <param name="unit">Unit to set animation states on.</param>
+        /// <param name="animPairs">Dictionary of animations to set.</param>
+        public static void SetAnimStates(IAttackableUnit unit, Dictionary<string, string> animPairs)
+        {
+            unit.SetAnimStates(animPairs);
+        }
+
+        public static void SetStatus(IAttackableUnit unit, StatusFlags status, bool enabled)
+        {
+            unit.SetStatus(status, enabled);
         }
 
         public static void SpellCast(IObjAiBase caster, int slot, SpellSlotType slotType, Vector2 pos, Vector2 endPos, bool fireWithoutCasting, Vector2 overrideCastPos, List<ICastTarget> targets = null, bool isForceCastingOrChanneling = false, int overrideForceLevel = -1, bool updateAutoAttackTimer = false, bool useAutoAttackSpell = false)
