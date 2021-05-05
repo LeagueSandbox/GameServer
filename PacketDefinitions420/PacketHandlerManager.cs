@@ -352,7 +352,7 @@ namespace PacketDefinitions420
                 return false;
             }
             
-            if(_peers.ContainsKey(request.PlayerID))
+            if(_peers.ContainsKey(request.PlayerID) && !_playerManager.GetPeerInfo(request.PlayerID).IsDisconnected)
             {
                 Debug.WriteLine($"Player {request.PlayerID} is already connected. Request from {peer.Address.ToString()}.");
                 return false;
