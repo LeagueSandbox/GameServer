@@ -187,22 +187,22 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Missile
                 return false;
             }
 
-            bool valid = true;
+            if (unit.IsDead && !SpellOrigin.SpellData.Flags.HasFlag(SpellDataFlags.AffectDead))
+            {
+                return false;
+            }
 
             if (unit.Team == CastInfo.Owner.Team && !SpellOrigin.SpellData.Flags.HasFlag(SpellDataFlags.AffectFriends))
             {
-                valid = false;
+                return false;
             }
 
             if (unit.Team != CastInfo.Owner.Team && unit.Team != TeamId.TEAM_NEUTRAL && !SpellOrigin.SpellData.Flags.HasFlag(SpellDataFlags.AffectEnemies))
             {
-                valid = false;
+                return false;
             }
 
-            if (unit.IsDead && !SpellOrigin.SpellData.Flags.HasFlag(SpellDataFlags.AffectDead))
-            {
-                valid = false;
-            }
+            bool valid = true;
 
             // Assuming all of the team-based checks passed, we move onto unit-based checks.
             if (valid)
