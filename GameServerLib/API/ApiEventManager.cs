@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using GameServerCore.Domain.GameObjects;
+﻿using GameServerCore.Domain.GameObjects;
 using GameServerCore.Domain.GameObjects.Spell;
 using GameServerCore.Domain.GameObjects.Spell.Missile;
 using GameServerCore.Enums;
 using LeagueSandbox.GameServer.Logging;
 using log4net;
+using System;
+using System.Collections.Generic;
 
 /*
  * Possible Events:
@@ -285,13 +285,20 @@ namespace LeagueSandbox.GameServer.API
         }
         public void Publish(ISpell spell)
         {
-            _listeners.ForEach((listener) =>
+            var count = _listeners.Count;
+
+            if (count == 0)
             {
-                if (listener.Item2 == spell)
+                return;
+            }
+
+            for (int i = count - 1; i >= 0; i--)
+            {
+                if (_listeners[i].Item2 == spell)
                 {
-                    listener.Item3(spell);
+                    _listeners[i].Item3(spell);
                 }
-            });
+            }
         }
     }
 
@@ -313,13 +320,20 @@ namespace LeagueSandbox.GameServer.API
         }
         public void Publish(ISpell spell)
         {
-            _listeners.ForEach((listener) =>
+            var count = _listeners.Count;
+
+            if (count == 0)
             {
-                if (listener.Item2 == spell)
+                return;
+            }
+
+            for (int i = count - 1; i >= 0; i--)
+            {
+                if (_listeners[i].Item2 == spell)
                 {
-                    listener.Item3(spell);
+                    _listeners[i].Item3(spell);
                 }
-            });
+            }
         }
     }
 
@@ -341,13 +355,20 @@ namespace LeagueSandbox.GameServer.API
         }
         public void Publish(ISpell spell)
         {
-            _listeners.ForEach((listener) =>
+            var count = _listeners.Count;
+
+            if (count == 0)
             {
-                if (listener.Item2 == spell)
+                return;
+            }
+
+            for (int i = count - 1; i >= 0; i--)
+            {
+                if (_listeners[i].Item2 == spell)
                 {
-                    listener.Item3(spell);
+                    _listeners[i].Item3(spell);
                 }
-            });
+            }
         }
     }
 
@@ -408,13 +429,20 @@ namespace LeagueSandbox.GameServer.API
         }
         public void Publish(ISpell spell)
         {
-            _listeners.ForEach((listener) =>
+            var count = _listeners.Count;
+
+            if (count == 0)
             {
-                if (listener.Item2 == spell)
+                return;
+            }
+
+            for (int i = count - 1; i >= 0; i--)
+            {
+                if (_listeners[i].Item2 == spell)
                 {
-                    listener.Item3(spell);
+                    _listeners[i].Item3(spell);
                 }
-            });
+            }
         }
     }
 
@@ -436,13 +464,20 @@ namespace LeagueSandbox.GameServer.API
         }
         public void Publish(ISpell spell)
         {
-            _listeners.ForEach((listener) =>
+            var count = _listeners.Count;
+
+            if (count == 0)
             {
-                if (listener.Item2 == spell)
+                return;
+            }
+
+            for (int i = count - 1; i >= 0; i--)
+            {
+                if (_listeners[i].Item2 == spell)
                 {
-                    listener.Item3(spell);
+                    _listeners[i].Item3(spell);
                 }
-            });
+            }
         }
     }
 

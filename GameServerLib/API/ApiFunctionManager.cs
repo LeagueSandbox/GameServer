@@ -525,19 +525,41 @@ namespace LeagueSandbox.GameServer.API
         }
 
         /// <summary>
-        /// Forces the given unit or object to perform the given animation.
+        /// Forces the given object to perform the given animation.
         /// </summary>
-        /// <param name="unit">Unit or object that will play the animation.</param>
+        /// <param name="obj">Object that will play the animation.</param>
         /// <param name="animName">Internal name of an animation to play.</param>
         /// <param name="timeScale">How fast the animation should play. Default 1x speed.</param>
         /// <param name="startTime">Time in the animation to start at.</param>
         /// TODO: Verify if this description is correct, if not, correct it.
         /// <param name="speedScale">How much the speed of the GameObject should affect the animation.</param>
         /// TODO: Implement AnimationFlags enum for this and fill it in.
-        /// <param name="flags">Animation flags. Possible values and functions unknown.</param>
-        public static void PlayAnimation(IGameObject unit, string animName, float timeScale = 1.0f, float startTime = 0, float speedScale = 0, byte flags = 0)
+        /// <param name="flags">Animation flags. Refer to AnimationFlags enum.</param>
+        public static void PlayAnimation(IGameObject obj, string animName, float timeScale = 1.0f, float startTime = 0, float speedScale = 0, AnimationFlags flags = 0)
         {
-            unit.PlayAnimation(animName, timeScale, startTime, speedScale, flags);
+            obj.PlayAnimation(animName, timeScale, startTime, speedScale, flags);
+        }
+
+        /// <summary>
+        /// Forces the given object's current animations to pause/unpause.
+        /// </summary>
+        /// <param name="pause">Whether or not to pause/unpause animations.</param>
+        public static void PauseAnimation(IGameObject obj, bool pause)
+        {
+            obj.PauseAnimation(pause);
+        }
+
+        /// <summary>
+        /// Forces the given object to stop performing the given animation (or optionally all animations).
+        /// </summary>
+        /// <param name="obj">Object who's animations will be stopped.</param>
+        /// <param name="animation">Internal name of the animation to stop playing. Set blank/null if stopAll is true.</param>
+        /// <param name="stopAll">Whether or not to stop all animations. Only works if animation is empty/null.</param>
+        /// <param name="fade">Whether or not the animation should fade before stopping.</param>
+        /// <param name="ignoreLock">Whether or not locked animations should still be stopped.</param>
+        public static void StopAnimation(IGameObject obj, string animation, bool stopAll = false, bool fade = false, bool ignoreLock = true)
+        {
+            obj.StopAnimation(animation, stopAll, fade, ignoreLock);
         }
 
         public static void SealSpellSlot(IObjAiBase target, SpellSlotType slotType, int slot, SpellbookType spellbookType, bool seal)

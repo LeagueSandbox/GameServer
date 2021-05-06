@@ -790,7 +790,8 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
             if (this is IChampion champion)
             {
-                _game.PacketNotifier.NotifyS2C_SetSpellData((int)_game.PlayerManager.GetClientInfoByChampion(champion).PlayerId, NetId, name, slot);
+                int userId = (int)_game.PlayerManager.GetClientInfoByChampion(champion).PlayerId;
+                _game.PacketNotifier.NotifyS2C_SetSpellData(userId, NetId, name, slot);
             }
 
             return newSpell;

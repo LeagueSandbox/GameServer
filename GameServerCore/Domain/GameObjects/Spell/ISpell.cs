@@ -106,7 +106,12 @@ namespace GameServerCore.Domain.GameObjects.Spell
         void LevelUp();
         string GetStringForSlot();
         float GetCooldown();
-        void SetCooldown(float newCd);
+        /// <summary>
+        /// Sets the cooldown of this spell.
+        /// </summary>
+        /// <param name="newCd">Cooldown to set.</param>
+        /// <param name="ignoreCDR">Whether or not to ignore cooldown reduction.</param>
+        void SetCooldown(float newCd, bool ignoreCDR = false);
         void LowerCooldown(float lowerValue);
         void ResetSpellDelay();
         void SetLevel(byte toLevel);

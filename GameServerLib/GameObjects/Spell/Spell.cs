@@ -635,11 +635,6 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
                 CastInfo.Owner.UpdateMoveOrder(OrderType.Hold, true);
             }
 
-            if (_spellScript.ScriptMetadata.TriggersSpellCasts)
-            {
-                ApiEventManager.OnSpellPostCast.Publish(this);
-            }
-
             if (CastInfo.IsAutoAttack)
             {
                 ApiEventManager.OnLaunchAttack.Publish(CastInfo.Owner, this);
@@ -688,6 +683,11 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
                         _game.PacketNotifier.NotifyCHAR_SetCooldown(CastInfo.Owner, CastInfo.SpellSlot, CurrentCooldown, GetCooldown());
                     }
                 }
+            }
+
+            if (_spellScript.ScriptMetadata.TriggersSpellCasts)
+            {
+                ApiEventManager.OnSpellPostCast.Publish(this);
             }
 
             if (_spellScript.ScriptMetadata.MissileParameters != null)
@@ -938,7 +938,12 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
             CurrentDelayTime = 0;
         }
 
-        public void SetCooldown(float newCd)
+        /// <summary>
+        /// Sets the cooldown of this spell.
+        /// </summary>
+        /// <param name="newCd">Cooldown to set.</param>
+        /// <param name="ignoreCDR">Whether or not to ignore cooldown reduction.</param>
+        public void SetCooldown(float newCd, bool ignoreCDR = false)
         {
             if (newCd <= 0)
             {
@@ -952,6 +957,11 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
             }
             else
             {
+                if (!ignoreCDR)
+                {
+                    newCd *= (1 - CastInfo.Owner.Stats.CooldownReduction.Total);
+                }
+
                 _game.PacketNotifier.NotifyCHAR_SetCooldown(CastInfo.Owner, CastInfo.SpellSlot, newCd, GetCooldown());
                 State = SpellState.STATE_COOLDOWN;
                 CurrentCooldown = newCd;
@@ -968,6 +978,11 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
             if (CastInfo.SpellSlot < 4)
             {
                 CastInfo.Owner.Stats.ManaCost[CastInfo.SpellSlot] = SpellData.ManaCost[CastInfo.SpellLevel];
+            }
+
+            if (CastInfo.Owner is IChampion champion)
+            {
+                _game.PacketNotifier.NotifyS2C_SetSpellLevel((int)_game.PlayerManager.GetClientInfoByChampion(champion).PlayerId, champion.NetId, CastInfo.SpellSlot, toLevel);
             }
         }
 
