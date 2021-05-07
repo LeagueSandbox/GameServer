@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Numerics;
-using GameServerCore.Content;
 using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Domain.GameObjects.Spell;
@@ -153,6 +152,22 @@ namespace GameServerCore.Packets.Interfaces
         /// </summary>
         /// <param name="c">Champion that respawned.</param>
         void NotifyChampionRespawn(IChampion c);
+        /// <summary>
+        /// Sends a packet to the specified user detailing that the specified owner unit's spell in the specified slot has been changed.
+        /// </summary>
+        /// <param name="userId">User to send the packet to.</param>
+        /// <param name="owner">Unit that owns the spell being changed.</param>
+        /// <param name="slot">Slot of the spell being changed.</param>
+        /// <param name="changeType">Type of change being made.</param>
+        /// <param name="isSummonerSpell">Whether or not the spell being changed is a summoner spell.</param>
+        /// <param name="targetingType">New targeting type to set.</param>
+        /// <param name="newName">New internal name of a spell to set.</param>
+        /// <param name="newRange">New cast range for the spell to set.</param>
+        /// <param name="newMaxCastRange">New max cast range for the spell to set.</param>
+        /// <param name="newDisplayRange">New max display range for the spell to set.</param>
+        /// <param name="newIconIndex">New index of an icon for the spell to set.</param>
+        /// <param name="offsetTargets">New target netids for the spell to set.</param>
+        void NotifyChangeSlotSpellData(int userId, IObjAiBase owner, byte slot, ChangeSlotSpellDataType changeType, bool isSummonerSpell = false, TargetingType targetingType = TargetingType.Invalid, string newName = "", float newRange = 0, float newMaxCastRange = 0, float newDisplayRange = 0, byte newIconIndex = 0x0, List<uint> offsetTargets = null);
         /// <summary>
         /// Sends a packet to all players with vision of a specified ObjAiBase explaining that their specified spell's cooldown has been set.
         /// </summary>
@@ -595,12 +610,27 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="obj">GameObject that is playing the animation.</param>
         /// <param name="animation">Internal name of the animation to play.</param>
         /// TODO: Implement AnimationFlags enum for this and fill it in.
-        /// <param name="flags">Animation flags. Possible values and functions unknown.</param>
+        /// <param name="flags">Animation flags. Refer to AnimationFlags enum.</param>
         /// <param name="timeScale">How fast the animation should play. Default 1x speed.</param>
         /// <param name="startTime">Time in the animation to start at.</param>
         /// TODO: Verify if this description is correct, if not, correct it.
         /// <param name="speedScale">How much the speed of the GameObject should affect the animation.</param>
-        void NotifyS2C_PlayAnimation(IGameObject obj, string animation, byte flags = 0, float timeScale = 1.0f, float startTime = 0.0f, float speedScale = 1.0f);
+        void NotifyS2C_PlayAnimation(IGameObject obj, string animation, AnimationFlags flags = 0, float timeScale = 1.0f, float startTime = 0.0f, float speedScale = 1.0f);
+        /// <summary>
+        /// Sends a packet to all players detailing that the specified object's current animations have been paused/unpaused.
+        /// </summary>
+        /// <param name="obj">GameObject that is playing the animation.</param>
+        /// <param name="pause">Whether or not to pause/unpause animations.</param>
+        void NotifyS2C_PauseAnimation(IGameObject obj, bool pause);
+        /// <summary>
+        /// Sends a packet to all players detailing that the specified object has stopped playing an animation.
+        /// </summary>
+        /// <param name="obj">GameObject that is playing the animation.</param>
+        /// <param name="animation">Internal name of the animation to stop.</param>
+        /// <param name="stopAll">Whether or not to stop all animations. Only works if animation is empty/null.</param>
+        /// <param name="fade">Whether or not the animation should fade before stopping.</param>
+        /// <param name="ignoreLock">Whether or not locked animations should still be stopped.</param>
+        void NotifyS2C_StopAnimation(IGameObject obj, string animation, bool stopAll = false, bool fade = false, bool ignoreLock = true);
         /// <summary>
         /// Sends a packet to all players with vision of the specified unit detailing that its animation states have changed to the specified animation pairs.
         /// Replaces the unit's normal animation behaviors with the given animation pairs. Structure of the animationPairs is expected to follow the same structure from before the replacement.
@@ -741,7 +771,7 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="enable">Whether or not to fade in the tint.</param>
         /// <param name="speed">Amount of time that should pass before tint is fully applied.</param>
         /// <param name="color">Color of the tint.</param>
-        void NotifyTint(TeamId team, bool enable, float speed, Color color);
+        void NotifyTint(TeamId team, bool enable, float speed, Content.Color color);
         /// <summary>
         /// Sends a packet to the specified player detailing that the specified LaneTurret has spawned.
         /// </summary>

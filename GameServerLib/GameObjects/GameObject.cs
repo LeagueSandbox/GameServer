@@ -277,11 +277,31 @@ namespace LeagueSandbox.GameServer.GameObjects
         /// <param name="startTime">Time in the animation to start at.</param>
         /// TODO: Verify if this description is correct, if not, correct it.
         /// <param name="speedScale">How much the speed of the GameObject should affect the animation.</param>
-        /// TODO: Implement AnimationFlags enum for this and fill it in.
-        /// <param name="flags">Animation flags. Possible values and functions unknown.</param>
-        public void PlayAnimation(string animName, float timeScale = 1.0f, float startTime = 0, float speedScale = 0, byte flags = 0)
+        /// <param name="flags">Animation flags. Refer to AnimationFlags enum.</param>
+        public void PlayAnimation(string animName, float timeScale = 1.0f, float startTime = 0, float speedScale = 0, AnimationFlags flags = 0)
         {
             _game.PacketNotifier.NotifyS2C_PlayAnimation(this, animName, flags, timeScale, startTime, speedScale);
+        }
+
+        /// <summary>
+        /// Forces this GameObject's current animations to pause/unpause.
+        /// </summary>
+        /// <param name="pause">Whether or not to pause/unpause animations.</param>
+        public void PauseAnimation(bool pause)
+        {
+            _game.PacketNotifier.NotifyS2C_PauseAnimation(this, pause);
+        }
+
+        /// <summary>
+        /// Forces this GameObject to stop playing the specified animation (or optionally all animations) with the given parameters.
+        /// </summary>
+        /// <param name="animation">Internal name of the animation to stop playing. Set blank/null if stopAll is true.</param>
+        /// <param name="stopAll">Whether or not to stop all animations. Only works if animation is empty/null.</param>
+        /// <param name="fade">Whether or not the animation should fade before stopping.</param>
+        /// <param name="ignoreLock">Whether or not locked animations should still be stopped.</param>
+        public void StopAnimation(string animation, bool stopAll = false, bool fade = false, bool ignoreLock = true)
+        {
+            _game.PacketNotifier.NotifyS2C_StopAnimation(this, animation, stopAll, fade, ignoreLock);
         }
     }
 }

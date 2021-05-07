@@ -440,7 +440,7 @@ namespace PacketDefinitions420
         /// <param name="newDisplayRange">New max display range for the spell to set.</param>
         /// <param name="newIconIndex">New index of an icon for the spell to set.</param>
         /// <param name="offsetTargets">New target netids for the spell to set.</param>
-        public void NotifyChangeSlotSpellData(int userId, IObjAiBase owner, byte slot, ChangeSlotSpellDataType changeType, bool isSummonerSpell = false, TargetingType targetingType = TargetingType.Invalid, string newName = "", float newRange = 0, float newMaxCastRange = 0, float newDisplayRange = 0, byte newIconIndex = 0x0, List<uint> offsetTargets = null)
+        public void NotifyChangeSlotSpellData(int userId, IObjAiBase owner, byte slot, GameServerCore.Enums.ChangeSlotSpellDataType changeType, bool isSummonerSpell = false, TargetingType targetingType = TargetingType.Invalid, string newName = "", float newRange = 0, float newMaxCastRange = 0, float newDisplayRange = 0, byte newIconIndex = 0x0, List<uint> offsetTargets = null)
         {
             ChangeSpellData spellData = new ChangeSpellDataUnknown()
             {
@@ -450,7 +450,7 @@ namespace PacketDefinitions420
 
             switch(changeType)
             {
-                case ChangeSlotSpellDataType.TargetingType:
+                case GameServerCore.Enums.ChangeSlotSpellDataType.TargetingType:
                 {
                     if (targetingType != TargetingType.Invalid)
                     {
@@ -463,7 +463,7 @@ namespace PacketDefinitions420
                     }
                     break;
                 }
-                case ChangeSlotSpellDataType.SpellName:
+                case GameServerCore.Enums.ChangeSlotSpellDataType.SpellName:
                 {
                     spellData = new ChangeSpellDataSpellName()
                     {
@@ -473,7 +473,7 @@ namespace PacketDefinitions420
                     };
                     break;
                 }
-                case ChangeSlotSpellDataType.Range:
+                case GameServerCore.Enums.ChangeSlotSpellDataType.Range:
                 {
                     spellData = new ChangeSpellDataRange()
                     {
@@ -483,7 +483,7 @@ namespace PacketDefinitions420
                     };
                     break;
                 }
-                case ChangeSlotSpellDataType.MaxGrowthRange:
+                case GameServerCore.Enums.ChangeSlotSpellDataType.MaxGrowthRange:
                 {
                     spellData = new ChangeSpellDataMaxGrowthRange()
                     {
@@ -493,7 +493,7 @@ namespace PacketDefinitions420
                     };
                     break;
                 }
-                case ChangeSlotSpellDataType.RangeDisplay:
+                case GameServerCore.Enums.ChangeSlotSpellDataType.RangeDisplay:
                 {
                     spellData = new ChangeSpellDataRangeDisplay()
                     {
@@ -503,7 +503,7 @@ namespace PacketDefinitions420
                     };
                     break;
                 }
-                case ChangeSlotSpellDataType.IconIndex:
+                case GameServerCore.Enums.ChangeSlotSpellDataType.IconIndex:
                 {
                     spellData = new ChangeSpellDataIconIndex()
                     {
@@ -513,7 +513,7 @@ namespace PacketDefinitions420
                     };
                     break;
                 }
-                case ChangeSlotSpellDataType.OffsetTarget:
+                case GameServerCore.Enums.ChangeSlotSpellDataType.OffsetTarget:
                 {
                     if (offsetTargets != null)
                     {
@@ -2107,17 +2107,17 @@ namespace PacketDefinitions420
         /// <param name="obj">GameObject that is playing the animation.</param>
         /// <param name="animation">Internal name of the animation to play.</param>
         /// TODO: Implement AnimationFlags enum for this and fill it in.
-        /// <param name="flags">Animation flags. Possible values and functions unknown.</param>
+        /// <param name="flags">Animation flags. Refer to AnimationFlags enum.</param>
         /// <param name="timeScale">How fast the animation should play. Default 1x speed.</param>
         /// <param name="startTime">Time in the animation to start at.</param>
         /// TODO: Verify if this description is correct, if not, correct it.
         /// <param name="speedScale">How much the speed of the GameObject should affect the animation.</param>
-        public void NotifyS2C_PlayAnimation(IGameObject obj, string animation, byte flags = 0, float timeScale = 1.0f, float startTime = 0.0f, float speedScale = 1.0f)
+        public void NotifyS2C_PlayAnimation(IGameObject obj, string animation, AnimationFlags flags = 0, float timeScale = 1.0f, float startTime = 0.0f, float speedScale = 1.0f)
         {
             var animPacket = new S2C_PlayAnimation
             {
                 SenderNetID = obj.NetId,
-                AnimationFlags = flags, // TODO: figure out what these do, and probably make an enum for it
+                AnimationFlags = (byte)flags,
                 ScaleTime = timeScale,
                 StartProgress = startTime,
                 SpeedRatio = speedScale,
@@ -2125,6 +2125,44 @@ namespace PacketDefinitions420
             };
 
             _packetHandlerManager.BroadcastPacketVision(obj, animPacket.GetBytes(), Channel.CHL_S2C);
+        }
+
+        /// <summary>
+        /// Sends a packet to all players detailing that the specified object's current animations have been paused/unpaused.
+        /// </summary>
+        /// <param name="obj">GameObject that is playing the animation.</param>
+        /// <param name="pause">Whether or not to pause/unpause animations.</param>
+        public void NotifyS2C_PauseAnimation(IGameObject obj, bool pause)
+        {
+            var animPacket = new S2C_PauseAnimation
+            {
+                SenderNetID = obj.NetId,
+                Pause = pause
+            };
+
+            _packetHandlerManager.BroadcastPacket(animPacket.GetBytes(), Channel.CHL_S2C);
+        }
+
+        /// <summary>
+        /// Sends a packet to all players detailing that the specified object has stopped playing an animation.
+        /// </summary>
+        /// <param name="obj">GameObject that is playing the animation.</param>
+        /// <param name="animation">Internal name of the animation to stop.</param>
+        /// <param name="stopAll">Whether or not to stop all animations. Only works if animation is empty/null.</param>
+        /// <param name="fade">Whether or not the animation should fade before stopping.</param>
+        /// <param name="ignoreLock">Whether or not locked animations should still be stopped.</param>
+        public void NotifyS2C_StopAnimation(IGameObject obj, string animation, bool stopAll = false, bool fade = false, bool ignoreLock = true)
+        {
+            var animPacket = new S2C_StopAnimation
+            {
+                SenderNetID = obj.NetId,
+                Fade = fade,
+                IgnoreLock = ignoreLock,
+                StopAll = stopAll,
+                AnimationName = animation
+            };
+
+            _packetHandlerManager.BroadcastPacket(animPacket.GetBytes(), Channel.CHL_S2C);
         }
 
         /// <summary>
@@ -2168,7 +2206,7 @@ namespace PacketDefinitions420
             {
                 SenderNetID = netId,
                 ObjectNetID = netId,
-                HashedSpellName = HashStringNorm(spellName),
+                HashedSpellName = HashString(spellName),
                 SpellSlot = slot
             };
 
