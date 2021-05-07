@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Numerics;
-using GameServerCore.Content;
 using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Domain.GameObjects.Spell;
@@ -10,7 +9,6 @@ using GameServerCore.NetInfo;
 using GameServerCore.Enums;
 using GameServerCore.Packets.Enums;
 using GameServerCore.Packets.PacketDefinitions.Requests;
-using LeaguePackets.Game.Common;
 
 namespace GameServerCore.Packets.Interfaces
 {

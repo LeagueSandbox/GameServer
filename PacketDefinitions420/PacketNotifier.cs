@@ -440,7 +440,7 @@ namespace PacketDefinitions420
         /// <param name="newDisplayRange">New max display range for the spell to set.</param>
         /// <param name="newIconIndex">New index of an icon for the spell to set.</param>
         /// <param name="offsetTargets">New target netids for the spell to set.</param>
-        public void NotifyChangeSlotSpellData(int userId, IObjAiBase owner, byte slot, ChangeSlotSpellDataType changeType, bool isSummonerSpell = false, TargetingType targetingType = TargetingType.Invalid, string newName = "", float newRange = 0, float newMaxCastRange = 0, float newDisplayRange = 0, byte newIconIndex = 0x0, List<uint> offsetTargets = null)
+        public void NotifyChangeSlotSpellData(int userId, IObjAiBase owner, byte slot, GameServerCore.Enums.ChangeSlotSpellDataType changeType, bool isSummonerSpell = false, TargetingType targetingType = TargetingType.Invalid, string newName = "", float newRange = 0, float newMaxCastRange = 0, float newDisplayRange = 0, byte newIconIndex = 0x0, List<uint> offsetTargets = null)
         {
             ChangeSpellData spellData = new ChangeSpellDataUnknown()
             {
@@ -450,7 +450,7 @@ namespace PacketDefinitions420
 
             switch(changeType)
             {
-                case ChangeSlotSpellDataType.TargetingType:
+                case GameServerCore.Enums.ChangeSlotSpellDataType.TargetingType:
                 {
                     if (targetingType != TargetingType.Invalid)
                     {
@@ -463,7 +463,7 @@ namespace PacketDefinitions420
                     }
                     break;
                 }
-                case ChangeSlotSpellDataType.SpellName:
+                case GameServerCore.Enums.ChangeSlotSpellDataType.SpellName:
                 {
                     spellData = new ChangeSpellDataSpellName()
                     {
@@ -473,7 +473,7 @@ namespace PacketDefinitions420
                     };
                     break;
                 }
-                case ChangeSlotSpellDataType.Range:
+                case GameServerCore.Enums.ChangeSlotSpellDataType.Range:
                 {
                     spellData = new ChangeSpellDataRange()
                     {
@@ -483,7 +483,7 @@ namespace PacketDefinitions420
                     };
                     break;
                 }
-                case ChangeSlotSpellDataType.MaxGrowthRange:
+                case GameServerCore.Enums.ChangeSlotSpellDataType.MaxGrowthRange:
                 {
                     spellData = new ChangeSpellDataMaxGrowthRange()
                     {
@@ -493,7 +493,7 @@ namespace PacketDefinitions420
                     };
                     break;
                 }
-                case ChangeSlotSpellDataType.RangeDisplay:
+                case GameServerCore.Enums.ChangeSlotSpellDataType.RangeDisplay:
                 {
                     spellData = new ChangeSpellDataRangeDisplay()
                     {
@@ -503,7 +503,7 @@ namespace PacketDefinitions420
                     };
                     break;
                 }
-                case ChangeSlotSpellDataType.IconIndex:
+                case GameServerCore.Enums.ChangeSlotSpellDataType.IconIndex:
                 {
                     spellData = new ChangeSpellDataIconIndex()
                     {
@@ -513,7 +513,7 @@ namespace PacketDefinitions420
                     };
                     break;
                 }
-                case ChangeSlotSpellDataType.OffsetTarget:
+                case GameServerCore.Enums.ChangeSlotSpellDataType.OffsetTarget:
                 {
                     if (offsetTargets != null)
                     {

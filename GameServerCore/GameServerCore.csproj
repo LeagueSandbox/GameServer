@@ -12,8 +12,4 @@
     <PackageReference Include="UltimateQuadTree" Version="1.0.3" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\LeaguePackets\LeaguePackets\LeaguePackets.csproj" />
-  </ItemGroup>
-
 </Project>
