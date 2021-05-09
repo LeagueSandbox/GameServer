@@ -125,11 +125,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             var playerTeam = "";
             var teamSize = GetTeamSize();
 
-            if (teamSize > 6) //???
-            {
-                teamSize = 6;
-            }
-
             if (config.Players.ContainsKey(playerIndex))
             {
                 var p = config.Players[playerIndex];
@@ -141,6 +136,12 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 {TeamId.TEAM_BLUE, config.MapSpawns.Blue},
                 {TeamId.TEAM_PURPLE, config.MapSpawns.Purple}
             };
+
+            if (teamSize > config.MapSpawns.Blue.Count || teamSize > config.MapSpawns.Purple.Count)
+            {
+                var spawns1 = spawnsByTeam[Team];
+                return spawns1[0].GetCoordsForPlayer(0);
+            }
 
             var spawns = spawnsByTeam[Team];
             return spawns[teamSize - 1].GetCoordsForPlayer((int)_playerTeamSpecialId);
