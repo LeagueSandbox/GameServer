@@ -56,7 +56,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             Stats.IsGeneratingGold = false;
 
             //TODO: automaticaly rise spell levels with CharData.SpellLevelsUp
-            
             Spells[(int)SpellSlotType.SummonerSpellSlots] = new Spell.Spell(game, this, clientInfo.SummonerSkills[0], (int)SpellSlotType.SummonerSpellSlots);
             Spells[(int)SpellSlotType.SummonerSpellSlots].LevelUp();
             Spells[(int)SpellSlotType.SummonerSpellSlots + 1] = new Spell.Spell(game, this, clientInfo.SummonerSkills[1], (int)SpellSlotType.SummonerSpellSlots + 1);
@@ -136,6 +135,12 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 {TeamId.TEAM_BLUE, config.MapSpawns.Blue},
                 {TeamId.TEAM_PURPLE, config.MapSpawns.Purple}
             };
+
+            if (teamSize > config.MapSpawns.Blue.Count || teamSize > config.MapSpawns.Purple.Count)
+            {
+                var spawns1 = spawnsByTeam[Team];
+                return spawns1[0].GetCoordsForPlayer(0);
+            }
 
             var spawns = spawnsByTeam[Team];
             return spawns[teamSize - 1].GetCoordsForPlayer((int)_playerTeamSpecialId);
