@@ -125,11 +125,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             var playerTeam = "";
             var teamSize = GetTeamSize();
 
-            if (teamSize > 6) //???
-            {
-                teamSize = 6;
-            }
-
             if (config.Players.ContainsKey(playerIndex))
             {
                 var p = config.Players[playerIndex];
