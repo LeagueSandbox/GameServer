@@ -45,7 +45,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Sector
                 foreach (var obj in objects)
                 {
                     var u = obj as IAttackableUnit;
-                    if (u != null && IsValidTarget(u))
+                    if (u != null && SpellOrigin.SpellData.IsValidTarget(CastInfo.Owner, u))
                     {
                         if (TargetIsInCone(u))
                         {
@@ -63,7 +63,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Sector
                 foreach (var obj in objects)
                 {
                     var u = obj as IAttackableUnit;
-                    if (u != null && IsValidTarget(u))
+                    if (u != null && SpellOrigin.SpellData.IsValidTarget(CastInfo.Owner, u))
                     {
                         if (TargetIsInCone(u))
                         {
@@ -72,7 +72,10 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Sector
                     }
                 }
 
-                SetToRemove();
+                if (!IsToRemove())
+                {
+                    SetToRemove();
+                }
             }
         }
 

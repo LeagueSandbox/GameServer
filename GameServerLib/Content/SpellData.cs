@@ -1,4 +1,5 @@
 ﻿using System.Numerics;
+using GameServerCore.Domain.GameObjects;
 using GameServerCore.Domain.GameObjects.Spell;
 using GameServerCore.Enums;
 using LeagueSandbox.GameServer.Logging;
@@ -190,6 +191,99 @@ namespace LeagueSandbox.GameServer.Content
         //Version
         //x1,x2,x3,x4,x5
 
+        /// <summary>
+        /// Determines whether or not the target unit should be affected by the spell which has this SpellData.
+        /// </summary>
+        /// <param name="attacker">AI which cast the spell.</param>
+        /// <param name="target">Unit which is being affected.</param>
+        /// <param name="overrideFlags">SpellDataFlags to use in place of the ones in this SpellData.</param>
+        /// <returns>True/False.</returns>
+        public bool IsValidTarget(IObjAiBase attacker, IAttackableUnit target, SpellDataFlags overrideFlags = 0)
+        {
+            var useFlags = Flags;
+
+            if (overrideFlags > 0)
+            {
+                useFlags = overrideFlags;
+            }
+
+            if (target.IsDead && !useFlags.HasFlag(SpellDataFlags.AffectDead))
+            {
+                return false;
+            }
+
+            if (target.Team == attacker.Team && !useFlags.HasFlag(SpellDataFlags.AffectFriends))
+            {
+                return false;
+            }
+
+            if (target.Team != attacker.Team && target.Team != TeamId.TEAM_NEUTRAL && !useFlags.HasFlag(SpellDataFlags.AffectEnemies))
+            {
+                return false;
+            }
+
+            bool valid = true;
+
+            // Assuming all of the team-based checks passed, we move onto unit-based checks.
+            if (valid)
+            {
+                if (Flags.HasFlag(SpellDataFlags.AffectAllUnitTypes))
+                {
+                    valid = true;
+                }
+                else
+                {
+                    switch (target)
+                    {
+                        // TODO: Verify all
+                        // Order is important
+                        case ILaneMinion _ when useFlags.HasFlag(SpellDataFlags.AffectMinions)
+                                        && !useFlags.HasFlag(SpellDataFlags.IgnoreLaneMinion):
+                            valid = true;
+                            break;
+                        case IMinion m when (!m.IsPet && useFlags.HasFlag(SpellDataFlags.AffectNotPet))
+                                    || (m.IsPet && useFlags.HasFlag(SpellDataFlags.AffectUseable))
+                                    || (m.IsWard && useFlags.HasFlag(SpellDataFlags.AffectWards))
+                                    || (!m.IsClone && useFlags.HasFlag(SpellDataFlags.IgnoreClones))
+                                    || (target.Team == attacker.Team && !useFlags.HasFlag(SpellDataFlags.IgnoreAllyMinion))
+                                    || (target.Team != attacker.Team && target.Team != TeamId.TEAM_NEUTRAL && !useFlags.HasFlag(SpellDataFlags.IgnoreEnemyMinion))
+                                    || useFlags.HasFlag(SpellDataFlags.AffectMinions):
+                            if (!(target is ILaneMinion))
+                            {
+                                valid = true;
+                                break;
+                            }
+                            // already got checked in ILaneMinion
+                            valid = false;
+                            break;
+                        case IBaseTurret _ when useFlags.HasFlag(SpellDataFlags.AffectTurrets):
+                            valid = true;
+                            break;
+                        case IInhibitor _ when useFlags.HasFlag(SpellDataFlags.AffectBuildings):
+                            valid = true;
+                            break;
+                        case INexus _ when useFlags.HasFlag(SpellDataFlags.AffectBuildings):
+                            valid = true;
+                            break;
+                        case IChampion _ when useFlags.HasFlag(SpellDataFlags.AffectHeroes):
+                            valid = true;
+                            break;
+                        default:
+                            valid = false;
+                            break;
+                    }
+
+                    // TODO: Verify if placing this here is okay.
+                    if (target.Team == TeamId.TEAM_NEUTRAL && !useFlags.HasFlag(SpellDataFlags.AffectNeutral))
+                    {
+                        valid = false;
+                    }
+                }
+            }
+
+            return valid;
+        }
+
         public float GetCastTime()
         {
             return (1.0f + DelayCastOffsetPercent) * 0.5f;
@@ -202,27 +296,38 @@ namespace LeagueSandbox.GameServer.Content
         }
 
         // TODO: read Global Character Data constants from constants.var (gcd_AttackDelay = 1.600f, gcd_AttackDelayCastPercent = 0.300f)
-        public float GetCharacterAttackDelay(float attackSpeedMod,
-                                             float attackDelayOffsetPercent,
-                                             float attackMinimumDelay = 0.4f,
-                                             float attackMaximumDelay = 5.0f)
+        public float GetCharacterAttackDelay
+        (
+            float attackSpeedMod,
+            float attackDelayOffsetPercent,
+            float attackMinimumDelay = 0.4f,
+            float attackMaximumDelay = 5.0f
+        )
         {
             float result = ((attackDelayOffsetPercent + 1.0f) * 1.600f) / attackSpeedMod;
             return System.Math.Clamp(result, attackMinimumDelay, attackMaximumDelay);
         }
 
-        public float GetCharacterAttackCastDelay(float attackSpeedMod,
-                                                 float attackDelayOffsetPercent,
-                                                 float attackDelayCastOffsetPercent,
-                                                 float attackDelayCastOffsetPercentAttackSpeedRatio,
-                                                 float attackMinimumDelay = 0.4f,
-                                                 float attackMaximumDelay = 5.0f)
+        public float GetCharacterAttackCastDelay
+        (
+            float attackSpeedMod,
+            float attackDelayOffsetPercent,
+            float attackDelayCastOffsetPercent,
+            float attackDelayCastOffsetPercentAttackSpeedRatio,
+            float attackMinimumDelay = 0.4f,
+            float attackMaximumDelay = 5.0f
+        )
         {
             float castPercent = System.Math.Min(0.300f + attackDelayCastOffsetPercent, 0.0f);
             float percentDelay = GetCharacterAttackDelay(1.0f, attackDelayOffsetPercent, attackMinimumDelay, attackMaximumDelay) * castPercent;
             float attackDelay = GetCharacterAttackDelay(attackSpeedMod, attackDelayCastOffsetPercent, attackMinimumDelay, attackMaximumDelay);
             float result = (((attackDelay * castPercent) - percentDelay) * attackDelayCastOffsetPercentAttackSpeedRatio) + percentDelay;
             return System.Math.Min(result, attackDelay);
+        }
+
+        public void SetTargetingType(TargetingType newType)
+        {
+            TargetingType = newType;
         }
 
         public void Load(string name)

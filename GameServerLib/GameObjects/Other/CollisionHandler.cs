@@ -30,8 +30,8 @@ namespace LeagueSandbox.GameServer.GameObjects.Other
                 _map.NavigationGrid.MinGridPosition.X,
                 _map.NavigationGrid.MinGridPosition.Z,
                 // Subtract one cell's size from the max so we never reach the CellCountX/Y (since Cells is an array).
-                _map.NavigationGrid.MaxGridPosition.X + System.MathF.Abs(_map.NavigationGrid.MinGridPosition.X),
-                _map.NavigationGrid.MaxGridPosition.Z + System.MathF.Abs(_map.NavigationGrid.MinGridPosition.Z),
+                _map.NavigationGrid.MaxGridPosition.X + MathF.Abs(_map.NavigationGrid.MinGridPosition.X),
+                _map.NavigationGrid.MaxGridPosition.Z + MathF.Abs(_map.NavigationGrid.MinGridPosition.Z),
                 _objectBounds
             );
 
@@ -126,8 +126,6 @@ namespace LeagueSandbox.GameServer.GameObjects.Other
                     {
                         obj.OnCollision(obj2);
                     }
-
-                    // TODO: Implement repathing if our position within the next few ticks intersects with another GameObject (assuming we are moving; !IsPathEnded).
                 }
             }
 

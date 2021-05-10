@@ -71,7 +71,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Missile
 
         public override void Update(float diff)
         {
-            if (!HasDestination() || _atDestination)
+            if (!IsToRemove() && (!HasDestination() || _atDestination))
             {
                 SetToRemove();
                 return;
@@ -155,7 +155,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Missile
 
         public override void CheckFlagsForUnit(IAttackableUnit unit)
         {
-            if (!HasDestination() || !IsValidTarget(unit))
+            if (unit == null || !HasDestination() || ObjectsHit.Contains(unit) || !SpellOrigin.SpellData.IsValidTarget(CastInfo.Owner, unit))
             {
                 return;
             }
@@ -178,16 +178,6 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Missile
             base.SetToRemove();
 
             _game.PacketNotifier.NotifyDestroyClientMissile(this);
-        }
-
-        protected override bool IsValidTarget(IAttackableUnit unit)
-        {
-            if (unit == null || ObjectsHit.Contains(unit))
-            {
-                return false;
-            }
-
-            return base.IsValidTarget(unit);
         }
 
         /// <summary>

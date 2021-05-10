@@ -19,8 +19,8 @@
         /// </summary>
         Polygon = 0x3,
         /// <summary>
-        /// Location targeted area of effect which follows the path of a wave function and has an area of effect in the shape of the wave's crest/trough.
+        /// Location and direction targeted area of effect in the shape of a ring (annulus).
         /// </summary>
-        Wave = 0x4,
+        Ring = 0x4,
     }
 }

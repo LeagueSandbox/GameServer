@@ -5,6 +5,7 @@ using GameServerCore;
 using System.Linq;
 using System.Numerics;
 using GameServerCore.Domain.GameObjects.Spell;
+using GameServerCore.Scripting.CSharp;
 
 namespace Spells
 {

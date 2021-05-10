@@ -5,6 +5,7 @@ using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using System.Numerics;
 using GameServerCore.Domain.GameObjects.Spell.Missile;
+using GameServerCore.Scripting.CSharp;
 
 namespace Spells
 {

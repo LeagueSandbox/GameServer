@@ -1,4 +1,5 @@
-﻿using System.Numerics;
+﻿using GameServerCore.Enums;
+using System.Numerics;
 
 namespace GameServerCore.Domain.GameObjects
 {
@@ -45,6 +46,10 @@ namespace GameServerCore.Domain.GameObjects
         /// true = visibility can be obstructed
         /// </summary>
         bool VisionAffected { get; }
+        /// <summary>
+        /// The only team that should be able to see this particle.
+        /// </summary>
+        TeamId SpecificTeam { get; }
 
         /// <summary>
         /// Returns the total game-time passed since the particle was added to ObjectManager

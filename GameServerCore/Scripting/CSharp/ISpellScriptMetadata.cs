@@ -1,6 +1,7 @@
 ﻿using GameServerCore.Domain.GameObjects.Spell.Missile;
+using GameServerCore.Domain.GameObjects.Spell.Sector;
 
-namespace LeagueSandbox.GameServer.Scripting.CSharp
+namespace GameServerCore.Scripting.CSharp
 {
     public interface ISpellScriptMetadata
     {

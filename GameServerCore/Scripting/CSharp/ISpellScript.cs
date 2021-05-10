@@ -3,7 +3,7 @@ using GameServerCore.Domain.GameObjects;
 using GameServerCore.Domain.GameObjects.Spell;
 using System.Numerics;
 
-namespace LeagueSandbox.GameServer.Scripting.CSharp
+namespace GameServerCore.Scripting.CSharp
 {
     public interface ISpellScript
     {

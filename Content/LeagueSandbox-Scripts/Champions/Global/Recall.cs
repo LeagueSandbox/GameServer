@@ -4,6 +4,7 @@ using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 using GameServerCore.Domain.GameObjects.Spell;
 using GameServerCore.Domain.GameObjects.Spell.Missile;
 using System.Numerics;
+using GameServerCore.Scripting.CSharp;
 
 namespace Spells
 {

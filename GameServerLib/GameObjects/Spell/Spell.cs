@@ -2,7 +2,9 @@
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Domain.GameObjects.Spell;
 using GameServerCore.Domain.GameObjects.Spell.Missile;
+using GameServerCore.Domain.GameObjects.Spell.Sector;
 using GameServerCore.Enums;
+using GameServerCore.Scripting.CSharp;
 using LeagueSandbox.GameServer.API;
 using LeagueSandbox.GameServer.GameObjects.Spell.Missile;
 using LeagueSandbox.GameServer.GameObjects.Spell.Sector;
@@ -20,18 +22,52 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
         private readonly CSharpScriptEngine _scriptEngine;
         private readonly NetworkIdManager _networkIdManager;
         private uint _futureProjNetId;
-        private ISpellScript _spellScript;
+        private float _overrrideCastRange;
 
+        /// <summary>
+        /// General information about this spell when it is cast. Refer to CastInfo class.
+        /// </summary>
         public ICastInfo CastInfo { get; private set; } = new CastInfo();
-        public string SpellName { get; }
-        public bool HasEmptyScript => _spellScript.GetType() == typeof(SpellScriptEmpty);
-        public SpellState State { get; protected set; } = SpellState.STATE_READY;
+        /// <summary>
+        /// Current cooldown of this spell.
+        /// </summary>
         public float CurrentCooldown { get; protected set; }
+        /// <summary>
+        /// Time until casting will end for this spell.
+        /// </summary>
         public float CurrentCastTime { get; protected set; }
+        /// <summary>
+        /// Time until channeling will finish for this spell.
+        /// </summary>
         public float CurrentChannelDuration { get; protected set; }
+        /// <summary>
+        /// Time until the same spell can be cast again. Usually only applicable to auto attack spells.
+        /// </summary>
         public float CurrentDelayTime { get; protected set; }
+        /// <summary>
+        /// The toggle state of this spell.
+        /// </summary>
         public bool Toggle { get; protected set; }
+        /// <summary>
+        /// Spell data for this spell used for interactions between units, cooldown, channeling time, etc. Refer to SpellData class.
+        /// </summary>
         public ISpellData SpellData { get; }
+        /// <summary>
+        /// Internal name of this spell.
+        /// </summary>
+        public string SpellName { get; }
+        /// <summary>
+        /// State of this spell. Refer to SpellState enum.
+        /// </summary>
+        public SpellState State { get; protected set; } = SpellState.STATE_READY;
+        /// <summary>
+        /// Script instance assigned to this spell.
+        /// </summary>
+        public ISpellScript Script { get; private set; }
+        /// <summary>
+        /// Whether or not the script for this spell is the default empty script.
+        /// </summary>
+        public bool HasEmptyScript => Script.GetType() == typeof(SpellScriptEmpty);
 
         public Spell(Game game, IObjAiBase owner, string spellName, byte slot)
         {
@@ -39,6 +75,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
             _scriptEngine = game.ScriptEngine;
             _networkIdManager = game.NetworkIdManager;
             _futureProjNetId = _networkIdManager.GetNewNetId();
+            _overrrideCastRange = 0;
 
             CastInfo.Owner = owner;
             SpellName = spellName;
@@ -63,28 +100,28 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
 
         public void LoadScript()
         {
-            ApiEventManager.RemoveAllListenersForOwner(_spellScript);
+            ApiEventManager.RemoveAllListenersForOwner(Script);
 
-            _spellScript = _scriptEngine.CreateObject<ISpellScript>("Spells", SpellName) ?? new SpellScriptEmpty();
+            Script = _scriptEngine.CreateObject<ISpellScript>("Spells", SpellName) ?? new SpellScriptEmpty();
 
-            if (_spellScript.ScriptMetadata.TriggersSpellCasts)
+            if (Script.ScriptMetadata.TriggersSpellCasts)
             {
-                ApiEventManager.OnSpellCast.AddListener(_spellScript, this, _spellScript.OnSpellCast);
-                ApiEventManager.OnSpellPostCast.AddListener(_spellScript, this, _spellScript.OnSpellPostCast);
+                ApiEventManager.OnSpellCast.AddListener(Script, this, Script.OnSpellCast);
+                ApiEventManager.OnSpellPostCast.AddListener(Script, this, Script.OnSpellPostCast);
             }
 
-            if (_spellScript.ScriptMetadata.ChannelDuration > 0)
+            if (Script.ScriptMetadata.ChannelDuration > 0)
             {
-                ApiEventManager.OnSpellChannel.AddListener(_spellScript, this, _spellScript.OnSpellChannel);
-                ApiEventManager.OnSpellChannelCancel.AddListener(_spellScript, this, _spellScript.OnSpellChannelCancel);
-                ApiEventManager.OnSpellPostChannel.AddListener(_spellScript, this, _spellScript.OnSpellPostChannel);
+                ApiEventManager.OnSpellChannel.AddListener(Script, this, Script.OnSpellChannel);
+                ApiEventManager.OnSpellChannelCancel.AddListener(Script, this, Script.OnSpellChannelCancel);
+                ApiEventManager.OnSpellPostChannel.AddListener(Script, this, Script.OnSpellPostChannel);
             }
 
             //Activate spell - Notes: Deactivate is never called as spell removal hasn't been added
-            _spellScript.OnActivate(CastInfo.Owner, this);
+            Script.OnActivate(CastInfo.Owner, this);
         }
 
-        public void ApplyEffects(IAttackableUnit u, ISpellMissile p = null)
+        public void ApplyEffects(IAttackableUnit u, ISpellMissile p = null, ISpellSector s = null)
         {
             if (SpellData.HaveHitEffect && !string.IsNullOrEmpty(SpellData.HitEffectName) && !CastInfo.IsAutoAttack && HasEmptyScript)
             {
@@ -98,7 +135,15 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
                 }
             }
 
-            ApiEventManager.OnSpellHit.Publish(CastInfo.Owner, this, u, p);
+            if (p != null)
+            {
+                ApiEventManager.OnSpellMissileHit.Publish(CastInfo.Owner, this, u, p);
+            }
+
+            if (s != null)
+            {
+                ApiEventManager.OnSpellSectorHit.Publish(CastInfo.Owner, this, u, s);
+            }
         }
 
         public bool Cast(Vector2 start, Vector2 end, IAttackableUnit unit = null)
@@ -167,9 +212,9 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
                 CastInfo.DesignerCastTime = SpellData.OverrideCastTime;
             }
 
-            if (_spellScript.ScriptMetadata.CastTime > 0)
+            if (Script.ScriptMetadata.CastTime > 0)
             {
-                CastInfo.DesignerCastTime = _spellScript.ScriptMetadata.CastTime;
+                CastInfo.DesignerCastTime = Script.ScriptMetadata.CastTime;
             }
 
             // Otherwise, use the normal auto attack setup
@@ -232,14 +277,14 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
 
             CastInfo.Owner.UpdateMoveOrder(OrderType.TempCastSpell, true);
 
-            _spellScript.OnSpellPreCast(CastInfo.Owner, this, unit, start, end);
+            Script.OnSpellPreCast(CastInfo.Owner, this, unit, start, end);
 
             if (!CastInfo.IsAutoAttack && (!SpellData.IsToggleSpell)
                         || (!SpellData.NoWinddownIfCancelled
                         && !SpellData.Flags.HasFlag(SpellDataFlags.InstantCast)
                         && SpellData.CantCancelWhileWindingUp))
             {
-                if (_spellScript.ScriptMetadata.TriggersSpellCasts)
+                if (Script.ScriptMetadata.TriggersSpellCasts)
                 {
                     if (!SpellData.Flags.HasFlag(SpellDataFlags.InstantCast))
                     {
@@ -262,7 +307,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
             }
 
             // If we are supposed to automatically cast a skillshot for this spell, then calculate the proper end position before casting.
-            if (_spellScript.ScriptMetadata.MissileParameters != null && _spellScript.ScriptMetadata.MissileParameters.Type == MissileType.Circle)
+            if (Script.ScriptMetadata.MissileParameters != null && Script.ScriptMetadata.MissileParameters.Type == MissileType.Circle)
             {
                 var targetPos = ApiFunctionManager.GetPointFromUnit(CastInfo.Owner, GetCurrentCastRange());
                 CastInfo.TargetPosition = new Vector3(targetPos.X, _game.Map.NavigationGrid.GetHeightAtLocation(targetPos.X, targetPos.Y), targetPos.Y);
@@ -319,7 +364,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
 
             if (CastInfo.DesignerCastTime > 0)
             {
-                if (_spellScript.ScriptMetadata.TriggersSpellCasts)
+                if (Script.ScriptMetadata.TriggersSpellCasts)
                 {
                     ApiEventManager.OnSpellCast.Publish(this);
                 }
@@ -360,7 +405,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
             var start = new Vector2(CastInfo.TargetPosition.X, CastInfo.TargetPosition.Z);
             var end = new Vector2(CastInfo.TargetPositionEnd.X, CastInfo.TargetPositionEnd.Z);
 
-            _spellScript.OnSpellPreCast(CastInfo.Owner, this, castInfo.Targets[0].Unit, start, end);
+            Script.OnSpellPreCast(CastInfo.Owner, this, castInfo.Targets[0].Unit, start, end);
 
             var stats = CastInfo.Owner.Stats;
 
@@ -404,9 +449,9 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
                 CastInfo.DesignerCastTime = SpellData.OverrideCastTime;
             }
 
-            if (_spellScript.ScriptMetadata.CastTime > 0)
+            if (Script.ScriptMetadata.CastTime > 0)
             {
-                CastInfo.DesignerCastTime = _spellScript.ScriptMetadata.CastTime;
+                CastInfo.DesignerCastTime = Script.ScriptMetadata.CastTime;
             }
 
             // Otherwise, use the normal auto attack setup
@@ -439,7 +484,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
                         && !SpellData.Flags.HasFlag(SpellDataFlags.InstantCast)
                         && SpellData.CantCancelWhileWindingUp)))
             {
-                if (_spellScript.ScriptMetadata.TriggersSpellCasts)
+                if (Script.ScriptMetadata.TriggersSpellCasts)
                 {
                     if (!SpellData.Flags.HasFlag(SpellDataFlags.InstantCast))
                     {
@@ -515,7 +560,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
 
                 if (CastInfo.DesignerCastTime > 0)
                 {
-                    if (_spellScript.ScriptMetadata.TriggersSpellCasts)
+                    if (Script.ScriptMetadata.TriggersSpellCasts)
                     {
                         ApiEventManager.OnSpellCast.Publish(this);
                     }
@@ -549,29 +594,14 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
             }
             else
             {
-                if (_spellScript.ScriptMetadata.MissileParameters != null)
+                if (Script.ScriptMetadata.MissileParameters != null)
                 {
-                    var missileType = _spellScript.ScriptMetadata.MissileParameters.Type;
+                    CreateSpellMissile();
+                }
 
-                    if (missileType == MissileType.Target)
-                    {
-                        CreateSpellMissile();
-                    }
-
-                    if (missileType == MissileType.Chained)
-                    {
-                        CreateSpellChainMissile();
-                    }
-                    
-                    if (missileType == MissileType.Circle)
-                    {
-                        CreateSpellCircleMissile();
-                    }
-
-                    if (missileType == MissileType.Arc)
-                    {
-                        CreateSpellLineMissile();
-                    }
+                if (Script.ScriptMetadata.SectorParameters != null)
+                {
+                    CreateSpellSector();
                 }
             }
 
@@ -582,9 +612,9 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
         {
             State = SpellState.STATE_CHANNELING;
             CurrentChannelDuration = SpellData.ChannelDuration[CastInfo.SpellLevel];
-            if (_spellScript.ScriptMetadata.ChannelDuration > 0)
+            if (Script.ScriptMetadata.ChannelDuration > 0)
             {
-                CurrentChannelDuration = _spellScript.ScriptMetadata.ChannelDuration;
+                CurrentChannelDuration = Script.ScriptMetadata.ChannelDuration;
                 ApiEventManager.OnSpellChannel.Publish(this);
             }
 
@@ -612,7 +642,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
         void ISpell.Deactivate()
         {
             CastInfo.Targets.Clear();
-            _spellScript.OnDeactivate(CastInfo.Owner, this);
+            Script.OnDeactivate(CastInfo.Owner, this);
         }
 
         public void FinishCasting()
@@ -651,12 +681,15 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
                 {
                     if (HasEmptyScript)
                     {
-                        CreateSpellMissile();
+                        CreateSpellMissile(new MissileParameters
+                        {
+                            Type = MissileType.Target
+                        });
                     }
                 }
                 else
                 {
-                    if (_spellScript.ScriptMetadata.MissileParameters == null)
+                    if (Script.ScriptMetadata.MissileParameters == null)
                     {
                         ApplyEffects(CastInfo.Targets[0].Unit, null);
                     }
@@ -667,7 +700,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
             }
             else
             {
-                if (_spellScript.ScriptMetadata.MissileParameters == null)
+                if (Script.ScriptMetadata.MissileParameters == null)
                 {
                     ApplyEffects(CastInfo.Targets[0].Unit, null);
                 }
@@ -685,34 +718,19 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
                 }
             }
 
-            if (_spellScript.ScriptMetadata.TriggersSpellCasts)
+            if (Script.ScriptMetadata.TriggersSpellCasts)
             {
                 ApiEventManager.OnSpellPostCast.Publish(this);
             }
 
-            if (_spellScript.ScriptMetadata.MissileParameters != null)
+            if (Script.ScriptMetadata.MissileParameters != null)
             {
-                var missileType = _spellScript.ScriptMetadata.MissileParameters.Type;
+                CreateSpellMissile();
+            }
 
-                if (missileType == MissileType.Target)
-                {
-                    CreateSpellMissile();
-                }
-
-                if (missileType == MissileType.Chained)
-                {
-                    CreateSpellChainMissile();
-                }
-
-                if (missileType == MissileType.Circle)
-                {
-                    CreateSpellCircleMissile();
-                }
-
-                if (missileType == MissileType.Arc)
-                {
-                    CreateSpellLineMissile();
-                }
+            if (Script.ScriptMetadata.SectorParameters != null)
+            {
+                CreateSpellSector();
             }
 
             if (CastInfo.Owner.SpellToCast != null)
@@ -721,133 +739,173 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
             }
         }
 
+        /// <summary>
+        /// Creates a spell missile with the given parameters.
+        /// </summary>
+        /// <param name="parameters">Parameters of the missile.</param>
+        public ISpellMissile CreateSpellMissile(IMissileParameters parameters)
+        {
+            if (CastInfo.MissileNetID == 0)
+            {
+                return null;
+            }
+
+            var netId = CastInfo.MissileNetID;
+
+            if (_game.ObjectManager.GetObjectById(netId) != null)
+            {
+                netId = _game.NetworkIdManager.GetNewNetId();
+            }
+
+            bool isServerOnly = SpellData.MissileEffect != "";
+
+            ISpellMissile p = null;
+
+            switch (parameters.Type)
+            {
+                case MissileType.Target:
+                {
+                    p = new SpellMissile(
+                        _game,
+                        (int)SpellData.LineWidth,
+                        this,
+                        CastInfo,
+                        SpellData.MissileSpeed,
+                        SpellData.Flags,
+                        netId,
+                        isServerOnly
+                    );
+                    break;
+                }
+                case MissileType.Chained:
+                {
+                    p = new SpellChainMissile(
+                        _game,
+                        (int)SpellData.LineWidth,
+                        this,
+                        CastInfo,
+                        Script.ScriptMetadata.MissileParameters,
+                        SpellData.MissileSpeed,
+                        SpellData.Flags,
+                        netId,
+                        isServerOnly
+                    );
+                    break;
+                }
+                case MissileType.Circle:
+                {
+                    p = new SpellCircleMissile(
+                        _game,
+                        (int)SpellData.LineWidth,
+                        this,
+                        CastInfo,
+                        SpellData.MissileSpeed,
+                        SpellData.Flags,
+                        netId,
+                        isServerOnly
+                    );
+                    break;
+                }
+                case MissileType.Arc:
+                {
+                    p = new SpellLineMissile(
+                        _game,
+                        (int)SpellData.LineWidth,
+                        this,
+                        CastInfo,
+                        SpellData.MissileSpeed,
+                        SpellData.Flags,
+                        netId,
+                        isServerOnly
+                    );
+                    break;
+                }
+            }
+
+            _game.ObjectManager.AddObject(p);
+
+            ApiEventManager.OnLaunchMissile.Publish(new KeyValuePair<IObjAiBase, ISpell>(CastInfo.Owner, this), p);
+
+            _game.PacketNotifier.NotifyMissileReplication(p);
+
+            // TODO: Verify when NotifyForceCreateMissile should be used instead.
+
+            return p;
+        }
+
+        /// <summary>
+        /// Creates a spell missile using this spell's script for the parameters.
+        /// </summary>
         public ISpellMissile CreateSpellMissile()
         {
-            if (CastInfo.MissileNetID == 0)
-            {
-                //_game.PacketNotifier.NotifyDestroyClientMissile(p);
-                return null;
-            }
-
-            bool isServerOnly = SpellData.MissileEffect != "";
-
-            var p = new SpellMissile(
-                _game,
-                (int)SpellData.LineWidth,
-                this,
-                CastInfo,
-                SpellData.MissileSpeed,
-                SpellData.Flags,
-                CastInfo.MissileNetID,
-                isServerOnly
-            );
-
-            _game.ObjectManager.AddObject(p);
-
-            ApiEventManager.OnLaunchMissile.Publish(new KeyValuePair<IObjAiBase, ISpell>(CastInfo.Owner, this), p);
-
-            _game.PacketNotifier.NotifyMissileReplication(p);
-
-            // TODO: Verify when NotifyForceCreateMissile should be used instead.
-
-            return p;
+            return CreateSpellMissile(Script.ScriptMetadata.MissileParameters);
         }
 
-        public ISpellMissile CreateSpellChainMissile()
+        /// <summary>
+        /// Creates a spell sector with the given parameters.
+        /// </summary>
+        /// <param name="parameters">Parameters of the sector.</param>
+        public ISpellSector CreateSpellSector(ISectorParameters parameters)
         {
             if (CastInfo.MissileNetID == 0)
             {
-                //_game.PacketNotifier.NotifyDestroyClientMissile(p);
                 return null;
             }
 
-            bool isServerOnly = SpellData.MissileEffect != "";
+            var netId = CastInfo.MissileNetID;
 
-            var p = new SpellChainMissile(
-                _game,
-                (int)SpellData.LineWidth,
-                this,
-                CastInfo,
-                _spellScript.ScriptMetadata.MissileParameters,
-                SpellData.MissileSpeed,
-                SpellData.Flags,
-                CastInfo.MissileNetID,
-                isServerOnly
-            );
+            if (_game.ObjectManager.GetObjectById(netId) != null)
+            {
+                netId = _game.NetworkIdManager.GetNewNetId();
+            }
 
-            _game.ObjectManager.AddObject(p);
+            ISpellSector s = null;
 
-            ApiEventManager.OnLaunchMissile.Publish(new KeyValuePair<IObjAiBase, ISpell>(CastInfo.Owner, this), p);
+            switch (parameters.Type)
+            {
+                case SectorType.Area:
+                {
+                    s = new SpellSector(
+                        _game,
+                        parameters,
+                        this,
+                        CastInfo,
+                        netId
+                    );
+                    break;
+                }
+                case SectorType.Cone:
+                {
+                    // TODO
+                    break;
+                }
+                case SectorType.Polygon:
+                {
+                    // TODO
+                    break;
+                }
+                case SectorType.Ring:
+                {
+                    // TODO
+                    break;
+                }
+            }
 
-            _game.PacketNotifier.NotifyMissileReplication(p);
+            _game.ObjectManager.AddObject(s);
+
+            ApiEventManager.OnCreateSector.Publish(new KeyValuePair<IObjAiBase, ISpell>(CastInfo.Owner, this), s);
 
             // TODO: Verify when NotifyForceCreateMissile should be used instead.
 
-            return p;
+            return s;
         }
 
-        public ISpellMissile CreateSpellCircleMissile()
+        /// <summary>
+        /// Creates a spell sector using this spell's script for the parameters.
+        /// </summary>
+        public ISpellSector CreateSpellSector()
         {
-            if (CastInfo.MissileNetID == 0)
-            {
-                //_game.PacketNotifier.NotifyDestroyClientMissile(p);
-                return null;
-            }
-
-            bool isServerOnly = SpellData.MissileEffect != "";
-
-            var p = new SpellCircleMissile(
-                _game,
-                (int)SpellData.LineWidth,
-                this,
-                CastInfo,
-                SpellData.MissileSpeed,
-                SpellData.Flags,
-                CastInfo.MissileNetID,
-                isServerOnly
-            );
-
-            _game.ObjectManager.AddObject(p);
-
-            ApiEventManager.OnLaunchMissile.Publish(new KeyValuePair<IObjAiBase, ISpell>(CastInfo.Owner, this), p);
-
-            _game.PacketNotifier.NotifyMissileReplication(p);
-
-            // TODO: Verify when NotifyForceCreateMissile should be used instead.
-
-            return p;
-        }
-
-        public ISpellMissile CreateSpellLineMissile()
-        {
-            if (CastInfo.MissileNetID == 0)
-            {
-                //_game.PacketNotifier.NotifyDestroyClientMissile(p);
-                return null;
-            }
-
-            bool isServerOnly = SpellData.MissileEffect != "";
-
-            var p = new SpellLineMissile(
-                _game,
-                (int)SpellData.LineWidth,
-                this,
-                CastInfo,
-                SpellData.MissileSpeed,
-                SpellData.Flags,
-                CastInfo.MissileNetID,
-                isServerOnly
-            );
-
-            _game.ObjectManager.AddObject(p);
-
-            ApiEventManager.OnLaunchMissile.Publish(new KeyValuePair<IObjAiBase, ISpell>(CastInfo.Owner, this), p);
-
-            _game.PacketNotifier.NotifyMissileReplication(p);
-
-            // TODO: Verify when NotifyForceCreateMissile should be used instead.
-
-            return p;
+            return CreateSpellSector(Script.ScriptMetadata.SectorParameters);
         }
 
         public void FinishChanneling()
@@ -875,6 +933,11 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
 
         public float GetCurrentCastRange()
         {
+            if (_overrrideCastRange > 0)
+            {
+                return _overrrideCastRange;
+            }
+
             float castRange = SpellData.CastRange[0];
 
             if (CastInfo.SpellLevel == 0)
@@ -936,6 +999,27 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
         public void ResetSpellDelay()
         {
             CurrentDelayTime = 0;
+        }
+
+        /// <summary>
+        /// Overrides the normal cast range for this spell. Set to 0 to revert.
+        /// </summary>
+        /// <param name="newCastRange">Cast range to set.</param>
+        public void SetOverrideCastRange(float newCastRange)
+        {
+            _overrrideCastRange = newCastRange;
+
+            if (CastInfo.Owner is IChampion champion)
+            {
+                _game.PacketNotifier.NotifyChangeSlotSpellData
+                (
+                    (int)_game.PlayerManager.GetClientInfoByChampion(champion).PlayerId,
+                    champion,
+                    (byte)CastInfo.SpellSlot,
+                    ChangeSlotSpellDataType.Range,
+                    newRange: newCastRange
+                );
+            }
         }
 
         /// <summary>
@@ -1010,7 +1094,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
         {
             if (!HasEmptyScript)
             {
-                _spellScript.OnUpdate(diff);
+                Script.OnUpdate(diff);
             }
 
             switch (State)
@@ -1025,7 +1109,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
                         if (CurrentCastTime <= 0)
                         {
                             FinishCasting();
-                            if (SpellData.ChannelDuration[CastInfo.SpellLevel] > 0 || _spellScript.ScriptMetadata.ChannelDuration > 0)
+                            if (SpellData.ChannelDuration[CastInfo.SpellLevel] > 0 || Script.ScriptMetadata.ChannelDuration > 0)
                             {
                                 Channel();
                             }

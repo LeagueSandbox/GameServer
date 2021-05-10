@@ -1,9 +1,7 @@
 ﻿using GameServerCore.Domain.GameObjects.Spell.Missile;
+using GameServerCore.Domain.GameObjects.Spell.Sector;
 using GameServerCore.Enums;
-using LeagueSandbox.GameServer.Scripting.CSharp;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using GameServerCore.Scripting.CSharp;
 
 namespace LeagueSandbox.GameServer.Scripting.CSharp
 {
@@ -69,23 +67,75 @@ namespace LeagueSandbox.GameServer.Scripting.CSharp
         public bool TriggersSpellCasts { get; set; } = false;
     }
 
+    /// <summary>
+    /// Parameters which determine how a missile behaves.
+    /// </summary>
     public class MissileParameters : IMissileParameters
     {
+        /// <summary>
+        /// Whether or not the missile should be able to hit something multiple times.
+        /// Will only hit again if the missile has bounced to a different unit.
+        /// Is overridden by CanHitSameTargetConsecutively.
+        /// </summary>
         public bool CanHitSameTarget { get; set; } = false;
+        /// <summary>
+        /// Whether or not the missile should be able to hit something multiple times in a row,
+        /// regardless of if it has bounced to another unit.
+        /// Overrides CanHitSameTarget.
+        /// </summary>
         public bool CanHitSameTargetConsecutively { get; set; } = false;
-
+        /// <summary>
+        /// Maximum number of times the missile can hit something before being removed.
+        /// </summary>
         public int MaximumHits { get; set; } = 0;
-
+        /// <summary>
+        /// What kind of behavior this missile has.
+        /// </summary>
         public MissileType Type { get; set; } = MissileType.None;
     }
 
+    /// <summary>
+    /// Parameters which determine how a sector behaves.
+    /// </summary>
     public class SectorParameters : ISectorParameters
     {
+        /// <summary>
+        /// Area around the sector to check for collisions.
+        /// </summary>
+        public float Radius { get; set; } = 0f;
+        /// <summary>
+        /// Maximum amount of time this spell sector should last before being automatically removed.
+        /// Setting to -1 will cause the spell sector to last until manually removed.
+        /// </summary>
+        public float Lifetime { get; set; } = -1f;
+        /// <summary>
+        /// How many times a second the spell sector should check for hitbox collisions.
+        /// </summary>
+        public int Tickrate { get; set; } = 60;
+        /// <summary>
+        /// Whether or not the spell sector should be able to hit something multiple times.
+        /// Will only hit again if the unit hit re-enters the hitbox (constant per-collision hitbox).
+        /// Is overridden by CanHitSameTargetConsecutively.
+        /// </summary>
         public bool CanHitSameTarget { get; set; } = false;
+        /// <summary>
+        /// Whether or not the spell sector should be able to hit something multiple times in a row,
+        /// regardless of if it has left and re-entered the hitbox (costant hitbox).
+        /// Overrides CanHitSameTarget.
+        /// </summary>
         public bool CanHitSameTargetConsecutively { get; set; } = false;
-
-        public int MaximumHits { get; set; } = 0;
-
-        public SectorType Type { get; set; } = SectorType.None;
+        /// <summary>
+        /// Maximum number of times the spell sector can hit something before being removed.
+        /// </summary>
+        public int MaximumHits { get; set; } = int.MaxValue;
+        /// <summary>
+        /// Optional spell flags which determine what units this spell sector affects.
+        /// If 0, the sector will use the SpellOrigin's spell flags.
+        /// </summary>
+        public SpellDataFlags OverrideFlags { get; set; } = 0;
+        /// <summary>
+        /// What kind of shape this sector has.
+        /// </summary>
+        public SectorType Type { get; set; } = SectorType.Area;
     }
 }
