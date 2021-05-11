@@ -124,7 +124,7 @@ namespace LeagueSandbox.GameServer.GameObjects
             VisionAffected = reqVision;
             SpecificTeam = teamOnly;
 
-            if (teamOnly != 0)
+            if (teamOnly != TeamId.TEAM_NEUTRAL)
             {
                 Team = teamOnly;
             }
