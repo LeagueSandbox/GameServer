@@ -172,7 +172,7 @@ namespace LeagueSandbox.GameServer.GameObjects
         /// Sets the collision radius of this GameObject.
         /// </summary>
         /// <param name="newRadius">Radius to set.</param>
-        public void SetCollisionRadiu(float newRadius)
+        public void SetCollisionRadius(float newRadius)
         {
             CollisionRadius = newRadius;
         }

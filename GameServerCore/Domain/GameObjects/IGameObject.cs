@@ -75,7 +75,7 @@ namespace GameServerCore.Domain.GameObjects
         /// Sets the collision radius of this GameObject.
         /// </summary>
         /// <param name="newRadius">Radius to set.</param>
-        void SetCollisionRadiu(float newRadius);
+        void SetCollisionRadius(float newRadius);
 
         /// <summary>
         /// Refers to the height that the object is at in 3D space.
