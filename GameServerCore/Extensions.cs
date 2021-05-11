@@ -125,7 +125,7 @@ namespace GameServerCore
         /// <param name="vectorToGetAngle">Vector2 to point towards.</param>
         /// <param name="origin">Vector2 to orient around.</param>
         /// <returns>float Angle in degrees</returns>
-        public static float AngleBetween(this Vector2 v, Vector2 vectorToGetAngle, Vector2 origin)
+        public static float AngleTo(this Vector2 v, Vector2 vectorToGetAngle, Vector2 origin)
         {
             // Make other vectors relative to the origin
             v.X -= origin.X;
@@ -133,19 +133,9 @@ namespace GameServerCore
             v.Y -= origin.Y;
             vectorToGetAngle.Y -= origin.Y;
 
-            // Normalize the vectors
-            v = Vector2.Normalize(v);
-            vectorToGetAngle = Vector2.Normalize(vectorToGetAngle);
+            var norm = Vector2.Normalize(vectorToGetAngle - v);
 
-            // Get the angle
-            var ang = Vector2.Dot(v, vectorToGetAngle);
-            var returnVal = RadianToDegree(MathF.Acos(ang));
-            if (vectorToGetAngle.X < v.X)
-            {
-                returnVal = 360 - returnVal;
-            }
-
-            return returnVal;
+            return UnitVectorToAngle(norm);
         }
 
         /// <summary>
@@ -249,9 +239,9 @@ namespace GameServerCore
         /// <param name="v">Starting point.</param>
         /// <param name="vectorToGetAngle">Ending point.</param>
         /// <returns>Angle in degrees.</returns>
-        public static float AngleBetween(this Vector2 v, Vector2 vectorToGetAngle)
+        public static float AngleTo(this Vector2 v, Vector2 vectorToGetAngle)
         {
-            return v.AngleBetween(vectorToGetAngle, new Vector2(0, 0));
+            return v.AngleTo(vectorToGetAngle, new Vector2(0, 0));
         }
 
         /// <summary>
@@ -272,6 +262,19 @@ namespace GameServerCore
         public static float RadianToDegree(float angle)
         {
             return angle * (180.0f / MathF.PI);
+        }
+
+        /// <summary>
+        /// Converts the given normalized vector (such that |v| = 1) to an angle in degrees (0 -> 360).
+        /// </summary>
+        /// <param name="v">Vector2 to convert.</param>
+        /// <returns>Angle in degrees (0 -> 360)</returns>
+        public static float UnitVectorToAngle(Vector2 v)
+        {
+            var angle = RadianToDegree(MathF.Atan2(v.Y, v.X));
+
+            // Clamp Atan2 degrees to 0 -> 360.
+            return (angle + 360f) % 360f;
         }
 
         /// <summary>
@@ -358,6 +361,26 @@ namespace GameServerCore
             Vector2 edgepoint2 = GetClosestCircleEdgePoint(p1, p2, r2);
 
             return Vector2.Add(p1, Vector2.Subtract(edgepoint2, edgepoint1));
+        }
+
+        /// <summary>
+        /// Effectively casts two rays from point p to the left and right boundaries of a given circle.
+        /// </summary>
+        /// <param name="p">Point to cast the rays from.</param>
+        /// <param name="c">Center of the circle.</param>
+        /// <param name="r">Radius of the circle.</param>
+        /// <returns>Array of 2 points representing the left and right bounds of the circle respectively.</returns>
+        /// TODO: Could probably be more efficient by using an alternative to Cos and Sin.
+        public static Vector2[] CastRayCircle(Vector2 p, Vector2 c, float r)
+        {
+            var angleToCenter = p.AngleTo(c, p);
+            var angleToLeft = angleToCenter + 270f;
+            var angleToRight = angleToCenter + 90f;
+
+            var cLeftBound = new Vector2(c.X + (MathF.Cos(angleToLeft) * r), c.Y + (MathF.Sin(angleToLeft) * r));
+            var cRightBound = new Vector2(c.X + (MathF.Cos(angleToRight) * r), c.Y + (MathF.Sin(angleToRight) * r));
+
+            return new Vector2[] { cLeftBound, cRightBound };
         }
     }
 

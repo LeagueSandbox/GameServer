@@ -8,14 +8,29 @@ namespace GameServerCore.Domain.GameObjects.Spell.Sector
     public interface ISectorParameters
     {
         /// <summary>
-        /// Area around the sector to check for collisions.
+        /// Half the distance from the center of the sector to the maximum Y-value.
+        /// If this is larger than HalfWidth, it will be used as the area around the sector to check for collisions.
         /// </summary>
-        float Radius { get; set; }
+        float HalfLength { get; set; }
         /// <summary>
-        /// Maximum amount of time this spell sector should last before being automatically removed.
+        /// Half the distance from the center of the sector to the maximum X-value.
+        /// If this is larger than HalfLength, it will be used as the area around the sector to check for collisions.
+        /// </summary>
+        float HalfWidth { get; set; }
+        /// <summary>
+        /// If the Type is Cone, this will filter collisions that are in front of the sector and are within this angle from the sector's center.
+        /// Should be a value from 0->360
+        /// </summary>
+        float ConeAngle { get; set; }
+        /// <summary>
+        /// Maximum amount of time this spell sector should last (in seconds) before being automatically removed.
         /// Setting to -1 will cause the spell sector to last until manually removed.
         /// </summary>
         float Lifetime { get; set; }
+        /// <summary>
+        /// Whether or not the sector should only tick once before being removed.
+        /// </summary>
+        bool SingleTick { get; set; }
         /// <summary>
         /// How many times a second the spell sector should check for hitbox collisions.
         /// </summary>

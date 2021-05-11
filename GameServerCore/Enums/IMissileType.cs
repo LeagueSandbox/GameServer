@@ -3,7 +3,7 @@
     public enum MissileType : int
     {
         /// <summary>
-        /// Unused. If a ProjectileGameScript is implemented which controls flight path, use this (possibly rename to "Custom").
+        /// Unused. If a MissileGameScript is implemented which controls flight path, use this (possibly rename to "Custom").
         /// </summary>
         None = 0x0,
         /// <summary>
