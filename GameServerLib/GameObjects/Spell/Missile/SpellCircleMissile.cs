@@ -155,7 +155,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Missile
 
         public override void CheckFlagsForUnit(IAttackableUnit unit)
         {
-            if (!HasDestination() || !IsValidTarget(unit))
+            if (unit == null || !HasDestination() || ObjectsHit.Contains(unit) || !SpellOrigin.SpellData.IsValidTarget(CastInfo.Owner, unit))
             {
                 return;
             }
@@ -171,23 +171,6 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Missile
             {
                 ai.AutoAttackHit(TargetUnit);
             }
-        }
-
-        public override void SetToRemove()
-        {
-            base.SetToRemove();
-
-            _game.PacketNotifier.NotifyDestroyClientMissile(this);
-        }
-
-        protected override bool IsValidTarget(IAttackableUnit unit)
-        {
-            if (unit == null || ObjectsHit.Contains(unit))
-            {
-                return false;
-            }
-
-            return base.IsValidTarget(unit);
         }
 
         /// <summary>

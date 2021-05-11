@@ -3,6 +3,7 @@ using GameServerCore.Domain.GameObjects;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using System.Numerics;
 using GameServerCore.Domain.GameObjects.Spell;
+using GameServerCore.Scripting.CSharp;
 
 namespace Spells
 {

@@ -42,6 +42,10 @@ namespace GameServerCore.Domain.GameObjects
         /// </summary>
         KeyValuePair<int, Vector2> CurrentWaypoint { get; }
         /// <summary>
+        /// Status effects enabled on this unit. Refer to StatusFlags enum.
+        /// </summary>
+        StatusFlags Status { get; }
+        /// <summary>
         /// Parameters of any forced movements (dashes) this unit is performing.
         /// </summary>
         IForceMovementParameters MovementParameters { get; }

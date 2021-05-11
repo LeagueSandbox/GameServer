@@ -39,7 +39,7 @@ namespace LeagueSandbox.GameServer.GameObjects
         /// <summary>
         /// Radius of the circle which is used for collision detection between objects or terrain.
         /// </summary>
-        public float CollisionRadius { get; set; }
+        public float CollisionRadius { get; protected set; }
         /// <summary>
         /// Position of this GameObject from a top-down view.
         /// </summary>
@@ -64,7 +64,7 @@ namespace LeagueSandbox.GameServer.GameObjects
         /// <summary>
         /// Instantiation of an object which represents the base class for all objects in League of Legends.
         /// </summary>
-        public GameObject(Game game, Vector2 position, int collisionRadius = 40, int visionRadius = 0, uint netId = 0, TeamId team = TeamId.TEAM_NEUTRAL)
+        public GameObject(Game game, Vector2 position, float collisionRadius = 40f, float visionRadius = 0f, uint netId = 0, TeamId team = TeamId.TEAM_NEUTRAL)
         {
             _game = game;
             _networkIdManager = game.NetworkIdManager;
@@ -166,6 +166,15 @@ namespace LeagueSandbox.GameServer.GameObjects
         public virtual void SetPosition(Vector2 vec)
         {
             Position = vec;
+        }
+
+        /// <summary>
+        /// Sets the collision radius of this GameObject.
+        /// </summary>
+        /// <param name="newRadius">Radius to set.</param>
+        public void SetCollisionRadius(float newRadius)
+        {
+            CollisionRadius = newRadius;
         }
 
         /// <summary>

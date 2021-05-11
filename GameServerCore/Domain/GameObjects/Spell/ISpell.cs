@@ -1,5 +1,7 @@
 ﻿using GameServerCore.Domain.GameObjects.Spell.Missile;
+using GameServerCore.Domain.GameObjects.Spell.Sector;
 using GameServerCore.Enums;
+using GameServerCore.Scripting.CSharp;
 using System.Collections.Generic;
 using System.Numerics;
 
@@ -7,16 +9,50 @@ namespace GameServerCore.Domain.GameObjects.Spell
 {
     public interface ISpell: IUpdate
     {
+        /// <summary>
+        /// General information about this spell when it is cast. Refer to CastInfo class.
+        /// </summary>
         ICastInfo CastInfo { get; }
+        /// <summary>
+        /// Current cooldown of this spell.
+        /// </summary>
         float CurrentCooldown { get; }
+        /// <summary>
+        /// Time until casting will end for this spell.
+        /// </summary>
         float CurrentCastTime { get; }
+        /// <summary>
+        /// Time until channeling will finish for this spell.
+        /// </summary>
         float CurrentChannelDuration { get; }
+        /// <summary>
+        /// Time until the same spell can be cast again. Usually only applicable to auto attack spells.
+        /// </summary>
         float CurrentDelayTime { get; }
-        bool HasEmptyScript { get; }
+        /// <summary>
+        /// The toggle state of this spell.
+        /// </summary>
         bool Toggle { get; }
+        /// <summary>
+        /// Spell data for this spell used for interactions between units, cooldown, channeling time, etc. Refer to SpellData class.
+        /// </summary>
         ISpellData SpellData { get; }
+        /// <summary>
+        /// Internal name of this spell.
+        /// </summary>
         string SpellName { get; }
+        /// <summary>
+        /// State of this spell. Refer to SpellState enum.
+        /// </summary>
         SpellState State { get; }
+        /// <summary>
+        /// Script instance assigned to this spell.
+        /// </summary>
+        ISpellScript Script { get; }
+        /// <summary>
+        /// Whether or not the script for this spell is the default empty script.
+        /// </summary>
+        bool HasEmptyScript { get; }
 
         /// <returns>spell's unique ID</returns>
         int GetId();
@@ -24,7 +60,7 @@ namespace GameServerCore.Domain.GameObjects.Spell
         /// <summary>
         /// Called by projectiles when they land / hit, this is where we apply damage/slows etc.
         /// </summary>
-        void ApplyEffects(IAttackableUnit u, ISpellMissile p);
+        void ApplyEffects(IAttackableUnit u, ISpellMissile p = null, ISpellSector s = null);
 
         /// <summary>
         /// Called when the character casts this spell. Initializes the CastInfo for this spell and begins casting.
@@ -61,24 +97,15 @@ namespace GameServerCore.Domain.GameObjects.Spell
         void Deactivate();
 
         /// <summary>
-        /// Creates a single-target missile with the specified properties.
+        /// Creates a spell missile with the given parameters.
         /// </summary>
-        ISpellMissile CreateSpellMissile();
-
+        /// <param name="parameters">Parameters of the missile.</param>
+        ISpellMissile CreateSpellMissile(IMissileParameters parameters);
         /// <summary>
-        /// Creates a single-target bouncing missile with the specified properties.
+        /// Creates a spell sector with the given parameters.
         /// </summary>
-        ISpellMissile CreateSpellChainMissile();
-
-        /// <summary>
-        /// Creates a line missile with the specified properties.
-        /// </summary>
-        ISpellMissile CreateSpellCircleMissile();
-
-        /// <summary>
-        /// Creates an arc missile with the specified properties.
-        /// </summary>
-        ISpellMissile CreateSpellLineMissile();
+        /// <param name="parameters">Parameters of the sector.</param>
+        ISpellSector CreateSpellSector(ISectorParameters parameters);
 
         /// <summary>
         /// Gets the cast range for this spell (based on level).
@@ -106,6 +133,12 @@ namespace GameServerCore.Domain.GameObjects.Spell
         void LevelUp();
         string GetStringForSlot();
         float GetCooldown();
+        void ResetSpellDelay();
+        /// <summary>
+        /// Overrides the normal cast range for this spell. Set to 0 to revert.
+        /// </summary>
+        /// <param name="newCastRange">Cast range to set.</param>
+        void SetOverrideCastRange(float newCastRange);
         /// <summary>
         /// Sets the cooldown of this spell.
         /// </summary>
@@ -113,7 +146,6 @@ namespace GameServerCore.Domain.GameObjects.Spell
         /// <param name="ignoreCDR">Whether or not to ignore cooldown reduction.</param>
         void SetCooldown(float newCd, bool ignoreCDR = false);
         void LowerCooldown(float lowerValue);
-        void ResetSpellDelay();
         void SetLevel(byte toLevel);
 
     }

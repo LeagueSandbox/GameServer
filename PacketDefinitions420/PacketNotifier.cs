@@ -964,6 +964,12 @@ namespace PacketDefinitions420
 
             if (userId == 0)
             {
+                if (particle.SpecificTeam != TeamId.TEAM_NEUTRAL)
+                {
+                    _packetHandlerManager.BroadcastPacketTeam(particle.SpecificTeam, fxPacket.GetBytes(), Channel.CHL_S2C);
+                    return;
+                }
+
                 if (particle.VisionAffected)
                 {
                     _packetHandlerManager.BroadcastPacketVision(particle, fxPacket.GetBytes(), Channel.CHL_S2C);

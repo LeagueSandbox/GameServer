@@ -282,9 +282,9 @@ namespace LeagueSandbox.GameServer.API
         /// <param name="lifetime">Time in seconds the particle should last.</param>
         /// <param name="reqVision">Whether or not the particle can be obstructed by terrain.</param>
         /// <returns>New particle instance.</returns>
-        public static IParticle AddParticle(IGameObject bindObj, string particle, Vector2 position, float size = 1.0f, string bone = "", string targetBone = "", Vector3 direction = new Vector3(), float lifetime = 0, bool reqVision = true)
+        public static IParticle AddParticle(IGameObject bindObj, string particle, Vector2 position, float size = 1.0f, string bone = "", string targetBone = "", Vector3 direction = new Vector3(), float lifetime = 0, bool reqVision = true, TeamId teamOnly = TeamId.TEAM_NEUTRAL)
         {
-            var p = new Particle(_game, bindObj, position, particle, size, bone, targetBone, 0, direction, lifetime, reqVision);
+            var p = new Particle(_game, bindObj, position, particle, size, bone, targetBone, 0, direction, lifetime, reqVision, true, teamOnly);
             return p;
         }
 
@@ -610,6 +610,47 @@ namespace LeagueSandbox.GameServer.API
         public static void SetStatus(IAttackableUnit unit, StatusFlags status, bool enabled)
         {
             unit.SetStatus(status, enabled);
+        }
+
+        public static void SetTargetingType(IObjAiBase target, SpellSlotType slotType, int slot, TargetingType newType)
+        {
+            if ((slotType == SpellSlotType.SpellSlots && (slot < 0 || slot > 3))
+                || (slotType == SpellSlotType.InventorySlots && (slot < 0 || slot > 6))
+                || (slotType == SpellSlotType.ExtraSlots && (slot < 0 || slot > 15)))
+            {
+                return;
+            }
+
+            if (slotType == SpellSlotType.InventorySlots)
+            {
+                slot += (int)SpellSlotType.InventorySlots;
+            }
+
+            if (slotType == SpellSlotType.TempItemSlot)
+            {
+                slot = (int)SpellSlotType.TempItemSlot;
+            }
+
+            if (slotType == SpellSlotType.ExtraSlots)
+            {
+                slot += (int)SpellSlotType.ExtraSlots;
+            }
+
+            ISpell spell = target.GetSpell((byte)slot);
+
+            spell.SpellData.SetTargetingType(newType);
+
+            if (target is IChampion champion)
+            {
+                _game.PacketNotifier.NotifyChangeSlotSpellData
+                (
+                    (int)_game.PlayerManager.GetClientInfoByChampion(champion).PlayerId,
+                    target,
+                    (byte)slot,
+                    ChangeSlotSpellDataType.TargetingType,
+                    targetingType: newType
+                );
+            }
         }
 
         public static void SpellCast(IObjAiBase caster, int slot, SpellSlotType slotType, Vector2 pos, Vector2 endPos, bool fireWithoutCasting, Vector2 overrideCastPos, List<ICastTarget> targets = null, bool isForceCastingOrChanneling = false, int overrideForceLevel = -1, bool updateAutoAttackTimer = false, bool useAutoAttackSpell = false)

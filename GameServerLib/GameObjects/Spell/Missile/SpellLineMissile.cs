@@ -145,7 +145,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Missile
 
         public override void CheckFlagsForUnit(IAttackableUnit unit)
         {
-            if (!HasDestination() || !IsValidTarget(unit))
+            if (unit == null || !HasDestination() || !SpellOrigin.SpellData.IsValidTarget(CastInfo.Owner, unit))
             {
                 return;
             }
@@ -163,22 +163,6 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Missile
             }
         }
 
-        public override void SetToRemove()
-        {
-            base.SetToRemove();
-
-            _game.PacketNotifier.NotifyDestroyClientMissile(this);
-        }
-
-        // TODO: Verify if LineMissile should have a different IsValidTarget functionality.
-
-        /// <summary>
-        /// Whether or not this projectile has a destination; if it is a valid projectile.
-        /// </summary>
-        /// <returns>True/False.</returns>
-        public bool HasDestination()
-        {
-            return Destination != Vector2.Zero && Destination.X != float.NaN && Destination.Y != float.NaN;
-        }
+        // TODO: Verify if LineMissile should have its own IsValidTarget functionality.
     }
 }

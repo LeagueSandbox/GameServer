@@ -2,7 +2,7 @@
 using GameServerCore.Domain.GameObjects.Spell;
 using GameServerCore.Enums;
 
-namespace LeagueSandbox.GameServer.Scripting.CSharp
+namespace GameServerCore.Scripting.CSharp
 {
     public interface IBuffGameScript
     {

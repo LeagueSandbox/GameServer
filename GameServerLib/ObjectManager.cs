@@ -84,10 +84,17 @@ namespace LeagueSandbox.GameServer
                 //3. Every other projectile that is not server only, and is affected by visibility checks (normal projectiles)
 
                 var particle = obj as IParticle;
-                if (particle != null)
+                // Only if the particle is affected by vision.
+                if (particle != null && particle.VisionAffected)
                 {
                     foreach (var team in Teams)
                     {
+                        // Only remove or re-send the particle to the specified team.
+                        if (particle.SpecificTeam != TeamId.TEAM_NEUTRAL && particle.SpecificTeam != team)
+                        {
+                            continue;
+                        }
+
                         var visionUnitsTeam = GetVisionUnits(particle.Team);
                         if (visionUnitsTeam.ContainsKey(particle.NetId))
                         {

@@ -1,4 +1,5 @@
 ﻿using GameServerCore.Domain.GameObjects;
+using GameServerCore.Enums;
 using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
 using LeagueSandbox.GameServer.GameObjects.Other;
 using System.Numerics;
@@ -51,6 +52,10 @@ namespace LeagueSandbox.GameServer.GameObjects
         /// true = visibility can be obstructed
         /// </summary>
         public bool VisionAffected { get; }
+        /// <summary>
+        /// The only team that should be able to see this particle.
+        /// </summary>
+        public TeamId SpecificTeam { get; }
 
         /// <summary>
         /// Prepares the Particle, setting up the information required for networking it to clients.
@@ -104,7 +109,7 @@ namespace LeagueSandbox.GameServer.GameObjects
         /// <param name="lifetime">Number of seconds the Particle should exist.</param>
         /// <param name="reqVision">Whether or not the Particle is affected by vision checks.</param>
         /// <param name="autoSend">Whether or not to automatically send the Particle packet to clients.</param>
-        public Particle(Game game, IGameObject bindObj, Vector2 targetPos, string particleName, float scale = 1.0f, string boneName = "", string targetBoneName = "", uint netId = 0, Vector3 direction = new Vector3(), float lifetime = 0, bool reqVision = true, bool autoSend = true)
+        public Particle(Game game, IGameObject bindObj, Vector2 targetPos, string particleName, float scale = 1.0f, string boneName = "", string targetBoneName = "", uint netId = 0, Vector3 direction = new Vector3(), float lifetime = 0, bool reqVision = true, bool autoSend = true, TeamId teamOnly = TeamId.TEAM_NEUTRAL)
                : base(game, targetPos, 0, 0, netId, bindObj.Team)
         {
             BindObject = bindObj;
@@ -117,6 +122,12 @@ namespace LeagueSandbox.GameServer.GameObjects
             Direction = direction;
             Lifetime = lifetime;
             VisionAffected = reqVision;
+            SpecificTeam = teamOnly;
+
+            if (teamOnly != TeamId.TEAM_NEUTRAL)
+            {
+                Team = teamOnly;
+            }
 
             _game.ObjectManager.AddObject(this);
 
@@ -133,7 +144,7 @@ namespace LeagueSandbox.GameServer.GameObjects
         public override void Update(float diff)
         {
             _currentTime += diff / 1000.0f;
-            if (_currentTime >= Lifetime && !IsToRemove())
+            if (_currentTime >= Lifetime)
             {
                 SetToRemove();
             }
@@ -152,8 +163,11 @@ namespace LeagueSandbox.GameServer.GameObjects
         /// </summary>
         public override void SetToRemove()
         {
-            base.SetToRemove();
-            _game.PacketNotifier.NotifyFXKill(this);
+            if (!IsToRemove())
+            {
+                base.SetToRemove();
+                _game.PacketNotifier.NotifyFXKill(this);
+            }
         }
     }
 }

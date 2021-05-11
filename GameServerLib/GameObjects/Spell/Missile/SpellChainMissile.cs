@@ -67,12 +67,9 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Missile
 
         public override void CheckFlagsForUnit(IAttackableUnit unit)
         {
-            if (!IsValidTarget(unit))
+            if (!IsValidTarget(unit) && !GetNextTarget())
             {
-                if (!GetNextTarget())
-                {
-                    SetToRemove();
-                }
+                SetToRemove();
 
                 return;
             }
@@ -121,7 +118,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Missile
 
         protected bool IsValidTarget(IAttackableUnit unit, bool checkOnly = false)
         {
-            bool valid = base.IsValidTarget(unit);
+            bool valid = SpellOrigin.SpellData.IsValidTarget(CastInfo.Owner, unit);
             bool hit = ObjectsHit.Contains(unit);
 
             if (hit)

@@ -6,6 +6,7 @@ using GameServerCore.Enums;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using LeagueSandbox.GameServer.GameObjects.Other;
 using LeagueSandbox.GameServer.API;
+using GameServerCore.Scripting.CSharp;
 
 namespace LeagueSandbox.GameServer.GameObjects
 {

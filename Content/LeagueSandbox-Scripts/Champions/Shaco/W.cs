@@ -7,6 +7,7 @@ using LeagueSandbox.GameServer.Scripting.CSharp;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 using GameServerCore.Enums;
 using System.Numerics;
+using GameServerCore.Scripting.CSharp;
 
 namespace Spells
 {
@@ -39,7 +40,7 @@ namespace Spells
         public void OnSpellPostCast(ISpell spell)
         {
             var owner = spell.CastInfo.Owner;
-            var castrange = spell.SpellData.CastRange[0];
+            var castrange = spell.GetCurrentCastRange();
             var apbonus = owner.Stats.AbilityPower.Total * 0.2f;
             var damage = 35 + ((15 * (spell.CastInfo.SpellLevel - 1)) + apbonus); //TODO: Should replace minion AA damage
             var jackduration = 5.0f; //TODO: Split into Active duration and Hidden duration when Invisibility is implemented

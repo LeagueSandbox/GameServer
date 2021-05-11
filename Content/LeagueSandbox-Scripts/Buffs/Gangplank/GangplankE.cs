@@ -3,8 +3,8 @@ using GameServerCore.Domain.GameObjects.Spell;
 using GameServerCore.Enums;
 using System.Collections.Generic;
 using LeagueSandbox.GameServer.GameObjects.Stats;
-using LeagueSandbox.GameServer.Scripting.CSharp;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
+using GameServerCore.Scripting.CSharp;
 
 namespace GangplankE
 {
@@ -25,8 +25,6 @@ namespace GangplankE
             StatsModifier.MoveSpeed.PercentBonus = StatsModifier.MoveSpeed.PercentBonus + (10f + 5f * ownerSpell.CastInfo.SpellLevel) / 100f;
             StatsModifier.AttackDamage.PercentBonus = StatsModifier.AttackDamage.PercentBonus + (10f + 10f * ownerSpell.CastInfo.SpellLevel) / 100f;
             unit.AddStatModifier(StatsModifier);
-
-            var time = 7.0f;
 
             //_hudvisual = AddBuffHUDVisual("RaiseMorale", time, 1, unit);
 

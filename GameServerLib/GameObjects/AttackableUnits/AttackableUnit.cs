@@ -7,6 +7,7 @@ using GameServerCore.Content;
 using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Domain.GameObjects.Spell.Missile;
+using GameServerCore.Domain.GameObjects.Spell.Sector;
 using GameServerCore.Enums;
 using LeagueSandbox.GameServer.API;
 using LeagueSandbox.GameServer.Logging;
@@ -215,7 +216,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
 
             base.OnCollision(collider, isTerrain);
 
-            if (collider is ISpellMissile || collider is IObjBuilding)
+            if (collider is ISpellMissile || collider is ISpellSector || collider is IObjBuilding)
             {
                 // TODO: Implement OnMissileCollide/Hit here.
                 return;
@@ -471,10 +472,14 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// <param name="killer">Unit which killed this unit.</param>
         public virtual void Die(IAttackableUnit killer)
         {
-            SetToRemove();
             _game.ObjectManager.StopTargeting(this);
 
-            _game.PacketNotifier.NotifyNpcDie(this, killer);
+            if (!IsToRemove())
+            {
+                _game.PacketNotifier.NotifyNpcDie(this, killer);
+            }
+
+            SetToRemove();
 
             var onDie = _game.ScriptEngine.GetStaticMethod<Action<IAttackableUnit, IAttackableUnit>>(Model, "Passive", "OnDie");
             onDie?.Invoke(this, killer);
@@ -1080,6 +1085,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             {
                 // Prevent moving past obstacles. TODO: Verify if works at high speeds.
                 // TODO: Implement range based (CollisionRadius) pathfinding so we don't keep getting stuck because of IsAnythingBetween.
+                // TODO: After the above, implement repathing if our position within the next tick or two will intersect with another GameObject.
                 KeyValuePair<bool, Vector2> pathBlocked = _game.Map.NavigationGrid.IsAnythingBetween(Position, nextPos);
                 if (pathBlocked.Key)
                 {

@@ -117,6 +117,14 @@ namespace GameServerCore.Domain.GameObjects.Spell
         bool UseGlobalLineIndicator { get; }
         bool UseMinimapTargeting { get; }
 
+        /// <summary>
+        /// Determines whether or not the target unit should be affected by the spell which has this SpellData.
+        /// </summary>
+        /// <param name="attacker">AI which cast the spell.</param>
+        /// <param name="target">Unit which is being affected.</param>
+        /// <param name="overrideFlags">SpellDataFlags to use in place of the ones in this SpellData.</param>
+        /// <returns>True/False.</returns>
+        bool IsValidTarget(IObjAiBase attacker, IAttackableUnit target, SpellDataFlags overrideFlags = 0);
         float GetCastTime();
         float GetCastTimeTotal();
         float GetCharacterAttackDelay
@@ -135,6 +143,7 @@ namespace GameServerCore.Domain.GameObjects.Spell
             float attackMinimumDelay = 0.4f,
             float attackMaximumDelay = 5.0f
         );
+        void SetTargetingType(TargetingType newType);
         void Load(string name);
     }
 }
