@@ -876,7 +876,13 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
                 }
                 case SectorType.Cone:
                 {
-                    // TODO
+                    s = new SpellSectorCone(
+                        _game,
+                        parameters,
+                        this,
+                        CastInfo,
+                        netId
+                    );
                     break;
                 }
                 case SectorType.Polygon:

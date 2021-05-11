@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Numerics;
 using GameServerCore;
 using GameServerCore.Domain.GameObjects;
@@ -53,7 +54,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Sector
             ISpell originSpell,
             ICastInfo castInfo,
             uint netId = 0
-        ) : base(game, new Vector2(castInfo.TargetPositionEnd.X, castInfo.TargetPositionEnd.Z), (int)parameters.Radius, 0, netId)
+        ) : base(game, new Vector2(castInfo.TargetPositionEnd.X, castInfo.TargetPositionEnd.Z), Math.Max(parameters.HalfLength, parameters.HalfWidth), 0, netId)
         {
             _timeSinceCreation = 0.0f;
             _lastTickTime = 0.0f;
@@ -85,7 +86,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Sector
 
             _lastTickTime += diff;
 
-            if ((Parameters.Lifetime >= 0 && Parameters.Lifetime <= _timeSinceCreation))
+            if ((Parameters.Lifetime >= 0 && (Parameters.Lifetime * 1000.0f) <= _timeSinceCreation))
             {
                 SetToRemove();
                 return;
@@ -130,7 +131,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Sector
             // OnCollision has already checked the affectRadius around the sector, so now we filter the area.
             if (collider is IAttackableUnit unit)
             {
-                if (FilterCollisions(unit) && IsValidTarget(unit))
+                if (IsValidTarget(unit) && FilterCollisions(unit))
                 {
                     _unitsToHit.Add(unit);
                 }
@@ -233,6 +234,11 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Sector
                     HitUnit(_unitsToHit[i]);
                     _unitsToHit.RemoveAt(i);
                 }
+            }
+
+            if (Parameters.SingleTick)
+            {
+                SetToRemove();
             }
         }
 

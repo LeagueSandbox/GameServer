@@ -100,14 +100,29 @@ namespace LeagueSandbox.GameServer.Scripting.CSharp
     public class SectorParameters : ISectorParameters
     {
         /// <summary>
-        /// Area around the sector to check for collisions.
+        /// Half the distance from the center of the sector to the maximum Y-value.
+        /// If this is larger than HalfWidth, it will be used as the area around the sector to check for collisions.
         /// </summary>
-        public float Radius { get; set; } = 0f;
+        public float HalfLength { get; set; } = 0f;
         /// <summary>
-        /// Maximum amount of time this spell sector should last before being automatically removed.
+        /// Half the distance from the center of the sector to the maximum X-value.
+        /// If this is larger than HalfLength, it will be used as the area around the sector to check for collisions.
+        /// </summary>
+        public float HalfWidth { get; set; } = 0f;
+        /// <summary>
+        /// If the Type is Cone, this will filter collisions that are in front of the sector and are within this angle from the sector's center.
+        /// Should be a value from 0->360
+        /// </summary>
+        public float ConeAngle { get; set; } = 0f;
+        /// <summary>
+        /// Maximum amount of time this spell sector should last (in seconds) before being automatically removed.
         /// Setting to -1 will cause the spell sector to last until manually removed.
         /// </summary>
         public float Lifetime { get; set; } = -1f;
+        /// <summary>
+        /// Whether or not the sector should only tick once before being removed (Lifetime must be greater than a single tick).
+        /// </summary>
+        public bool SingleTick { get; set; } = false;
         /// <summary>
         /// How many times a second the spell sector should check for hitbox collisions.
         /// </summary>

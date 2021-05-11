@@ -1,11 +1,12 @@
 ﻿using GameServerCore.Enums;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Domain.GameObjects.Spell;
-using GameServerCore.Domain.GameObjects.Spell.Missile;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using System.Numerics;
 using GameServerCore.Scripting.CSharp;
+using LeagueSandbox.GameServer.API;
+using GameServerCore.Domain.GameObjects.Spell.Sector;
 
 namespace Spells
 {
@@ -21,6 +22,7 @@ namespace Spells
 
         public void OnActivate(IObjAiBase owner, ISpell spell)
         {
+            ApiEventManager.OnSpellSectorHit.AddListener(this, new System.Collections.Generic.KeyValuePair<ISpell, IObjAiBase>(spell, owner), TargetExecute, false);
         }
 
         public void OnDeactivate(IObjAiBase owner, ISpell spell)
@@ -38,21 +40,26 @@ namespace Spells
         public void OnSpellPostCast(ISpell spell)
         {
             var owner = spell.CastInfo.Owner;
-            var current = new Vector2(owner.Position.X, owner.Position.Y);
-            var spellPos = new Vector2(spell.CastInfo.TargetPosition.X, spell.CastInfo.TargetPosition.Z);
-            var to = Vector2.Normalize(spellPos - current);
-            var range = to * 625;
-            var trueCoords = current + range;
 
-            //spell.AddCone("Incinerate", trueCoords, 24.76f);
-            AddParticle(owner, "IIncinerate_buf.troy", trueCoords);
-            FaceDirection(trueCoords, owner, false);
-            PlayAnimation(owner, "SPELL2");
+            var spellPos = new Vector2(spell.CastInfo.TargetPosition.X, spell.CastInfo.TargetPosition.Z);
+            FaceDirection(spellPos, owner, false);
+
+            var sector = spell.CreateSpellSector(new SectorParameters
+            {
+                HalfLength = 625f,
+                SingleTick = true,
+                ConeAngle = 24.76f,
+                Type = SectorType.Cone
+            });
+
+            AddParticle(owner, "IIncinerate_buf.troy", GetPointFromUnit(owner, 625f));
             AddParticleTarget(owner, "Incinerate_cas.troy", owner);
         }
 
-        public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, ISpellMissile missile)
+        public void TargetExecute(ISpell spell, IAttackableUnit target, ISpellSector sector)
         {
+            var owner = spell.CastInfo.Owner;
+
             var ap = owner.Stats.AbilityPower.Total * 0.8f;
             var damage = 70 + spell.CastInfo.SpellLevel * 45 + ap;
 
