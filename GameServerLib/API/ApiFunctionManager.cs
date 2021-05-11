@@ -314,7 +314,7 @@ namespace LeagueSandbox.GameServer.API
         /// <param name="p">Particle to remove.</param>
         public static void RemoveParticle(IParticle p)
         {
-            if (p != null && !p.IsToRemove())
+            if (p != null)
             {
                 p.SetToRemove();
             }

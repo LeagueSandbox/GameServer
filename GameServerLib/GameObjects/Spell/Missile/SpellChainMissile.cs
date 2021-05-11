@@ -53,7 +53,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Missile
             base.Update(diff);
 
             // TODO: Verify if we can move this into CheckFlagsForUnit instead of checking every Update.
-            if (HitCount >= Parameters.MaximumHits && !IsToRemove())
+            if (HitCount >= Parameters.MaximumHits)
             {
                 SetToRemove();
             }
@@ -67,7 +67,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Missile
 
         public override void CheckFlagsForUnit(IAttackableUnit unit)
         {
-            if (!IsValidTarget(unit) && !GetNextTarget() && !IsToRemove())
+            if (!IsValidTarget(unit) && !GetNextTarget())
             {
                 SetToRemove();
 
@@ -88,7 +88,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Missile
                 ai.AutoAttackHit(TargetUnit);
             }
 
-            if (!GetNextTarget() && !IsToRemove())
+            if (!GetNextTarget())
             {
                 SetToRemove();
             }

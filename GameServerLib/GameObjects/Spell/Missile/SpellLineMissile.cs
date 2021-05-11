@@ -61,7 +61,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Missile
 
         public override void Update(float diff)
         {
-            if (!IsToRemove() && (!HasDestination() || _atDestination))
+            if (!HasDestination() || _atDestination)
             {
                 SetToRemove();
                 return;
@@ -161,13 +161,6 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Missile
             {
                 ai.AutoAttackHit(TargetUnit);
             }
-        }
-
-        public override void SetToRemove()
-        {
-            base.SetToRemove();
-
-            _game.PacketNotifier.NotifyDestroyClientMissile(this);
         }
 
         // TODO: Verify if LineMissile should have its own IsValidTarget functionality.

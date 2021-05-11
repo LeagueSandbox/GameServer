@@ -472,13 +472,14 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// <param name="killer">Unit which killed this unit.</param>
         public virtual void Die(IAttackableUnit killer)
         {
-            if (!IsToRemove())
-            {
-                SetToRemove();
-            }
             _game.ObjectManager.StopTargeting(this);
 
-            _game.PacketNotifier.NotifyNpcDie(this, killer);
+            if (!IsToRemove())
+            {
+                _game.PacketNotifier.NotifyNpcDie(this, killer);
+            }
+
+            SetToRemove();
 
             var onDie = _game.ScriptEngine.GetStaticMethod<Action<IAttackableUnit, IAttackableUnit>>(Model, "Passive", "OnDie");
             onDie?.Invoke(this, killer);

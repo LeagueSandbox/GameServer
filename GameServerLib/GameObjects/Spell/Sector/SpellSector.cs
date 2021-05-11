@@ -193,7 +193,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Sector
 
             ObjectsHit.Add(unit);
 
-            if (!IsToRemove() && ObjectsHit.Count >= Parameters.MaximumHits)
+            if (ObjectsHit.Count >= Parameters.MaximumHits)
             {
                 SetToRemove();
             }

@@ -144,7 +144,7 @@ namespace LeagueSandbox.GameServer.GameObjects
         public override void Update(float diff)
         {
             _currentTime += diff / 1000.0f;
-            if (_currentTime >= Lifetime && !IsToRemove())
+            if (_currentTime >= Lifetime)
             {
                 SetToRemove();
             }
@@ -163,8 +163,11 @@ namespace LeagueSandbox.GameServer.GameObjects
         /// </summary>
         public override void SetToRemove()
         {
-            base.SetToRemove();
-            _game.PacketNotifier.NotifyFXKill(this);
+            if (!IsToRemove())
+            {
+                base.SetToRemove();
+                _game.PacketNotifier.NotifyFXKill(this);
+            }
         }
     }
 }

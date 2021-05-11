@@ -69,10 +69,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
                     {
                         foreach (var particle in _circleParticles)
                         {
-                            if (!particle.Value.IsToRemove())
-                            {
-                                particle.Value.SetToRemove();
-                            }
+                            particle.Value.SetToRemove();
                         }
                     }
                     _circleParticles.Clear();
@@ -85,10 +82,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
                         {
                             particleList.Value.ForEach(arrowparticle =>
                             {
-                                if (!arrowparticle.IsToRemove())
-                                {
-                                    arrowparticle.SetToRemove();
-                                }
+                                arrowparticle.SetToRemove();
                             });
                             particleList.Value.Clear();
                         }

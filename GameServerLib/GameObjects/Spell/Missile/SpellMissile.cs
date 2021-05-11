@@ -69,7 +69,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Missile
 
         public override void Update(float diff)
         {
-            if (!HasTarget() && !IsToRemove())
+            if (!HasTarget())
             {
                 Direction = new Vector3();
 
@@ -188,17 +188,17 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Missile
                 ai.AutoAttackHit(TargetUnit);
             }
 
-            if (!IsToRemove())
-            {
-                SetToRemove();
-            }
+            SetToRemove();
         }
 
         public override void SetToRemove()
         {
-            base.SetToRemove();
+            if (!IsToRemove())
+            {
+                base.SetToRemove();
 
-            _game.PacketNotifier.NotifyDestroyClientMissile(this);
+                _game.PacketNotifier.NotifyDestroyClientMissile(this);
+            }
         }
 
         /// <summary>
