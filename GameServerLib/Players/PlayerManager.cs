@@ -15,7 +15,6 @@ namespace LeagueSandbox.GameServer.Players
         private Game _game;
 
         private List<Tuple<uint, ClientInfo>> _players = new List<Tuple<uint, ClientInfo>>();
-        private long _currentId = 1;
         private Dictionary<TeamId, uint> _userIdsPerTeam = new Dictionary<TeamId, uint>
         {
             { TeamId.TEAM_BLUE, 0 },
@@ -54,9 +53,8 @@ namespace LeagueSandbox.GameServer.Players
                 p.Value.Skin,
                 p.Value.Name,
                 summonerSkills,
-                _currentId // same as StartClient.bat
+                p.Value.PlayerID // same as StartClient.bat
             );
-            _currentId++;
             var c = new Champion(_game, p.Value.Champion, (uint)player.PlayerId, _userIdsPerTeam[teamId]++, p.Value.Runes, player, 0, teamId);
 
             var pos = c.GetSpawnPosition();
