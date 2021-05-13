@@ -58,8 +58,7 @@ namespace LeagueSandbox.GameServer
             foreach (var player in playerConfigurations)
             {
                 var playerConfig = new PlayerConfig(player);
-                var playerNum = Players.Count + 1;
-                Players.Add($"player{playerNum}", playerConfig);
+                Players.Add($"player{playerConfig.PlayerID}", playerConfig);
             }
 
             // Read cost/cd info
