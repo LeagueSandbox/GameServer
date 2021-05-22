@@ -6,6 +6,8 @@ using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using GameServerCore.Domain.GameObjects.Spell.Missile;
 using GameServerCore.Scripting.CSharp;
+using LeagueSandbox.GameServer.API;
+using GameServerCore.Domain.GameObjects.Spell.Sector;
 
 namespace Spells
 {
@@ -19,6 +21,7 @@ namespace Spells
 
         public void OnActivate(IObjAiBase owner, ISpell spell)
         {
+            ApiEventManager.OnSpellSectorHit.AddListener(this, new System.Collections.Generic.KeyValuePair<ISpell, IObjAiBase>(spell, owner), TargetExecute, false);
         }
 
         public void OnDeactivate(IObjAiBase owner, ISpell spell)
@@ -31,32 +34,45 @@ namespace Spells
 
         public void OnSpellCast(ISpell spell)
         {
-            var current = new Vector2(spell.CastInfo.Owner.Position.X, spell.CastInfo.Owner.Position.Y);
-            var spellPos = new Vector2(spell.CastInfo.TargetPosition.X, spell.CastInfo.TargetPosition.Z);
-            var to = Vector2.Normalize(spellPos - current);
-
-            //spell.SpellAnimation("SPELL1", spell.CastInfo.Owner);
-            //spell.CastInfo.Owner.FaceDirection(new Vector3(to.X, 0, to.Y), false);
+            var owner = spell.CastInfo.Owner;
+            var endPoint = GetPointFromUnit(owner, 1100f);
+            //AddParticleTarget(owner, null, "Lucian_Q_cas.troy", owner, lifetime: 1.0f);
+            AddParticle(owner, owner, "Lucian_Q_laser_red.troy", endPoint, bone: "C_BUFFBONE_GLB_CENTER_LOC", lifetime: 1.0f);
         }
 
         public void OnSpellPostCast(ISpell spell)
         {
-            var current = new Vector2(spell.CastInfo.Owner.Position.X, spell.CastInfo.Owner.Position.Y);
-            var spellPos = new Vector2(spell.CastInfo.TargetPosition.X, spell.CastInfo.TargetPosition.Z);
-            var to = Vector2.Normalize(spellPos - current);
-            var range = to * 1100;
-            var trueCoords = current + range;
+            var owner = spell.CastInfo.Owner;
+            var endPoint = GetPointFromUnit(owner, 1100f);
 
-            //spell.AddLaser("LucianQ", trueCoords);
-            AddParticle(spell.CastInfo.Owner, "Lucian_Q_laser.troy", trueCoords);
-            AddParticleTarget(spell.CastInfo.Owner, "Lucian_Q_cas.troy", spell.CastInfo.Owner);
+            spell.CreateSpellSector(new SectorParameters
+            {
+                BindObject = owner,
+                HalfLength = 550f,
+                Width = spell.SpellData.LineWidth,
+                PolygonVertices = new Vector2[]
+                {
+                    // Basic square, however the values will be scaled by HalfLength/Width, which will make it a rectangle
+                    new Vector2(-1, 0),
+                    new Vector2(-1, 1),
+                    new Vector2(1, 1),
+                    new Vector2(1, 0)
+                },
+                SingleTick = true,
+                Type = SectorType.Polygon
+            });
+
+            AddParticle(owner, owner, "Lucian_Q_laser.troy", endPoint, bone: "C_BUFFBONE_GLB_CENTER_LOC", lifetime: 1.0f);
         }
 
-        public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, ISpellMissile missile)
+        public void TargetExecute(ISpell spell, IAttackableUnit target, ISpellSector sector)
         {
+            var owner = spell.CastInfo.Owner;
+
             var damage = owner.Stats.AttackDamage.Total * (0.45f + spell.CastInfo.SpellLevel * 0.15f) + (50 + spell.CastInfo.SpellLevel * 30);
             target.TakeDamage(owner, damage, DamageType.DAMAGE_TYPE_PHYSICAL, DamageSource.DAMAGE_SOURCE_SPELL,
                 false);
+            AddParticleTarget(owner, target, "Lucian_Q_tar.troy", target, 1.0f);
         }
 
         public void OnSpellChannel(ISpell spell)

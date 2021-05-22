@@ -15,6 +15,10 @@ namespace LeagueSandbox.GameServer.GameObjects
         private float _currentTime;
 
         /// <summary>
+        /// Creator of this particle.
+        /// </summary>
+        public IGameObject Caster { get; }
+        /// <summary>
         /// Primary bind target.
         /// </summary>
         public IGameObject BindObject { get; }
@@ -56,25 +60,35 @@ namespace LeagueSandbox.GameServer.GameObjects
         /// The only team that should be able to see this particle.
         /// </summary>
         public TeamId SpecificTeam { get; }
+        /// <summary>
+        /// Whether or not the particle should be titled along the ground towards its end position.
+        /// Effectively uses the ground height for the end position.
+        /// </summary>
+        public bool FollowsGroundTilt { get; }
 
         /// <summary>
         /// Prepares the Particle, setting up the information required for networking it to clients.
         /// This particle will spawn and stay on the specified GameObject target.
         /// </summary>
         /// <param name="game">Game instance.</param>
+        /// <param name="caster">GameObject that caused this particle to spawn.</param>
         /// <param name="bindObj">Primary bind target.</param>
         /// <param name="target">Secondary bind target.</param>
         /// <param name="particleName">Name used by League of Legends interally (ex: DebugCircle.troy).</param>
         /// <param name="scale">Scale of the Particle.</param>
         /// <param name="boneName">Name used by League of Legends internally where the Particle should be attached. Only useful when the target is a GameObject.</param>
+        /// <param name="targetBoneName">Bone of the target to attach to.</param>
         /// <param name="netId">NetID that should be forced onto the Particle. *NOTE*: Exceptions unhandled, expect crashes if NetID is already owned by a GameObject.</param>
         /// <param name="direction">3 dimensional vector representing the particle's orientation; unit vector forward.</param>
+        /// <param name="followGroundTilt">Whether or not the particle should be titled along the ground towards its end position.</param>
         /// <param name="lifetime">Number of seconds the Particle should exist.</param>
         /// <param name="reqVision">Whether or not the Particle is affected by vision checks.</param>
         /// <param name="autoSend">Whether or not to automatically send the Particle packet to clients.</param>
-        public Particle(Game game, IGameObject bindObj, IGameObject target, string particleName, float scale = 1.0f, string boneName = "", string targetBoneName = "", uint netId = 0, Vector3 direction = new Vector3(), float lifetime = 0, bool reqVision = true, bool autoSend = true)
-               : base(game, target.Position, 0, 0, netId, bindObj.Team)
+        /// <param name="teamOnly">The only team that should be able to see this particle.</param>
+        public Particle(Game game, IGameObject caster, IGameObject bindObj, IGameObject target, string particleName, float scale = 1.0f, string boneName = "", string targetBoneName = "", uint netId = 0, Vector3 direction = new Vector3(), bool followGroundTilt = false, float lifetime = 0, bool reqVision = true, bool autoSend = true, TeamId teamOnly = TeamId.TEAM_NEUTRAL)
+               : base(game, target.Position, 0, 0, netId)
         {
+            Caster = caster;
             BindObject = bindObj;
             TargetObject = target;
             TargetPosition = TargetObject.Position;
@@ -85,6 +99,8 @@ namespace LeagueSandbox.GameServer.GameObjects
             Direction = direction;
             Lifetime = lifetime;
             VisionAffected = reqVision;
+            SpecificTeam = teamOnly;
+            FollowsGroundTilt = followGroundTilt;
 
             _game.ObjectManager.AddObject(this);
 
@@ -99,20 +115,31 @@ namespace LeagueSandbox.GameServer.GameObjects
         /// This particle will spawn and stay at the specified position.
         /// </summary>
         /// <param name="game">Game instance.</param>
+        /// <param name="caster">GameObject that caused this particle to spawn.</param>
         /// <param name="bindObj">GameObject that the particle should be bound to.</param>
         /// <param name="targetPos">Target position of this particle.</param>
         /// <param name="particleName">Name used by League of Legends interally (ex: DebugCircle.troy).</param>
         /// <param name="scale">Scale of the Particle.</param>
         /// <param name="boneName">Name used by League of Legends internally where the Particle should be attached. Only useful when the target is a GameObject.</param>
+        /// <param name="targetBoneName">Bone of the target to attach to.</param>
         /// <param name="netId">NetID that should be forced onto the Particle. *NOTE*: Exceptions unhandled, expect crashes if NetID is already owned by a GameObject.</param>
         /// <param name="direction">3 dimensional vector representing the particle's orientation; unit vector forward.</param>
+        /// <param name="followGroundTilt">Whether or not the particle should be titled along the ground towards its end position.</param>
         /// <param name="lifetime">Number of seconds the Particle should exist.</param>
         /// <param name="reqVision">Whether or not the Particle is affected by vision checks.</param>
         /// <param name="autoSend">Whether or not to automatically send the Particle packet to clients.</param>
-        public Particle(Game game, IGameObject bindObj, Vector2 targetPos, string particleName, float scale = 1.0f, string boneName = "", string targetBoneName = "", uint netId = 0, Vector3 direction = new Vector3(), float lifetime = 0, bool reqVision = true, bool autoSend = true, TeamId teamOnly = TeamId.TEAM_NEUTRAL)
-               : base(game, targetPos, 0, 0, netId, bindObj.Team)
+        /// <param name="teamOnly">The only team that should be able to see this particle.</param>
+        public Particle(Game game, IGameObject caster, IGameObject bindObj, Vector2 targetPos, string particleName, float scale = 1.0f, string boneName = "", string targetBoneName = "", uint netId = 0, Vector3 direction = new Vector3(), bool followGroundTilt = false, float lifetime = 0, bool reqVision = true, bool autoSend = true, TeamId teamOnly = TeamId.TEAM_NEUTRAL)
+               : base(game, targetPos, 0, 0, netId, teamOnly)
         {
+            Caster = caster;
+
             BindObject = bindObj;
+            if (BindObject != null)
+            {
+                Position = BindObject.Position;
+            }
+
             TargetObject = null;
             TargetPosition = targetPos;
             Name = particleName;
@@ -123,11 +150,7 @@ namespace LeagueSandbox.GameServer.GameObjects
             Lifetime = lifetime;
             VisionAffected = reqVision;
             SpecificTeam = teamOnly;
-
-            if (teamOnly != TeamId.TEAM_NEUTRAL)
-            {
-                Team = teamOnly;
-            }
+            FollowsGroundTilt = followGroundTilt;
 
             _game.ObjectManager.AddObject(this);
 

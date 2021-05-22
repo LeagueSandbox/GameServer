@@ -33,23 +33,25 @@ namespace Spells
 
         public void OnSpellCast(ISpell spell)
         {
-            var spellPos = new Vector2(spell.CastInfo.TargetPosition.X, spell.CastInfo.TargetPosition.Z);
-            AddParticleTarget(spell.CastInfo.Owner, "Karthus_Base_Q_Hand_Glow.troy", spell.CastInfo.Owner, 1, "R_Hand");
-            AddParticle(spell.CastInfo.Owner, "Karthus_Base_Q_Point.troy", spellPos);
-            AddParticle(spell.CastInfo.Owner, "Karthus_Base_Q_Ring.troy", spellPos);
-            AddParticle(spell.CastInfo.Owner, "Karthus_Base_Q_Skull_Child.troy", spellPos);
+            var owner = spell.CastInfo.Owner;
+             var spellPos = new Vector2(spell.CastInfo.TargetPosition.X, spell.CastInfo.TargetPosition.Z);
+            AddParticleTarget(owner, owner, "Karthus_Base_Q_Hand_Glow.troy", owner, bone: "R_Hand");
+            AddParticle(owner, null, "Karthus_Base_Q_Point.troy", spellPos);
+            AddParticle(owner, null, "Karthus_Base_Q_Ring.troy", spellPos);
+            AddParticle(owner, null, "Karthus_Base_Q_Skull_Child.troy", spellPos);
         }
 
         public void OnSpellPostCast(ISpell spell)
         {
+            var owner = spell.CastInfo.Owner;
             var spellPos = new Vector2(spell.CastInfo.TargetPosition.X, spell.CastInfo.TargetPosition.Z);
-            IGameObject m = AddParticle(spell.CastInfo.Owner, "Karthus_Base_Q_Explosion.troy", spellPos);
+            IGameObject m = AddParticle(owner, null, "Karthus_Base_Q_Explosion.troy", spellPos);
             var affectedUnits = GetUnitsInRange(m.Position, 150, true);
             var ap = spell.CastInfo.Owner.Stats.AbilityPower.Total;
             var damage = 20f + spell.CastInfo.SpellLevel * 20f + ap * 0.3f;
             if (affectedUnits.Count == 0)
             {
-                AddParticle(spell.CastInfo.Owner, "Karthus_Base_Q_Hit_Miss.troy", spellPos);
+                AddParticle(owner, null, "Karthus_Base_Q_Hit_Miss.troy", spellPos);
             }
             foreach (var unit in affectedUnits
             .Where(x => x.Team == CustomConvert.GetEnemyTeam(spell.CastInfo.Owner.Team)))
@@ -59,18 +61,18 @@ namespace Spells
                     if (affectedUnits.Count == 1)
                     {
                         damage *= 2;
-                        AddParticle(spell.CastInfo.Owner, "Karthus_Base_Q_Hit_Single.troy", spellPos);
+                        AddParticle(owner, null, "Karthus_Base_Q_Hit_Single.troy", spellPos);
                         unit.TakeDamage(spell.CastInfo.Owner, damage, DamageType.DAMAGE_TYPE_MAGICAL, DamageSource.DAMAGE_SOURCE_SPELL, true);
                     }
                     if (affectedUnits.Count > 1)
                     {
-                        AddParticle(spell.CastInfo.Owner, "Karthus_Base_Q_Hit_Many.troy", spellPos);
+                        AddParticle(owner, null, "Karthus_Base_Q_Hit_Many.troy", spellPos);
                         unit.TakeDamage(spell.CastInfo.Owner, damage, DamageType.DAMAGE_TYPE_MAGICAL, DamageSource.DAMAGE_SOURCE_SPELL, false);
                     }
                 }
             }
             m.SetToRemove();
-            AddParticle(spell.CastInfo.Owner, "Karthus_Base_Q_Explosion_Sound.troy", spellPos);
+            AddParticle(owner, null, "Karthus_Base_Q_Explosion_Sound.troy", spellPos);
         }
 
         public void OnSpellChannel(ISpell spell)

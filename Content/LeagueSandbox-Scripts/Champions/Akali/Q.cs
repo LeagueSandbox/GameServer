@@ -46,7 +46,7 @@ namespace Spells
             var ap = owner.Stats.AbilityPower.Total * 0.4f;
             var damage = 15 + spell.CastInfo.SpellLevel * 20 + ap;
             target.TakeDamage(owner, damage, DamageType.DAMAGE_TYPE_PHYSICAL, DamageSource.DAMAGE_SOURCE_ATTACK, false);
-            AddParticleTarget(owner, "akali_markOftheAssasin_marker_tar_02.troy", target, 1, "");
+            AddParticleTarget(owner, target, "akali_markOftheAssasin_marker_tar_02.troy", target);
             missile.SetToRemove();
         }
 

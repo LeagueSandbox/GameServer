@@ -41,13 +41,13 @@ namespace GlacialStorm
 
             if (owner.Team == TeamId.TEAM_BLUE)
             {
-                red = AddParticle(owner, "cryo_storm_red_team.troy", spellPos, lifetime: buff.Duration, reqVision: false, teamOnly: TeamId.TEAM_PURPLE);
-                green = AddParticle(owner, "cryo_storm_green_team.troy", spellPos, lifetime: buff.Duration, reqVision: false, teamOnly: TeamId.TEAM_BLUE);
+                red = AddParticle(owner, null, "cryo_storm_red_team.troy", spellPos, lifetime: buff.Duration, reqVision: false, teamOnly: TeamId.TEAM_PURPLE);
+                green = AddParticle(owner, null, "cryo_storm_green_team.troy", spellPos, lifetime: buff.Duration, reqVision: false, teamOnly: TeamId.TEAM_BLUE);
             }
             else
             {
-                red = AddParticle(owner, "cryo_storm_red_team.troy", spellPos, lifetime: buff.Duration, reqVision: false, teamOnly: TeamId.TEAM_BLUE);
-                green = AddParticle(owner, "cryo_storm_green_team.troy", spellPos, lifetime: buff.Duration, reqVision: false, teamOnly: TeamId.TEAM_PURPLE);
+                red = AddParticle(owner, null, "cryo_storm_red_team.troy", spellPos, lifetime: buff.Duration, reqVision: false, teamOnly: TeamId.TEAM_BLUE);
+                green = AddParticle(owner, null, "cryo_storm_green_team.troy", spellPos, lifetime: buff.Duration, reqVision: false, teamOnly: TeamId.TEAM_PURPLE);
             }
         }
 

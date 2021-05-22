@@ -24,7 +24,8 @@ namespace Quickdraw
 
         public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
-            activate = AddParticleTarget(ownerSpell.CastInfo.Owner, "Graves_Move_OnBuffActivate.troy", unit);
+            var owner = ownerSpell.CastInfo.Owner;
+            activate = AddParticleTarget(owner, unit, "Graves_Move_OnBuffActivate.troy", unit);
             StatsModifier.AttackSpeed.PercentBonus = 0.2f + (0.1f * ownerSpell.CastInfo.SpellLevel);
             unit.AddStatModifier(StatsModifier);
         }

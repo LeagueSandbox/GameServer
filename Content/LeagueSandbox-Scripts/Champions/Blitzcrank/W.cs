@@ -24,12 +24,7 @@ namespace Spells
 
         public void OnSpellPreCast(IObjAiBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
         {
-            var p = AddParticleTarget(owner, "Overdrive_buf.troy", target, 1);
             AddBuff("Overdrive", 8.0f, 1, spell, owner, owner);
-            CreateTimer(8.0f, () =>
-            {
-                RemoveParticle(p);
-            });
         }
 
         public void OnSpellCast(ISpell spell)

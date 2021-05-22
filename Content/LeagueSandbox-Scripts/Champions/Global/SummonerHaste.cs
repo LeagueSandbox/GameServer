@@ -26,8 +26,8 @@ namespace Spells
         public void OnSpellPreCast(IObjAiBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
         {
             AddBuff("SummonerHasteBuff", 10.0f, 1, spell, owner, owner);
-            var p1 = AddParticleTarget(owner, "Global_SS_Ghost.troy", target);
-            var p2 = AddParticleTarget(owner, "Global_SS_Ghost_cas.troy", target);
+            var p1 = AddParticleTarget(owner, target, "Global_SS_Ghost.troy", target);
+            var p2 = AddParticleTarget(owner, target, "Global_SS_Ghost_cas.troy", target);
             CreateTimer(10.0f, () =>
             {
                 RemoveParticle(p1);

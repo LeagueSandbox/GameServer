@@ -36,7 +36,7 @@ namespace Spells
             foreach (var enemyTarget in GetChampionsInRange(owner.Position, 20000, true)
                 .Where(x => x.Team == CustomConvert.GetEnemyTeam(owner.Team)))
             {
-                AddParticleTarget(owner, "KarthusFallenOne", enemyTarget);
+                AddParticleTarget(owner, enemyTarget, "KarthusFallenOne", enemyTarget);
             }
         }
 

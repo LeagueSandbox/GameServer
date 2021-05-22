@@ -36,7 +36,7 @@ namespace AatroxR
                 {
                     pmodelname = "Aatrox_Skin02_RModel.troy";
                 }
-                pmodel = AddParticleTarget(c, pmodelname, c);
+                pmodel = AddParticleTarget(c, c, pmodelname, c);
                 pmodel.SetToRemove();
 
                 StatsModifier.AttackSpeed.PercentBonus = (0.4f + (0.1f * (ownerSpell.CastInfo.SpellLevel - 1))) * buff.StackCount; // StackCount included here as an example

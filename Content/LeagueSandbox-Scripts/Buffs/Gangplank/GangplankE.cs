@@ -21,6 +21,7 @@ namespace GangplankE
 
         public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
+            var owner = ownerSpell.CastInfo.Owner;
             StatsModifier.AttackSpeed.PercentBonus = StatsModifier.AttackSpeed.PercentBonus + (10f + 20f * ownerSpell.CastInfo.SpellLevel) / 100f;
             StatsModifier.MoveSpeed.PercentBonus = StatsModifier.MoveSpeed.PercentBonus + (10f + 5f * ownerSpell.CastInfo.SpellLevel) / 100f;
             StatsModifier.AttackDamage.PercentBonus = StatsModifier.AttackDamage.PercentBonus + (10f + 10f * ownerSpell.CastInfo.SpellLevel) / 100f;
@@ -28,9 +29,9 @@ namespace GangplankE
 
             //_hudvisual = AddBuffHUDVisual("RaiseMorale", time, 1, unit);
 
-            Particles.Add(AddParticleTarget(ownerSpell.CastInfo.Owner, "pirate_raiseMorale_cas.troy", unit, 1));
-            Particles.Add(AddParticleTarget(ownerSpell.CastInfo.Owner, "pirate_raiseMorale_mis.troy", unit, 1));
-            Particles.Add(AddParticleTarget(ownerSpell.CastInfo.Owner, "pirate_raiseMorale_tar.troy", unit, 1));
+            Particles.Add(AddParticleTarget(owner, null, "pirate_raiseMorale_cas.troy", unit));
+            Particles.Add(AddParticleTarget(owner, null, "pirate_raiseMorale_mis.troy", unit));
+            Particles.Add(AddParticleTarget(owner, null, "pirate_raiseMorale_tar.troy", unit));
         }
 
         public void OnDeactivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)

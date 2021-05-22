@@ -52,8 +52,8 @@ namespace Spells
                 Type = SectorType.Cone
             });
 
-            AddParticle(owner, "IIncinerate_buf.troy", GetPointFromUnit(owner, 625f));
-            AddParticleTarget(owner, "Incinerate_cas.troy", owner);
+            AddParticle(owner, null, "IIncinerate_buf.troy", GetPointFromUnit(owner, 625f));
+            AddParticleTarget(owner, owner, "Incinerate_cas.troy", owner);
         }
 
         public void TargetExecute(ISpell spell, IAttackableUnit target, ISpellSector sector)

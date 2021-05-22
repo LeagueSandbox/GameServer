@@ -26,8 +26,9 @@ namespace LuluR
 
         public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
+            var owner = ownerSpell.CastInfo.Owner;
             OwnerSpell = ownerSpell;
-            cast = AddParticleTarget(ownerSpell.CastInfo.Owner, "Lulu_R_cas.troy", unit, 1);
+            cast = AddParticleTarget(owner, unit, "Lulu_R_cas.troy", unit);
 
             StatsModifier.Size.PercentBonus = StatsModifier.Size.PercentBonus + 1;
             _healthBefore = unit.Stats.CurrentHealth;
@@ -40,7 +41,7 @@ namespace LuluR
         public void OnDeactivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
             RemoveParticle(cast);
-            AddParticleTarget(OwnerSpell.CastInfo.Owner, "Lulu_R_expire.troy", unit, 1);
+            AddParticleTarget(OwnerSpell.CastInfo.Owner, unit, "Lulu_R_expire.troy", unit);
             _healthNow = unit.Stats.CurrentHealth - _healthBonus;
             _meantimeDamage = _healthBefore - _healthNow;
             var bonusDamage = _healthBonus - _meantimeDamage;

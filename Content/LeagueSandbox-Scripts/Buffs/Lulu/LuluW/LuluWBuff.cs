@@ -21,8 +21,9 @@ namespace LuluWBuff
 
         public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
-            buff1 = AddParticleTarget(ownerSpell.CastInfo.Owner, "Lulu_W_buf_01.troy", unit, 1);
-            buff2 = AddParticleTarget(ownerSpell.CastInfo.Owner, "Lulu_W_buf_02.troy", unit, 1);
+            var caster = ownerSpell.CastInfo.Owner;
+            buff1 = AddParticleTarget(caster, unit, "Lulu_W_buf_01.troy", unit);
+            buff2 = AddParticleTarget(caster, unit, "Lulu_W_buf_02.troy", unit);
 
             var ap = ownerSpell.CastInfo.Owner.Stats.AbilityPower.Total * 0.001;
             StatsModifier.MoveSpeed.PercentBonus = StatsModifier.MoveSpeed.PercentBonus + 0.3f + (float)ap;

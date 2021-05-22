@@ -56,7 +56,7 @@ namespace Spells
 
         public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, ISpellMissile missile)
         {
-            AddParticleTarget(owner, "olaf_axeThrow_tar.troy", target, 1);
+            AddParticleTarget(owner, target, "olaf_axeThrow_tar.troy", target);
             var ad = owner.Stats.AttackDamage.Total * 1.1f;
             var ap = owner.Stats.AttackDamage.Total * 0.0f;
             var damage = 15 + spell.CastInfo.SpellLevel * 20 + ad + ap;

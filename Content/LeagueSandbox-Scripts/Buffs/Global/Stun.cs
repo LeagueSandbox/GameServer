@@ -19,7 +19,7 @@ namespace Stun
 
         public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
-            stun = AddParticleTarget(ownerSpell.CastInfo.Owner, "Global_Stun.troy", unit, buff.Duration, "head");
+            stun = AddParticleTarget(ownerSpell.CastInfo.Owner, null, "Global_Stun.troy", unit, buff.Duration, bone: "head");
         }
 
         public void OnDeactivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)

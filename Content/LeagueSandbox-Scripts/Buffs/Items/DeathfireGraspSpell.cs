@@ -20,7 +20,8 @@ namespace DeathfireGraspSpell
 
         public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
-            debuff = AddParticleTarget(ownerSpell.CastInfo.Owner, "obj_DeathfireGrasp_debuff.troy", unit);
+            var owner = ownerSpell.CastInfo.Owner;
+            debuff = AddParticleTarget(owner, unit, "obj_DeathfireGrasp_debuff.troy", unit);
 
             // TODO: Implement damage amp. stat modifier or OnTakeDamage listener
         }

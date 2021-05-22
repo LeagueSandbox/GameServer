@@ -33,7 +33,8 @@ namespace Spells
 
         public void OnSpellCast(ISpell spell)
         {
-            AddParticleTarget(spell.CastInfo.Owner, "ezreal_bow.troy", spell.CastInfo.Owner, 1, "L_HAND", lifetime: 1.0f);
+            var owner = spell.CastInfo.Owner;
+            AddParticleTarget(owner, owner, "ezreal_bow.troy", owner, bone: "L_HAND");
         }
 
         public void OnSpellPostCast(ISpell spell)
@@ -117,7 +118,7 @@ namespace Spells
                 owner.Spells[i].LowerCooldown(1);
             }
 
-            AddParticleTarget(target, "Ezreal_mysticshot_tar.troy", target);
+            AddParticleTarget(owner, target, "Ezreal_mysticshot_tar.troy", target);
             missile.SetToRemove();
 
             // SpellBuffAdd EzrealRisingSpellForce

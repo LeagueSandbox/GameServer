@@ -42,9 +42,9 @@ namespace Spells
 
             owner.FaceDirection(new Vector3(to.X, 0.0f, to.Y));
 
-            AddParticle(owner, "global_ss_flash.troy", owner.Position);
+            AddParticle(owner, null, "global_ss_flash.troy", owner.Position);
             TeleportTo(owner, trueCoords.X, trueCoords.Y);
-            AddParticleTarget(owner, "global_ss_flash_02.troy", owner);
+            AddParticleTarget(owner, owner, "global_ss_flash_02.troy", owner);
         }
 
         public void OnSpellCast(ISpell spell)

@@ -35,16 +35,18 @@ namespace Spells
 
         public void OnSpellPostCast(ISpell spell)
         {
-            var current = new Vector2(spell.CastInfo.Owner.Position.X, spell.CastInfo.Owner.Position.Y);
-            var to = Vector2.Normalize(new Vector2(spell.CastInfo.Targets[0].Unit.Position.X, spell.CastInfo.Targets[0].Unit.Position.Y) - current);
+            var owner = spell.CastInfo.Owner;
+            var target = spell.CastInfo.Targets[0].Unit;
+            var current = new Vector2(owner.Position.X, owner.Position.Y);
+            var to = Vector2.Normalize(new Vector2(target.Position.X, target.Position.Y) - current);
             var range = to * 800;
 
             var trueCoords = current + range;
 
             //TODO: Dash to the correct location (in front of the enemy IChampion) instead of far behind or inside them
-            ForceMovement(spell.CastInfo.Owner, spell.CastInfo.Targets[0].Unit, "Spell4", 2200, 0, 0, 0, 20000);
+            ForceMovement(owner, target, "Spell4", 2200, 0, 0, 0, 20000);
             //ForceMovement(spell.CastInfo.Owner, "Spell4", trueCoords, 2200, 0, 0, 0);
-            AddParticleTarget(spell.CastInfo.Owner, "akali_shadowDance_tar.troy", spell.CastInfo.Targets[0].Unit, 1, "");
+            AddParticleTarget(owner, target, "akali_shadowDance_tar.troy", target);
         }
 
         public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, ISpellMissile missile)

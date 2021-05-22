@@ -20,7 +20,7 @@ namespace RocketGrab
 
         public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
-            grab = AddParticleTarget(unit, "FistReturn_mis.troy", ownerSpell.CastInfo.Owner, 1, "head", "R_hand", lifetime: buff.Duration);
+            grab = AddParticleTarget(ownerSpell.CastInfo.Owner, unit, "FistReturn_mis.troy", ownerSpell.CastInfo.Owner, buff.Duration, 1, "head", "R_hand");
         }
 
         public void OnDeactivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)

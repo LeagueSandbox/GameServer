@@ -44,7 +44,7 @@ namespace Spells
                 target.Stats.CurrentMana = newMp;
             else
                 target.Stats.CurrentMana = maxMp;
-            AddParticleTarget(target, "global_ss_clarity_02.troy", target);
+            AddParticleTarget(target, target, "global_ss_clarity_02.troy", target);
         }
 
         public void OnSpellCast(ISpell spell)

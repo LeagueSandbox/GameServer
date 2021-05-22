@@ -20,9 +20,10 @@ namespace RegenerationPotion
 
         public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
+            var caster = ownerSpell.CastInfo.Owner;
             StatsModifier.HealthRegeneration.FlatBonus = 10f;
             unit.AddStatModifier(StatsModifier);
-            potion = AddParticleTarget(ownerSpell.CastInfo.Owner, "GLOBAL_Item_HealthPotion.troy", unit, 1, "Buffbone_Glb_Ground_Loc", lifetime: buff.Duration);
+            potion = AddParticleTarget(caster, unit, "GLOBAL_Item_HealthPotion.troy", unit, buff.Duration, bone: "Buffbone_Glb_Ground_Loc");
         }
 
         public void OnDeactivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)

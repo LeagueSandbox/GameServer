@@ -82,9 +82,10 @@ namespace Spells
 
         public void TargetExecute(ISpell spell, IAttackableUnit target, ISpellMissile missile)
         {
-            spell.CastInfo.Owner.AutoAttackHit(target);
-            AddParticleTarget(spell.CastInfo.Owner, "Sivir_Base_W_Tar.troy", target, bone: "C_BUFFBONE_GLB_CHEST_LOC");
-            SpellCast(spell.CastInfo.Owner, 2, SpellSlotType.ExtraSlots, false, target, missile.Position);
+            var owner = spell.CastInfo.Owner;
+            owner.AutoAttackHit(target);
+            AddParticleTarget(owner, target, "Sivir_Base_W_Tar.troy", target, bone: "C_BUFFBONE_GLB_CHEST_LOC");
+            SpellCast(owner, 2, SpellSlotType.ExtraSlots, false, target, missile.Position);
         }
 
         public void OnSpellCast(ISpell spell)
@@ -142,7 +143,7 @@ namespace Spells
 
             var owner = spell.CastInfo.Owner;
 
-            AddParticleTarget(owner, "Sivir_Base_W_Tar.troy", target);
+            AddParticleTarget(owner, target, "Sivir_Base_W_Tar.troy", target);
 
             var damage = owner.Stats.AttackDamage.Total * (0.5f + (0.05f * (spell.CastInfo.SpellLevel - 1)));
 

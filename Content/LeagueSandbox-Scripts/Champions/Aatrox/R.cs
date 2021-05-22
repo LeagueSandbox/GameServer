@@ -50,7 +50,8 @@ namespace Spells
 
         public void OnSpellCast(ISpell spell)
         {
-            AddParticleTarget(spell.CastInfo.Owner, pcastname, spell.CastInfo.Owner);
+            var owner = spell.CastInfo.Owner;
+            AddParticleTarget(owner, owner, pcastname, owner);
         }
 
         public void OnSpellPostCast(ISpell spell)
@@ -65,7 +66,7 @@ namespace Spells
                     if (units[i].Team != c.Team && !(units[i] is IObjBuilding || units[i] is IBaseTurret))
                     {
                         units[i].TakeDamage(c, damage, DamageType.DAMAGE_TYPE_MAGICAL, DamageSource.DAMAGE_SOURCE_SPELL, false);
-                        AddParticleTarget(c, phitname, units[i]);
+                        AddParticleTarget(c, units[i], phitname, units[i]);
                     }
                 }
 

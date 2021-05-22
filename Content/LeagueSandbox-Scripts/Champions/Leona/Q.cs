@@ -76,8 +76,8 @@ namespace Spells
         {
             var owner = spell.CastInfo.Owner;
 
-            AddParticle(owner, "Leona_ShieldOfDaybreak_nova.troy", target.Position);
-            AddParticleTarget(owner, "Leona_ShieldOfDaybreak_tar.troy", target);
+            AddParticle(owner, null, "Leona_ShieldOfDaybreak_nova.troy", target.Position);
+            AddParticleTarget(owner, target, "Leona_ShieldOfDaybreak_tar.troy", target);
 
             var ap = owner.Stats.AbilityPower.Total * 0.3f;
             var damage = 40 + (30 * (spell.CastInfo.SpellLevel - 1)) + ap;
