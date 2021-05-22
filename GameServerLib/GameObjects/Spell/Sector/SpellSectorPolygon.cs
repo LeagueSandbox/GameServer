@@ -14,9 +14,9 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Sector
     /// </summary>
     internal class SpellSectorPolygon : SpellSector, ISpellSector
     {
-        public Vector2[] _trueVertices;
-        public float _trueWidth;
-        public float _trueHalfLength;
+        private Vector2[] _trueVertices;
+        private float _trueWidth;
+        private float _trueHalfLength;
 
         public SpellSectorPolygon(
             Game game,
