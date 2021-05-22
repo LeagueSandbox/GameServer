@@ -36,24 +36,24 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Sector
             _trueWidth = parameters.Width;
             _trueHalfLength = parameters.HalfLength;
 
-            Vector2? lastVertice = null;
+            Vector2? lastVertex = null;
             for (int i = 0; i < _trueVertices.Length; i++)
             {
-                Vector2 currVertice = _trueVertices[i];
+                Vector2 currVertex = _trueVertices[i];
 
-                // Scale the vertice
-                Vector2 trueVertice = new Vector2(currVertice.X * parameters.Width, currVertice.Y * parameters.HalfLength);
+                // Scale the vertex
+                Vector2 trueVertex = new Vector2(currVertex.X * parameters.Width, currVertex.Y * parameters.HalfLength);
 
                 // Compare distances and override HalfWidth/Length as necessary
-                if (lastVertice != null)
+                if (lastVertex != null)
                 {
-                    var distX = currVertice.X - trueVertice.X;
+                    var distX = currVertex.X - trueVertex.X;
                     if (distX > _trueWidth)
                     {
                         _trueWidth = distX;
                     }
 
-                    var distY = currVertice.Y - trueVertice.Y;
+                    var distY = currVertex.Y - trueVertex.Y;
                     if (distY > _trueHalfLength)
                     {
                         _trueHalfLength = distY;
@@ -61,12 +61,12 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Sector
                 }
 
                 // Reassign with true width/halflength.
-                trueVertice = new Vector2(currVertice.X * _trueWidth, currVertice.Y * _trueHalfLength);
+                trueVertex = new Vector2(currVertex.X * _trueWidth, currVertex.Y * _trueHalfLength);
 
-                // Save current vertice for next iteration so we can compare distance.
-                lastVertice = trueVertice;
-                // Assign scaled vertice.
-                _trueVertices[i] = trueVertice;
+                // Save current vertex for next iteration so we can compare distance.
+                lastVertex = trueVertex;
+                // Assign scaled vertex.
+                _trueVertices[i] = trueVertex;
             }
 
             if (_trueWidth > _trueHalfLength)
@@ -147,14 +147,14 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Sector
             // Get the current direction of the sector (negated and added 90 degrees for clockwise rotation of vertices)
             var angleDir = -Extensions.UnitVectorToAngle(new Vector2(Direction.X, Direction.Z)) + 90f;
 
-            // This section checks if the any of the lines connecting each vertice intersect with the collider's collision radius.
+            // This section checks if the any of the lines connecting each vertex intersect with the collider's collision radius.
             var collision = false;
             int next = 0;
             for (int curr = 0; curr < _trueVertices.Length; curr++)
             {
                 next = curr++;
 
-                // Last vertice connects to the first.
+                // Last vertex connects to the first.
                 if (next == _trueVertices.Length)
                 {
                     next = 0;
@@ -164,7 +164,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Sector
                 var currVert = Position + _trueVertices[curr].Rotate(angleDir) - collider.Position;
                 var nextVert = Position + _trueVertices[next].Rotate(angleDir) - collider.Position;
 
-                // Then, for each vertice, check if it is colliding.
+                // Then, for each vertex, check if it is colliding.
                 if (Extensions.IsVectorWithinRange(currVert, Vector2.Zero, collider.CollisionRadius)
                     || Extensions.IsVectorWithinRange(nextVert, Vector2.Zero, collider.CollisionRadius))
                 {
