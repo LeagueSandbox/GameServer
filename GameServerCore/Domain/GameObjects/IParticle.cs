@@ -9,9 +9,13 @@ namespace GameServerCore.Domain.GameObjects
     public interface IParticle : IGameObject
     {
         /// <summary>
+        /// Creator of this particle.
+        /// </summary>
+        IGameObject Caster { get; }
+        /// <summary>
         /// Primary bind object.
         /// </summary>
-        public IGameObject BindObject { get; }
+        IGameObject BindObject { get; }
         /// <summary>
         /// Client-sided, internal name of the particle used in networking, usually always ends in .troy
         /// </summary>
@@ -50,6 +54,11 @@ namespace GameServerCore.Domain.GameObjects
         /// The only team that should be able to see this particle.
         /// </summary>
         TeamId SpecificTeam { get; }
+        /// <summary>
+        /// Whether or not the particle should be titled along the ground towards its end position.
+        /// Effectively uses the ground height for the end position.
+        /// </summary>
+        bool FollowsGroundTilt { get; }
 
         /// <summary>
         /// Returns the total game-time passed since the particle was added to ObjectManager

@@ -272,19 +272,21 @@ namespace LeagueSandbox.GameServer.API
         /// <summary>
         /// Creates a new particle with the specified parameters.
         /// </summary>
+        /// <param name="caster">GameObject that caused this particle to spawn.</param>
         /// <param name="bindObj">GameObject that the particle should bind to.</param>
         /// <param name="particle">Internal name of the particle.</param>
         /// <param name="position">Position to spawn at.</param>
+        /// <param name="lifetime">Time in seconds the particle should last.</param>
         /// <param name="size">Scale.</param>
         /// <param name="bone">Bone on the owner the particle should be attached to.</param>
         /// <param name="targetBone">Bone on the target the particle should be attached to.</param>
         /// <param name="direction">3D direction the particle should face.</param>
-        /// <param name="lifetime">Time in seconds the particle should last.</param>
+        /// <param name="followGroundTilt">Whether or not the particle should be titled along the ground towards its end position.</param>
         /// <param name="reqVision">Whether or not the particle can be obstructed by terrain.</param>
         /// <returns>New particle instance.</returns>
-        public static IParticle AddParticle(IGameObject bindObj, string particle, Vector2 position, float size = 1.0f, string bone = "", string targetBone = "", Vector3 direction = new Vector3(), float lifetime = 0, bool reqVision = true, TeamId teamOnly = TeamId.TEAM_NEUTRAL)
+        public static IParticle AddParticle(IGameObject caster, IGameObject bindObj, string particle, Vector2 position, float lifetime = 0, float size = 1.0f, string bone = "", string targetBone = "", Vector3 direction = new Vector3(), bool followGroundTilt = false, bool reqVision = true, TeamId teamOnly = TeamId.TEAM_NEUTRAL)
         {
-            var p = new Particle(_game, bindObj, position, particle, size, bone, targetBone, 0, direction, lifetime, reqVision, true, teamOnly);
+            var p = new Particle(_game, caster, bindObj, position, particle, size, bone, targetBone, 0, direction, followGroundTilt, lifetime, reqVision, true, teamOnly);
             return p;
         }
 
@@ -292,19 +294,21 @@ namespace LeagueSandbox.GameServer.API
         /// Creates a new particle with the specified parameters.
         /// This particle will be attached to a target.
         /// </summary>
+        /// <param name="caster">GameObject that caused this particle to spawn.</param>
         /// <param name="bindObj">GameObject that the particle should bind to (prioritized over target).</param>
         /// <param name="particle">Internal name of the particle.</param>
         /// <param name="target">GameObject that the particle should bind to after the bindObj.</param>
+        /// <param name="lifetime">Time in seconds the particle should last.</param>
         /// <param name="size">Scale.</param>
         /// <param name="bone">Bone on the owner the particle should be attached to.</param>
         /// <param name="targetBone">Bone on the target the particle should be attached to.</param>
         /// <param name="direction">3D direction the particle should face.</param>
-        /// <param name="lifetime">Time in seconds the particle should last.</param>
+        /// <param name="followGroundTilt">Whether or not the particle should be titled along the ground towards its end position.</param>
         /// <param name="reqVision">Whether or not the particle can be obstructed by terrain.</param>
         /// <returns>New particle instance.</returns>
-        public static IParticle AddParticleTarget(IGameObject bindObj, string particle, IGameObject target, float size = 1.0f, string bone = "", string targetBone = "", Vector3 direction = new Vector3(), float lifetime = 0, bool reqVision = true)
+        public static IParticle AddParticleTarget(IGameObject caster, IGameObject bindObj, string particle, IGameObject target, float lifetime = 0, float size = 1.0f, string bone = "", string targetBone = "", Vector3 direction = new Vector3(), bool followGroundTilt = false, bool reqVision = true)
         {
-            var p = new Particle(_game, bindObj, target, particle, size, bone, targetBone, 0, direction, lifetime, reqVision);
+            var p = new Particle(_game, caster, bindObj, target, particle, size, bone, targetBone, 0, direction, followGroundTilt, lifetime, reqVision);
             return p;
         }
 

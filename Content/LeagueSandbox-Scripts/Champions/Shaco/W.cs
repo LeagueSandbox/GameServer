@@ -54,7 +54,7 @@ namespace Spells
             if (Extensions.IsVectorWithinRange(ownerPos, spellPos, castrange))
             {
                 IMinion m = AddMinion((IChampion)owner, "ShacoBox", "ShacoBox", spellPos);
-                AddParticle(owner, "JackintheboxPoof.troy", spellPos);
+                AddParticle(owner, null, "JackintheboxPoof.troy", spellPos);
 
                 var attackrange = m.Stats.Range.Total;
 

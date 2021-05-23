@@ -27,10 +27,6 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Sector
         /// </summary>
         public ICastInfo CastInfo { get; protected set; }
         /// <summary>
-        /// Object this sector is bound to. Null if the sector is location targeted.
-        /// </summary>
-        public IGameObject BindObject { get; protected set; }
-        /// <summary>
         /// Spell which created this projectile.
         /// </summary>
         public ISpell SpellOrigin { get; protected set; }
@@ -54,7 +50,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Sector
             ISpell originSpell,
             ICastInfo castInfo,
             uint netId = 0
-        ) : base(game, new Vector2(castInfo.TargetPositionEnd.X, castInfo.TargetPositionEnd.Z), Math.Max(parameters.HalfLength, parameters.HalfWidth), 0, netId)
+        ) : base(game, new Vector2(castInfo.TargetPositionEnd.X, castInfo.TargetPositionEnd.Z), Math.Max(parameters.HalfLength, parameters.Width), 0, netId)
         {
             _timeSinceCreation = 0.0f;
             _lastTickTime = 0.0f;
@@ -65,12 +61,6 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Sector
             SpellOrigin = originSpell;
             ObjectsHit = new List<IGameObject>();
             HitCount = 0;
-
-            // TODO: Implement full support for multiple targets.
-            if (castInfo.Targets[0].Unit != null)
-            {
-                BindObject = castInfo.Targets[0].Unit;
-            }
 
             VisionRadius = SpellOrigin.SpellData.MissilePerceptionBubbleRadius;
 
@@ -92,7 +82,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Sector
                 return;
             }
 
-            if (BindObject != null)
+            if (Parameters.BindObject != null)
             {
                 Move(diff);
             }
@@ -246,11 +236,11 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Sector
         /// Gets the position of this projectile's target (unit or destination).
         /// </summary>
         /// <returns>Vector2 position of target. Vector2(float.NaN, float.NaN) if projectile has no target.</returns>
-        public Vector2 GetTargetPosition()
+        public virtual Vector2 GetTargetPosition()
         {
-            if (BindObject != null)
+            if (Parameters.BindObject != null)
             {
-                return BindObject.Position;
+                return Parameters.BindObject.Position;
             }
 
             return Position;

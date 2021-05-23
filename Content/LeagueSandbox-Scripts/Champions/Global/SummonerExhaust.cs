@@ -27,7 +27,7 @@ namespace Spells
         {
             if (target != null)
             {
-                AddParticleTarget(owner, "Global_SS_Exhaust.troy", target);
+                AddParticleTarget(owner, target, "Global_SS_Exhaust.troy", target);
                 AddBuff("SummonerExhaustDebuff", 2.5f, 1, spell, target, owner);
             }
         }

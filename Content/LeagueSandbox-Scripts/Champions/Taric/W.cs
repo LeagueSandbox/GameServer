@@ -39,20 +39,21 @@ namespace Spells
 
         public void OnSpellPostCast(ISpell spell)
         {
-            var armor = spell.CastInfo.Owner.Stats.Armor.Total;
+            var owner = spell.CastInfo.Owner;
+            var armor = owner.Stats.Armor.Total;
             var damage = spell.CastInfo.SpellLevel * 40 + armor * 0.2f;
             var reduce = spell.CastInfo.SpellLevel * 5 + armor * 0.05f;
-            AddParticleTarget(spell.CastInfo.Owner, "Shatter_nova.troy", spell.CastInfo.Owner, 1);
+            AddParticleTarget(owner, owner, "Shatter_nova.troy", owner);
 
-            foreach (var enemy in GetUnitsInRange(spell.CastInfo.Owner.Position, 375, true)
-                .Where(x => x.Team == CustomConvert.GetEnemyTeam(spell.CastInfo.Owner.Team)))
+            foreach (var enemy in GetUnitsInRange(owner.Position, 375, true)
+                .Where(x => x.Team == CustomConvert.GetEnemyTeam(owner.Team)))
             {
                 var hasbuff = HasBuff((IObjAiBase)enemy, "TaricWDis");
                 if (enemy is IObjAiBase)
                 {
-                    enemy.TakeDamage(spell.CastInfo.Owner, damage, DamageType.DAMAGE_TYPE_MAGICAL, DamageSource.DAMAGE_SOURCE_SPELL, false);
-                    var p2 = AddParticleTarget(spell.CastInfo.Owner, "Shatter_tar.troy", enemy, 1);
-                    AddBuff("TaricWDis", 4.0f, 1, spell, enemy, spell.CastInfo.Owner);
+                    enemy.TakeDamage(owner, damage, DamageType.DAMAGE_TYPE_MAGICAL, DamageSource.DAMAGE_SOURCE_SPELL, false);
+                    var p2 = AddParticleTarget(owner, enemy, "Shatter_tar.troy", enemy);
+                    AddBuff("TaricWDis", 4.0f, 1, spell, enemy, owner);
 
                     if (hasbuff == true)
                     {

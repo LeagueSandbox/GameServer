@@ -19,7 +19,8 @@ namespace YasuoEBlock
 
         public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
-            timer = AddParticleTarget(ownerSpell.CastInfo.Owner, "Yasuo_base_E_timer1.troy", unit);
+            var owner = ownerSpell.CastInfo.Owner;
+            timer = AddParticleTarget(owner, unit, "Yasuo_base_E_timer1.troy", unit);
         }
 
         public void OnDeactivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)

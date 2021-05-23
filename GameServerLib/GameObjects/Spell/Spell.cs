@@ -127,11 +127,11 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
             {
                 if (SpellData.HaveHitBone)
                 {
-                    ApiFunctionManager.AddParticleTarget(CastInfo.Owner, SpellData.HitEffectName, u, targetBone: SpellData.HitBoneName, lifetime: 1.0f);
+                    ApiFunctionManager.AddParticleTarget(CastInfo.Owner, null, SpellData.HitEffectName, u, targetBone: SpellData.HitBoneName, lifetime: 1.0f);
                 }
                 else
                 {
-                    ApiFunctionManager.AddParticleTarget(CastInfo.Owner, SpellData.HitEffectName, u, lifetime: 1.0f);
+                    ApiFunctionManager.AddParticleTarget(CastInfo.Owner, null, SpellData.HitEffectName, u, lifetime: 1.0f);
                 }
             }
 
@@ -887,7 +887,13 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
                 }
                 case SectorType.Polygon:
                 {
-                    // TODO
+                    s = new SpellSectorPolygon(
+                        _game,
+                        parameters,
+                        this,
+                        CastInfo,
+                        netId
+                    );
                     break;
                 }
                 case SectorType.Ring:

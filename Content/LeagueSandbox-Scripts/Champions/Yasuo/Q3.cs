@@ -45,19 +45,20 @@ namespace Spells
 
         public void OnSpellPostCast(ISpell spell)
         {
+            var owner = spell.CastInfo.Owner;
             if (HasBuff(spell.CastInfo.Owner, "YasuoE"))
             {
                 //spell.CastInfo.Owner.SpellAnimation("SPELL3b");
-                AddParticleTarget(spell.CastInfo.Owner, "Yasuo_Base_EQ3_cas.troy", spell.CastInfo.Owner);
-                AddParticleTarget(spell.CastInfo.Owner, "Yasuo_Base_EQ_SwordGlow.troy", spell.CastInfo.Owner, bone: "C_BUFFBONE_GLB_Weapon_1");
+                AddParticleTarget(owner, owner, "Yasuo_Base_EQ3_cas.troy", owner);
+                AddParticleTarget(owner, owner, "Yasuo_Base_EQ_SwordGlow.troy", owner, bone: "C_BUFFBONE_GLB_Weapon_1");
                 foreach (var affectEnemys in GetUnitsInRange(spell.CastInfo.Owner.Position, 270f, true))
                 {
-                    if (affectEnemys is IAttackableUnit && affectEnemys.Team != spell.CastInfo.Owner.Team)
+                    if (affectEnemys is IAttackableUnit && affectEnemys.Team != owner.Team)
                     {
-                        affectEnemys.TakeDamage(spell.CastInfo.Owner, spell.CastInfo.SpellLevel * 20f + spell.CastInfo.Owner.Stats.AttackDamage.Total, DamageType.DAMAGE_TYPE_PHYSICAL, DamageSource.DAMAGE_SOURCE_ATTACK, false);
-                        AddParticleTarget(spell.CastInfo.Owner, "Yasuo_Base_Q_WindStrike.troy", affectEnemys);
-                        AddParticleTarget(spell.CastInfo.Owner, "Yasuo_Base_Q_windstrike_02.troy", affectEnemys);
-                        AddParticleTarget(spell.CastInfo.Owner, "Yasuo_Base_Q_hit_tar.troy", affectEnemys);
+                        affectEnemys.TakeDamage(owner, spell.CastInfo.SpellLevel * 20f + owner.Stats.AttackDamage.Total, DamageType.DAMAGE_TYPE_PHYSICAL, DamageSource.DAMAGE_SOURCE_ATTACK, false);
+                        AddParticleTarget(owner, owner, "Yasuo_Base_Q_WindStrike.troy", affectEnemys);
+                        AddParticleTarget(owner, owner, "Yasuo_Base_Q_windstrike_02.troy", affectEnemys);
+                        AddParticleTarget(owner, owner, "Yasuo_Base_Q_hit_tar.troy", affectEnemys);
                         ForceMovement(affectEnemys, "RUN", new Vector2(affectEnemys.Position.X + 10f, affectEnemys.Position.Y + 10f), 13f, 0, 16.5f, 0, movementOrdersFacing: ForceMovementOrdersFacing.KEEP_CURRENT_FACING);
                     }
                 }
@@ -66,21 +67,21 @@ namespace Spells
             {
                 //spell.AddProjectile("YasuoQ3Mis", spell.CastInfo.Owner.Position, spell.CastInfo.Owner.Position, trueCoords);
                 //spell.CastInfo.Owner.SpellAnimation("SPELL1C");
-                (spell.CastInfo.Owner as IChampion).SetSpell("YasuoQW", 0, true);
-                AddParticleTarget(spell.CastInfo.Owner, "Yasuo_Base_Q3_Hand.troy", spell.CastInfo.Owner);
-                AddParticleTarget(spell.CastInfo.Owner, "Yasuo_Base_Q3_cast_sound.troy", spell.CastInfo.Owner);
+                (owner as IChampion).SetSpell("YasuoQW", 0, true);
+                AddParticleTarget(owner, owner, "Yasuo_Base_Q3_Hand.troy", owner);
+                AddParticleTarget(owner, owner, "Yasuo_Base_Q3_cast_sound.troy", owner);
             }
-            if (HasBuff(spell.CastInfo.Owner, "YasuoQ02"))
+            if (HasBuff(owner, "YasuoQ02"))
             {
-                RemoveBuff(spell.CastInfo.Owner, "YasuoQ02");
+                RemoveBuff(owner, "YasuoQ02");
             }
         }
 
         public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, ISpellMissile missile)
         {
-            AddParticleTarget(owner, "Yasuo_Base_Q_WindStrike.troy", target);
-            AddParticleTarget(owner, "Yasuo_Base_Q_windstrike_02.troy", target);
-            AddParticleTarget(owner, "Yasuo_Base_Q_hit_tar.troy", target);
+            AddParticleTarget(owner, owner, "Yasuo_Base_Q_WindStrike.troy", target);
+            AddParticleTarget(owner, owner, "Yasuo_Base_Q_windstrike_02.troy", target);
+            AddParticleTarget(owner, owner, "Yasuo_Base_Q_hit_tar.troy", target);
             target.TakeDamage(owner, spell.CastInfo.SpellLevel * 20f + owner.Stats.AttackDamage.Total,DamageType.DAMAGE_TYPE_PHYSICAL, DamageSource.DAMAGE_SOURCE_ATTACK, false);
             ForceMovement(target, "RUN", new Vector2(target.Position.X + 10f, target.Position.Y + 10f), 13f, 0, 16.5f, 0);
         }

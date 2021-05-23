@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Numerics;
 using GameServerCore;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Domain.GameObjects.Spell;
-using GameServerCore.Domain.GameObjects.Spell.Missile;
 using GameServerCore.Domain.GameObjects.Spell.Sector;
-using GameServerCore.Enums;
-using LeagueSandbox.GameServer.Scripting.CSharp;
 
 namespace LeagueSandbox.GameServer.GameObjects.Spell.Sector
 {
@@ -31,19 +27,23 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Sector
             var dirTemp = Vector2.Normalize(goingTo);
 
             // usually doesn't happen
-            if (float.IsNaN(dirTemp.X) || float.IsNaN(dirTemp.Y))
+            if (float.IsNaN(dirTemp.X) || float.IsNaN(dirTemp.Y) && Parameters.BindObject != null)
             {
-                if (float.IsNaN(BindObject.Direction.X) || float.IsNaN(BindObject.Direction.Y))
+                if (float.IsNaN(Parameters.BindObject.Direction.X) || float.IsNaN(Parameters.BindObject.Direction.Y))
                 {
                     dirTemp = new Vector2(1, 0);
                 }
                 else
                 {
-                    dirTemp = new Vector2(BindObject.Direction.X, BindObject.Direction.Z);
+                    dirTemp = new Vector2(Parameters.BindObject.Direction.X, Parameters.BindObject.Direction.Z);
                 }
 
                 var endPos = Position + (dirTemp * SpellOrigin.GetCurrentCastRange());
                 CastInfo.TargetPositionEnd = new Vector3(endPos.X, 0, endPos.Y);
+            }
+            else
+            {
+                dirTemp = new Vector2(1, 0);
             }
 
             Direction = new Vector3(dirTemp.X, 0, dirTemp.Y);
@@ -56,7 +56,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Sector
         public override void Move(float diff)
         {
             // Change direction to the bind object's facing direction.
-            Direction = BindObject.Direction;
+            Direction = Parameters.BindObject.Direction;
 
             // Then move.
             base.Move(diff);

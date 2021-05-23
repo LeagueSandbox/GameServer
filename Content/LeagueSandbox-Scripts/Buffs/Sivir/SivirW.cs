@@ -25,7 +25,7 @@ namespace SivirW
         public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
             thisBuff = buff;
-            pbuff = AddParticleTarget(unit, "Sivir_Base_W_Buff.troy", unit, 1, "BUFFBONE_CSTM_WEAPON_1", lifetime: buff.Duration);
+            pbuff = AddParticleTarget(ownerSpell.CastInfo.Owner, unit, "Sivir_Base_W_Buff.troy", unit, buff.Duration, bone: "BUFFBONE_CSTM_WEAPON_1");
 
             if (unit is IObjAiBase ai)
             {

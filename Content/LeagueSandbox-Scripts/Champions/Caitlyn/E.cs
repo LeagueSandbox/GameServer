@@ -57,8 +57,8 @@ namespace Spells
             target.TakeDamage(owner, damage, DamageType.DAMAGE_TYPE_MAGICAL, DamageSource.DAMAGE_SOURCE_SPELL, false);
             var slowDuration = new[] { 0, 1, 1.25f, 1.5f, 1.75f, 2 }[spell.CastInfo.SpellLevel];
             AddBuff("Slow", slowDuration, 1, spell, target, owner);
-            AddParticleTarget(owner, "caitlyn_entrapment_tar.troy", target);
-            AddParticleTarget(owner, "caitlyn_entrapment_slow.troy", target);
+            AddParticleTarget(owner, target, "caitlyn_entrapment_tar.troy", target);
+            AddParticleTarget(owner, target, "caitlyn_entrapment_slow.troy", target);
 
             missile.SetToRemove();
         }

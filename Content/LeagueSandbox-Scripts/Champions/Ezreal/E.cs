@@ -61,8 +61,8 @@ namespace Spells
                 }
             }
 
-            AddParticle(owner, "Ezreal_arcaneshift_cas.troy", startPos);
-            AddParticleTarget(owner, "Ezreal_arcaneshift_flash.troy", owner);
+            AddParticle(owner, null, "Ezreal_arcaneshift_cas.troy", startPos);
+            AddParticleTarget(owner, owner, "Ezreal_arcaneshift_flash.troy", owner);
 
             TeleportTo(owner, trueCoords.X, trueCoords.Y);
         }

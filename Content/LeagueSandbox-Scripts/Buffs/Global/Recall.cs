@@ -29,7 +29,7 @@ namespace Recall
             ApiEventManager.OnTakeDamage.AddListener(this, unit, OnTakeDamage, true);
             ApiEventManager.OnUnitUpdateMoveOrder.AddListener(this, champion, OnUpdateMoveOrder, true);
 
-            _createdParticle = AddParticleTarget(champion, "TeleportHome.troy", champion, lifetime: buff.Duration);
+            _createdParticle = AddParticleTarget(champion, champion, "TeleportHome.troy", champion, lifetime: buff.Duration);
         }
 
         public void OnDeactivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)

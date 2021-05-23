@@ -1,4 +1,5 @@
 ﻿using GameServerCore.Enums;
+using System.Numerics;
 
 namespace GameServerCore.Domain.GameObjects.Spell.Sector
 {
@@ -8,27 +9,41 @@ namespace GameServerCore.Domain.GameObjects.Spell.Sector
     public interface ISectorParameters
     {
         /// <summary>
+        /// Optional object the sector should be bound to. The sector will be attached to this object and will use its facing direction.
+        /// </summary>
+        IGameObject BindObject { get; set; }
+        /// <summary>
         /// Half the distance from the center of the sector to the maximum Y-value.
-        /// If this is larger than HalfWidth, it will be used as the area around the sector to check for collisions.
+        /// If this is larger than Width, it will be used as the area around the sector to check for collisions.
+        /// Scales the distance (in y) between PolygonVertices.
         /// </summary>
         float HalfLength { get; set; }
         /// <summary>
-        /// Half the distance from the center of the sector to the maximum X-value.
+        /// Distance from the center of the sector to the maximum X-value.
         /// If this is larger than HalfLength, it will be used as the area around the sector to check for collisions.
+        /// Scales the distance (in x) between PolygonVertices.
         /// </summary>
-        float HalfWidth { get; set; }
+        float Width { get; set; }
         /// <summary>
         /// If the Type is Cone, this will filter collisions that are in front of the sector and are within this angle from the sector's center.
         /// Should be a value from 0->360
         /// </summary>
         float ConeAngle { get; set; }
         /// <summary>
+        /// If the Type is Polygon, this will represent the vertices of the sector.
+        /// Vertices are relative to the origin (SpellCastLaunchPosition or target position & direction).
+        /// If the distance between points exceeds HalfLength/Width, that distance will be used instead as the collision radius check for the sector.
+        /// Points should be ordered such that each point connects to the next (with the last point connecting to the first point).
+        /// Due to HalfLength and Width scaling the distance between vertices, it is recommended that points be arranged with x and y values between 0 and 1.
+        /// </summary>
+        Vector2[] PolygonVertices { get; set; }
+        /// <summary>
         /// Maximum amount of time this spell sector should last (in seconds) before being automatically removed.
         /// Setting to -1 will cause the spell sector to last until manually removed.
         /// </summary>
         float Lifetime { get; set; }
         /// <summary>
-        /// Whether or not the sector should only tick once before being removed.
+        /// Whether or not the sector should only tick once before being removed (Lifetime must be greater than a single tick).
         /// </summary>
         bool SingleTick { get; set; }
         /// <summary>

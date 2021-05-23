@@ -9,10 +9,6 @@ namespace GameServerCore.Domain.GameObjects.Spell.Sector
         /// </summary>
         ICastInfo CastInfo { get; }
         /// <summary>
-        /// Object this sector is bound to. Null if the sector is location targeted.
-        /// </summary>
-        IGameObject BindObject { get; }
-        /// <summary>
         /// Spell which created this projectile.
         /// </summary>
         ISpell SpellOrigin { get; }
