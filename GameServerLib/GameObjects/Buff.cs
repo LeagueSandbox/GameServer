@@ -28,11 +28,11 @@ namespace LeagueSandbox.GameServer.GameObjects
         public string Name { get; }
         public ISpell OriginSpell { get; }
         public byte Slot { get; private set; }
-        public IObjAiBase SourceUnit { get; }
+        public IAttackableUnit SourceUnit { get; }
         public IAttackableUnit TargetUnit { get; }
         public float TimeElapsed { get; private set; }
 
-        public Buff(Game game, string buffName, float duration, int stacks, ISpell originSpell, IAttackableUnit onto, IObjAiBase from, bool infiniteDuration = false)
+        public Buff(Game game, string buffName, float duration, int stacks, ISpell originSpell, IAttackableUnit onto, IAttackableUnit from, bool infiniteDuration = false)
         {
             if (duration < 0)
             {

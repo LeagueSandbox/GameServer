@@ -43,7 +43,7 @@ namespace GameServerCore.Domain.GameObjects
         /// <summary>
         /// Unit which applied this buff to its target.
         /// </summary>
-        IObjAiBase SourceUnit { get; }
+        IAttackableUnit SourceUnit { get; }
 
         /// <summary>
         /// Unit which has this buff applied to it.
