@@ -40,7 +40,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                     {
                         if (!p.Item2.IsStartedClient) continue; //user still didn't connect, not get informed about it
                         if (player.Item2.PlayerId == p.Item2.PlayerId) continue; //Don't self-inform twice
-                        _game.PacketNotifier.NotifyHeroSpawn((int)player.Item2.PlayerId, p.Item2);
+                        _game.PacketNotifier.NotifyS2C_CreateHero((int)player.Item2.PlayerId, p.Item2);
                         _game.PacketNotifier.NotifyAvatarInfo((int)player.Item2.PlayerId, p.Item2);
                     }
 

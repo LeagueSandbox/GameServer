@@ -5,6 +5,7 @@ using GameServerCore.Domain.GameObjects.Spell.Missile;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using GameServerCore.Scripting.CSharp;
+using GameServerCore.Enums;
 
 namespace Spells
 {
@@ -41,6 +42,7 @@ namespace Spells
             }
 
             owner.FaceDirection(new Vector3(to.X, 0.0f, to.Y));
+            owner.StopChanneling(ChannelingStopCondition.Cancel, ChannelingStopSource.Move);
 
             AddParticle(owner, null, "global_ss_flash.troy", owner.Position);
             TeleportTo(owner, trueCoords.X, trueCoords.Y);

@@ -3,6 +3,7 @@ using GameServerCore.Domain.GameObjects;
 using GameServerCore.Domain.GameObjects.Spell;
 using LeagueSandbox.GameServer.GameObjects.Stats;
 using GameServerCore.Scripting.CSharp;
+using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 
 namespace HealSpeed
 {
@@ -17,6 +18,9 @@ namespace HealSpeed
 
         public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
+            AddParticleTarget(ownerSpell.CastInfo.Owner, unit, "global_ss_heal_02.troy", unit, buff.Duration);
+            AddParticleTarget(ownerSpell.CastInfo.Owner, unit, "global_ss_heal_speedboost.troy", unit, buff.Duration);
+
             StatsModifier.MoveSpeed.PercentBonus = 0.3f;
             unit.AddStatModifier(StatsModifier);
         }
