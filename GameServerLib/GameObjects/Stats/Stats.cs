@@ -218,11 +218,11 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
             CurrentHealth = HealthPoints.Total / (HealthPoints.Total - HealthPerLevel) * CurrentHealth;
             ManaPoints.BaseValue = ManaPoints.Total + ManaPerLevel;
             CurrentMana = ManaPoints.Total / (ManaPoints.Total - ManaPerLevel) * CurrentMana;
-            AttackDamage.BaseValue = AttackDamage.BaseValue + AdPerLevel;
-            Armor.BaseValue = Armor.BaseValue + ArmorPerLevel;
-            MagicResist.BaseValue = MagicResist.Total + MagicResistPerLevel;
-            HealthRegeneration.BaseValue = HealthRegeneration.BaseValue + HealthRegenerationPerLevel;
-            ManaRegeneration.BaseValue = ManaRegeneration.BaseValue + ManaRegenerationPerLevel;
+            AttackDamage.BaseValue += + AdPerLevel;
+            Armor.BaseValue += + ArmorPerLevel;
+            MagicResist.BaseValue += + MagicResistPerLevel;
+            HealthRegeneration.BaseValue += + HealthRegenerationPerLevel;
+            ManaRegeneration.BaseValue += + ManaRegenerationPerLevel;
 
             if (Level > 1)
             {
