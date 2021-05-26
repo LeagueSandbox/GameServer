@@ -74,8 +74,6 @@ namespace Spells
             target.Stats.CurrentHealth = Math.Min(newHealth, target.Stats.HealthPoints.Total);
             AddBuff("HealSpeed", 1.0f, 1, spell, target, owner);
             AddBuff("HealCheck", 35.0f, 1, spell, target, owner);
-            AddParticleTarget(owner, target, "global_ss_heal_02.troy", target);
-            AddParticleTarget(owner, target, "global_ss_heal_speedboost.troy", target);
         }
 
         public void OnSpellCast(ISpell spell)

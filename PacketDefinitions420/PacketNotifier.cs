@@ -1114,17 +1114,6 @@ namespace PacketDefinitions420
         }
 
         /// <summary>
-        /// Sends a packet to the specified player detailing that (usually) their hero has spawned.
-        /// </summary>
-        /// <param name="userId">User to send the packet to.</param>
-        /// <param name="client">Info of the client which the user owns.</param>
-        public void NotifyHeroSpawn(int userId, ClientInfo client)
-        {
-            var spawn = new HeroSpawn(client);
-            _packetHandlerManager.SendPacket(userId, spawn, Channel.CHL_S2C);
-        }
-
-        /// <summary>
         /// Sends a packet to all players which announces that the team which owns the specified inhibitor has an inhibitor which is respawning soon.
         /// </summary>
         /// <param name="inhibitor">Inhibitor that is respawning soon.</param>
@@ -2082,6 +2071,11 @@ namespace PacketDefinitions420
             _packetHandlerManager.BroadcastPacketVision(p, changePacket.GetBytes(), Channel.CHL_S2C);
         }
 
+        /// <summary>
+        /// Sends a packet to the specified user detailing that the hero designated to the given clientInfo has been created.
+        /// </summary>
+        /// <param name="userId">User to send the packet to.</param>
+        /// <param name="clientInfo">Information about the client which had their hero created.</param>
         public void NotifyS2C_CreateHero(int userId, ClientInfo clientInfo)
         {
             var champion = clientInfo.Champion;

@@ -35,7 +35,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
         public IStat Armor { get; }
         public IStat ArmorPenetration { get; }
         public IStat AttackDamage { get; }
-        public IStat AttackSpeedMultiplier { get; }
+        public IStat AttackSpeedMultiplier { get; set; }
         public IStat CooldownReduction { get; }
         public IStat CriticalChance { get; }
         public IStat CriticalDamage { get; }
@@ -116,7 +116,8 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
             MagicResist.BaseValue = charData.SpellBlock;
             HealthRegeneration.BaseValue = charData.BaseStaticHpRegen;
             ManaRegeneration.BaseValue = charData.BaseStaticMpRegen;
-            AttackSpeedFlat = 0.625f / (1.0f + charData.AttackDelayOffsetPercent[0]);
+            // AttackSpeedFlat = GlobalAttackSpeed / CharAttackDelay
+            AttackSpeedFlat = (1.0f / charData.GlobalCharData.AttackDelay) / (1.0f + charData.AttackDelayOffsetPercent[0]);
             HealthPerLevel = charData.HpPerLevel;
             ManaPerLevel = charData.MpPerLevel;
             AdPerLevel = charData.DamagePerLevel;
@@ -217,11 +218,19 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
             CurrentHealth = HealthPoints.Total / (HealthPoints.Total - HealthPerLevel) * CurrentHealth;
             ManaPoints.BaseValue = ManaPoints.Total + ManaPerLevel;
             CurrentMana = ManaPoints.Total / (ManaPoints.Total - ManaPerLevel) * CurrentMana;
-            AttackDamage.BaseValue = AttackDamage.BaseValue + AdPerLevel;
-            Armor.BaseValue = Armor.BaseValue + ArmorPerLevel;
-            MagicResist.BaseValue = MagicResist.Total + MagicResistPerLevel;
-            HealthRegeneration.BaseValue = HealthRegeneration.BaseValue + HealthRegenerationPerLevel;
-            ManaRegeneration.BaseValue = ManaRegeneration.BaseValue + ManaRegenerationPerLevel;
+            AttackDamage.BaseValue += AdPerLevel;
+            Armor.BaseValue += ArmorPerLevel;
+            MagicResist.BaseValue += MagicResistPerLevel;
+            HealthRegeneration.BaseValue += HealthRegenerationPerLevel;
+            ManaRegeneration.BaseValue += ManaRegenerationPerLevel;
+
+            if (Level > 1)
+            {
+                AttackSpeedMultiplier.ApplyStatModifier(new StatModifier
+                {
+                    PercentBaseBonus = (GrowthAttackSpeed / 100.0f)
+                });
+            }
         }
 
         public bool GetSpellEnabled(byte id)

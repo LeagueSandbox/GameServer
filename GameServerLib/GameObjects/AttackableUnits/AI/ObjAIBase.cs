@@ -909,7 +909,11 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         /// <param name="reason">How it should be treated.</param>
         public void StopChanneling(ChannelingStopCondition condition, ChannelingStopSource reason)
         {
-            ChannelSpell.StopChanneling(condition, reason);
+            if (ChannelSpell != null)
+            {
+                ChannelSpell.StopChanneling(condition, reason);
+                ChannelSpell = null;
+            }
         }
 
         public override void Update(float diff)

@@ -320,12 +320,6 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="time">Time since the game started (in milliseconds).</param>
         void NotifyGameTimerUpdate(int userId, float time);
         /// <summary>
-        /// Sends a packet to the specified player detailing that (usually) their hero has spawned.
-        /// </summary>
-        /// <param name="userId">User to send the packet to.</param>
-        /// <param name="client">Info of the client which the user owns.</param>
-        void NotifyHeroSpawn(int userId, ClientInfo client);
-        /// <summary>
         /// Sends a packet to all players which announces that the team which owns the specified inhibitor has an inhibitor which is respawning soon.
         /// </summary>
         /// <param name="inhibitor">Inhibitor that is respawning soon.</param>
@@ -604,6 +598,12 @@ namespace GameServerCore.Packets.Interfaces
         /// </summary>
         /// <param name="p">Projectile that has changed target.</param>
         void NotifyS2C_ChangeMissileTarget(ISpellMissile p);
+        /// <summary>
+        /// Sends a packet to the specified user detailing that the hero designated to the given clientInfo has been created.
+        /// </summary>
+        /// <param name="userId">User to send the packet to.</param>
+        /// <param name="clientInfo">Information about the client which had their hero created.</param>
+        void NotifyS2C_CreateHero(int userId, ClientInfo clientInfo);
         /// <summary>
         /// Sends a packet to all players with vision of the specified object detailing that it is playing the specified animation.
         /// </summary>
