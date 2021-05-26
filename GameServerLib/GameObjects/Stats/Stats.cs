@@ -226,14 +226,10 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
 
             if (Level > 1)
             {
-                AttackSpeedMultiplier = new Stat
-                (
-                    AttackSpeedMultiplier.BaseValue,
-                    AttackSpeedMultiplier.BaseBonus,
-                    AttackSpeedMultiplier.PercentBaseBonus + (GrowthAttackSpeed / 100.0f),
-                    AttackSpeedMultiplier.FlatBonus,
-                    AttackSpeedMultiplier.PercentBonus
-                );
+                AttackSpeedMultiplier.ApplyStatModifier(new StatModifier
+                {
+                    PercentBaseBonus = (GrowthAttackSpeed / 100.0f)
+                });
             }
         }
 
