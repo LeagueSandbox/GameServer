@@ -222,7 +222,7 @@ namespace LeagueSandbox.GameServer.API
         /// <param name="unit">Unit to check.</param>
         /// <param name="b">Buff to check for.</param>
         /// <returns>True/False</returns>
-        public static bool HasBuff(IObjAiBase unit, IBuff b)
+        public static bool HasBuff(IAttackableUnit unit, IBuff b)
         {
             return unit.HasBuff(b);
         }
@@ -233,7 +233,7 @@ namespace LeagueSandbox.GameServer.API
         /// <param name="unit">Unit to check.</param>
         /// <param name="b">Buff name to check for.</param>
         /// <returns>True/False</returns>
-        public static bool HasBuff(IObjAiBase unit, string b)
+        public static bool HasBuff(IAttackableUnit unit, string b)
         {
             return unit.HasBuff(b);
         }
@@ -264,7 +264,7 @@ namespace LeagueSandbox.GameServer.API
         /// </summary>
         /// <param name="target">AI unit to check.</param>
         /// <param name="buff">Buff name to remove.</param>
-        public static void RemoveBuff(IObjAiBase target, string buff)
+        public static void RemoveBuff(IAttackableUnit target, string buff)
         {
             target.RemoveBuffsWithName(buff);
         }

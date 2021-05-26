@@ -31,9 +31,9 @@ namespace RocketGrab2
             unit.Stats.SetActionState(ActionState.CAN_CAST, true);
             unit.Stats.SetActionState(ActionState.CAN_MOVE, true);
 
-            if (unit is IChampion)
+            if (buff.SourceUnit is IObjAiBase ai && unit is IChampion ch)
             {
-                buff.SourceUnit.SetTargetUnit(unit, true);
+                ai.SetTargetUnit(ch, true);
             }
         }
 

@@ -5,6 +5,8 @@ using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using GameServerCore.Domain.GameObjects.Spell;
 using GameServerCore.Domain.GameObjects.Spell.Missile;
+using LeagueSandbox.GameServer.API;
+using System.Collections.Generic;
 using GameServerCore.Scripting.CSharp;
 
 namespace Spells
@@ -13,11 +15,18 @@ namespace Spells
     {
         public ISpellScriptMetadata ScriptMetadata => new SpellScriptMetadata()
         {
+            MissileParameters = new MissileParameters
+            {
+                Type = MissileType.Target
+            },
+            TriggersSpellCasts = true
+
             // TODO
         };
 
         public void OnActivate(IObjAiBase owner, ISpell spell)
         {
+            ApiEventManager.OnSpellMissileHit.AddListener(this, new KeyValuePair<ISpell, IObjAiBase>(spell, owner), TargetExecute, false);
         }
 
         public void OnDeactivate(IObjAiBase owner, ISpell spell)
@@ -34,19 +43,16 @@ namespace Spells
 
         public void OnSpellPostCast(ISpell spell)
         {
-            var current = new Vector2(spell.CastInfo.Owner.Position.X, spell.CastInfo.Owner.Position.Y);
-            var to = Vector2.Normalize(new Vector2(spell.CastInfo.Targets[0].Unit.Position.X, spell.CastInfo.Targets[0].Unit.Position.Y) - current);
-            var range = to * 1150;
-            var trueCoords = current + range;
-            //spell.AddProjectile("AkaliMota", current, current, trueCoords);
         }
 
-        public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, ISpellMissile missile)
+        public void TargetExecute(ISpell spell, IAttackableUnit target, ISpellMissile missile)
         {
-            var ap = owner.Stats.AbilityPower.Total * 0.4f;
-            var damage = 15 + spell.CastInfo.SpellLevel * 20 + ap;
-            target.TakeDamage(owner, damage, DamageType.DAMAGE_TYPE_PHYSICAL, DamageSource.DAMAGE_SOURCE_ATTACK, false);
-            AddParticleTarget(owner, target, "akali_markOftheAssasin_marker_tar_02.troy", target);
+            var owner = spell.CastInfo.Owner;
+            var AP = owner.Stats.AbilityPower.Total * 0.4f;
+            var damage = 15f + spell.CastInfo.SpellLevel * 20f + AP;
+            
+            target.TakeDamage(owner, damage, DamageType.DAMAGE_TYPE_MAGICAL, DamageSource.DAMAGE_SOURCE_ATTACK, false);
+            AddBuff("AkaliMota", 6f, 1, spell, target, owner);
             missile.SetToRemove();
         }
 

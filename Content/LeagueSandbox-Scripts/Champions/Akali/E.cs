@@ -7,7 +7,10 @@ using GameServerCore.Enums;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using System.Numerics;
+using LeagueSandbox.GameServer.API;
+using System.Collections.Generic;
 using GameServerCore.Scripting.CSharp;
+using GameServerCore.Domain.GameObjects.Spell.Sector;
 
 namespace Spells
 {
@@ -21,6 +24,7 @@ namespace Spells
 
         public void OnActivate(IObjAiBase owner, ISpell spell)
         {
+            ApiEventManager.OnSpellSectorHit.AddListener(this, new KeyValuePair<ISpell, IObjAiBase>(spell, owner), TargetExecute, false);
         }
 
         public void OnDeactivate(IObjAiBase owner, ISpell spell)
@@ -29,6 +33,7 @@ namespace Spells
 
         public void OnSpellPreCast(IObjAiBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
         {
+
         }
 
         public void OnSpellCast(ISpell spell)
@@ -37,20 +42,32 @@ namespace Spells
 
         public void OnSpellPostCast(ISpell spell)
         {
-            var ap = spell.CastInfo.Owner.Stats.AbilityPower.Total * 0.3f;
-            var ad = spell.CastInfo.Owner.Stats.AttackDamage.Total * 0.6f;
-            var damage = 40 + spell.CastInfo.SpellLevel * 30 + ap + ad;
-            foreach (var enemyTarget in GetUnitsInRange(spell.CastInfo.Owner.Position, 300, true)
-                .Where(x => x.Team == CustomConvert.GetEnemyTeam(spell.CastInfo.Owner.Team)))
+            var sector = spell.CreateSpellSector(new SectorParameters
             {
-                enemyTarget.TakeDamage(spell.CastInfo.Owner, damage, DamageType.DAMAGE_TYPE_MAGICAL, DamageSource.DAMAGE_SOURCE_SPELL,
-                    false);
-                if (spell.CastInfo.Targets[0].Unit.IsDead)
-                {
-                    spell.LowerCooldown(spell.CurrentCooldown * 0.6f);
-                }
-            }
+                HalfLength = 300f,
+                SingleTick = true,
+                Type = SectorType.Area
+            });
         }
+        public void TargetExecute(ISpell spell, IAttackableUnit target, ISpellSector sector)
+        {
+            var owner = spell.CastInfo.Owner;
+            var AP = spell.CastInfo.Owner.Stats.AbilityPower.Total * 0.3f;
+            var AD = spell.CastInfo.Owner.Stats.AttackDamage.Total * 0.6f;
+            var damage = 40 + spell.CastInfo.SpellLevel * 30 + AP + AD;
+            var MarkAPratio = spell.CastInfo.Owner.Stats.AbilityPower.Total * 0.5f;
+            var MarkDamage = 45 + 25 * (owner.GetSpell("AkaliMota").CastInfo.SpellLevel - 1) + MarkAPratio;
+
+            if (target.HasBuff("AkaliMota"))
+            {
+                target.TakeDamage(owner, MarkDamage, DamageType.DAMAGE_TYPE_MAGICAL, DamageSource.DAMAGE_SOURCE_PROC, false);
+                AddParticleTarget(owner, target, "akali_mark_impact_tar.troy", target, 1f);
+                RemoveBuff(target, "AkaliMota");
+            }
+            target.TakeDamage(owner, damage, DamageType.DAMAGE_TYPE_PHYSICAL, DamageSource.DAMAGE_SOURCE_SPELLAOE, false);
+            AddParticleTarget(owner, target, "akali_shadowSwipe_tar.troy", target, 1f);
+        }
+
 
         public void OnSpellChannel(ISpell spell)
         {
