@@ -700,11 +700,6 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
             }
             else
             {
-                if (Script.ScriptMetadata.MissileParameters == null)
-                {
-                    ApplyEffects(CastInfo.Targets[0].Unit, null);
-                }
-
                 if (SpellData.ChannelDuration[CastInfo.SpellLevel] <= 0)
                 {
                     State = SpellState.STATE_COOLDOWN;
@@ -784,7 +779,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
                         (int)SpellData.LineWidth,
                         this,
                         CastInfo,
-                        Script.ScriptMetadata.MissileParameters,
+                        parameters,
                         SpellData.MissileSpeed,
                         SpellData.Flags,
                         netId,

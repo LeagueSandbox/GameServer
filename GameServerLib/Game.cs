@@ -336,10 +336,14 @@ namespace LeagueSandbox.GameServer
         /// <param name="diff">Number of milliseconds since this tick occurred.</param>
         public void Update(float diff)
         {
+            // This section dictates the priority of updates.
             GameTime += diff;
-            ObjectManager.Update(diff);
-            ProtectionManager.Update(diff);
+            // Collision
             Map.Update(diff);
+            // Objects
+            ObjectManager.Update(diff);
+            // Protection (TODO: Move this into ObjectManager).
+            ProtectionManager.Update(diff);
             ChatCommandManager.GetCommands().ForEach(command => command.Update(diff));
             _gameScriptTimers.ForEach(gsTimer => gsTimer.Update(diff));
             _gameScriptTimers.RemoveAll(gsTimer => gsTimer.IsDead());

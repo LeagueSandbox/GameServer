@@ -1335,46 +1335,46 @@ namespace PacketDefinitions420
         /// Sends a packet to either all players with vision (given the projectile is networked to the client) of the projectile, or all players. The packet contains all details regarding the specified projectile's creation.
         /// </summary>
         /// <param name="p">Projectile that was created.</param>
-        public void NotifyMissileReplication(ISpellMissile p)
+        public void NotifyMissileReplication(ISpellMissile m)
         {
             var castInfo = new CastInfo
             {
-                SpellHash = p.CastInfo.SpellHash,
-                SpellNetID = p.CastInfo.SpellNetID,
+                SpellHash = m.CastInfo.SpellHash,
+                SpellNetID = m.CastInfo.SpellNetID,
 
-                SpellLevel = p.CastInfo.SpellLevel,
-                AttackSpeedModifier = p.CastInfo.AttackSpeedModifier,
-                CasterNetID = p.CastInfo.Owner.NetId,
+                SpellLevel = m.CastInfo.SpellLevel,
+                AttackSpeedModifier = m.CastInfo.AttackSpeedModifier,
+                CasterNetID = m.CastInfo.Owner.NetId,
                 // TODO: Implement spell chains?
-                SpellChainOwnerNetID = p.CastInfo.Owner.NetId,
-                PackageHash = p.CastInfo.PackageHash,
-                MissileNetID = p.CastInfo.MissileNetID,
+                SpellChainOwnerNetID = m.CastInfo.Owner.NetId,
+                PackageHash = m.CastInfo.PackageHash,
+                MissileNetID = m.CastInfo.MissileNetID,
                 // Not sure if we want to add height for these, but i did it anyway
-                TargetPosition = p.CastInfo.TargetPosition,
-                TargetPositionEnd = p.CastInfo.TargetPositionEnd,
-                DesignerCastTime = p.CastInfo.DesignerCastTime,
-                ExtraCastTime = p.CastInfo.ExtraCastTime,
-                DesignerTotalTime = p.CastInfo.DesignerTotalTime,
+                TargetPosition = m.CastInfo.TargetPosition,
+                TargetPositionEnd = m.CastInfo.TargetPositionEnd,
+                DesignerCastTime = m.CastInfo.DesignerCastTime,
+                ExtraCastTime = m.CastInfo.ExtraCastTime,
+                DesignerTotalTime = m.CastInfo.DesignerTotalTime,
 
-                Cooldown = p.CastInfo.Cooldown,
-                StartCastTime = p.CastInfo.StartCastTime,
+                Cooldown = m.CastInfo.Cooldown,
+                StartCastTime = m.CastInfo.StartCastTime,
 
-                IsAutoAttack = p.CastInfo.IsAutoAttack,
-                IsSecondAutoAttack = p.CastInfo.IsSecondAutoAttack,
-                IsForceCastingOrChannel = p.CastInfo.IsForceCastingOrChannel,
-                IsOverrideCastPosition = p.CastInfo.IsOverrideCastPosition,
-                IsClickCasted = p.CastInfo.IsClickCasted,
+                IsAutoAttack = m.CastInfo.IsAutoAttack,
+                IsSecondAutoAttack = m.CastInfo.IsSecondAutoAttack,
+                IsForceCastingOrChannel = m.CastInfo.IsForceCastingOrChannel,
+                IsOverrideCastPosition = m.CastInfo.IsOverrideCastPosition,
+                IsClickCasted = m.CastInfo.IsClickCasted,
 
-                SpellSlot = p.CastInfo.SpellSlot,
-                ManaCost = p.CastInfo.ManaCost,
-                SpellCastLaunchPosition = p.CastInfo.SpellCastLaunchPosition,
-                AmmoUsed = p.CastInfo.AmmoUsed,
-                AmmoRechargeTime = p.CastInfo.AmmoRechargeTime
+                SpellSlot = m.CastInfo.SpellSlot,
+                ManaCost = m.CastInfo.ManaCost,
+                SpellCastLaunchPosition = m.CastInfo.SpellCastLaunchPosition,
+                AmmoUsed = m.CastInfo.AmmoUsed,
+                AmmoRechargeTime = m.CastInfo.AmmoRechargeTime
             };
 
-            if (p.CastInfo.Targets.Count > 0)
+            if (m.CastInfo.Targets.Count > 0)
             {
-                p.CastInfo.Targets.ForEach(t =>
+                m.CastInfo.Targets.ForEach(t =>
                 {
                     if (t.Unit != null)
                     {
@@ -1389,18 +1389,18 @@ namespace PacketDefinitions420
 
             var misPacket = new MissileReplication
             {
-                SenderNetID = p.CastInfo.Owner.NetId,
-                Position = p.GetPosition3D(),
-                CasterPosition = p.CastInfo.Owner.GetPosition3D(),
+                SenderNetID = m.CastInfo.Owner.NetId,
+                Position = m.GetPosition3D(),
+                CasterPosition = m.CastInfo.Owner.GetPosition3D(),
                 // Not sure if we want to add height for these, but i did it anyway
-                Direction = p.Direction,
-                Velocity = p.Direction * p.GetSpeed(),
-                StartPoint = p.CastInfo.SpellCastLaunchPosition,
-                EndPoint = p.CastInfo.TargetPositionEnd,
+                Direction = m.Direction,
+                Velocity = m.Direction * m.GetSpeed(),
+                StartPoint = m.CastInfo.SpellCastLaunchPosition,
+                EndPoint = m.CastInfo.TargetPositionEnd,
                 // TODO: Verify
-                UnitPosition = p.CastInfo.Owner.GetPosition3D(),
-                TimeFromCreation = p.GetTimeSinceCreation(), // TODO: Unhardcode
-                Speed = p.GetSpeed(),
+                UnitPosition = m.CastInfo.Owner.GetPosition3D(),
+                TimeFromCreation = m.GetTimeSinceCreation(), // TODO: Unhardcode
+                Speed = m.GetSpeed(),
                 LifePercentage = 0f, // TODO: Unhardcode
                 //TODO: Implement time limited projectiles
                 TimedSpeedDelta = 0f, // TODO: Implement time limited projectiles for this
@@ -1411,9 +1411,14 @@ namespace PacketDefinitions420
                 CastInfo = castInfo
             };
 
-            if (!p.IsServerOnly)
+            if (m is ISpellChainMissile chainMissile && chainMissile.ObjectsHit.Count > 0)
             {
-                _packetHandlerManager.BroadcastPacketVision(p, misPacket.GetBytes(), Channel.CHL_S2C);
+                misPacket.Bounced = true;
+            }
+
+            if (!m.IsServerOnly)
+            {
+                _packetHandlerManager.BroadcastPacketVision(m, misPacket.GetBytes(), Channel.CHL_S2C);
             }
             else
             {
@@ -2043,6 +2048,38 @@ namespace PacketDefinitions420
         }
 
         /// <summary>
+        /// Sends a packet to all players with vision of the given chain missile that it has updated (unit/position).
+        /// </summary>
+        /// <param name="p">Missile that should be synced.</param>
+        public void NotifyS2C_ChainMissileSync(ISpellMissile m)
+        {
+            if (!m.HasTarget())
+            {
+                return;
+            }
+
+            var syncPacket = new S2C_ChainMissileSync()
+            {
+                SenderNetID = m.NetId,
+                TargetCount = m.CastInfo.Targets.Count,
+                // TODO: Verify
+                OwnerNetworkID = m.CastInfo.Owner.NetId
+            };
+
+            for (int i = 0; i < syncPacket.TargetNetIDs.Length; i++)
+            {
+                if (m.CastInfo.Targets.Count == i)
+                {
+                    break;
+                }
+
+                syncPacket.TargetNetIDs[i] = m.CastInfo.Targets[i].Unit.NetId;
+            }
+
+            _packetHandlerManager.BroadcastPacketVision(m, syncPacket.GetBytes(), Channel.CHL_S2C);
+        }
+
+        /// <summary>
         /// Sends a packet to all players with vision of the given projectile that it has changed targets (unit/position).
         /// </summary>
         /// <param name="p">Projectile that has changed target.</param>
@@ -2305,7 +2342,7 @@ namespace PacketDefinitions420
             {
                 SenderNetID = p.NetId,
                 TargetNetID = 0,
-                CasterPosition = p.CastInfo.Owner.GetPosition3D()
+                CasterPosition = p.CastInfo.SpellCastLaunchPosition
             };
 
             if (p.CastInfo.Targets.Count > 0)
