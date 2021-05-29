@@ -594,6 +594,11 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="showWindow">Whether or not to show a window before unpausing (delay).</param>
         void NotifyResumeGame(IAttackableUnit unpauser, bool showWindow);
         /// <summary>
+        /// Sends a packet to all players with vision of the given chain missile that it has updated (unit/position).
+        /// </summary>
+        /// <param name="p">Missile that should be synced.</param>
+        void NotifyS2C_ChainMissileSync(ISpellMissile m);
+        /// <summary>
         /// Sends a packet to all players with vision of the given projectile that it has changed targets (unit/position).
         /// </summary>
         /// <param name="p">Projectile that has changed target.</param>
