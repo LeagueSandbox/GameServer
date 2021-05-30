@@ -27,7 +27,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Sector
             var dirTemp = Vector2.Normalize(goingTo);
 
             // usually doesn't happen
-            if (float.IsNaN(dirTemp.X) || float.IsNaN(dirTemp.Y) && Parameters.BindObject != null)
+            if (Parameters.BindObject != null)
             {
                 if (float.IsNaN(Parameters.BindObject.Direction.X) || float.IsNaN(Parameters.BindObject.Direction.Y))
                 {
@@ -41,7 +41,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Sector
                 var endPos = Position + (dirTemp * SpellOrigin.GetCurrentCastRange());
                 CastInfo.TargetPositionEnd = new Vector3(endPos.X, 0, endPos.Y);
             }
-            else
+            else if (float.IsNaN(dirTemp.X) || float.IsNaN(dirTemp.Y))
             {
                 dirTemp = new Vector2(1, 0);
             }
