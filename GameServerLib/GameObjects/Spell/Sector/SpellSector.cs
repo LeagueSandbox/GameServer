@@ -121,7 +121,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Sector
             // OnCollision has already checked the affectRadius around the sector, so now we filter the area.
             if (collider is IAttackableUnit unit)
             {
-                if (IsValidTarget(unit) && FilterCollisions(unit))
+                if (IsValidTarget(unit))
                 {
                     _unitsToHit.Add(unit);
                 }
@@ -216,12 +216,17 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Sector
         /// </summary>
         public void ExecuteTick()
         {
-            // OnCollision has been called within a single Update, so now we just hit all units within collision radius.
+            // OnCollision has been called within a single Update, so now we just hit any units within the filtered area of the collision radius.
             if (_unitsToHit.Count > 0)
             {
                 for (int i = _unitsToHit.Count - 1; i >= 0; i--)
                 {
-                    HitUnit(_unitsToHit[i]);
+                    var unit = _unitsToHit[i];
+                    if (unit.IsCollidingWith(this) && FilterCollisions(unit))
+                    {
+                        HitUnit(_unitsToHit[i]);
+                    }
+
                     _unitsToHit.RemoveAt(i);
                 }
             }
