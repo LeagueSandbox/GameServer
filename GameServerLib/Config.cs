@@ -17,6 +17,7 @@ namespace LeagueSandbox.GameServer
     {
         public Dictionary<string, PlayerConfig> Players { get; private set; }
         public GameConfig GameConfig { get; private set; }
+        public MapData MapData { get; private set; }
         public MapSpawns MapSpawns { get; private set; }
         public ContentManager ContentManager { get; private set; }
         public const string VERSION_STRING = "Version 4.20.0.315 [PUBLIC]";
@@ -85,8 +86,35 @@ namespace LeagueSandbox.GameServer
             // Load data package
             ContentManager = ContentManager.LoadDataPackage(game, GameConfig.DataPackage, ContentPath);
 
-            // Read spawns info
+            // Read data & spawns info
+            MapData = ContentManager.GetMapData(GameConfig.Map);
             MapSpawns = ContentManager.GetMapSpawns(GameConfig.Map);
+        }
+    }
+
+    public class MapData
+    {
+        public int Id { get; private set; }
+        public Dictionary<string, MapObject> MapObjects { get; private set; }
+
+        public MapData(int mapId)
+        {
+            Id = mapId;
+            MapObjects = new Dictionary<string, MapObject>();
+        }
+
+        public class MapObject
+        {
+            public string Name { get; private set; }
+            public Vector3 CentralPoint { get; private set; }
+            public int ParentMapId { get; private set; }
+
+            public MapObject(string name, Vector3 point, int id)
+            {
+                Name = name;
+                CentralPoint = point;
+                ParentMapId = id;
+            }
         }
     }
 

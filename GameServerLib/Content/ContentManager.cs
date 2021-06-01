@@ -111,6 +111,23 @@ namespace LeagueSandbox.GameServer.Content
             return packageLoadingResults.Contains(false);
         }
 
+        public MapData GetMapData(int mapId)
+        {
+            foreach (var dataPackage in _loadedPackages)
+            {
+                var toReturnMapData = dataPackage.GetMapData(mapId);
+
+                if (toReturnMapData == null)
+                {
+                    continue;
+                }
+
+                return toReturnMapData;
+            }
+
+            throw new ContentNotFoundException($"No map data found for map with id: {mapId}");
+        }
+
         public MapSpawns GetMapSpawns(int mapId)
         {
             foreach (var dataPackage in _loadedPackages)
