@@ -8,6 +8,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using LeagueSandbox.GameServer.Content.Navigation;
 using GameServerCore.Domain.GameObjects.Spell;
+using System.Numerics;
 
 namespace LeagueSandbox.GameServer.Content
 {
@@ -83,6 +84,90 @@ namespace LeagueSandbox.GameServer.Content
             }
 
             return toReturnContentFile;
+        }
+
+        /// <summary>
+        /// Reads through the room file of the given map to create MapData which includes all of the map's objects.
+        /// </summary>
+        /// <param name="mapId">Map to read.</param>
+        /// <returns>MapData containing all objects listed in the room file.</returns>
+        public MapData GetMapData(int mapId)
+        {
+            // Define the end of the file path and setup return variable.
+            var mapName = $"Map{mapId}";
+            var contentType = "Maps";
+            var toReturnMapData = new MapData(mapId);
+
+            // Verify that the content exists.
+            if (!_content.ContainsKey(contentType) || !_content[contentType].ContainsKey(mapName))
+            {
+                return null;
+            }
+
+            // Define the full path to the room file which houses references to all objects.
+            var fileName = $"{mapName}/Scene/room.dsc";
+            var filePath = $"{GetContentTypePath(contentType)}/{fileName}.json";
+
+            // Declare empty room variable.
+            JArray mapObjects;
+
+            // To prevent crashes if the files are missing.
+            try
+            {
+                // Read the room file.
+                var mapData = JObject.Parse(File.ReadAllText(filePath));
+
+                // Grab the array of object reference entries.
+                mapObjects = (JArray)mapData.SelectToken("entries");
+            }
+            // If failed to read.
+            catch (JsonReaderException)
+            {
+                return null;
+            }
+
+            // Get the number of objects in the entries array.
+            var objectCount = mapObjects.Count;
+            // Iterate through them.
+            for (var i = 0; i < objectCount; i++)
+            {
+                // Get the object reference name.
+                string nameReference = mapObjects[i].Value<string>("Name");
+
+                // Define the full path to the object file.
+                var objectFileName = $"{mapName}/Scene/{nameReference}.sco";
+                var objectFilePath = $"{GetContentTypePath(contentType)}/{objectFileName}.json";
+
+                // Create empty mapObject so we can fill it after we successfully read the object file.
+                MapData.MapObject mapObject;
+
+                try
+                {
+                    // Read the object file
+                    var objectData = JObject.Parse(File.ReadAllText(objectFilePath));
+
+                    // Grab the Name and CentralPoint
+                    var name = objectData.Value<string>("Name");
+                    var pointJson = objectData.SelectToken("CentralPoint");
+                    var point = new Vector3
+                    {
+                        X = pointJson.Value<float>("X"),
+                        Y = pointJson.Value<float>("Y"),
+                        Z = pointJson.Value<float>("Z")
+                    };
+
+                    mapObject = new MapData.MapObject(name, point, mapId);
+                }
+                catch (JsonReaderException)
+                {
+                    continue;
+                }
+
+                // Add the reference name and filled map object.
+                toReturnMapData.MapObjects.Add(nameReference, mapObject);
+            }
+
+            return toReturnMapData;
         }
 
         public MapSpawns GetMapSpawns(int mapId)
