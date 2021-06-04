@@ -173,7 +173,7 @@ namespace PacketDefinitions420
 
                         md = new MovementDataNormal
                         {
-                            SyncID = (int)unit.SyncId,
+                            SyncID = unit.SyncId,
                             TeleportNetID = unit.NetId,
                             // TODO: Implement teleportID (likely to be the index (starting at 1) of a waypoint we want to TP to).
                             // Crucial in syncing client positions with server positions, especially when entering vision

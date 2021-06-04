@@ -70,6 +70,12 @@ namespace GameServerCore.Domain.GameObjects
         /// <returns>Hashed string of this unit's model.</returns>
         uint GetObjHash();
         /// <summary>
+        /// Sets the server-sided position of this object. Optionally takes into account the AI's current waypoints.
+        /// </summary>
+        /// <param name="vec">Position to set.</param>
+        /// <param name="repath">Whether or not to repath the AI from the given position (assuming it has a path).</param>
+        void SetPosition(Vector2 vec, bool repath = true);
+        /// <summary>
         /// Returns whether or not this unit is targetable to the specified team.
         /// </summary>
         /// <param name="team">TeamId to check for.</param>
