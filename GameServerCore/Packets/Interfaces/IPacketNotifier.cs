@@ -303,17 +303,6 @@ namespace GameServerCore.Packets.Interfaces
         /// </summary>
         void NotifyGameStart();
         /// <summary>
-        /// Sends a packet to all players detailing the amount of time since the game started (in seconds).
-        /// </summary>
-        /// <param name="gameTime">Time since the game started (in milliseconds).</param>
-        void NotifyGameTimer(float gameTime);
-        /// <summary>
-        /// Sends a packet to the specified player detailing the amount of time since the game started (in seconds).
-        /// </summary>
-        /// <param name="userId">User to send the packet to.</param>
-        /// <param name="time">Time since the game started (in milliseconds).</param>
-        void NotifyGameTimer(int userId, float time);
-        /// <summary>
         /// Sends a packet to the specified player detailing the amount of time since the game started (in seconds). Used to initialize the user's in-game timer.
         /// </summary>
         /// <param name="userId">User to send the packet to.</param>
@@ -746,6 +735,17 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="netId">NetID of the GameObject that has spawned.</param>
         /// TODO: Remove this and replace all usages with NotifyEnterVisibilityClient, refer to the MinionSpawn2 packet as it uses the same packet command.
         void NotifyStaticObjectSpawn(int userId, uint netId);
+        /// <summary>
+        /// Sends a packet to all players detailing the amount of time since the game started (in seconds).
+        /// </summary>
+        /// <param name="gameTime">Time since the game started (in milliseconds).</param>
+        void NotifySynchSimTimeS2C(float gameTime);
+        /// <summary>
+        /// Sends a packet to the specified player detailing the amount of time since the game started (in seconds).
+        /// </summary>
+        /// <param name="userId">User to send the packet to.</param>
+        /// <param name="time">Time since the game started (in milliseconds).</param>
+        void NotifySynchSimTimeS2C(int userId, float time);
         /// <summary>
         /// Sends a packet to the specified player detailing the results of server's the version and game info check for the specified player.
         /// </summary>

@@ -1087,27 +1087,6 @@ namespace PacketDefinitions420
         }
 
         /// <summary>
-        /// Sends a packet to all players detailing the amount of time since the game started (in seconds).
-        /// </summary>
-        /// <param name="gameTime">Time since the game started (in milliseconds).</param>
-        public void NotifyGameTimer(float gameTime)
-        {
-            var gameTimer = new GameTimer(gameTime / 1000.0f);
-            _packetHandlerManager.BroadcastPacket(gameTimer, Channel.CHL_S2C);
-        }
-
-        /// <summary>
-        /// Sends a packet to the specified player detailing the amount of time since the game started (in seconds).
-        /// </summary>
-        /// <param name="userId">User to send the packet to.</param>
-        /// <param name="time">Time since the game started (in milliseconds).</param>
-        public void NotifyGameTimer(int userId, float time)
-        {
-            var timer = new GameTimer(time / 1000.0f);
-            _packetHandlerManager.SendPacket(userId, timer, Channel.CHL_S2C);
-        }
-
-        /// <summary>
         /// Sends a packet to the specified player detailing the amount of time since the game started (in seconds). Used to initialize the user's in-game timer.
         /// </summary>
         /// <param name="userId">User to send the packet to.</param>
@@ -2528,6 +2507,35 @@ namespace PacketDefinitions420
         {
             var minionSpawnPacket = new MinionSpawn2(netId);
             _packetHandlerManager.SendPacket(userId, minionSpawnPacket, Channel.CHL_S2C);
+        }
+
+        /// <summary>
+        /// Sends a packet to all players detailing the amount of time since the game started (in seconds).
+        /// </summary>
+        /// <param name="gameTime">Time since the game started (in milliseconds).</param>
+        public void NotifySynchSimTimeS2C(float gameTime)
+        {
+            var sync = new SynchSimTimeS2C()
+            {
+                SynchTime = gameTime / 1000.0f
+            };
+
+            _packetHandlerManager.BroadcastPacket(sync.GetBytes(), Channel.CHL_S2C);
+        }
+
+        /// <summary>
+        /// Sends a packet to the specified player detailing the amount of time since the game started (in seconds).
+        /// </summary>
+        /// <param name="userId">User to send the packet to.</param>
+        /// <param name="time">Time since the game started (in milliseconds).</param>
+        public void NotifySynchSimTimeS2C(int userId, float time)
+        {
+            var sync = new SynchSimTimeS2C()
+            {
+                SynchTime = time / 1000.0f
+            };
+
+            _packetHandlerManager.SendPacket(userId, sync.GetBytes(), Channel.CHL_S2C);
         }
 
         /// <summary>

@@ -352,7 +352,7 @@ namespace LeagueSandbox.GameServer
             _nextSyncTime += diff;
             if (_nextSyncTime >= 10 * 1000)
             {
-                PacketNotifier.NotifyGameTimer(GameTime);
+                PacketNotifier.NotifySynchSimTimeS2C(GameTime);
                 _nextSyncTime = 0;
             }
         }
