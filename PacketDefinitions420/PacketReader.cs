@@ -37,10 +37,11 @@ namespace PacketDefinitions420
         }
 
         [PacketType(GamePacketID.SynchSimTimeC2S, Channel.CHL_GAMEPLAY)]
-        public static HeartbeatRequest ReadHeartbeatRequest(byte[] data)
+        public static SyncSimTimeRequest ReadSyncSimTimeRequest(byte[] data)
         {
-            var rq = new HeartBeat(data);
-            return new HeartbeatRequest(rq.NetId, rq.ReceiveTime, rq.AckTime);
+            var sync = new SynchSimTimeC2S();
+            sync.Read(data);
+            return new SyncSimTimeRequest((int)sync.SenderNetID, sync.TimeLastClient, sync.TimeLastServer);
         }
 
         [PacketType(GamePacketID.RemoveItemReq)]
