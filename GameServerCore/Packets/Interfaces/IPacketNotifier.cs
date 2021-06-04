@@ -776,6 +776,12 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="timeOut">Time until voting becomes unavailable.</param>
         void NotifyTeamSurrenderVote(IChampion starter, bool open, bool votedYes, byte yesVotes, byte noVotes, byte maxVotes, float timeOut);
         /// <summary>
+        /// Sends a packet to all players with vision of the given unit detailing that it has teleported to the given position.
+        /// </summary>
+        /// <param name="unit">Unit that has teleported.</param>
+        /// <param name="position">Position the unit teleported to.</param>
+        void NotifyTeleport(IAttackableUnit unit, Vector2 position);
+        /// <summary>
         /// Sends a packet to all players detailing that their screen's tint is shifting to the specified color.
         /// </summary>
         /// <param name="team">TeamID to apply the tint to.</param>

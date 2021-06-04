@@ -2603,6 +2603,31 @@ namespace PacketDefinitions420
         }
 
         /// <summary>
+        /// Sends a packet to all players with vision of the given unit detailing that it has teleported to the given position.
+        /// </summary>
+        /// <param name="unit">Unit that has teleported.</param>
+        /// <param name="position">Position the unit teleported to.</param>
+        public void NotifyTeleport(IAttackableUnit unit, Vector2 position)
+        {
+            var md = new MovementDataNormal()
+            {
+                SyncID = unit.SyncId,
+                TeleportNetID = unit.NetId,
+                HasTeleportID = true,
+                TeleportID = unit.TeleportID,
+                Waypoints = new List<CompressedWaypoint> { PacketExtensions.Vector2ToWaypoint(PacketExtensions.TranslateToCenteredCoordinates(position, _navGrid)) },
+            };
+
+            var wpGroup = new WaypointGroup()
+            {
+                SyncID = unit.SyncId,
+                Movements = new List<MovementDataNormal> { md }
+            };
+
+            _packetHandlerManager.BroadcastPacketVision(unit, wpGroup.GetBytes(), Channel.CHL_LOW_PRIORITY);
+        }
+
+        /// <summary>
         /// Sends a packet to all players detailing that their screen's tint is shifting to the specified color.
         /// </summary>
         /// <param name="team">TeamID to apply the tint to.</param>

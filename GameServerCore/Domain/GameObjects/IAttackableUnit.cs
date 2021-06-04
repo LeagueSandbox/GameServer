@@ -63,6 +63,11 @@ namespace GameServerCore.Domain.GameObjects
         /// Currently these are only initialized manually by ObjAIBase and ObjBuilding.
         /// </summary>
         IStats Stats { get; }
+        /// <summary>
+        /// Variable which stores the number of times a unit has teleported. Used purely for networking.
+        /// Resets when reaching byte.MaxValue (255).
+        /// </summary>
+        byte TeleportID { get; }
 
         /// <summary>
         /// Gets the HashString for this unit's model. Used for packets so clients know what data to load.
