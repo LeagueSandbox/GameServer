@@ -1087,17 +1087,6 @@ namespace PacketDefinitions420
         }
 
         /// <summary>
-        /// Sends a packet to the specified player detailing the amount of time since the game started (in seconds). Used to initialize the user's in-game timer.
-        /// </summary>
-        /// <param name="userId">User to send the packet to.</param>
-        /// <param name="time">Time since the game started (in milliseconds).</param>
-        public void NotifyGameTimerUpdate(int userId, float time)
-        {
-            var timer = new GameTimerUpdate(time / 1000.0f);
-            _packetHandlerManager.SendPacket(userId, timer, Channel.CHL_S2C);
-        }
-
-        /// <summary>
         /// Sends a packet to all players which announces that the team which owns the specified inhibitor has an inhibitor which is respawning soon.
         /// </summary>
         /// <param name="inhibitor">Inhibitor that is respawning soon.</param>
@@ -2507,6 +2496,21 @@ namespace PacketDefinitions420
         {
             var minionSpawnPacket = new MinionSpawn2(netId);
             _packetHandlerManager.SendPacket(userId, minionSpawnPacket, Channel.CHL_S2C);
+        }
+
+        /// <summary>
+        /// Sends a packet to the specified player detailing the amount of time since the game started (in seconds). Used to initialize the user's in-game timer.
+        /// </summary>
+        /// <param name="userId">User to send the packet to.</param>
+        /// <param name="time">Time since the game started (in milliseconds).</param>
+        public void NotifySyncMissionStartTimeS2C(int userId, float time)
+        {
+            var sync = new SyncMissionStartTimeS2C()
+            {
+                StartTime = time / 1000.0f
+            };
+
+            _packetHandlerManager.SendPacket(userId, sync.GetBytes(), Channel.CHL_S2C);
         }
 
         /// <summary>

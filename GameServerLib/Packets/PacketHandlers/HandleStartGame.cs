@@ -93,7 +93,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                     // Send the initial game time sync packets, then let the map send another
                     var gameTime = _game.GameTime;
                      _game.PacketNotifier.NotifySynchSimTimeS2C(userId, gameTime);
-                     _game.PacketNotifier.NotifyGameTimerUpdate(userId, gameTime);
+                     _game.PacketNotifier.NotifySyncMissionStartTimeS2C(userId, gameTime);
 
                     return true;
                 }
@@ -105,7 +105,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                     // Send the initial game time sync packets, then let the map send another
                     var gameTime = _game.GameTime;
                      _game.PacketNotifier.NotifySynchSimTimeS2C((int) p.Item2.PlayerId, gameTime);
-                     _game.PacketNotifier.NotifyGameTimerUpdate((int) p.Item2.PlayerId, gameTime);
+                     _game.PacketNotifier.NotifySyncMissionStartTimeS2C((int) p.Item2.PlayerId, gameTime);
                 }
             }
 
