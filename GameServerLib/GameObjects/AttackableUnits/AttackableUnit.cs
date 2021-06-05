@@ -177,10 +177,17 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             {
                 List<Vector2> safePath = _game.Map.NavigationGrid.GetPath(Position, _game.Map.NavigationGrid.GetClosestTerrainExit(Waypoints.Last(), CollisionRadius));
 
+                // TODO: When using this safePath, sometimes we collide with the terrain again, so we use an unsafe path the next collision, however,
+                // sometimes we collide again before we can finish the unsafe path, so we end up looping collisions between safe and unsafe paths, never actually escaping (ex: sharp corners).
+                // This is a more fundamental issue where the pathfinding should be taking into account collision radius, rather than simply pathing from center of an object.
                 if (safePath != null)
                 {
                     SetWaypoints(safePath);
                 }
+            }
+            else if (!repath && !IsPathEnded())
+            {
+                ResetWaypoints();
             }
         }
 
@@ -239,27 +246,38 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                 return;
             }
 
-            base.OnCollision(collider, isTerrain);
-
             if (collider is ISpellMissile || collider is ISpellSector || collider is IObjBuilding)
             {
-                // TODO: Implement OnMissileCollide/Hit here.
                 return;
             }
 
+            Vector2 exit = Vector2.Zero;
+
             if (isTerrain)
             {
+                // TODO: Replace this with event listener publishing.
                 var onCollideWithTerrain = _game.ScriptEngine.GetStaticMethod<Action<IGameObject>>(Model, "Passive", "onCollideWithTerrain");
                 onCollideWithTerrain?.Invoke(this);
+
+                if (isTerrain)
+                {
+                    // only time we would collide with terrain is if we are inside of it, so we should teleport out of it.
+                    exit = _game.Map.NavigationGrid.GetClosestTerrainExit(Position, CollisionRadius + 1.0f);
+                }
             }
             else
             {
+                // TODO: Replace this with event listener publishing.
                 var onCollide = _game.ScriptEngine.GetStaticMethod<Action<IAttackableUnit, IGameObject>>(Model, "Passive", "onCollide");
                 onCollide?.Invoke(this, collider);
 
                 // Teleport out of other objects (+1 for insurance).
-                Vector2 exit = Extensions.GetCircleEscapePoint(Position, CollisionRadius + 1, collider.Position, collider.CollisionRadius);
-                TeleportTo(exit.X, exit.Y);
+                exit = Extensions.GetCircleEscapePoint(Position, CollisionRadius + 1, collider.Position, collider.CollisionRadius);
+            }
+
+            if (exit != Vector2.Zero)
+            {
+                TeleportTo(exit.X, exit.Y, true);
             }
         }
 
@@ -1041,7 +1059,13 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             return MovementParameters != null;
         }
 
-        public override void TeleportTo(float x, float y)
+        /// <summary>
+        /// Teleports this unit to the given position, and optionally repaths from the new position.
+        /// </summary>
+        /// <param name="x">X coordinate to teleport to.</param>
+        /// <param name="y">Y coordinate to teleport to.</param>
+        /// <param name="repath">Whether or not to repath from the new position.</param>
+        public void TeleportTo(float x, float y, bool repath = false)
         {
             var position = new Vector2(x, y);
 
@@ -1050,8 +1074,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                 position = _game.Map.NavigationGrid.GetClosestTerrainExit(new Vector2(x, y), CollisionRadius + 1.0f);
             }
 
-            SetWaypoints(new List<Vector2> { Position, position });
-            SetPosition(position, false);
+            SetPosition(position, repath);
             TeleportID++;
             _game.PacketNotifier.NotifyTeleport(this, position);
         }
@@ -1131,8 +1154,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                 // stop moving because we have reached our last waypoint
                 if (nextIndex >= Waypoints.Count)
                 {
-                    Waypoints = new List<Vector2> { Position };
-                    CurrentWaypoint = new KeyValuePair<int, Vector2>(1, Position);
+                    ResetWaypoints();
 
                     if (MovementParameters != null)
                     {
@@ -1162,6 +1184,15 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                 return CurrentWaypoint.Value;
             }
             return new Vector2(float.NegativeInfinity, float.NegativeInfinity);
+        }
+
+        /// <summary>
+        /// Resets this unit's waypoints.
+        /// </summary>
+        public void ResetWaypoints()
+        {
+            Waypoints = new List<Vector2> { Position };
+            CurrentWaypoint = new KeyValuePair<int, Vector2>(1, Position);
         }
 
         /// <summary>
@@ -1208,8 +1239,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                 return;
             }
 
-            Waypoints = new List<Vector2> { Position };
-            CurrentWaypoint = new KeyValuePair<int, Vector2>(1, Position);
+            ResetWaypoints();
         }
 
         /// <summary>

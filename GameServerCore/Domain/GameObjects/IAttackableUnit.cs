@@ -224,6 +224,13 @@ namespace GameServerCore.Domain.GameObjects
         /// <returns></returns>
         bool CanMove();
         /// <summary>
+        /// Teleports this unit to the given position, and optionally repaths from the new position.
+        /// </summary>
+        /// <param name="x">X coordinate to teleport to.</param>
+        /// <param name="y">Y coordinate to teleport to.</param>
+        /// <param name="repath">Whether or not to repath from the new position.</param>
+        void TeleportTo(float x, float y, bool repath = false);
+        /// <summary>
         /// Returns the next waypoint. If all waypoints have been reached then this returns a -inf Vector2
         /// </summary>
         Vector2 GetNextWaypoint();
