@@ -30,7 +30,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 
         public override bool HandlePacket(int userId, SpawnRequest req)
         {
-             _game.PacketNotifier.NotifySpawnStart(userId);
+             _game.PacketNotifier.NotifyS2C_StartSpawn(userId);
             _logger.Debug("Spawning map");
 
             var peerInfo = _playerManager.GetPeerInfo(userId);
@@ -64,7 +64,14 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             var objects = _game.ObjectManager.GetObjects();
             foreach (var kv in objects)
             {
-                if (kv.Value is ILaneTurret turret)
+                if (kv.Value is IChampion champion)
+                {
+                    if (champion.IsVisibleByTeam(peerInfo.Champion.Team))
+                    {
+                        _game.PacketNotifier.NotifyEnterVisibilityClient(champion, userId, true);
+                    }
+                }
+                else if (kv.Value is ILaneTurret turret)
                 {
                      _game.PacketNotifier.NotifyTurretSpawn(userId, turret);
 
@@ -95,13 +102,6 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                 else if (kv.Value is ILevelProp levelProp)
                 {
                      _game.PacketNotifier.NotifyLevelPropSpawn(userId, levelProp);
-                }
-                else if (kv.Value is IChampion champion)
-                {
-                    if (champion.IsVisibleByTeam(peerInfo.Champion.Team))
-                    {
-                        _game.PacketNotifier.NotifyEnterVisibilityClient(champion, userId, true);
-                    }
                 }
                 else if (kv.Value is IInhibitor || kv.Value is INexus)
                 {

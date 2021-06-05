@@ -889,7 +889,12 @@ namespace PacketDefinitions420
             }
 
             var position = particle.GetPosition3D();
-            var ownerPos = particle.Caster.GetPosition3D();
+
+            var ownerPos = position;
+            if (particle.Caster != null)
+            {
+                ownerPos = particle.Caster.GetPosition3D();
+            }
 
             var fxPacket = new FX_Create_Group();
             var fxDataList = new List<FXCreateData>();
@@ -1079,38 +1084,6 @@ namespace PacketDefinitions420
                 EnablePause = true
             };
             _packetHandlerManager.BroadcastPacket(start.GetBytes(), Channel.CHL_S2C);
-        }
-
-        /// <summary>
-        /// Sends a packet to all players detailing the amount of time since the game started (in seconds).
-        /// </summary>
-        /// <param name="gameTime">Time since the game started (in milliseconds).</param>
-        public void NotifyGameTimer(float gameTime)
-        {
-            var gameTimer = new GameTimer(gameTime / 1000.0f);
-            _packetHandlerManager.BroadcastPacket(gameTimer, Channel.CHL_S2C);
-        }
-
-        /// <summary>
-        /// Sends a packet to the specified player detailing the amount of time since the game started (in seconds).
-        /// </summary>
-        /// <param name="userId">User to send the packet to.</param>
-        /// <param name="time">Time since the game started (in milliseconds).</param>
-        public void NotifyGameTimer(int userId, float time)
-        {
-            var timer = new GameTimer(time / 1000.0f);
-            _packetHandlerManager.SendPacket(userId, timer, Channel.CHL_S2C);
-        }
-
-        /// <summary>
-        /// Sends a packet to the specified player detailing the amount of time since the game started (in seconds). Used to initialize the user's in-game timer.
-        /// </summary>
-        /// <param name="userId">User to send the packet to.</param>
-        /// <param name="time">Time since the game started (in milliseconds).</param>
-        public void NotifyGameTimerUpdate(int userId, float time)
-        {
-            var timer = new GameTimerUpdate(time / 1000.0f);
-            _packetHandlerManager.SendPacket(userId, timer, Channel.CHL_S2C);
         }
 
         /// <summary>
@@ -2190,28 +2163,6 @@ namespace PacketDefinitions420
         }
 
         /// <summary>
-        /// Sends a packet to all players detailing that the specified object has stopped playing an animation.
-        /// </summary>
-        /// <param name="obj">GameObject that is playing the animation.</param>
-        /// <param name="animation">Internal name of the animation to stop.</param>
-        /// <param name="stopAll">Whether or not to stop all animations. Only works if animation is empty/null.</param>
-        /// <param name="fade">Whether or not the animation should fade before stopping.</param>
-        /// <param name="ignoreLock">Whether or not locked animations should still be stopped.</param>
-        public void NotifyS2C_StopAnimation(IGameObject obj, string animation, bool stopAll = false, bool fade = false, bool ignoreLock = true)
-        {
-            var animPacket = new S2C_StopAnimation
-            {
-                SenderNetID = obj.NetId,
-                Fade = fade,
-                IgnoreLock = ignoreLock,
-                StopAll = stopAll,
-                AnimationName = animation
-            };
-
-            _packetHandlerManager.BroadcastPacket(animPacket.GetBytes(), Channel.CHL_S2C);
-        }
-
-        /// <summary>
         /// Sends a packet to all players with vision of the specified unit detailing that its animation states have changed to the specified animation pairs.
         /// Replaces the unit's normal animation behaviors with the given animation pairs. Structure of the animationPairs is expected to follow the same structure from before the replacement.
         /// </summary>
@@ -2278,6 +2229,48 @@ namespace PacketDefinitions420
             _packetHandlerManager.SendPacket(userId, spellLevelPacket.GetBytes(), Channel.CHL_S2C);
         }
 
+        /// <summary>
+        /// Sends a packet to the specified player detailing that the game has started the spawning GameObjects that occurs at the start of the game.
+        /// </summary>
+        /// <param name="userId">User to send the packet to.</param>
+        public void NotifyS2C_StartSpawn(int userId)
+        {
+            var start = new S2C_StartSpawn
+            {
+                // TODO: Set these values when bots are implemented.
+                BotCountOrder = 0,
+                BotCountChaos = 0
+            };
+            _packetHandlerManager.SendPacket(userId, start.GetBytes(), Channel.CHL_S2C);
+        }
+
+        /// <summary>
+        /// Sends a packet to all players detailing that the specified object has stopped playing an animation.
+        /// </summary>
+        /// <param name="obj">GameObject that is playing the animation.</param>
+        /// <param name="animation">Internal name of the animation to stop.</param>
+        /// <param name="stopAll">Whether or not to stop all animations. Only works if animation is empty/null.</param>
+        /// <param name="fade">Whether or not the animation should fade before stopping.</param>
+        /// <param name="ignoreLock">Whether or not locked animations should still be stopped.</param>
+        public void NotifyS2C_StopAnimation(IGameObject obj, string animation, bool stopAll = false, bool fade = false, bool ignoreLock = true)
+        {
+            var animPacket = new S2C_StopAnimation
+            {
+                SenderNetID = obj.NetId,
+                Fade = fade,
+                IgnoreLock = ignoreLock,
+                StopAll = stopAll,
+                AnimationName = animation
+            };
+
+            _packetHandlerManager.BroadcastPacket(animPacket.GetBytes(), Channel.CHL_S2C);
+        }
+
+        /// <summary>
+        /// Sends a packet to the given user detailing that the specified input locking flags have been toggled.
+        /// </summary>
+        /// <param name="userId">User to send the packet to.</param>
+        /// <param name="flags">InputLockFlags to toggle.</param>
         public void NotifyS2C_ToggleInputLockFlag(int userId, InputLockFlags flags)
         {
             var inputLockPacket = new S2C_ToggleInputLockFlag
@@ -2494,21 +2487,6 @@ namespace PacketDefinitions420
         }
 
         /// <summary>
-        /// Sends a packet to the specified player detailing that the game has started the spawning GameObjects that occurs at the start of the game.
-        /// </summary>
-        /// <param name="userId">User to send the packet to.</param>
-        public void NotifySpawnStart(int userId)
-        {
-            var start = new S2C_StartSpawn
-            {
-                // TODO: Set these values when bots are implemented.
-                BotCountOrder = 0,
-                BotCountChaos = 0
-            };
-            _packetHandlerManager.SendPacket(userId, start.GetBytes(), Channel.CHL_S2C);
-        }
-
-        /// <summary>
         /// Sends a packet to the specified player detailing that the GameObject associated with the specified NetID has spawned.
         /// </summary>
         /// <param name="userId">User to send the packet to.</param>
@@ -2518,6 +2496,50 @@ namespace PacketDefinitions420
         {
             var minionSpawnPacket = new MinionSpawn2(netId);
             _packetHandlerManager.SendPacket(userId, minionSpawnPacket, Channel.CHL_S2C);
+        }
+
+        /// <summary>
+        /// Sends a packet to the specified player detailing the amount of time since the game started (in seconds). Used to initialize the user's in-game timer.
+        /// </summary>
+        /// <param name="userId">User to send the packet to.</param>
+        /// <param name="time">Time since the game started (in milliseconds).</param>
+        public void NotifySyncMissionStartTimeS2C(int userId, float time)
+        {
+            var sync = new SyncMissionStartTimeS2C()
+            {
+                StartTime = time / 1000.0f
+            };
+
+            _packetHandlerManager.SendPacket(userId, sync.GetBytes(), Channel.CHL_S2C);
+        }
+
+        /// <summary>
+        /// Sends a packet to all players detailing the amount of time since the game started (in seconds).
+        /// </summary>
+        /// <param name="gameTime">Time since the game started (in milliseconds).</param>
+        public void NotifySynchSimTimeS2C(float gameTime)
+        {
+            var sync = new SynchSimTimeS2C()
+            {
+                SynchTime = gameTime / 1000.0f
+            };
+
+            _packetHandlerManager.BroadcastPacket(sync.GetBytes(), Channel.CHL_S2C);
+        }
+
+        /// <summary>
+        /// Sends a packet to the specified player detailing the amount of time since the game started (in seconds).
+        /// </summary>
+        /// <param name="userId">User to send the packet to.</param>
+        /// <param name="time">Time since the game started (in milliseconds).</param>
+        public void NotifySynchSimTimeS2C(int userId, float time)
+        {
+            var sync = new SynchSimTimeS2C()
+            {
+                SynchTime = time / 1000.0f
+            };
+
+            _packetHandlerManager.SendPacket(userId, sync.GetBytes(), Channel.CHL_S2C);
         }
 
         /// <summary>
@@ -2578,6 +2600,31 @@ namespace PacketDefinitions420
                 TimeOut = timeOut,
             };
             _packetHandlerManager.BroadcastPacketTeam(starter.Team, surrender.GetBytes(), Channel.CHL_S2C);
+        }
+
+        /// <summary>
+        /// Sends a packet to all players with vision of the given unit detailing that it has teleported to the given position.
+        /// </summary>
+        /// <param name="unit">Unit that has teleported.</param>
+        /// <param name="position">Position the unit teleported to.</param>
+        public void NotifyTeleport(IAttackableUnit unit, Vector2 position)
+        {
+            var md = new MovementDataNormal()
+            {
+                SyncID = unit.SyncId,
+                TeleportNetID = unit.NetId,
+                HasTeleportID = true,
+                TeleportID = unit.TeleportID,
+                Waypoints = new List<CompressedWaypoint> { PacketExtensions.Vector2ToWaypoint(PacketExtensions.TranslateToCenteredCoordinates(position, _navGrid)) },
+            };
+
+            var wpGroup = new WaypointGroup()
+            {
+                SyncID = unit.SyncId,
+                Movements = new List<MovementDataNormal> { md }
+            };
+
+            _packetHandlerManager.BroadcastPacketVision(unit, wpGroup.GetBytes(), Channel.CHL_LOW_PRIORITY);
         }
 
         /// <summary>

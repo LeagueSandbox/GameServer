@@ -303,23 +303,6 @@ namespace GameServerCore.Packets.Interfaces
         /// </summary>
         void NotifyGameStart();
         /// <summary>
-        /// Sends a packet to all players detailing the amount of time since the game started (in seconds).
-        /// </summary>
-        /// <param name="gameTime">Time since the game started (in milliseconds).</param>
-        void NotifyGameTimer(float gameTime);
-        /// <summary>
-        /// Sends a packet to the specified player detailing the amount of time since the game started (in seconds).
-        /// </summary>
-        /// <param name="userId">User to send the packet to.</param>
-        /// <param name="time">Time since the game started (in milliseconds).</param>
-        void NotifyGameTimer(int userId, float time);
-        /// <summary>
-        /// Sends a packet to the specified player detailing the amount of time since the game started (in seconds). Used to initialize the user's in-game timer.
-        /// </summary>
-        /// <param name="userId">User to send the packet to.</param>
-        /// <param name="time">Time since the game started (in milliseconds).</param>
-        void NotifyGameTimerUpdate(int userId, float time);
-        /// <summary>
         /// Sends a packet to all players which announces that the team which owns the specified inhibitor has an inhibitor which is respawning soon.
         /// </summary>
         /// <param name="inhibitor">Inhibitor that is respawning soon.</param>
@@ -628,15 +611,6 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="pause">Whether or not to pause/unpause animations.</param>
         void NotifyS2C_PauseAnimation(IGameObject obj, bool pause);
         /// <summary>
-        /// Sends a packet to all players detailing that the specified object has stopped playing an animation.
-        /// </summary>
-        /// <param name="obj">GameObject that is playing the animation.</param>
-        /// <param name="animation">Internal name of the animation to stop.</param>
-        /// <param name="stopAll">Whether or not to stop all animations. Only works if animation is empty/null.</param>
-        /// <param name="fade">Whether or not the animation should fade before stopping.</param>
-        /// <param name="ignoreLock">Whether or not locked animations should still be stopped.</param>
-        void NotifyS2C_StopAnimation(IGameObject obj, string animation, bool stopAll = false, bool fade = false, bool ignoreLock = true);
-        /// <summary>
         /// Sends a packet to all players with vision of the specified unit detailing that its animation states have changed to the specified animation pairs.
         /// Replaces the unit's normal animation behaviors with the given animation pairs. Structure of the animationPairs is expected to follow the same structure from before the replacement.
         /// </summary>
@@ -659,6 +633,26 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="slot">Slot of the spell being changed.</param>
         /// <param name="level">New level of the spell to set.</param>
         void NotifyS2C_SetSpellLevel(int userId, uint netId, int slot, int level);
+        /// <summary>
+        /// Sends a packet to the specified player detailing that the game has started the spawning GameObjects that occurs at the start of the game.
+        /// </summary>
+        /// <param name="userId">User to send the packet to.</param>
+        void NotifyS2C_StartSpawn(int userId);
+        /// <summary>
+        /// Sends a packet to all players detailing that the specified object has stopped playing an animation.
+        /// </summary>
+        /// <param name="obj">GameObject that is playing the animation.</param>
+        /// <param name="animation">Internal name of the animation to stop.</param>
+        /// <param name="stopAll">Whether or not to stop all animations. Only works if animation is empty/null.</param>
+        /// <param name="fade">Whether or not the animation should fade before stopping.</param>
+        /// <param name="ignoreLock">Whether or not locked animations should still be stopped.</param>
+        void NotifyS2C_StopAnimation(IGameObject obj, string animation, bool stopAll = false, bool fade = false, bool ignoreLock = true);
+        /// <summary>
+        /// Sends a packet to the given user detailing that the specified input locking flags have been toggled.
+        /// </summary>
+        /// <param name="userId">User to send the packet to.</param>
+        /// <param name="flags">InputLockFlags to toggle.</param>
+        void NotifyS2C_ToggleInputLockFlag(int userId, InputLockFlags flags);
         /// <summary>
         /// Sends a packet to all players with vision of the specified attacker that it it looking at the specified attacked unit with the given AttackType.
         /// </summary>
@@ -729,17 +723,29 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="userId">User to send the packet to.</param>
         void NotifySpawnEnd(int userId);
         /// <summary>
-        /// Sends a packet to the specified player detailing that the game has started the spawning GameObjects that occurs at the start of the game.
-        /// </summary>
-        /// <param name="userId">User to send the packet to.</param>
-        void NotifySpawnStart(int userId);
-        /// <summary>
         /// Sends a packet to the specified player detailing that the GameObject associated with the specified NetID has spawned.
         /// </summary>
         /// <param name="userId">User to send the packet to.</param>
         /// <param name="netId">NetID of the GameObject that has spawned.</param>
         /// TODO: Remove this and replace all usages with NotifyEnterVisibilityClient, refer to the MinionSpawn2 packet as it uses the same packet command.
         void NotifyStaticObjectSpawn(int userId, uint netId);
+        /// <summary>
+        /// Sends a packet to the specified player detailing the amount of time since the game started (in seconds). Used to initialize the user's in-game timer.
+        /// </summary>
+        /// <param name="userId">User to send the packet to.</param>
+        /// <param name="time">Time since the game started (in milliseconds).</param>
+        void NotifySyncMissionStartTimeS2C(int userId, float time);
+        /// <summary>
+        /// Sends a packet to all players detailing the amount of time since the game started (in seconds).
+        /// </summary>
+        /// <param name="gameTime">Time since the game started (in milliseconds).</param>
+        void NotifySynchSimTimeS2C(float gameTime);
+        /// <summary>
+        /// Sends a packet to the specified player detailing the amount of time since the game started (in seconds).
+        /// </summary>
+        /// <param name="userId">User to send the packet to.</param>
+        /// <param name="time">Time since the game started (in milliseconds).</param>
+        void NotifySynchSimTimeS2C(int userId, float time);
         /// <summary>
         /// Sends a packet to the specified player detailing the results of server's the version and game info check for the specified player.
         /// </summary>
@@ -769,6 +775,12 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="maxVotes">Maximum number of votes possible.</param>
         /// <param name="timeOut">Time until voting becomes unavailable.</param>
         void NotifyTeamSurrenderVote(IChampion starter, bool open, bool votedYes, byte yesVotes, byte noVotes, byte maxVotes, float timeOut);
+        /// <summary>
+        /// Sends a packet to all players with vision of the given unit detailing that it has teleported to the given position.
+        /// </summary>
+        /// <param name="unit">Unit that has teleported.</param>
+        /// <param name="position">Position the unit teleported to.</param>
+        void NotifyTeleport(IAttackableUnit unit, Vector2 position);
         /// <summary>
         /// Sends a packet to all players detailing that their screen's tint is shifting to the specified color.
         /// </summary>

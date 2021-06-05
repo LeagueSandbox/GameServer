@@ -62,6 +62,10 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// </summary>
         public IStats Stats { get; protected set; }
         /// <summary>
+        /// Variable which stores the number of times a unit has teleported. Used purely for networking.
+        /// </summary>
+        public byte TeleportID { get; protected set; }
+        /// <summary>
         /// Array of buff slots which contains all parent buffs (oldest buff of a given name) applied to this AI.
         /// Maximum of 256 slots, hard limit due to packets.
         /// </summary>
@@ -157,6 +161,27 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             }
 
             return HashFunctions.HashStringNorm(gobj);
+        }
+
+        /// <summary>
+        /// Sets the server-sided position of this object. Optionally takes into account the AI's current waypoints.
+        /// </summary>
+        /// <param name="vec">Position to set.</param>
+        /// <param name="repath">Whether or not to repath the AI from the given position (assuming it has a path).</param>
+        public void SetPosition(Vector2 vec, bool repath = true)
+        {
+            Position = vec;
+
+            // Reevaluate our current path to account for the starting position being changed.
+            if (repath && !IsPathEnded())
+            {
+                List<Vector2> safePath = _game.Map.NavigationGrid.GetPath(Position, _game.Map.NavigationGrid.GetClosestTerrainExit(Waypoints.Last(), CollisionRadius));
+
+                if (safePath != null)
+                {
+                    SetWaypoints(safePath);
+                }
+            }
         }
 
         public override void Update(float diff)
@@ -1025,10 +1050,10 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                 position = _game.Map.NavigationGrid.GetClosestTerrainExit(new Vector2(x, y), CollisionRadius + 1.0f);
             }
 
-            // TODO: Verify if we should move this to ApiFunctionManager as an optional parameter.
             SetWaypoints(new List<Vector2> { Position, position });
-
-            SetPosition(position);
+            SetPosition(position, false);
+            TeleportID++;
+            _game.PacketNotifier.NotifyTeleport(this, position);
         }
 
         /// <summary>
@@ -1106,15 +1131,15 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                 // stop moving because we have reached our last waypoint
                 if (nextIndex >= Waypoints.Count)
                 {
+                    Waypoints = new List<Vector2> { Position };
+                    CurrentWaypoint = new KeyValuePair<int, Vector2>(1, Position);
+
                     if (MovementParameters != null)
                     {
                         SetDashingState(false);
-                        Waypoints = new List<Vector2> { Position };
-                        CurrentWaypoint = new KeyValuePair<int, Vector2>(1, Position);
                         return true;
                     }
 
-                    StopMovement();
                     return true;
                 }
                 // start moving to our next waypoint

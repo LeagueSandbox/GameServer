@@ -13,6 +13,7 @@ namespace Spells
     {
         public ISpellScriptMetadata ScriptMetadata { get; private set; } = new SpellScriptMetadata()
         {
+            NotSingleTargetSpell = true
             // TODO
         };
 
@@ -45,8 +46,9 @@ namespace Spells
             owner.StopChanneling(ChannelingStopCondition.Cancel, ChannelingStopSource.Move);
 
             AddParticle(owner, null, "global_ss_flash.troy", owner.Position);
-            TeleportTo(owner, trueCoords.X, trueCoords.Y);
             AddParticleTarget(owner, owner, "global_ss_flash_02.troy", owner);
+
+            TeleportTo(owner, trueCoords.X, trueCoords.Y);
         }
 
         public void OnSpellCast(ISpell spell)

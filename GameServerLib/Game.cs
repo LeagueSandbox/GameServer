@@ -215,7 +215,7 @@ namespace LeagueSandbox.GameServer
             RequestHandler.Register<SpellChargeUpdateReq>(new HandleSpellChargeUpdateReq(this).HandlePacket);
             RequestHandler.Register<EmotionPacketRequest>(new HandleEmotion(this).HandlePacket);
             RequestHandler.Register<ExitRequest>(new HandleExit(this).HandlePacket);
-            RequestHandler.Register<HeartbeatRequest>(new HandleHeartBeat(this).HandlePacket);
+            RequestHandler.Register<SyncSimTimeRequest>(new HandleSyncSimTime(this).HandlePacket);
             RequestHandler.Register<PingLoadInfoRequest>(new HandleLoadPing(this).HandlePacket);
             RequestHandler.Register<LockCameraRequest>(new HandleLockCamera(this).HandlePacket);
             RequestHandler.Register<MapRequest>(new HandleMap(this).HandlePacket);
@@ -352,7 +352,7 @@ namespace LeagueSandbox.GameServer
             _nextSyncTime += diff;
             if (_nextSyncTime >= 10 * 1000)
             {
-                PacketNotifier.NotifyGameTimer(GameTime);
+                PacketNotifier.NotifySynchSimTimeS2C(GameTime);
                 _nextSyncTime = 0;
             }
         }

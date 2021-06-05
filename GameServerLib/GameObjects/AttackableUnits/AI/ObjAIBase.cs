@@ -198,22 +198,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             }
         }
 
-        public override void SetPosition(Vector2 vec)
-        {
-            Position = vec;
-
-            // Reevaluate our current path to account for the starting position being changed.
-            if (!IsPathEnded())
-            {
-                List<Vector2> safePath = _game.Map.NavigationGrid.GetPath(Position, _game.Map.NavigationGrid.GetClosestTerrainExit(Waypoints.Last(), CollisionRadius));
-
-                if (safePath != null)
-                {
-                    SetWaypoints(safePath);
-                }
-            }
-        }
-
         /// <summary>
         /// Function called by this AI's auto attack projectile when it hits its target.
         /// </summary>
