@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Numerics;
 using GameServerCore.Domain;
 using LeagueSandbox.GameServer.Content;
@@ -75,6 +76,12 @@ namespace LeagueSandbox.GameServer
 
             // Read where the content is
             ContentPath = (string)gameInfo.SelectToken("CONTENT_PATH");
+            
+            // Evaluate if content path is correct, if not try to path traversal to find it
+            if (!Directory.Exists(ContentPath))
+            {
+                ContentPath = getContentPath();
+            }
 
             // Read global damage text setting
             IsDamageTextGlobal = (bool) gameInfo.SelectToken("IS_DAMAGE_TEXT_GLOBAL");
@@ -89,6 +96,30 @@ namespace LeagueSandbox.GameServer
             // Read data & spawns info
             MapData = ContentManager.GetMapData(GameConfig.Map);
             MapSpawns = ContentManager.GetMapSpawns(GameConfig.Map);
+        }
+
+        private string getContentPath()
+        {
+            string result = null;
+            var path = new DirectoryInfo(Directory.GetCurrentDirectory());
+
+            while (result == null) {
+                if (path == null) {
+                    break;
+                }
+
+                var directory = path.GetDirectories().Where(c => c.Name.Equals("Content")).ToArray();
+
+                if (directory.Length == 1)
+                {
+                    result = directory[0].FullName;
+                }
+                else
+                {
+                    path = path.Parent;
+                }
+            }
+            return result;
         }
     }
 
