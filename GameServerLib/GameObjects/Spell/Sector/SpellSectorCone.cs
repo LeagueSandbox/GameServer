@@ -79,7 +79,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Sector
             // Get the current direction of the sector
             var angleDir = Extensions.UnitVectorToAngle(new Vector2(Direction.X, Direction.Z));
             // Get the left and round bounds of the collider (from the sector's perspective)
-            var colliderBounds = Extensions.CastRayCircle(Position, collider.Position, collider.CollisionRadius);
+            var colliderBounds = Extensions.CastRayCircleBounds(Position, collider.Position, collider.CollisionRadius);
 
             // True if the angle from the sector to either the left or right bounds is within the ConeAngle.
             return MathF.Abs(Position.AngleTo(colliderBounds[0], Position) - angleDir) <= Parameters.ConeAngle

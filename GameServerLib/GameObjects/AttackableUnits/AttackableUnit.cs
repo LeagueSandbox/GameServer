@@ -240,19 +240,11 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// <param name="isTerrain">Whether or not this AI collided with terrain.</param>
         public override void OnCollision(IGameObject collider, bool isTerrain = false)
         {
-            // TODO: Account for dashes that collide with terrain.
-            if (MovementParameters != null)
-            {
-                return;
-            }
-
             // We do not want to teleport out of missiles, sectors, or buildings. Buildings in particular are already baked into the Navigation Grid.
             if (collider is ISpellMissile || collider is ISpellSector || collider is IObjBuilding)
             {
                 return;
             }
-
-            Vector2 exit = Vector2.Zero;
 
             if (isTerrain)
             {
@@ -260,8 +252,14 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                 var onCollideWithTerrain = _game.ScriptEngine.GetStaticMethod<Action<IGameObject>>(Model, "Passive", "onCollideWithTerrain");
                 onCollideWithTerrain?.Invoke(this);
 
+                if (MovementParameters != null)
+                {
+                    return;
+                }
+
                 // only time we would collide with terrain is if we are inside of it, so we should teleport out of it.
-                exit = _game.Map.NavigationGrid.GetClosestTerrainExit(Position, CollisionRadius + 1.0f);
+                Vector2 exit = _game.Map.NavigationGrid.GetClosestTerrainExit(Position, CollisionRadius + 1.0f);
+                TeleportTo(exit.X, exit.Y, true);
             }
             else
             {
@@ -269,12 +267,9 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                 var onCollide = _game.ScriptEngine.GetStaticMethod<Action<IAttackableUnit, IGameObject>>(Model, "Passive", "onCollide");
                 onCollide?.Invoke(this, collider);
 
-                // Teleport out of other objects (+1 for insurance).
-                exit = Extensions.GetCircleEscapePoint(Position, CollisionRadius + 1, collider.Position, collider.CollisionRadius);
-            }
-
-            if (exit != Vector2.Zero)
-            {
+                // We should not teleport here because Pathfinding should handle it.
+                // TODO: Implement a PathfindingHandler, and remove currently implemented manual pathfinding.
+                Vector2 exit = Extensions.GetCircleEscapePoint(Position, CollisionRadius + 1, collider.Position, collider.CollisionRadius);
                 TeleportTo(exit.X, exit.Y, true);
             }
         }

@@ -353,18 +353,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             _game.ObjectManager.StopTargeting(this);
         }
 
-        public override void OnCollision(IGameObject collider, bool isTerrain = false)
-        {
-            // TODO: Pathfinding should be responsible for pathing around units so collisions with other units never occur (or at least very little).
-            // As a result, collisions for Champions should only occur between buildings and terrain.
-            if (!(collider is IBaseTurret || isTerrain == true))
-            {
-                return;
-            }
-
-            base.OnCollision(collider, isTerrain);
-        }
-
         public override void TakeDamage(IAttackableUnit attacker, float damage, DamageType type, DamageSource source, bool isCrit)
         {
             base.TakeDamage(attacker, damage, type, source, isCrit);
