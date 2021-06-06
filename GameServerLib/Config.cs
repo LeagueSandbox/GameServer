@@ -80,7 +80,7 @@ namespace LeagueSandbox.GameServer
             // Evaluate if content path is correct, if not try to path traversal to find it
             if (!Directory.Exists(ContentPath))
             {
-                ContentPath = getContentPath();
+                ContentPath = GetContentPath();
             }
 
             // Read global damage text setting
@@ -98,13 +98,15 @@ namespace LeagueSandbox.GameServer
             MapSpawns = ContentManager.GetMapSpawns(GameConfig.Map);
         }
 
-        private string getContentPath()
+        private string GetContentPath()
         {
             string result = null;
             var path = new DirectoryInfo(Directory.GetCurrentDirectory());
 
-            while (result == null) {
-                if (path == null) {
+            while (result == null)
+            {
+                if (path == null)
+                {
                     break;
                 }
 
@@ -119,6 +121,7 @@ namespace LeagueSandbox.GameServer
                     path = path.Parent;
                 }
             }
+
             return result;
         }
     }
