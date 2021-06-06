@@ -246,6 +246,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                 return;
             }
 
+            // We do not want to teleport out of missiles, sectors, or buildings. Buildings in particular are already baked into the Navigation Grid.
             if (collider is ISpellMissile || collider is ISpellSector || collider is IObjBuilding)
             {
                 return;
@@ -259,11 +260,8 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                 var onCollideWithTerrain = _game.ScriptEngine.GetStaticMethod<Action<IGameObject>>(Model, "Passive", "onCollideWithTerrain");
                 onCollideWithTerrain?.Invoke(this);
 
-                if (isTerrain)
-                {
-                    // only time we would collide with terrain is if we are inside of it, so we should teleport out of it.
-                    exit = _game.Map.NavigationGrid.GetClosestTerrainExit(Position, CollisionRadius + 1.0f);
-                }
+                // only time we would collide with terrain is if we are inside of it, so we should teleport out of it.
+                exit = _game.Map.NavigationGrid.GetClosestTerrainExit(Position, CollisionRadius + 1.0f);
             }
             else
             {
