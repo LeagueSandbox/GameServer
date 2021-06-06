@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Numerics;
+using System.Reflection;
 using GameServerCore.Domain;
 using LeagueSandbox.GameServer.Content;
 using Newtonsoft.Json.Linq;
@@ -101,7 +102,9 @@ namespace LeagueSandbox.GameServer
         private string GetContentPath()
         {
             string result = null;
-            var path = new DirectoryInfo(Directory.GetCurrentDirectory());
+            
+            var executionDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            var path = new DirectoryInfo(executionDirectory ?? Directory.GetCurrentDirectory());
 
             while (result == null)
             {
