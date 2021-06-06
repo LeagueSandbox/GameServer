@@ -353,31 +353,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             _game.ObjectManager.StopTargeting(this);
         }
 
-        public override void OnCollision(IGameObject collider, bool isTerrain = false)
-        {
-            // TODO: Pathfinding should be responsible for pathing around units so collisions with other units never occur (or at least very little).
-            // Collisions only occur between buildings.
-            if (MovementParameters != null || !(collider is IObjBuilding || collider is IBaseTurret || isTerrain == true))
-            {
-                return;
-            }
-
-            base.OnCollision(collider, isTerrain);
-            if (isTerrain)
-            {
-                //CORE_INFO("I bumped into a wall!");
-            }
-            // Champions are only teleported if they collide with other Champions.
-            // TODO: Implement Collision Priority
-            // TODO: Implement dynamic navigation grid for buildings and turrets.
-            else if (collider is IChampion || collider is IBaseTurret)
-            {
-                // Teleport out of other objects (+1 for insurance).
-                Vector2 exit = Extensions.GetCircleEscapePoint(Position, CollisionRadius * 2, collider.Position, collider.CollisionRadius);
-                TeleportTo(exit.X, exit.Y);
-            }
-        }
-
         public override void TakeDamage(IAttackableUnit attacker, float damage, DamageType type, DamageSource source, bool isCrit)
         {
             base.TakeDamage(attacker, damage, type, source, isCrit);

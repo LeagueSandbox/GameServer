@@ -8,7 +8,7 @@ using UltimateQuadTree;
 namespace LeagueSandbox.GameServer.GameObjects.Other
 {
     /// <summary>
-    /// Class which calls to collision based functions for GameObjects.
+    /// Class which calls collision based functions for GameObjects.
     /// </summary>
     public class CollisionHandler : ICollisionHandler
     {

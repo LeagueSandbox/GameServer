@@ -364,14 +364,14 @@ namespace GameServerCore
         }
 
         /// <summary>
-        /// Effectively casts two rays from point p to the left and right boundaries of a given circle.
+        /// Casts two rays from point p to the left and right boundaries of a given circle.
         /// </summary>
         /// <param name="p">Point to cast the rays from.</param>
         /// <param name="c">Center of the circle.</param>
         /// <param name="r">Radius of the circle.</param>
         /// <returns>Array of 2 points representing the left and right bounds of the circle respectively.</returns>
         /// TODO: Could probably be more efficient by using an alternative to Cos and Sin.
-        public static Vector2[] CastRayCircle(Vector2 p, Vector2 c, float r)
+        public static Vector2[] CastRayCircleBounds(Vector2 p, Vector2 c, float r)
         {
             var angleToCenter = p.AngleTo(c, p);
             var angleToLeft = angleToCenter + 270f;
