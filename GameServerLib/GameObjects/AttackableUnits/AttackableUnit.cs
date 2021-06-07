@@ -725,9 +725,8 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                     ParentBuffs[b.Name].ResetTimeElapsed();
 
                     if (ParentBuffs[b.Name].StackCount < ParentBuffs[b.Name].MaxStacks)
-                    {
                         ParentBuffs[b.Name].ActivateBuff();
-                    }
+
                     ParentBuffs[b.Name].IncrementStackCount();
 
                     if (!b.IsHidden)
