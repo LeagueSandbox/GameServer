@@ -723,12 +723,10 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
 
                     // Refresh the time of the parent buff and adds a stack if Max Stacks wasn't reached.
                     ParentBuffs[b.Name].ResetTimeElapsed();
-
-                    if (ParentBuffs[b.Name].StackCount < ParentBuffs[b.Name].MaxStacks)
+                    if (ParentBuffs[b.Name].IncrementStackCount())
                     {
                         ParentBuffs[b.Name].ActivateBuff();
                     }
-                    ParentBuffs[b.Name].IncrementStackCount();
 
                     if (!b.IsHidden)
                     {
