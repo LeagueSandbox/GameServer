@@ -215,13 +215,13 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
             Level++;
 
             StatsModifier statsLevelUp = new StatsModifier();
-            statsLevelUp.HealthPoints.BaseBonus = HealthPerLevel;
-            statsLevelUp.ManaPoints.BaseBonus = ManaPerLevel;
-            statsLevelUp.AttackDamage.BaseBonus = AdPerLevel;
-            statsLevelUp.Armor.BaseBonus = ArmorPerLevel;
-            statsLevelUp.MagicResist.BaseBonus = MagicResistPerLevel;
-            statsLevelUp.HealthRegeneration.BaseBonus = HealthRegenerationPerLevel;
-            statsLevelUp.ManaRegeneration.BaseBonus = ManaRegenerationPerLevel;
+            statsLevelUp.HealthPoints.BaseValue = HealthPerLevel;
+            statsLevelUp.ManaPoints.BaseValue = ManaPerLevel;
+            statsLevelUp.AttackDamage.BaseValue = AdPerLevel;
+            statsLevelUp.Armor.BaseValue = ArmorPerLevel;
+            statsLevelUp.MagicResist.BaseValue = MagicResistPerLevel;
+            statsLevelUp.HealthRegeneration.BaseValue = HealthRegenerationPerLevel;
+            statsLevelUp.ManaRegeneration.BaseValue = ManaRegenerationPerLevel;
             if (Level > 1)
             {
                 statsLevelUp.AttackSpeed.PercentBaseBonus = GrowthAttackSpeed / 100.0f;
