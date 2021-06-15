@@ -214,23 +214,22 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
         {
             Level++;
 
-            HealthPoints.BaseValue += HealthPerLevel;
-            CurrentHealth = HealthPoints.Total / (HealthPoints.Total - HealthPerLevel) * CurrentHealth;
-            ManaPoints.BaseValue = ManaPoints.Total + ManaPerLevel;
-            CurrentMana = ManaPoints.Total / (ManaPoints.Total - ManaPerLevel) * CurrentMana;
-            AttackDamage.BaseValue += AdPerLevel;
-            Armor.BaseValue += ArmorPerLevel;
-            MagicResist.BaseValue += MagicResistPerLevel;
-            HealthRegeneration.BaseValue += HealthRegenerationPerLevel;
-            ManaRegeneration.BaseValue += ManaRegenerationPerLevel;
-
+            StatsModifier statsLevelUp = new StatsModifier();
+            statsLevelUp.HealthPoints.BaseValue = HealthPerLevel;
+            statsLevelUp.ManaPoints.BaseValue = ManaPerLevel;
+            statsLevelUp.AttackDamage.BaseValue = AdPerLevel;
+            statsLevelUp.Armor.BaseValue = ArmorPerLevel;
+            statsLevelUp.MagicResist.BaseValue = MagicResistPerLevel;
+            statsLevelUp.HealthRegeneration.BaseValue = HealthRegenerationPerLevel;
+            statsLevelUp.ManaRegeneration.BaseValue = ManaRegenerationPerLevel;
             if (Level > 1)
             {
-                AttackSpeedMultiplier.ApplyStatModifier(new StatModifier
-                {
-                    PercentBaseBonus = (GrowthAttackSpeed / 100.0f)
-                });
+                statsLevelUp.AttackSpeed.PercentBaseBonus = GrowthAttackSpeed / 100.0f;
             }
+            AddModifier(statsLevelUp);
+
+            CurrentHealth = HealthPoints.Total / (HealthPoints.Total - HealthPerLevel) * CurrentHealth;
+            CurrentMana = ManaPoints.Total / (ManaPoints.Total - ManaPerLevel) * CurrentMana;
         }
 
         public bool GetSpellEnabled(byte id)
