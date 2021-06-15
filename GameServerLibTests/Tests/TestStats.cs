@@ -31,7 +31,7 @@ namespace LeagueSandbox.GameServerTests.Tests
         [TestMethod]
         public void TestLevelUp()
         {
-            var stats = new Stats();  
+            var stats = new Stats();
 
             Assert.AreEqual(0, stats.Level);
 
