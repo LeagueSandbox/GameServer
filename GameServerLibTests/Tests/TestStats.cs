@@ -31,7 +31,7 @@ namespace LeagueSandbox.GameServerTests.Tests
         [TestMethod]
         public void TestLevelUp()
         {
-            Stats stats = new Stats();  
+            var stats = new Stats();
 
             Assert.AreEqual(0, stats.Level);
 
@@ -39,13 +39,13 @@ namespace LeagueSandbox.GameServerTests.Tests
 
             Assert.AreEqual(1, stats.Level);
 
-            Assert.AreEqual(0, stats.AttackDamage.BaseBonus);
-            Assert.AreEqual(0, stats.Armor.BaseBonus);
-            Assert.AreEqual(0, stats.HealthPoints.BaseBonus);
-            Assert.AreEqual(0, stats.HealthRegeneration.BaseBonus);
-            Assert.AreEqual(0, stats.MagicResist.BaseBonus);
-            Assert.AreEqual(0, stats.ManaPoints.BaseBonus);
-            Assert.AreEqual(0, stats.ManaRegeneration.BaseBonus);
+            Assert.AreEqual(0, stats.AttackDamage.BaseValue);
+            Assert.AreEqual(0, stats.Armor.BaseValue);
+            Assert.AreEqual(0, stats.HealthPoints.BaseValue);
+            Assert.AreEqual(0, stats.HealthRegeneration.BaseValue);
+            Assert.AreEqual(0, stats.MagicResist.BaseValue);
+            Assert.AreEqual(0, stats.ManaPoints.BaseValue);
+            Assert.AreEqual(0, stats.ManaRegeneration.BaseValue);
 
             stats.AdPerLevel = 1;
             stats.ArmorPerLevel = 2;
@@ -59,13 +59,13 @@ namespace LeagueSandbox.GameServerTests.Tests
 
             Assert.AreEqual(2, stats.Level);
 
-            Assert.AreEqual(1, stats.AttackDamage.BaseBonus);
-            Assert.AreEqual(2, stats.Armor.BaseBonus);
-            Assert.AreEqual(3, stats.HealthPoints.BaseBonus);
-            Assert.AreEqual(4, stats.HealthRegeneration.BaseBonus);
-            Assert.AreEqual(5, stats.MagicResist.BaseBonus);
-            Assert.AreEqual(6, stats.ManaPoints.BaseBonus);
-            Assert.AreEqual(7, stats.ManaRegeneration.BaseBonus);
+            Assert.AreEqual(1, stats.AttackDamage.BaseValue);
+            Assert.AreEqual(2, stats.Armor.BaseValue);
+            Assert.AreEqual(3, stats.HealthPoints.BaseValue);
+            Assert.AreEqual(4, stats.HealthRegeneration.BaseValue);
+            Assert.AreEqual(5, stats.MagicResist.BaseValue);
+            Assert.AreEqual(6, stats.ManaPoints.BaseValue);
+            Assert.AreEqual(7, stats.ManaRegeneration.BaseValue);
         }
 
         [TestMethod]
