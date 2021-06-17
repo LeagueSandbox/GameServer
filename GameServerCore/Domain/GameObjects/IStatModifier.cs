@@ -2,6 +2,7 @@
 {
     public interface IStatModifier
     {
+        float BaseValue { get; set; }
         float BaseBonus { get; set; }
         float PercentBaseBonus { get; set; }
         float FlatBonus { get; set; }

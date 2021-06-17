@@ -10,6 +10,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.Buildings.Animate
     public class Inhibitor : ObjAnimatedBuilding, IInhibitor
     {
         private Timer _respawnTimer;
+        public LaneID Lane { get; private set; }
         public InhibitorState InhibitorState { get; private set; }
         private const double RESPAWN_TIMER = 5 * 60 * 1000;
         private const double RESPAWN_ANNOUNCE = 1 * 60 * 1000;
@@ -21,6 +22,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.Buildings.Animate
         public Inhibitor(
             Game game,
             string model,
+            LaneID laneId,
             TeamId team,
             int collisionRadius = 40,
             Vector2 position = new Vector2(),
@@ -31,6 +33,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.Buildings.Animate
             Stats.CurrentHealth = 4000;
             Stats.HealthPoints.BaseValue = 4000;
             InhibitorState = InhibitorState.ALIVE;
+            Lane = laneId;
         }
 
         public override void OnAdded()
@@ -52,7 +55,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.Buildings.Animate
             }
 
             _respawnTimer?.Stop();
-            _respawnTimer = new Timer(RESPAWN_TIMER) {AutoReset = false};
+            _respawnTimer = new Timer(RESPAWN_TIMER) { AutoReset = false };
 
             _respawnTimer.Elapsed += (a, b) =>
             {

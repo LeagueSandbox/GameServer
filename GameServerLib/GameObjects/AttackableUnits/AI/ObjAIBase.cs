@@ -402,6 +402,10 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             float travelTime
         )
         {
+            SetWaypoints(new List<Vector2> { Position, target.Position }, false);
+
+            SetTargetUnit(target, true);
+
             // TODO: Take into account the rest of the arguments
             MovementParameters = new ForceMovementParameters
             {
@@ -416,22 +420,15 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             };
             DashElapsedTime = 0;
 
-            // TODO: Verify if this should be a parameter
-            Stats.SetActionState(ActionState.CAN_ATTACK, false);
-            Stats.SetActionState(ActionState.CAN_NOT_ATTACK, true);
-            Stats.SetActionState(ActionState.CAN_MOVE, false);
-            Stats.SetActionState(ActionState.CAN_NOT_MOVE, true);
+            _game.PacketNotifier.NotifyWaypointGroupWithSpeed(this);
+
+            SetDashingState(true);
 
             if (animation != null && animation != "")
             {
                 var animPairs = new Dictionary<string, string> { { "RUN", animation } };
                 SetAnimStates(animPairs);
             }
-
-            SetWaypoints(new List<Vector2> { Position, target.Position }, false);
-
-            SetTargetUnit(target, true);
-            _game.PacketNotifier.NotifyWaypointGroupWithSpeed(this);
 
             // TODO: Verify if we want to use NotifyWaypointListWithSpeed instead as it does not require conversions.
         }

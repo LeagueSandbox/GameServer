@@ -10,7 +10,7 @@
         MIDDLE = 1,
         TOP = 2,
         /// <summary>
-        /// Used for newly created turrets, Azir turrets, Nexus turrets, and Fountain turrets.
+        /// Used for newly created turrets and Azir turrets
         /// </summary>
         NONE = 3
     }

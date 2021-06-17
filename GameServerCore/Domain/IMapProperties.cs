@@ -8,7 +8,6 @@ namespace GameServerCore.Domain
 {
     public interface IMapProperties: IUpdate
     {
-        List<int> ExpToLevelUp { get; set; }
         float GoldPerSecond { get; set; }
         float StartingGold { get; set; }
         bool HasFirstBloodHappened { get; set; }
@@ -23,15 +22,11 @@ namespace GameServerCore.Domain
 
         void SetMinionStats(ILaneMinion m);
 
-        Vector2 GetRespawnLocation(TeamId team);
-
         string GetMinionModel(TeamId team, MinionSpawnType type);
 
         float GetGoldFor(IAttackableUnit u);
 
         float GetExperienceFor(IAttackableUnit u);
-
-        Vector3 GetEndGameCameraPosition(TeamId team);
 
         void HandleSurrender(int userId, IChampion who, bool vote);
     }

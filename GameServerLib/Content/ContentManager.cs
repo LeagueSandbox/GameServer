@@ -145,11 +145,11 @@ namespace LeagueSandbox.GameServer.Content
             throw new ContentNotFoundException($"No map spawns found for map with id: {mapId}");
         }
 
-        public IContentFile GetContentFileFromJson(string contentType, string itemName)
+        public IContentFile GetContentFileFromJson(string contentType, string itemName, string subPath = null)
         {
             foreach (var dataPackage in _loadedPackages)
             {
-                var toReturnContentFile = dataPackage.GetContentFileFromJson(contentType, itemName);
+                var toReturnContentFile = dataPackage.GetContentFileFromJson(contentType, itemName, subPath);
 
                 if (toReturnContentFile == null)
                 {

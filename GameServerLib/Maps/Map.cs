@@ -16,7 +16,7 @@ namespace LeagueSandbox.GameServer.Maps
     /// <summary>
     /// Class responsible for all map related game settings such as collision handler, navigation grid, announcer events, and map properties.
     /// </summary>
-    public class Map: IMap
+    public class Map : IMap
     {
         // Crucial Vars
         protected Game _game;
@@ -100,7 +100,7 @@ namespace LeagueSandbox.GameServer.Maps
             var dict = new Dictionary<int, Type>
             {
                 // [0] = typeof(FlatTestMap),
-                [1] = typeof(SummonersRift)
+                [1] = typeof(SummonersRift),
                 // [2] = typeof(HarrowingRift),
                 // [3] = typeof(ProvingGrounds),
                 // [4] = typeof(TwistedTreeline),
@@ -108,7 +108,7 @@ namespace LeagueSandbox.GameServer.Maps
                 // [8] = typeof(CrystalScar),
                 // [10] = typeof(NewTwistedTreeline),
                 // [11] = typeof(NewSummonersRift),
-                // [12] = typeof(HowlingAbyss),
+                //[12] = typeof(HowlingAbyss)
                 // [14] = typeof(ButchersBridge)
             };
 
