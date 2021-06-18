@@ -242,7 +242,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
             //Ideally we'd use "stats.Level < expMap.Count + 1", but since we still don't have gamemodes implemented yet, i'll be hardcoding the EXP level to cap at lvl 18,
             //Since the SR Map has 30 levels in total because of URF
-            while (stats.Level < 18 && (stats.Level < 1 || stats.Experience >= expMap[stats.Level - 1])) //The + and - 1s are there because the XP files don't have level 1
+            if (stats.Level < 18 && (stats.Level < 1 || stats.Experience >= expMap[stats.Level - 1])) //The + and - 1s are there because the XP files don't have level 1
             {
                 Stats.LevelUp();
                 Logger.Debug("Champion " + Model + " leveled up to " + stats.Level);
