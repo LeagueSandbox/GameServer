@@ -794,44 +794,6 @@ namespace LeagueSandbox.GameServer.Maps
                 new Tuple<long, int>(35 * 60 * 1000, 0)
             };
 
-            /*var spawnToWaypoints = new Dictionary<string, Tuple<List<Vector2>, uint>>();
-            var waypoint = BlueMidWaypoints;
-            uint item2 = 0xffff8f1f;
-            foreach (var barrack in _mapData.SpawnBarracks)
-            {
-                if (barrack.Value.Name.Contains("Order"))
-                {
-                    if (barrack.Value.Name.Contains("__L"))
-                    {
-                        waypoint = BlueTopWaypoints;
-                        item2 = 0xff6793d0;
-                    }
-                    else if (barrack.Value.Name.Contains("__R"))
-                    {
-                        waypoint = BlueBotWaypoints;
-                        item2 = 0xff26ac0f;
-                    }
-                }
-                else if (barrack.Value.Name.Contains("__P_Chaos"))
-                {
-                    if (barrack.Value.Name.Contains("__C"))
-                    {
-                        waypoint = RedMidWaypoints;
-                        item2 = 0xff4a20f1;
-                    }
-                    else if (barrack.Value.Name.Contains("__L"))
-                    {
-                        waypoint = RedTopWaypoints;
-                        item2 = 0xffd23c3e;
-                    }
-                    else if (barrack.Value.Name.Contains("__R"))
-                    {
-                        waypoint = RedBotWaypoints;
-                        item2 = 0xff9303e1;
-                    }
-                }
-                spawnToWaypoints.Add(barrack.Value.Name, Tuple.Create(waypoint, item2));
-            }*/
             var spawnToWaypoints = new Dictionary<string, Tuple<List<Vector2>, uint>>();
             foreach (var barrack in _mapData.SpawnBarracks)
             {
