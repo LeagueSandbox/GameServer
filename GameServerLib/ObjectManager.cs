@@ -337,7 +337,6 @@ namespace LeagueSandbox.GameServer
         /// <summary>
         /// Gets a new Dictionary containing all GameObjects of type AttackableUnit contained in the list of Vision Units in ObjectManager.
         /// </summary>
-        /// <param name="team">TeamId.BLUE/PURPLE/NEUTRAL</param>
         /// <returns>Dictionary of (NetID, AttackableUnit) pairs.</returns>
         public Dictionary<uint, IAttackableUnit> GetVisionUnits()
         {
