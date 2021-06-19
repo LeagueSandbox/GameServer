@@ -63,8 +63,9 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         public IStats Stats { get; protected set; }
         /// <summary>
         /// Variable which stores the number of times a unit has teleported. Used purely for networking.
+        /// Resets when reaching byte.MaxValue (255).
         /// </summary>
-        public byte TeleportID { get; protected set; }
+        public byte TeleportID { get; set; }
         /// <summary>
         /// Array of buff slots which contains all parent buffs (oldest buff of a given name) applied to this AI.
         /// Maximum of 256 slots, hard limit due to packets.

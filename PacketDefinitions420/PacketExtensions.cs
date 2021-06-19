@@ -144,10 +144,15 @@ namespace PacketDefinitions420
                             // TODO: Implement teleportID (likely to be the index (starting at 1) of a waypoint we want to TP to).
                             // Crucial in syncing client positions with server positions, especially when entering vision
                             HasTeleportID = useTeleportID,
-                            TeleportID = 0,
+                            TeleportID = unit.TeleportID,
                             Waypoints = waypoints,
                             SpeedParams = speeds
                         };
+
+                        if (useTeleportID)
+                        {
+                            unit.TeleportID++;
+                        }
 
                         break;
                     }
@@ -178,9 +183,14 @@ namespace PacketDefinitions420
                             // TODO: Implement teleportID (likely to be the index (starting at 1) of a waypoint we want to TP to).
                             // Crucial in syncing client positions with server positions, especially when entering vision
                             HasTeleportID = useTeleportID,
-                            TeleportID = 0,
+                            TeleportID = unit.TeleportID,
                             Waypoints = waypoints
                         };
+
+                        if (useTeleportID)
+                        {
+                            unit.TeleportID++;
+                        }
 
                         break;
                     }
