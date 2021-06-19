@@ -3,16 +3,16 @@
     public enum PrimaryAbilityResourceType : byte
     {
         MANA = 0,
-        ENERGY = 1,
-        NONE = 2,
-        SHIELD = 3,
-        BATTLE_FURY = 4,
-        DRAGON_FURY = 5,
-        RAGE = 6,
-        HEAT = 7,
-        FEROCITY = 8,
-        BLOOD_WELL = 9,
-        WIND = 10,
-        OTHER = 11
+        Energy = 1,
+        None = 2,
+        Shield = 3,
+        Battlefury = 4,
+        Dragonfury = 5,
+        Rage = 6,
+        Heat = 7,
+        Ferocity = 8,
+        BloodWell = 9,
+        Wind = 10,
+        Gnarfury = 11 
     }
 }
