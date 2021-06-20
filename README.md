@@ -25,7 +25,7 @@ Take a look at [this](https://github.com/LeagueSandbox/GameServer/blob/indev/CON
 ### Manual Setup (Windows/Mac)
 * Download the 4.20 version of League game client:
 	1. [Unscrubbed, packed version](https://mega.nz/#!hpkiQK5A!pFkZJtxCMQktJf4umplAdPC_Fukt0xgMfO7g3bGp1Io)
-	2. [Scrubbed, moddable version](https://drive.google.com/file/d/12sWXWPQdTDIpNTJMOygC61zS7DnoFLfy)
+	2. [Scrubbed, moddable version](https://drive.google.com/file/d/1JVUGe75nMluczrY14xb0KDXiihFRlGnV)
 * For running the git commands below, [Git Bash](https://gitforwindows.org/) is recommended
 * Clone the git repository using ```git clone https://github.com/LeagueSandbox/GameServer.git```, then to download the necessary contents packages, run:
 	* ```cd GameServer```
