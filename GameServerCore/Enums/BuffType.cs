@@ -24,7 +24,6 @@
         NEAR_SIGHT,
         FRENZY,
         FEAR,
-        NET,
         CHARM,
         POISON,
         SUPPRESSION,

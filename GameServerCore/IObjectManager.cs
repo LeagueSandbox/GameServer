@@ -48,6 +48,12 @@ namespace GameServerCore
         void AddVisionUnit(IAttackableUnit unit);
 
         /// <summary>
+        /// Gets a new Dictionary containing all GameObjects of type AttackableUnit contained in the list of Vision Units in ObjectManager.
+        /// </summary>
+        /// <returns>Dictionary of (NetID, AttackableUnit) pairs.</returns>
+        Dictionary<uint, IAttackableUnit> GetVisionUnits();
+
+        /// <summary>
         /// Gets a new Dictionary containing all GameObjects of type AttackableUnit of the specified team contained in the list of Vision Units in ObjectManager.
         /// </summary>
         /// <param name="team">TeamId.BLUE/PURPLE/NEUTRAL</param>

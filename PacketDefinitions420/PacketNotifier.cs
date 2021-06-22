@@ -724,12 +724,12 @@ namespace PacketDefinitions420
         }
 
         /// <summary>
-        /// Sends a packet to either all players with vision of the specified GameObject or a specified user.
-        /// The packet contains details of the GameObject's health (given it is of the type AttackableUnit) and is meant for after the GameObject is first initialized into vision.
+        /// Sends a packet to either all players with vision of the specified GameObject or a specified user. The packet contains details of the GameObject's health (given it is of the type AttackableUnit) and is meant for after the GameObject is first initialized into vision.
         /// </summary>
         /// <param name="o">GameObject coming into vision.</param>
         /// <param name="userId">User to send the packet to.</param>
-        public void NotifyEnterLocalVisibilityClient(IGameObject o, int userId = 0)
+        /// <param name="ignoreVision">Optionally ignore vision checks when sending this packet.</param>
+        public void NotifyEnterLocalVisibilityClient(IGameObject o, int userId = 0, bool ignoreVision = false)
         {
             var enterLocalVis = new OnEnterLocalVisibilityClient
             {
@@ -744,6 +744,12 @@ namespace PacketDefinitions420
 
             if (userId == 0)
             {
+                if (ignoreVision)
+                {
+                    _packetHandlerManager.BroadcastPacket(enterLocalVis.GetBytes(), Channel.CHL_S2C);
+                    return;
+                }
+
                 _packetHandlerManager.BroadcastPacketVision(o, enterLocalVis.GetBytes(), Channel.CHL_S2C);
             }
             else
@@ -759,8 +765,9 @@ namespace PacketDefinitions420
         /// <param name="userId">User to send the packet to.</param>
         /// <param name="isChampion">Whether or not the GameObject entering vision is a Champion.</param>
         /// <param name="useTeleportID">Whether or not to teleport the object to its current position.</param>
+        /// <param name="ignoreVision">Optionally ignore vision checks when sending this packet.</param>
         /// TODO: Incomplete implementation.
-        public void NotifyEnterVisibilityClient(IGameObject o, int userId = 0, bool isChampion = false, bool useTeleportID = false)
+        public void NotifyEnterVisibilityClient(IGameObject o, int userId = 0, bool isChampion = false, bool useTeleportID = false, bool ignoreVision = false)
         {
             var itemData = new List<ItemData>(); //TODO: Fix item system so this can be finished
             var shields = new ShieldValues(); //TODO: Implement shields so this can be finished
@@ -825,10 +832,17 @@ namespace PacketDefinitions420
             if (userId != 0)
             {
                 _packetHandlerManager.SendPacket(userId, enterVis.GetBytes(), Channel.CHL_S2C);
-                NotifyEnterLocalVisibilityClient(o, userId);
+                NotifyEnterLocalVisibilityClient(o, userId, ignoreVision);
             }
             else
             {
+                if (ignoreVision)
+                {
+                    _packetHandlerManager.BroadcastPacket(enterVis.GetBytes(), Channel.CHL_S2C);
+                    NotifyEnterLocalVisibilityClient(o, ignoreVision: true);
+                    return;
+                }
+
                 _packetHandlerManager.BroadcastPacketVision(o, enterVis.GetBytes(), Channel.CHL_S2C);
                 NotifyEnterLocalVisibilityClient(o);
             }

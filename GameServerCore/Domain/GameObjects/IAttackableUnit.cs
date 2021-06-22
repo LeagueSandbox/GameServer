@@ -67,7 +67,7 @@ namespace GameServerCore.Domain.GameObjects
         /// Variable which stores the number of times a unit has teleported. Used purely for networking.
         /// Resets when reaching byte.MaxValue (255).
         /// </summary>
-        byte TeleportID { get; }
+        byte TeleportID { get; set; }
 
         /// <summary>
         /// Gets the HashString for this unit's model. Used for packets so clients know what data to load.

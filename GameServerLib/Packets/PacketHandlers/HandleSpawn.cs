@@ -68,7 +68,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                 {
                     if (champion.IsVisibleByTeam(peerInfo.Champion.Team))
                     {
-                        _game.PacketNotifier.NotifyEnterVisibilityClient(champion, userId, true);
+                        _game.PacketNotifier.NotifyEnterVisibilityClient(champion, userId, true, true, true);
                     }
                 }
                 else if (kv.Value is ILaneTurret turret)
@@ -87,7 +87,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                     );
 
                     // To suppress game HP-related errors for enemy turrets out of vision
-                    _game.PacketNotifier.NotifyEnterLocalVisibilityClient(turret, userId);
+                    _game.PacketNotifier.NotifyEnterLocalVisibilityClient(turret, userId, ignoreVision: true);
 
                     foreach (var item in turret.Inventory)
                     {

@@ -135,7 +135,7 @@ namespace LeagueSandbox.GameServer
                         {
                             u.SetVisibleByTeam(team, true);
                             // Might not be necessary, but just for good measure.
-                            _game.PacketNotifier.NotifyEnterVisibilityClient(u);
+                            _game.PacketNotifier.NotifyEnterVisibilityClient(u, useTeleportID: true);
                             RemoveVisionUnit(u);
                             // TODO: send this in one place only
                             _game.PacketNotifier.NotifyUpdatedStats(u, false);
@@ -331,6 +331,25 @@ namespace LeagueSandbox.GameServer
             lock (_visionLock)
             {
                 _visionUnits[team].Remove(netId);
+            }
+        }
+
+        /// <summary>
+        /// Gets a new Dictionary containing all GameObjects of type AttackableUnit contained in the list of Vision Units in ObjectManager.
+        /// </summary>
+        /// <returns>Dictionary of (NetID, AttackableUnit) pairs.</returns>
+        public Dictionary<uint, IAttackableUnit> GetVisionUnits()
+        {
+            var ret = new Dictionary<uint, IAttackableUnit>();
+            lock (_visionLock)
+            {
+                var visionUnitsTeam = _visionUnits.Values.SelectMany(x => x).ToDictionary(pair => pair.Key, pair => pair.Value);
+                foreach (var unit in visionUnitsTeam)
+                {
+                    ret.Add(unit.Key, unit.Value);
+                }
+
+                return ret;
             }
         }
 

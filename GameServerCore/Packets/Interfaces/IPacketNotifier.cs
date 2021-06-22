@@ -244,7 +244,8 @@ namespace GameServerCore.Packets.Interfaces
         /// </summary>
         /// <param name="o">GameObject coming into vision.</param>
         /// <param name="userId">User to send the packet to.</param>
-        void NotifyEnterLocalVisibilityClient(IGameObject o, int userId = 0);
+        /// <param name="ignoreVision">Optionally ignore vision checks when sending this packet.</param>
+        void NotifyEnterLocalVisibilityClient(IGameObject o, int userId = 0, bool ignoreVision = false);
         /// <summary>
         /// Sends a packet to either all players with vision of the specified object or the specified user. The packet details the data surrounding the specified GameObject that is required by players when a GameObject enters vision such as items, shields, skin, and movements.
         /// </summary>
@@ -252,8 +253,9 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="userId">User to send the packet to.</param>
         /// <param name="isChampion">Whether or not the GameObject entering vision is a Champion.</param>
         /// <param name="useTeleportID">Whether or not to teleport the object to its current position.</param>
+        /// <param name="ignoreVision">Optionally ignore vision checks when sending this packet.</param>
         /// TODO: Full implementation (items & shields)
-        void NotifyEnterVisibilityClient(IGameObject o, int userId = 0, bool isChampion = false, bool useTeleportID = false);
+        void NotifyEnterVisibilityClient(IGameObject o, int userId = 0, bool isChampion = false, bool useTeleportID = false, bool ignoreVision = false);
         /// <summary>
         /// Sends a packet to all players with vision of the specified unit detailing that the unit has begun facing the specified direction.
         /// </summary>
