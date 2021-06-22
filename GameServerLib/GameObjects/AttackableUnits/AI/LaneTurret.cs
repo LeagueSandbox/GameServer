@@ -19,8 +19,9 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             TurretType type = TurretType.OUTER_TURRET,
             int[] items = null,
             uint netId = 0,
-            LaneID lane = LaneID.NONE
-        ) : base(game, name, model, position, team, netId, lane)
+            LaneID lane = LaneID.NONE,
+            MapData.MapObject mapObject = null
+        ) : base(game, name, model, position, team, netId, lane, mapObject)
         {
             Type = type;
 

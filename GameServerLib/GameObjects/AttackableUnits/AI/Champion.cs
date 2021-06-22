@@ -56,7 +56,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             Stats.IsGeneratingGold = false;
 
             //TODO: automaticaly rise spell levels with CharData.SpellLevelsUp
-            
+
             Spells[(int)SpellSlotType.SummonerSpellSlots] = new Spell.Spell(game, this, clientInfo.SummonerSkills[0], (int)SpellSlotType.SummonerSpellSlots);
             Spells[(int)SpellSlotType.SummonerSpellSlots].LevelUp();
             Spells[(int)SpellSlotType.SummonerSpellSlots + 1] = new Spell.Spell(game, this, clientInfo.SummonerSkills[1], (int)SpellSlotType.SummonerSpellSlots + 1);
@@ -149,7 +149,15 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
         public Vector2 GetRespawnPosition()
         {
-            return _game.Map.MapProperties.GetRespawnLocation(Team);
+            var config = _game.Config;
+
+            var spawnsByTeam = new Dictionary<TeamId, Dictionary<int, PlayerSpawns>>
+            {
+                {TeamId.TEAM_BLUE, config.MapSpawns.Blue},
+                {TeamId.TEAM_PURPLE, config.MapSpawns.Purple}
+            };
+            var spawns1 = spawnsByTeam[Team];
+            return spawns1[0].GetCoordsForPlayer(0);
         }
 
         public override ISpell LevelUpSpell(byte slot)
@@ -183,8 +191,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 }
             }
 
-            var isLevelup = LevelUp();
-            if (isLevelup)
+            if (LevelUp())
             {
                 _game.PacketNotifier.NotifyNPC_LevelUp(this);
                 // TODO: send this in one place only
@@ -216,7 +223,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         public bool OnDisconnect()
         {
             this.StopMovement();
-            this.SetWaypoints(_game.Map.NavigationGrid.GetPath(Position, _game.Map.MapProperties.GetRespawnLocation(Team)));
+            this.SetWaypoints(_game.Map.NavigationGrid.GetPath(Position, GetRespawnPosition()));
             this.UpdateMoveOrder(OrderType.MoveTo, true);
 
             return true;
@@ -231,25 +238,21 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         public bool LevelUp()
         {
             var stats = Stats;
-            var expMap = _game.Map.MapProperties.ExpToLevelUp;
-            if (stats.Level >= expMap.Count)
-            {
-                return false;
-            }
+            var expMap = _game.Config.MapData.ExpCurve;
 
-            if (stats.Experience < expMap[stats.Level])
-            {
-                return false;
-            }
-
-            while (stats.Level < expMap.Count && stats.Experience >= expMap[stats.Level])
+            //Ideally we'd use "stats.Level < expMap.Count + 1", but since we still don't have gamemodes implemented yet, i'll be hardcoding the EXP level to cap at lvl 18,
+            //Since the SR Map has 30 levels in total because of URF
+            if (stats.Level < 18 && (stats.Level < 1 || stats.Experience >= expMap[stats.Level - 1])) //The + and - 1s are there because the XP files don't have level 1
             {
                 Stats.LevelUp();
                 Logger.Debug("Champion " + Model + " leveled up to " + stats.Level);
-                SkillPoints++;
+                if (stats.Level <= 18)
+                {
+                    SkillPoints++;
+                }
+                return true;
             }
-
-            return true;
+            return false;
         }
 
         public void OnKill(IAttackableUnit killed)
@@ -287,7 +290,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
         public override void Die(IAttackableUnit killer)
         {
-            RespawnTimer = 5000 + Stats.Level * 2500;
+            RespawnTimer = _game.Config.MapData.DeathTimes[Stats.Level] * 1000.0f;
             ChampStats.Deaths += 1;
 
             _game.PacketNotifier.NotifyUnitAnnounceEvent(UnitAnnounces.DEATH, this, killer);

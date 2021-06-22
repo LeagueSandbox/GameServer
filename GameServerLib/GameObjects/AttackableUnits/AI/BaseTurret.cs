@@ -23,6 +23,10 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         /// </summary>
         public LaneID Lane { get; private set; }
         /// <summary>
+        /// MapObject that this turret was created from.
+        /// </summary>
+        public MapData.MapObject ParentObject { get; private set; }
+        /// <summary>
         /// Internal name of this turret, used for packets so that clients know which visual turret to assign them to.
         /// </summary>
         public string Name { get; private set; }
@@ -38,12 +42,14 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             Vector2 position,
             TeamId team = TeamId.TEAM_BLUE,
             uint netId = 0,
-            LaneID lane = LaneID.NONE
+            LaneID lane = LaneID.NONE,
+            MapData.MapObject mapObject = null
         ) : base(game, model, new Stats.Stats(), 88, position, 1200, netId, team)
         {
             ParentNetId = Crc32Algorithm.Compute(Encoding.UTF8.GetBytes(name)) | 0xFF000000;
             Name = name;
             Lane = lane;
+            ParentObject = mapObject;
             SetTeam(team);
             Inventory = InventoryManager.CreateInventory();
             Replication = new ReplicationAiTurret(this);

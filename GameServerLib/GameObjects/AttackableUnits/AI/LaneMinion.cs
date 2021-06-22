@@ -13,7 +13,10 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         /// </summary>
         protected List<Vector2> _mainWaypoints;
         protected int _curMainWaypoint;
-        public string BarracksName { get; } // barracks name of the position
+        /// <summary>
+        /// Name of the Barracks that spawned this lane minion.
+        /// </summary>
+        public string BarracksName { get; }
         public MinionSpawnType MinionSpawnType { get; }
 
         public LaneMinion(

@@ -22,7 +22,10 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.Buildings.Animate
 
         public override void Die(IAttackableUnit killer)
         {
-            var cameraPosition = _game.Map.MapProperties.GetEndGameCameraPosition(Team);
+            //On SR the Z value was hardcoded to 188 for blue, 110 Purple, but it seemed fine with for both sides with only 110
+            //Double check from where those values came from and if they're accurate.
+            //I'll use 110 as default here just to keep it simple for now.
+            var cameraPosition = new Vector3 (this.Position.X, this.Position.Y, 110);
             _game.Stop();
             _game.PacketNotifier.NotifyGameEnd(cameraPosition, this, _game.PlayerManager.GetPlayers());
             _game.SetGameToExit();
