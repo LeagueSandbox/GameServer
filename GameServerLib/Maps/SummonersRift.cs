@@ -803,10 +803,10 @@ namespace LeagueSandbox.GameServer.Maps
                 }
 
                 List<Vector2> waypoint = new List<Vector2>();
-                TeamId team = barrack.Value.GetTeamID();
+                TeamId opposed_team = barrack.Value.GetOpposingTeamID();
                 LaneID lane = barrack.Value.GetSpawnBarrackLaneID();
 
-                if (team == TeamId.TEAM_BLUE)
+                if (opposed_team == TeamId.TEAM_PURPLE)
                 {
                     if (lane == LaneID.TOP)
                     {
@@ -821,7 +821,7 @@ namespace LeagueSandbox.GameServer.Maps
                         waypoint = BlueBotWaypoints;
                     }
                 }
-                else if (team == TeamId.TEAM_PURPLE)
+                else if (opposed_team == TeamId.TEAM_BLUE) 
                 {
                     if (lane == LaneID.TOP)
                     {
@@ -836,7 +836,7 @@ namespace LeagueSandbox.GameServer.Maps
                         waypoint = RedBotWaypoints;
                     }
                 }
-                spawnToWaypoints.Add(barrack.Value.Name, Tuple.Create(waypoint, _inhibitors[team][lane][0].NetId));
+                spawnToWaypoints.Add(barrack.Value.Name, Tuple.Create(waypoint, _inhibitors[opposed_team][lane][0].NetId));
             }
             var cannonMinionCap = 2;
 
