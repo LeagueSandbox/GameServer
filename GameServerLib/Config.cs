@@ -256,7 +256,7 @@ namespace LeagueSandbox.GameServer
                 return laneId;
             }
 
-            public LaneID GetSpawBarrackLaneID()
+            public LaneID GetSpawnBarrackLaneID()
             {
                 var laneId = LaneID.NONE;
 
