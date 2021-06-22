@@ -220,6 +220,22 @@ namespace LeagueSandbox.GameServer
                 return team;
             }
 
+            public TeamId GetOpposingTeamID()
+            {
+                var team = TeamId.TEAM_NEUTRAL;
+
+                if (Name.Contains("T1") || Name.Contains("Order"))
+                {
+                    team = TeamId.TEAM_PURPLE;
+                }
+                else if (Name.Contains("T2") || Name.Contains("Chaos"))
+                {
+                    team = TeamId.TEAM_BLUE;
+                }
+
+                return team;
+            }
+
             public string GetTeamName()
             {
                 string teamName = "";
