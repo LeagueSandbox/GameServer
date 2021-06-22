@@ -804,7 +804,7 @@ namespace LeagueSandbox.GameServer.Maps
 
                 List<Vector2> waypoint = new List<Vector2>();
                 TeamId team = barrack.Value.GetTeamID();
-                LaneID lane = barrack.Value.GetLaneID();
+                LaneID lane = barrack.Value.GetSpawnBarrackLaneID();
 
                 if (team == TeamId.TEAM_BLUE)
                 {
