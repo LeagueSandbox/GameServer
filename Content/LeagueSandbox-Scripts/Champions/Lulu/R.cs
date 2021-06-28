@@ -7,6 +7,19 @@ using GameServerCore.Scripting.CSharp;
 
 namespace Spells
 {
+    public class LuluQ : ISpellScript
+    {
+        public void OnActivate(IObjAiBase owner, ISpell spell) 
+        {
+            var current = new Vector2(spell.CastInfo.Owner.Position.X, spell.CastInfo.Owner.Position.Y);
+            var spellPos = new Vector2(spell.CastInfo.TargetPosition.X, spell.CastInfo.TargetPosition.Z);
+            var to = Vector2.Normalize(spellPos - current);
+
+            spell.CastInfo.Owner.FaceDirection(new Vector3(to.X, 0.0f, to.Y), false);
+        }
+        
+    }
+    
     public class LuluR : ISpellScript
     {
         public ISpellScriptMetadata ScriptMetadata { get; private set; } = new SpellScriptMetadata()
