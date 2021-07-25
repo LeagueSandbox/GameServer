@@ -124,7 +124,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             Model = model;
             Waypoints = new List<Vector2> { Position };
             CurrentWaypoint = new KeyValuePair<int, Vector2>(1, Position);
-            Status = StatusFlags.CanAttack | StatusFlags.CanCast | StatusFlags.CanMove | StatusFlags.CanMoveEver;
+            Status = StatusFlags.CanAttack | StatusFlags.CanCast | StatusFlags.CanMove | StatusFlags.CanMoveEver | StatusFlags.Targetable;
             MovementParameters = null;
             Stats.AttackSpeedMultiplier.BaseValue = 1.0f;
 
@@ -298,7 +298,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// <returns>True/False.</returns>
         public bool GetIsTargetableToTeam(TeamId team)
         {
-            if (!Stats.IsTargetable)
+            if (Status.HasFlag(StatusFlags.Targetable))
             {
                 return false;
             }
@@ -309,16 +309,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             }
 
             return !Stats.IsTargetableToTeam.HasFlag(SpellDataFlags.NonTargetableEnemy);
-        }
-
-        /// <summary>
-        /// Sets whether or not this unit should be targetable.
-        /// </summary>
-        /// <param name="targetable">True/False.</param>
-        public void SetIsTargetable(bool targetable)
-        {
-            Stats.IsTargetable = targetable;
-            SetStatus(StatusFlags.Targetable, false);
         }
 
         /// <summary>

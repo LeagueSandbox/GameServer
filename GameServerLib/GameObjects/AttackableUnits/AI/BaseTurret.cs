@@ -69,7 +69,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
             foreach (var u in units)
             {
-                if (u.IsDead || u.Team == Team)
+                if (u.IsDead || u.Team == Team || !u.Status.HasFlag(StatusFlags.Targetable))
                 {
                     continue;
                 }

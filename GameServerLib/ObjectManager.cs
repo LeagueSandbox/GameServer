@@ -4,6 +4,7 @@ using System.Linq;
 using System.Numerics;
 using GameServerCore;
 using GameServerCore.Domain.GameObjects;
+using GameServerCore.Domain.GameObjects.Spell.Missile;
 using GameServerCore.Enums;
 using LeagueSandbox.GameServer.GameObjects.Other;
 using LeagueSandbox.GameServer.Logging;
@@ -119,6 +120,16 @@ namespace LeagueSandbox.GameServer
                     }
                 }
 
+                // Destroy any missiles which are targeting an untargetable unit.
+                // TODO: Verify if this should apply to SpellSector.
+                if (obj is ISpellMissile m)
+                {
+                    if (m.TargetUnit != null && !m.TargetUnit.Status.HasFlag(StatusFlags.Targetable))
+                    {
+                        m.SetToRemove();
+                    }
+                }
+
                 if (!(obj is IAttackableUnit))
                     continue;
 
@@ -171,6 +182,12 @@ namespace LeagueSandbox.GameServer
                         {
                             tempBuffs[i].Update(diff);
                         }
+                    }
+
+                    // Stop targeting an untargetable unit.
+                    if (ai.TargetUnit != null && !ai.TargetUnit.Status.HasFlag(StatusFlags.Targetable))
+                    {
+                        StopTargeting(ai.TargetUnit);
                     }
                 }
 

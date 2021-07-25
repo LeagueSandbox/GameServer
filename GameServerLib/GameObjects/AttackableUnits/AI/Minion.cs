@@ -143,7 +143,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         // AI tasks
         protected bool ScanForTargets()
         {
-            if(TargetUnit != null && !TargetUnit.IsDead)
+            if (TargetUnit != null && !TargetUnit.IsDead)
             {
                 return true;
             }
@@ -158,7 +158,8 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                     u.IsDead ||
                     u.Team == Team ||
                     Vector2.DistanceSquared(Position, u.Position) > DETECT_RANGE * DETECT_RANGE ||
-                    !_game.ObjectManager.TeamHasVisionOn(Team, u))
+                    !_game.ObjectManager.TeamHasVisionOn(Team, u)
+                    || !u.Status.HasFlag(StatusFlags.Targetable))
                 {
                     continue;
                 }

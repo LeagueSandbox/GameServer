@@ -812,6 +812,11 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         /// TODO: Remove Target class.
         public void SetTargetUnit(IAttackableUnit target, bool networked = false)
         {
+            if (target == null || target.IsDead || !target.Status.HasFlag(StatusFlags.Targetable))
+            {
+                target = null;
+            }
+
             TargetUnit = target;
 
             if (networked)
@@ -1009,6 +1014,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 else
                 {
                     // Acquires the closest target.
+                    // TODO: Make a function which uses this method and use it for every case of target acquisition (ex minions, turrets, attackmove).
                     if (MoveOrder == OrderType.AttackMove)
                     {
                         var objects = _game.ObjectManager.GetObjects();
@@ -1021,11 +1027,17 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                             if (!(it.Value is IAttackableUnit u) ||
                                 u.IsDead ||
                                 u.Team == Team ||
-                                Vector2.DistanceSquared(Position, u.Position) > range * range)
+                                Vector2.DistanceSquared(Position, u.Position) > range * range ||
+                                !u.Status.HasFlag(StatusFlags.Targetable))
+                            {
                                 continue;
+                            }
 
                             if (!(Vector2.DistanceSquared(Position, u.Position) < distanceSqrToTarget))
+                            {
                                 continue;
+                            }
+
                             distanceSqrToTarget = Vector2.DistanceSquared(Position, u.Position);
                             nextTarget = u;
                         }

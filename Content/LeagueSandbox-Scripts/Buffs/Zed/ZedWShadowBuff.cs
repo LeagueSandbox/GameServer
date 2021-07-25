@@ -30,7 +30,7 @@ namespace Buffs
             ThisBuff = buff;
             Shadow = unit as IMinion;
 
-            Shadow.SetIsTargetable(false);
+            Shadow.SetStatus(StatusFlags.Targetable, false);
             Shadow.SetStatus(StatusFlags.Ghosted, true);
 
             AddParticleTarget(Shadow.Owner, Shadow, "zed_base_w_tar.troy", Shadow);

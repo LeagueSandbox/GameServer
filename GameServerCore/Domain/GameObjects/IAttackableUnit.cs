@@ -87,11 +87,6 @@ namespace GameServerCore.Domain.GameObjects
         /// <returns>True/False.</returns>
         bool GetIsTargetableToTeam(TeamId team);
         /// <summary>
-        /// Sets whether or not this unit should be targetable.
-        /// </summary>
-        /// <param name="targetable">True/False.</param>
-        void SetIsTargetable(bool targetable);
-        /// <summary>
         /// Sets whether or not this unit is targetable to the specified team.
         /// </summary>
         /// <param name="team">TeamId to change.</param>
