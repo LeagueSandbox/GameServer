@@ -298,7 +298,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// <returns>True/False.</returns>
         public bool GetIsTargetableToTeam(TeamId team)
         {
-            if (Status.HasFlag(StatusFlags.Targetable))
+            if (!Status.HasFlag(StatusFlags.Targetable))
             {
                 return false;
             }
