@@ -1,7 +1,7 @@
 ﻿using System;
+using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
-using LeagueSandbox.GameServer.Content;
 
 namespace LeagueSandbox.GameServer.GameObjects.Stats
 {
