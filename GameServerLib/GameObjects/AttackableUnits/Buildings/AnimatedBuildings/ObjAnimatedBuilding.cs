@@ -18,7 +18,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.Buildings.Animate
         public override void Update(float diff)
         {
             base.Update(diff);
-            Replication.Update();
         }
     }
 }

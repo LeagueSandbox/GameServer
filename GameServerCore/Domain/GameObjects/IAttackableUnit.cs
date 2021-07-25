@@ -134,8 +134,8 @@ namespace GameServerCore.Domain.GameObjects
         /// <summary>
         /// Called when this unit dies.
         /// </summary>
-        /// <param name="killer">Unit that killed this unit.</param>
-        void Die(IAttackableUnit killer);
+        /// <param name="data">Data of the death.</param>
+        void Die(IDeathData data);
         /// <summary>
         /// Sets this unit's current model to the specified internally named model. *NOTE*: If the model is not present in the client files, all connected players will crash.
         /// </summary>

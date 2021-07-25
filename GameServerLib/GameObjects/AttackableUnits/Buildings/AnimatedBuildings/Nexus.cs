@@ -1,4 +1,5 @@
-﻿using GameServerCore.Domain.GameObjects;
+﻿using GameServerCore.Domain;
+using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
 using System.Numerics;
 
@@ -20,7 +21,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.Buildings.Animate
             Stats.HealthPoints.BaseValue = 5500;
         }
 
-        public override void Die(IAttackableUnit killer)
+        public override void Die(IDeathData data)
         {
             //On SR the Z value was hardcoded to 188 for blue, 110 Purple, but it seemed fine with for both sides with only 110
             //Double check from where those values came from and if they're accurate.

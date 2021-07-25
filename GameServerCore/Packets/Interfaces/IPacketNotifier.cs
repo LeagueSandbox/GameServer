@@ -492,6 +492,12 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="s">Spell being cast.</param>
         void NotifyNPC_CastSpellAns(ISpell s);
         /// <summary>
+        /// Sends a packet to all players detailing that the specified unit has been killed by the specified killer.
+        /// </summary>
+        /// <param name="data">Data of the death.</param>
+        /// TODO: Use this. Seems to be often used when the killer = the attacker.
+        void NotifyNPC_Die_Broadcast(IDeathData data);
+        /// <summary>
         /// Sends a packet to all players with vision of the specified AttackableUnit detailing that the attacker has abrubtly stopped their attack (can be a spell or auto attack, although internally AAs are also spells).
         /// </summary>
         /// <param name="attacker">AttackableUnit that stopped their auto attack.</param>
@@ -517,11 +523,22 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="points">New number of points after the upgrade.</param>
         void NotifyNPC_UpgradeSpellAns(int userId, uint netId, byte slot, byte level, byte points);
         /// <summary>
-        /// Sends a packet to all players detailing that the specified AttackableUnit die has died to the specified AttackableUnit killer.
+        /// Sends a packet to all users with vision of the given caster detailing that the given spell has been set to auto cast (as well as the spell in the critSlot) for the given caster.
         /// </summary>
-        /// <param name="unit">AttackableUnit that was killed.</param>
-        /// <param name="killer">AttackableUnit that killed the unit.</param>
-        void NotifyNpcDie(IAttackableUnit unit, IAttackableUnit killer);
+        /// <param name="caster">Unit responsible for the autocasting.</param>
+        /// <param name="spell">Spell to auto cast.</param>
+        /// // TODO: Verify critSlot functionality
+        /// <param name="critSlot">Optional spell slot to cast when a crit is going to occur.</param>
+        void NotifyNPC_SetAutocast(IObjAiBase caster, ISpell spell, byte critSlot = 0);
+        /// <summary>
+        /// Sends a packet to the given user detailing that the given spell has been set to auto cast (as well as the spell in the critSlot) for the given caster.
+        /// </summary>
+        /// <param name="userId">User to send the packet to.</param>
+        /// <param name="caster">Unit responsible for the autocasting.</param>
+        /// <param name="spell">Spell to auto cast.</param>
+        /// // TODO: Verify critSlot functionality
+        /// <param name="critSlot">Optional spell slot to cast when a crit is going to occur.</param>
+        void NotifyNPC_SetAutocast(int userId, IObjAiBase caster, ISpell spell, byte critSlot = 0);
         /// <summary>
         /// Sends a packet to all players detailing that the game has paused.
         /// </summary>
@@ -594,6 +611,11 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="userId">User to send the packet to.</param>
         /// <param name="clientInfo">Information about the client which had their hero created.</param>
         void NotifyS2C_CreateHero(int userId, ClientInfo clientInfo);
+        /// <summary>
+        /// Sends a packet to all players detailing that the specified unit has been killed by the specified killer.
+        /// </summary>
+        /// <param name="data">Data of the death.</param>
+        void NotifyS2C_NPC_Die_MapView(IDeathData data);
         /// <summary>
         /// Sends a packet to all players with vision of the specified object detailing that it is playing the specified animation.
         /// </summary>

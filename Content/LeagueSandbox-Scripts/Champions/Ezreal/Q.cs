@@ -40,7 +40,7 @@ namespace Spells
         public void OnSpellPostCast(ISpell spell)
         {
             var owner = spell.CastInfo.Owner as IChampion;
-            var ownerSkinID = owner.Skin;
+            var ownerSkinID = owner.SkinID;
             var targetPos = new Vector2(spell.CastInfo.TargetPosition.X, spell.CastInfo.TargetPosition.Z);
             var ownerPos = owner.Position;
             var distance = Vector2.Distance(ownerPos, targetPos);

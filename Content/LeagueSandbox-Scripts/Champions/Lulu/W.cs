@@ -55,7 +55,7 @@ namespace Spells
             var time = 1 + 0.25f * spell.CastInfo.SpellLevel;
             AddBuff("LuluWDebuff", time, 1, spell, champion, owner);
             var model = champion.Model;
-            ChangeModel((owner as IChampion).Skin, target);
+            ChangeModel(owner.SkinID, target);
 
             var p = AddParticleTarget(owner, owner, "Lulu_W_polymorph_01.troy", target);
             CreateTimer(time, () =>

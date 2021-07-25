@@ -9,7 +9,6 @@ namespace GameServerCore.Domain.GameObjects
         float RespawnTimer { get; }
         float ChampionGoldFromMinions { get; set; }
         IRuneCollection RuneList { get; }
-        int Skin { get; }
         IChampionStats ChampStats { get; }
         byte SkillPoints { get; set; }
 

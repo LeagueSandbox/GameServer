@@ -1,4 +1,6 @@
 ﻿using GameServerCore;
+using GameServerCore.Enums;
+using GameServerLib.GameObjects.AttackableUnits;
 using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
 
 namespace LeagueSandbox.GameServer.Chatbox.Commands
@@ -32,7 +34,16 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
                 {
                     if (o.Value is Minion minion)
                     {
-                        minion.Die(_playerManager.GetPeerInfo(userId).Champion); // :(
+                        minion.Die(new DeathData
+                        {
+                            BecomeZombie = false,
+                            DieType = 0,
+                            Unit = minion,
+                            Killer = minion,
+                            DamageType = (byte)DamageType.DAMAGE_TYPE_PHYSICAL,
+                            DamageSource = (byte)DamageSource.DAMAGE_SOURCE_RAW,
+                            DeathDuration = 0
+                        }); // :(
                     }
                 }
             }

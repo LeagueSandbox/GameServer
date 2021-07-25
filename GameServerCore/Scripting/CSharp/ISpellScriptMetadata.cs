@@ -13,6 +13,11 @@ namespace GameServerCore.Scripting.CSharp
 
         string AutoItemActivateEffect { get; }
 
+        /// <summary>
+        /// Whether or not the caster should automatically face the end position of the spell.
+        /// </summary>
+        bool AutoFaceDirection { get; }
+
         float[] AutoTargetDamageByLevel { get; }
 
         float CastTime { get; }

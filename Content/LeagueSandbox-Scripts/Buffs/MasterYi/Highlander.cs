@@ -5,7 +5,7 @@ using GameServerCore.Domain.GameObjects.Spell;
 using LeagueSandbox.GameServer.GameObjects.Stats;
 using GameServerCore.Scripting.CSharp;
 
-namespace Highlander
+namespace Buffs
 {
     internal class Highlander : IBuffGameScript
     {

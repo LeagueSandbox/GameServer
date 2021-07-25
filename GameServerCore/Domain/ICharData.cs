@@ -1,4 +1,5 @@
-﻿using GameServerCore.Enums;
+﻿using GameServerCore.Domain;
+using GameServerCore.Enums;
 
 namespace LeagueSandbox.GameServer.Content
 {

@@ -1,24 +1,24 @@
-using GameServerCore.Domain.GameObjects;
+﻿using GameServerCore.Domain.GameObjects;
 using GameServerCore.Domain.GameObjects.Spell;
+using GameServerCore.Domain.GameObjects.Spell.Missile;
 using GameServerCore.Enums;
 using GameServerCore.Scripting.CSharp;
 using LeagueSandbox.GameServer.GameObjects.Stats;
+using System.Numerics;
 
-namespace Buffs
+namespace LeagueSandbox.GameServer.Scripting.CSharp
 {
-    internal class OverdriveSlow : IBuffGameScript
+    public class BuffScriptEmpty : IBuffGameScript
     {
-        public BuffType BuffType => BuffType.SLOW;
+        public BuffType BuffType => BuffType.INTERNAL;
         public BuffAddType BuffAddType => BuffAddType.REPLACE_EXISTING;
-        public int MaxStacks => 1;
-        public bool IsHidden => false;
+        public int MaxStacks => 0;
+        public bool IsHidden => true;
 
         public IStatsModifier StatsModifier { get; private set; } = new StatsModifier();
 
         public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
-            StatsModifier.MoveSpeed.PercentBonus = StatsModifier.MoveSpeed.PercentBonus - 0.3f;
-            unit.AddStatModifier(StatsModifier);
         }
 
         public void OnDeactivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
@@ -27,8 +27,6 @@ namespace Buffs
 
         public void OnUpdate(float diff)
         {
-
         }
     }
 }
-

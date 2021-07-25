@@ -3,7 +3,7 @@ using GameServerCore.Domain.GameObjects.Spell;
 using GameServerCore.Enums;
 using GameServerCore.Scripting.CSharp;
 
-namespace Silence
+namespace Buffs
 {
     internal class Silence : IBuffGameScript
     {

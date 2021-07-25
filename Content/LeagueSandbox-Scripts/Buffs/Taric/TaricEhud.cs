@@ -3,7 +3,7 @@ using GameServerCore.Domain.GameObjects;
 using GameServerCore.Domain.GameObjects.Spell;
 using GameServerCore.Scripting.CSharp;
 
-namespace TaricEhud
+namespace Buffs
 {
     internal class TaricEhud : IBuffGameScript
     {

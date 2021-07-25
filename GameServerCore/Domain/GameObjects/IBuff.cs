@@ -1,5 +1,6 @@
 ﻿using GameServerCore.Domain.GameObjects.Spell;
 using GameServerCore.Enums;
+using GameServerCore.Scripting.CSharp;
 
 namespace GameServerCore.Domain.GameObjects
 {
@@ -54,6 +55,10 @@ namespace GameServerCore.Domain.GameObjects
         /// Time since this buff's timer started.
         /// </summary>
         float TimeElapsed { get; }
+        /// <summary>
+        /// Script instance for this buff. Casting to a specific buff class gives access its functions and variables.
+        /// </summary>
+        IBuffGameScript BuffScript { get; }
 
         /// <summary>
         /// Used to load the script for the buff.

@@ -20,7 +20,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         public IChampionStats ChampStats { get; private set; } = new ChampionStats();
 
         public byte SkillPoints { get; set; }
-        public int Skin { get; set; }
 
         private float _championHitFlagTimer;
         /// <summary>
@@ -42,7 +41,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                         ClientInfo clientInfo,
                         uint netId = 0,
                         TeamId team = TeamId.TEAM_BLUE)
-            : base(game, model, new Stats.Stats(), 30, new Vector2(), 1200, netId, team)
+            : base(game, model, new Stats.Stats(), 30, new Vector2(), 1200, clientInfo.SkinNo, netId, team)
         {
             _playerId = playerId;
             _playerTeamSpecialId = playerTeamSpecialId;
@@ -206,7 +205,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                     _championHitFlagTimer = 0;
                 }
             }
-            Replication.Update();
         }
 
         public void Respawn()
@@ -288,14 +286,14 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             }
         }
 
-        public override void Die(IAttackableUnit killer)
+        public override void Die(IDeathData data)
         {
             RespawnTimer = _game.Config.MapData.DeathTimes[Stats.Level] * 1000.0f;
             ChampStats.Deaths += 1;
 
-            _game.PacketNotifier.NotifyUnitAnnounceEvent(UnitAnnounces.DEATH, this, killer);
+            _game.PacketNotifier.NotifyUnitAnnounceEvent(UnitAnnounces.DEATH, this, data.Killer);
 
-            var cKiller = killer as IChampion;
+            var cKiller = data.Killer as IChampion;
 
             if (cKiller == null && _championHitFlagTimer > 0)
             {
@@ -305,7 +303,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
             if (cKiller == null)
             {
-                _game.PacketNotifier.NotifyChampionDie(this, killer, 0);
+                _game.PacketNotifier.NotifyChampionDie(this, data.Killer, 0);
                 return;
             }
 
@@ -367,7 +365,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
         public void UpdateSkin(int skinNo)
         {
-            Skin = skinNo;
+            SkinID = skinNo;
         }
     }
 }

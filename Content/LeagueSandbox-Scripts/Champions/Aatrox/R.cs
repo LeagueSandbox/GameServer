@@ -22,17 +22,17 @@ namespace Spells
         {
             if (owner is IChampion c)
             {
-                if (c.Skin == 0)
+                if (c.SkinID == 0)
                 {
                     pcastname = "Aatrox_Base_R_Activate.troy";
                     phitname = "Aatrox_Base_R_active_hit_tar.troy";
                 }
-                else if (c.Skin == 1)
+                else if (c.SkinID == 1)
                 {
                     pcastname = "Aatrox_Skin01_R_Activate.troy";
                     phitname = "Aatrox_Skin01_R_active_hit_tar.troy";
                 }
-                else if (c.Skin == 2)
+                else if (c.SkinID == 2)
                 {
                     pcastname = "Aatrox_Skin02_R_Activate.troy";
                     phitname = "Aatrox_Skin02_R_active_hit_tar.troy";

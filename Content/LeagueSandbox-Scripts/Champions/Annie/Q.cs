@@ -30,7 +30,7 @@ namespace Spells
         public void TargetExecute(ISpell spell, IAttackableUnit target, ISpellMissile missile)
         {
             var owner = spell.CastInfo.Owner as IChampion;
-            var ownerSkinID = owner.Skin;
+            var ownerSkinID = owner.SkinID;
             var ap = owner.Stats.AbilityPower.Total * spell.SpellData.MagicDamageCoefficient;
             var damage = 45 + spell.CastInfo.SpellLevel * 35 + ap;
 

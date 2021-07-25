@@ -6,7 +6,7 @@ using LeagueSandbox.GameServer.GameObjects.Stats;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 using GameServerCore.Scripting.CSharp;
 
-namespace GangplankE
+namespace Buffs
 {
     internal class GangplankE : IBuffGameScript
     {

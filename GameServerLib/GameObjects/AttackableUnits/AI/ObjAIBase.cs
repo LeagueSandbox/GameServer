@@ -39,6 +39,10 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         /// </summary>
         /// TODO: Move to AttackableUnit as it relates to stats.
         public ICharData CharData { get; }
+        /// <summary>
+        /// The ID of the skin this unit should use for its model.
+        /// </summary>
+        public int SkinID { get; set; }
         public bool HasAutoAttacked { get; set; }
         /// <summary>
         /// Whether or not this AI has made their first auto attack against their current target. Refreshes after untargeting or targeting another unit.
@@ -75,12 +79,14 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         public Dictionary<short, ISpell> Spells { get; }
 
         public ObjAiBase(Game game, string model, Stats.Stats stats, int collisionRadius = 40,
-            Vector2 position = new Vector2(), int visionRadius = 0, uint netId = 0, TeamId team = TeamId.TEAM_NEUTRAL) :
+            Vector2 position = new Vector2(), int visionRadius = 0, int skinId = 0, uint netId = 0, TeamId team = TeamId.TEAM_NEUTRAL) :
             base(game, model, stats, collisionRadius, position, visionRadius, netId, team)
         {
             _itemManager = game.ItemManager;
 
             CharData = _game.Config.ContentManager.GetCharData(Model);
+
+            SkinID = skinId;
 
             stats.LoadStats(CharData);
 

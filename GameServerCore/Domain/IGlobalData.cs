@@ -1,4 +1,4 @@
-﻿namespace LeagueSandbox.GameServer.Content
+﻿namespace GameServerCore.Domain
 {
     public interface IGlobalData
     {

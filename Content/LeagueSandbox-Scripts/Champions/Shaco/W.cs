@@ -84,7 +84,8 @@ namespace Spells
                         {
                             if (!m.IsDead)
                             {
-                                m.Die(m); //TODO: Fix targeting issues
+                                //TODO: Fix targeting issues
+                                m.TakeDamage(m.Owner, 1000f, DamageType.DAMAGE_TYPE_TRUE, DamageSource.DAMAGE_SOURCE_INTERNALRAW, DamageResultType.RESULT_NORMAL);
                             }
                         });
                     }

@@ -4,7 +4,7 @@ using GameServerCore.Domain.GameObjects.Spell;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 using GameServerCore.Scripting.CSharp;
 
-namespace Stun
+namespace Buffs
 {
     internal class Stun : IBuffGameScript
     {

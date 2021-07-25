@@ -7,7 +7,7 @@ using LeagueSandbox.GameServer.API;
 using LeagueSandbox.GameServer.GameObjects.Stats;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 
-namespace GlacialStorm
+namespace Buffs
 {
     class GlacialStorm : IBuffGameScript
     {
