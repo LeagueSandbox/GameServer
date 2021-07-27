@@ -813,24 +813,26 @@ namespace LeagueSandbox.GameServer.Content.Navigation
                     break;
                 }
 
+                bool isGrass = HasFlag(new Vector2(x1, y1), NavigationGridCellFlags.HAS_GRASS);
                 // If you are outside of a bush
-                if (checkVisible && !HasFlag(origin, NavigationGridCellFlags.HAS_GRASS))
+                if (checkVisible && !prevPosHadBush)
                 {
-                    if (HasFlag(new Vector2(x1, y1), NavigationGridCellFlags.HAS_GRASS))
+                    if (isGrass)
                     {
                         break;
                     }
                 }
 
                 // If you are in a different bush
-                if (prevPosHadBush && checkVisible && HasFlag(destination, NavigationGridCellFlags.HAS_GRASS))
+                if (checkVisible && prevPosHadBush && HasFlag(destination, NavigationGridCellFlags.HAS_GRASS))
                 {
-                    if (!HasFlag(new Vector2(x1, y1), NavigationGridCellFlags.HAS_GRASS))
+                    if (!isGrass)
                     {
                         break;
                     }
-                    prevPosHadBush = HasFlag(new Vector2(x1, x2), NavigationGridCellFlags.HAS_GRASS);
+                    prevPosHadBush = isGrass;
                 }
+
 
                 // if checkWalkable == true, stop incrementing when (x1, x2) is a see-able position
                 // if checkWalkable == false, stop incrementing when (x1, x2) is a non-see-able position
