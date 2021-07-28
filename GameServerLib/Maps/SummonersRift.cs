@@ -145,7 +145,7 @@ namespace LeagueSandbox.GameServer.Maps
         private readonly long _firstSpawnTime = 90 * 1000;
         private long _nextSpawnTime = 90 * 1000;
         private readonly long _spawnInterval = 30 * 1000;
-        private readonly Dictionary<TeamId, Fountain> _fountains;
+        private Dictionary<TeamId, Fountain> _fountains = new Dictionary<TeamId, Fountain>();
         private readonly List<Nexus> _nexus;
         private readonly Dictionary<TeamId, Dictionary<LaneID, List<Inhibitor>>> _inhibitors;
         private readonly Dictionary<TeamId, Dictionary<LaneID, List<LaneTurret>>> _turrets;
@@ -164,11 +164,6 @@ namespace LeagueSandbox.GameServer.Maps
         {
             _game = game;
             _mapData = game.Config.MapData;
-            _fountains = new Dictionary<TeamId, Fountain>
-            {
-                { TeamId.TEAM_BLUE, new Fountain(game, TeamId.TEAM_BLUE, new Vector2(11, 250), 1000) },
-                { TeamId.TEAM_PURPLE, new Fountain(game, TeamId.TEAM_PURPLE, new Vector2(13950, 14200), 1000) }
-            };
             _nexus = new List<Nexus>();
             _inhibitors = new Dictionary<TeamId, Dictionary<LaneID, List<Inhibitor>>>
             {
@@ -386,6 +381,10 @@ namespace LeagueSandbox.GameServer.Maps
 
                     // index - 1 as we need it to start at 0.
                     AddTurret(mapObject, position, teamId, teamName, turretType, lane);
+                }
+                else if (objectType == GameObjectTypes.ObjBuilding_SpawnPoint)
+                {
+                    _fountains.Add(teamId, new Fountain(_game, teamId, position, 1000));
                 }
             }
 

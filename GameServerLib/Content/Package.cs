@@ -134,47 +134,21 @@ namespace LeagueSandbox.GameServer.Content
                 return null;
             }
 
-            // Get the number of objects in the entries array.
-            var objectCount = mapObjects.Count;
             // Iterate through them.
-            for (var i = 0; i < objectCount; i++)
+            foreach (var Object in mapObjects)
             {
-                // Get the object reference name.
-                string nameReference = mapObjects[i].Value<string>("Name");
-
-                // Define the full path to the object file.
-                var objectFileName = $"{mapName}/Scene/{nameReference}.sco";
-                var objectFilePath = $"{GetContentTypePath(contentType)}/{objectFileName}.json";
-
-                // Create empty mapObject so we can fill it after we successfully read the object file.
-                MapData.MapObject mapObject;
-
-                try
-                {
-                    // Read the object file
-                    var objectData = JObject.Parse(File.ReadAllText(objectFilePath));
-
-                    // Grab the Name and CentralPoint
-                    var name = objectData.Value<string>("Name");
-                    var pointJson = objectData.SelectToken("CentralPoint");
-                    var point = new Vector3
-                    {
-                        X = pointJson.Value<float>("X"),
-                        Y = pointJson.Value<float>("Y"),
-                        Z = pointJson.Value<float>("Z")
-                    };
-
-                    mapObject = new MapData.MapObject(name, point, mapId);
-                }
-                catch (JsonReaderException)
-                {
-                    continue;
-                }
-
-                // Add the reference name and filled map object.
-                toReturnMapData.MapObjects.Add(nameReference, mapObject);
+                string referenceName = Object.Value<string>("Name");
+                toReturnMapData.MapObjects.Add(referenceName, AddMapObject(referenceName, contentType, mapName, mapId));
             }
-
+            //Map1's Room file doesn't contain the Fountains, so we have to get that manually
+            if (!toReturnMapData.MapObjects.ContainsKey("__Spawn_T1"))
+            {
+                for (int i = 1; i <= 2; i++)
+                {
+                    toReturnMapData.MapObjects.Add($"__Spawn_T{i}", AddMapObject($"__Spawn_T{i}", contentType, mapName, mapId));
+                }
+            }
+            
             // EXPCurve, DeathTimes, and StatsProgression.
 
             var expFile = new ContentFile();
@@ -261,6 +235,40 @@ namespace LeagueSandbox.GameServer.Content
             }
 
             return toReturnMapData;
+        }
+
+        public MapData.MapObject AddMapObject(string objectName, string contentType, string mapName, int mapId)
+        {
+            // Define the full path to the object file.
+            var objectFileName = $"{mapName}/Scene/{objectName}.sco";
+            var objectFilePath = $"{GetContentTypePath(contentType)}/{objectFileName}.json";
+
+            // Create empty mapObject so we can fill it after we successfully read the object file.
+            MapData.MapObject mapObject;
+
+            try
+            {
+                // Read the object file
+                var objectData = JObject.Parse(File.ReadAllText(objectFilePath));
+
+                // Grab the Name and CentralPoint
+                var name = objectData.Value<string>("Name");
+                var pointJson = objectData.SelectToken("CentralPoint");
+                var point = new Vector3
+                {
+                    X = pointJson.Value<float>("X"),
+                    Y = pointJson.Value<float>("Y"),
+                    Z = pointJson.Value<float>("Z")
+                };
+                mapObject = new MapData.MapObject(name, point, mapId);
+            }
+            catch (JsonReaderException)
+            {
+                return null;
+            }
+
+            // Add the reference name and filled map object.
+            return mapObject;
         }
 
         public MapSpawns GetMapSpawns(int mapId)

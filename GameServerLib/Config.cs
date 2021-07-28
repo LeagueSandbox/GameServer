@@ -200,6 +200,10 @@ namespace LeagueSandbox.GameServer
                 {
                     type = GameObjectTypes.ObjAIBase_Turret;
                 }
+                else if (Name.Contains("__Spawn"))
+                {
+                    type = GameObjectTypes.ObjBuilding_SpawnPoint;
+                }
 
                 return type;
             }
