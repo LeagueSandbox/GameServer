@@ -804,6 +804,7 @@ namespace LeagueSandbox.GameServer.Content.Navigation
             float dy = disty / greatestdist;
             int i;
             bool prevPosHadBush = HasFlag(origin, NavigationGridCellFlags.HAS_GRASS);
+            bool destinationHasGrass = HasFlag(destination, NavigationGridCellFlags.HAS_GRASS);
 
             for (i = 0; i < il; i++)
             {
@@ -824,7 +825,7 @@ namespace LeagueSandbox.GameServer.Content.Navigation
                 }
 
                 // If you are in a different bush
-                if (checkVisible && prevPosHadBush && HasFlag(destination, NavigationGridCellFlags.HAS_GRASS))
+                if (checkVisible && prevPosHadBush && destinationHasGrass)
                 {
                     if (!isGrass)
                     {
@@ -832,7 +833,6 @@ namespace LeagueSandbox.GameServer.Content.Navigation
                     }
                     prevPosHadBush = isGrass;
                 }
-
 
                 // if checkWalkable == true, stop incrementing when (x1, x2) is a see-able position
                 // if checkWalkable == false, stop incrementing when (x1, x2) is a non-see-able position
