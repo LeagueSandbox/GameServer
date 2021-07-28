@@ -803,13 +803,35 @@ namespace LeagueSandbox.GameServer.Content.Navigation
             float dx = distx / greatestdist;
             float dy = disty / greatestdist;
             int i;
+            bool prevPosHadBush = HasFlag(origin, NavigationGridCellFlags.HAS_GRASS);
+            bool destinationHasGrass = HasFlag(destination, NavigationGridCellFlags.HAS_GRASS);
+
             for (i = 0; i < il; i++)
             {
-                //TODO: Implement bush logic (preferably near here)
                 //TODO: Implement methods for maps whose NavGrids don't use SEE_THROUGH flags for buildings
                 if ((checkWalkable && !IsWalkable(x1, y1)) || (checkVisible && !IsVisible(x1, y1)))
                 {
                     break;
+                }
+
+                bool isGrass = HasFlag(new Vector2(x1, y1), NavigationGridCellFlags.HAS_GRASS);
+                // If you are outside of a bush
+                if (checkVisible && !prevPosHadBush)
+                {
+                    if (isGrass)
+                    {
+                        break;
+                    }
+                }
+
+                // If you are in a different bush
+                if (checkVisible && prevPosHadBush && destinationHasGrass)
+                {
+                    if (!isGrass)
+                    {
+                        break;
+                    }
+                    prevPosHadBush = isGrass;
                 }
 
                 // if checkWalkable == true, stop incrementing when (x1, x2) is a see-able position
