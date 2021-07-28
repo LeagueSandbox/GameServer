@@ -831,7 +831,6 @@ namespace LeagueSandbox.GameServer.Content.Navigation
                     {
                         break;
                     }
-                    prevPosHadBush = isGrass;
                 }
 
                 // if checkWalkable == true, stop incrementing when (x1, x2) is a see-able position
