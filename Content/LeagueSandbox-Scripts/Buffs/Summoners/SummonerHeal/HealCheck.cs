@@ -3,7 +3,7 @@ using GameServerCore.Domain.GameObjects;
 using GameServerCore.Domain.GameObjects.Spell;
 using GameServerCore.Scripting.CSharp;
 
-namespace HealCheck
+namespace Buffs
 {
     internal class HealCheck : IBuffGameScript
     {

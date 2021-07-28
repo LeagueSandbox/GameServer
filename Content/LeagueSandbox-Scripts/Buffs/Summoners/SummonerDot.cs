@@ -5,7 +5,7 @@ using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 using LeagueSandbox.GameServer.GameObjects.Stats;
 using GameServerCore.Scripting.CSharp;
 
-namespace SummonerDot
+namespace Buffs
 {
     internal class SummonerDot : IBuffGameScript
     {

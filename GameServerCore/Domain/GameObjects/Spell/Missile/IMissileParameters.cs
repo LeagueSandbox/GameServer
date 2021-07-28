@@ -1,4 +1,5 @@
 ﻿using GameServerCore.Enums;
+using System.Numerics;
 
 namespace GameServerCore.Domain.GameObjects.Spell.Missile
 {
@@ -10,5 +11,6 @@ namespace GameServerCore.Domain.GameObjects.Spell.Missile
         int MaximumHits { get; }
 
         MissileType Type { get; }
+        Vector2 OverrideEndPosition { get; }
     }
 }

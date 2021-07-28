@@ -294,15 +294,18 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
                         CastInfo.Owner.UpdateMoveOrder(OrderType.CastSpell, true);
                     }
 
-                    var goingTo = end - CastInfo.Owner.Position;
-
-                    if (unit != null)
+                    if (Script.ScriptMetadata.AutoFaceDirection)
                     {
-                        goingTo = unit.Position - CastInfo.Owner.Position;
-                    }
+                        var goingTo = end - CastInfo.Owner.Position;
 
-                    var dirTemp = Vector2.Normalize(goingTo);
-                    CastInfo.Owner.FaceDirection(new Vector3(dirTemp.X, 0, dirTemp.Y), false);
+                        if (unit != null)
+                        {
+                            goingTo = unit.Position - CastInfo.Owner.Position;
+                        }
+
+                        var dirTemp = Vector2.Normalize(goingTo);
+                        CastInfo.Owner.FaceDirection(new Vector3(dirTemp.X, 0, dirTemp.Y), false);
+                    }
                 }
             }
 
@@ -321,7 +324,10 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
 
             if (CastInfo.Targets[0].Unit != null && CastInfo.Targets[0].Unit != CastInfo.Owner)
             {
-                ApiFunctionManager.FaceDirection(CastInfo.Targets[0].Unit.Position, CastInfo.Owner);
+                if (Script.ScriptMetadata.AutoFaceDirection)
+                {
+                    ApiFunctionManager.FaceDirection(CastInfo.Targets[0].Unit.Position, CastInfo.Owner);
+                }
                 _game.PacketNotifier.NotifyS2C_UnitSetLookAt(CastInfo.Owner, CastInfo.Targets[0].Unit, attackType);
             }
 
@@ -494,15 +500,18 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
                         CastInfo.Owner.UpdateMoveOrder(OrderType.CastSpell, true);
                     }
 
-                    var goingTo = end - CastInfo.Owner.Position;
-
-                    if (CastInfo.Targets[0].Unit != null)
+                    if (Script.ScriptMetadata.AutoFaceDirection)
                     {
-                        goingTo = CastInfo.Targets[0].Unit.Position - CastInfo.Owner.Position;
-                    }
+                        var goingTo = end - CastInfo.Owner.Position;
 
-                    var dirTemp = Vector2.Normalize(goingTo);
-                    CastInfo.Owner.FaceDirection(new Vector3(dirTemp.X, 0, dirTemp.Y), false);
+                        if (CastInfo.Targets[0].Unit != null)
+                        {
+                            goingTo = CastInfo.Targets[0].Unit.Position - CastInfo.Owner.Position;
+                        }
+
+                        var dirTemp = Vector2.Normalize(goingTo);
+                        CastInfo.Owner.FaceDirection(new Vector3(dirTemp.X, 0, dirTemp.Y), false);
+                    }
                 }
             }
 
@@ -513,7 +522,10 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
 
             if (cast && CastInfo.Targets[0].Unit != null && CastInfo.Targets[0].Unit != CastInfo.Owner)
             {
-                ApiFunctionManager.FaceDirection(CastInfo.Targets[0].Unit.Position, CastInfo.Owner);
+                if (Script.ScriptMetadata.AutoFaceDirection)
+                {
+                    ApiFunctionManager.FaceDirection(CastInfo.Targets[0].Unit.Position, CastInfo.Owner);
+                }
 
                 _game.PacketNotifier.NotifyS2C_UnitSetLookAt(CastInfo.Owner, CastInfo.Targets[0].Unit, attackType);
             }
@@ -795,6 +807,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
                         this,
                         CastInfo,
                         SpellData.MissileSpeed,
+                        parameters.OverrideEndPosition,
                         SpellData.Flags,
                         netId,
                         isServerOnly
@@ -809,12 +822,21 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
                         this,
                         CastInfo,
                         SpellData.MissileSpeed,
+                        parameters.OverrideEndPosition,
                         SpellData.Flags,
                         netId,
                         isServerOnly
                     );
                     break;
                 }
+            }
+
+            // If the position is the same as the destination, the server will have destroyed the missile before notifying of creation, causing the client to crash.
+            // TODO: Make a better check.
+            if (p == null || (p is ISpellCircleMissile c && c.Position == c.Destination)
+                || p.Position == p.GetTargetPosition())
+            {
+                return null;
             }
 
             _game.ObjectManager.AddObject(p);
@@ -1006,6 +1028,14 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
         public void ResetSpellDelay()
         {
             CurrentDelayTime = 0;
+        }
+
+        /// <summary>
+        /// Toggles the auto cast state for this spell.
+        /// </summary>
+        public void SetAutocast()
+        {
+            _game.PacketNotifier.NotifyNPC_SetAutocast(CastInfo.Owner, this);
         }
 
         /// <summary>

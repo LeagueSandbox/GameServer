@@ -3,7 +3,7 @@ using GameServerCore.Domain.GameObjects.Spell;
 using GameServerCore.Enums;
 using GameServerCore.Scripting.CSharp;
 
-namespace GarenE
+namespace Buffs
 {
     internal class GarenE : IBuffGameScript
     {

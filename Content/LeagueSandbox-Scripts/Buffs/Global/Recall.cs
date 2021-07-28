@@ -5,7 +5,7 @@ using GameServerCore.Scripting.CSharp;
 using LeagueSandbox.GameServer.API;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 
-namespace Recall
+namespace Buffs
 {
     class Recall : IBuffGameScript
     {

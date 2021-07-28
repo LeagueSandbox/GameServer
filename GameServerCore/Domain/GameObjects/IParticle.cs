@@ -59,6 +59,10 @@ namespace GameServerCore.Domain.GameObjects
         /// Effectively uses the ground height for the end position.
         /// </summary>
         bool FollowsGroundTilt { get; }
+        /// <summary>
+        /// Flags which determine how the particle behaves. Values unknown.
+        /// </summary>
+        FXFlags Flags { get; }
 
         /// <summary>
         /// Returns the total game-time passed since the particle was added to ObjectManager

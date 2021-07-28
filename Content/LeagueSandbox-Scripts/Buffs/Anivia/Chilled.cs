@@ -4,7 +4,7 @@ using GameServerCore.Enums;
 using GameServerCore.Scripting.CSharp;
 using LeagueSandbox.GameServer.GameObjects.Stats;
 
-namespace Chilled
+namespace Buffs
 {
     internal class Chilled : IBuffGameScript
     {

@@ -3,7 +3,7 @@ using GameServerCore.Enums;
 using GameServerCore.Domain.GameObjects.Spell;
 using GameServerCore.Scripting.CSharp;
 
-namespace Disarm
+namespace Buffs
 {
     internal class Disarm : IBuffGameScript
     {

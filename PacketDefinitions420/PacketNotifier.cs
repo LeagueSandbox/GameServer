@@ -790,7 +790,7 @@ namespace PacketDefinitions420
 
                 if (a is IChampion c)
                 {
-                    charStackData.SkinID = (uint)c.Skin;
+                    charStackData.SkinID = (uint)c.SkinID;
                 }
 
                 buffCountList = new List<KeyValuePair<byte, int>>();
@@ -969,8 +969,7 @@ namespace PacketDefinitions420
             var fxGroupData1 = new FXCreateGroupData
             {
                 EffectNameHash = HashString(particle.Name),
-                //TODO: un-hardcode flags
-                Flags = 0x20, // Taken from SpawnParticle packet
+                Flags = (ushort)particle.Flags,
                 TargetBoneNameHash = HashString(particle.TargetBoneName),
                 BoneNameHash = HashString(particle.BoneName),
 
@@ -1291,28 +1290,33 @@ namespace PacketDefinitions420
                 SenderNetID = minion.NetId,
                 NetID = minion.NetId,
                 OwnerNetID = minion.NetId,
-                NetNodeID = (byte)NetNodeID.Spawned, // TODO: Verify
-                Position = minion.GetPosition3D(), // TODO: Verify
-                SkinID = 0, // TODO: Unhardcode
+                NetNodeID = (byte)NetNodeID.Spawned,
+                Position = minion.GetPosition3D(),
+                SkinID = minion.SkinID,
                 // CloneNetID, clones not yet implemented
                 TeamID = (ushort)minion.Team,
-                IgnoreCollision = false, // TODO: Unhardcode
+                IgnoreCollision = minion.IgnoresCollision,
                 IsWard = minion.IsWard,
                 IsLaneMinion = minion.IsLaneMinion,
                 IsBot = minion.IsBot,
-                IsTargetable = true, // TODO: Unhardcode
+                IsTargetable = minion.IsTargetable,
 
-                IsTargetableToTeamSpellFlags = (uint)SpellDataFlags.TargetableToAll, // TODO: Unhardcode
-                VisibilitySize = minion.VisionRadius, // TODO: Verify
+                IsTargetableToTeamSpellFlags = (uint)minion.Stats.IsTargetableToTeam,
+                VisibilitySize = minion.VisionRadius,
                 Name = minion.Name,
                 SkinName = minion.Model,
                 InitialLevel = 1, // TODO: Unhardcode
-                OnlyVisibleToNetID = 0 // TODO: Unhardcode
+                OnlyVisibleToNetID = 0
             };
 
-            if (minion.Owner != null) // Should probably change/optimize at some point
+            if (minion.Owner != null)
             {
                 spawnPacket.OwnerNetID = minion.Owner.NetId;
+            }
+
+            if (minion.VisibilityOwner != null)
+            {
+                spawnPacket.OnlyVisibleToNetID = minion.VisibilityOwner.NetId;
             }
 
             _packetHandlerManager.BroadcastPacketVision(minion, spawnPacket.GetBytes(), Channel.CHL_S2C);
@@ -1826,6 +1830,74 @@ namespace PacketDefinitions420
         }
 
         /// <summary>
+        /// Sends a packet to all players detailing that the specified unit has been killed by the specified killer.
+        /// </summary>
+        /// <param name="data">Data of the death.</param>
+        public void NotifyNPC_Die_Broadcast(IDeathData data)
+        {
+            var dieMapView = new NPC_Die_Broadcast
+            {
+                SenderNetID = data.Unit.NetId,
+                DeathData = new DeathData
+                {
+                    BecomeZombie = data.BecomeZombie,
+                    DieType = data.DieType,
+                    KillerNetID = data.Killer.NetId,
+                    DamageType = (byte)data.DamageType,
+                    DamageSource = (byte)data.DamageSource,
+                    DeathDuration = data.DeathDuration
+                }
+            };
+            _packetHandlerManager.BroadcastPacket(dieMapView.GetBytes(), Channel.CHL_S2C);
+        }
+
+        /// <summary>
+        /// Sends a packet to all users with vision of the given unit that it has been forced to die.
+        /// </summary>
+        /// <param name="unit"></param>
+        public void NotifyNPC_ForceDead(IAttackableUnit unit, float duration)
+        {
+            var forceDead = new NPC_ForceDead
+            {
+                SenderNetID = unit.NetId,
+                DeathDuration = duration
+            };
+
+            _packetHandlerManager.BroadcastPacketVision(unit, forceDead.GetBytes(), Channel.CHL_S2C);
+        }
+
+        /// <summary>
+        /// Sends a packet to all players with vision of the specified AttackableUnit detailing that the attacker has abrubtly stopped their attack (can be a spell or auto attack, although internally AAs are also spells).
+        /// </summary>
+        /// <param name="attacker">AttackableUnit that stopped their auto attack.</param>
+        /// <param name="isSummonerSpell">Whether or not the spell is a summoner spell.</param>
+        /// <param name="keepAnimating">Whether or not to continue the auto attack animation after the abrupt stop.</param>
+        /// <param name="destroyMissile">Whether or not to destroy the missile which may have been created before stopping (client-side removal).</param>
+        /// <param name="overrideVisibility">Whether or not stopping this auto attack overrides visibility checks.</param>
+        /// <param name="forceClient">Whether or not this packet should be forcibly applied, regardless of if an auto attack is being performed client-side.</param>
+        /// <param name="missileNetID">NetId of the missile that may have been spawned by the spell.</param>
+        /// TODO: Find a better way to implement these parameters
+        public void NotifyNPC_InstantStop_Attack(IAttackableUnit attacker, bool isSummonerSpell,
+            bool keepAnimating = false,
+            bool destroyMissile = true,
+            bool overrideVisibility = true,
+            bool forceClient = false,
+            uint missileNetID = 0)
+        {
+            var stopAttack = new NPC_InstantStop_Attack
+            {
+                SenderNetID = attacker.NetId,
+                MissileNetID = missileNetID, //TODO: Fix MissileNetID, currently it only works when it is 0
+                KeepAnimating = keepAnimating,
+                DestroyMissile = destroyMissile,
+                OverrideVisibility = overrideVisibility,
+                IsSummonerSpell = isSummonerSpell,
+                ForceDoClient = forceClient
+            };
+            _packetHandlerManager.BroadcastPacketVision(attacker, stopAttack.GetBytes(), Channel.CHL_S2C);
+        }
+
+        /// <summary>
         /// Sends a packet to all players detailing that the specified Champion has leveled up.
         /// </summary>
         /// <param name="c">Champion which leveled up.</param>
@@ -1864,45 +1936,52 @@ namespace PacketDefinitions420
         }
 
         /// <summary>
-        /// Sends a packet to all players with vision of the specified AttackableUnit detailing that the attacker has abrubtly stopped their attack (can be a spell or auto attack, although internally AAs are also spells).
+        /// Sends a packet to all users with vision of the given caster detailing that the given spell has been set to auto cast (as well as the spell in the critSlot) for the given caster.
         /// </summary>
-        /// <param name="attacker">AttackableUnit that stopped their auto attack.</param>
-        /// <param name="isSummonerSpell">Whether or not the spell is a summoner spell.</param>
-        /// <param name="keepAnimating">Whether or not to continue the auto attack animation after the abrupt stop.</param>
-        /// <param name="destroyMissile">Whether or not to destroy the missile which may have been created before stopping (client-side removal).</param>
-        /// <param name="overrideVisibility">Whether or not stopping this auto attack overrides visibility checks.</param>
-        /// <param name="forceClient">Whether or not this packet should be forcibly applied, regardless of if an auto attack is being performed client-side.</param>
-        /// <param name="missileNetID">NetId of the missile that may have been spawned by the spell.</param>
-        /// TODO: Find a better way to implement these parameters
-        public void NotifyNPC_InstantStop_Attack(IAttackableUnit attacker, bool isSummonerSpell,
-            bool keepAnimating = false,
-            bool destroyMissile = true,
-            bool overrideVisibility = true,
-            bool forceClient = false,
-            uint missileNetID = 0)
+        /// <param name="caster">Unit responsible for the autocasting.</param>
+        /// <param name="spell">Spell to auto cast.</param>
+        /// // TODO: Verify critSlot functionality
+        /// <param name="critSlot">Optional spell slot to cast when a crit is going to occur.</param>
+        public void NotifyNPC_SetAutocast(IObjAiBase caster, ISpell spell, byte critSlot = 0)
         {
-            var stopAttack = new NPC_InstantStop_Attack
+            var autoCast = new NPC_SetAutocast
             {
-                SenderNetID = attacker.NetId,
-                MissileNetID = missileNetID, //TODO: Fix MissileNetID, currently it only works when it is 0
-                KeepAnimating = keepAnimating,
-                DestroyMissile = destroyMissile,
-                OverrideVisibility = overrideVisibility,
-                IsSummonerSpell = isSummonerSpell,
-                ForceDoClient = forceClient
+                SenderNetID = caster.NetId,
+                Slot = spell.CastInfo.SpellSlot,
+                CritSlot = critSlot
             };
-            _packetHandlerManager.BroadcastPacketVision(attacker, stopAttack.GetBytes(), Channel.CHL_S2C);
+
+            if (critSlot == 0)
+            {
+                autoCast.CritSlot = autoCast.Slot;
+            }
+
+            _packetHandlerManager.BroadcastPacketVision(caster, autoCast.GetBytes(), Channel.CHL_S2C);
         }
 
         /// <summary>
-        /// Sends a packet to all players detailing that the specified AttackableUnit die has died to the specified AttackableUnit killer.
+        /// Sends a packet to the given user detailing that the given spell has been set to auto cast (as well as the spell in the critSlot) for the given caster.
         /// </summary>
-        /// <param name="unit">AttackableUnit that was killed.</param>
-        /// <param name="killer">AttackableUnit that killed the unit.</param>
-        public void NotifyNpcDie(IAttackableUnit unit, IAttackableUnit killer)
+        /// <param name="userId">User to send the packet to.</param>
+        /// <param name="caster">Unit responsible for the autocasting.</param>
+        /// <param name="spell">Spell to auto cast.</param>
+        /// // TODO: Verify critSlot functionality
+        /// <param name="critSlot">Optional spell slot to cast when a crit is going to occur.</param>
+        public void NotifyNPC_SetAutocast(int userId, IObjAiBase caster, ISpell spell, byte critSlot = 0)
         {
-            var nd = new NpcDie(unit, killer);
-            _packetHandlerManager.BroadcastPacket(nd, Channel.CHL_S2C);
+            var autoCast = new NPC_SetAutocast
+            {
+                SenderNetID = caster.NetId,
+                Slot = spell.CastInfo.SpellSlot,
+                CritSlot = critSlot
+            };
+
+            if (critSlot == 0)
+            {
+                autoCast.CritSlot = autoCast.Slot;
+            }
+
+            _packetHandlerManager.SendPacket(userId, autoCast.GetBytes(), Channel.CHL_S2C);
         }
 
         /// <summary>
@@ -2115,7 +2194,7 @@ namespace PacketDefinitions420
                 // BotRank, deprecated as of v4.18
                 // TODO: Unhardcode
                 SpawnPositionIndex = 0,
-                SkinID = champion.Skin,
+                SkinID = champion.SkinID,
                 Name = clientInfo.Name,
                 Skin = champion.Model,
                 DeathDurationRemaining = champion.RespawnTimer,
@@ -2132,6 +2211,28 @@ namespace PacketDefinitions420
             }
 
             _packetHandlerManager.SendPacket(userId, heroPacket.GetBytes(), Channel.CHL_S2C);
+        }
+
+        /// <summary>
+        /// Sends a packet to all players detailing that the specified unit has been killed by the specified killer.
+        /// </summary>
+        /// <param name="data">Data of the death.</param>
+        public void NotifyS2C_NPC_Die_MapView(IDeathData data)
+        {
+            var dieMapView = new S2C_NPC_Die_MapView
+            {
+                SenderNetID = data.Unit.NetId,
+                DeathData = new DeathData
+                {
+                    BecomeZombie = data.BecomeZombie,
+                    DieType = data.DieType,
+                    KillerNetID = data.Killer.NetId,
+                    DamageType = (byte)data.DamageType,
+                    DamageSource = (byte)data.DamageSource,
+                    DeathDuration = data.DeathDuration
+                }
+            };
+            _packetHandlerManager.BroadcastPacket(dieMapView.GetBytes(), Channel.CHL_S2C);
         }
 
         /// <summary>

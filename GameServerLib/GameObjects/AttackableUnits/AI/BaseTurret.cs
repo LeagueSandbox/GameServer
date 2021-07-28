@@ -1,6 +1,7 @@
 ﻿using System.Numerics;
 using System.Text;
 using Force.Crc32;
+using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
 using LeagueSandbox.GameServer.GameObjects.Stats;
@@ -43,8 +44,9 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             TeamId team = TeamId.TEAM_BLUE,
             uint netId = 0,
             LaneID lane = LaneID.NONE,
-            MapData.MapObject mapObject = null
-        ) : base(game, model, new Stats.Stats(), 88, position, 1200, netId, team)
+            MapData.MapObject mapObject = null,
+            int skinId = 0
+        ) : base(game, model, new Stats.Stats(), 88, position, 1200, skinId, netId, team)
         {
             ParentNetId = Crc32Algorithm.Compute(Encoding.UTF8.GetBytes(name)) | 0xFF000000;
             Name = name;
@@ -67,7 +69,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
             foreach (var u in units)
             {
-                if (u.IsDead || u.Team == Team)
+                if (u.IsDead || u.Team == Team || !u.Status.HasFlag(StatusFlags.Targetable))
                 {
                     continue;
                 }
@@ -119,9 +121,9 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         /// Called when this unit dies.
         /// </summary>
         /// <param name="killer">Unit that killed this unit.</param>
-        public override void Die(IAttackableUnit killer)
+        public override void Die(IDeathData data)
         {
-            foreach (var player in _game.ObjectManager.GetAllChampionsFromTeam(killer.Team))
+            foreach (var player in _game.ObjectManager.GetAllChampionsFromTeam(data.Killer.Team))
             {
                 var goldEarn = _globalGold;
 
@@ -140,8 +142,8 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 _game.PacketNotifier.NotifyAddGold(player, this, goldEarn);
             }
 
-            _game.PacketNotifier.NotifyUnitAnnounceEvent(UnitAnnounces.TURRET_DESTROYED, this, killer);
-            base.Die(killer);
+            _game.PacketNotifier.NotifyUnitAnnounceEvent(UnitAnnounces.TURRET_DESTROYED, this, data.Killer);
+            base.Die(data);
         }
 
         /// <summary>
@@ -200,7 +202,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             }
 
             base.Update(diff);
-            Replication.Update();
         }
     }
 }

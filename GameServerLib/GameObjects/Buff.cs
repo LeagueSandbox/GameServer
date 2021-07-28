@@ -15,7 +15,6 @@ namespace LeagueSandbox.GameServer.GameObjects
         // Crucial Vars.
         private readonly Game _game;
         private readonly CSharpScriptEngine _scriptEngine;
-        private IBuffGameScript _buffGameScript;
 
         // Function Vars.
         private readonly bool _infiniteDuration;
@@ -31,6 +30,10 @@ namespace LeagueSandbox.GameServer.GameObjects
         public IObjAiBase SourceUnit { get; }
         public IAttackableUnit TargetUnit { get; }
         public float TimeElapsed { get; private set; }
+        /// <summary>
+        /// Script instance for this buff. Casting to a specific buff class gives access its functions and variables.
+        /// </summary>
+        public IBuffGameScript BuffScript { get; private set; }
 
         public Buff(Game game, string buffName, float duration, int stacks, ISpell originSpell, IAttackableUnit onto, IObjAiBase from, bool infiniteDuration = false)
         {
@@ -47,22 +50,22 @@ namespace LeagueSandbox.GameServer.GameObjects
 
             LoadScript();
 
-            BuffAddType = _buffGameScript.BuffAddType;
-            if (BuffAddType == (BuffAddType.STACKS_AND_RENEWS | BuffAddType.STACKS_AND_CONTINUE | BuffAddType.STACKS_AND_OVERLAPS) && _buffGameScript.MaxStacks < 2)
+            BuffAddType = BuffScript.BuffAddType;
+            if (BuffAddType == (BuffAddType.STACKS_AND_RENEWS | BuffAddType.STACKS_AND_CONTINUE | BuffAddType.STACKS_AND_OVERLAPS) && BuffScript.MaxStacks < 2)
             {
                 throw new ArgumentException("Error: Tried to create Stackable Buff, but MaxStacks was less than 2.");
             }
 
-            BuffType = _buffGameScript.BuffType;
+            BuffType = BuffScript.BuffType;
             Duration = duration;
-            IsHidden = _buffGameScript.IsHidden;
-            if (_buffGameScript.MaxStacks > 254 && BuffType != BuffType.COUNTER)
+            IsHidden = BuffScript.IsHidden;
+            if (BuffScript.MaxStacks > 254 && BuffType != BuffType.COUNTER)
             {
                 MaxStacks = 254;
             }
             else
             {
-                MaxStacks = Math.Min(_buffGameScript.MaxStacks, int.MaxValue);
+                MaxStacks = Math.Min(BuffScript.MaxStacks, int.MaxValue);
             }
             OriginSpell = originSpell;
             if (onto.HasBuff(Name) && BuffAddType == BuffAddType.STACKS_AND_OVERLAPS)
@@ -83,15 +86,15 @@ namespace LeagueSandbox.GameServer.GameObjects
 
         public void LoadScript()
         {
-            ApiEventManager.RemoveAllListenersForOwner(_buffGameScript);
-            _buffGameScript = _scriptEngine.CreateObject<IBuffGameScript>(Name, Name);
+            ApiEventManager.RemoveAllListenersForOwner(BuffScript);
+            BuffScript = _scriptEngine.CreateObject<IBuffGameScript>("Buffs", Name) ?? new BuffScriptEmpty();
         }
 
         public void ActivateBuff()
         {
-            _buffGameScript.OnActivate(TargetUnit, this, OriginSpell);
-
             _remove = false;
+
+            BuffScript.OnActivate(TargetUnit, this, OriginSpell);
         }
 
         public void DeactivateBuff()
@@ -102,11 +105,11 @@ namespace LeagueSandbox.GameServer.GameObjects
             }
             _remove = true; // To prevent infinite loop with OnDeactivate calling events
 
-            _buffGameScript.OnDeactivate(TargetUnit, this, OriginSpell);
+            BuffScript.OnDeactivate(TargetUnit, this, OriginSpell);
 
-            if (_buffGameScript.StatsModifier != null)
+            if (BuffScript.StatsModifier != null)
             {
-                TargetUnit.RemoveStatModifier(_buffGameScript.StatsModifier);
+                TargetUnit.RemoveStatModifier(BuffScript.StatsModifier);
             }
         }
 
@@ -117,7 +120,7 @@ namespace LeagueSandbox.GameServer.GameObjects
 
         public IStatsModifier GetStatsModifier()
         {
-            return _buffGameScript.StatsModifier;
+            return BuffScript.StatsModifier;
         }
 
         public bool IsBuffInfinite()
@@ -150,7 +153,7 @@ namespace LeagueSandbox.GameServer.GameObjects
             TimeElapsed += diff / 1000.0f;
             if (Math.Abs(Duration) > Extensions.COMPARE_EPSILON)
             {
-                _buffGameScript?.OnUpdate(diff);
+                BuffScript?.OnUpdate(diff);
                 if (TimeElapsed >= Duration)
                 {
                     DeactivateBuff();

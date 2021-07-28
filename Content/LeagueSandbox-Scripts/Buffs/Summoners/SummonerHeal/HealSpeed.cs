@@ -5,7 +5,7 @@ using LeagueSandbox.GameServer.GameObjects.Stats;
 using GameServerCore.Scripting.CSharp;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 
-namespace HealSpeed
+namespace Buffs
 {
     internal class HealSpeed : IBuffGameScript
     {

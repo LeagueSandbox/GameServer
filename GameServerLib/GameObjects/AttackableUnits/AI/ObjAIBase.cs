@@ -39,6 +39,10 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         /// </summary>
         /// TODO: Move to AttackableUnit as it relates to stats.
         public ICharData CharData { get; }
+        /// <summary>
+        /// The ID of the skin this unit should use for its model.
+        /// </summary>
+        public int SkinID { get; set; }
         public bool HasAutoAttacked { get; set; }
         /// <summary>
         /// Whether or not this AI has made their first auto attack against their current target. Refreshes after untargeting or targeting another unit.
@@ -75,12 +79,14 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         public Dictionary<short, ISpell> Spells { get; }
 
         public ObjAiBase(Game game, string model, Stats.Stats stats, int collisionRadius = 40,
-            Vector2 position = new Vector2(), int visionRadius = 0, uint netId = 0, TeamId team = TeamId.TEAM_NEUTRAL) :
+            Vector2 position = new Vector2(), int visionRadius = 0, int skinId = 0, uint netId = 0, TeamId team = TeamId.TEAM_NEUTRAL) :
             base(game, model, stats, collisionRadius, position, visionRadius, netId, team)
         {
             _itemManager = game.ItemManager;
 
             CharData = _game.Config.ContentManager.GetCharData(Model);
+
+            SkinID = skinId;
 
             stats.LoadStats(CharData);
 
@@ -806,6 +812,11 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         /// TODO: Remove Target class.
         public void SetTargetUnit(IAttackableUnit target, bool networked = false)
         {
+            if (target == null || target.IsDead || !target.Status.HasFlag(StatusFlags.Targetable))
+            {
+                target = null;
+            }
+
             TargetUnit = target;
 
             if (networked)
@@ -1003,6 +1014,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 else
                 {
                     // Acquires the closest target.
+                    // TODO: Make a function which uses this method and use it for every case of target acquisition (ex minions, turrets, attackmove).
                     if (MoveOrder == OrderType.AttackMove)
                     {
                         var objects = _game.ObjectManager.GetObjects();
@@ -1015,11 +1027,17 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                             if (!(it.Value is IAttackableUnit u) ||
                                 u.IsDead ||
                                 u.Team == Team ||
-                                Vector2.DistanceSquared(Position, u.Position) > range * range)
+                                Vector2.DistanceSquared(Position, u.Position) > range * range ||
+                                !u.Status.HasFlag(StatusFlags.Targetable))
+                            {
                                 continue;
+                            }
 
                             if (!(Vector2.DistanceSquared(Position, u.Position) < distanceSqrToTarget))
+                            {
                                 continue;
+                            }
+
                             distanceSqrToTarget = Vector2.DistanceSquared(Position, u.Position);
                             nextTarget = u;
                         }

@@ -1,6 +1,6 @@
 ﻿using GameServerCore.Enums;
 
-namespace LeagueSandbox.GameServer.Content
+namespace GameServerCore.Domain
 {
     public interface ICharData
     {

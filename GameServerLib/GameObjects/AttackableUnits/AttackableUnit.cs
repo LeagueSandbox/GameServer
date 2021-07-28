@@ -9,6 +9,7 @@ using GameServerCore.Domain.GameObjects;
 using GameServerCore.Domain.GameObjects.Spell.Missile;
 using GameServerCore.Domain.GameObjects.Spell.Sector;
 using GameServerCore.Enums;
+using GameServerLib.GameObjects.AttackableUnits;
 using LeagueSandbox.GameServer.API;
 using LeagueSandbox.GameServer.Logging;
 using log4net;
@@ -24,6 +25,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         // Crucial Vars.
         private float _statUpdateTimer;
         private object _buffsLock;
+        private IDeathData _death;
 
         // Utility Vars.
         internal const float DETECT_RANGE = 475.0f;
@@ -122,7 +124,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             Model = model;
             Waypoints = new List<Vector2> { Position };
             CurrentWaypoint = new KeyValuePair<int, Vector2>(1, Position);
-            Status = StatusFlags.CanAttack | StatusFlags.CanCast | StatusFlags.CanMove | StatusFlags.CanMoveEver;
+            Status = StatusFlags.CanAttack | StatusFlags.CanCast | StatusFlags.CanMove | StatusFlags.CanMoveEver | StatusFlags.Targetable;
             MovementParameters = null;
             Stats.AttackSpeedMultiplier.BaseValue = 1.0f;
 
@@ -150,13 +152,13 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             if (this is IChampion c)
             {
                 var szSkin = "";
-                if (c.Skin < 10)
+                if (c.SkinID < 10)
                 {
-                    szSkin = "0" + c.Skin;
+                    szSkin = "0" + c.SkinID;
                 }
                 else
                 {
-                    szSkin = c.Skin.ToString();
+                    szSkin = c.SkinID.ToString();
                 }
                 gobj += szSkin;
             }
@@ -207,6 +209,8 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             var onUpdate = _game.ScriptEngine.GetStaticMethod<Action<IAttackableUnit, double>>(Model, "Passive", "OnUpdate");
             onUpdate?.Invoke(this, diff);
 
+            Replication.Update();
+
             if (Waypoints.Count > 1)
             {
                 Move(diff);
@@ -225,6 +229,12 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                 {
                     SetDashingState(false);
                 }
+            }
+
+            if (IsDead && _death != null)
+            {
+                Die(_death);
+                _death = null;
             }
         }
 
@@ -264,6 +274,12 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             }
             else
             {
+                if (collider is IAttackableUnit unit && unit.Status.HasFlag(StatusFlags.Ghosted)
+                    || Status.HasFlag(StatusFlags.Ghosted))
+                {
+                    return;
+                }
+
                 // TODO: Replace this with event listener publishing.
                 var onCollide = _game.ScriptEngine.GetStaticMethod<Action<IAttackableUnit, IGameObject>>(Model, "Passive", "onCollide");
                 onCollide?.Invoke(this, collider);
@@ -282,7 +298,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// <returns>True/False.</returns>
         public bool GetIsTargetableToTeam(TeamId team)
         {
-            if (!Stats.IsTargetable)
+            if (!Status.HasFlag(StatusFlags.Targetable))
             {
                 return false;
             }
@@ -293,15 +309,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             }
 
             return !Stats.IsTargetableToTeam.HasFlag(SpellDataFlags.NonTargetableEnemy);
-        }
-
-        /// <summary>
-        /// Sets whether or not this unit should be targetable.
-        /// </summary>
-        /// <param name="targetable">True/False.</param>
-        public void SetIsTargetable(bool targetable)
-        {
-            Stats.IsTargetable = targetable;
         }
 
         /// <summary>
@@ -436,7 +443,16 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             if (!IsDead && Stats.CurrentHealth <= 0)
             {
                 IsDead = true;
-                Die(attacker);
+                _death = new DeathData
+                {
+                    BecomeZombie = false, // TODO: Unhardcode
+                    DieType = 0, // TODO: Unhardcode
+                    Unit = this,
+                    Killer = attacker,
+                    DamageType = type,
+                    DamageSource = source,
+                    DeathDuration = 0 // TODO: Unhardcode
+                };
             }
 
             int attackerId = 0, targetId = 0;
@@ -457,8 +473,11 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                 attackerId = (int)_game.PlayerManager.GetClientInfoByChampion((IChampion)attackerMinion.Owner).PlayerId;
             }
 
-            _game.PacketNotifier.NotifyUnitApplyDamage(attacker, this, damage, type, damageText,
-                _game.Config.IsDamageTextGlobal, attackerId, targetId);
+            if (attacker.Team != Team)
+            {
+                _game.PacketNotifier.NotifyUnitApplyDamage(attacker, this, damage, type, damageText,
+                    _game.Config.IsDamageTextGlobal, attackerId, targetId);
+            }
 
             // TODO: send this in one place only
             _game.PacketNotifier.NotifyUpdatedStats(this, false);
@@ -506,20 +525,20 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// <summary>
         /// Function called when this unit's health drops to 0 or less.
         /// </summary>
-        /// <param name="killer">Unit which killed this unit.</param>
-        public virtual void Die(IAttackableUnit killer)
+        /// <param name="data">Data of the death.</param>
+        public virtual void Die(IDeathData data)
         {
             _game.ObjectManager.StopTargeting(this);
 
             if (!IsToRemove())
             {
-                _game.PacketNotifier.NotifyNpcDie(this, killer);
+                _game.PacketNotifier.NotifyS2C_NPC_Die_MapView(data);
             }
 
             SetToRemove();
 
             var onDie = _game.ScriptEngine.GetStaticMethod<Action<IAttackableUnit, IAttackableUnit>>(Model, "Passive", "OnDie");
-            onDie?.Invoke(this, killer);
+            onDie?.Invoke(this, data.Killer);
 
             var exp = _game.Map.MapProperties.GetExperienceFor(this);
             var champs = _game.ObjectManager.GetChampionsInRange(Position, EXP_RANGE, true);
@@ -536,7 +555,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                 }
             }
 
-            if (killer != null && killer is IChampion champion)
+            if (data.Killer != null && data.Killer is IChampion champion)
                 champion.OnKill(this);
         }
 
@@ -1268,6 +1287,106 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             else
             {
                 Status &= ~status;
+            }
+
+            switch (status)
+            {
+                case StatusFlags.CanAttack:
+                {
+                    Stats.SetActionState(ActionState.CAN_ATTACK, enabled);
+                    return;
+                }
+                case StatusFlags.CanCast:
+                {
+                    Stats.SetActionState(ActionState.CAN_CAST, enabled);
+                    return;
+                }
+                case StatusFlags.CanMove:
+                {
+                    Stats.SetActionState(ActionState.CAN_MOVE, enabled);
+                    return;
+                }
+                case StatusFlags.CanMoveEver:
+                {
+                    Stats.SetActionState(ActionState.CAN_NOT_MOVE, !enabled);
+                    return;
+                }
+                case StatusFlags.Stealthed:
+                {
+                    Stats.SetActionState(ActionState.STEALTHED, enabled);
+                    return;
+                }
+                case StatusFlags.RevealSpecificUnit:
+                {
+                    Stats.SetActionState(ActionState.REVEAL_SPECIFIC_UNIT, enabled);
+                    return;
+                }
+                case StatusFlags.Taunted:
+                {
+                    Stats.SetActionState(ActionState.TAUNTED, enabled);
+                    return;
+                }
+                case StatusFlags.Feared:
+                {
+                    Stats.SetActionState(ActionState.FEARED, enabled);
+                    // TODO: Verify
+                    Stats.SetActionState(ActionState.IS_FLEEING, enabled);
+                    return;
+                }
+                case StatusFlags.Sleep:
+                {
+                    Stats.SetActionState(ActionState.IS_ASLEEP, enabled);
+                    return;
+                }
+                case StatusFlags.NearSighted:
+                {
+                    Stats.SetActionState(ActionState.IS_NEAR_SIGHTED, enabled);
+                    return;
+                }
+                case StatusFlags.Ghosted:
+                {
+                    Stats.SetActionState(ActionState.IS_GHOSTED, enabled);
+                    return;
+                }
+                case StatusFlags.Charmed:
+                {
+                    Stats.SetActionState(ActionState.CHARMED, enabled);
+                    return;
+                }
+                case StatusFlags.NoRender:
+                {
+                    Stats.SetActionState(ActionState.NO_RENDER, enabled);
+                    return;
+                }
+                case StatusFlags.ForceRenderParticles:
+                {
+                    Stats.SetActionState(ActionState.FORCE_RENDER_PARTICLES, enabled);
+                    return;
+                }
+                case StatusFlags.Targetable:
+                {
+                    Stats.IsTargetable = enabled;
+                    // TODO: Verify.
+                    Stats.SetActionState(ActionState.UNKNOWN, enabled);
+                    return;
+                }    
+            }
+
+            if (!(Status.HasFlag(StatusFlags.CanAttack)
+                    && !Status.HasFlag(StatusFlags.Charmed)
+                    && !Status.HasFlag(StatusFlags.Disarmed)
+                    && !Status.HasFlag(StatusFlags.Feared)
+                    // TODO: Verify
+                    && !Status.HasFlag(StatusFlags.Pacified)
+                    && !Status.HasFlag(StatusFlags.Sleep)
+                    && !Status.HasFlag(StatusFlags.Stunned)
+                    && !Status.HasFlag(StatusFlags.Suppressed)))
+            {
+                Stats.SetActionState(ActionState.CAN_NOT_ATTACK, true);
+            }
+            else if (Stats.GetActionState(ActionState.CAN_NOT_ATTACK))
+            {
+                Stats.SetActionState(ActionState.CAN_NOT_ATTACK, false);
             }
         }
 

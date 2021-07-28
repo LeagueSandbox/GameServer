@@ -5,7 +5,7 @@ using GameServerCore.Domain.GameObjects.Spell;
 using GameServerCore.Scripting.CSharp;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 
-namespace Overdrive
+namespace Buffs
 {
     internal class Overdrive : IBuffGameScript
     {

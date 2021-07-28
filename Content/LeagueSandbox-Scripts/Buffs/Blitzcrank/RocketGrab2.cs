@@ -5,7 +5,7 @@ using LeagueSandbox.GameServer.GameObjects.Stats;
 using GameServerCore.Domain.GameObjects.Spell;
 using GameServerCore.Scripting.CSharp;
 
-namespace RocketGrab2
+namespace Buffs
 {
     internal class RocketGrab2 : IBuffGameScript
     {

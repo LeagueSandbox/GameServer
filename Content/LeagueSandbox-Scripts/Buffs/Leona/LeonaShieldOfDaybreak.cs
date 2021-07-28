@@ -7,7 +7,7 @@ using LeagueSandbox.GameServer.API;
 using LeagueSandbox.GameServer.GameObjects.Stats;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 
-namespace LeonaShieldOfDaybreak
+namespace Buffs
 {
     class LeonaShieldOfDaybreak : IBuffGameScript
     {

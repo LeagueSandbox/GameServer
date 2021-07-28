@@ -18,6 +18,11 @@ namespace LeagueSandbox.GameServer.Scripting.CSharp
 
         public string AutoItemActivateEffect { get; set; } = "";
 
+        /// <summary>
+        /// Whether or not the caster should automatically face the end position of the spell.
+        /// </summary>
+        public bool AutoFaceDirection { get; set; } = true;
+
         public float[] AutoTargetDamageByLevel { get; set; } = { 0.0f, 0.0f, 0.0f, 0.0f, 0.0f };
 
         public float CastTime { get; set; } = 0.0f;
@@ -94,6 +99,10 @@ namespace LeagueSandbox.GameServer.Scripting.CSharp
         /// What kind of behavior this missile has.
         /// </summary>
         public MissileType Type { get; set; } = MissileType.None;
+        /// <summary>
+        /// Position the missile should end at, only useful for Circle and Arc missile types.
+        /// </summary>
+        public Vector2 OverrideEndPosition { get; set; }
     }
 
     /// <summary>

@@ -1,6 +1,5 @@
 ﻿using GameServerCore.Domain.GameObjects.Spell;
 using GameServerCore.Enums;
-using LeagueSandbox.GameServer.Content;
 using System.Collections.Generic;
 using System.Numerics;
 
@@ -25,6 +24,10 @@ namespace GameServerCore.Domain.GameObjects
         /// </summary>
         /// TODO: Move to AttackableUnit as it relates to stats..
         ICharData CharData { get; }
+        /// <summary>
+        /// The ID of the skin this unit should use for its model.
+        /// </summary>
+        public int SkinID { get; }
         /// <summary>
         /// Whether or not this AI has finished an auto attack.
         /// </summary>

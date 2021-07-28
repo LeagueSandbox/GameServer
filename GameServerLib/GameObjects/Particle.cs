@@ -65,6 +65,10 @@ namespace LeagueSandbox.GameServer.GameObjects
         /// Effectively uses the ground height for the end position.
         /// </summary>
         public bool FollowsGroundTilt { get; }
+        /// <summary>
+        /// Flags which determine how the particle behaves. Values unknown.
+        /// </summary>
+        public FXFlags Flags { get; }
 
         /// <summary>
         /// Prepares the Particle, setting up the information required for networking it to clients.
@@ -85,7 +89,8 @@ namespace LeagueSandbox.GameServer.GameObjects
         /// <param name="reqVision">Whether or not the Particle is affected by vision checks.</param>
         /// <param name="autoSend">Whether or not to automatically send the Particle packet to clients.</param>
         /// <param name="teamOnly">The only team that should be able to see this particle.</param>
-        public Particle(Game game, IGameObject caster, IGameObject bindObj, IGameObject target, string particleName, float scale = 1.0f, string boneName = "", string targetBoneName = "", uint netId = 0, Vector3 direction = new Vector3(), bool followGroundTilt = false, float lifetime = 0, bool reqVision = true, bool autoSend = true, TeamId teamOnly = TeamId.TEAM_NEUTRAL)
+        /// <param name="flags">Flags which determine how the particle behaves. Refer to FXFlags enum.</param>
+        public Particle(Game game, IGameObject caster, IGameObject bindObj, IGameObject target, string particleName, float scale = 1.0f, string boneName = "", string targetBoneName = "", uint netId = 0, Vector3 direction = new Vector3(), bool followGroundTilt = false, float lifetime = 0, bool reqVision = true, bool autoSend = true, TeamId teamOnly = TeamId.TEAM_NEUTRAL, FXFlags flags = FXFlags.GivenDirection)
                : base(game, target.Position, 0, 0, netId)
         {
             Caster = caster;
@@ -101,6 +106,7 @@ namespace LeagueSandbox.GameServer.GameObjects
             VisionAffected = reqVision;
             SpecificTeam = teamOnly;
             FollowsGroundTilt = followGroundTilt;
+            Flags = flags;
 
             _game.ObjectManager.AddObject(this);
 
@@ -129,7 +135,8 @@ namespace LeagueSandbox.GameServer.GameObjects
         /// <param name="reqVision">Whether or not the Particle is affected by vision checks.</param>
         /// <param name="autoSend">Whether or not to automatically send the Particle packet to clients.</param>
         /// <param name="teamOnly">The only team that should be able to see this particle.</param>
-        public Particle(Game game, IGameObject caster, IGameObject bindObj, Vector2 targetPos, string particleName, float scale = 1.0f, string boneName = "", string targetBoneName = "", uint netId = 0, Vector3 direction = new Vector3(), bool followGroundTilt = false, float lifetime = 0, bool reqVision = true, bool autoSend = true, TeamId teamOnly = TeamId.TEAM_NEUTRAL)
+        /// <param name="flags">Flags which determine how the particle behaves. Refer to FXFlags enum.</param>
+        public Particle(Game game, IGameObject caster, IGameObject bindObj, Vector2 targetPos, string particleName, float scale = 1.0f, string boneName = "", string targetBoneName = "", uint netId = 0, Vector3 direction = new Vector3(), bool followGroundTilt = false, float lifetime = 0, bool reqVision = true, bool autoSend = true, TeamId teamOnly = TeamId.TEAM_NEUTRAL, FXFlags flags = FXFlags.GivenDirection)
                : base(game, targetPos, 0, 0, netId, teamOnly)
         {
             Caster = caster;
@@ -151,6 +158,7 @@ namespace LeagueSandbox.GameServer.GameObjects
             VisionAffected = reqVision;
             SpecificTeam = teamOnly;
             FollowsGroundTilt = followGroundTilt;
+            Flags = flags;
 
             _game.ObjectManager.AddObject(this);
 

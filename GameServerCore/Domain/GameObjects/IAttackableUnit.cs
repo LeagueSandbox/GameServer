@@ -87,11 +87,6 @@ namespace GameServerCore.Domain.GameObjects
         /// <returns>True/False.</returns>
         bool GetIsTargetableToTeam(TeamId team);
         /// <summary>
-        /// Sets whether or not this unit should be targetable.
-        /// </summary>
-        /// <param name="targetable">True/False.</param>
-        void SetIsTargetable(bool targetable);
-        /// <summary>
         /// Sets whether or not this unit is targetable to the specified team.
         /// </summary>
         /// <param name="team">TeamId to change.</param>
@@ -134,8 +129,8 @@ namespace GameServerCore.Domain.GameObjects
         /// <summary>
         /// Called when this unit dies.
         /// </summary>
-        /// <param name="killer">Unit that killed this unit.</param>
-        void Die(IAttackableUnit killer);
+        /// <param name="data">Data of the death.</param>
+        void Die(IDeathData data);
         /// <summary>
         /// Sets this unit's current model to the specified internally named model. *NOTE*: If the model is not present in the client files, all connected players will crash.
         /// </summary>

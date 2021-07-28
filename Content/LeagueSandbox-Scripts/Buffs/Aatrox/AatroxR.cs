@@ -5,7 +5,7 @@ using GameServerCore.Scripting.CSharp;
 using LeagueSandbox.GameServer.GameObjects.Stats;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 
-namespace AatroxR
+namespace Buffs
 {
     class AatroxR : IBuffGameScript
     {
@@ -24,15 +24,15 @@ namespace AatroxR
             if (unit is IChampion c)
             {
                 // TODO: Implement Animation Overrides for spells like these
-                if (c.Skin == 0)
+                if (c.SkinID == 0)
                 {
                     pmodelname = "Aatrox_Base_RModel.troy";
                 }
-                else if (c.Skin == 1)
+                else if (c.SkinID == 1)
                 {
                     pmodelname = "Aatrox_Skin01_RModel.troy";
                 }
-                else if (c.Skin == 2)
+                else if (c.SkinID == 2)
                 {
                     pmodelname = "Aatrox_Skin02_RModel.troy";
                 }
