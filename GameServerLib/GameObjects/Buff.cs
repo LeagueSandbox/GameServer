@@ -92,9 +92,9 @@ namespace LeagueSandbox.GameServer.GameObjects
 
         public void ActivateBuff()
         {
-            BuffScript.OnActivate(TargetUnit, this, OriginSpell);
-
             _remove = false;
+
+            BuffScript.OnActivate(TargetUnit, this, OriginSpell);
         }
 
         public void DeactivateBuff()
