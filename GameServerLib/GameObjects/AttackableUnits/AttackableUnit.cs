@@ -614,7 +614,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
 
                     prevbuff.DeactivateBuff();
                     RemoveBuff(b.Name, false);
-                    BuffList.Remove(prevbuff);
 
                     // Clear the newly given buff's slot since we will move it into the previous buff's slot.
                     RemoveBuffSlot(b);
@@ -632,13 +631,22 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                     {
                         _game.PacketNotifier.NotifyNPC_BuffReplace(b);
                     }
+
+                    // New buff means new script, so we need to activate it.
                     b.ActivateBuff();
                 }
-                // If the buff is supposed to reset the timer on any existing buff instances of the same name.
                 else if (b.BuffAddType == BuffAddType.RENEW_EXISTING)
                 {
+                    // Clear the newly created buff's slot so we aren't wasting slots.
+                    if (b != ParentBuffs[b.Name])
+                    {
+                        RemoveBuffSlot(b);
+                    }
+
+                    // Reset the already existing buff's timer.
                     ParentBuffs[b.Name].ResetTimeElapsed();
 
+                    // Update the visual buff in-game (just resets the time on the icon).
                     if (!b.IsHidden)
                     {
                         _game.PacketNotifier.NotifyNPC_BuffReplace(ParentBuffs[b.Name]);
