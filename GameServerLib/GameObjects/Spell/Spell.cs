@@ -135,15 +135,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
                 }
             }
 
-            if (p != null)
-            {
-                ApiEventManager.OnSpellMissileHit.Publish(CastInfo.Owner, this, u, p);
-            }
-
-            if (s != null)
-            {
-                ApiEventManager.OnSpellSectorHit.Publish(CastInfo.Owner, this, u, s);
-            }
+            ApiEventManager.OnSpellHit.Publish(CastInfo.Owner, this, u, p, s);
         }
 
         public bool Cast(Vector2 start, Vector2 end, IAttackableUnit unit = null)
@@ -279,7 +271,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
 
             Script.OnSpellPreCast(CastInfo.Owner, this, unit, start, end);
 
-            if (!CastInfo.IsAutoAttack && (!SpellData.IsToggleSpell)
+            if (!CastInfo.IsAutoAttack && !SpellData.IsToggleSpell
                         || (!SpellData.NoWinddownIfCancelled
                         && !SpellData.Flags.HasFlag(SpellDataFlags.InstantCast)
                         && SpellData.CantCancelWhileWindingUp))
@@ -485,7 +477,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
             // TODO: Verify
             var attackType = AttackType.ATTACK_TYPE_RADIAL;
 
-            if (cast && (!CastInfo.IsAutoAttack && (!SpellData.IsToggleSpell)
+            if (cast && (!CastInfo.IsAutoAttack && !SpellData.IsToggleSpell
                         || (!SpellData.NoWinddownIfCancelled
                         && !SpellData.Flags.HasFlag(SpellDataFlags.InstantCast)
                         && SpellData.CantCancelWhileWindingUp)))
@@ -495,9 +487,6 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
                     if (!SpellData.Flags.HasFlag(SpellDataFlags.InstantCast))
                     {
                         CastInfo.Owner.StopMovement();
-
-                        // TODO: Verify if we should move this outside of this TriggersSpellCasts if statement.
-                        CastInfo.Owner.UpdateMoveOrder(OrderType.CastSpell, true);
                     }
 
                     if (Script.ScriptMetadata.AutoFaceDirection)
@@ -513,6 +502,9 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
                         CastInfo.Owner.FaceDirection(new Vector3(dirTemp.X, 0, dirTemp.Y), false);
                     }
                 }
+
+                // TODO: Verify if this should be inside of the above TriggersSpellCasts check.
+                CastInfo.Owner.UpdateMoveOrder(OrderType.CastSpell, true);
             }
 
             if (CastInfo.IsAutoAttack && CastInfo.Owner.IsMelee)
@@ -701,10 +693,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
                 }
                 else
                 {
-                    if (Script.ScriptMetadata.MissileParameters == null)
-                    {
-                        ApplyEffects(CastInfo.Targets[0].Unit, null);
-                    }
+                    ApplyEffects(CastInfo.Targets[0].Unit);
                     CastInfo.Owner.AutoAttackHit(CastInfo.Targets[0].Unit);
                 }
 
@@ -712,6 +701,11 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
             }
             else
             {
+                if (Script.ScriptMetadata.MissileParameters == null && Script.ScriptMetadata.SectorParameters == null)
+                {
+                    ApplyEffects(CastInfo.Targets[0].Unit);
+                }
+
                 if (SpellData.ChannelDuration[CastInfo.SpellLevel] <= 0)
                 {
                     State = SpellState.STATE_COOLDOWN;
