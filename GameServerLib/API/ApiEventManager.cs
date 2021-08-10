@@ -85,9 +85,8 @@ namespace LeagueSandbox.GameServer.API
             OnSpellCast.RemoveListener(owner);
             OnSpellChannel.RemoveListener(owner);
             OnSpellChannelCancel.RemoveListener(owner);
-            OnSpellMissileHit.RemoveListener(owner);
+            OnSpellHit.RemoveListener(owner);
             OnSpellMissileEnd.RemoveListener(owner);
-            OnSpellSectorHit.RemoveListener(owner);
             OnSpellPostCast.RemoveListener(owner);
             OnSpellPostChannel.RemoveListener(owner);
             OnTakeDamage.RemoveListener(owner);
@@ -103,9 +102,8 @@ namespace LeagueSandbox.GameServer.API
         public static EventOnSpellCast OnSpellCast = new EventOnSpellCast();
         public static EventOnSpellChannel OnSpellChannel = new EventOnSpellChannel();
         public static EventOnSpellChannelCancel OnSpellChannelCancel = new EventOnSpellChannelCancel();
-        public static EventOnSpellMissileHit OnSpellMissileHit = new EventOnSpellMissileHit();
+        public static EventOnSpellHit OnSpellHit = new EventOnSpellHit();
         public static EventOnSpellMissileEnd OnSpellMissileEnd = new EventOnSpellMissileEnd();
-        public static EventOnSpellSectorHit OnSpellSectorHit = new EventOnSpellSectorHit();
         public static EventOnSpellPostCast OnSpellPostCast = new EventOnSpellPostCast();
         public static EventOnSpellPostChannel OnSpellPostChannel = new EventOnSpellPostChannel();
         public static EventOnTakeDamage OnTakeDamage = new EventOnTakeDamage();
@@ -413,6 +411,45 @@ namespace LeagueSandbox.GameServer.API
                 if (_listeners[i].Item2 == spell)
                 {
                     _listeners[i].Item3(spell);
+                }
+            }
+        }
+    }
+
+    public class EventOnSpellHit
+    {
+        private readonly List<Tuple<object, ISpell, Action<ISpell, IAttackableUnit, ISpellMissile, ISpellSector>, bool>> _listeners = new List<Tuple<object, ISpell, Action<ISpell, IAttackableUnit, ISpellMissile, ISpellSector>, bool>>();
+        public void AddListener(object owner, ISpell spell, Action<ISpell, IAttackableUnit, ISpellMissile, ISpellSector> callback, bool singleInstance)
+        {
+            var listenerTuple = new Tuple<object, ISpell, Action<ISpell, IAttackableUnit, ISpellMissile, ISpellSector>, bool>(owner, spell, callback, singleInstance);
+            _listeners.Add(listenerTuple);
+        }
+        public void RemoveListener(object owner, ISpell spell)
+        {
+            _listeners.RemoveAll((listener) => listener.Item1 == owner && listener.Item2 == spell);
+        }
+        public void RemoveListener(object owner)
+        {
+            _listeners.RemoveAll((listener) => listener.Item1 == owner);
+        }
+        public void Publish(IObjAiBase unit, ISpell spell, IAttackableUnit target, ISpellMissile p, ISpellSector s)
+        {
+            var count = _listeners.Count;
+
+            if (count == 0)
+            {
+                return;
+            }
+
+            for (int i = count - 1; i >= 0; i--)
+            {
+                if (_listeners[i].Item2 == spell)
+                {
+                    _listeners[i].Item3(spell, target, p, s);
+                    if (_listeners[i].Item4 == true)
+                    {
+                        _listeners.RemoveAt(i);
+                    }
                 }
             }
         }
