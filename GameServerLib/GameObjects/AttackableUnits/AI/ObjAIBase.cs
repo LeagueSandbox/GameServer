@@ -660,7 +660,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             }
 
             s.LevelUp();
-
+            ApiEventManager.OnLevelUpSpell.Publish(s);
             return s;
         }
 

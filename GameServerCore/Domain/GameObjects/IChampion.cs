@@ -19,6 +19,6 @@ namespace GameServerCore.Domain.GameObjects
         void Respawn();
         bool OnDisconnect();
 
-        void OnKill(IAttackableUnit killed);
+        void OnKill(IDeathData deathData);
     }
 }
