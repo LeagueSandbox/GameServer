@@ -8,6 +8,7 @@ using GameServerCore.NetInfo;
 using GameServerCore.Enums;
 using LeagueSandbox.GameServer.GameObjects.Stats;
 using LeagueSandbox.GameServer.Items;
+using LeagueSandbox.GameServer.API;
 
 namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 {
@@ -192,6 +193,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
             if (LevelUp())
             {
+                ApiEventManager.OnLevelUp.Publish(this);
                 _game.PacketNotifier.NotifyNPC_LevelUp(this);
                 // TODO: send this in one place only
                 _game.PacketNotifier.NotifyUpdatedStats(this, false);
@@ -216,6 +218,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             Stats.CurrentMana = Stats.HealthPoints.Total;
             IsDead = false;
             RespawnTimer = -1;
+            ApiEventManager.OnResurrect.Publish(this);
         }
 
         public bool OnDisconnect()
@@ -253,24 +256,24 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             return false;
         }
 
-        public void OnKill(IAttackableUnit killed)
+        public void OnKill(IDeathData deathData)
         {
-            if (killed is IMinion)
+            if (deathData.Killer is IMinion)
             {
                 ChampStats.MinionsKilled += 1;
-                if (killed.Team == TeamId.TEAM_NEUTRAL)
+                if (deathData.Killer.Team == TeamId.TEAM_NEUTRAL)
                 {
                     ChampStats.NeutralMinionsKilled += 1;
                 }
 
-                var gold = _game.Map.MapProperties.GetGoldFor(killed);
+                var gold = _game.Map.MapProperties.GetGoldFor(deathData.Killer);
                 if (gold <= 0)
                 {
                     return;
                 }
 
                 Stats.Gold += gold;
-                _game.PacketNotifier.NotifyAddGold(this, killed, gold);
+                _game.PacketNotifier.NotifyAddGold(this, deathData.Killer, gold);
 
                 if (KillDeathCounter < 0)
                 {
@@ -284,10 +287,13 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                     KillDeathCounter += 1;
                 }
             }
+            ApiEventManager.OnKillUnit.Publish(deathData);
         }
 
         public override void Die(IDeathData data)
         {
+            ApiEventManager.OnDeath.Publish(data);
+
             RespawnTimer = _game.Config.MapData.DeathTimes[Stats.Level] * 1000.0f;
             ChampStats.Deaths += 1;
 
@@ -306,6 +312,8 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 _game.PacketNotifier.NotifyChampionDie(this, data.Killer, 0);
                 return;
             }
+
+            ApiEventManager.OnKill.Publish(data);
 
             cKiller.ChampionGoldFromMinions = 0;
             cKiller.ChampStats.Kills += 1;

@@ -437,7 +437,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                 damage = defense >= 0 ? 100 / (100 + defense) * damage : (2 - 100 / (100 - defense)) * damage;
             }
 
-            ApiEventManager.OnTakeDamage.Publish(this, attacker);
+            ApiEventManager.OnPreTakeDamage.Publish(this, attacker);
 
             Stats.CurrentHealth = Math.Max(0.0f, Stats.CurrentHealth - damage);
             if (!IsDead && Stats.CurrentHealth <= 0)
@@ -453,6 +453,8 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                     DamageSource = source,
                     DeathDuration = 0 // TODO: Unhardcode
                 };
+
+                ApiEventManager.OnTakeDamage.Publish(this, attacker);
             }
 
             int attackerId = 0, targetId = 0;
@@ -537,9 +539,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
 
             SetToRemove();
 
-            var onDie = _game.ScriptEngine.GetStaticMethod<Action<IAttackableUnit, IAttackableUnit>>(Model, "Passive", "OnDie");
-            onDie?.Invoke(this, data.Killer);
-
+            ApiEventManager.OnDeath.Publish(data);
             var exp = _game.Map.MapProperties.GetExperienceFor(this);
             var champs = _game.ObjectManager.GetChampionsInRange(Position, EXP_RANGE, true);
             //Cull allied champions
@@ -556,7 +556,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             }
 
             if (data.Killer != null && data.Killer is IChampion champion)
-                champion.OnKill(this);
+                champion.OnKill(data);
         }
 
         /// <summary>
