@@ -1,22 +1,23 @@
-using GameServerCore.Domain.GameObjects;
+﻿using GameServerCore.Domain.GameObjects;
 using GameServerCore.Domain.GameObjects.Spell;
+using GameServerCore.Domain.GameObjects.Spell.Missile;
 using GameServerCore.Scripting.CSharp;
-using LeagueSandbox.GameServer.Scripting.CSharp;
 using System.Numerics;
 
-namespace Passives
+namespace LeagueSandbox.GameServer.Scripting.CSharp
 {
-    public class EzrealRisingSpellForce : ICharScript
+    public class CharScriptEmpty : ICharScript
     {
         public void OnActivate(IObjAiBase owner, ISpell spell)
         {
         }
+
         public void OnDeactivate(IObjAiBase owner, ISpell spell)
         {
         }
+
         public void OnUpdate(float diff)
         {
         }
     }
 }
-

@@ -7,10 +7,12 @@ using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Domain.GameObjects.Spell;
 using GameServerCore.Enums;
+using GameServerCore.Scripting.CSharp;
 using LeagueSandbox.GameServer.API;
 using LeagueSandbox.GameServer.Content;
 using LeagueSandbox.GameServer.GameObjects.Spell.Missile;
 using LeagueSandbox.GameServer.Items;
+using LeagueSandbox.GameServer.Scripting.CSharp;
 
 namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 {
@@ -77,6 +79,10 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         /// </summary>
         public IAttackableUnit TargetUnit { get; set; }
         public Dictionary<short, ISpell> Spells { get; }
+        public ISpell Passive { get; }
+        public ICharScript CharScript { get; private set; }
+
+        private readonly CSharpScriptEngine _charScriptEngine;
 
         public ObjAiBase(Game game, string model, Stats.Stats stats, int collisionRadius = 40,
             Vector2 position = new Vector2(), int visionRadius = 0, int skinId = 0, uint netId = 0, TeamId team = TeamId.TEAM_NEUTRAL) :
@@ -89,6 +95,8 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             SkinID = skinId;
 
             stats.LoadStats(CharData);
+
+            _charScriptEngine = game.ScriptEngine;
 
             // TODO: Centralize this instead of letting it lay in the initialization.
             if (CharData.PathfindingCollisionRadius > 0)
@@ -138,6 +146,13 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                         Spells[i] = new Spell.Spell(game, this, CharData.SpellNames[i], (byte)i);
                     }
                 }
+                if(this is IChampion)
+                {
+
+                }
+                //Passive
+                Spells[(int)SpellSlotType.PassiveSpellSlot] = new Spell.Spell(game, this, CharData.PassiveAbilityName, (int)SpellSlotType.PassiveSpellSlot);
+                LoadPassiveScript(Spells[(int)SpellSlotType.PassiveSpellSlot]);
 
                 Spells[(int)SpellSlotType.SummonerSpellSlots] = new Spell.Spell(game, this, "BaseSpell", (int)SpellSlotType.SummonerSpellSlots);
                 Spells[(int)SpellSlotType.SummonerSpellSlots + 1] = new Spell.Spell(game, this, "BaseSpell", (int)SpellSlotType.SummonerSpellSlots + 1);
@@ -178,9 +193,9 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 Spells[(int)SpellSlotType.UseSpellSlot] = new Spell.Spell(game, this, "BaseSpell", (int)SpellSlotType.UseSpellSlot);
 
                 var passiveSpellName = "BaseSpell";
-                if (!string.IsNullOrEmpty(CharData.Passive.PassiveAbilityName))
+                if (!string.IsNullOrEmpty(CharData.PassiveAbilityName))
                 {
-                    passiveSpellName = CharData.Passive.PassiveAbilityName;
+                    passiveSpellName = CharData.PassiveAbilityName;
                 }
 
                 Spells[(int)SpellSlotType.PassiveSpellSlot] = new Spell.Spell(game, this, passiveSpellName, (int)SpellSlotType.PassiveSpellSlot);
@@ -202,6 +217,12 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             {
                 IsMelee = true;
             }
+        }
+
+        public void LoadPassiveScript(ISpell spell)
+        {
+            CharScript = _charScriptEngine.CreateObject<ICharScript>("Passives", spell.SpellName) ?? new CharScriptEmpty();
+            CharScript.OnActivate(this, spell);
         }
 
         /// <summary>
@@ -674,6 +695,12 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             {
                 return;
             }
+            //Removes Passive
+            else if(slot == (int)SpellSlotType.PassiveSpellSlot)
+            {
+                CharScript.OnDeactivate(this, Passive);
+            }
+            //Removes normal Spells
             else
             {
                 Spells[slot].Deactivate();
@@ -887,7 +914,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         public override void Update(float diff)
         {
             base.Update(diff);
-
+            CharScript.OnUpdate(diff);
             foreach (var s in Spells.Values)
             {
                 s.Update(diff);
