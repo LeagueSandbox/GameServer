@@ -215,6 +215,9 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             }
         }
 
+        /// <summary>
+        /// Loads the Passive Script
+        /// </summary>
         public void LoadPassiveScript(ISpell spell)
         {
             CharScript = _charScriptEngine.CreateObject<ICharScript>("Passives", spell.SpellName) ?? new CharScriptEmpty();
