@@ -146,10 +146,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                         Spells[i] = new Spell.Spell(game, this, CharData.SpellNames[i], (byte)i);
                     }
                 }
-                if(this is IChampion)
-                {
-
-                }
                 //Passive
                 Spells[(int)SpellSlotType.PassiveSpellSlot] = new Spell.Spell(game, this, CharData.PassiveAbilityName, (int)SpellSlotType.PassiveSpellSlot);
                 LoadPassiveScript(Spells[(int)SpellSlotType.PassiveSpellSlot]);
