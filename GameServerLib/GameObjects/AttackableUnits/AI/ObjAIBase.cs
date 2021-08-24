@@ -79,7 +79,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         /// </summary>
         public IAttackableUnit TargetUnit { get; set; }
         public Dictionary<short, ISpell> Spells { get; }
-        public ISpell Passive { get; }
         public ICharScript CharScript { get; private set; }
 
         private readonly CSharpScriptEngine _charScriptEngine;
@@ -147,7 +146,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                     }
                 }
                 //Passive
-                Spells[(int)SpellSlotType.PassiveSpellSlot] = new Spell.Spell(game, this, CharData.PassiveAbilityName, (int)SpellSlotType.PassiveSpellSlot);
+                Spells[(int)SpellSlotType.PassiveSpellSlot] = new Spell.Spell(game, this, CharData.PassiveData.PassiveLuaName, (int)SpellSlotType.PassiveSpellSlot);
                 LoadPassiveScript(Spells[(int)SpellSlotType.PassiveSpellSlot]);
 
                 Spells[(int)SpellSlotType.SummonerSpellSlots] = new Spell.Spell(game, this, "BaseSpell", (int)SpellSlotType.SummonerSpellSlots);
@@ -189,9 +188,9 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 Spells[(int)SpellSlotType.UseSpellSlot] = new Spell.Spell(game, this, "BaseSpell", (int)SpellSlotType.UseSpellSlot);
 
                 var passiveSpellName = "BaseSpell";
-                if (!string.IsNullOrEmpty(CharData.PassiveAbilityName))
+                if (!string.IsNullOrEmpty(CharData.PassiveData.PassiveLuaName))
                 {
-                    passiveSpellName = CharData.PassiveAbilityName;
+                    passiveSpellName = CharData.PassiveData.PassiveLuaName;
                 }
 
                 Spells[(int)SpellSlotType.PassiveSpellSlot] = new Spell.Spell(game, this, passiveSpellName, (int)SpellSlotType.PassiveSpellSlot);
@@ -697,7 +696,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             //Removes Passive
             else if(slot == (int)SpellSlotType.PassiveSpellSlot)
             {
-                CharScript.OnDeactivate(this, Passive);
+                CharScript.OnDeactivate(this, Spells[(int)SpellSlotType.PassiveSpellSlot]);
             }
             //Removes normal Spells
             else
