@@ -90,7 +90,7 @@ namespace LeagueSandbox.GameServer.Content
         public float[] AttackProbabilities { get; private set; } = new float[18];
 
         // TODO: Verify if we want this to be an array.
-        IPassiveData PassiveData { get; private set; } = new PassiveData();
+        public IPassiveData PassiveData { get; private set; } = new PassiveData();
 
         public void Load(string name)
         {
