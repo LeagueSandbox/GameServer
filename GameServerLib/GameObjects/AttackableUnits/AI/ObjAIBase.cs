@@ -146,7 +146,12 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                     }
                 }
                 //Passive
-                Spells[(int)SpellSlotType.PassiveSpellSlot] = new Spell.Spell(game, this, CharData.PassiveData.PassiveLuaName, (int)SpellSlotType.PassiveSpellSlot);
+                var passiveSpellName = "BaseSpell";
+                if (!string.IsNullOrEmpty(CharData.PassiveData.PassiveLuaName))
+                {
+                    passiveSpellName = CharData.PassiveData.PassiveLuaName;
+                }
+                Spells[(int)SpellSlotType.PassiveSpellSlot] = new Spell.Spell(game, this, passiveSpellName, (int)SpellSlotType.PassiveSpellSlot);
                 LoadPassiveScript(Spells[(int)SpellSlotType.PassiveSpellSlot]);
 
                 Spells[(int)SpellSlotType.SummonerSpellSlots] = new Spell.Spell(game, this, "BaseSpell", (int)SpellSlotType.SummonerSpellSlots);
@@ -186,14 +191,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
                 Spells[(int)SpellSlotType.RespawnSpellSlot] = new Spell.Spell(game, this, "BaseSpell", (int)SpellSlotType.RespawnSpellSlot);
                 Spells[(int)SpellSlotType.UseSpellSlot] = new Spell.Spell(game, this, "BaseSpell", (int)SpellSlotType.UseSpellSlot);
-
-                var passiveSpellName = "BaseSpell";
-                if (!string.IsNullOrEmpty(CharData.PassiveData.PassiveLuaName))
-                {
-                    passiveSpellName = CharData.PassiveData.PassiveLuaName;
-                }
-
-                Spells[(int)SpellSlotType.PassiveSpellSlot] = new Spell.Spell(game, this, passiveSpellName, (int)SpellSlotType.PassiveSpellSlot);
 
                 // BasicAttackNormalSlots & BasicAttackCriticalSlots
                 // 64 - 72 & 73 - 81
