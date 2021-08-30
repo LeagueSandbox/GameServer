@@ -94,8 +94,12 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
 
             SpellData = game.Config.ContentManager.GetSpellData(spellName);
 
-            //Set the game script for the spell
-            LoadScript();
+            //Checks if the spell is in the passive slot, so it doesn't try to load it twice under the "Spells" and "Passives" namespaces
+            if (CastInfo.SpellSlot != (int)SpellSlotType.PassiveSpellSlot)
+            {
+                //Set the game script for the spell
+                LoadScript();
+            }
         }
 
         public void LoadScript()

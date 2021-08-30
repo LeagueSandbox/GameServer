@@ -33,23 +33,6 @@ namespace LeagueSandbox.GameServer.Content
         public string PassiveNameStr { get; set; } = "";
 
         //TODO: Extend into handling several passives, when we decide on a format for that case.
-        public static string GetPassiveAbilityNameFromScriptFile(string champName, List<IPackage> packages)
-        {
-            foreach (var package in packages)
-            {
-                var path = $"{package.PackagePath}\\Champions\\{champName}\\Passive.cs";
-                if (File.Exists(path))
-                {
-                    var inputPassiveFile = File.ReadAllText(path);
-                    string pattern = @"class (?<passiveName>\w+) : IGameScript";
-                    RegexOptions options = RegexOptions.Multiline;
-                    var passiveName = Regex.Match(inputPassiveFile, pattern, options).Groups["passiveName"].Value;
-
-                    return passiveName;
-                }
-            }
-            return "";
-        }
     }
 
     public class CharData : ICharData
@@ -107,7 +90,7 @@ namespace LeagueSandbox.GameServer.Content
         public float[] AttackProbabilities { get; private set; } = new float[18];
 
         // TODO: Verify if we want this to be an array.
-        public IPassiveData Passive { get; private set; } = new PassiveData();
+        public IPassiveData PassiveData { get; private set; } = new PassiveData();
 
         public void Load(string name)
         {
@@ -168,6 +151,8 @@ namespace LeagueSandbox.GameServer.Content
             {
                 SpellsUpLevels[i] = file.GetIntArray("Data", $"SpellsUpLevels{i + 1}", SpellsUpLevels[i]);
             }
+
+            PassiveData.PassiveLuaName = file.GetString("Data", "Passive1LuaName", "");
 
             MaxLevels = file.GetIntArray("Data", "MaxLevels", MaxLevels);
 
@@ -271,8 +256,6 @@ namespace LeagueSandbox.GameServer.Content
                     }
                 }
             }
-
-            Passive.PassiveAbilityName = PassiveData.GetPassiveAbilityNameFromScriptFile(name, packages);
         }
     }
 }

@@ -10,18 +10,12 @@ using GameServerLib.GameObjects.AttackableUnits;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 
 
-namespace Spells
+namespace Passives
 {
-    public class SionQ : ISpellScript //Was supposed to be "SionPassive", but passive scripts aren't getting read 
+    public class SionPassive : ICharScript
     {
         ISpell Spell;
         int counter;
-        public ISpellScriptMetadata ScriptMetadata => new SpellScriptMetadata()
-        {
-            TriggersSpellCasts = true
-            // TODO
-        };
-
         public void OnActivate(IObjAiBase owner, ISpell spell)
         {
             ApiEventManager.OnDeath.AddListener(this, owner, OnDeath, true);
@@ -43,25 +37,6 @@ namespace Spells
             }
         }
         public void OnDeactivate(IObjAiBase owner, ISpell spell)
-        {
-        }
-        public void OnSpellPreCast(IObjAiBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
-        {
-            owner.TakeDamage(owner, 10000, GameServerCore.Enums.DamageType.DAMAGE_TYPE_TRUE, GameServerCore.Enums.DamageSource.DAMAGE_SOURCE_INTERNALRAW, false);
-        }
-        public void OnSpellCast(ISpell spell)
-        {
-        }
-        public void OnSpellPostCast(ISpell spell)
-        {
-        }
-        public void OnSpellChannel(ISpell spell)
-        {
-        }
-        public void OnSpellChannelCancel(ISpell spell)
-        {
-        }
-        public void OnSpellPostChannel(ISpell spell)
         {
         }
         public void OnUpdate(float diff)

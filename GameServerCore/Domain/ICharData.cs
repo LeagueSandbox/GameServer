@@ -37,7 +37,7 @@ namespace GameServerCore.Domain
         float[] AttackProbabilities { get; }
         string[] ExtraSpells { get; }
         // TODO: Verify if we want this to be an array.
-        IPassiveData Passive { get; }
+        IPassiveData PassiveData { get; }
         void Load(string name);
     }
 }
