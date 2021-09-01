@@ -1,5 +1,6 @@
 ﻿using GameServerCore.Domain.GameObjects.Spell;
 using GameServerCore.Enums;
+using GameServerCore.Scripting.CSharp;
 using System.Collections.Generic;
 using System.Numerics;
 
@@ -60,14 +61,17 @@ namespace GameServerCore.Domain.GameObjects
         OrderType MoveOrder { get; }
         bool IsNextAutoCrit { get; }
         Dictionary<short, ISpell> Spells { get; }
+        public ICharScript CharScript { get; }
         /// <summary>
         /// Unit this AI will auto attack when it is in auto attack range.
         /// </summary>
-        IAttackableUnit TargetUnit { get; set;  }
+        IAttackableUnit TargetUnit { get; set; }
 
         /// <summary>
         /// Function called by this AI's auto attack projectile when it hits its target.
         /// </summary>
+        public void LoadPassiveScript(ISpell spell);
+
         void AutoAttackHit(IAttackableUnit target);
         /// <summary>
         /// Cancels any auto attacks this AI is performing and resets the time between the next auto attack if specified.

@@ -67,7 +67,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
         /// <summary>
         /// Whether or not the script for this spell is the default empty script.
         /// </summary>
-        public bool HasEmptyScript { get; set; } = true;
+        public bool HasEmptyScript { get; private set; } = true;
 
         public Spell(Game game, IObjAiBase owner, string spellName, byte slot)
         {
@@ -99,6 +99,12 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
             {
                 //Set the game script for the spell
                 LoadScript();
+                HasEmptyScript = Script.GetType() == typeof(SpellScriptEmpty);
+            }
+            else
+            {
+                owner.LoadPassiveScript(this);
+                HasEmptyScript = owner.CharScript.GetType() == typeof(CharScriptEmpty);
             }
         }
 
