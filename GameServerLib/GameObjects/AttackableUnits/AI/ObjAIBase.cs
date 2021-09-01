@@ -217,6 +217,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         public void LoadPassiveScript(ISpell spell)
         {
             CharScript = _charScriptEngine.CreateObject<ICharScript>("Passives", spell.SpellName) ?? new CharScriptEmpty();
+            spell.HasEmptyScript = CharScript.GetType() == typeof(CharScriptEmpty);
             CharScript.OnActivate(this, spell);
         }
 

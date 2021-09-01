@@ -52,7 +52,7 @@ namespace GameServerCore.Domain.GameObjects.Spell
         /// <summary>
         /// Whether or not the script for this spell is the default empty script.
         /// </summary>
-        bool HasEmptyScript { get; }
+        bool HasEmptyScript { get; set; }
 
         /// <returns>spell's unique ID</returns>
         int GetId();
