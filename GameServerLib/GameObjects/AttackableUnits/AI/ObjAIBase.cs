@@ -152,7 +152,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                     passiveSpellName = CharData.PassiveData.PassiveLuaName;
                 }
                 Spells[(int)SpellSlotType.PassiveSpellSlot] = new Spell.Spell(game, this, passiveSpellName, (int)SpellSlotType.PassiveSpellSlot);
-                LoadPassiveScript(Spells[(int)SpellSlotType.PassiveSpellSlot]);
 
                 Spells[(int)SpellSlotType.SummonerSpellSlots] = new Spell.Spell(game, this, "BaseSpell", (int)SpellSlotType.SummonerSpellSlots);
                 Spells[(int)SpellSlotType.SummonerSpellSlots + 1] = new Spell.Spell(game, this, "BaseSpell", (int)SpellSlotType.SummonerSpellSlots + 1);
