@@ -499,6 +499,9 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
                     if (!SpellData.Flags.HasFlag(SpellDataFlags.InstantCast))
                     {
                         CastInfo.Owner.StopMovement();
+
+                        // TODO: Verify if we should move this outside of this TriggersSpellCasts if statement.
+                        CastInfo.Owner.UpdateMoveOrder(OrderType.CastSpell, true);
                     }
 
                     if (Script.ScriptMetadata.AutoFaceDirection)
@@ -514,9 +517,6 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
                         CastInfo.Owner.FaceDirection(new Vector3(dirTemp.X, 0, dirTemp.Y), false);
                     }
                 }
-
-                // TODO: Verify if this should be inside of the above TriggersSpellCasts check.
-                CastInfo.Owner.UpdateMoveOrder(OrderType.CastSpell, true);
             }
 
             if (CastInfo.IsAutoAttack && CastInfo.Owner.IsMelee)
