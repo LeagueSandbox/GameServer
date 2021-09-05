@@ -78,7 +78,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
         {
             SpellCostReduction = 0;
             ManaCost = new float[64];
-            ActionState = ActionState.CAN_ATTACK | ActionState.CAN_CAST | ActionState.CAN_MOVE | ActionState.UNKNOWN;
+            ActionState = ActionState.CAN_ATTACK | ActionState.CAN_CAST | ActionState.CAN_MOVE | ActionState.TARGETABLE;
             IsTargetable = true;
             IsTargetableToTeam = SpellDataFlags.TargetableToAll;
 

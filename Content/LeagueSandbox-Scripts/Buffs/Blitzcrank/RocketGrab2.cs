@@ -12,24 +12,25 @@ namespace Buffs
         public BuffType BuffType => BuffType.STUN;
         public BuffAddType BuffAddType => BuffAddType.REPLACE_EXISTING;
         public int MaxStacks => 1;
-        public bool IsHidden => false;
+        public bool IsHidden => true;
 
         public IStatsModifier StatsModifier { get; private set; } = new StatsModifier();
 
         public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
-            unit.Stats.SetActionState(ActionState.CAN_ATTACK, false);
-            unit.Stats.SetActionState(ActionState.CAN_CAST, false);
-            unit.Stats.SetActionState(ActionState.CAN_MOVE, false);
+            SetStatus(unit, StatusFlags.CanAttack, false);
+            SetStatus(unit, StatusFlags.CanMove, false);
+            SetStatus(unit, StatusFlags.CanCast, false);
 
             ForceMovement(unit, "RUN", buff.SourceUnit.Position, 1800f, 0, 5.0f, 0, movementOrdersType: ForceMovementOrdersType.CANCEL_ORDER);
         }
 
+        // TODO: Use OnMoveEnd event and call this manually.
         public void OnDeactivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
-            unit.Stats.SetActionState(ActionState.CAN_ATTACK, true);
-            unit.Stats.SetActionState(ActionState.CAN_CAST, true);
-            unit.Stats.SetActionState(ActionState.CAN_MOVE, true);
+            SetStatus(unit, StatusFlags.CanAttack, true);
+            SetStatus(unit, StatusFlags.CanCast, true);
+            SetStatus(unit, StatusFlags.CanMove, true);
 
             if (buff.SourceUnit is IObjAiBase ai && unit is IChampion ch)
             {

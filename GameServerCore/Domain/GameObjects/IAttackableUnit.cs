@@ -50,11 +50,6 @@ namespace GameServerCore.Domain.GameObjects
         /// </summary>
         IForceMovementParameters MovementParameters { get; }
         /// <summary>
-        /// Amount of time passed since the unit started dashing.
-        /// </summary>
-        /// TODO: Implement a dash class so dash based variables and functions can be separate from units.
-        float DashElapsedTime { get; set; }
-        /// <summary>
         /// Stats used purely in networking the accompishments or status of units and their gameplay affecting stats.
         /// </summary>
         IReplication Replication { get; }

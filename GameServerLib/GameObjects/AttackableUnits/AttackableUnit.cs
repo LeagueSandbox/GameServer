@@ -101,11 +101,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// Parameters of any forced movements (dashes) this unit is performing.
         /// </summary>
         public IForceMovementParameters MovementParameters { get; protected set; }
-        /// <summary>
-        /// Amount of time passed since the unit started dashing.
-        /// </summary>
-        /// TODO: Implement a dash class so dash based variables and functions can be separate from units.
-        public float DashElapsedTime { get; set; }
 
         public AttackableUnit(
             Game game,
@@ -211,7 +206,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
 
             Replication.Update();
 
-            if (Waypoints.Count > 1)
+            if (Waypoints.Count > 1 && CanMove())
             {
                 Move(diff);
             }
@@ -224,8 +219,8 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                     return;
                 }
 
-                DashElapsedTime += diff;
-                if (DashElapsedTime >= MovementParameters.FollowTravelTime)
+                MovementParameters.SetTimeElapsed(MovementParameters.ElapsedTime + diff);
+                if (MovementParameters.ElapsedTime >= MovementParameters.FollowTravelTime)
                 {
                     SetDashingState(false);
                 }
@@ -274,15 +269,16 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             }
             else
             {
-                if (collider is IAttackableUnit unit && unit.Status.HasFlag(StatusFlags.Ghosted)
-                    || Status.HasFlag(StatusFlags.Ghosted))
-                {
-                    return;
-                }
-
                 // TODO: Replace this with event listener publishing.
                 var onCollide = _game.ScriptEngine.GetStaticMethod<Action<IAttackableUnit, IGameObject>>(Model, "Passive", "onCollide");
                 onCollide?.Invoke(this, collider);
+
+                if (MovementParameters != null || Status.HasFlag(StatusFlags.Ghosted)
+                    || (collider is IAttackableUnit unit &&
+                    (unit.MovementParameters != null || unit.Status.HasFlag(StatusFlags.Ghosted))))
+                {
+                    return;
+                }
 
                 // We should not teleport here because Pathfinding should handle it.
                 // TODO: Implement a PathfindingHandler, and remove currently implemented manual pathfinding.
@@ -1121,15 +1117,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                 dirTemp = new Vector2(0, 0);
             }
 
-            if (CanMove())
-            {
-                //FaceDirection(new Vector3(dirTemp.X, 0.0f, dirTemp.Y), false);
-                Direction = new Vector3(dirTemp.X, 0.0f, dirTemp.Y);
-            }
-            else
-            {
-                Direction = new Vector3(dirTemp.X, 0.0f, dirTemp.Y);
-            }
+            Direction = new Vector3(dirTemp.X, 0.0f, dirTemp.Y);
 
             FaceDirection(Direction, false);
 
@@ -1233,7 +1221,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         {
             // Waypoints should always have an origin at the current position.
             // Can't set waypoints if we can't move. Dashes are also excluded as their paths should be set before being applied.
-            if (newWaypoints.Count <= 1 || newWaypoints[0] != Position || !CanMove() || MovementParameters != null)
+            if (newWaypoints.Count <= 1 || newWaypoints[0] != Position)
             {
                 return;
             }
@@ -1375,7 +1363,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                 {
                     Stats.IsTargetable = enabled;
                     // TODO: Verify.
-                    Stats.SetActionState(ActionState.UNKNOWN, enabled);
+                    Stats.SetActionState(ActionState.TARGETABLE, enabled);
                     return;
                 }    
             }
@@ -1419,6 +1407,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             // TODO: Take into account the rest of the arguments
             MovementParameters = new ForceMovementParameters
             {
+                ElapsedTime = 0,
                 PathSpeedOverride = dashSpeed,
                 ParabolicGravity = leapGravity,
                 ParabolicStartPoint = Position,
@@ -1428,7 +1417,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                 FollowBackDistance = 0,
                 FollowTravelTime = 0
             };
-            DashElapsedTime = 0;
 
             SetDashingState(true);
 
@@ -1455,7 +1443,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             if (MovementParameters != null && state == false)
             {
                 MovementParameters = null;
-                DashElapsedTime = 0;
 
                 // TODO: Implement this as a parameter.
                 Stats.SetActionState(ActionState.CAN_ATTACK, true);
