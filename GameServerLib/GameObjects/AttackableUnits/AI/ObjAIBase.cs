@@ -25,8 +25,9 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         // Crucial Vars
         private float _autoAttackCurrentCooldown;
         private bool _skipNextAutoAttack;
-        protected ItemManager _itemManager;
         private Random _random = new Random();
+        private readonly CSharpScriptEngine _charScriptEngine;
+        protected ItemManager _itemManager;
 
         /// <summary>
         /// Variable storing all the data related to this AI's current auto attack. *NOTE*: Will be deprecated as the spells system gets finished.
@@ -80,8 +81,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         public IAttackableUnit TargetUnit { get; set; }
         public Dictionary<short, ISpell> Spells { get; }
         public ICharScript CharScript { get; private set; }
-
-        private readonly CSharpScriptEngine _charScriptEngine;
 
         public ObjAiBase(Game game, string model, Stats.Stats stats, int collisionRadius = 40,
             Vector2 position = new Vector2(), int visionRadius = 0, int skinId = 0, uint netId = 0, TeamId team = TeamId.TEAM_NEUTRAL) :
@@ -691,11 +690,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             {
                 return;
             }
-            //Removes Passive
-            else if(slot == (int)SpellSlotType.PassiveSpellSlot)
-            {
-                CharScript.OnDeactivate(this, Spells[(int)SpellSlotType.PassiveSpellSlot]);
-            }
+            // Verify if we want to support removal/re-addition of character scripts.
             //Removes normal Spells
             else
             {

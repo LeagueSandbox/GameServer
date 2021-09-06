@@ -28,7 +28,7 @@ namespace GameServerCore.Domain.GameObjects
         /// <summary>
         /// The ID of the skin this unit should use for its model.
         /// </summary>
-        public int SkinID { get; }
+        int SkinID { get; }
         /// <summary>
         /// Whether or not this AI has finished an auto attack.
         /// </summary>
@@ -61,17 +61,16 @@ namespace GameServerCore.Domain.GameObjects
         OrderType MoveOrder { get; }
         bool IsNextAutoCrit { get; }
         Dictionary<short, ISpell> Spells { get; }
-        public ICharScript CharScript { get; }
+        ICharScript CharScript { get; }
         /// <summary>
         /// Unit this AI will auto attack when it is in auto attack range.
         /// </summary>
         IAttackableUnit TargetUnit { get; set; }
 
+        void LoadPassiveScript(ISpell spell);
         /// <summary>
         /// Function called by this AI's auto attack projectile when it hits its target.
         /// </summary>
-        public void LoadPassiveScript(ISpell spell);
-
         void AutoAttackHit(IAttackableUnit target);
         /// <summary>
         /// Cancels any auto attacks this AI is performing and resets the time between the next auto attack if specified.
