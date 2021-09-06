@@ -808,13 +808,35 @@ namespace PacketDefinitions420
             charStackDataList.Add(charStackData);
 
             var type = MovementDataType.Normal;
+            SpeedParams speeds = null;
 
-            if (o is IAttackableUnit unit && unit.Waypoints.Count <= 1)
+            if (o is IAttackableUnit u)
             {
-                type = MovementDataType.Stop;
+                if (u.Waypoints.Count <= 1)
+                {
+                    type = MovementDataType.Stop;
+                }
+
+                if (u.MovementParameters != null)
+                {
+                    type = MovementDataType.WithSpeed;
+
+                    speeds = new SpeedParams
+                    {
+                        PathSpeedOverride = u.MovementParameters.PathSpeedOverride,
+                        ParabolicGravity = u.MovementParameters.ParabolicGravity,
+                        // TODO: Implement as parameter (ex: Aatrox Q).
+                        ParabolicStartPoint = u.MovementParameters.ParabolicStartPoint,
+                        Facing = u.MovementParameters.KeepFacingDirection,
+                        FollowNetID = u.MovementParameters.FollowNetID,
+                        FollowDistance = u.MovementParameters.FollowDistance,
+                        FollowBackDistance = u.MovementParameters.FollowBackDistance,
+                        FollowTravelTime = u.MovementParameters.FollowTravelTime
+                    };
+                }
             }
 
-            var md = PacketExtensions.CreateMovementData(o, _navGrid, type, useTeleportID: useTeleportID);
+            var md = PacketExtensions.CreateMovementData(o, _navGrid, type, speeds, useTeleportID: useTeleportID);
 
             var enterVis = new OnEnterVisibilityClient // TYPO >:(
             {

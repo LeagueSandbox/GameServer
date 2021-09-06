@@ -15,29 +15,22 @@ namespace Buffs
 
         public IStatsModifier StatsModifier { get; private set; }
 
-        IAttackableUnit owner;
         IParticle stun;
 
         public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
-            owner = unit;
-            SetStatus(unit, StatusFlags.Stunned, true);
+            buff.SetStatusEffect(StatusFlags.Stunned, true);
             stun = AddParticleTarget(ownerSpell.CastInfo.Owner, unit, "LOC_Stun.troy", unit, buff.Duration, bone: "head");
         }
 
         public void OnDeactivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
-            owner = null;
-            SetStatus(unit, StatusFlags.Stunned, false);
+            buff.SetStatusEffect(StatusFlags.Stunned, false);
             RemoveParticle(stun);
         }
 
         public void OnUpdate(float diff)
         {
-            if (owner != null)
-            {
-                SetStatus(owner, StatusFlags.Stunned, true);
-            }
         }
     }
 }

@@ -250,16 +250,15 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         {
             // TODO: Verify if Dashes should bypass this.
             return !IsDead
+                // TODO: Verify if priority is still maintained with the MovementParameters checks.
                 && ((Status.HasFlag(StatusFlags.CanMove) && Status.HasFlag(StatusFlags.CanMoveEver)) || MovementParameters != null)
-                && (MoveOrder != OrderType.CastSpell
-                // TODO: Verify if priority is still maintained with these MovementParameters checks.
-                || MovementParameters != null
-                || !(Status.HasFlag(StatusFlags.Immovable)
-                || Status.HasFlag(StatusFlags.Netted)
+                && (MoveOrder != OrderType.CastSpell || MovementParameters != null)
+                && (!(Status.HasFlag(StatusFlags.Netted)
                 || Status.HasFlag(StatusFlags.Rooted)
                 || Status.HasFlag(StatusFlags.Sleep)
                 || Status.HasFlag(StatusFlags.Stunned)
-                || Status.HasFlag(StatusFlags.Suppressed)));
+                || Status.HasFlag(StatusFlags.Suppressed))
+                || MovementParameters != null);
         }
 
         /// <summary>

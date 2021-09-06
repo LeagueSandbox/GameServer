@@ -231,6 +231,8 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                 Die(_death);
                 _death = null;
             }
+
+            UpdateStatus();
         }
 
         public override void OnRemoved()
@@ -1221,7 +1223,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         {
             // Waypoints should always have an origin at the current position.
             // Can't set waypoints if we can't move. Dashes are also excluded as their paths should be set before being applied.
-            if (newWaypoints.Count <= 1 || newWaypoints[0] != Position)
+            if (newWaypoints.Count <= 1 || newWaypoints[0] != Position || !CanMove())
             {
                 return;
             }
@@ -1287,6 +1289,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
 
             switch (status)
             {
+                // CallForHelpSuppressor
                 case StatusFlags.CanAttack:
                 {
                     Stats.SetActionState(ActionState.CAN_ATTACK, enabled);
@@ -1307,21 +1310,12 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                     Stats.SetActionState(ActionState.CAN_NOT_MOVE, !enabled);
                     return;
                 }
-                case StatusFlags.Stealthed:
+                case StatusFlags.Charmed:
                 {
-                    Stats.SetActionState(ActionState.STEALTHED, enabled);
+                    Stats.SetActionState(ActionState.CHARMED, enabled);
                     return;
                 }
-                case StatusFlags.RevealSpecificUnit:
-                {
-                    Stats.SetActionState(ActionState.REVEAL_SPECIFIC_UNIT, enabled);
-                    return;
-                }
-                case StatusFlags.Taunted:
-                {
-                    Stats.SetActionState(ActionState.TAUNTED, enabled);
-                    return;
-                }
+                // DisableAmbientGold
                 case StatusFlags.Feared:
                 {
                     Stats.SetActionState(ActionState.FEARED, enabled);
@@ -1329,43 +1323,63 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                     Stats.SetActionState(ActionState.IS_FLEEING, enabled);
                     return;
                 }
-                case StatusFlags.Sleep:
-                {
-                    Stats.SetActionState(ActionState.IS_ASLEEP, enabled);
-                    return;
-                }
-                case StatusFlags.NearSighted:
-                {
-                    Stats.SetActionState(ActionState.IS_NEAR_SIGHTED, enabled);
-                    return;
-                }
-                case StatusFlags.Ghosted:
-                {
-                    Stats.SetActionState(ActionState.IS_GHOSTED, enabled);
-                    return;
-                }
-                case StatusFlags.Charmed:
-                {
-                    Stats.SetActionState(ActionState.CHARMED, enabled);
-                    return;
-                }
-                case StatusFlags.NoRender:
-                {
-                    Stats.SetActionState(ActionState.NO_RENDER, enabled);
-                    return;
-                }
                 case StatusFlags.ForceRenderParticles:
                 {
                     Stats.SetActionState(ActionState.FORCE_RENDER_PARTICLES, enabled);
                     return;
                 }
+                // GhostProof
+                case StatusFlags.Ghosted:
+                {
+                    Stats.SetActionState(ActionState.IS_GHOSTED, enabled);
+                    return;
+                }
+                // IgnoreCallForHelp
+                // Immovable
+                // Invulnerable
+                // MagicImmune
+                case StatusFlags.NearSighted:
+                {
+                    Stats.SetActionState(ActionState.IS_NEAR_SIGHTED, enabled);
+                    return;
+                }
+                // Netted
+                case StatusFlags.NoRender:
+                {
+                    Stats.SetActionState(ActionState.NO_RENDER, enabled);
+                    return;
+                }
+                // PhysicalImmune
+                case StatusFlags.RevealSpecificUnit:
+                {
+                    Stats.SetActionState(ActionState.REVEAL_SPECIFIC_UNIT, enabled);
+                    return;
+                }
+                // Rooted
+                // Silenced
+                case StatusFlags.Sleep:
+                {
+                    Stats.SetActionState(ActionState.IS_ASLEEP, enabled);
+                    return;
+                }
+                case StatusFlags.Stealthed:
+                {
+                    Stats.SetActionState(ActionState.STEALTHED, enabled);
+                    return;
+                }
+                // SuppressCallForHelp
                 case StatusFlags.Targetable:
                 {
                     Stats.IsTargetable = enabled;
                     // TODO: Verify.
                     Stats.SetActionState(ActionState.TARGETABLE, enabled);
                     return;
-                }    
+                }
+                case StatusFlags.Taunted:
+                {
+                    Stats.SetActionState(ActionState.TAUNTED, enabled);
+                    return;
+                }   
             }
 
             if (!(Status.HasFlag(StatusFlags.CanAttack)
@@ -1383,6 +1397,40 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             else if (Stats.GetActionState(ActionState.CAN_NOT_ATTACK))
             {
                 Stats.SetActionState(ActionState.CAN_NOT_ATTACK, false);
+            }
+        }
+
+        public void UpdateStatus()
+        {
+            // Combine the status effects of all the buffs
+            Dictionary<StatusFlags, bool> finalEffects = new Dictionary<StatusFlags, bool>();
+            foreach (IBuff buff in GetBuffs())
+            {
+                foreach (KeyValuePair<StatusFlags, bool> effect in buff.StatusEffects)
+                {
+                    if (finalEffects.ContainsKey(effect.Key))
+                    {
+                        // If the effect should be enabled, it overrides disable.
+                        if (finalEffects[effect.Key])
+                        {
+                            continue;
+                        }
+                        else
+                        {
+                            finalEffects[effect.Key] = effect.Value;
+                        }
+                    }
+                    else
+                    {
+                        finalEffects.Add(effect.Key, effect.Value);
+                    }
+                }
+            }
+
+            // Set the status effects of this unit.
+            foreach (KeyValuePair<StatusFlags, bool> effect in finalEffects)
+            {
+                SetStatus(effect.Key, effect.Value);
             }
         }
 
@@ -1444,24 +1492,15 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             {
                 MovementParameters = null;
 
-                // TODO: Implement this as a parameter.
-                Stats.SetActionState(ActionState.CAN_ATTACK, true);
-                Stats.SetActionState(ActionState.CAN_NOT_ATTACK, false);
-                Stats.SetActionState(ActionState.CAN_MOVE, true);
-                Stats.SetActionState(ActionState.CAN_NOT_MOVE, false);
-
                 var animPairs = new Dictionary<string, string> { { "RUN", "" } };
                 SetAnimStates(animPairs);
             }
 
-            if (state)
-            {
-                // TODO: Implement this as a parameter.
-                Stats.SetActionState(ActionState.CAN_ATTACK, false);
-                Stats.SetActionState(ActionState.CAN_NOT_ATTACK, true);
-                Stats.SetActionState(ActionState.CAN_MOVE, false);
-                Stats.SetActionState(ActionState.CAN_NOT_MOVE, true);
-            }
+            // TODO: Implement this as a parameter.
+            Stats.SetActionState(ActionState.CAN_ATTACK, !state);
+            Stats.SetActionState(ActionState.CAN_NOT_ATTACK, state);
+            Stats.SetActionState(ActionState.CAN_MOVE, !state);
+            Stats.SetActionState(ActionState.CAN_NOT_MOVE, state);
         }
 
         /// <summary>

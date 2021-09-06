@@ -9,18 +9,16 @@ namespace Buffs
 {
     internal class RocketGrab2 : IBuffGameScript
     {
-        public BuffType BuffType => BuffType.STUN;
+        public BuffType BuffType => BuffType.INTERNAL;
         public BuffAddType BuffAddType => BuffAddType.REPLACE_EXISTING;
         public int MaxStacks => 1;
-        public bool IsHidden => true;
+        public bool IsHidden => false;
 
         public IStatsModifier StatsModifier { get; private set; } = new StatsModifier();
 
         public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
-            SetStatus(unit, StatusFlags.CanAttack, false);
-            SetStatus(unit, StatusFlags.CanMove, false);
-            SetStatus(unit, StatusFlags.CanCast, false);
+            buff.SetStatusEffect(StatusFlags.CanAttack | StatusFlags.CanMove | StatusFlags.CanCast, false);
 
             ForceMovement(unit, "RUN", buff.SourceUnit.Position, 1800f, 0, 5.0f, 0, movementOrdersType: ForceMovementOrdersType.CANCEL_ORDER);
         }
@@ -28,9 +26,7 @@ namespace Buffs
         // TODO: Use OnMoveEnd event and call this manually.
         public void OnDeactivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
-            SetStatus(unit, StatusFlags.CanAttack, true);
-            SetStatus(unit, StatusFlags.CanCast, true);
-            SetStatus(unit, StatusFlags.CanMove, true);
+            buff.SetStatusEffect(StatusFlags.CanAttack | StatusFlags.CanMove | StatusFlags.CanCast, true);
 
             if (buff.SourceUnit is IObjAiBase ai && unit is IChampion ch)
             {
