@@ -26,7 +26,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
         private static readonly object _particlesLock = new object();
 
         public override string Command => "debugmode";
-        public override string Syntax => $"{Command} self/champions/laneminions/projectiles";
+        public override string Syntax => $"{Command} self/champions/minions/projectiles";
 
         public DebugParticlesCommand(ChatCommandManager chatCommandManager, Game game)
             : base(chatCommandManager, game)
@@ -55,7 +55,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
 
                 if (_debugMode == 3)
                 {
-                    _logger.Debug($"Stopped debugging lane minions.");
+                    _logger.Debug($"Stopped debugging minions.");
                 }
 
                 if (_debugMode == 4)
@@ -114,10 +114,10 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
                     _debugMode = 2;
                     DebugChampions(userId);
                 }
-                else if (split[1].Contains("laneminions"))
+                else if (split[1].Contains("minions"))
                 {
                     _debugMode = 3;
-                    DebugLaneMinions(userId);
+                    DebugMinions(userId);
                 }
                 else if (split[1].Contains("projectiles"))
                 {
@@ -146,7 +146,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
                 }
                 if (_debugMode == 3)
                 {
-                    DrawLaneMinions(_userId);
+                    DrawMinions(_userId);
                 }
                 if (_debugMode == 4)
                 {
@@ -340,94 +340,94 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
             }
         }
 
-        // Draws the collision radius and waypoints of all LaneMinions
-        public void DebugLaneMinions(int userId)
+        // Draws the collision radius and waypoints of all Minions
+        public void DebugMinions(int userId)
         {
             // Arbitrary ratio is required for the DebugCircle particle to look accurate
             var circlesize = (1f / 100f) * _userChampion.CollisionRadius;
 
-            _logger.Debug($"Started debugging lane minions. Your Debug Circle Radius: " + "(1 / 100) * " + _userChampion.CollisionRadius + " = " + "(" + (1f / 100f) + ") * " + _userChampion.CollisionRadius + " = " + circlesize);
-            var startdebugmsg = $"Started debugging lane minions. Your Debug Circle Radius: " + "(1 / 100) * " + _userChampion.CollisionRadius + " = " + "(" + (1f / 100f) + ") * " + _userChampion.CollisionRadius + " = " + circlesize;
+            _logger.Debug($"Started debugging minions. Your Debug Circle Radius: " + "(1 / 100) * " + _userChampion.CollisionRadius + " = " + "(" + (1f / 100f) + ") * " + _userChampion.CollisionRadius + " = " + circlesize);
+            var startdebugmsg = $"Started debugging minions. Your Debug Circle Radius: " + "(1 / 100) * " + _userChampion.CollisionRadius + " = " + "(" + (1f / 100f) + ") * " + _userChampion.CollisionRadius + " = " + circlesize;
             ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.NORMAL, startdebugmsg);
 
             // Creates a blue flashing highlight around your unit
             _game.PacketNotifier.NotifyCreateUnitHighlight(userId, _userChampion);
         }
 
-        public void DrawLaneMinions(int userId)
+        public void DrawMinions(int userId)
         {
             if (_debugMode != 3)
             {
                 return;
             }
 
-            List<IAttackableUnit> laneMinions = new List<IAttackableUnit>(_game.ObjectManager.GetVisionUnits().Values.ToList().Where(x => x is ILaneMinion));
+            List<IAttackableUnit> minions = new List<IAttackableUnit>(_game.ObjectManager.GetVisionUnits().Values.ToList().Where(x => x is IMinion));
 
             // Same method as DebugSelf just for every champion
-            foreach (var laneMinion in laneMinions)
+            foreach (var minion in minions)
             {
                 // Arbitrary ratio is required for the DebugCircle particle to look accurate
-                var circlesize = (1f / 100f) * laneMinion.CollisionRadius;
+                var circlesize = (1f / 100f) * minion.CollisionRadius;
 
-                if (laneMinion.CollisionRadius < 5)
+                if (minion.CollisionRadius < 5)
                 {
                     circlesize = (1f / 100f) * 35;
                 }
 
                 // Clear circle particles every draw in case the unit changes its position
-                if (_circleParticles.ContainsKey(laneMinion.NetId))
+                if (_circleParticles.ContainsKey(minion.NetId))
                 {
-                    if (_circleParticles[laneMinion.NetId] != null)
+                    if (_circleParticles[minion.NetId] != null)
                     {
-                        _circleParticles.Remove(laneMinion.NetId);
+                        _circleParticles.Remove(minion.NetId);
                     }
                 }
 
-                var circleparticle = new Particle(_game, null, null, laneMinion.Position, "DebugCircle_green.troy", circlesize, "", "", 0, default, false, 0.1f, false, false);
-                _circleParticles.Add(laneMinion.NetId, circleparticle);
+                var circleparticle = new Particle(_game, null, null, minion.Position, "DebugCircle_green.troy", circlesize, "", "", 0, default, false, 0.1f, false, false);
+                _circleParticles.Add(minion.NetId, circleparticle);
                 _game.PacketNotifier.NotifyFXCreateGroup(circleparticle, userId);
 
-                if (laneMinion.Waypoints.Count > 0)
+                if (minion.Waypoints.Count > 0)
                 {
                     // Clear arrow particles every draw in case the unit changes its waypoints
-                    if (_arrowParticlesList.ContainsKey(laneMinion.NetId))
+                    if (_arrowParticlesList.ContainsKey(minion.NetId))
                     {
-                        if (_arrowParticlesList[laneMinion.NetId].Count != 0)
+                        if (_arrowParticlesList[minion.NetId].Count != 0)
                         {
                             lock (_particlesLock)
                             {
-                                _arrowParticlesList[laneMinion.NetId].Clear();
+                                _arrowParticlesList[minion.NetId].Clear();
                             }
-                            _arrowParticlesList.Remove(laneMinion.NetId);
+                            _arrowParticlesList.Remove(minion.NetId);
                         }
                     }
 
-                    for (int waypoint = laneMinion.CurrentWaypoint.Key; waypoint < laneMinion.Waypoints.Count; waypoint++)
+                    for (int waypoint = minion.CurrentWaypoint.Key; waypoint < minion.Waypoints.Count; waypoint++)
                     {
-                        var current = laneMinion.Waypoints[waypoint - 1];
+                        var current = minion.Waypoints[waypoint - 1];
 
-                        var wpTarget = laneMinion.Waypoints[waypoint];
+                        var wpTarget = minion.Waypoints[waypoint];
 
                         // Makes the arrow point to the next waypoint
                         var to = Vector2.Normalize(new Vector2(wpTarget.X, wpTarget.Y) - current);
-                        if (laneMinion.Waypoints.Count - 1 > waypoint)
+                        if (minion.Waypoints.Count - 1 > waypoint)
                         {
-                            var nextTargetWp = laneMinion.Waypoints[waypoint + 1];
-                            to = Vector2.Normalize(new Vector2(nextTargetWp.X, nextTargetWp.Y) - laneMinion.Waypoints[waypoint]);
+                            var nextTargetWp = minion.Waypoints[waypoint + 1];
+                            to = Vector2.Normalize(new Vector2(nextTargetWp.X, nextTargetWp.Y) - minion.Waypoints[waypoint]);
                         }
                         var direction = new Vector3(to.X, 0, to.Y);
 
-                        if (!_arrowParticlesList.ContainsKey(laneMinion.NetId))
+                        if (!_arrowParticlesList.ContainsKey(minion.NetId))
                         {
-                            _arrowParticlesList.Add(laneMinion.NetId, new List<Particle>());
+                            _arrowParticlesList.Add(minion.NetId, new List<Particle>());
                         }
 
                         var arrowparticle = new Particle(_game, null, null, wpTarget, "DebugArrow_green.troy", 0.5f, "", "", 0, direction, false, 0.1f, false, false);
-                        _arrowParticlesList[laneMinion.NetId].Add(arrowparticle);
+                        _arrowParticlesList[minion.NetId].Add(arrowparticle);
 
                         _game.PacketNotifier.NotifyFXCreateGroup(arrowparticle, userId);
 
-                        if (waypoint >= laneMinion.Waypoints.Count)
+                        if (waypoint >= minion.Waypoints.Count)
                         {
                             _logger.Debug("Waypoints Drawn: " + waypoint);
                         }
