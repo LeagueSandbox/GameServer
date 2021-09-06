@@ -132,17 +132,19 @@ namespace LeagueSandbox.GameServer.GameObjects
         public void SetStatusEffect(StatusFlags flag, bool enabled)
         {
             // Loop over all possible status flags and assign them individually to the dictionary
-            foreach (StatusFlags enumFlag in Enum.GetValues(typeof(StatusFlags)))
+            for (int i = 0; i < 30; i++)
             {
-                if (flag.HasFlag(enumFlag))
+                StatusFlags currentFlag = (StatusFlags)(1 << i);
+
+                if (flag.HasFlag(currentFlag))
                 {
-                    if (StatusEffects.ContainsKey(enumFlag))
+                    if (StatusEffects.ContainsKey(currentFlag))
                     {
-                        StatusEffects[enumFlag] = enabled;
+                        StatusEffects[currentFlag] = enabled;
                         continue;
                     }
 
-                    StatusEffects.Add(enumFlag, enabled);
+                    StatusEffects.Add(currentFlag, enabled);
                 }
             }
         }

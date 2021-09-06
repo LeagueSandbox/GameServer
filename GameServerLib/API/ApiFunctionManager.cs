@@ -640,11 +640,13 @@ namespace LeagueSandbox.GameServer.API
         public static void SetStatus(IAttackableUnit unit, StatusFlags status, bool enabled)
         {
             // Loop over all possible status flags and set them individually.
-            foreach (StatusFlags enumFlag in Enum.GetValues(typeof(StatusFlags)))
+            for (int i = 0; i < 30; i++)
             {
-                if (status.HasFlag(enumFlag))
+                StatusFlags currentFlag = (StatusFlags)(1 << i);
+
+                if (status.HasFlag(currentFlag))
                 {
-                    unit.SetStatus(status, enabled);
+                    unit.SetStatus(currentFlag, enabled);
                 }
             }
         }
