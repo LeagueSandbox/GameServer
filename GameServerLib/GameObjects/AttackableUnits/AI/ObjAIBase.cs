@@ -249,14 +249,16 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         public override bool CanMove()
         {
             // TODO: Verify if Dashes should bypass this.
-            return !(IsDead || MoveOrder == OrderType.CastSpell
-                    || !(Status.HasFlag(StatusFlags.CanMove) || Status.HasFlag(StatusFlags.CanMoveEver))
-                    || Status.HasFlag(StatusFlags.Immovable)
-                    || Status.HasFlag(StatusFlags.Netted)
-                    || Status.HasFlag(StatusFlags.Rooted)
-                    || Status.HasFlag(StatusFlags.Sleep)
-                    || Status.HasFlag(StatusFlags.Stunned)
-                    || Status.HasFlag(StatusFlags.Suppressed));
+            return !IsDead
+                // TODO: Verify if priority is still maintained with the MovementParameters checks.
+                && ((Status.HasFlag(StatusFlags.CanMove) && Status.HasFlag(StatusFlags.CanMoveEver)) || MovementParameters != null)
+                && (MoveOrder != OrderType.CastSpell || MovementParameters != null)
+                && (!(Status.HasFlag(StatusFlags.Netted)
+                || Status.HasFlag(StatusFlags.Rooted)
+                || Status.HasFlag(StatusFlags.Sleep)
+                || Status.HasFlag(StatusFlags.Stunned)
+                || Status.HasFlag(StatusFlags.Suppressed))
+                || MovementParameters != null);
         }
 
         /// <summary>
@@ -430,6 +432,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             // TODO: Take into account the rest of the arguments
             MovementParameters = new ForceMovementParameters
             {
+                ElapsedTime = 0,
                 PathSpeedOverride = dashSpeed,
                 ParabolicGravity = leapGravity,
                 ParabolicStartPoint = Position,
@@ -439,7 +442,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 FollowBackDistance = backDistance,
                 FollowTravelTime = travelTime
             };
-            DashElapsedTime = 0;
 
             _game.PacketNotifier.NotifyWaypointGroupWithSpeed(this);
 

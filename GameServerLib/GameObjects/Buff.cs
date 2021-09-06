@@ -7,6 +7,7 @@ using LeagueSandbox.GameServer.Scripting.CSharp;
 using LeagueSandbox.GameServer.GameObjects.Other;
 using LeagueSandbox.GameServer.API;
 using GameServerCore.Scripting.CSharp;
+using System.Collections.Generic;
 
 namespace LeagueSandbox.GameServer.GameObjects
 {
@@ -34,6 +35,10 @@ namespace LeagueSandbox.GameServer.GameObjects
         /// Script instance for this buff. Casting to a specific buff class gives access its functions and variables.
         /// </summary>
         public IBuffGameScript BuffScript { get; private set; }
+        /// <summary>
+        /// All status effects applied by this buff.
+        /// </summary>
+        public Dictionary<StatusFlags, bool> StatusEffects { get; private set; }
 
         public Buff(Game game, string buffName, float duration, int stacks, ISpell originSpell, IAttackableUnit onto, IObjAiBase from, bool infiniteDuration = false)
         {
@@ -82,6 +87,7 @@ namespace LeagueSandbox.GameServer.GameObjects
             SourceUnit = from;
             TimeElapsed = 0;
             TargetUnit = onto;
+            StatusEffects = new Dictionary<StatusFlags, bool>();
         }
 
         public void LoadScript()
@@ -121,6 +127,26 @@ namespace LeagueSandbox.GameServer.GameObjects
         public IStatsModifier GetStatsModifier()
         {
             return BuffScript.StatsModifier;
+        }
+
+        public void SetStatusEffect(StatusFlags flag, bool enabled)
+        {
+            // Loop over all possible status flags and assign them individually to the dictionary
+            for (int i = 0; i < 30; i++)
+            {
+                StatusFlags currentFlag = (StatusFlags)(1 << i);
+
+                if (flag.HasFlag(currentFlag))
+                {
+                    if (StatusEffects.ContainsKey(currentFlag))
+                    {
+                        StatusEffects[currentFlag] = enabled;
+                        continue;
+                    }
+
+                    StatusEffects.Add(currentFlag, enabled);
+                }
+            }
         }
 
         public bool IsBuffInfinite()

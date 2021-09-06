@@ -102,14 +102,18 @@ namespace Spells
             var owner = spell.CastInfo.Owner;
             var ap = owner.Stats.AbilityPower.Total;
             var damage = 80 + ((spell.CastInfo.SpellLevel - 1) * 55) + ap;
+            var dist = System.Math.Abs(Vector2.Distance(target.Position, owner.Position));
+            var time = dist / 1350f;
+
+            // Grab particle
+            AddBuff("RocketGrab", time, 1, spell, target, owner);
+
             target.TakeDamage(owner, damage, DamageType.DAMAGE_TYPE_MAGICAL, DamageSource.DAMAGE_SOURCE_SPELL, false);
+
+            AddBuff("Stun", 0.6f, 1, spell, target, owner);
 
             missile.SetToRemove();
 
-            var dist = System.Math.Abs(Vector2.Distance(target.Position, owner.Position));
-            var time = dist / 1350f;
-            // Grab particle
-            AddBuff("RocketGrab", time, 1, spell, target, owner);
             // SetStatus & auto attack
             AddBuff("RocketGrab2", 0.6f, 1, spell, target, owner);
         }

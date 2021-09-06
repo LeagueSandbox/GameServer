@@ -631,9 +631,24 @@ namespace LeagueSandbox.GameServer.API
             spell.SetAutocast();
         }
 
+        /// <summary>
+        /// Sets the state of the given status for the given unit.
+        /// </summary>
+        /// <param name="unit">Unit to set status.</param>
+        /// <param name="status">Status to set.</param>
+        /// <param name="enabled">Whether or not the status should be enabled.</param>
         public static void SetStatus(IAttackableUnit unit, StatusFlags status, bool enabled)
         {
-            unit.SetStatus(status, enabled);
+            // Loop over all possible status flags and set them individually.
+            for (int i = 0; i < 30; i++)
+            {
+                StatusFlags currentFlag = (StatusFlags)(1 << i);
+
+                if (status.HasFlag(currentFlag))
+                {
+                    unit.SetStatus(currentFlag, enabled);
+                }
+            }
         }
 
         public static void SetTargetingType(IObjAiBase target, SpellSlotType slotType, int slot, TargetingType newType)

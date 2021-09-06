@@ -30,8 +30,8 @@ namespace Buffs
             ThisBuff = buff;
             Shadow = unit as IMinion;
 
-            Shadow.SetStatus(StatusFlags.Targetable, false);
-            Shadow.SetStatus(StatusFlags.Ghosted, true);
+            buff.SetStatusEffect(StatusFlags.Targetable, false);
+            buff.SetStatusEffect(StatusFlags.Ghosted, true);
 
             AddParticleTarget(Shadow.Owner, Shadow, "zed_base_w_tar.troy", Shadow);
 
@@ -47,7 +47,7 @@ namespace Buffs
                     currentIndicator.SetToRemove();
                 }
 
-                Shadow.SetStatus(StatusFlags.NoRender, true);
+                SetStatus(Shadow, StatusFlags.NoRender, true);
                 AddParticle(Shadow.Owner, null, "zed_base_clonedeath.troy", Shadow.Position);
                 Shadow.TakeDamage(Shadow.Owner, 10000f, DamageType.DAMAGE_TYPE_TRUE, DamageSource.DAMAGE_SOURCE_INTERNALRAW, DamageResultType.RESULT_NORMAL);
             }

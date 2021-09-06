@@ -18,11 +18,10 @@ namespace GameServerCore.Enums
         IS_ASLEEP = 1 << 10,
         IS_NEAR_SIGHTED = 1 << 11,
         IS_GHOSTED = 1 << 12,
-
         CHARMED = 1 << 15,
         NO_RENDER = 1 << 16,
         FORCE_RENDER_PARTICLES = 1 << 17,
 
-        UNKNOWN = 1 << 23 // set to 1 by default, interferes with targetability
+        TARGETABLE = 1 << 23
     }
 }

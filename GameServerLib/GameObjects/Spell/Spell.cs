@@ -663,24 +663,6 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
 
         public void FinishCasting()
         {
-            // Updates move order before script PostCast so teleports are sent to clients correctly (not sent if MoveOrder == CastSpell).
-            if (SpellData.Flags.HasFlag(SpellDataFlags.InstantCast))
-            {
-                if (!CastInfo.Owner.IsPathEnded())
-                {
-                    CastInfo.Owner.UpdateMoveOrder(OrderType.MoveTo, true);
-                }
-                if (CastInfo.Owner.TargetUnit != null)
-                {
-                    CastInfo.Owner.UpdateMoveOrder(OrderType.AttackTo, true);
-                }
-            }
-            else
-            {
-                // TODO: Verify
-                CastInfo.Owner.UpdateMoveOrder(OrderType.Hold, true);
-            }
-
             if (CastInfo.IsAutoAttack)
             {
                 ApiEventManager.OnLaunchAttack.Publish(CastInfo.Owner, this);
@@ -749,6 +731,24 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
             if (CastInfo.Owner.SpellToCast != null)
             {
                 CastInfo.Owner.SetSpellToCast(null, Vector2.Zero);
+            }
+
+            // Updates move order before script PostCast so teleports are sent to clients correctly (not sent if MoveOrder == CastSpell).
+            if (SpellData.Flags.HasFlag(SpellDataFlags.InstantCast))
+            {
+                if (!CastInfo.Owner.IsPathEnded())
+                {
+                    CastInfo.Owner.UpdateMoveOrder(OrderType.MoveTo, true);
+                }
+                if (CastInfo.Owner.TargetUnit != null)
+                {
+                    CastInfo.Owner.UpdateMoveOrder(OrderType.AttackTo, true);
+                }
+            }
+            else
+            {
+                // TODO: Verify
+                CastInfo.Owner.UpdateMoveOrder(OrderType.Hold, true);
             }
         }
 
