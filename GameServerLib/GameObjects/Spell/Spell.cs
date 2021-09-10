@@ -104,7 +104,6 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
             else
             {
                 owner.LoadPassiveScript(this);
-                HasEmptyScript = owner.CharScript.GetType() == typeof(CharScriptEmpty);
             }
         }
 
@@ -113,8 +112,6 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
             ApiEventManager.RemoveAllListenersForOwner(Script);
 
             Script = _scriptEngine.CreateObject<ISpellScript>("Spells", SpellName) ?? new SpellScriptEmpty();
-
-            HasEmptyScript = Script.GetType() == typeof(SpellScriptEmpty);
 
             if (Script.ScriptMetadata.TriggersSpellCasts)
             {
