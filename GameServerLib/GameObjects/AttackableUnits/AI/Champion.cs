@@ -258,22 +258,22 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
         public void OnKill(IDeathData deathData)
         {
-            if (deathData.Killer is IMinion)
+            if (deathData.Unit is IMinion)
             {
                 ChampStats.MinionsKilled += 1;
-                if (deathData.Killer.Team == TeamId.TEAM_NEUTRAL)
+                if (deathData.Unit.Team == TeamId.TEAM_NEUTRAL)
                 {
                     ChampStats.NeutralMinionsKilled += 1;
                 }
 
-                var gold = _game.Map.MapProperties.GetGoldFor(deathData.Killer);
+                var gold = _game.Map.MapProperties.GetGoldFor(deathData.Unit);
                 if (gold <= 0)
                 {
                     return;
                 }
 
                 Stats.Gold += gold;
-                _game.PacketNotifier.NotifyAddGold(this, deathData.Killer, gold);
+                _game.PacketNotifier.NotifyAddGold(this, deathData.Unit, gold);
 
                 if (KillDeathCounter < 0)
                 {
