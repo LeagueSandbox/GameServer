@@ -14,7 +14,7 @@ namespace LeagueSandbox.GameServer.Items
         public int MaxStacks { get; private set; }
         public int Price { get; private set; }
         public string ItemGroup { get; private set; }
-        public int ItemClass { get; private set; }
+        public bool Consumed { get; private set; }
         public string SpellName { get; private set; }
         public float SellBackModifier { get; private set; }
 
@@ -62,7 +62,7 @@ namespace LeagueSandbox.GameServer.Items
                 MaxStacks = itemInfo.GetInt("Data", "MaxStack"),
                 Price = itemInfo.GetInt("Data", "Price"),
                 ItemGroup = itemInfo.GetString("Data", "ItemGroup"),
-                ItemClass = itemInfo.GetInt("Data", "ItemClass"),
+                Consumed = itemInfo.GetBool("Data", "Consumed"),
                 SpellName = itemInfo.GetString("Data", "SpellName"),
                 SellBackModifier = itemInfo.GetFloat("Data", "SellBackModifier", 0.7f),
 

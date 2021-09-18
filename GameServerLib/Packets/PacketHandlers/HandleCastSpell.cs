@@ -35,10 +35,10 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                 return false;
             }
 
-            if (s.CastInfo.SpellSlot == (int)SpellSlotType.InventorySlots)
+            if (s.CastInfo.SpellSlot >= (int)SpellSlotType.InventorySlots && s.CastInfo.SpellSlot < (int)SpellSlotType.BluePillSlot)
             {
                 var item = s.CastInfo.Owner.Inventory.GetItem(s.SpellName);
-                if (item.ItemData.ItemClass == 1)
+                if (item != null && item.ItemData.Consumed)
                 {
                     s.CastInfo.Owner.Inventory.RemoveStackingItem(item.ItemData.SpellName, s.CastInfo.Owner);
                 }

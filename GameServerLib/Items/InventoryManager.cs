@@ -34,26 +34,29 @@ namespace LeagueSandbox.GameServer.Items
 
         public IItem GetItem(string itemSpellName)
         {
-            for (byte i = 0; i <= _inventory.Items.Length; i++)
+            for (byte i = 0; i < _inventory.Items.Length - 1; i++)
             {
-                if (itemSpellName == _inventory.Items[i].ItemData.SpellName)
+                if (_inventory.Items[i] != null)
                 {
-                    return _inventory.Items[i];
+                    if (itemSpellName == _inventory.Items[i].ItemData.SpellName)
+                    {
+                        return _inventory.Items[i];
+                    }
                 }
             }
-            return null;
+            return _inventory.GetItem(itemSpellName);
         }
         public void RemoveItem(byte slot)
         {
             _inventory.RemoveItem(slot);
         }
-        
+
         public void RemoveItem(IItem item)
         {
             _inventory.RemoveItem(item);
         }
 
-        public void RemoveStackingItem (string itemSpellName, IObjAiBase owner)
+        public void RemoveStackingItem(string itemSpellName, IObjAiBase owner)
         {
             _inventory.RemoveStackingItem(_game, itemSpellName, owner);
         }
@@ -72,7 +75,7 @@ namespace LeagueSandbox.GameServer.Items
             var tempInv = new List<IItem>(_inventory.GetBaseItems());
             return GetAvailableItemsRecursive(ref tempInv, items);
         }
-        
+
         private static List<IItem> GetAvailableItemsRecursive(ref List<IItem> inventoryState, IEnumerable<IItemData> items)
         {
             var result = new List<IItem>();

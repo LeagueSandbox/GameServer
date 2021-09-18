@@ -7,7 +7,7 @@ namespace GameServerCore.Domain
     public interface IInventoryManager
     {
         IItem GetItem(byte slot);
-        IItem GetItem(string ItemName);
+        IItem GetItem(string ItemSpellName);
         byte GetItemSlot(IItem item);
         void RemoveItem(byte slot);
         void RemoveItem(IItem item);

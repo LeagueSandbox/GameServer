@@ -63,11 +63,14 @@ namespace LeagueSandbox.GameServer.Items
 
         public IItem GetItem(string itemSpellName)
         {
-            for (byte i = 0; i <= Items.Length; i++)
+            for (byte i = 0; i < Items.Length; i++)
             {
-                if (itemSpellName == Items[i].ItemData.SpellName)
+                if (Items[i] != null)
                 {
-                    return Items[i];
+                    if (itemSpellName == Items[i].ItemData.SpellName)
+                    {
+                        return Items[i];
+                    }
                 }
             }
             return null;
@@ -147,8 +150,13 @@ namespace LeagueSandbox.GameServer.Items
         {
             IItem item = GetItem(itemSpellName);
 
-            game.PacketNotifier.NotifyRemoveItem(owner, GetItemSlot(item), (byte)(item.StackCount - 1));
             item.DecrementStackCount();
+            game.PacketNotifier.NotifyRemoveItem(owner, GetItemSlot(item), (byte)item.StackCount);
+
+            if (item.StackCount == 0)
+            {
+                RemoveItem(item);
+            }
         }
         private IItem AddNewItem(IItemData item)
         {
