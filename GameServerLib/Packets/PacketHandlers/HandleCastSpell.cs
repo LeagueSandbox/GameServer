@@ -35,6 +35,15 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                 return false;
             }
 
+            if (s.CastInfo.SpellSlot == (int)SpellSlotType.InventorySlots)
+            {
+                var item = s.CastInfo.Owner.Inventory.GetItem(s.SpellName);
+                if (item.ItemData.ItemClass == 1)
+                {
+                    s.CastInfo.Owner.Inventory.RemoveStackingItem(item.ItemData.SpellName, s.CastInfo.Owner);
+                }
+            }
+
             return s.Cast(req.Position, req.EndPosition, targetUnit);
         }
     }

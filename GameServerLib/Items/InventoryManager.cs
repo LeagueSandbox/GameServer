@@ -2,15 +2,18 @@
 using System.Collections.Generic;
 using System.Linq;
 using GameServerCore.Domain;
+using GameServerCore.Domain.GameObjects;
 
 namespace LeagueSandbox.GameServer.Items
 {
     public class InventoryManager : IInventoryManager
     {
+        private readonly Game _game;
         private readonly Inventory _inventory;
 
-        private InventoryManager()
+        private InventoryManager(Game game)
         {
+            _game = game;
             _inventory = new Inventory(this);
         }
 
@@ -29,16 +32,31 @@ namespace LeagueSandbox.GameServer.Items
             return _inventory.GetItem(slot);
         }
 
+        public IItem GetItem(string itemSpellName)
+        {
+            for (byte i = 0; i <= _inventory.Items.Length; i++)
+            {
+                if (itemSpellName == _inventory.Items[i].ItemData.SpellName)
+                {
+                    return _inventory.Items[i];
+                }
+            }
+            return null;
+        }
         public void RemoveItem(byte slot)
         {
             _inventory.RemoveItem(slot);
         }
-
+        
         public void RemoveItem(IItem item)
         {
             _inventory.RemoveItem(item);
         }
 
+        public void RemoveStackingItem (string itemSpellName, IObjAiBase owner)
+        {
+            _inventory.RemoveStackingItem(_game, itemSpellName, owner);
+        }
         public byte GetItemSlot(IItem item)
         {
             return _inventory.GetItemSlot(item);
@@ -79,9 +97,9 @@ namespace LeagueSandbox.GameServer.Items
             return result;
         }
 
-        public static InventoryManager CreateInventory()
+        public static InventoryManager CreateInventory(Game game)
         {
-            return new InventoryManager();
+            return new InventoryManager(game);
         }
 
         public IEnumerator GetEnumerator()

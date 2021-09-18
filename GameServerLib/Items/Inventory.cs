@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using GameServerCore.Domain;
+using GameServerCore.Domain.GameObjects;
 
 namespace LeagueSandbox.GameServer.Items
 {
@@ -23,7 +24,7 @@ namespace LeagueSandbox.GameServer.Items
         {
             return Items.Take(BASE_INVENTORY_SIZE).ToArray();
         }
-        
+
         public IItem AddItem(IItemData item)
         {
             if (item.ItemGroup.ToLower().Equals("relicbase"))
@@ -58,6 +59,18 @@ namespace LeagueSandbox.GameServer.Items
         public IItem GetItem(byte slot)
         {
             return Items[slot];
+        }
+
+        public IItem GetItem(string itemSpellName)
+        {
+            for (byte i = 0; i <= Items.Length; i++)
+            {
+                if (itemSpellName == Items[i].ItemData.SpellName)
+                {
+                    return Items[i];
+                }
+            }
+            return null;
         }
 
         public void RemoveItem(byte slot)
@@ -130,7 +143,13 @@ namespace LeagueSandbox.GameServer.Items
             }
             return AddNewItem(item);
         }
+        public void RemoveStackingItem(Game game, string itemSpellName, IObjAiBase owner)
+        {
+            IItem item = GetItem(itemSpellName);
 
+            game.PacketNotifier.NotifyRemoveItem(owner, GetItemSlot(item), (byte)(item.StackCount - 1));
+            item.DecrementStackCount();
+        }
         private IItem AddNewItem(IItemData item)
         {
             for (var i = 0; i < BASE_INVENTORY_SIZE; i++)
