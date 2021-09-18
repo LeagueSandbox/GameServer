@@ -14,15 +14,7 @@ namespace LeagueSandbox.GameServer.Items
         public int MaxStacks { get; private set; }
         public int Price { get; private set; }
         public string ItemGroup { get; private set; }
-
-        /// <summary>
-        /// The item Classes such as consumables
-        /// </summary>
         public int ItemClass { get; private set; }
-
-        /// <summary>
-        ///Wether a consumable is or isn't removed from inventory when it reaches 0 stacks.
-        /// </summary>
         public string SpellName { get; private set; }
         public float SellBackModifier { get; private set; }
 
