@@ -23,7 +23,6 @@ namespace LeagueSandbox.GameServer.Items
         /// <summary>
         ///Wether a consumable is or isn't removed from inventory when it reaches 0 stacks.
         /// </summary>
-        public bool IsConsumed { get; private set; }
         public string SpellName { get; private set; }
         public float SellBackModifier { get; private set; }
 
@@ -72,7 +71,6 @@ namespace LeagueSandbox.GameServer.Items
                 Price = itemInfo.GetInt("Data", "Price"),
                 ItemGroup = itemInfo.GetString("Data", "ItemGroup"),
                 ItemClass = itemInfo.GetInt("Data", "ItemClass"),
-                IsConsumed = itemInfo.GetBool("Data", "Consumed"),
                 SpellName = itemInfo.GetString("Data", "SpellName"),
                 SellBackModifier = itemInfo.GetFloat("Data", "SellBackModifier", 0.7f),
 
