@@ -100,11 +100,16 @@ namespace LeagueSandbox.GameServer.Items
             return null;
         }
 
-        public void RemoveItem(byte slot, IObjAiBase owner, int stacksToRemove)
+        public void RemoveItem(byte slot, IObjAiBase owner, int stacksToRemove = 1)
         {
-            Items[slot].DecrementStackCount(stacksToRemove);
+            if (stacksToRemove < 0)
+            {
+                throw new Exception("Stacks to be Removed can't be a negative number!");
+            }
 
-            if (Items[slot].StackCount == 0)
+            int finalStacks = Items[slot].StackCount - stacksToRemove;
+
+            if (finalStacks <= 0)
             {
                 if (owner != null)
                 {
@@ -112,7 +117,10 @@ namespace LeagueSandbox.GameServer.Items
                 }
                 Items[slot] = null;
             }
-
+            else
+            {
+                Items[slot].SetStacks(finalStacks);
+            }
         }
 
         public byte GetItemSlot(IItem item)

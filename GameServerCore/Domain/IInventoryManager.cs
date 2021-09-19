@@ -12,7 +12,7 @@ namespace GameServerCore.Domain
         byte GetItemSlot(IItem item);
         bool RemoveItem(byte slot, IObjAiBase owner = null, int stacksToRemove = 1);
         bool RemoveItem(IItem item, IObjAiBase owner = null, int stacksToRemove = 1);
-        Tuple<IItem, bool> AddItem(IItemData item, IObjAiBase owner = null);
+        KeyValuePair<IItem, bool> AddItem(IItemData item, IObjAiBase owner = null);
         IItem SetExtraItem(byte slot, IItemData item);
         void SwapItems(byte slot1, byte slot2);
         List<IItem> GetAvailableItems(IEnumerable<IItemData> items);
