@@ -17,9 +17,14 @@ namespace LeagueSandbox.GameServer.Items
             _inventory = new Inventory(this);
         }
 
-        public IItem AddItem(IItemData item)
+        public IItem AddItem(IItemData itemData, IChampion owner = null)
         {
-            return _inventory.AddItem(item);
+            var item = _inventory.AddItem(itemData, owner);
+            if (owner != null && item != null)
+            {
+                _game.PacketNotifier.NotifyBuyItem((int)_game.PlayerManager.GetClientInfoByChampion(owner).PlayerId, owner, _inventory.GetItem(item.ItemData.Name, true));
+            }
+            return item;
         }
 
         public IItem SetExtraItem(byte slot, IItemData item)
@@ -34,16 +39,6 @@ namespace LeagueSandbox.GameServer.Items
 
         public IItem GetItem(string itemSpellName)
         {
-            for (byte i = 0; i < _inventory.Items.Length - 1; i++)
-            {
-                if (_inventory.Items[i] != null)
-                {
-                    if (itemSpellName == _inventory.Items[i].ItemData.SpellName)
-                    {
-                        return _inventory.Items[i];
-                    }
-                }
-            }
             return _inventory.GetItem(itemSpellName);
         }
         public void RemoveItem(byte slot)

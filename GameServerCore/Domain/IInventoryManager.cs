@@ -12,7 +12,7 @@ namespace GameServerCore.Domain
         void RemoveItem(byte slot);
         void RemoveItem(IItem item);
         void RemoveStackingItem(string itemSpellName, IObjAiBase owner);
-        IItem AddItem(IItemData item);
+        IItem AddItem(IItemData item, IChampion owner);
         IItem SetExtraItem(byte slot, IItemData item);
         void SwapItems(byte slot1, byte slot2);
         List<IItem> GetAvailableItems(IEnumerable<IItemData> items);

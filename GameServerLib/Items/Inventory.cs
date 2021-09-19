@@ -2,6 +2,7 @@
 using System.Linq;
 using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
+using GameServerCore.Enums;
 
 namespace LeagueSandbox.GameServer.Items
 {
@@ -25,11 +26,21 @@ namespace LeagueSandbox.GameServer.Items
             return Items.Take(BASE_INVENTORY_SIZE).ToArray();
         }
 
-        public IItem AddItem(IItemData item)
+        public IItem AddItem(IItemData item, IChampion owner = null)
         {
             if (item.ItemGroup.ToLower().Equals("relicbase"))
             {
                 return AddTrinketItem(item);
+            }
+
+            if (owner != null)
+            {
+                owner.Stats.AddModifier(item);
+
+                if (!string.IsNullOrEmpty(item.SpellName))
+                {
+                    owner.SetSpell(item.SpellName, (byte)(owner.Inventory.GetItemSlot(GetItem(item.SpellName)) + (byte)SpellSlotType.InventorySlots), true);
+                }
             }
 
             if (item.MaxStacks > 1)
@@ -37,7 +48,7 @@ namespace LeagueSandbox.GameServer.Items
                 return AddStackingItem(item);
             }
 
-            return AddNewItem(item);
+            return AddNewItem(item, owner);
         }
 
         public IItem SetExtraItem(byte slot, IItemData item)
@@ -61,15 +72,26 @@ namespace LeagueSandbox.GameServer.Items
             return Items[slot];
         }
 
-        public IItem GetItem(string itemSpellName)
+        public IItem GetItem(string name, bool isItemName = false)
         {
-            for (byte i = 0; i < Items.Length; i++)
+
+            if (name != null)
             {
-                if (Items[i] != null)
+                for (byte i = 0; i < Items.Length; i++)
                 {
-                    if (itemSpellName == Items[i].ItemData.SpellName)
+                    if (Items[i] != null)
                     {
-                        return Items[i];
+                        if (isItemName)
+                        {
+                            if (name == Items[i].ItemData.Name)
+                            {
+                                return Items[i];
+                            };
+                        }
+                        else if (name == Items[i].ItemData.SpellName)
+                        {
+                            return Items[i];
+                        }
                     }
                 }
             }
@@ -158,7 +180,7 @@ namespace LeagueSandbox.GameServer.Items
                 RemoveItem(item);
             }
         }
-        private IItem AddNewItem(IItemData item)
+        private IItem AddNewItem(IItemData item, IChampion owner = null)
         {
             for (var i = 0; i < BASE_INVENTORY_SIZE; i++)
             {

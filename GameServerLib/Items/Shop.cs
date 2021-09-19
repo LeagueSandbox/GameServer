@@ -29,9 +29,15 @@ namespace LeagueSandbox.GameServer.Items
 
             var sellPrice = i.TotalPrice * i.ItemData.SellBackModifier;
             _owner.Stats.Gold += sellPrice;
-            
-            i.DecrementStackCount();
-            RemoveItem(i, slotId, (byte)i.StackCount);
+
+            if (i.ItemData.Consumed)
+            {
+                _owner.Inventory.RemoveStackingItem(i.ItemData.SpellName, _owner);
+            }
+            else
+            {
+                _owner.Inventory.RemoveItem(slotId);
+            }
             return true;
         }
 
@@ -47,7 +53,6 @@ namespace LeagueSandbox.GameServer.Items
             var inventory = _owner.Inventory;
             var price = itemTemplate.TotalPrice;
             var ownedItems = inventory.GetAvailableItems(itemTemplate.Recipe.GetItems());
-
             if (ownedItems.Count != 0)
             {
                 price -= ownedItems.Sum(item => item.ItemData.TotalPrice);
@@ -56,55 +61,19 @@ namespace LeagueSandbox.GameServer.Items
                     return false;
                 }
 
-                foreach (var item in ownedItems)
+                foreach (var itens in ownedItems)
                 {
-                    item.DecrementStackCount();
-                    RemoveItem(item, inventory.GetItemSlot(item), (byte)item.StackCount);
+                    _owner.Inventory.RemoveItem(inventory.GetItemSlot(itens));
                 }
-
-                AddItem(itemTemplate);
+                
+               _owner.Inventory.AddItem(itemTemplate, _owner);
             }
-            else if (stats.Gold < price || !AddItem(itemTemplate))
+            else if (stats.Gold < price || _owner.Inventory.AddItem(itemTemplate, _owner) == null)
             {
                 return false;
             }
             
             stats.Gold -= price;
-            return true;
-        }
-
-        private void RemoveItem(IItem item, byte slotId, byte newStacks)
-        {
-            var inventory = _owner.Inventory;
-
-            _game.PacketNotifier.NotifyRemoveItem(_owner, slotId, newStacks);
-
-            if(newStacks == 0) // I don't believe there exists a stackable item that applies stats.
-            {
-                _owner.Stats.RemoveModifier(item.ItemData);
-                _owner.RemoveSpell((byte)(slotId + ITEM_ACTIVE_OFFSET));
-                inventory.RemoveItem(item);
-            }
-        }
-
-        private bool AddItem(IItemData itemData)
-        {
-            var item = _owner.Inventory.AddItem(itemData);
-
-            if (item == null)
-            {
-                return false;
-            }
-
-            _owner.Stats.AddModifier(itemData);
-
-            _game.PacketNotifier.NotifyBuyItem((int)_game.PlayerManager.GetClientInfoByChampion(_owner).PlayerId, _owner, item);
-
-            if (!string.IsNullOrEmpty(item.ItemData.SpellName))
-            {
-                _owner.SetSpell(item.ItemData.SpellName, (byte)(_owner.Inventory.GetItemSlot(item) + ITEM_ACTIVE_OFFSET), true);
-            }
-
             return true;
         }
 
