@@ -32,7 +32,7 @@ namespace LeagueSandbox.GameServer.Items
 
             if (i.ItemData.Consumed)
             {
-                _owner.Inventory.RemoveStackingItem(i.ItemData.SpellName, _owner);
+                _owner.Inventory.RemoveStackingItem(i, _owner);
             }
             else
             {

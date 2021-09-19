@@ -11,7 +11,7 @@ namespace GameServerCore.Domain
         byte GetItemSlot(IItem item);
         void RemoveItem(byte slot);
         void RemoveItem(IItem item);
-        void RemoveStackingItem(string itemSpellName, IObjAiBase owner);
+        void RemoveStackingItem(IItem item, IObjAiBase owner);
         IItem AddItem(IItemData item, IChampion owner = null);
         IItem SetExtraItem(byte slot, IItemData item);
         void SwapItems(byte slot1, byte slot2);

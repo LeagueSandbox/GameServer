@@ -52,9 +52,11 @@ namespace LeagueSandbox.GameServer.Items
             _inventory.RemoveItem(item);
         }
 
-        public void RemoveStackingItem(string itemSpellName, IObjAiBase owner)
+        public void RemoveStackingItem(IItem item, IObjAiBase owner)
         {
-            _inventory.RemoveStackingItem(_packetNotifier, itemSpellName, owner);
+            byte slot = GetItemSlot(item);
+            _inventory.RemoveStackingItem(_packetNotifier, item, owner);
+            _packetNotifier.NotifyRemoveItem(owner, slot, (byte)item.StackCount);
         }
         public byte GetItemSlot(IItem item)
         {

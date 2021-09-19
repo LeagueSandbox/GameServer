@@ -169,12 +169,9 @@ namespace LeagueSandbox.GameServer.Items
             }
             return AddNewItem(item);
         }
-        public void RemoveStackingItem(IPacketNotifier packetNotifier, string itemSpellName, IObjAiBase owner)
+        public void RemoveStackingItem(IPacketNotifier packetNotifier, IItem item, IObjAiBase owner)
         {
-            IItem item = GetItem(itemSpellName);
-
             item.DecrementStackCount();
-            packetNotifier.NotifyRemoveItem(owner, GetItemSlot(item), (byte)item.StackCount);
 
             if (item.StackCount == 0)
             {

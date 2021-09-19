@@ -40,7 +40,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                 var item = s.CastInfo.Owner.Inventory.GetItem(s.SpellName);
                 if (item != null && item.ItemData.Consumed)
                 {
-                    s.CastInfo.Owner.Inventory.RemoveStackingItem(item.ItemData.SpellName, s.CastInfo.Owner);
+                    s.CastInfo.Owner.Inventory.RemoveStackingItem(item, s.CastInfo.Owner);
                 }
             }
 
