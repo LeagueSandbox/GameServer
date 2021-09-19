@@ -5,13 +5,13 @@ using GameServerCore.Domain.GameObjects;
 
 namespace LeagueSandbox.GameServer.Items
 {
-    public class Shop: IShop
+    public class Shop : IShop
     {
         private readonly IChampion _owner;
         private readonly Game _game;
 
         public const byte ITEM_ACTIVE_OFFSET = 6;
-        
+
         private Shop(IChampion owner, Game game)
         {
             _owner = owner;
@@ -30,14 +30,7 @@ namespace LeagueSandbox.GameServer.Items
             var sellPrice = i.TotalPrice * i.ItemData.SellBackModifier;
             _owner.Stats.Gold += sellPrice;
 
-            if (i.ItemData.Consumed)
-            {
-                _owner.Inventory.RemoveStackingItem(i, _owner);
-            }
-            else
-            {
-                _owner.Inventory.RemoveItem(slotId);
-            }
+            _owner.Inventory.RemoveItem(inventory.GetItemSlot(i), _owner);
             return true;
         }
 
@@ -63,16 +56,16 @@ namespace LeagueSandbox.GameServer.Items
 
                 foreach (var itens in ownedItems)
                 {
-                    _owner.Inventory.RemoveItem(inventory.GetItemSlot(itens));
+                    _owner.Inventory.RemoveItem(inventory.GetItemSlot(itens), _owner);
                 }
-                
-               _owner.Inventory.AddItem(itemTemplate, _owner);
+
+                _owner.Inventory.AddItem(itemTemplate, _owner);
             }
             else if (stats.Gold < price || _owner.Inventory.AddItem(itemTemplate, _owner) == null)
             {
                 return false;
             }
-            
+
             stats.Gold -= price;
             return true;
         }

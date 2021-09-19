@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
@@ -20,6 +21,7 @@ namespace LeagueSandbox.GameServer.Items
         {
             _owner = owner;
             Items = new IItem[BASE_INVENTORY_SIZE + EXTRA_INVENTORY_SIZE + RUNE_INVENTORY_SIZE];
+
         }
 
         public IItem[] GetBaseItems()
@@ -27,7 +29,7 @@ namespace LeagueSandbox.GameServer.Items
             return Items.Take(BASE_INVENTORY_SIZE).ToArray();
         }
 
-        public IItem AddItem(IItemData item, IChampion owner = null)
+        public IItem AddItem(IItemData item, IObjAiBase owner = null)
         {
             if (item.ItemGroup.ToLower().Equals("relicbase"))
             {
@@ -49,7 +51,7 @@ namespace LeagueSandbox.GameServer.Items
                 return AddStackingItem(item);
             }
 
-            return AddNewItem(item, owner);
+            return AddNewItem(item);
         }
 
         public IItem SetExtraItem(byte slot, IItemData item)
@@ -99,14 +101,15 @@ namespace LeagueSandbox.GameServer.Items
             return null;
         }
 
-        public void RemoveItem(byte slot)
+        public void RemoveItem(byte slot, IObjAiBase owner)
         {
-            Items[slot] = null;
-        }
+            Items[slot].DecrementStackCount();
 
-        public void RemoveItem(IItem item)
-        {
-            RemoveItem(GetItemSlot(item));
+            if (Items[slot].StackCount == 0)
+            {
+                owner.Stats.RemoveModifier(Items[slot].ItemData);
+                Items[slot] = null;
+            }
         }
 
         public byte GetItemSlot(IItem item)
@@ -169,16 +172,7 @@ namespace LeagueSandbox.GameServer.Items
             }
             return AddNewItem(item);
         }
-        public void RemoveStackingItem(IPacketNotifier packetNotifier, IItem item, IObjAiBase owner)
-        {
-            item.DecrementStackCount();
-
-            if (item.StackCount == 0)
-            {
-                RemoveItem(item);
-            }
-        }
-        private IItem AddNewItem(IItemData item, IChampion owner = null)
+        private IItem AddNewItem(IItemData item)
         {
             for (var i = 0; i < BASE_INVENTORY_SIZE; i++)
             {

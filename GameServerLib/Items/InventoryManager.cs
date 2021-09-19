@@ -18,12 +18,13 @@ namespace LeagueSandbox.GameServer.Items
             _inventory = new Inventory(this);
         }
 
-        public IItem AddItem(IItemData itemData, IChampion owner = null)
+        public IItem AddItem(IItemData itemData, IObjAiBase owner = null)
         {
             var item = _inventory.AddItem(itemData, owner);
-            if (owner != null && item != null)
+            if (owner is IChampion champion && item != null)
             {
-                _packetNotifier.NotifyBuyItem((int)owner.GetPlayerId(), owner, _inventory.GetItem(item.ItemData.Name, true));
+                //This packet seems to break when buying more than 3 of one of the 250Gold elixirs
+                _packetNotifier.NotifyBuyItem((int)champion.GetPlayerId(), champion, item);
             }
             return item;
         }
@@ -42,20 +43,10 @@ namespace LeagueSandbox.GameServer.Items
         {
             return _inventory.GetItem(itemSpellName);
         }
-        public void RemoveItem(byte slot)
+        public void RemoveItem(byte slot, IObjAiBase owner)
         {
-            _inventory.RemoveItem(slot);
-        }
-
-        public void RemoveItem(IItem item)
-        {
-            _inventory.RemoveItem(item);
-        }
-
-        public void RemoveStackingItem(IItem item, IObjAiBase owner)
-        {
-            byte slot = GetItemSlot(item);
-            _inventory.RemoveStackingItem(_packetNotifier, item, owner);
+            var item = GetItem(slot);
+            _inventory.RemoveItem(slot, owner);
             _packetNotifier.NotifyRemoveItem(owner, slot, (byte)item.StackCount);
         }
         public byte GetItemSlot(IItem item)
