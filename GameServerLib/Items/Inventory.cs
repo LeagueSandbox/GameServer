@@ -3,6 +3,7 @@ using System.Linq;
 using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
+using GameServerCore.Packets.Interfaces;
 
 namespace LeagueSandbox.GameServer.Items
 {
@@ -168,12 +169,12 @@ namespace LeagueSandbox.GameServer.Items
             }
             return AddNewItem(item);
         }
-        public void RemoveStackingItem(Game game, string itemSpellName, IObjAiBase owner)
+        public void RemoveStackingItem(IPacketNotifier packetNotifier, string itemSpellName, IObjAiBase owner)
         {
             IItem item = GetItem(itemSpellName);
 
             item.DecrementStackCount();
-            game.PacketNotifier.NotifyRemoveItem(owner, GetItemSlot(item), (byte)item.StackCount);
+            packetNotifier.NotifyRemoveItem(owner, GetItemSlot(item), (byte)item.StackCount);
 
             if (item.StackCount == 0)
             {

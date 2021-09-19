@@ -1,5 +1,6 @@
 using System;
 using GameServerCore.Domain;
+using GameServerCore.Packets.Interfaces;
 using LeagueSandbox.GameServer;
 using LeagueSandbox.GameServer.Content;
 using LeagueSandbox.GameServer.Items;
@@ -17,7 +18,8 @@ namespace LeagueSandbox.GameServerTests.Tests.Items
             var itemManager = new ItemManager();
             itemManager.AddItems(ItemContentCollection.LoadItemsFrom(path + "LeagueSandbox-Default/Items"));
 
-            var inventoryManager = InventoryManager.CreateInventory();
+            IPacketNotifier _packetNotifier = new Game().PacketNotifier;
+            var inventoryManager = InventoryManager.CreateInventory(_packetNotifier);
 
             // Add an item and make sure it gets added to the first (0) slot
             var item = inventoryManager.AddItem(itemManager.GetItemType(2001));
@@ -55,7 +57,8 @@ namespace LeagueSandbox.GameServerTests.Tests.Items
             var itemManager = new ItemManager();
             itemManager.AddItems(ItemContentCollection.LoadItemsFrom(path + "LeagueSandbox-Default/Items"));
 
-            var manager = InventoryManager.CreateInventory();
+            IPacketNotifier _packetNotifier = new Game().PacketNotifier;
+            var manager = InventoryManager.CreateInventory(_packetNotifier);
 
             // Get two stacking item types
             var itemType1 = itemManager.GetItemType(2038);
@@ -95,7 +98,8 @@ namespace LeagueSandbox.GameServerTests.Tests.Items
             var itemManager = new ItemManager();
             itemManager.AddItems(ItemContentCollection.LoadItemsFrom(path + "LeagueSandbox-Default/Items"));
 
-            var manager = InventoryManager.CreateInventory();
+            IPacketNotifier _packetNotifier = new Game().PacketNotifier;
+            var manager = InventoryManager.CreateInventory(_packetNotifier);
 
             // Add an item and make sure it exists in the proper slot
             var item = manager.SetExtraItem(7, itemManager.GetItemType(2001));
@@ -120,7 +124,8 @@ namespace LeagueSandbox.GameServerTests.Tests.Items
             var itemManager = new ItemManager();
             itemManager.AddItems(ItemContentCollection.LoadItemsFrom(path + "LeagueSandbox-Default/Items"));
 
-            var manager = InventoryManager.CreateInventory();
+            IPacketNotifier _packetNotifier = new Game().PacketNotifier;
+            var manager = InventoryManager.CreateInventory(_packetNotifier);
 
             // Add an item, and make sure the slot is right
             var item = manager.AddItem(itemManager.GetItemType(2001));
@@ -151,7 +156,8 @@ namespace LeagueSandbox.GameServerTests.Tests.Items
             var itemManager = new ItemManager();
             itemManager.AddItems(ItemContentCollection.LoadItemsFrom(path + "LeagueSandbox-Default/Items"));
 
-            var manager = InventoryManager.CreateInventory();
+            IPacketNotifier _packetNotifier = new Game().PacketNotifier;
+            var manager = InventoryManager.CreateInventory(_packetNotifier);
 
             // Add an item and make sure it gets added to the first (0) slot
             var item = manager.AddItem(itemManager.GetItemType(2001));
@@ -176,7 +182,8 @@ namespace LeagueSandbox.GameServerTests.Tests.Items
             var itemManager = new ItemManager();
             itemManager.AddItems(ItemContentCollection.LoadItemsFrom(path + "LeagueSandbox-Default/Items"));
 
-            var manager = InventoryManager.CreateInventory();
+            IPacketNotifier _packetNotifier = new Game().PacketNotifier;
+            var manager = InventoryManager.CreateInventory(_packetNotifier);
 
             // Add 3 items and make sure they get proper slots
             var item1 = manager.AddItem(itemManager.GetItemType(4001));
@@ -227,7 +234,8 @@ namespace LeagueSandbox.GameServerTests.Tests.Items
             itemManager.ResetItems();
             itemManager.AddItems(ItemContentCollection.LoadItemsFrom(path + "LeagueSandbox-Default/Items"));
 
-            var manager = InventoryManager.CreateInventory();
+            IPacketNotifier _packetNotifier = new Game().PacketNotifier;
+            var manager = InventoryManager.CreateInventory(_packetNotifier);
 
             var zephyrId = 3172;
             var componentId1 = 3101;

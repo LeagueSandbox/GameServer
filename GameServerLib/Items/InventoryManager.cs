@@ -3,17 +3,18 @@ using System.Collections.Generic;
 using System.Linq;
 using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
+using GameServerCore.Packets.Interfaces;
 
 namespace LeagueSandbox.GameServer.Items
 {
     public class InventoryManager : IInventoryManager
     {
-        private readonly Game _game;
+        private readonly IPacketNotifier _packetNotifier;
         private readonly Inventory _inventory;
 
-        private InventoryManager(Game game)
+        private InventoryManager(IPacketNotifier packetNotifier)
         {
-            _game = game;
+            _packetNotifier = packetNotifier;
             _inventory = new Inventory(this);
         }
 
@@ -22,7 +23,7 @@ namespace LeagueSandbox.GameServer.Items
             var item = _inventory.AddItem(itemData, owner);
             if (owner != null && item != null)
             {
-                _game.PacketNotifier.NotifyBuyItem((int)_game.PlayerManager.GetClientInfoByChampion(owner).PlayerId, owner, _inventory.GetItem(item.ItemData.Name, true));
+                _packetNotifier.NotifyBuyItem((int)owner.GetPlayerId(), owner, _inventory.GetItem(item.ItemData.Name, true));
             }
             return item;
         }
@@ -53,7 +54,7 @@ namespace LeagueSandbox.GameServer.Items
 
         public void RemoveStackingItem(string itemSpellName, IObjAiBase owner)
         {
-            _inventory.RemoveStackingItem(_game, itemSpellName, owner);
+            _inventory.RemoveStackingItem(_packetNotifier, itemSpellName, owner);
         }
         public byte GetItemSlot(IItem item)
         {
@@ -95,9 +96,9 @@ namespace LeagueSandbox.GameServer.Items
             return result;
         }
 
-        public static InventoryManager CreateInventory(Game game)
+        public static InventoryManager CreateInventory(IPacketNotifier packetNotifier)
         {
-            return new InventoryManager(game);
+            return new InventoryManager(packetNotifier);
         }
 
         public IEnumerator GetEnumerator()

@@ -53,7 +53,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             Lane = lane;
             ParentObject = mapObject;
             SetTeam(team);
-            Inventory = InventoryManager.CreateInventory(game);
+            Inventory = InventoryManager.CreateInventory(game.PacketNotifier);
             Replication = new ReplicationAiTurret(this);
         }
 
