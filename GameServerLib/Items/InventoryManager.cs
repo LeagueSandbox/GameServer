@@ -1,6 +1,8 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Packets.Interfaces;
@@ -18,13 +20,13 @@ namespace LeagueSandbox.GameServer.Items
             _inventory = new Inventory(this);
         }
 
-        public bool AddItem(IItemData itemData, IObjAiBase owner = null)
+        public Tuple<IItem, bool> AddItem(IItemData itemData, IObjAiBase owner = null)
         {
             var item = _inventory.AddItem(itemData, owner);
             
             if(item == null)
             {
-                return false;
+                return Tuple.Create(item, false);
             }
 
             if (owner is IChampion champion && item != null)
@@ -32,7 +34,7 @@ namespace LeagueSandbox.GameServer.Items
                 //This packet seems to break when buying more than 3 of one of the 250Gold elixirs
                 _packetNotifier.NotifyBuyItem((int)champion.GetPlayerId(), champion, item);
             }
-            return true;
+            return Tuple.Create(item, true);
         }
 
         public IItem SetExtraItem(byte slot, IItemData item)
@@ -49,11 +51,41 @@ namespace LeagueSandbox.GameServer.Items
         {
             return _inventory.GetItem(itemSpellName);
         }
-        public void RemoveItem(byte slot, IObjAiBase owner)
+        public bool RemoveItem(byte slot, IObjAiBase owner = null, int stacksToRemove = 1)
         {
             var item = GetItem(slot);
-            _inventory.RemoveItem(slot, owner);
-            _packetNotifier.NotifyRemoveItem(owner, slot, (byte)item.StackCount);
+
+            if (item == null)
+            {
+                return false;
+            }
+
+            _inventory.RemoveItem(slot, owner, stacksToRemove);
+            
+            if(owner != null)
+            {
+                _packetNotifier.NotifyRemoveItem(owner, slot, (byte)item.StackCount);
+            }
+
+            return true;
+        }
+        public bool RemoveItem(IItem item, IObjAiBase owner = null, int stacksToRemove = 1)
+        {
+            var slot = _inventory.GetItemSlot(item);
+
+            if(_inventory.Items[slot] == null)
+            {
+                return false;
+            }
+
+            _inventory.RemoveItem(slot, owner, stacksToRemove);
+
+            if (owner != null)
+            {
+                _packetNotifier.NotifyRemoveItem(owner, slot, (byte)item.StackCount);
+            }
+
+            return true;
         }
         public byte GetItemSlot(IItem item)
         {

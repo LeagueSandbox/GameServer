@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using GameServerCore.Domain.GameObjects;
 using System.Collections.Generic;
+using System;
 
 namespace GameServerCore.Domain
 {
@@ -9,8 +10,9 @@ namespace GameServerCore.Domain
         IItem GetItem(byte slot);
         IItem GetItem(string ItemSpellName);
         byte GetItemSlot(IItem item);
-        void RemoveItem(byte slot, IObjAiBase owner);
-        bool AddItem(IItemData item, IObjAiBase owner = null);
+        bool RemoveItem(byte slot, IObjAiBase owner = null, int stacksToRemove = 1);
+        bool RemoveItem(IItem item, IObjAiBase owner = null, int stacksToRemove = 1);
+        Tuple<IItem, bool> AddItem(IItemData item, IObjAiBase owner = null);
         IItem SetExtraItem(byte slot, IItemData item);
         void SwapItems(byte slot1, byte slot2);
         List<IItem> GetAvailableItems(IEnumerable<IItemData> items);

@@ -5,7 +5,7 @@ namespace GameServerCore.Domain
         int MaxStacks { get; }
         int StackCount { get; }
         bool IncrementStackCount();
-        bool DecrementStackCount();
+        bool DecrementStackCount(int stacksToRemove = 0);
         void SetStacks(int newStacks);
     }
 }

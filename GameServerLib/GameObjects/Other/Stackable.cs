@@ -19,14 +19,27 @@ namespace LeagueSandbox.GameServer.GameObjects.Other
             return true;
         }
 
-        public virtual bool DecrementStackCount()
+        public virtual bool DecrementStackCount(int stacksToRemove = 0)
         {
             if (StackCount < 1)
             {
                 return false;
             }
 
-            StackCount--;
+            if (stacksToRemove != 0)
+            {
+                if (stacksToRemove < 0)
+                {
+                    throw new Exception("Stacks to be Removed can't be a negative number!");
+                }
+
+                StackCount = System.Math.Max(StackCount - stacksToRemove, 0);
+            }
+            else
+            {
+                StackCount--;
+            }
+
             return true;
         }
 

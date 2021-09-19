@@ -29,7 +29,7 @@ namespace LeagueSandbox.GameServer.Items
             return Items.Take(BASE_INVENTORY_SIZE).ToArray();
         }
 
-        public IItem AddItem(IItemData item, IObjAiBase owner = null)
+        public IItem AddItem(IItemData item, IObjAiBase owner)
         {
             if (item.ItemGroup.ToLower().Equals("relicbase"))
             {
@@ -77,7 +77,6 @@ namespace LeagueSandbox.GameServer.Items
 
         public IItem GetItem(string name, bool isItemName = false)
         {
-
             if (name != null)
             {
                 for (byte i = 0; i < Items.Length; i++)
@@ -101,15 +100,19 @@ namespace LeagueSandbox.GameServer.Items
             return null;
         }
 
-        public void RemoveItem(byte slot, IObjAiBase owner)
+        public void RemoveItem(byte slot, IObjAiBase owner, int stacksToRemove)
         {
-            Items[slot].DecrementStackCount();
+            Items[slot].DecrementStackCount(stacksToRemove);
 
             if (Items[slot].StackCount == 0)
             {
-                owner.Stats.RemoveModifier(Items[slot].ItemData);
+                if (owner != null)
+                {
+                    owner.Stats.RemoveModifier(Items[slot].ItemData);
+                }
                 Items[slot] = null;
             }
+
         }
 
         public byte GetItemSlot(IItem item)
