@@ -10,7 +10,7 @@ namespace GameServerCore.Domain
         IItem GetItem(string ItemSpellName);
         byte GetItemSlot(IItem item);
         void RemoveItem(byte slot, IObjAiBase owner);
-        IItem AddItem(IItemData item, IObjAiBase owner = null);
+        bool AddItem(IItemData item, IObjAiBase owner = null);
         IItem SetExtraItem(byte slot, IItemData item);
         void SwapItems(byte slot1, byte slot2);
         List<IItem> GetAvailableItems(IEnumerable<IItemData> items);

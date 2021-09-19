@@ -61,7 +61,7 @@ namespace LeagueSandbox.GameServer.Items
 
                 _owner.Inventory.AddItem(itemTemplate, _owner);
             }
-            else if (stats.Gold < price || _owner.Inventory.AddItem(itemTemplate, _owner) == null)
+            else if (stats.Gold < price || !_owner.Inventory.AddItem(itemTemplate, _owner))
             {
                 return false;
             }

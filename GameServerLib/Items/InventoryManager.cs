@@ -18,15 +18,21 @@ namespace LeagueSandbox.GameServer.Items
             _inventory = new Inventory(this);
         }
 
-        public IItem AddItem(IItemData itemData, IObjAiBase owner = null)
+        public bool AddItem(IItemData itemData, IObjAiBase owner = null)
         {
             var item = _inventory.AddItem(itemData, owner);
+            
+            if(item == null)
+            {
+                return false;
+            }
+
             if (owner is IChampion champion && item != null)
             {
                 //This packet seems to break when buying more than 3 of one of the 250Gold elixirs
                 _packetNotifier.NotifyBuyItem((int)champion.GetPlayerId(), champion, item);
             }
-            return item;
+            return true;
         }
 
         public IItem SetExtraItem(byte slot, IItemData item)
