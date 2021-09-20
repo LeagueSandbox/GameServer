@@ -1,6 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using GameServerCore.Domain;
+using GameServerCore.Domain.GameObjects;
+using GameServerCore.Enums;
+using GameServerCore.Packets.Interfaces;
 
 namespace LeagueSandbox.GameServer.Items
 {
@@ -17,18 +21,29 @@ namespace LeagueSandbox.GameServer.Items
         {
             _owner = owner;
             Items = new IItem[BASE_INVENTORY_SIZE + EXTRA_INVENTORY_SIZE + RUNE_INVENTORY_SIZE];
+
         }
 
         public IItem[] GetBaseItems()
         {
             return Items.Take(BASE_INVENTORY_SIZE).ToArray();
         }
-        
-        public IItem AddItem(IItemData item)
+
+        public IItem AddItem(IItemData item, IObjAiBase owner)
         {
             if (item.ItemGroup.ToLower().Equals("relicbase"))
             {
                 return AddTrinketItem(item);
+            }
+
+            if (owner != null)
+            {
+                owner.Stats.AddModifier(item);
+
+                if (!string.IsNullOrEmpty(item.SpellName))
+                {
+                    owner.SetSpell(item.SpellName, (byte)(owner.Inventory.GetItemSlot(GetItem(item.SpellName)) + (byte)SpellSlotType.InventorySlots), true);
+                }
             }
 
             if (item.MaxStacks > 1)
@@ -60,14 +75,52 @@ namespace LeagueSandbox.GameServer.Items
             return Items[slot];
         }
 
-        public void RemoveItem(byte slot)
+        public IItem GetItem(string name, bool isItemName = false)
         {
-            Items[slot] = null;
+            if (name != null)
+            {
+                for (byte i = 0; i < Items.Length; i++)
+                {
+                    if (Items[i] != null)
+                    {
+                        if (isItemName)
+                        {
+                            if (name == Items[i].ItemData.Name)
+                            {
+                                return Items[i];
+                            };
+                        }
+                        else if (name == Items[i].ItemData.SpellName)
+                        {
+                            return Items[i];
+                        }
+                    }
+                }
+            }
+            return null;
         }
 
-        public void RemoveItem(IItem item)
+        public void RemoveItem(byte slot, IObjAiBase owner, int stacksToRemove = 1)
         {
-            RemoveItem(GetItemSlot(item));
+            if (stacksToRemove < 0)
+            {
+                throw new Exception("Stacks to be Removed can't be a negative number!");
+            }
+
+            int finalStacks = Items[slot].StackCount - stacksToRemove;
+
+            if (finalStacks <= 0)
+            {
+                if (owner != null)
+                {
+                    owner.Stats.RemoveModifier(Items[slot].ItemData);
+                }
+                Items[slot] = null;
+            }
+            else
+            {
+                Items[slot].SetStacks(finalStacks);
+            }
         }
 
         public byte GetItemSlot(IItem item)
@@ -130,7 +183,6 @@ namespace LeagueSandbox.GameServer.Items
             }
             return AddNewItem(item);
         }
-
         private IItem AddNewItem(IItemData item)
         {
             for (var i = 0; i < BASE_INVENTORY_SIZE; i++)

@@ -1,22 +1,40 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using GameServerCore.Domain;
+using GameServerCore.Domain.GameObjects;
+using GameServerCore.Packets.Interfaces;
 
 namespace LeagueSandbox.GameServer.Items
 {
     public class InventoryManager : IInventoryManager
     {
+        private readonly IPacketNotifier _packetNotifier;
         private readonly Inventory _inventory;
 
-        private InventoryManager()
+        private InventoryManager(IPacketNotifier packetNotifier)
         {
+            _packetNotifier = packetNotifier;
             _inventory = new Inventory(this);
         }
 
-        public IItem AddItem(IItemData item)
+        public KeyValuePair<IItem, bool> AddItem(IItemData itemData, IObjAiBase owner = null)
         {
-            return _inventory.AddItem(item);
+            var item = _inventory.AddItem(itemData, owner);
+            
+            if(item == null)
+            {
+                return KeyValuePair.Create(item, false);
+            }
+
+            if (owner is IChampion champion && item != null)
+            {
+                //This packet seems to break when buying more than 3 of one of the 250Gold elixirs
+                _packetNotifier.NotifyBuyItem((int)champion.GetPlayerId(), champion, item);
+            }
+            return KeyValuePair.Create(item, true);
         }
 
         public IItem SetExtraItem(byte slot, IItemData item)
@@ -29,16 +47,46 @@ namespace LeagueSandbox.GameServer.Items
             return _inventory.GetItem(slot);
         }
 
-        public void RemoveItem(byte slot)
+        public IItem GetItem(string itemSpellName)
         {
-            _inventory.RemoveItem(slot);
+            return _inventory.GetItem(itemSpellName);
         }
-
-        public void RemoveItem(IItem item)
+        public bool RemoveItem(byte slot, IObjAiBase owner = null, int stacksToRemove = 1)
         {
-            _inventory.RemoveItem(item);
-        }
+            var item = GetItem(slot);
 
+            if (item == null)
+            {
+                return false;
+            }
+
+            _inventory.RemoveItem(slot, owner, stacksToRemove);
+            
+            if(owner != null)
+            {
+                _packetNotifier.NotifyRemoveItem(owner, slot, (byte)item.StackCount);
+            }
+
+            return true;
+        }
+        public bool RemoveItem(IItem item, IObjAiBase owner = null, int stacksToRemove = 1)
+        {
+            var slot = _inventory.GetItemSlot(item);
+
+            if(_inventory.Items[slot] == null)
+            {
+                return false;
+            }
+
+            _inventory.RemoveItem(slot, owner, stacksToRemove);
+
+            if (owner != null)
+            {
+                _packetNotifier.NotifyRemoveItem(owner, slot, (byte)item.StackCount);
+            }
+
+            return true;
+        }
         public byte GetItemSlot(IItem item)
         {
             return _inventory.GetItemSlot(item);
@@ -54,7 +102,7 @@ namespace LeagueSandbox.GameServer.Items
             var tempInv = new List<IItem>(_inventory.GetBaseItems());
             return GetAvailableItemsRecursive(ref tempInv, items);
         }
-        
+
         private static List<IItem> GetAvailableItemsRecursive(ref List<IItem> inventoryState, IEnumerable<IItemData> items)
         {
             var result = new List<IItem>();
@@ -79,9 +127,9 @@ namespace LeagueSandbox.GameServer.Items
             return result;
         }
 
-        public static InventoryManager CreateInventory()
+        public static InventoryManager CreateInventory(IPacketNotifier packetNotifier)
         {
-            return new InventoryManager();
+            return new InventoryManager(packetNotifier);
         }
 
         public IEnumerator GetEnumerator()

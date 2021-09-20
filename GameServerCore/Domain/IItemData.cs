@@ -10,6 +10,7 @@ namespace GameServerCore.Domain
         int MaxStacks { get; }
         int Price { get; }
         string ItemGroup { get; }
+        bool Consumed { get; }
         string SpellName { get; }
         float SellBackModifier { get; }
         int[] RecipeItem { get; }

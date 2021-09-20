@@ -48,7 +48,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             _playerTeamSpecialId = playerTeamSpecialId;
             RuneList = runeList;
 
-            Inventory = InventoryManager.CreateInventory();
+            Inventory = InventoryManager.CreateInventory(game.PacketNotifier);
             Shop = Items.Shop.CreateShop(this, game);
 
             Stats.Gold = _game.Map.MapProperties.StartingGold;
@@ -116,6 +116,10 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             }
 
             return 0;
+        }
+        public uint GetPlayerId()
+        {
+            return _playerId;
         }
 
         public Vector2 GetSpawnPosition()
