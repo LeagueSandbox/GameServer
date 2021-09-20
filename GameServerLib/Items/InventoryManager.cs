@@ -53,18 +53,25 @@ namespace LeagueSandbox.GameServer.Items
         }
         public bool RemoveItem(byte slot, IObjAiBase owner = null, int stacksToRemove = 1)
         {
-            var item = GetItem(slot);
-
+            var item = _inventory.Items[slot];
             if (item == null)
             {
                 return false;
             }
 
             _inventory.RemoveItem(slot, owner, stacksToRemove);
-            
-            if(owner != null)
+
+            if (owner != null)
             {
-                _packetNotifier.NotifyRemoveItem(owner, slot, (byte)item.StackCount);
+                item = _inventory.Items[slot];
+
+                byte stacks = 0;
+                if (item != null)
+                {
+                    stacks = (byte)item.StackCount;
+                }
+
+                _packetNotifier.NotifyRemoveItem(owner, slot, stacks);
             }
 
             return true;
