@@ -54,9 +54,9 @@ namespace LeagueSandbox.GameServer.Items
                     return false;
                 }
 
-                foreach (var itens in ownedItems)
+                foreach (var items in ownedItems)
                 {
-                    _owner.Inventory.RemoveItem(inventory.GetItemSlot(itens), _owner);
+                    _owner.Inventory.RemoveItem(inventory.GetItemSlot(items), _owner);
                 }
 
                 _owner.Inventory.AddItem(itemTemplate, _owner);

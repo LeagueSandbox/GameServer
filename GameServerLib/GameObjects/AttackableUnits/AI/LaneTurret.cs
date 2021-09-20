@@ -34,7 +34,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                     {
                         continue;
                     }
-                    Inventory.AddItem(itemTemplate);
+                    Inventory.AddItem(itemTemplate, this);
                     Stats.AddModifier(itemTemplate);
                 }
             }
