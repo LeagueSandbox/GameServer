@@ -438,6 +438,9 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             ApiEventManager.OnPreTakeDamage.Publish(this, attacker);
 
             Stats.CurrentHealth = Math.Max(0.0f, Stats.CurrentHealth - damage);
+
+            ApiEventManager.OnTakeDamage.Publish(this, attacker);
+
             if (!IsDead && Stats.CurrentHealth <= 0)
             {
                 IsDead = true;
@@ -451,8 +454,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                     DamageSource = source,
                     DeathDuration = 0 // TODO: Unhardcode
                 };
-
-                ApiEventManager.OnTakeDamage.Publish(this, attacker);
             }
 
             int attackerId = 0, targetId = 0;
