@@ -1,6 +1,7 @@
 ﻿using GameServerCore;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Domain.GameObjects.Spell.Missile;
+using GameServerCore.Domain.GameObjects.Spell.Sector;
 using LeagueSandbox.GameServer.GameObjects;
 using LeagueSandbox.GameServer.Logging;
 using log4net;
@@ -26,7 +27,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
         private static readonly object _particlesLock = new object();
 
         public override string Command => "debugmode";
-        public override string Syntax => $"{Command} self/champions/minions/projectiles";
+        public override string Syntax => $"{Command} self/champions/minions/projectiles/sectors";
 
         public DebugParticlesCommand(ChatCommandManager chatCommandManager, Game game)
             : base(chatCommandManager, game)
@@ -61,6 +62,11 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
                 if (_debugMode == 4)
                 {
                     _logger.Debug($"Stopped debugging projectiles.");
+                }
+
+                if (_debugMode == 5)
+                {
+                    _logger.Debug($"Stopped debugging sectors.");
                 }
 
                 _debugMode = 0;
@@ -124,6 +130,11 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
                     _debugMode = 4;
                     DebugProjectiles(userId);
                 }
+                else if (split[1].Contains("sectors"))
+                {
+                    _debugMode = 5;
+                    DebugSectors(userId);
+                }
                 else
                 {
                     ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.SYNTAXERROR);
@@ -134,7 +145,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
 
         public override void Update(float diff)
         {
-            if (_game.GameTime - lastDrawTime > 60.0f)
+            if (_game.GameTime - lastDrawTime > 30.0f)
             {
                 if (_debugMode == 1)
                 {
@@ -151,6 +162,10 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
                 if (_debugMode == 4)
                 {
                     DrawProjectiles(_userId);
+                }
+                if (_debugMode == 5)
+                {
+                    DrawSectors(_userId);
                 }
 
                 lastDrawTime = _game.GameTime;
@@ -452,7 +467,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
 
         public void DrawProjectiles(int userId)
         {
-            if (_debugMode != 3)
+            if (_debugMode != 4)
             {
                 return;
             }
@@ -557,6 +572,98 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
                             var arrowParticleStart3 = new Particle(_game, null, arrowParticleEnd3Temp, new Vector2(current.X + dirTangent2.X, current.Y + dirTangent2.Y), "Global_Indicator_Line_Beam.troy", 1.0f, "", "", 0, missile.Direction, false, 0.1f, false, false);
                             _arrowParticlesList[missile.NetId].Add(arrowParticleStart3);
                             _game.PacketNotifier.NotifyFXCreateGroup(arrowParticleStart3, userId);
+                        }
+                    }
+                }
+            }
+        }
+
+        // Draws the effected area of all sectors
+        public void DebugSectors(int userId)
+        {
+            // Arbitrary ratio is required for the DebugCircle particle to look accurate
+            var circlesize = (1f / 100f) * _userChampion.CollisionRadius;
+
+            _logger.Debug($"Started debugging projectiles. Your Debug Circle Radius: " + "(1 / 100) * " + _userChampion.CollisionRadius + " = " + "(" + (1f / 100f) + ") * " + _userChampion.CollisionRadius + " = " + circlesize);
+            var startdebugmsg = $"Started debugging sectors. Your Debug Circle Radius: " + "(1 / 100) * " + _userChampion.CollisionRadius + " = " + "(" + (1f / 100f) + ") * " + _userChampion.CollisionRadius + " = " + circlesize;
+            ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.NORMAL, startdebugmsg);
+
+            // Creates a blue flashing highlight around your unit
+            _game.PacketNotifier.NotifyCreateUnitHighlight(userId, _userChampion);
+        }
+
+        public void DrawSectors(int userId)
+        {
+            if (_debugMode != 5)
+            {
+                return;
+            }
+
+            var tempObjects = Game.ObjectManager.GetObjects();
+
+            foreach (KeyValuePair<uint, IGameObject> obj in tempObjects)
+            {
+                if (obj.Value is ISpellSector sector)
+                {
+                    // Arbitrary ratio is required for the DebugCircle particle to look accurate
+                    var circlesize = (1f / 100f) * sector.CollisionRadius;
+
+                    if (sector.Parameters.Width < 5)
+                    {
+                        circlesize = (1f / 100f) * 35;
+                    }
+
+                    // Clear circle particles every draw in case the unit changes its position
+                    if (_circleParticles.ContainsKey(sector.NetId))
+                    {
+                        if (_circleParticles[sector.NetId] != null)
+                        {
+                            _circleParticles.Remove(sector.NetId);
+                        }
+                    }
+
+                    if (sector.CastInfo.Targets[0] != null || (sector.CastInfo.TargetPosition != Vector3.Zero && sector.CastInfo.TargetPositionEnd != Vector3.Zero))
+                    {
+                        // Clear arrow particles every draw in case the unit changes its waypoints
+                        if (_arrowParticlesList.ContainsKey(sector.NetId))
+                        {
+                            if (_arrowParticlesList[sector.NetId].Count != 0)
+                            {
+                                lock (_particlesLock)
+                                {
+                                    _arrowParticlesList[sector.NetId].Clear();
+                                }
+                                _arrowParticlesList.Remove(sector.NetId);
+                            }
+                        }
+
+                        if (sector is ISpellSectorPolygon polygon)
+                        {
+                            if (!_arrowParticlesList.ContainsKey(polygon.NetId))
+                            {
+                                _arrowParticlesList.Add(polygon.NetId, new List<Particle>());
+                            }
+
+                            var current = polygon.Position;
+                            var bindObj = polygon.Parameters.BindObject;
+                            var wpTarget = polygon.CastInfo.TargetPositionEnd;
+
+                            if (bindObj == null)
+                            {
+                                return;
+                            }
+
+                            var circleparticle = new Particle(_game, null, null, polygon.Position, "DebugCircle_green.troy", circlesize, "", "", 0, default, false, 0.1f, false, false);
+                            _circleParticles.Add(polygon.NetId, circleparticle);
+                            _game.PacketNotifier.NotifyFXCreateGroup(circleparticle, userId);
+
+                            foreach (Vector2 vert in polygon.GetPolygonVertices())
+                            {
+                                var truePos = bindObj.Position + Extensions.Rotate(vert, -Extensions.UnitVectorToAngle(new Vector2(bindObj.Direction.X, bindObj.Direction.Z)) + 90f);
+                                var arrowParticleVert = new Particle(_game, null, null, truePos, "DebugArrow_green.troy", 0.5f, "", "", 0, bindObj.Direction, false, 0.1f, false, false);
+                                _arrowParticlesList[polygon.NetId].Add(arrowParticleVert);
+                                _game.PacketNotifier.NotifyFXCreateGroup(arrowParticleVert, userId);
+                            }
                         }
                     }
                 }

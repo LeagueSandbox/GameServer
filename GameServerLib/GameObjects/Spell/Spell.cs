@@ -692,11 +692,6 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
             }
             else
             {
-                if (Script.ScriptMetadata.MissileParameters == null && Script.ScriptMetadata.SectorParameters == null)
-                {
-                    ApplyEffects(CastInfo.Targets[0].Unit);
-                }
-
                 if (SpellData.ChannelDuration[CastInfo.SpellLevel] <= 0)
                 {
                     State = SpellState.STATE_COOLDOWN;

@@ -50,7 +50,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Sector
             ISpell originSpell,
             ICastInfo castInfo,
             uint netId = 0
-        ) : base(game, new Vector2(castInfo.TargetPositionEnd.X, castInfo.TargetPositionEnd.Z), Math.Max(parameters.HalfLength, parameters.Width), 0, netId)
+        ) : base(game, new Vector2(castInfo.TargetPositionEnd.X, castInfo.TargetPositionEnd.Z), Math.Max(parameters.Length, parameters.Width), 0, netId)
         {
             _timeSinceCreation = 0.0f;
             _lastTickTime = 0.0f;
