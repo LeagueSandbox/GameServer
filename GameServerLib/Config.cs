@@ -191,7 +191,7 @@ namespace LeagueSandbox.GameServer
                 {
                     type = GameObjectTypes.ObjAnimated_HQ;
                 }
-                else if (Name.Contains("Barracks"))
+                else if (Name.Contains("Barracks") && !Name.Contains("_Spawn"))
                 {
                     // Inhibitors are dampeners for the enemy Nexus.
                     type = GameObjectTypes.ObjAnimated_BarracksDampener;
