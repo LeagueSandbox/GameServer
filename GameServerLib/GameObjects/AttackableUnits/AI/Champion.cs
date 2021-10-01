@@ -48,7 +48,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             _playerTeamSpecialId = playerTeamSpecialId;
             RuneList = runeList;
 
-            Inventory = InventoryManager.CreateInventory(game.PacketNotifier);
+            Inventory = InventoryManager.CreateInventory(game.PacketNotifier, game.ScriptEngine);
             Shop = Items.Shop.CreateShop(this, game);
 
             Stats.Gold = _game.Map.MapProperties.StartingGold;
