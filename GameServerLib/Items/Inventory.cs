@@ -18,7 +18,7 @@ namespace LeagueSandbox.GameServer.Items
         private const byte RUNE_INVENTORY_SIZE = 30;
         private InventoryManager _owner;
         private CSharpScriptEngine _scriptEngine;
-        public Dictionary<string, IItemScript> ItemScripts = new Dictionary<string, IItemScript>();
+        public Dictionary<int, IItemScript> ItemScripts = new Dictionary<int, IItemScript>();
         public IItem[] Items { get; }
 
         public Inventory(InventoryManager owner, CSharpScriptEngine scriptEngine)
@@ -51,11 +51,11 @@ namespace LeagueSandbox.GameServer.Items
                 }
 
                 //Checks if the item's script was already loaded before
-                if (!ItemScripts.ContainsKey(item.Name))
+                if (!ItemScripts.ContainsKey(item.ItemId))
                 {
                     //Loads the Script
-                    ItemScripts.Add(item.Name, _scriptEngine.CreateObject<IItemScript>("ItemPassives", $"ItemID_{item.ItemId}") ?? new ItemScriptEmpty());
-                    ItemScripts[item.Name].OnActivate(owner);
+                    ItemScripts.Add(item.ItemId, _scriptEngine.CreateObject<IItemScript>("ItemPassives", $"ItemID_{item.ItemId}") ?? new ItemScriptEmpty());
+                    ItemScripts[item.ItemId].OnActivate(owner);
                 }
             }
 
@@ -130,12 +130,12 @@ namespace LeagueSandbox.GameServer.Items
 
                     var item = GetItem(slot);
 
-                    ItemScripts[item.ItemData.Name].OnDeactivate(owner);
-                    if (ItemScripts[item.ItemData.Name].StatsModifier != null)
+                    ItemScripts[item.ItemData.ItemId].OnDeactivate(owner);
+                    if (ItemScripts[item.ItemData.ItemId].StatsModifier != null)
                     {
-                        owner.Stats.RemoveModifier(ItemScripts[item.ItemData.Name].StatsModifier);
+                        owner.Stats.RemoveModifier(ItemScripts[item.ItemData.ItemId].StatsModifier);
                     }
-                    ItemScripts.Remove(GetItem(slot).ItemData.Name);
+                    ItemScripts.Remove(GetItem(slot).ItemData.ItemId);
                 }
                 Items[slot] = null;
             }
