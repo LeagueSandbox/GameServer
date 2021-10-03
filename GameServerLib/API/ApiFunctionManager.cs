@@ -277,6 +277,29 @@ namespace LeagueSandbox.GameServer.API
         /// Creates a new particle with the specified parameters.
         /// </summary>
         /// <param name="caster">GameObject that caused this particle to spawn.</param>
+        /// <param name="particle">Internal name of the particle.</param>
+        /// <param name="start">Position to spawn at.</param>
+        /// <param name="end">Position to end at.</param>
+        /// <param name="lifetime">Time in seconds the particle should last.</param>
+        /// <param name="size">Scale.</param>
+        /// <param name="bone">Bone on the owner the particle should be attached to.</param>
+        /// <param name="targetBone">Bone on the target the particle should be attached to.</param>
+        /// <param name="direction">3D direction the particle should face.</param>
+        /// <param name="followGroundTilt">Whether or not the particle should be titled along the ground towards its end position.</param>
+        /// <param name="reqVision">Whether or not the particle can be obstructed by terrain.</param>
+        /// <param name="teamOnly">The only team which should be able to see the particle.</param>
+        /// <param name="flags">Flags which determine how the particle behaves. Refer to FXFlags enum.</param>
+        /// <returns>New particle instance.</returns>
+        public static IParticle AddParticlePos(IGameObject caster, string particle, Vector2 start, Vector2 end, float lifetime = 1.0f, float size = 1.0f, string bone = "", string targetBone = "", Vector3 direction = new Vector3(), bool followGroundTilt = false, bool reqVision = true, TeamId teamOnly = TeamId.TEAM_NEUTRAL, FXFlags flags = FXFlags.BindDirection)
+        {
+            var p = new Particle(_game, caster, start, end, particle, size, bone, targetBone, 0, direction, followGroundTilt, lifetime, reqVision, true, teamOnly, flags);
+            return p;
+        }
+
+        /// <summary>
+        /// Creates a new particle with the specified parameters.
+        /// </summary>
+        /// <param name="caster">GameObject that caused this particle to spawn.</param>
         /// <param name="bindObj">GameObject that the particle should bind to.</param>
         /// <param name="particle">Internal name of the particle.</param>
         /// <param name="position">Position to spawn at.</param>
@@ -744,7 +767,7 @@ namespace LeagueSandbox.GameServer.API
                 UseAttackCastTime = useAutoAttackSpell,
                 UseAttackCastDelay = false,
                 IsForceCastingOrChannel = isForceCastingOrChanneling,
-                
+
                 SpellSlot = (byte)slot,
                 SpellCastLaunchPosition = caster.GetPosition3D()
             };
