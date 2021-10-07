@@ -119,7 +119,7 @@ namespace LeagueSandbox.GameServer.Items
             {
                 throw new Exception("Stacks to be Removed can't be a negative number!");
             }
-
+            var itemID = Items[slot].ItemData.ItemId;
             int finalStacks = Items[slot].StackCount - stacksToRemove;
 
             if (finalStacks <= 0)
@@ -128,12 +128,10 @@ namespace LeagueSandbox.GameServer.Items
                 {
                     owner.Stats.RemoveModifier(Items[slot].ItemData);
 
-                    var item = GetItem(slot);
-
-                    ItemScripts[item.ItemData.ItemId].OnDeactivate(owner);
-                    if (ItemScripts[item.ItemData.ItemId].StatsModifier != null)
+                    ItemScripts[itemID].OnDeactivate(owner);
+                    if (ItemScripts[itemID].StatsModifier != null)
                     {
-                        owner.Stats.RemoveModifier(ItemScripts[item.ItemData.ItemId].StatsModifier);
+                        owner.Stats.RemoveModifier(ItemScripts[itemID].StatsModifier);
                     }
                     ItemScripts.Remove(GetItem(slot).ItemData.ItemId);
                 }
@@ -143,8 +141,28 @@ namespace LeagueSandbox.GameServer.Items
             {
                 Items[slot].SetStacks(finalStacks);
             }
-        }
 
+            if (!HasItemWithID(itemID) && owner != null)
+            {
+                ItemScripts[itemID].OnDeactivate(owner);
+                if (ItemScripts[itemID].StatsModifier != null)
+                {
+                    owner.Stats.RemoveModifier(ItemScripts[itemID].StatsModifier);
+                }
+                ItemScripts.Remove(itemID);
+            }
+        }
+        public bool HasItemWithID(int ItemID)
+        {
+            foreach (var item in Items)
+            {
+                if (item != null && ItemID == item.ItemData.ItemId)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
         public byte GetItemSlot(IItem item)
         {
             for (byte i = 0; i < Items.Length; i++)
