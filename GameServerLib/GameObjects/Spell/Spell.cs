@@ -110,8 +110,12 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
         public void LoadScript()
         {
             ApiEventManager.RemoveAllListenersForOwner(Script);
-
-            Script = _scriptEngine.CreateObject<ISpellScript>("Spells", SpellName) ?? new SpellScriptEmpty();
+            string nameSpace = "Spells";
+            if (CastInfo.SpellSlot >= (byte)SpellSlotType.InventorySlots && CastInfo.SpellSlot < (byte)SpellSlotType.BluePillSlot)
+            {
+               nameSpace = "ItemSpells";
+            }
+            Script = _scriptEngine.CreateObject<ISpellScript>(nameSpace, SpellName) ?? new SpellScriptEmpty();
 
             if (Script.ScriptMetadata.TriggersSpellCasts)
             {
