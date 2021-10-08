@@ -230,7 +230,8 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             {
                 target.TakeDamage(this, 0, DamageType.DAMAGE_TYPE_PHYSICAL,
                                              DamageSource.DAMAGE_SOURCE_ATTACK,
-                                             DamageResultType.RESULT_MISS);
+                                             DamageResultType.RESULT_MISS,
+                                             AutoAttackSpell);
                 return;
             }
 
@@ -242,7 +243,8 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
             target.TakeDamage(this, damage, DamageType.DAMAGE_TYPE_PHYSICAL,
                 DamageSource.DAMAGE_SOURCE_ATTACK,
-                IsNextAutoCrit);
+                IsNextAutoCrit ? DamageResultType.RESULT_CRITICAL : DamageResultType.RESULT_NORMAL,
+                AutoAttackSpell);
         }
 
         public override bool CanMove()

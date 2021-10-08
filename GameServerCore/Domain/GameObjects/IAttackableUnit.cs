@@ -1,4 +1,5 @@
-﻿using GameServerCore.Enums;
+﻿using GameServerCore.Domain.GameObjects.Spell;
+using GameServerCore.Enums;
 using System.Collections.Generic;
 using System.Numerics;
 
@@ -115,6 +116,16 @@ namespace GameServerCore.Domain.GameObjects
         /// <param name="source">What the damage came from: attack, spell, summoner spell, or passive.</param>
         /// <param name="isCrit">Whether or not the damage text should be shown as a crit.</param>
         void TakeDamage(IAttackableUnit attacker, float damage, DamageType type, DamageSource source, bool isCrit);
+        /// <summary>
+        /// Applies damage to this unit.
+        /// </summary>
+        /// <param name="attacker">Unit that is dealing the damage.</param>
+        /// <param name="damage">Amount of damage to deal.</param>
+        /// <param name="type">Whether the damage is physical, magical, or true.</param>
+        /// <param name="source">What the damage came from: attack, spell, summoner spell, or passive.</param>
+        /// <param name="damageText">Type of damage the damage text should be.</param>
+        /// <param name="spell">The spell that damage came from.</param>
+        void TakeDamage(IAttackableUnit attacker, float damage, DamageType type, DamageSource source, DamageResultType damageText, ISpell spell);
         /// <summary>
         /// Whether or not this unit is currently calling for help. Unimplemented.
         /// </summary>

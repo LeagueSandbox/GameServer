@@ -902,7 +902,10 @@ namespace LeagueSandbox.GameServer.API
 
     public class EventOnTakeDamage
     {
-        private readonly List<Tuple<object, IAttackableUnit, Action<IAttackableUnit, IAttackableUnit>, bool>> _listeners = new List<Tuple<object, IAttackableUnit, Action<IAttackableUnit, IAttackableUnit>, bool>>();
+        #region REMOVE THIS SOMEDAY
+
+        private readonly List<Tuple<object, IAttackableUnit, Action<IAttackableUnit, IAttackableUnit>, bool>> _listeners2 = new List<Tuple<object, IAttackableUnit, Action<IAttackableUnit, IAttackableUnit>, bool>>();
+
         /// <summary>
         /// Adds a listener for this event, wherein, if the unit that took damage was the given unit, it will call the <paramref name="callback"/> function.
         /// </summary>
@@ -913,20 +916,49 @@ namespace LeagueSandbox.GameServer.API
         public void AddListener(object owner, IAttackableUnit unit, Action<IAttackableUnit, IAttackableUnit> callback, bool singleInstance)
         {
             var listenerTuple = new Tuple<object, IAttackableUnit, Action<IAttackableUnit, IAttackableUnit>, bool>(owner, unit, callback, singleInstance);
-            _listeners.Add(listenerTuple);
-        }
-
-        public void RemoveListener(object owner, IAttackableUnit unit)
-        {
-            _listeners.RemoveAll(listener => listener.Item1 == owner && listener.Item2 == unit);
-        }
-
-        public void RemoveListener(object owner)
-        {
-            _listeners.RemoveAll(listener => listener.Item1 == owner);
+            _listeners2.Add(listenerTuple);
         }
 
         public void Publish(IAttackableUnit unit, IAttackableUnit source)
+        {
+            var count = _listeners2.Count;
+
+            if (count == 0)
+            {
+                return;
+            }
+
+            for (int i = count - 1; i >= 0; i--)
+            {
+                if (_listeners2[i].Item2 == unit)
+                {
+                    _listeners2[i].Item3(unit, source);
+                    if (_listeners2[i].Item4 == true)
+                    {
+                        _listeners2.RemoveAt(i);
+                    }
+                }
+            }
+        }
+
+        #endregion
+
+        private readonly List<Tuple<object, IAttackableUnit, Action<IAttackableUnit, IAttackableUnit, ISpell>, bool>> _listeners = new List<Tuple<object, IAttackableUnit, Action<IAttackableUnit, IAttackableUnit, ISpell>, bool>>();
+
+        /// <summary>
+        /// Adds a listener for this event, wherein, if the unit that took damage was the given unit, it will call the <paramref name="callback"/> function.
+        /// </summary>
+        /// <param name="owner">Object which will own this listener. Used in removal. Often times "this" will suffice.</param>
+        /// <param name="unit">Unit that should be checked when this event fires.</param>
+        /// <param name="callback">Function to call when this event fires.</param>
+        /// <param name="singleInstance">Whether or not to remove the event listener after calling the <paramref name="callback"/> function.</param>
+        public void AddListener(object owner, IAttackableUnit unit, Action<IAttackableUnit, IAttackableUnit, ISpell> callback, bool singleInstance)
+        {
+            var listenerTuple = new Tuple<object, IAttackableUnit, Action<IAttackableUnit, IAttackableUnit, ISpell>, bool>(owner, unit, callback, singleInstance);
+            _listeners.Add(listenerTuple);
+        }
+
+        public void Publish(IAttackableUnit unit, IAttackableUnit source, ISpell spell)
         {
             var count = _listeners.Count;
 
@@ -939,13 +971,25 @@ namespace LeagueSandbox.GameServer.API
             {
                 if (_listeners[i].Item2 == unit)
                 {
-                    _listeners[i].Item3(unit, source);
+                    _listeners[i].Item3(unit, source, spell);
                     if (_listeners[i].Item4 == true)
                     {
                         _listeners.RemoveAt(i);
                     }
                 }
             }
+        }
+
+        public void RemoveListener(object owner, IAttackableUnit unit)
+        {
+            _listeners.RemoveAll(listener => listener.Item1 == owner && listener.Item2 == unit);
+            _listeners2.RemoveAll(listener => listener.Item1 == owner && listener.Item2 == unit); // REMOVE THIS SOMEDAY
+        }
+
+        public void RemoveListener(object owner)
+        {
+            _listeners.RemoveAll(listener => listener.Item1 == owner);
+            _listeners2.RemoveAll(listener => listener.Item1 == owner); // REMOVE THIS SOMEDAY
         }
     }
 

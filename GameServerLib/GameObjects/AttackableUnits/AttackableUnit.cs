@@ -6,6 +6,7 @@ using GameServerCore;
 using GameServerCore.Content;
 using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
+using GameServerCore.Domain.GameObjects.Spell;
 using GameServerCore.Domain.GameObjects.Spell.Missile;
 using GameServerCore.Domain.GameObjects.Spell.Sector;
 using GameServerCore.Enums;
@@ -370,6 +371,42 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         public virtual void TakeDamage(IAttackableUnit attacker, float damage, DamageType type, DamageSource source,
             DamageResultType damageText)
         {
+            TakeDamage(attacker, damage, type, source, damageText, null);
+        }
+
+        /// <summary>
+        /// Applies damage to this unit.
+        /// </summary>
+        /// <param name="attacker">Unit that is dealing the damage.</param>
+        /// <param name="damage">Amount of damage to deal.</param>
+        /// <param name="type">Whether the damage is physical, magical, or true.</param>
+        /// <param name="source">What the damage came from: attack, spell, summoner spell, or passive.</param>
+        /// <param name="isCrit">Whether or not the damage text should be shown as a crit.</param>
+        public virtual void TakeDamage(IAttackableUnit attacker, float damage, DamageType type, DamageSource source, 
+            bool isCrit)
+        {
+            var text = DamageResultType.RESULT_NORMAL;
+
+            if (isCrit)
+            {
+                text = DamageResultType.RESULT_CRITICAL;
+            }
+
+            TakeDamage(attacker, damage, type, source, text, null);
+        }
+
+        /// <summary>
+        /// Applies damage to this unit.
+        /// </summary>
+        /// <param name="attacker">Unit that is dealing the damage.</param>
+        /// <param name="damage">Amount of damage to deal.</param>
+        /// <param name="type">Whether the damage is physical, magical, or true.</param>
+        /// <param name="source">What the damage came from: attack, spell, summoner spell, or passive.</param>
+        /// <param name="damageText">Type of damage the damage text should be.</param>
+        /// <param name="spell">The spell that damage came from.</param>
+        public virtual void TakeDamage(IAttackableUnit attacker, float damage, DamageType type, DamageSource source,
+            DamageResultType damageText, ISpell spell)
+        {
             float defense = 0;
             float regain = 0;
             var attackerStats = attacker.Stats;
@@ -439,7 +476,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
 
             Stats.CurrentHealth = Math.Max(0.0f, Stats.CurrentHealth - damage);
 
-            ApiEventManager.OnTakeDamage.Publish(this, attacker);
+            ApiEventManager.OnTakeDamage.Publish(this, attacker, spell);
 
             if (!IsDead && Stats.CurrentHealth <= 0)
             {
@@ -493,25 +530,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             }
         }
 
-        /// <summary>
-        /// Applies damage to this unit.
-        /// </summary>
-        /// <param name="attacker">Unit that is dealing the damage.</param>
-        /// <param name="damage">Amount of damage to deal.</param>
-        /// <param name="type">Whether the damage is physical, magical, or true.</param>
-        /// <param name="source">What the damage came from: attack, spell, summoner spell, or passive.</param>
-        /// <param name="isCrit">Whether or not the damage text should be shown as a crit.</param>
-        public virtual void TakeDamage(IAttackableUnit attacker, float damage, DamageType type, DamageSource source, bool isCrit)
-        {
-            var text = DamageResultType.RESULT_NORMAL;
-
-            if (isCrit)
-            {
-                text = DamageResultType.RESULT_CRITICAL;
-            }
-
-            TakeDamage(attacker, damage, type, source, text);
-        }
 
         /// <summary>
         /// Whether or not this unit is currently calling for help. Unimplemented.
