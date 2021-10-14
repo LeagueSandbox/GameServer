@@ -1,3 +1,4 @@
+using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Domain.GameObjects.Spell;
 using GameServerCore.Enums;
@@ -44,9 +45,9 @@ namespace Buffs
             RemoveParticle(_createdParticle);
         }
 
-        public void OnTakeDamage(IAttackableUnit unit, IAttackableUnit source)
+        private void OnTakeDamage(IDamageData damageData)
         {
-            var buff = unit.GetBuffWithName("Recall");
+            var buff = damageData.Target.GetBuffWithName("Recall");
             if (buff != null)
             {
                 buff.DeactivateBuff();
