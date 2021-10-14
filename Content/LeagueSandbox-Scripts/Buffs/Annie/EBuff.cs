@@ -26,10 +26,10 @@ namespace Buffs
             StatsModifier.MagicResist.FlatBonus += bonus;
             unit.AddStatModifier(StatsModifier);
 
-            ApiEventManager.OnBeingHit.AddListener(this, unit, OnTakeDamage, false);
+            ApiEventManager.OnBeingHit.AddListener(this, unit, OnBeingHit, false);
         }
 
-        public void OnTakeDamage(IAttackableUnit owner, IAttackableUnit attacker)
+        public void OnBeingHit(IAttackableUnit owner, IAttackableUnit attacker)
         {
             if (!(attacker is IBaseTurret) && owner is IObjAiBase obj)
             {
