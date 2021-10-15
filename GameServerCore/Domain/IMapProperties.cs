@@ -8,6 +8,9 @@ namespace GameServerCore.Domain
 {
     public interface IMapProperties: IUpdate
     {
+        bool HasTopLane { get; set; }
+        bool HasMidLane { get; set; }
+        bool HasBotLane { get; set; }
         float GoldPerSecond { get; set; }
         float StartingGold { get; set; }
         bool HasFirstBloodHappened { get; set; }
@@ -15,6 +18,9 @@ namespace GameServerCore.Domain
         int BluePillId { get; set; }
         long FirstGoldTime { get; set; }
         bool SpawnEnabled { get; set; }
+
+        int[] GetTurretItems(TurretType type);
+        string GetTowerModel(TurretType type, TeamId teamId);
 
         void Init();
 

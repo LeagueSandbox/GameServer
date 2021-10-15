@@ -5,9 +5,12 @@ using System.Linq;
 using System.Numerics;
 using System.Reflection;
 using GameServerCore.Domain;
+using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
 using LeagueSandbox.GameServer.Content;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
 using Newtonsoft.Json.Linq;
+using static LeagueSandbox.GameServer.MapData;
 
 namespace LeagueSandbox.GameServer
 {
@@ -32,6 +35,7 @@ namespace LeagueSandbox.GameServer
         public bool MinionSpawnsEnabled { get; private set; }
         public string ContentPath { get; private set; }
         public bool IsDamageTextGlobal { get; private set; }
+        //public MapData LoadMapStructures { get; internal set; }
 
         private Config()
         {
@@ -191,7 +195,7 @@ namespace LeagueSandbox.GameServer
                 {
                     type = GameObjectTypes.ObjAnimated_HQ;
                 }
-                else if (Name.Contains("Barracks"))
+                else if (Name.Contains("Barracks") && !Name.Contains("Spawn"))
                 {
                     // Inhibitors are dampeners for the enemy Nexus.
                     type = GameObjectTypes.ObjAnimated_BarracksDampener;
@@ -336,7 +340,41 @@ namespace LeagueSandbox.GameServer
                 return index;
             }
         }
+
+        public TurretType GetTurretType(int trueIndex, LaneID lane)
+        {
+            TurretType returnType = TurretType.FOUNTAIN_TURRET;
+
+            if (lane == LaneID.MIDDLE)
+            {
+                if (trueIndex < 3)
+                {
+                    returnType = TurretType.NEXUS_TURRET;
+                    return returnType;
+                }
+
+                trueIndex -= 2;
+            }
+
+            if (trueIndex == 1)
+            {
+                returnType = TurretType.INHIBITOR_TURRET;
+            }
+            else if (trueIndex == 2)
+            {
+                returnType = TurretType.INNER_TURRET;
+            }
+            else if (trueIndex == 3)
+            {
+                returnType = TurretType.OUTER_TURRET;
+            }
+
+            return returnType;
+        }
+
     }
+
+
 
     public class MapSpawns
     {
