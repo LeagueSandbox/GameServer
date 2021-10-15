@@ -50,6 +50,7 @@ namespace LeagueSandbox.GameServer.Maps
         /// MapProperties specific to a Map Id. Contains information about passive gold gen, lane minion spawns, experience to level, etc.
         /// </summary>
         public IMapProperties MapProperties { get; private set; }
+        public IMapScript MapScript { get; private set; }
         /// <summary>
         /// List of events related to the announcer (ex: first blood)
         /// </summary>
@@ -84,7 +85,8 @@ namespace LeagueSandbox.GameServer.Maps
 
             AnnouncerEvents = new List<IAnnounce>();
             CollisionHandler = new CollisionHandler(this);
-            MapProperties = GetMapProperties(Id);
+            MapScript = _scriptEngine.CreateObject<IMapScript>("MapScripts", $"Map{Id}") ?? new MapScriptEmpty();
+            MapScript.StartUp(_game);
         }
 
         /// <summary>
@@ -117,7 +119,7 @@ namespace LeagueSandbox.GameServer.Maps
 
         public IMapProperties GetMapProperties(int mapId)
         {
-            var dict = new Dictionary<int, Type>
+            /*var dict = new Dictionary<int, Type>
             {
                 // [0] = typeof(FlatTestMap),
                 [1] = typeof(SummonersRift),
@@ -135,9 +137,9 @@ namespace LeagueSandbox.GameServer.Maps
             if (!dict.ContainsKey(mapId))
             {
                 return new SummonersRift(_game);
-            }
-
-            return (IMapProperties)Activator.CreateInstance(dict[mapId], _game);
+            }*/
+            return null;
+            //return (IMapProperties)Activator.CreateInstance(dict[mapId], _game);
         }
 
         public void LoadBuildings()

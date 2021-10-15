@@ -1,25 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Numerics;
-using System.Text;
-using Force.Crc32;
 using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
 using GameServerCore.Maps;
 using LeagueSandbox.GameServer;
 using LeagueSandbox.GameServer.GameObjects;
-using LeagueSandbox.GameServer.GameObjects.AttackableUnits;
 using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
-using LeagueSandbox.GameServer.GameObjects.AttackableUnits.Buildings.AnimatedBuildings;
 using LeagueSandbox.GameServer.GameObjects.Other;
 using LeagueSandbox.GameServer.Maps;
-using LeagueSandbox.GameServer.Scripting.CSharp;
 
-namespace LeagueSandbox.GameServer.Maps
+namespace MapScripts
 {
-    internal class SummonersRift : IMapProperties
+    public class Map1 : IMapScript
     {
         public bool HasTopLane { get; set; } = true;
         public bool HasMidLane { get; set; } = true;
@@ -145,7 +139,8 @@ namespace LeagueSandbox.GameServer.Maps
         private readonly long _firstSpawnTime = 90 * 1000;
         private long _nextSpawnTime = 90 * 1000;
         private readonly long _spawnInterval = 30 * 1000;
-        private readonly Dictionary<TeamId, SurrenderHandler> _surrenders;
+        private readonly Dictionary<TeamId, SurrenderHandler> _surrenders = new Dictionary<TeamId, SurrenderHandler>();
+
         public Dictionary<TeamId, Fountain> _fountains = new Dictionary<TeamId, Fountain>();
 
         public float GoldPerSecond { get; set; } = 1.9f;
@@ -156,16 +151,14 @@ namespace LeagueSandbox.GameServer.Maps
         public long FirstGoldTime { get; set; } = 90 * 1000;
         public bool SpawnEnabled { get; set; }
 
-        public SummonersRift(Game game)
+        public void StartUp(Game game)
         {
             _game = game;
             _mapData = game.Config.MapData;
 
-            _surrenders = new Dictionary<TeamId, SurrenderHandler>
-            {
-                { TeamId.TEAM_BLUE, new SurrenderHandler(game, TeamId.TEAM_BLUE, 1200000.0f , 300000.0f , 30.0f) },
-                { TeamId.TEAM_PURPLE, new SurrenderHandler(game, TeamId.TEAM_PURPLE, 1200000.0f, 300000.0f, 30.0f) }
-            };
+            _surrenders.Add(TeamId.TEAM_BLUE, new SurrenderHandler(_game, TeamId.TEAM_BLUE, 1200000.0f, 300000.0f, 30.0f));
+            _surrenders.Add(TeamId.TEAM_PURPLE, new SurrenderHandler(_game, TeamId.TEAM_PURPLE, 1200000.0f, 300000.0f, 30.0f));
+      
             SpawnEnabled = _game.Config.MinionSpawnsEnabled;
         }
         public void AddFountain(TeamId team, Vector2 position)
