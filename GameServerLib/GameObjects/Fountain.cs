@@ -24,7 +24,7 @@ namespace LeagueSandbox.GameServer.GameObjects
             _team = team;
         }
 
-        internal void Update(float diff)
+        public void Update(float diff)
         {
             _healTickTimer += diff;
             if (_healTickTimer < HEAL_FREQUENCY)

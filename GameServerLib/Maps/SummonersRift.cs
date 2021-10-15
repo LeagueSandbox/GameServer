@@ -8,11 +8,13 @@ using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
 using GameServerCore.Maps;
+using LeagueSandbox.GameServer;
 using LeagueSandbox.GameServer.GameObjects;
 using LeagueSandbox.GameServer.GameObjects.AttackableUnits;
 using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
 using LeagueSandbox.GameServer.GameObjects.AttackableUnits.Buildings.AnimatedBuildings;
 using LeagueSandbox.GameServer.GameObjects.Other;
+using LeagueSandbox.GameServer.Maps;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 
 namespace LeagueSandbox.GameServer.Maps
@@ -134,18 +136,17 @@ namespace LeagueSandbox.GameServer.Maps
             MinionSpawnType.MINION_TYPE_CASTER,
             MinionSpawnType.MINION_TYPE_CASTER
         };
+
         private Game _game;
+        private MapData _mapData;
+        private IMap _map;
         private int _cannonMinionCount;
         private int _minionNumber;
         private readonly long _firstSpawnTime = 90 * 1000;
         private long _nextSpawnTime = 90 * 1000;
         private readonly long _spawnInterval = 30 * 1000;
-        private Dictionary<TeamId, Fountain> _fountains = new Dictionary<TeamId, Fountain>();
-        private readonly List<Nexus> _nexus;
-        private readonly Dictionary<TeamId, Dictionary<LaneID, List<Inhibitor>>> _inhibitors;
-        private readonly Dictionary<TeamId, Dictionary<LaneID, List<LaneTurret>>> _turrets;
         private readonly Dictionary<TeamId, SurrenderHandler> _surrenders;
-        private MapData _mapData;
+        public Dictionary<TeamId, Fountain> _fountains = new Dictionary<TeamId, Fountain>();
 
         public float GoldPerSecond { get; set; } = 1.9f;
         public float StartingGold { get; set; } = 475.0f;
@@ -167,6 +168,10 @@ namespace LeagueSandbox.GameServer.Maps
             };
             SpawnEnabled = _game.Config.MinionSpawnsEnabled;
         }
+        public void AddFountain(TeamId team, Vector2 position)
+        {
+            _fountains.Add(team, new Fountain(_game, team, position, 1000));
+        }
 
         public int[] GetTurretItems(TurretType type)
         {
@@ -184,6 +189,38 @@ namespace LeagueSandbox.GameServer.Maps
             }
 
             return TurretItems[type];
+        }
+        public TurretType GetTurretType(int trueIndex, LaneID lane)
+        {
+            TurretType returnType = TurretType.FOUNTAIN_TURRET;
+
+            if (lane == LaneID.MIDDLE)
+            {
+                if (trueIndex < 3)
+                {
+                    returnType = TurretType.NEXUS_TURRET;
+                    return returnType;
+                }
+
+                trueIndex -= 2;
+            }
+
+            switch (trueIndex)
+            {
+                case 1:
+                case 4:
+                case 5:
+                    returnType = TurretType.INHIBITOR_TURRET;
+                    break;
+                case 2:
+                    returnType = TurretType.INNER_TURRET;
+                    break;
+                case 3:
+                    returnType = TurretType.OUTER_TURRET;
+                    break;
+            }
+
+            return returnType;
         }
 
         public string GetTowerModel(TurretType type, TeamId teamId)
@@ -224,12 +261,12 @@ namespace LeagueSandbox.GameServer.Maps
                         break;
 
                     case TurretType.NEXUS_TURRET:
-                        towerModel = "TurretGiant";
+                        towerModel = "TurretNormal";
                         break;
 
                     // Nexus and Inhib Towers Might be swapped, double check if that's right.
                     case TurretType.INHIBITOR_TURRET:
-                        towerModel = "TurretNormal";
+                        towerModel = "TurretGiant";
                         break;
 
                     case TurretType.INNER_TURRET:
@@ -244,14 +281,26 @@ namespace LeagueSandbox.GameServer.Maps
             }
             return towerModel;
         }
-        public void Init()
+        public void ChangeTowerOnMapList(string towerName, TeamId team, LaneID currentLaneId, LaneID desiredLaneID)
         {
+            var tower = _map._turrets[team][currentLaneId].Find(x => x.Name == towerName);
+            tower.SetLaneID(desiredLaneID);
+            _map._turrets[team][currentLaneId].Remove(tower);
+            _map._turrets[team][desiredLaneID].Add(tower);
+        }
+        public void Init(IMap map)
+        {
+            _map = map;
+
+            ChangeTowerOnMapList("Turret_T1_C_06_A", TeamId.TEAM_BLUE, LaneID.MIDDLE, LaneID.TOP);
+            ChangeTowerOnMapList("Turret_T1_C_07_A", TeamId.TEAM_BLUE, LaneID.MIDDLE, LaneID.BOTTOM);
+
             // Announcer events
-            _game.Map.AnnouncerEvents.Add(new Announce(_game, 30 * 1000, Announces.WELCOME_TO_SR, true)); // Welcome to SR
+            map.AnnouncerEvents.Add(new Announce(_game, 30 * 1000, Announces.WELCOME_TO_SR, true)); // Welcome to SR
             if (_firstSpawnTime - 30 * 1000 >= 0.0f)
                 _game.Map.AnnouncerEvents.Add(new Announce(_game, _firstSpawnTime - 30 * 1000, Announces.THIRY_SECONDS_TO_MINIONS_SPAWN, true)); // 30 seconds until minions spawn
-            _game.Map.AnnouncerEvents.Add(new Announce(_game, _firstSpawnTime, Announces.MINIONS_HAVE_SPAWNED, false)); // Minions have spawned (90 * 1000)
-            _game.Map.AnnouncerEvents.Add(new Announce(_game, _firstSpawnTime, Announces.MINIONS_HAVE_SPAWNED2, false)); // Minions have spawned [2] (90 * 1000)
+            map.AnnouncerEvents.Add(new Announce(_game, _firstSpawnTime, Announces.MINIONS_HAVE_SPAWNED, false)); // Minions have spawned (90 * 1000)
+            map.AnnouncerEvents.Add(new Announce(_game, _firstSpawnTime, Announces.MINIONS_HAVE_SPAWNED2, false)); // Minions have spawned [2] (90 * 1000)
 
             //Map props
             _game.ObjectManager.AddObject(new LevelProp(_game, new Vector2(12465.0f, 14422.257f), 101.0f, new Vector3(0.0f, 0.0f, 0.0f), 0.0f, 0.0f, "LevelProp_Yonkey", "Yonkey"));
@@ -539,7 +588,7 @@ namespace LeagueSandbox.GameServer.Maps
                         waypoint = RedBotWaypoints;
                     }
                 }
-                spawnToWaypoints.Add(barrack.Value.Name, Tuple.Create(waypoint, _inhibitors[opposed_team][lane][0].NetId));
+                spawnToWaypoints.Add(barrack.Value.Name, Tuple.Create(waypoint, _map._inhibitors[opposed_team][lane][0].NetId));
             }
             var cannonMinionCap = 2;
 

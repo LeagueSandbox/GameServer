@@ -8,6 +8,7 @@ using Force.Crc32;
 using GameServerCore;
 using GameServerCore.Content;
 using GameServerCore.Domain;
+using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
 using GameServerCore.Maps;
 using LeagueSandbox.GameServer.Content;
@@ -29,6 +30,7 @@ namespace LeagueSandbox.GameServer.Maps
         // Crucial Vars
         protected Game _game;
         public MapData _mapData;
+        public CSharpScriptEngine _scriptEngine;
         public MapData _loadMapStructures;
         private readonly ILog _logger;
 
@@ -53,12 +55,9 @@ namespace LeagueSandbox.GameServer.Maps
         /// </summary>
         public List<IAnnounce> AnnouncerEvents { get; private set; }
 
-        private Dictionary<TeamId, Fountain> _fountains = new Dictionary<TeamId, Fountain>();
-        private List<Nexus> _nexus;
-        private Dictionary<TeamId, Dictionary<LaneID, List<Inhibitor>>> _inhibitors;
-        private Dictionary<TeamId, Dictionary<LaneID, List<LaneTurret>>> _turrets;
-
-
+        public List<INexus> _nexus { get; set; } = new List<INexus>();
+        public Dictionary<TeamId, Dictionary<LaneID, List<IInhibitor>>> _inhibitors { get; set; } = new Dictionary<TeamId, Dictionary<LaneID, List<IInhibitor>>> { { TeamId.TEAM_BLUE, new Dictionary<LaneID, List<IInhibitor>>() }, { TeamId.TEAM_PURPLE, new Dictionary<LaneID, List<IInhibitor>>() } };
+        public Dictionary<TeamId, Dictionary<LaneID, List<ILaneTurret>>> _turrets { get; set; }  = new Dictionary<TeamId, Dictionary<LaneID, List<ILaneTurret>>> { { TeamId.TEAM_BLUE, new Dictionary<LaneID, List<ILaneTurret>>() }, { TeamId.TEAM_PURPLE, new Dictionary<LaneID, List<ILaneTurret>>() } }; 
         /// <summary>
         /// Instantiates map related game settings such as collision handler, navigation grid, announcer events, and map properties.
         /// </summary>
@@ -67,6 +66,7 @@ namespace LeagueSandbox.GameServer.Maps
         {
             _game = game;
             _mapData = game.Config.MapData;
+            _scriptEngine = game.ScriptEngine;
             //_loadMapStructures = _game.Config.LoadMapStructures;
             _logger = LoggerProvider.GetLogger();
 
@@ -111,7 +111,7 @@ namespace LeagueSandbox.GameServer.Maps
         public void Init()
         {
             LoadBuildings();
-            MapProperties.Init();
+            MapProperties.Init(this);
             LoadBuildingProtection();
         }
 
@@ -142,29 +142,27 @@ namespace LeagueSandbox.GameServer.Maps
 
         public void LoadBuildings()
         {
-            _nexus = new List<Nexus>();
-            Dictionary<LaneID, List<LaneTurret>> turretLanesToAdd = new Dictionary<LaneID, List<LaneTurret>>();
-            Dictionary<LaneID, List<Inhibitor>> inhibitorLanedToAdd = new Dictionary<LaneID, List<Inhibitor>>();
-            if (MapProperties.HasTopLane)
+            foreach (TeamId team in _inhibitors.Keys)
             {
-                turretLanesToAdd.Add(LaneID.TOP, new List<LaneTurret>());
+                if (MapProperties.HasTopLane)
+                {
+                    _turrets[team].Add(LaneID.TOP, new List<ILaneTurret>());
 
-                inhibitorLanedToAdd.Add(LaneID.TOP, new List<Inhibitor>());
-            }
-            if (MapProperties.HasMidLane)
-            {
-                turretLanesToAdd.Add(LaneID.MIDDLE, new List<LaneTurret>());
+                    _inhibitors[team].Add(LaneID.TOP, new List<IInhibitor>());
+                }
+                if (MapProperties.HasMidLane)
+                {
+                    _turrets[team].Add(LaneID.MIDDLE, new List<ILaneTurret>());
 
-                inhibitorLanedToAdd.Add(LaneID.MIDDLE, new List<Inhibitor>());
-            }
-            if (MapProperties.HasBotLane)
-            {
-                turretLanesToAdd.Add(LaneID.BOTTOM, new List<LaneTurret>());
+                    _inhibitors[team].Add(LaneID.MIDDLE, new List<IInhibitor>());
+                }
+                if (MapProperties.HasBotLane)
+                {
+                    _turrets[team].Add(LaneID.BOTTOM, new List<ILaneTurret>());
 
-                inhibitorLanedToAdd.Add(LaneID.BOTTOM, new List<Inhibitor>());
+                    _inhibitors[team].Add(LaneID.BOTTOM, new List<IInhibitor>());
+                }
             }
-            _inhibitors = new Dictionary<TeamId, Dictionary<LaneID, List<Inhibitor>>> { { TeamId.TEAM_BLUE, inhibitorLanedToAdd }, { TeamId.TEAM_PURPLE, inhibitorLanedToAdd } };
-            _turrets = new Dictionary<TeamId, Dictionary<LaneID, List<LaneTurret>>> { { TeamId.TEAM_BLUE, turretLanesToAdd }, { TeamId.TEAM_PURPLE, turretLanesToAdd } };
 
             // Below is where we create the buildings.
 
@@ -183,7 +181,6 @@ namespace LeagueSandbox.GameServer.Maps
                 {
                     continue;
                 }
-
                 TeamId teamId = mapObject.GetTeamID();
                 LaneID lane = mapObject.GetLaneID();
                 Vector2 position = new Vector2(mapObject.CentralPoint.X, mapObject.CentralPoint.Z);
@@ -219,7 +216,7 @@ namespace LeagueSandbox.GameServer.Maps
                         continue;
                     }
 
-                    var turretType = _mapData.GetTurretType(index, lane);
+                    var turretType = MapProperties.GetTurretType(index, lane);
 
                     if (turretType == TurretType.FOUNTAIN_TURRET)
                     {
@@ -232,16 +229,16 @@ namespace LeagueSandbox.GameServer.Maps
                 }
                 else if (objectType == GameObjectTypes.ObjBuilding_SpawnPoint)
                 {
-                    _fountains.Add(teamId, new Fountain(_game, teamId, position, 1000));
+                    MapProperties.AddFountain(teamId, position);
                 }
             }
         }
         public void LoadBuildingProtection()
         {
-            var teamInhibitors = new Dictionary<TeamId, List<Inhibitor>>
+            var teamInhibitors = new Dictionary<TeamId, List<IInhibitor>>
             {
-                { TeamId.TEAM_BLUE, new List<Inhibitor>() },
-                { TeamId.TEAM_PURPLE, new List<Inhibitor>() }
+                { TeamId.TEAM_BLUE, new List<IInhibitor>() },
+                { TeamId.TEAM_PURPLE, new List<IInhibitor>() }
             };
 
             var teams = teamInhibitors.Keys.ToList();
@@ -249,6 +246,7 @@ namespace LeagueSandbox.GameServer.Maps
             {
                 _inhibitors[team].Values.ToList().ForEach(l => teamInhibitors[team].AddRange(l));
             }
+
 
             foreach (var nexus in _nexus)
             {
@@ -265,7 +263,7 @@ namespace LeagueSandbox.GameServer.Maps
             }
 
             // Iterate through all inhibitors for both teams.
-            List<Inhibitor> allInhibitors = new List<Inhibitor>();
+            List<IInhibitor> allInhibitors = new List<IInhibitor>();
             allInhibitors.AddRange(teamInhibitors[TeamId.TEAM_BLUE]);
             allInhibitors.AddRange(teamInhibitors[TeamId.TEAM_PURPLE]);
 

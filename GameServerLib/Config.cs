@@ -341,41 +341,7 @@ namespace LeagueSandbox.GameServer
             }
         }
 
-        public TurretType GetTurretType(int trueIndex, LaneID lane)
-        {
-            TurretType returnType = TurretType.FOUNTAIN_TURRET;
-
-            if (lane == LaneID.MIDDLE)
-            {
-                if (trueIndex < 3)
-                {
-                    returnType = TurretType.NEXUS_TURRET;
-                    return returnType;
-                }
-
-                trueIndex -= 2;
-            }
-
-            if (trueIndex == 1)
-            {
-                returnType = TurretType.INHIBITOR_TURRET;
-            }
-            else if (trueIndex == 2)
-            {
-                returnType = TurretType.INNER_TURRET;
-            }
-            else if (trueIndex == 3)
-            {
-                returnType = TurretType.OUTER_TURRET;
-            }
-
-            return returnType;
-        }
-
     }
-
-
-
     public class MapSpawns
     {
         public Dictionary<int, PlayerSpawns> Blue = new Dictionary<int, PlayerSpawns>();

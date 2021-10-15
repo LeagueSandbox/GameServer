@@ -175,12 +175,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         /// <param name="newId"></param>
         public void SetLaneID(LaneID newId)
         {
-            // Protect the current LaneID if it has already been set.
-            if (Lane != LaneID.NONE)
-            {
-                return;
-            }
-
             Lane = newId;
         }
 

@@ -1,6 +1,9 @@
 ﻿using System.Collections.Generic;
 using GameServerCore.Content;
 using GameServerCore.Domain;
+using GameServerCore.Domain.GameObjects;
+using GameServerCore.Enums;
+
 
 namespace GameServerCore.Maps
 {
@@ -29,17 +32,21 @@ namespace GameServerCore.Maps
         /// List of events related to the announcer (ex: first blood)
         /// </summary>
         List<IAnnounce> AnnouncerEvents { get; }
-
+        /// <summary>
+        /// List of all nexus in-game
+        /// </summary>
+        List<INexus> _nexus { get; }
+        /// <summary>
+        /// List of all turrets in-game
+        /// </summary>
+        Dictionary<TeamId, Dictionary<LaneID, List<ILaneTurret>>> _turrets { get; }
+        /// <summary>
+        /// List of all inhibitors in-game
+        /// </summary>
+        Dictionary<TeamId, Dictionary<LaneID, List<IInhibitor>>> _inhibitors { get; }
         /// <summary>
         /// Initializes MapProperties. Usually only occurs once before players are added to Game.
         /// </summary>
         void Init();
-
-        /// <summary>
-        /// Gets a new MapProperties instance for the specified Map ID. If the ID is not found, returns the default MapProperty for Old SR. *NOTE*: Currently oly returns MapProperties of Old SR.
-        /// </summary>
-        /// <param name="mapId">Map ID.</param>
-        /// <returns>New MapProperties instance for the specified Map ID.</returns>
-        IMapProperties GetMapProperties(int mapId);
     }
 }
