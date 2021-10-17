@@ -346,19 +346,19 @@ namespace PacketDefinitions420
             _packetHandlerManager.BroadcastPacketVision(attacker, basicAttackPacket.GetBytes(), Channel.CHL_S2C);
         }
 
-    /// <summary>
-    /// Sends a side bar tip to the specified player (ex: quest tips).
-    /// </summary>
-    /// <param name="userId">User to send the packet to.</param>
-    /// <param name="title">Title of the tip.</param>
-    /// <param name="text">Description text of the tip.</param>
-    /// <param name="imagePath">Path to an image that will be embedded in the tip.</param>
-    /// <param name="tipCommand">Action suggestion(? unconfirmed).</param>
-    /// <param name="playerNetId">NetID to send the packet to.</param>
-    /// <param name="targetNetId">NetID of the target referenced by the tip.</param>
-    /// TODO: tipCommand should be a lib/core enum that gets translated into a league version specific packet enum as it may change over time.
-    public void NotifyBlueTip(int userId, string title, string text, string imagePath, byte tipCommand, uint playerNetId,
-            uint targetNetId)
+        /// <summary>
+        /// Sends a side bar tip to the specified player (ex: quest tips).
+        /// </summary>
+        /// <param name="userId">User to send the packet to.</param>
+        /// <param name="title">Title of the tip.</param>
+        /// <param name="text">Description text of the tip.</param>
+        /// <param name="imagePath">Path to an image that will be embedded in the tip.</param>
+        /// <param name="tipCommand">Action suggestion(? unconfirmed).</param>
+        /// <param name="playerNetId">NetID to send the packet to.</param>
+        /// <param name="targetNetId">NetID of the target referenced by the tip.</param>
+        /// TODO: tipCommand should be a lib/core enum that gets translated into a league version specific packet enum as it may change over time.
+        public void NotifyBlueTip(int userId, string title, string text, string imagePath, byte tipCommand, uint playerNetId,
+                uint targetNetId)
         {
             var packet = new BlueTip(title, text, imagePath, tipCommand, playerNetId, targetNetId);
             _packetHandlerManager.SendPacket(userId, packet, Channel.CHL_S2C);
@@ -448,7 +448,7 @@ namespace PacketDefinitions420
                 IsSummonerSpell = isSummonerSpell
             };
 
-            switch(changeType)
+            switch (changeType)
             {
                 case GameServerCore.Enums.ChangeSlotSpellDataType.TargetingType:
                 {
@@ -935,7 +935,13 @@ namespace PacketDefinitions420
             var fxPacket = new FX_Create_Group();
             var fxDataList = new List<FXCreateData>();
 
-            var targetHeight = _navGrid.GetHeightAtLocation(particle.TargetPosition.X, particle.TargetPosition.Y);
+            var targetPos = particle.StartPosition;
+            if (particle.BindObject == null && particle.TargetObject == null)
+            {
+                targetPos = particle.EndPosition;
+            }
+
+            var targetHeight = _navGrid.GetHeightAtLocation(particle.StartPosition.X, particle.StartPosition.Y);
             var higherValue = Math.Max(targetHeight, particle.GetHeight());
 
             // TODO: implement option for multiple particles instead of hardcoding one
@@ -949,9 +955,9 @@ namespace PacketDefinitions420
                 PositionY = higherValue,
                 PositionZ = (short)((position.Z - _navGrid.MapHeight / 2) / 2),
 
-                TargetPositionX = (short)((particle.TargetPosition.X - _navGrid.MapWidth / 2) / 2),
+                TargetPositionX = (short)((targetPos.X - _navGrid.MapWidth / 2) / 2),
                 TargetPositionY = higherValue,
-                TargetPositionZ = (short)((particle.TargetPosition.Y - _navGrid.MapHeight / 2) / 2),
+                TargetPositionZ = (short)((targetPos.Y - _navGrid.MapHeight / 2) / 2),
 
                 OwnerPositionX = (short)((ownerPos.X - _navGrid.MapWidth / 2) / 2),
                 OwnerPositionY = ownerPos.Y,

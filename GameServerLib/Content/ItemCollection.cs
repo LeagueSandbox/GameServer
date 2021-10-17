@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using LeagueSandbox.GameServer.Logging;
+using log4net;
 using Newtonsoft.Json;
 
 namespace LeagueSandbox.GameServer.Content
@@ -26,6 +28,7 @@ namespace LeagueSandbox.GameServer.Content
     public class ItemContentCollection : ContentCollection
     {
         private Dictionary<int, ItemContentCollectionEntry> _items;
+        ILog _logger = LoggerProvider.GetLogger();
 
         public Dictionary<int, ItemContentCollectionEntry>.Enumerator GetEnumerator()
         {
@@ -39,7 +42,17 @@ namespace LeagueSandbox.GameServer.Content
 
         private void AddFromPath(string dataPath)
         {
-            var data = File.ReadAllText(dataPath);
+            string data;
+            //This is so it doesn't try to load items from the scripts folders
+            try
+            {
+                data = File.ReadAllText(dataPath);
+            }
+            catch
+            {
+                _logger.Debug($"File not found in {dataPath}. Skipping...");
+                return;
+            }
             var collectionEntry = JsonConvert.DeserializeObject<ItemContentCollectionEntry>(data);
             _items.Add(collectionEntry.ItemId, collectionEntry);
         }

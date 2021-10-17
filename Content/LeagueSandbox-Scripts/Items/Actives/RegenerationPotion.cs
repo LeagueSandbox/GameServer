@@ -6,11 +6,11 @@ using LeagueSandbox.GameServer.Scripting.CSharp;
 using System.Numerics;
 using GameServerCore.Scripting.CSharp;
 
-namespace Spells
+namespace ItemSpells
 {
-    public class YoumusBlade : ISpellScript
+    public class RegenerationPotion : ISpellScript
     {
-        public ISpellScriptMetadata ScriptMetadata { get; private set; } = new SpellScriptMetadata()
+        public ISpellScriptMetadata ScriptMetadata => new SpellScriptMetadata()
         {
             // TODO
         };
@@ -25,7 +25,7 @@ namespace Spells
 
         public void OnSpellPreCast(IObjAiBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
         {
-            AddBuff("YoumuusGhostblade", 6.0f, 1, spell, owner, owner);
+            AddBuff("RegenerationPotion", 15.0f, 1, spell, owner, owner);
         }
 
         public void OnSpellCast(ISpell spell)

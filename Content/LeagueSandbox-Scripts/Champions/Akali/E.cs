@@ -44,7 +44,7 @@ namespace Spells
         {
             var sector = spell.CreateSpellSector(new SectorParameters
             {
-                HalfLength = 300f,
+                Length = 300f,
                 SingleTick = true,
                 Type = SectorType.Area
             });

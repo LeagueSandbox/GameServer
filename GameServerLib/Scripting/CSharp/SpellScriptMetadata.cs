@@ -115,14 +115,14 @@ namespace LeagueSandbox.GameServer.Scripting.CSharp
         /// </summary>
         public IGameObject BindObject { get; set; } = null;
         /// <summary>
-        /// Half the distance from the center of the sector to the maximum Y-value.
+        /// Distance from the bottom of the sector to the top.
         /// If this is larger than Width, it will be used as the area around the sector to check for collisions.
         /// Scales the distance (in y) between PolygonVertices.
         /// </summary>
-        public float HalfLength { get; set; } = 0f;
+        public float Length { get; set; } = 0f;
         /// <summary>
-        /// Distance from the center of the sector to the maximum X-value.
-        /// If this is larger than HalfLength, it will be used as the area around the sector to check for collisions.
+        /// Distance from the left side of the sector to the right side.
+        /// If this is larger than Length, it will be used as the area around the sector to check for collisions.
         /// Scales the distance (in x) between PolygonVertices.
         /// </summary>
         public float Width { get; set; } = 0f;

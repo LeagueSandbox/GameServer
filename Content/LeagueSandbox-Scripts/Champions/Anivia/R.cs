@@ -59,7 +59,7 @@ namespace Spells
 
                 DamageSector = spell.CreateSpellSector(new SectorParameters
                 {
-                    HalfLength = 400f,
+                    Length = 400f,
                     Tickrate = 2,
                     CanHitSameTargetConsecutively = true,
                     OverrideFlags = SpellDataFlags.AffectEnemies | SpellDataFlags.AffectNeutral | SpellDataFlags.AffectMinions | SpellDataFlags.AffectHeroes,
@@ -68,7 +68,7 @@ namespace Spells
 
                 SlowSector = spell.CreateSpellSector(new SectorParameters
                 {
-                    HalfLength = 400f,
+                    Length = 400f,
                     Tickrate = 4,
                     CanHitSameTargetConsecutively = true,
                     OverrideFlags = SpellDataFlags.AffectEnemies | SpellDataFlags.AffectNeutral | SpellDataFlags.AffectMinions | SpellDataFlags.AffectHeroes,
