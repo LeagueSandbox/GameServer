@@ -499,5 +499,9 @@ namespace LeagueSandbox.GameServer.Maps
         }
 
         //Game Time
+        public float GameTime()
+        {
+            return _game.GameTime;
+        }
     }
 }
