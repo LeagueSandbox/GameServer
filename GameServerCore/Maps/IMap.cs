@@ -65,7 +65,6 @@ namespace GameServerCore.Maps
         IInhibitor GetInhibitorById(uint id);
         bool AllInhibitorsDestroyedFromTeam(TeamId team);
         bool IsMinionSpawnEnabled();
-        public Dictionary<string, IMapObject> GetSpawnBarracks();
         Tuple<TeamId, Vector2> GetMinionSpawnPosition(string spawnPosition);
         /// <summary>
         /// Spawns a LaneMinion
@@ -102,6 +101,7 @@ namespace GameServerCore.Maps
         /// <param name="restTime"></param>
         /// <param name="length"></param>
         void AddSurrender(float time, float restTime, float length);
+        void HandleSurrender(int userId, IChampion who, bool vote);
         /// <summary>
         /// Returns how long the match has been going on for.
         /// </summary>
