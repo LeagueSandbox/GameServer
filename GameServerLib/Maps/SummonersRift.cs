@@ -130,59 +130,27 @@ namespace MapScripts
             MinionSpawnType.MINION_TYPE_CASTER,
             MinionSpawnType.MINION_TYPE_CASTER
         };
-
-        private Game _game;
-        private MapData _mapData;
+        //General Map variable
         private IMap _map;
+
+        //Stuff about minions
+        public bool SpawnEnabled { get; set; }
         private int _cannonMinionCount;
         private int _minionNumber;
-        private readonly long _firstSpawnTime = 90 * 1000;
-        private long _nextSpawnTime = 90 * 1000;
+        private readonly long _firstSpawnTime = 10 * 1000;
+        private long _nextSpawnTime = 10 * 1000;
         private readonly long _spawnInterval = 30 * 1000;
-        private readonly Dictionary<TeamId, SurrenderHandler> _surrenders = new Dictionary<TeamId, SurrenderHandler>();
 
-        public Dictionary<TeamId, Fountain> _fountains = new Dictionary<TeamId, Fountain>();
-
+        //General things that will affect players globaly, such as default gold per-second, Starting gold....
         public float GoldPerSecond { get; set; } = 1.9f;
         public float StartingGold { get; set; } = 475.0f;
         public bool HasFirstBloodHappened { get; set; } = false;
         public bool IsKillGoldRewardReductionActive { get; set; } = true;
         public int BluePillId { get; set; } = 2001;
         public long FirstGoldTime { get; set; } = 90 * 1000;
-        public bool SpawnEnabled { get; set; }
+        private readonly Dictionary<TeamId, SurrenderHandler> _surrenders = new Dictionary<TeamId, SurrenderHandler>();
 
-        public void StartUp(Game game)
-        {
-            _game = game;
-            _mapData = game.Config.MapData;
-
-            _surrenders.Add(TeamId.TEAM_BLUE, new SurrenderHandler(_game, TeamId.TEAM_BLUE, 1200000.0f, 300000.0f, 30.0f));
-            _surrenders.Add(TeamId.TEAM_PURPLE, new SurrenderHandler(_game, TeamId.TEAM_PURPLE, 1200000.0f, 300000.0f, 30.0f));
-      
-            SpawnEnabled = _game.Config.MinionSpawnsEnabled;
-        }
-        public void AddFountain(TeamId team, Vector2 position)
-        {
-            _fountains.Add(team, new Fountain(_game, team, position, 1000));
-        }
-
-        public int[] GetTurretItems(TurretType type)
-        {
-            Dictionary<TurretType, int[]> TurretItems = new Dictionary<TurretType, int[]>
-        {
-            { TurretType.OUTER_TURRET, new[] { 1500, 1501, 1502, 1503 } },
-            { TurretType.INNER_TURRET, new[] { 1500, 1501, 1502, 1503, 1504 } },
-            { TurretType.INHIBITOR_TURRET, new[] { 1501, 1502, 1503, 1505 } },
-            { TurretType.NEXUS_TURRET, new[] { 1501, 1502, 1503, 1505 } }
-        };
-
-            if (!TurretItems.ContainsKey(type))
-            {
-                return null;
-            }
-
-            return TurretItems[type];
-        }
+        //Some Map-Specific stuff, such as tower models, and Tower Items
         public TurretType GetTurretType(int trueIndex, LaneID lane)
         {
             TurretType returnType = TurretType.FOUNTAIN_TURRET;
@@ -215,96 +183,77 @@ namespace MapScripts
 
             return returnType;
         }
-
-        public string GetTowerModel(TurretType type, TeamId teamId)
+        public Dictionary<TeamId, Dictionary<TurretType, string>> TowerModels { get; set; } = new Dictionary<TeamId, Dictionary<TurretType, string>>
         {
-            string towerModel = "";
-            if (teamId == TeamId.TEAM_BLUE)
+            {TeamId.TEAM_BLUE, new Dictionary<TurretType, string>
             {
-                switch (type)
-                {
-                    case TurretType.FOUNTAIN_TURRET:
-                        towerModel = "TurretShrine";
-                        break;
-
-                    case TurretType.NEXUS_TURRET:
-                        towerModel = "TurretAngel";
-                        break;
-
-                    case TurretType.INHIBITOR_TURRET:
-                        towerModel = "TurretDragon";
-                        break;
-
-                    case TurretType.INNER_TURRET:
-                        towerModel = "TurretNormal2";
-                        break;
-
-                    case TurretType.OUTER_TURRET:
-                        towerModel = "TurretNormal";
-                        break;
-
-                }
-            }
-            else
+                {TurretType.FOUNTAIN_TURRET, "TurretShrine" },
+                {TurretType.NEXUS_TURRET, "TurretAngel" },
+                {TurretType.INHIBITOR_TURRET, "TurretDragon" },
+                {TurretType.INNER_TURRET, "TurretNormal2" },
+                {TurretType.OUTER_TURRET, "TurretNormal" },
+            } },
+            {TeamId.TEAM_PURPLE, new Dictionary<TurretType, string>
             {
-                switch (type)
-                {
-                    case TurretType.FOUNTAIN_TURRET:
-                        towerModel = "TurretShrine";
-                        break;
+                {TurretType.FOUNTAIN_TURRET, "TurretShrine" },
+                {TurretType.NEXUS_TURRET, "TurretNormal" },
+                {TurretType.INHIBITOR_TURRET, "TurretGiant" },
+                {TurretType.INNER_TURRET, "TurretWorm2" },
+                {TurretType.OUTER_TURRET, "TurretWorm" },
+            } }
+        };
 
-                    case TurretType.NEXUS_TURRET:
-                        towerModel = "TurretNormal";
-                        break;
-
-                    // Nexus and Inhib Towers Might be swapped, double check if that's right.
-                    case TurretType.INHIBITOR_TURRET:
-                        towerModel = "TurretGiant";
-                        break;
-
-                    case TurretType.INNER_TURRET:
-                        towerModel = "TurretWorm2";
-                        break;
-
-                    case TurretType.OUTER_TURRET:
-                        towerModel = "TurretWorm";
-                        break;
-
-                }
-            }
-            return towerModel;
-        }
-        public void ChangeTowerOnMapList(string towerName, TeamId team, LaneID currentLaneId, LaneID desiredLaneID)
+        public Dictionary<TeamId, Dictionary<MinionSpawnType, string>> MinionModels { get; set; } = new Dictionary<TeamId, Dictionary<MinionSpawnType, string>>
         {
-            var tower = _map._turrets[team][currentLaneId].Find(x => x.Name == towerName);
-            tower.SetLaneID(desiredLaneID);
-            _map._turrets[team][currentLaneId].Remove(tower);
-            _map._turrets[team][desiredLaneID].Add(tower);
-        }
+            {TeamId.TEAM_BLUE, new Dictionary<MinionSpawnType, string>{
+                {MinionSpawnType.MINION_TYPE_MELEE, "Blue_Minion_Basic"},
+                {MinionSpawnType.MINION_TYPE_CASTER, "Blue_Minion_Wizard"},
+                {MinionSpawnType.MINION_TYPE_CANNON, "Blue_Minion_MechCannon"},
+                {MinionSpawnType.MINION_TYPE_SUPER, "Blue_Minion_MechMelee"}
+            }},
+            {TeamId.TEAM_PURPLE, new Dictionary<MinionSpawnType, string>{
+                {MinionSpawnType.MINION_TYPE_MELEE, "Red_Minion_Basic"},
+                {MinionSpawnType.MINION_TYPE_CASTER, "Red_Minion_Wizard"},
+                {MinionSpawnType.MINION_TYPE_CANNON, "Red_Minion_MechCannon"},
+                {MinionSpawnType.MINION_TYPE_SUPER, "Red_Minion_MechMelee"}
+            }}
+        };
+
+        public Dictionary<TurretType, int[]> TurretItems { get; set; } = new Dictionary<TurretType, int[]>
+        {
+            { TurretType.OUTER_TURRET, new[] { 1500, 1501, 1502, 1503 } },
+            { TurretType.INNER_TURRET, new[] { 1500, 1501, 1502, 1503, 1504 } },
+            { TurretType.INHIBITOR_TURRET, new[] { 1501, 1502, 1503, 1505 } },
+            { TurretType.NEXUS_TURRET, new[] { 1501, 1502, 1503, 1505 } }
+        };
+
         public void Init(IMap map)
         {
             _map = map;
 
-            ChangeTowerOnMapList("Turret_T1_C_06_A", TeamId.TEAM_BLUE, LaneID.MIDDLE, LaneID.TOP);
-            ChangeTowerOnMapList("Turret_T1_C_07_A", TeamId.TEAM_BLUE, LaneID.MIDDLE, LaneID.BOTTOM);
+            SpawnEnabled = map.IsMinionSpawnEnabled();
+            map.AddSurrender(1200000.0f, 300000.0f, 30.0f);
+
+            //Due to riot's questionable map-naming scheme some towers are missplaced into other lanes during outomated setup, so we have to manually fix them.
+            map.ChangeTowerOnMapList("Turret_T1_C_06_A", TeamId.TEAM_BLUE, LaneID.MIDDLE, LaneID.TOP);
+            map.ChangeTowerOnMapList("Turret_T1_C_07_A", TeamId.TEAM_BLUE, LaneID.MIDDLE, LaneID.BOTTOM);
 
             // Announcer events
-            map.AnnouncerEvents.Add(new Announce(_game, 30 * 1000, Announces.WELCOME_TO_SR, true)); // Welcome to SR
-            if (_firstSpawnTime - 30 * 1000 >= 0.0f)
-                _game.Map.AnnouncerEvents.Add(new Announce(_game, _firstSpawnTime - 30 * 1000, Announces.THIRY_SECONDS_TO_MINIONS_SPAWN, true)); // 30 seconds until minions spawn
-            map.AnnouncerEvents.Add(new Announce(_game, _firstSpawnTime, Announces.MINIONS_HAVE_SPAWNED, false)); // Minions have spawned (90 * 1000)
-            map.AnnouncerEvents.Add(new Announce(_game, _firstSpawnTime, Announces.MINIONS_HAVE_SPAWNED2, false)); // Minions have spawned [2] (90 * 1000)
+            map.AddAnnouncement(30 * 1000, Announces.WELCOME_TO_SR, true); // Welcome to SR
+            map.AddAnnouncement(_firstSpawnTime - 30 * 1000, Announces.THIRY_SECONDS_TO_MINIONS_SPAWN, true); // 30 seconds until minions spawn
+            map.AddAnnouncement(_firstSpawnTime, Announces.MINIONS_HAVE_SPAWNED, false); // Minions have spawned (90 * 1000)
+            map.AddAnnouncement(_firstSpawnTime, Announces.MINIONS_HAVE_SPAWNED2, false); // Minions have spawned [2] (90 * 1000)
 
             //Map props
-            _game.ObjectManager.AddObject(new LevelProp(_game, new Vector2(12465.0f, 14422.257f), 101.0f, new Vector3(0.0f, 0.0f, 0.0f), 0.0f, 0.0f, "LevelProp_Yonkey", "Yonkey"));
-            _game.ObjectManager.AddObject(new LevelProp(_game, new Vector2(-76.0f, 1769.1589f), 94.0f, new Vector3(0.0f, 0.0f, 0.0f), 0.0f, 0.0f, "LevelProp_Yonkey1", "Yonkey"));
-            _game.ObjectManager.AddObject(new LevelProp(_game, new Vector2(13374.17f, 14245.673f), 194.9741f, new Vector3(224.0f, 33.33f, 0.0f), 0.0f, -44.44f, "LevelProp_ShopMale", "ShopMale"));
-            _game.ObjectManager.AddObject(new LevelProp(_game, new Vector2(-99.5613f, 855.6632f), 191.4039f, new Vector3(158.0f, 0.0f, 0.0f), 0.0f, 0.0f, "LevelProp_ShopMale1", "ShopMale"));
+            map.AddObject(new Vector2(12465.0f, 14422.257f), 101.0f, new Vector3(0.0f, 0.0f, 0.0f), 0.0f, 0.0f, "LevelProp_Yonkey", "Yonkey");
+            map.AddObject(new Vector2(-76.0f, 1769.1589f), 94.0f, new Vector3(0.0f, 0.0f, 0.0f), 0.0f, 0.0f, "LevelProp_Yonkey1", "Yonkey");
+            map.AddObject(new Vector2(13374.17f, 14245.673f), 194.9741f, new Vector3(224.0f, 33.33f, 0.0f), 0.0f, -44.44f, "LevelProp_ShopMale", "ShopMale");
+            map.AddObject(new Vector2(-99.5613f, 855.6632f), 191.4039f, new Vector3(158.0f, 0.0f, 0.0f), 0.0f, 0.0f, "LevelProp_ShopMale1", "ShopMale");
         }
 
         public void Update(float diff)
         {
-            if (_game.GameTime >= 120 * 1000)
+            if (_map.GameTime() >= 120 * 1000)
             {
                 IsKillGoldRewardReductionActive = false;
             }
@@ -313,12 +262,12 @@ namespace MapScripts
             {
                 if (_minionNumber > 0)
                 {
-                    if (_game.GameTime >= _nextSpawnTime + _minionNumber * 8 * 100)
+                    if (_map.GameTime() >= _nextSpawnTime + _minionNumber * 8 * 100)
                     { // Spawn new wave every 0.8s
                         if (Spawn())
                         {
                             _minionNumber = 0;
-                            _nextSpawnTime = (long)_game.GameTime + _spawnInterval;
+                            _nextSpawnTime = (long)_map.GameTime() + _spawnInterval;
                         }
                         else
                         {
@@ -326,14 +275,14 @@ namespace MapScripts
                         }
                     }
                 }
-                else if (_game.GameTime >= _nextSpawnTime)
+                else if (_map.GameTime() >= _nextSpawnTime)
                 {
                     Spawn();
                     _minionNumber++;
                 }
             }
 
-            foreach (var fountain in _fountains.Values)
+            foreach (var fountain in _map._fountains.Values)
             {
                 fountain.Update(diff);
             }
@@ -421,10 +370,10 @@ namespace MapScripts
 
             var dic = new Dictionary<MinionSpawnType, float>
             {
-                { MinionSpawnType.MINION_TYPE_MELEE, 19.8f + 0.2f * (int)(_game.GameTime / (90 * 1000)) },
-                { MinionSpawnType.MINION_TYPE_CASTER, 16.8f + 0.2f * (int)(_game.GameTime / (90 * 1000)) },
-                { MinionSpawnType.MINION_TYPE_CANNON, 40.0f + 0.5f * (int)(_game.GameTime / (90 * 1000)) },
-                { MinionSpawnType.MINION_TYPE_SUPER, 40.0f + 1.0f * (int)(_game.GameTime / (180 * 1000)) }
+                { MinionSpawnType.MINION_TYPE_MELEE, 19.8f + 0.2f * (int)(_map.GameTime() / (90 * 1000)) },
+                { MinionSpawnType.MINION_TYPE_CASTER, 16.8f + 0.2f * (int)(_map.GameTime() / (90 * 1000)) },
+                { MinionSpawnType.MINION_TYPE_CANNON, 40.0f + 0.5f * (int)(_map.GameTime() / (90 * 1000)) },
+                { MinionSpawnType.MINION_TYPE_SUPER, 40.0f + 1.0f * (int)(_map.GameTime() / (180 * 1000)) }
             };
 
             if (!dic.ContainsKey(m.MinionSpawnType))
@@ -458,17 +407,7 @@ namespace MapScripts
             return dic[m.MinionSpawnType];
         }
 
-        public Tuple<TeamId, Vector2> GetMinionSpawnPosition(string spawnPosition)
-        {
-            var coords = _mapData.SpawnBarracks[spawnPosition].CentralPoint;
 
-            var teamID = TeamId.TEAM_BLUE;
-            if (spawnPosition.Contains("Chaos"))
-            {
-                teamID = TeamId.TEAM_PURPLE;
-            }
-            return new Tuple<TeamId, Vector2>(teamID, new Vector2(coords.X, coords.Z));
-        }
 
         public void SetMinionStats(ILaneMinion m)
         {
@@ -478,31 +417,31 @@ namespace MapScripts
             switch (m.MinionSpawnType)
             {
                 case MinionSpawnType.MINION_TYPE_MELEE:
-                    m.Stats.CurrentHealth = 475.0f + 20.0f * (int)(_game.GameTime / (180 * 1000));
-                    m.Stats.HealthPoints.BaseValue = 475.0f + 20.0f * (int)(_game.GameTime / (180 * 1000));
-                    m.Stats.AttackDamage.BaseValue = 12.0f + 1.0f * (int)(_game.GameTime / (180 * 1000));
+                    m.Stats.CurrentHealth = 475.0f + 20.0f * (int)(_map.GameTime() / (180 * 1000));
+                    m.Stats.HealthPoints.BaseValue = 475.0f + 20.0f * (int)(_map.GameTime() / (180 * 1000));
+                    m.Stats.AttackDamage.BaseValue = 12.0f + 1.0f * (int)(_map.GameTime() / (180 * 1000));
                     m.Stats.Range.BaseValue = 180.0f;
                     m.Stats.AttackSpeedFlat = 1.250f;
                     m.IsMelee = true;
                     break;
                 case MinionSpawnType.MINION_TYPE_CASTER:
-                    m.Stats.CurrentHealth = 279.0f + 7.5f * (int)(_game.GameTime / (90 * 1000));
-                    m.Stats.HealthPoints.BaseValue = 279.0f + 7.5f * (int)(_game.GameTime / (90 * 1000));
-                    m.Stats.AttackDamage.BaseValue = 23.0f + 1.0f * (int)(_game.GameTime / (90 * 1000));
+                    m.Stats.CurrentHealth = 279.0f + 7.5f * (int)(_map.GameTime() / (90 * 1000));
+                    m.Stats.HealthPoints.BaseValue = 279.0f + 7.5f * (int)(_map.GameTime() / (90 * 1000));
+                    m.Stats.AttackDamage.BaseValue = 23.0f + 1.0f * (int)(_map.GameTime() / (90 * 1000));
                     m.Stats.Range.BaseValue = 600.0f;
                     m.Stats.AttackSpeedFlat = 0.670f;
                     break;
                 case MinionSpawnType.MINION_TYPE_CANNON:
-                    m.Stats.CurrentHealth = 700.0f + 27.0f * (int)(_game.GameTime / (180 * 1000));
-                    m.Stats.HealthPoints.BaseValue = 700.0f + 27.0f * (int)(_game.GameTime / (180 * 1000));
-                    m.Stats.AttackDamage.BaseValue = 40.0f + 3.0f * (int)(_game.GameTime / (180 * 1000));
+                    m.Stats.CurrentHealth = 700.0f + 27.0f * (int)(_map.GameTime() / (180 * 1000));
+                    m.Stats.HealthPoints.BaseValue = 700.0f + 27.0f * (int)(_map.GameTime() / (180 * 1000));
+                    m.Stats.AttackDamage.BaseValue = 40.0f + 3.0f * (int)(_map.GameTime() / (180 * 1000));
                     m.Stats.Range.BaseValue = 450.0f;
                     m.Stats.AttackSpeedFlat = 1.0f;
                     break;
                 case MinionSpawnType.MINION_TYPE_SUPER:
-                    m.Stats.CurrentHealth = 1500.0f + 200.0f * (int)(_game.GameTime / (180 * 1000));
-                    m.Stats.HealthPoints.BaseValue = 1500.0f + 200.0f * (int)(_game.GameTime / (180 * 1000));
-                    m.Stats.AttackDamage.BaseValue = 190.0f + 10.0f * (int)(_game.GameTime / (180 * 1000));
+                    m.Stats.CurrentHealth = 1500.0f + 200.0f * (int)(_map.GameTime() / (180 * 1000));
+                    m.Stats.HealthPoints.BaseValue = 1500.0f + 200.0f * (int)(_map.GameTime() / (180 * 1000));
+                    m.Stats.AttackDamage.BaseValue = 190.0f + 10.0f * (int)(_map.GameTime() / (180 * 1000));
                     m.Stats.Range.BaseValue = 170.0f;
                     m.Stats.AttackSpeedFlat = 0.694f;
                     m.Stats.Armor.BaseValue = 30.0f;
@@ -512,22 +451,10 @@ namespace MapScripts
             }
         }
 
-        public void SpawnMinion(List<MinionSpawnType> list, int minionNo, string barracksName, List<Vector2> waypoints)
-        {
-            if (list.Count <= minionNo)
-            {
-                return;
-            }
-
-            var team = GetMinionSpawnPosition(barracksName).Item1;
-            var m = new LaneMinion(_game, list[minionNo], barracksName, waypoints, GetMinionModel(team, list[minionNo]), 0, team);
-            _game.ObjectManager.AddObject(m);
-        }
-
         public bool Spawn()
         {
             var barracks = new List<string>();
-            foreach (var barrack in _mapData.SpawnBarracks)
+            foreach (var barrack in _map.GetSpawnBarracks())
             {
                 barracks.Add(barrack.Value.Name);
             }
@@ -540,7 +467,7 @@ namespace MapScripts
             };
 
             var spawnToWaypoints = new Dictionary<string, Tuple<List<Vector2>, uint>>();
-            foreach (var barrack in _mapData.SpawnBarracks)
+            foreach (var barrack in _map.GetSpawnBarracks())
             {
                 if (!barrack.Value.Name.StartsWith("__P"))
                 {
@@ -587,7 +514,7 @@ namespace MapScripts
 
             foreach (var timestamp in cannonMinionTimestamps)
             {
-                if (_game.GameTime >= timestamp.Item1)
+                if (_map.GameTime() >= timestamp.Item1)
                 {
                     cannonMinionCap = timestamp.Item2;
                 }
@@ -597,7 +524,7 @@ namespace MapScripts
             {
                 var waypoints = spawnToWaypoints[barracksName].Item1;
                 var inhibitorId = spawnToWaypoints[barracksName].Item2;
-                var inhibitor = _game.ObjectManager.GetInhibitorById(inhibitorId);
+                var inhibitor = _map.GetInhibitorById(inhibitorId);
                 var isInhibitorDead = inhibitor.InhibitorState == InhibitorState.DEAD && !inhibitor.RespawnAnnounced;
 
                 var oppositeTeam = TeamId.TEAM_BLUE;
@@ -606,7 +533,7 @@ namespace MapScripts
                     oppositeTeam = TeamId.TEAM_PURPLE;
                 }
 
-                var areAllInhibitorsDead = _game.ObjectManager.AllInhibitorsDestroyedFromTeam(oppositeTeam) && !inhibitor.RespawnAnnounced;
+                var areAllInhibitorsDead = _map.AllInhibitorsDestroyedFromTeam(oppositeTeam) && !inhibitor.RespawnAnnounced;
 
                 var list = RegularMinionWave;
                 if (_cannonMinionCount >= cannonMinionCap)
@@ -624,7 +551,7 @@ namespace MapScripts
                     list = DoubleSuperMinionWave;
                 }
 
-                SpawnMinion(list, _minionNumber, barracksName, waypoints);
+                _map.SpawnMinion(list, _minionNumber, barracksName, waypoints);
             }
 
             if (_minionNumber < 8)

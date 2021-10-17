@@ -34,7 +34,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             _logger.Debug("Spawning map");
 
             var peerInfo = _playerManager.GetPeerInfo(userId);
-            var bluePill = _itemManager.GetItemType(_game.Map.MapProperties.BluePillId);
+            var bluePill = _itemManager.GetItemType(_game.Map.MapScript.BluePillId);
             var itemInstance = peerInfo.Champion.Inventory.SetExtraItem(7, bluePill);
 
             // self-inform

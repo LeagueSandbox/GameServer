@@ -66,6 +66,47 @@ namespace LeagueSandbox.GameServer.Maps
         private readonly long _spawnInterval = 30 * 1000;
         private readonly Dictionary<TeamId, SurrenderHandler> _surrenders = new Dictionary<TeamId, SurrenderHandler>();
         private Dictionary<TeamId, Fountain> _fountains = new Dictionary<TeamId, Fountain>();
+        public Dictionary<TurretType, int[]> TurretItems { get; set; } = new Dictionary<TurretType, int[]>
+        {
+            { TurretType.OUTER_TURRET, new[] { 1500, 1501, 1502, 1503 } },
+            { TurretType.INNER_TURRET, new[] { 1500, 1501, 1502, 1503, 1504 } },
+            { TurretType.INHIBITOR_TURRET, new[] { 1501, 1502, 1503, 1505 } },
+            { TurretType.NEXUS_TURRET, new[] { 1501, 1502, 1503, 1505 } }
+        };
+        public Dictionary<TeamId, Dictionary<TurretType, string>> TowerModels { get; set; } = new Dictionary<TeamId, Dictionary<TurretType, string>>
+        {
+            {TeamId.TEAM_BLUE, new Dictionary<TurretType, string>
+            {
+                {TurretType.FOUNTAIN_TURRET, "TurretShrine" },
+                {TurretType.NEXUS_TURRET, "TurretAngel" },
+                {TurretType.INHIBITOR_TURRET, "TurretDragon" },
+                {TurretType.INNER_TURRET, "TurretNormal2" },
+                {TurretType.OUTER_TURRET, "TurretNormal" },
+            } },
+            {TeamId.TEAM_PURPLE, new Dictionary<TurretType, string>
+            {
+                {TurretType.FOUNTAIN_TURRET, "TurretShrine" },
+                {TurretType.NEXUS_TURRET, "TurretNormal" },
+                {TurretType.INHIBITOR_TURRET, "TurretGiant" },
+                {TurretType.INNER_TURRET, "TurretWorm2" },
+                {TurretType.OUTER_TURRET, "TurretWorm" },
+            } }
+        };
+        public Dictionary<TeamId, Dictionary<MinionSpawnType, string>> MinionModels { get; set; } = new Dictionary<TeamId, Dictionary<MinionSpawnType, string>>
+        {
+            {TeamId.TEAM_BLUE, new Dictionary<MinionSpawnType, string>{
+                {MinionSpawnType.MINION_TYPE_MELEE, "Blue_Minion_Basic"},
+                {MinionSpawnType.MINION_TYPE_CASTER, "Blue_Minion_Wizard"},
+                {MinionSpawnType.MINION_TYPE_CANNON, "Blue_Minion_MechCannon"},
+                {MinionSpawnType.MINION_TYPE_SUPER, "Blue_Minion_MechMelee"}
+            }},
+            {TeamId.TEAM_PURPLE, new Dictionary<MinionSpawnType, string>{
+                {MinionSpawnType.MINION_TYPE_MELEE, "Red_Minion_Basic"},
+                {MinionSpawnType.MINION_TYPE_CASTER, "Red_Minion_Wizard"},
+                {MinionSpawnType.MINION_TYPE_CANNON, "Red_Minion_MechCannon"},
+                {MinionSpawnType.MINION_TYPE_SUPER, "Red_Minion_MechMelee"}
+            }}
+        };
 
         public float GoldPerSecond { get; set; } = 1.9f;
         public float StartingGold { get; set; } = 475.0f;
@@ -75,7 +116,7 @@ namespace LeagueSandbox.GameServer.Maps
         public long FirstGoldTime { get; set; } = 90 * 1000;
         public bool SpawnEnabled { get; set; }
 
-        public void StartUp(Game game)
+        public MapScriptEmpty(Game game)
         {
             _game = game;
             _mapData = game.Config.MapData;

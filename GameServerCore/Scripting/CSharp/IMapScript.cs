@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Numerics;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
@@ -18,18 +19,12 @@ namespace GameServerCore.Domain
         int BluePillId { get; set; }
         long FirstGoldTime { get; set; }
         bool SpawnEnabled { get; set; }
-        void StartUp(IGame game);
-        void AddFountain(TeamId team, Vector2 position);
-        int[] GetTurretItems(TurretType type);
+        Dictionary<TurretType, int[]> TurretItems { get; }
+        Dictionary<TeamId, Dictionary<TurretType, string>> TowerModels { get; }
+        Dictionary<TeamId, Dictionary<MinionSpawnType, string>> MinionModels { get; }
         TurretType GetTurretType(int trueIndex, LaneID lane);
-        string GetTowerModel(TurretType type, TeamId teamId);
-        void ChangeTowerOnMapList(string towerName, TeamId team, LaneID currentLaneId, LaneID desiredLaneID);
         void Init(IMap map);
-        Tuple<TeamId, Vector2> GetMinionSpawnPosition(string barracksName);
-
         void SetMinionStats(ILaneMinion m);
-
-        string GetMinionModel(TeamId team, MinionSpawnType type);
 
         float GetGoldFor(IAttackableUnit u);
 

@@ -22,7 +22,7 @@
             }
             else
             {
-                Game.Map.MapProperties.SpawnEnabled = input != 0;
+                Game.Map.MapScript.SpawnEnabled = input != 0;
             }
         }
     }
