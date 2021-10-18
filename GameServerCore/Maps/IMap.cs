@@ -6,7 +6,6 @@ using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
 
-
 namespace GameServerCore.Maps
 {
     /// <summary>

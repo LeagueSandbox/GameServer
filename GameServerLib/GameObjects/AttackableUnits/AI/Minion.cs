@@ -53,7 +53,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         public IObjAiBase VisibilityOwner { get; }
 
         //Minions check for stuff to do every 0.25 secs
-        float MinionActionTimer = 250f;
 
         public Minion(
             Game game,
@@ -119,20 +118,17 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         public override void Update(float diff)
         {
             base.Update(diff);
-            MinionActionTimer -= diff;
-            if (!IsDead && MinionActionTimer <= 0)
+            if (!IsDead)
             {
                 if (MovementParameters != null || _aiPaused)
                 {
                     return;
                 }
-
-                AIMove(diff);
-                MinionActionTimer = 250;
+                AIMove();
             }
         }
 
-        public virtual bool AIMove(float diff)
+        public virtual bool AIMove()
         {
             if (ScanForTargets()) // returns true if we have a target
             {

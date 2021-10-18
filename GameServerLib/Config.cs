@@ -340,7 +340,6 @@ namespace LeagueSandbox.GameServer
                 return index;
             }
         }
-
     }
     public class MapSpawns
     {

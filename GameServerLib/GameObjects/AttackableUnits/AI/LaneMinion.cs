@@ -19,7 +19,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         public string BarracksName { get; }
         public MinionSpawnType MinionSpawnType { get; }
 
-        public float TimeToDeAggro = 3000f;
         public LaneMinion(
             Game game,
             MinionSpawnType spawnType,
@@ -69,24 +68,14 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             base.Update(diff);
         }
 
-        public override bool AIMove(float diff)
+        public override bool AIMove()
         {
             // TODO: Use unique LaneMinion AI instead of normal Minion AI and add here for return values.
             if (ScanForTargets()) // returns true if we have a target
             {
                 if (!RecalculateAttackPosition())
                 {
-                    // attack/follow target
-                    if (TimeToDeAggro >= 0)
-                    {
-                        TimeToDeAggro -= diff;
-                        KeepFocusingTarget();
-                    }
-                    else
-                    {
-                        SetTargetUnit(null, true);
-                        TimeToDeAggro = 3000;
-                    }
+                       KeepFocusingTarget(); // attack/follow target
                 }
                 return false;
             }
