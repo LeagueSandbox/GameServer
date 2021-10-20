@@ -1,30 +1,31 @@
 ﻿using System;
 using System.Numerics;
+using GameServerCore.Domain;
 using GameServerCore.Enums;
 
 namespace LeagueSandbox.GameServer.GameObjects
 {
-    public class Fountain
+    public class Fountain : IFountain
     {
+        private Game _game;
+        public Vector2 Position { get; set; }
+        public TeamId Team { get; set; }
         private const float PERCENT_MAX_HEALTH_HEAL = 0.15f;
         private const float PERCENT_MAX_MANA_HEAL = 0.15f;
         private const float HEAL_FREQUENCY = 1000f;
-        private Vector2 _position;
         private float _fountainSize;
         private float _healTickTimer;
-        private TeamId _team;
-        private Game _game;
 
         public Fountain(Game game, TeamId team, Vector2 position, float size)
         {
             _game = game;
-            _position = position;
+            Position = position;
             _fountainSize = size;
             _healTickTimer = 0;
-            _team = team;
+            Team = team;
         }
 
-        internal void Update(float diff)
+        public void Update(float diff)
         {
             _healTickTimer += diff;
             if (_healTickTimer < HEAL_FREQUENCY)
@@ -34,10 +35,10 @@ namespace LeagueSandbox.GameServer.GameObjects
 
             _healTickTimer = 0;
 
-            var champions = _game.ObjectManager.GetChampionsInRange(_position, _fountainSize, true);
+            var champions = _game.ObjectManager.GetChampionsInRange(Position, _fountainSize, true);
             foreach (var champion in champions)
             {
-                if (champion.Team != _team)
+                if (champion.Team != Team)
                 {
                     continue;
                 }

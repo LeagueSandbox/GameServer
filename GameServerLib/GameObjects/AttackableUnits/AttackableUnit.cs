@@ -539,7 +539,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             SetToRemove();
 
             ApiEventManager.OnDeath.Publish(data);
-            var exp = _game.Map.MapProperties.GetExperienceFor(this);
+            var exp = _game.Map.MapScript.GetExperienceFor(this);
             var champs = _game.ObjectManager.GetChampionsInRange(Position, EXP_RANGE, true);
             //Cull allied champions
             champs.RemoveAll(l => l.Team == Team);

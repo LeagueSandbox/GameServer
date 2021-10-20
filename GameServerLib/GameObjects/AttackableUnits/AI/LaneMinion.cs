@@ -36,10 +36,10 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             _curMainWaypoint = 0;
             _aiPaused = false;
 
-            var spawnSpecifics = _game.Map.MapProperties.GetMinionSpawnPosition(BarracksName);
+            var spawnSpecifics = _game.Map.GetMinionSpawnPosition(BarracksName);
             SetPosition(spawnSpecifics.Item2.X, spawnSpecifics.Item2.Y);
 
-            _game.Map.MapProperties.SetMinionStats(this); // Let the map decide how strong this minion has to be.
+            _game.Map.MapScript.SetMinionStats(this); // Let the map decide how strong this minion has to be.
 
             StopMovement();
 
@@ -75,7 +75,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             {
                 if (!RecalculateAttackPosition())
                 {
-                    KeepFocusingTarget(); // attack/follow target
+                       KeepFocusingTarget(); // attack/follow target
                 }
                 return false;
             }

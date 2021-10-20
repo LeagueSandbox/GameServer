@@ -5,9 +5,12 @@ using System.Linq;
 using System.Numerics;
 using System.Reflection;
 using GameServerCore.Domain;
+using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
 using LeagueSandbox.GameServer.Content;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
 using Newtonsoft.Json.Linq;
+using static LeagueSandbox.GameServer.MapData;
 
 namespace LeagueSandbox.GameServer
 {
@@ -32,6 +35,7 @@ namespace LeagueSandbox.GameServer
         public bool MinionSpawnsEnabled { get; private set; }
         public string ContentPath { get; private set; }
         public bool IsDamageTextGlobal { get; private set; }
+        //public MapData LoadMapStructures { get; internal set; }
 
         private Config()
         {
@@ -130,18 +134,18 @@ namespace LeagueSandbox.GameServer
         }
     }
 
-    public class MapData
+    public class MapData : IMapData
     {
         public int Id { get; private set; }
         /// <summary>
         /// Collection of MapObjects present within a map's room file, with the key being the name present in the room file. Refer to <see cref="MapObject"/>.
         /// </summary>
-        public Dictionary<string, MapObject> MapObjects { get; private set; }
+        public Dictionary<string, IMapObject> MapObjects { get; private set; }
         /// <summary>
         /// Collection of MapObjects which represent lane minion spawn positions.
         /// Not present within the room file, therefor it is split into its own collection.
         /// </summary>
-        public Dictionary<string, MapObject> SpawnBarracks { get; private set; }
+        public Dictionary<string, IMapObject> SpawnBarracks { get; private set; }
         /// <summary>
         /// Experience required to level, ordered from 2 and up.
         /// </summary>
@@ -159,14 +163,14 @@ namespace LeagueSandbox.GameServer
         public MapData(int mapId)
         {
             Id = mapId;
-            MapObjects = new Dictionary<string, MapObject>();
-            SpawnBarracks = new Dictionary<string, MapObject>();
+            MapObjects = new Dictionary<string, IMapObject>();
+            SpawnBarracks = new Dictionary<string, IMapObject>();
             ExpCurve = new List<float>();
             DeathTimes = new List<float>();
             StatsProgression = new List<float>();
         }
 
-        public class MapObject
+        public class MapObject : IMapObject
         {
             public string Name { get; private set; }
             public Vector3 CentralPoint { get; private set; }
@@ -191,7 +195,7 @@ namespace LeagueSandbox.GameServer
                 {
                     type = GameObjectTypes.ObjAnimated_HQ;
                 }
-                else if (Name.Contains("Barracks"))
+                else if (Name.Contains("Barracks") && !Name.Contains("Spawn"))
                 {
                     // Inhibitors are dampeners for the enemy Nexus.
                     type = GameObjectTypes.ObjAnimated_BarracksDampener;
@@ -200,7 +204,7 @@ namespace LeagueSandbox.GameServer
                 {
                     type = GameObjectTypes.ObjAIBase_Turret;
                 }
-                else if (Name.Contains("__Spawn"))
+                else if (Name.Contains("__Spawn" ) && !Name.Contains("____P"))
                 {
                     type = GameObjectTypes.ObjBuilding_SpawnPoint;
                 }
@@ -337,7 +341,6 @@ namespace LeagueSandbox.GameServer
             }
         }
     }
-
     public class MapSpawns
     {
         public Dictionary<int, PlayerSpawns> Blue = new Dictionary<int, PlayerSpawns>();

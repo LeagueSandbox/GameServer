@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Numerics;
+using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
 
@@ -20,7 +21,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             int[] items = null,
             uint netId = 0,
             LaneID lane = LaneID.NONE,
-            MapData.MapObject mapObject = null
+            IMapObject mapObject = null
         ) : base(game, name, model, position, team, netId, lane, mapObject)
         {
             Type = type;
