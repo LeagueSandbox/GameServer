@@ -246,6 +246,7 @@ namespace LeagueSandbox.GameServer.Maps
                 }
             }
         }
+        //Currently towers are spawned by the Protection system, I think having 2 separate systems in the future might be ideal
         public void LoadBuildingProtection()
         {
             var teamInhibitors = new Dictionary<TeamId, List<IInhibitor>>
