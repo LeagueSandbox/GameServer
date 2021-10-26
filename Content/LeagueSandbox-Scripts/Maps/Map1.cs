@@ -25,6 +25,7 @@ namespace MapScripts
         public long FirstSpawnTime { get; set; } = 90 * 1000;
         public long NextSpawnTime { get; set; } = 90 * 1000;
         public long SpawnInterval { get; set; } = 30 * 1000;
+        public bool MinionPathingOverride { get; set; } = true;
 
         //General things that will affect players globaly, such as default gold per-second, Starting gold....
         public float GoldPerSecond { get; set; } = 1.9f;
@@ -99,11 +100,8 @@ namespace MapScripts
         };
 
         //List of every path minions will take, separated by team and lane
-        public Dictionary<TeamId, Dictionary<LaneID, List<Vector2>>> MinionPaths { get; set; } = new Dictionary<TeamId, Dictionary<LaneID, List<Vector2>>>
+        public Dictionary<LaneID, List<Vector2>> MinionPaths { get; set; } = new Dictionary<LaneID, List<Vector2>>
         {
-            //Minion Pathing list for Blue team
-            {TeamId.TEAM_BLUE, new Dictionary<LaneID, List<Vector2>>
-            {
                 //Pathing coordinates for Top lane
                 {LaneID.TOP, new List<Vector2> {
                     new Vector2(917.0f, 1725.0f),
@@ -141,51 +139,8 @@ namespace MapScripts
                     new Vector2(12886.0f, 10356.0f),
                     new Vector2(12511.0f, 12776.0f) }
                 }
-            }
-            },
+        };
 
-            //Minion Pathing list for Blue team
-            {TeamId.TEAM_PURPLE, new Dictionary<LaneID, List<Vector2>>
-            {
-                //Pathing coordinates for Top lane
-                {LaneID.TOP, new List<Vector2> {
-                    new Vector2(12451.0f, 13217.0f),
-                    new Vector2(10947.0f, 13135.0f),
-                    new Vector2(10244.0f, 13238.0f),
-                    new Vector2(7550.0f, 13407.0f),
-                    new Vector2(3907.0f, 13243.0f),
-                    new Vector2(2806.0f, 13075.0f),
-                    new Vector2(1268.0f, 11675.0f),
-                    new Vector2(880.0f, 10180.0f),
-                    new Vector2(861.0f, 6459.0f),
-                    new Vector2(1170.0f, 4041.0f),
-                    new Vector2(1418.0f, 1686.0f) }
-                },
-
-                //Pathing coordinates for Mid lane
-                {LaneID.MIDDLE, new List<Vector2> {
-                    new Vector2(12511.0f, 12776.0f),
-                    new Vector2(10948.0f, 10821.0f),
-                    new Vector2(8375.0f, 8366.0f),
-                    new Vector2(4472.0f, 4727.0f),
-                    new Vector2(2997.0f, 2781.0f),
-                    new Vector2(1418.0f, 1686.0f) }
-                },
-
-                //Pathing coordinates for Bot lane
-                {LaneID.BOTTOM, new List<Vector2> {
-                    new Vector2(13062.0f, 12760.0f),
-                    new Vector2(12886.0f, 10356.0f),
-                    new Vector2(13249.0f, 7884.0f),
-                    new Vector2(13148.0f, 4202.0f),
-                    new Vector2(12841.0f, 3051.0f),
-                    new Vector2(10995.0f, 1234.0f),
-                    new Vector2(6430.0f, 1005.0f),
-                    new Vector2(3789.0f, 1346.0f),
-                    new Vector2(1418.0f, 1686.0f) }
-                }
-            }
-        }};
 
         //List of every wave type
         public Dictionary<string, List<MinionSpawnType>> MinionWaveTypes = new Dictionary<string, List<MinionSpawnType>>

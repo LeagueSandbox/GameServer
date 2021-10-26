@@ -208,6 +208,10 @@ namespace LeagueSandbox.GameServer
                 {
                     type = GameObjectTypes.ObjBuilding_SpawnPoint;
                 }
+                else if (Name.Contains("__NAV"))
+                {
+                    type = GameObjectTypes.ObjBuilding_NavPoint;
+                }
 
                 return type;
             }

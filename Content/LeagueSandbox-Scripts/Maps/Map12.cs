@@ -24,7 +24,8 @@ namespace MapScripts
         public bool SpawnEnabled { get; set; }
         public long FirstSpawnTime { get; set; } = 45 * 1000;
         public long NextSpawnTime { get; set; } = 45 * 1000;
-        public long SpawnInterval { get; set; } = 45 * 1000;
+        public long SpawnInterval { get; set; } = 30 * 1000;
+        public bool MinionPathingOverride { get; set; } = false;
 
         //General things that will affect players globaly, such as default gold per-second, Starting gold....
         public float GoldPerSecond { get; set; } = 5.0f;
@@ -88,40 +89,7 @@ namespace MapScripts
             { TurretType.NEXUS_TURRET, new[] { 1501, 1502, 1503, 1505 } }
         };
 
-        //List of every path minions will take, separated by team and lane
-        public Dictionary<TeamId, Dictionary<LaneID, List<Vector2>>> MinionPaths { get; set; } = new Dictionary<TeamId, Dictionary<LaneID, List<Vector2>>>
-        {
-            //Minion Pathing list for Blue team
-            {TeamId.TEAM_BLUE, new Dictionary<LaneID, List<Vector2>>
-            {
-                //Pathing coordinates for Mid lane
-                {LaneID.MIDDLE, new List<Vector2> {
-                    new Vector2(2248.0f, 2330.0f),
-                    new Vector2(2895.0f, 3352.0f),
-                    new Vector2(4772.0f, 5048.0f),
-                    new Vector2(6562.0f, 6332.0f),
-                    new Vector2(7675.0f, 7967.0f),
-                    new Vector2(9481.0f, 9691.0f),
-                    new Vector2(10599.0f, 10396.0f) }
-                },
-            }
-            },
-
-            //Minion Pathing list for Blue team
-            {TeamId.TEAM_PURPLE, new Dictionary<LaneID, List<Vector2>>
-            {
-                //Pathing coordinates for Mid lane
-                {LaneID.MIDDLE, new List<Vector2> {
-                    new Vector2(9481.0f, 9691.0f),
-                    new Vector2(7675.0f, 7967.0f),
-                    new Vector2(6562.0f, 6332.0f),
-                    new Vector2(4772.0f, 5048.0f),
-                    new Vector2(2895.0f, 3352.0f),
-                    new Vector2(2164.0f, 2228.0f) }
-                },
-            }
-        }};
-
+        public Dictionary<LaneID, List<Vector2>> MinionPaths { get; set; }
         //List of every wave type
         public Dictionary<string, List<MinionSpawnType>> MinionWaveTypes = new Dictionary<string, List<MinionSpawnType>>
         { {"RegularMinionWave", new List<MinionSpawnType>

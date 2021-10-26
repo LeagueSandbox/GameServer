@@ -63,7 +63,8 @@ namespace LeagueSandbox.GameServer.Maps
         private readonly Dictionary<TeamId, SurrenderHandler> _surrenders = new Dictionary<TeamId, SurrenderHandler>();
         public Dictionary<TeamId, Dictionary<LaneID, List<IInhibitor>>> _inhibitors { get; set; }
         public Dictionary<TeamId, Dictionary<LaneID, List<ILaneTurret>>> _turrets { get; set; }
-
+        public Dictionary<LaneID, List<Vector2>> BlueMinionPathing;
+        public Dictionary<LaneID, List<Vector2>> PurpleMinionPathing;
 
         /// <summary>
         /// Instantiates map related game settings such as collision handler, navigation grid, announcer events, and map properties.
@@ -178,8 +179,9 @@ namespace LeagueSandbox.GameServer.Maps
                 { TeamId.TEAM_PURPLE, new Dictionary<LaneID, List<IInhibitor>>{{LaneID.TOP, new List<IInhibitor>()}, {LaneID.MIDDLE, new List<IInhibitor>()}, {LaneID.BOTTOM, new List<IInhibitor>()} }
             }};
 
+            BlueMinionPathing = new Dictionary<LaneID, List<Vector2>> { { LaneID.TOP, new List<Vector2>() }, { LaneID.MIDDLE, new List<Vector2>() }, { LaneID.BOTTOM, new List<Vector2>() } };
+            PurpleMinionPathing = new Dictionary<LaneID, List<Vector2>> { { LaneID.TOP, new List<Vector2>() }, { LaneID.MIDDLE, new List<Vector2>() }, { LaneID.BOTTOM, new List<Vector2>() } };
             // Below is where we create the buildings.
-
             var inhibRadius = 214;
             var nexusRadius = 353;
             var sightRange = 1700;
@@ -244,6 +246,31 @@ namespace LeagueSandbox.GameServer.Maps
                 {
                     AddFountain(teamId, position);
                 }
+                else if (objectType == GameObjectTypes.ObjBuilding_NavPoint)
+                {
+                    BlueMinionPathing[lane].Add(new Vector2(mapObject.CentralPoint.X, mapObject.CentralPoint.Z));
+                }
+            }
+            //If the map doesn't have any Minion pathing file but the map script has Minion pathing hardcoded
+            if (BlueMinionPathing.Count == 0 && MapScript.MinionPaths != null && MapScript.MinionPaths.Count != 0 || MapScript.MinionPathingOverride)
+            {
+                //Make Sure the Disctionary is actually empty in order to receive new info
+                BlueMinionPathing.Clear();
+                foreach (var lane in MapScript.MinionPaths.Keys)
+                {
+                    foreach (var value in MapScript.MinionPaths[lane])
+                    {
+                        BlueMinionPathing[lane].Add(value);
+                    }
+                }
+            }
+            foreach(var lane in BlueMinionPathing.Keys)
+            {
+                foreach(var value in BlueMinionPathing[lane])
+                {
+                    PurpleMinionPathing[lane].Add(value);
+                }
+                PurpleMinionPathing[lane].Reverse();
             }
         }
         //Currently towers are spawned by the Protection system, I think having 2 separate systems in the future might be ideal
@@ -420,8 +447,18 @@ namespace LeagueSandbox.GameServer.Maps
             foreach (var barrack in _mapData.SpawnBarracks)
             {
                 TeamId opposed_team = barrack.Value.GetOpposingTeamID();
+                TeamId barrackTeam = barrack.Value.GetTeamID();
                 LaneID lane = barrack.Value.GetSpawnBarrackLaneID();
-                List<Vector2> waypoint = MapScript.MinionPaths[barrack.Value.GetTeamID()][lane];
+                List<Vector2> waypoint = new List<Vector2>();
+
+                if (barrackTeam == TeamId.TEAM_BLUE)
+                {
+                    waypoint = BlueMinionPathing[lane];
+                }
+                else if (barrackTeam == TeamId.TEAM_PURPLE)
+                {
+                    waypoint = PurpleMinionPathing[lane];
+                }
 
                 spawnToWaypoints.Add(barrack.Value.Name, Tuple.Create(waypoint, _inhibitors[opposed_team][lane][0].NetId));
             }
@@ -429,21 +466,12 @@ namespace LeagueSandbox.GameServer.Maps
             int cannonMinionCap = 2;
             foreach (var barrack in _mapData.SpawnBarracks)
             {
-                //Howling Abyss has some odd minion spawn files, maybe used for poros' spawning?
-                if (!barrack.Value.Name.StartsWith("____P"))
-                {
-                    continue;
-                }
                 var waypoints = spawnToWaypoints[barrack.Value.Name].Item1;
                 var inhibitorId = spawnToWaypoints[barrack.Value.Name].Item2;
                 var inhibitor = GetInhibitorById(inhibitorId);
                 var isInhibitorDead = inhibitor.InhibitorState == InhibitorState.DEAD && !inhibitor.RespawnAnnounced;
 
-                var oppositeTeam = TeamId.TEAM_BLUE;
-                if (inhibitor.Team == TeamId.TEAM_PURPLE)
-                {
-                    oppositeTeam = TeamId.TEAM_PURPLE;
-                }
+                var oppositeTeam = barrack.Value.GetOpposingTeamID();
 
                 var areAllInhibitorsDead = AllInhibitorsDestroyedFromTeam(oppositeTeam) && !inhibitor.RespawnAnnounced;
 
