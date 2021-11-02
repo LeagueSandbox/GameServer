@@ -272,7 +272,8 @@ namespace LeagueSandbox.GameServer
                 {
                     laneId = LaneID.TOP;
                 }
-                else if (Name.Contains("_C"))
+                //Using just _C would cause files with "_Chaos" to be mistakenly assigned as MidLane
+                else if (Name.Contains("_C0") || Name.Contains("_C1") || Name.Contains("_C_"))
                 {
                     laneId = LaneID.MIDDLE;
                 }

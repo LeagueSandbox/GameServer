@@ -251,19 +251,22 @@ namespace LeagueSandbox.GameServer.Maps
                     BlueMinionPathing[lane].Add(new Vector2(mapObject.CentralPoint.X, mapObject.CentralPoint.Z));
                 }
             }
+
             //If the map doesn't have any Minion pathing file but the map script has Minion pathing hardcoded
             if (BlueMinionPathing.Count == 0 && MapScript.MinionPaths != null && MapScript.MinionPaths.Count != 0 || MapScript.MinionPathingOverride)
             {
-                //Make Sure the Disctionary is actually empty in order to receive new info
-                BlueMinionPathing.Clear();
                 foreach (var lane in MapScript.MinionPaths.Keys)
                 {
+                    //Makes sure the coordinate list is empty
+                    MapScript.MinionPaths[lane].Clear();
                     foreach (var value in MapScript.MinionPaths[lane])
                     {
                         BlueMinionPathing[lane].Add(value);
                     }
                 }
             }
+
+            //Sets purple team pathing by reversing Blue Team's pathing and adds an extra path coordinate towards the minions' spawn point.
             foreach(var lane in BlueMinionPathing.Keys)
             {
                 foreach(var value in BlueMinionPathing[lane])
@@ -271,8 +274,24 @@ namespace LeagueSandbox.GameServer.Maps
                     PurpleMinionPathing[lane].Add(value);
                 }
                 PurpleMinionPathing[lane].Reverse();
+
+                //The unhardcoded system results on minions stop walking right next to the nexus/nexus towers (since the last waypoint of a given minion, is the first one of the opsoite team, which isn't next to towers/nexus).
+                //TODO: Decide if we want to hardcode extra waypoints in order to force the minion to walk towards the nexus or let it somehow be handled automatically by the minion's A.I
+                var SpawnBarracks = _mapData.SpawnBarracks.Values.ToList().FindAll(x => x.GetLaneID() == lane);
+                foreach (var SpawnBarrack in SpawnBarracks)
+                {
+                    if(SpawnBarrack.GetTeamID() == TeamId.TEAM_PURPLE)
+                    {
+                        BlueMinionPathing[lane].Add(new Vector2(SpawnBarrack.CentralPoint.X, SpawnBarrack.CentralPoint.Z));
+                    }                    
+                    else
+                    {
+                        PurpleMinionPathing[lane].Add(new Vector2(SpawnBarrack.CentralPoint.X, SpawnBarrack.CentralPoint.Z));
+                    }
+                }
             }
         }
+
         //Currently towers are spawned by the Protection system, I think having 2 separate systems in the future might be ideal
         public void LoadBuildingProtection()
         {

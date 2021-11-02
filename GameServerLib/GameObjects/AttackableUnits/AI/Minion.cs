@@ -154,12 +154,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             //Find target closest to max attack range.
             foreach (var it in nearestObjects.OrderBy(x => Vector2.DistanceSquared(Position, x.Position) - (Stats.Range.Total * Stats.Range.Total)))
             {
-                if (!(it is IAttackableUnit u) ||
-                    u.IsDead ||
-                    u.Team == Team ||
-                    Vector2.DistanceSquared(Position, u.Position) > DETECT_RANGE * DETECT_RANGE ||
-                    !_game.ObjectManager.TeamHasVisionOn(Team, u)
-                    || !u.Status.HasFlag(StatusFlags.Targetable))
+                if (!(it is IAttackableUnit u) || u.IsDead || u.Team == Team || Vector2.DistanceSquared(Position, u.Position) > DETECT_RANGE * DETECT_RANGE || !_game.ObjectManager.TeamHasVisionOn(Team, u) || !u.Status.HasFlag(StatusFlags.Targetable) || _game.ProtectionManager.IsProtected(u))
                 {
                     continue;
                 }
