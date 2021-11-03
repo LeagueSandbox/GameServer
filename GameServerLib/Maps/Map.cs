@@ -75,7 +75,6 @@ namespace LeagueSandbox.GameServer.Maps
             _game = game;
             _mapData = game.Config.MapData;
             _scriptEngine = game.ScriptEngine;
-            //_loadMapStructures = _game.Config.LoadMapStructures;
             _logger = LoggerProvider.GetLogger();
 
             Id = _game.Config.GameConfig.Map;
@@ -93,8 +92,7 @@ namespace LeagueSandbox.GameServer.Maps
             AnnouncerEvents = new List<IAnnounce>();
             CollisionHandler = new CollisionHandler(this);
 
-            //Since there are quite a few Summoners Rift map variations (Map1, Map2, Map6, Map7), if no map script is found, it will default to a vanilla summoners rift script
-            MapScript = _scriptEngine.CreateObject<IMapScript>("MapScripts", $"Map{Id}") ?? new SummonersRiftDefault();
+            MapScript = _scriptEngine.CreateObject<IMapScript>("MapScripts", $"Map{Id}") ?? new EmptyMapScript();
         }
 
         /// <summary>
@@ -248,6 +246,11 @@ namespace LeagueSandbox.GameServer.Maps
                 }
                 else if (objectType == GameObjectTypes.ObjBuilding_NavPoint)
                 {
+                    if(lane == LaneID.NONE)
+                    {
+                        //Map8 seems to have some issues with their navigation file lane identification. This solves the issue for now, but has to be worked on later.
+                        continue;
+                    }
                     BlueMinionPathing[lane].Add(new Vector2(mapObject.CentralPoint.X, mapObject.CentralPoint.Z));
                 }
             }
