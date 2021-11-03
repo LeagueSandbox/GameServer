@@ -246,6 +246,7 @@ namespace MapScripts
 
             //Due to riot's questionable map-naming scheme some towers are missplaced into other lanes during outomated setup, so we have to manually fix them.
             map.ChangeTowerOnMapList("Turret_T1_C_06_A", TeamId.TEAM_BLUE, LaneID.MIDDLE, LaneID.TOP);
+            map.ChangeTowerOnMapList("Turret_T1_C_07_A", TeamId.TEAM_BLUE, LaneID.MIDDLE, LaneID.BOTTOM);
 
             // Announcer events
             map.AddAnnouncement(30 * 1000, Announces.WELCOME_TO_SR, true); // Welcome to SR
