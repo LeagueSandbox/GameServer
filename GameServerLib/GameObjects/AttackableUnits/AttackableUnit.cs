@@ -101,7 +101,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// Parameters of any forced movements (dashes) this unit is performing.
         /// </summary>
         public IForceMovementParameters MovementParameters { get; protected set; }
-
+        public ForceMovementState DashState { get; protected set; }
         public AttackableUnit(
             Game game,
             string model,
@@ -215,14 +215,14 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             {
                 if (MovementParameters.FollowTravelTime <= 0)
                 {
-                    SetDashingState(false);
+                    SetDashingState(ForceMovementState.NOT_DASHING);
                     return;
                 }
 
                 MovementParameters.SetTimeElapsed(MovementParameters.ElapsedTime + diff);
                 if (MovementParameters.ElapsedTime >= MovementParameters.FollowTravelTime)
                 {
-                    SetDashingState(false);
+                    SetDashingState(ForceMovementState.NOT_DASHING);
                 }
             }
 
@@ -1170,7 +1170,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
 
                     if (MovementParameters != null)
                     {
-                        SetDashingState(false);
+                        SetDashingState(ForceMovementState.NOT_DASHING);
                         return true;
                     }
 
@@ -1247,7 +1247,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
 
             if (MovementParameters != null)
             {
-                SetDashingState(false, true);
+                SetDashingState(ForceMovementState.DASH_CANCELLED);
                 return;
             }
 
@@ -1467,7 +1467,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                 FollowTravelTime = 0
             };
 
-            SetDashingState(true);
+            SetDashingState(ForceMovementState.DASHING);
 
             if (animation != null && animation != "")
             {
@@ -1485,33 +1485,40 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// <summary>
         /// Sets this unit's current dash state to the given state.
         /// </summary>
-        /// <param name="state">State to set. True = dashing, false = not dashing.</param>
+        /// <param name="state">State to set. DASHING = dashing, NOT_DASHING = not dashing, DASH_CANCELLER = cancel dashing.</param>
         /// TODO: Implement ForcedMovement methods and enumerators to handle different kinds of dashes.
-        public virtual void SetDashingState(bool state, bool wasCancelled = false)
+        public virtual void SetDashingState(ForceMovementState state)
         {
-            if (MovementParameters != null && state == false)
+            switch(state)
             {
-                MovementParameters = null;
-
-                var animPairs = new Dictionary<string, string> { { "RUN", "" } };
-                SetAnimStates(animPairs);
-                if (!wasCancelled)
-                {
+                case ForceMovementState.NOT_DASHING when MovementParameters != null:
+                    MovementParameters = null;
+                    var animPairs = new Dictionary<string, string> { { "RUN", "" } };
+                    SetAnimStates(animPairs);
+                    Stats.SetActionState(ActionState.CAN_ATTACK, true);
+                    Stats.SetActionState(ActionState.CAN_NOT_ATTACK, false);
+                    Stats.SetActionState(ActionState.CAN_MOVE, true);
+                    Stats.SetActionState(ActionState.CAN_NOT_MOVE, false);
+                    DashState = ForceMovementState.NOT_DASHING;
                     ApiEventManager.OnFinishDash.Publish(this);
-                }
+                    break;
+                case ForceMovementState.DASHING:
+                    Stats.SetActionState(ActionState.CAN_ATTACK, false);
+                    Stats.SetActionState(ActionState.CAN_NOT_ATTACK, true);
+                    Stats.SetActionState(ActionState.CAN_MOVE, false);
+                    Stats.SetActionState(ActionState.CAN_NOT_MOVE, true);
+                    DashState = ForceMovementState.DASHING;
+                    ApiEventManager.OnDash.Publish(this);
+                    break;
+                case ForceMovementState.DASH_CANCELLED:
+                    Stats.SetActionState(ActionState.CAN_ATTACK, true);
+                    Stats.SetActionState(ActionState.CAN_NOT_ATTACK, false);
+                    Stats.SetActionState(ActionState.CAN_MOVE, true);
+                    Stats.SetActionState(ActionState.CAN_NOT_MOVE, false);
+                    DashState = ForceMovementState.NOT_DASHING;
+                    break;
             }
-            if(state)
-            {
-                ApiEventManager.OnDash.Publish(this);
-            }
-
-            // TODO: Implement this as a parameter.
-            Stats.SetActionState(ActionState.CAN_ATTACK, !state);
-            Stats.SetActionState(ActionState.CAN_NOT_ATTACK, state);
-            Stats.SetActionState(ActionState.CAN_MOVE, !state);
-            Stats.SetActionState(ActionState.CAN_NOT_MOVE, state);
         }
-
         /// <summary>
         /// Sets this unit's animation states to the given set of states.
         /// Given state pairs are expected to follow a specific structure:

@@ -50,6 +50,10 @@ namespace GameServerCore.Domain.GameObjects
         /// </summary>
         IForceMovementParameters MovementParameters { get; }
         /// <summary>
+        /// State of force movement of this unit.
+        /// </summary>
+        ForceMovementState DashState { get; }
+        /// <summary>
         /// Stats used purely in networking the accompishments or status of units and their gameplay affecting stats.
         /// </summary>
         IReplication Replication { get; }
@@ -271,7 +275,7 @@ namespace GameServerCore.Domain.GameObjects
         /// </summary>
         /// <param name="state">State to set. True = dashing, false = not dashing.</param>
         /// TODO: Implement ForcedMovement methods and enumerators to handle different kinds of dashes.
-        void SetDashingState(bool state, bool wasCancelled = false);
+        void SetDashingState(ForceMovementState state);
         /// <summary>
         /// Sets this unit's animation states to the given set of states.
         /// Given state pairs are expected to follow a specific structure:

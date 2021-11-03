@@ -39,7 +39,7 @@ namespace Buffs
             var target = thisBuff.TargetUnit;
             if (owner.MovementParameters != null && owner.IsCollidingWith(target))
             {
-                owner.SetDashingState(false);
+                owner.SetDashingState(ForceMovementState.NOT_DASHING);
                 var ad = owner.Stats.AttackDamage.Total * 1.0f;
                 var damage = 50 + (originSpell.CastInfo.SpellLevel * 30) + ad + (0.08f * (target.Stats.HealthPoints.Total - target.Stats.CurrentHealth));
                 target.TakeDamage(owner, damage, DamageType.DAMAGE_TYPE_PHYSICAL, DamageSource.DAMAGE_SOURCE_REACTIVE, false);

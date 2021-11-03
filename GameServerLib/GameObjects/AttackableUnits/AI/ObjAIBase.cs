@@ -443,7 +443,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             };
 
             _game.PacketNotifier.NotifyWaypointGroupWithSpeed(this);
-            SetDashingState(true);
+            SetDashingState(ForceMovementState.DASHING);
 
             if (animation != null && animation != "")
             {
@@ -510,7 +510,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 {
                     if (IsCollidingWith(TargetUnit))
                     {
-                        SetDashingState(false);
+                        SetDashingState(ForceMovementState.NOT_DASHING);
                     }
                     else
                     {

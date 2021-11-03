@@ -486,7 +486,7 @@ namespace LeagueSandbox.GameServer.API
         public static void CancelDash(IAttackableUnit unit)
         {
             // Allow the user to move the champion
-            unit.SetDashingState(false, true);
+            unit.SetDashingState(ForceMovementState.DASH_CANCELLED);
         }
 
         /// <summary>
