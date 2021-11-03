@@ -271,7 +271,7 @@ namespace GameServerCore.Domain.GameObjects
         /// </summary>
         /// <param name="state">State to set. True = dashing, false = not dashing.</param>
         /// TODO: Implement ForcedMovement methods and enumerators to handle different kinds of dashes.
-        void SetDashingState(bool state);
+        void SetDashingState(bool state, bool wasCancelled = false);
         /// <summary>
         /// Sets this unit's animation states to the given set of states.
         /// Given state pairs are expected to follow a specific structure:

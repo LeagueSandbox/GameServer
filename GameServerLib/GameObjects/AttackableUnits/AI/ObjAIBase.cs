@@ -443,7 +443,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             };
 
             _game.PacketNotifier.NotifyWaypointGroupWithSpeed(this);
-
             SetDashingState(true);
 
             if (animation != null && animation != "")
@@ -830,7 +829,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         /// TODO: Remove Target class.
         public void SetTargetUnit(IAttackableUnit target, bool networked = false)
         {
-            if (target == null || target.IsDead || !target.Status.HasFlag(StatusFlags.Targetable))
+            if (target == null || target.IsDead || !target.Status.HasFlag(StatusFlags.Targetable) || MovementParameters != null)
             {
                 target = null;
             }

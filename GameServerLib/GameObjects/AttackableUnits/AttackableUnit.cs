@@ -1247,7 +1247,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
 
             if (MovementParameters != null)
             {
-                SetDashingState(false);
+                SetDashingState(false, true);
                 return;
             }
 
@@ -1487,7 +1487,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// </summary>
         /// <param name="state">State to set. True = dashing, false = not dashing.</param>
         /// TODO: Implement ForcedMovement methods and enumerators to handle different kinds of dashes.
-        public virtual void SetDashingState(bool state)
+        public virtual void SetDashingState(bool state, bool wasCancelled = false)
         {
             if (MovementParameters != null && state == false)
             {
@@ -1495,6 +1495,14 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
 
                 var animPairs = new Dictionary<string, string> { { "RUN", "" } };
                 SetAnimStates(animPairs);
+                if (!wasCancelled)
+                {
+                    ApiEventManager.OnFinishDash.Publish(this);
+                }
+            }
+            if(state)
+            {
+                ApiEventManager.OnDash.Publish(this);
             }
 
             // TODO: Implement this as a parameter.

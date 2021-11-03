@@ -1,6 +1,7 @@
 using System.Numerics;
 using GameServerCore.Enums;
 using GameServerCore.Domain.GameObjects;
+using LeagueSandbox.GameServer.API;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using GameServerCore.Domain.GameObjects.Spell;
@@ -11,6 +12,8 @@ namespace Spells
 {
     public class AkaliShadowDance : ISpellScript
     {
+        public ISpell Spell;
+        public IAttackableUnit Target;
         public ISpellScriptMetadata ScriptMetadata => new SpellScriptMetadata()
         {
             TriggersSpellCasts = true
@@ -19,14 +22,25 @@ namespace Spells
 
         public void OnActivate(IObjAiBase owner, ISpell spell)
         {
+            ApiEventManager.OnFinishDash.AddListener(this, owner, OnFinishDash, false);
+            ApiEventManager.OnDash.AddListener(this, owner, OnDash, false);
         }
 
         public void OnDeactivate(IObjAiBase owner, ISpell spell)
         {
         }
-
+        public void OnDash(IAttackableUnit owner)
+        {
+        }
+        public void OnFinishDash(IAttackableUnit owner)
+        {
+            ApplyEffects(Spell.CastInfo.Owner, Target, Spell, null);
+            
+        }
         public void OnSpellPreCast(IObjAiBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
         {
+            Spell = spell;
+            Target = target;
         }
 
         public void OnSpellCast(ISpell spell)
