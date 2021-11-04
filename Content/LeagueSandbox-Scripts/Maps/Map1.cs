@@ -16,6 +16,7 @@ namespace MapScripts
     public class Map1 : IMapScript
     {
         public bool HasInnerTurrets { get; set; } = true;
+        public bool EnableBuildingProtection { get; set; } = true;
 
         //General Map variable
         private IMap _map;
@@ -259,9 +260,6 @@ namespace MapScripts
             map.AddObject(new Vector2(-76.0f, 1769.1589f), 94.0f, new Vector3(0.0f, 0.0f, 0.0f), 0.0f, 0.0f, "LevelProp_Yonkey1", "Yonkey");
             map.AddObject(new Vector2(13374.17f, 14245.673f), 194.9741f, new Vector3(224.0f, 33.33f, 0.0f), 0.0f, -44.44f, "LevelProp_ShopMale", "ShopMale");
             map.AddObject(new Vector2(-99.5613f, 855.6632f), 191.4039f, new Vector3(158.0f, 0.0f, 0.0f), 0.0f, 0.0f, "LevelProp_ShopMale1", "ShopMale");
-
-            //Spawns a building and sets their protection parameters
-            map.LoadBuildingProtection();
         }
 
         //This function gets executed every server tick

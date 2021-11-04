@@ -161,6 +161,11 @@ namespace LeagueSandbox.GameServer.Maps
         {
             LoadBuildings();
             MapScript.Init(this);
+            if (MapScript.EnableBuildingProtection)
+            {
+                LoadBuildingProtection();
+            }
+            SpawnBuildings();
         }
 
         public void LoadBuildings()
@@ -294,8 +299,33 @@ namespace LeagueSandbox.GameServer.Maps
                 }
             }
         }
-
-        //Currently towers are spawned by the Protection system, I think having 2 separate systems in the future might be ideal
+        //Spawn Buildings
+        public void SpawnBuildings()
+        {
+            //Spawn Nexus
+            foreach (var nexus in _nexus)
+            {
+                _game.ObjectManager.AddObject(nexus);
+            }
+            foreach(var team in _inhibitors.Keys)
+            {
+                foreach(var lane in _inhibitors[team].Keys)
+                {
+                    //Spawn Inhibitors
+                    foreach (var inhibitor in _inhibitors[team][lane])
+                    {
+                        _game.ObjectManager.AddObject(inhibitor);
+                    }
+                    //Spawn Turrets
+                    foreach (var turret in _turrets[team][lane])
+                    {
+                        // Adds Turrets
+                        _game.ObjectManager.AddObject(turret);
+                    }
+                }
+            }
+        }
+        //Load Building Protections
         public void LoadBuildingProtection()
         {
             var teamInhibitors = new Dictionary<TeamId, List<IInhibitor>>
@@ -320,9 +350,6 @@ namespace LeagueSandbox.GameServer.Maps
                     _turrets[nexus.Team][LaneID.MIDDLE].FindAll(turret => turret.Type == TurretType.NEXUS_TURRET).ToArray(),
                     teamInhibitors[nexus.Team].ToArray()
                 );
-
-                // Adds Nexus
-                _game.ObjectManager.AddObject(nexus);
             }
 
             // Iterate through all inhibitors for both teams.
@@ -349,9 +376,6 @@ namespace LeagueSandbox.GameServer.Maps
                     _game.ProtectionManager.AddProtection(inhibitor, false, inhibitorTurret);
                 }
 
-                // Adds Inhibitors
-                _game.ObjectManager.AddObject(inhibitor);
-
                 // Adds Protection to Turrets
                 foreach (var turret in _turrets[inhibitor.Team][inhibitor.Lane])
                 {
@@ -367,9 +391,6 @@ namespace LeagueSandbox.GameServer.Maps
                     {
                         _game.ProtectionManager.AddProtection(turret, false, _turrets[inhibitor.Team][inhibitor.Lane].First(dependTurret => dependTurret.Type == TurretType.OUTER_TURRET));
                     }
-
-                    // Adds Turrets
-                    _game.ObjectManager.AddObject(turret);
                 }
             }
         }

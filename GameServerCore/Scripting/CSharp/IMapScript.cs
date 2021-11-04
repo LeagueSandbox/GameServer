@@ -10,6 +10,7 @@ namespace GameServerCore.Domain
     public interface IMapScript : IUpdate
     {
         bool HasInnerTurrets { get; }
+        bool EnableBuildingProtection { get; }
         long FirstSpawnTime { get; }
         long NextSpawnTime { get; set; }
         long SpawnInterval { get; }

@@ -16,7 +16,7 @@ namespace MapScripts
     public class EmptyMapScript : IMapScript
     {
         public bool HasInnerTurrets { get; set; } = true;
-
+        public bool EnableBuildingProtection { get; set; } = false;
         //General Map variable
         private IMap _map;
 
@@ -47,10 +47,13 @@ namespace MapScripts
             {TeamId.TEAM_BLUE, new Dictionary<TurretType, string>
             {
                 {TurretType.OUTER_TURRET, "OrderTurretNormal" },
+                {TurretType.FOUNTAIN_TURRET, "OrderTurretShrine" }
+
             } },
             {TeamId.TEAM_PURPLE, new Dictionary<TurretType, string>
             {
                 {TurretType.OUTER_TURRET, "ChaosTurretWorm" },
+                {TurretType.FOUNTAIN_TURRET, "ChaosTurretShrine" }
             } }
         };
 
@@ -102,7 +105,6 @@ namespace MapScripts
 
             SpawnEnabled = map.IsMinionSpawnEnabled();
             map.AddSurrender(1200000.0f, 300000.0f, 30.0f);
-
         }
 
         //This function gets executed every server tick
