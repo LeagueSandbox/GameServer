@@ -17,6 +17,8 @@ namespace MapScripts
     {
         public bool HasInnerTurrets { get; set; } = true;
         public bool EnableBuildingProtection { get; set; } = false;
+        public bool DoesntHaveLanes { get; set; } = false;
+
         //General Map variable
         private IMap _map;
 
@@ -41,7 +43,19 @@ namespace MapScripts
             return TurretType.OUTER_TURRET;
         }
 
-        //List of each turret model present in this map, being organized between team and tower type
+        //Nexus models
+        public Dictionary<TeamId, string> NexusModels { get; set; } = new Dictionary<TeamId, string>
+        {
+            {TeamId.TEAM_BLUE, "OrderNexus" },
+            {TeamId.TEAM_PURPLE, "ChaosNexus" }
+        };
+        //Inhib models
+        public Dictionary<TeamId, string> InhibitorModels { get; set; } = new Dictionary<TeamId, string>
+        {
+            {TeamId.TEAM_BLUE, "OrderInhibitor" },
+            {TeamId.TEAM_PURPLE, "ChaosInhibitor" }
+        };
+        //Tower Models
         public Dictionary<TeamId, Dictionary<TurretType, string>> TowerModels { get; set; } = new Dictionary<TeamId, Dictionary<TurretType, string>>
         {
             {TeamId.TEAM_BLUE, new Dictionary<TurretType, string>
@@ -106,7 +120,9 @@ namespace MapScripts
             SpawnEnabled = map.IsMinionSpawnEnabled();
             map.AddSurrender(1200000.0f, 300000.0f, 30.0f);
         }
-
+        public void OnMatchStart()
+        {
+        }
         //This function gets executed every server tick
         public void Update(float diff)
         {

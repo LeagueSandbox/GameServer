@@ -18,6 +18,7 @@ namespace MapScripts
     {
         public bool HasInnerTurrets { get; set; } = false;
         public bool EnableBuildingProtection { get; set; } = true;
+        public bool DoesntHaveLanes { get; set; } = false;
 
         //General Map variable
         private IMap _map;
@@ -61,7 +62,19 @@ namespace MapScripts
             return returnType;
         }
 
-        //List of each turret model present in this map, being organized between team and tower type
+        //Nexus models
+        public Dictionary<TeamId, string> NexusModels { get; set; } = new Dictionary<TeamId, string>
+        {
+            {TeamId.TEAM_BLUE, "OrderNexus" },
+            {TeamId.TEAM_PURPLE, "ChaosNexus" }
+        };
+        //Inhib models
+        public Dictionary<TeamId, string> InhibitorModels { get; set; } = new Dictionary<TeamId, string>
+        {
+            {TeamId.TEAM_BLUE, "TT_OrderInhibitor" },
+            {TeamId.TEAM_PURPLE, "TT_ChaosInhibitor" }
+        };
+        //Tower Models
         public Dictionary<TeamId, Dictionary<TurretType, string>> TowerModels { get; set; } = new Dictionary<TeamId, Dictionary<TurretType, string>>
         {
             {TeamId.TEAM_BLUE, new Dictionary<TurretType, string>
@@ -198,35 +211,33 @@ namespace MapScripts
             map.ChangeTowerOnMapList("Turret_T1_C_07_A", TeamId.TEAM_BLUE, LaneID.MIDDLE, LaneID.BOTTOM);
             map.ChangeTowerOnMapList("Turret_T1_C_06_A", TeamId.TEAM_BLUE, LaneID.MIDDLE, LaneID.TOP);
 
-            //Due to TT not havin a mid inhibitor, we have to spawn mid towers (nexus and fountain towers) manually
-            map.SpawnTurret(map._turrets[TeamId.TEAM_PURPLE][LaneID.MIDDLE].Find(turret => turret.Type == TurretType.NEXUS_TURRET), true, false, new IAttackableUnit[] { map._inhibitors[TeamId.TEAM_PURPLE][LaneID.TOP].First(), map._inhibitors[TeamId.TEAM_PURPLE][LaneID.BOTTOM].First() });
-            map.SpawnTurret(map._turrets[TeamId.TEAM_BLUE][LaneID.MIDDLE].Find(turret => turret.Type == TurretType.NEXUS_TURRET), true, false, new IAttackableUnit[] { map._inhibitors[TeamId.TEAM_BLUE][LaneID.TOP].First(), map._inhibitors[TeamId.TEAM_BLUE][LaneID.BOTTOM].First() });
-            map.SpawnTurret(map._turrets[TeamId.TEAM_BLUE][LaneID.MIDDLE].Find(turret => turret.Type == TurretType.FOUNTAIN_TURRET), false);
-            map.SpawnTurret(map._turrets[TeamId.TEAM_PURPLE][LaneID.MIDDLE].Find(turret => turret.Type == TurretType.FOUNTAIN_TURRET), false);
-
             // Announcer events
             map.AddAnnouncement(FirstSpawnTime - 30 * 1000, Announces.THIRY_SECONDS_TO_MINIONS_SPAWN, true); // 30 seconds until minions spawn
             map.AddAnnouncement(FirstSpawnTime, Announces.MINIONS_HAVE_SPAWNED, false); // Minions have spawned (90 * 1000)
             map.AddAnnouncement(FirstSpawnTime, Announces.MINIONS_HAVE_SPAWNED2, false); // Minions have spawned [2] (90 * 1000)
 
             //Map props
-            map.AddObject(new Vector2(1360.9241f, 5072.1309f), 291.2142f, new Vector3(134.0f, 11.1111f, 0.0f), 288.8889f, -22.2222f, "LevelProp_TT_Brazier1", "TT_Brazier");
-            map.AddObject(new Vector2(423.5712f, 6529.0327f), 385.9983f, new Vector3(0.0f, -33.3334f, 0.0f), 277.7778f, -11.1111f, "LevelProp_TT_Brazier2", "TT_Brazier");
-            map.AddObject(new Vector2(399.4241f, 8021.057f), 692.2211f, new Vector3(0.0f, -22.2222f, 0.0f), 300f, 0.0f, "LevelProp_TT_Brazier3", "TT_Brazier");
-            map.AddObject(new Vector2(1314.294f, 9495.576f), 582.8416f, new Vector3(48.0f, -33.3334f, 0.0f), 277.7778f, 22.2223f, "LevelProp_TT_Brazier4", "TT_Brazier");
-            map.AddObject(new Vector2(14080.0f, 9530.3379f), 305.0638f, new Vector3(120.0f, 11.1111f, 0.0f), 277.7778f, 0.0f, "LevelProp_TT_Brazier5", "TT_Brazier");
-            map.AddObject(new Vector2(14990.46f, 8053.91f), 675.8145f, new Vector3(0.0f, -22.2222f, 0.0f), 266.6666f, -11.1111f, "LevelProp_TT_Brazier6", "TT_Brazier");
-            map.AddObject(new Vector2(15016.35f, 6532.84f), 664.7033f, new Vector3(0.0f, -11.1111f, 0.0f), 255.5555f, -11.1111f, "LevelProp_TT_Brazier7", "TT_Brazier");
-            map.AddObject(new Vector2(14102.99f, 5098.367f), 580.504f, new Vector3(36.0f, 0.0f, 0.0f), 244.4445f, 11.1111f, "LevelProp_TT_Brazier8", "TT_Brazier");
-            map.AddObject(new Vector2(3624.281f, 3730.965f), -100.4387f, new Vector3(0.0f, 88.8889f, 0.0f), -33.3334f, 66.6667f, "LevelProp_TT_Chains_Bot_Lane", "TT_Chains_Bot_Lane");
-            map.AddObject(new Vector2(3778.364f, 7573.525f), -496.0713f, new Vector3(0.0f, -233.3334f, 0.0f), -333.3333f, 277.7778f, "LevelProp_TT_Chains_Order_Base", "TT_Chains_Order_Base");
-            map.AddObject(new Vector2(11636.06f, 7618.667f), -551.6268f, new Vector3(0.0f, 200f, 0.0f), -388.8889f, 33.3334f, "LevelProp_TT_Chains_Xaos_Base", "TT_Chains_Xaos_Base");
-            map.AddObject(new Vector2(759.1779f, 4740.938f), 507.9883f, new Vector3(0.0f, -155.5555f, 0.0f), 44.4445f, 222.2222f, "LevelProp_TT_Chains_Order_Periph", "TT_Chains_Order_Periph");
-            map.AddObject(new Vector2(3000.0f, 7289.682f), 19.51249f, new Vector3(0.0f, 0.0f, 0.0f), 144.4445f, 0.0f, "LevelProp_TT_Nexus_Gears", "TT_Nexus_Gears");
-            map.AddObject(new Vector2(12436.4775f, 7366.5859f), -124.9320f, new Vector3(180.0f, -44.4445f, 0.0f), 122.2222f, -122.2222f, "LevelProp_TT_Nexus_Gears1", "TT_Nexus_Gears");
-            map.AddObject(new Vector2(14169.09f, 7916.989f), 178.1922f, new Vector3(150f, 22.2223f, 0.0f), 33.3333f, -66.6667f, "LevelProp_TT_Shopkeeper1", "TT_Shopkeeper");
-            map.AddObject(new Vector2(1340.8141f, 7996.8691f), 126.2980f, new Vector3(208f, -66.6667f, 0.0f), 22.2223f, -55.5556f, "LevelProp_TT_Shopkeeper", "TT_Shopkeeper");
-            map.AddObject(new Vector2(7706.3052f, 6720.3926f), -124.9320f, new Vector3(0.0f, 0.0f, 0.0f), 0.0f, 0.0f, "LevelProp_TT_Speedshrine_Gears", "TT_Speedshrine_Gears");
+            map.AddLevelProp("LevelProp_TT_Brazier1", "TT_Brazier", new Vector2(1360.9241f, 5072.1309f), 291.2142f, new Vector3(134.0f, 11.1111f, 0.0f), new Vector3(288.8889f, 0.0f, -22.2222f), Vector3.One);
+            map.AddLevelProp("LevelProp_TT_Brazier2", "TT_Brazier", new Vector2(423.5712f, 6529.0327f), 385.9983f, new Vector3(0.0f, -33.3334f, 0.0f), new Vector3(277.7778f, 0.0f, -11.1111f), Vector3.One);
+            map.AddLevelProp("LevelProp_TT_Brazier3", "TT_Brazier", new Vector2(399.4241f, 8021.057f), 692.2211f, new Vector3(0.0f, -22.2222f, 0.0f), new Vector3(300f, 0.0f, 0.0f), Vector3.One);
+            map.AddLevelProp("LevelProp_TT_Brazier4", "TT_Brazier", new Vector2(1314.294f, 9495.576f), 582.8416f, new Vector3(48.0f, -33.3334f, 0.0f), new Vector3(277.7778f, 0.0f, 22.2223f), Vector3.One);
+            map.AddLevelProp("LevelProp_TT_Brazier5", "TT_Brazier", new Vector2(14080.0f, 9530.3379f), 305.0638f, new Vector3(120.0f, 11.1111f, 0.0f), new Vector3(277.7778f, 0.0f, 0.0f), Vector3.One);
+            map.AddLevelProp("LevelProp_TT_Brazier6", "TT_Brazier", new Vector2(14990.46f, 8053.91f), 675.8145f, new Vector3(0.0f, -22.2222f, 0.0f), new Vector3(266.6666f, 0.0f, -11.1111f), Vector3.One);
+            map.AddLevelProp("LevelProp_TT_Brazier7", "TT_Brazier", new Vector2(15016.35f, 6532.84f), 664.7033f, new Vector3(0.0f, -11.1111f, 0.0f), new Vector3(255.5555f, 0.0f, -11.1111f), Vector3.One);
+            map.AddLevelProp("LevelProp_TT_Brazier8", "TT_Brazier", new Vector2(14102.99f, 5098.367f), 580.504f, new Vector3(36.0f, 0.0f, 0.0f), new Vector3(244.4445f, 0.0f, 11.1111f), Vector3.One);
+            map.AddLevelProp("LevelProp_TT_Chains_Bot_Lane", "TT_Chains_Bot_Lane", new Vector2(3624.281f, 3730.965f), -100.4387f, new Vector3(0.0f, 88.8889f, 0.0f), new Vector3(-33.3334f, 0.0f, 66.6667f), Vector3.One);
+            map.AddLevelProp("LevelProp_TT_Chains_Order_Base", "TT_Chains_Order_Base", new Vector2(3778.364f, 7573.525f), -496.0713f, new Vector3(0.0f, -233.3334f, 0.0f), new Vector3(-333.3333f, 0.0f, 277.7778f), Vector3.One);
+            map.AddLevelProp("LevelProp_TT_Chains_Xaos_Base", "TT_Chains_Xaos_Base", new Vector2(11636.06f, 7618.667f), -551.6268f, new Vector3(0.0f, 200f, 0.0f), new Vector3(-388.8889f, 0.0f, 33.3334f), Vector3.One);
+            map.AddLevelProp("LevelProp_TT_Chains_Order_Periph", "TT_Chains_Order_Periph", new Vector2(759.1779f, 4740.938f), 507.9883f, new Vector3(0.0f, -155.5555f, 0.0f), new Vector3(44.4445f, 0.0f, 222.2222f), Vector3.One);
+            map.AddLevelProp("LevelProp_TT_Nexus_Gears", "TT_Nexus_Gears", new Vector2(3000.0f, 7289.682f), 19.51249f, new Vector3(0.0f, 0.0f, 0.0f), new Vector3(144.4445f, 0.0f, 0.0f), Vector3.One);
+            map.AddLevelProp("LevelProp_TT_Nexus_Gears1", "TT_Nexus_Gears", new Vector2(12436.4775f, 7366.5859f), -124.9320f, new Vector3(180.0f, -44.4445f, 0.0f), new Vector3(122.2222f, 0.0f, -122.2222f), Vector3.One);
+            map.AddLevelProp("LevelProp_TT_Shopkeeper1", "TT_Shopkeeper", new Vector2(14169.09f, 7916.989f), 178.1922f, new Vector3(150f, 22.2223f, 0.0f), new Vector3(33.3333f, 0.0f, -66.6667f), Vector3.One);
+            map.AddLevelProp("LevelProp_TT_Shopkeeper", "TT_Shopkeeper", new Vector2(1340.8141f, 7996.8691f), 126.2980f, new Vector3(208f, -66.6667f, 0.0f), new Vector3(22.2223f, 0.0f, -55.5556f), Vector3.One);
+            map.AddLevelProp("LevelProp_TT_Speedshrine_Gears", "TT_Speedshrine_Gears", new Vector2(7706.3052f, 6720.3926f), -124.9320f, new Vector3(0.0f, 0.0f, 0.0f), new Vector3(0.0f, 0.0f, 0.0f), Vector3.One);
+        }
+        public void OnMatchStart()
+        {
+
         }
 
         //This function gets executed every server tick

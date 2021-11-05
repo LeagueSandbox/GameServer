@@ -17,15 +17,16 @@ namespace MapScripts
     {
         public bool HasInnerTurrets { get; set; } = true;
         public bool EnableBuildingProtection { get; set; } = true;
+        public bool DoesntHaveLanes { get; set; } = false;
 
         //General Map variable
         private IMap _map;
 
         //Stuff about minions
         public bool SpawnEnabled { get; set; }
-        public long FirstSpawnTime { get; set; } = 90 * 1000;
-        public long NextSpawnTime { get; set; } = 90 * 1000;
-        public long SpawnInterval { get; set; } = 30 * 1000;
+        public long FirstSpawnTime { get; set; } = 10 * 1000;
+        public long NextSpawnTime { get; set; } = 10 * 1000;
+        public long SpawnInterval { get; set; } = 10 * 1000;
         public bool MinionPathingOverride { get; set; } = true;
 
         //General things that will affect players globaly, such as default gold per-second, Starting gold....
@@ -70,7 +71,20 @@ namespace MapScripts
             return returnType;
         }
 
-        //List of each turret model present in this map, being organized between team and tower type
+        //Nexus models
+        //Nexus and Inhibitor model changes dont seem to take effect in-game, has to be investigated.
+        public Dictionary<TeamId, string> NexusModels { get; set; } = new Dictionary<TeamId, string>
+        {
+            {TeamId.TEAM_BLUE, "OrderNexus" },
+            {TeamId.TEAM_PURPLE, "ChaosNexus" }
+        };
+        //Inhib models
+        public Dictionary<TeamId, string> InhibitorModels { get; set; } = new Dictionary<TeamId, string>
+        {
+            {TeamId.TEAM_BLUE, "OrderInhibitor" },
+            {TeamId.TEAM_PURPLE, "ChaosInhibitor" }
+        };
+        //Tower Models
         public Dictionary<TeamId, Dictionary<TurretType, string>> TowerModels { get; set; } = new Dictionary<TeamId, Dictionary<TurretType, string>>
         {
             {TeamId.TEAM_BLUE, new Dictionary<TurretType, string>
@@ -256,12 +270,15 @@ namespace MapScripts
             map.AddAnnouncement(FirstSpawnTime, Announces.MINIONS_HAVE_SPAWNED2, false); // Minions have spawned [2] (90 * 1000)
 
             //Map props
-            map.AddObject(new Vector2(12465.0f, 14422.257f), 101.0f, new Vector3(0.0f, 0.0f, 0.0f), 0.0f, 0.0f, "LevelProp_Yonkey", "Yonkey");
-            map.AddObject(new Vector2(-76.0f, 1769.1589f), 94.0f, new Vector3(0.0f, 0.0f, 0.0f), 0.0f, 0.0f, "LevelProp_Yonkey1", "Yonkey");
-            map.AddObject(new Vector2(13374.17f, 14245.673f), 194.9741f, new Vector3(224.0f, 33.33f, 0.0f), 0.0f, -44.44f, "LevelProp_ShopMale", "ShopMale");
-            map.AddObject(new Vector2(-99.5613f, 855.6632f), 191.4039f, new Vector3(158.0f, 0.0f, 0.0f), 0.0f, 0.0f, "LevelProp_ShopMale1", "ShopMale");
+            map.AddLevelProp("LevelProp_Yonkey", "Yonkey", new Vector2(12465.0f, 14422.257f), 101.0f, new Vector3(0.0f, 0.0f, 0.0f), new Vector3(0.0f, 0.0f, 0.0f), Vector3.One);
+            map.AddLevelProp("LevelProp_Yonkey1", "Yonkey", new Vector2(-76.0f, 1769.1589f), 94.0f, new Vector3(0.0f, 0.0f, 0.0f), new Vector3(0.0f, 0.0f, 0.0f), Vector3.One);
+            map.AddLevelProp("LevelProp_ShopMale", "ShopMale", new Vector2(13374.17f, 14245.673f), 194.9741f, new Vector3(224.0f, 33.33f, 0.0f), new Vector3(0.0f, 0.0f, -44.44f), Vector3.One);
+            map.AddLevelProp("LevelProp_ShopMale1", "ShopMale", new Vector2(-99.5613f, 855.6632f), 191.4039f, new Vector3(158.0f, 0.0f, 0.0f), new Vector3(0.0f, 0.0f, 0.0f), Vector3.One);
         }
+        public void OnMatchStart()
+        {
 
+        }
         //This function gets executed every server tick
         public void Update(float diff)
         {

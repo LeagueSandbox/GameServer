@@ -9,6 +9,8 @@ using GameServerCore.NetInfo;
 using GameServerCore.Enums;
 using GameServerCore.Packets.Enums;
 using GameServerCore.Packets.PacketDefinitions.Requests;
+using LeaguePackets.Game;
+using LeaguePackets;
 
 namespace GameServerCore.Packets.Interfaces
 {
@@ -44,9 +46,10 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="gold">Amount of gold the Champion gained for the kill.</param>
         void NotifyAddGold(IChampion c, IAttackableUnit died, float gold);
         /// <summary>
-        /// Sends a packet to the specified team that a part of the map has changed. Known to be used in for initializing turret vision.
+        /// Sends a packet to the specified team that a part of the map has changed. Known to be used in League for initializing turret vision and collision.
         /// </summary>
-        /// <param name="newFogId">NetID of the owner of the region.</param>
+        /// <param name="unitNetId">NetID of the unit owning the region.</param>
+        /// <param name="bubbleNetId">NetID of the unit which owns the vision for this region. Functionality unknown.</param>
         /// <param name="team">Team to send the packet to.</param>
         /// <param name="position">2D top-down position of the region.</param>
         /// <param name="time">Amount of time the region lasts.</param>
@@ -60,7 +63,8 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="addsize">Number of units to add to the region's radius.</param>
         /// <param name="grantVis">Whether or not the region should give the region's team vision of enemy units.</param>
         /// <param name="stealthVis">Whether or not invisible units should be visible in the region.</param>
-        void NotifyAddRegion(uint newFogId, TeamId team, Vector2 position, float time, float radius = 0, int regionType = 0, ClientInfo clientInfo = null, IGameObject obj = null, float collisionRadius = 0, float grassRadius = 0, float sizemult = 1.0f, float addsize = 0, bool grantVis = true, bool stealthVis = false);
+        /// TODO: Implement a Region class so we can easily grab these parameters instead of listing them all in the function.
+        void NotifyAddRegion(uint unitNetId, uint bubbleNetId, TeamId team, Vector2 position, float time, float radius = 0, int regionType = 0, ClientInfo clientInfo = null, IGameObject obj = null, float collisionRadius = 0, float grassRadius = 0, float sizemult = 1.0f, float addsize = 0, bool grantVis = true, bool stealthVis = false);
         /// <summary>
         /// Sends a packet to all players that have vision of the specified Azir turret that it has spawned.
         /// </summary>
@@ -254,8 +258,9 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="isChampion">Whether or not the GameObject entering vision is a Champion.</param>
         /// <param name="useTeleportID">Whether or not to teleport the object to its current position.</param>
         /// <param name="ignoreVision">Optionally ignore vision checks when sending this packet.</param>
-        /// TODO: Full implementation (items & shields)
-        void NotifyEnterVisibilityClient(IGameObject o, int userId = 0, bool isChampion = false, bool useTeleportID = false, bool ignoreVision = false);
+        /// <param name="packets">Takes in a list of packets to send alongside this vision packet.</param>
+        /// TODO: Incomplete implementation.
+        void NotifyEnterVisibilityClient(IGameObject o, int userId = 0, bool isChampion = false, bool useTeleportID = false, bool ignoreVision = false, List<GamePacket> packets = null);
         /// <summary>
         /// Sends a packet to all players with vision of the specified unit detailing that the unit has begun facing the specified direction.
         /// </summary>
@@ -350,11 +355,11 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="userId">User to send the packet to (if applicable).</param>
         void NotifyLeaveVisibilityClient(IGameObject o, TeamId team, int userId = 0);
         /// <summary>
-        /// Sends a packet to the specified player detailing that the specified GameObject of type LevelProp has spawned.
+        /// Sends a packet to either all players or the specified player detailing that the specified GameObject of type LevelProp has spawned.
         /// </summary>
-        /// <param name="userId">User to send the packet to.</param>
         /// <param name="levelProp">LevelProp that has spawned.</param>
-        void NotifyLevelPropSpawn(int userId, ILevelProp levelProp);
+        /// <param name="userId">User to send the packet to.</param>
+        void NotifySpawnLevelPropS2C(ILevelProp levelProp, int userId = 0);
         /// <summary>
         /// Sends a packet to the specified player detailing the load screen information.
         /// </summary>
@@ -374,10 +379,12 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="player">Player information to send.</param>
         void NotifyLoadScreenPlayerName(int userId, Tuple<uint, ClientInfo> player);
         /// <summary>
-        /// Sends a packet to all players who have vision of the specified Minion detailing that it has spawned.
+        /// Optionally sends a packet to all players who have vision of the specified Minion detailing that it has spawned.
         /// </summary>
+        /// <returns>A new and fully setup SpawnMinionS2C packet.</returns>
         /// <param name="minion">Minion that is spawning.</param>
-        void NotifyMinionSpawned(IMinion m);
+        /// <param name="send">Whether or not to send the created packet.</param>
+        SpawnMinionS2C NotifyMinionSpawned(IMinion minion, bool send = true);
         /// <summary>
         /// Sends a packet to either all players with vision (given the projectile is networked to the client) of the projectile, or all players. The packet contains all details regarding the specified projectile's creation.
         /// </summary>
@@ -584,6 +591,11 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="remaining">Number of stacks of the item left (0 if not applicable).</param>
         void NotifyRemoveItem(IObjAiBase ai, byte slot, byte remaining);
         /// <summary>
+        /// Sends a packet to all players detailing that the specified region was removed.
+        /// </summary>
+        /// <param name="region">Region to remove.</param>
+        void NotifyRemoveRegion(IRegion region);
+        /// <summary>
         /// Sends a packet to the specified player detailing that the highlight of the specified GameObject was removed.
         /// </summary>
         /// <param name="userId">User to send the packet to.</param>
@@ -611,6 +623,12 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="userId">User to send the packet to.</param>
         /// <param name="clientInfo">Information about the client which had their hero created.</param>
         void NotifyS2C_CreateHero(int userId, ClientInfo clientInfo);
+        /// <summary>
+        /// Sends a packet to either all players or the specified player detailing that the specified LaneTurret has spawned.
+        /// </summary>
+        /// <param name="turret">LaneTurret that spawned.</param>
+        /// <param name="userId">User to send the packet to.</param>
+        void NotifyS2C_CreateTurret(ILaneTurret turret, int userId = 0);
         /// <summary>
         /// Sends a packet to all players detailing that the specified unit has been killed by the specified killer.
         /// </summary>
@@ -740,7 +758,9 @@ namespace GameServerCore.Packets.Interfaces
         /// Calls for the appropriate spawn packet to be sent given the specified GameObject's type and calls for a vision packet to be sent for the specified GameObject.
         /// </summary>
         /// <param name="o">GameObject that has spawned.</param>
-        void NotifySpawn(IGameObject o);
+        /// <param name="userId">UserId to send the packet to.</param>
+        /// <param name="doVision">Whether or not to package the packets into a vision packet.</param>
+        void NotifySpawn(IGameObject o, int userId = 0, bool doVision = true);
         /// <summary>
         /// Sends a packet to the specified player detailing that the spawning (of champions & buildings) that occurs at the start of the game has ended.
         /// </summary>
@@ -813,12 +833,6 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="speed">Amount of time that should pass before tint is fully applied.</param>
         /// <param name="color">Color of the tint.</param>
         void NotifyTint(TeamId team, bool enable, float speed, Content.Color color);
-        /// <summary>
-        /// Sends a packet to the specified player detailing that the specified LaneTurret has spawned.
-        /// </summary>
-        /// <param name="userId">User to send the packet to.</param>
-        /// <param name="turret">LaneTurret that spawned.</param>
-        void NotifyTurretSpawn(int userId, ILaneTurret turret);
         /// <summary>
         /// Sends a packet to all players detailing that the specified event has occurred.
         /// </summary>
@@ -912,7 +926,7 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="backDistance">Optional unknown parameter.</param>
         /// <param name="travelTime">Optional total time the dash will follow the GameObject before stopping or reaching the Target.</param>
         /// TODO: Implement ForceMovement class which houses these parameters, then have that as the only parameter to this function (and other Dash-based functions).
-        public void NotifyWaypointListWithSpeed
+        void NotifyWaypointListWithSpeed
         (
             IAttackableUnit u,
             float dashSpeed,

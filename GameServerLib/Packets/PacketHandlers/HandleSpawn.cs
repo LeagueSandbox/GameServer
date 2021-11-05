@@ -30,7 +30,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 
         public override bool HandlePacket(int userId, SpawnRequest req)
         {
-             _game.PacketNotifier.NotifyS2C_StartSpawn(userId);
+            _game.PacketNotifier.NotifyS2C_StartSpawn(userId);
             _logger.Debug("Spawning map");
 
             var peerInfo = _playerManager.GetPeerInfo(userId);
@@ -68,53 +68,16 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                 {
                     if (champion.IsVisibleByTeam(peerInfo.Champion.Team))
                     {
-                        _game.PacketNotifier.NotifyEnterVisibilityClient(champion, userId, true, true, true);
+                        _game.PacketNotifier.NotifyEnterVisibilityClient(champion, userId, false, false, true);
                     }
                 }
                 else if (kv.Value is ILaneTurret turret)
                 {
-                     _game.PacketNotifier.NotifyTurretSpawn(userId, turret);
-
-                    // TODO: Implemnent a Region class so we can have a centralized (and cleaner) way of making new regions.
-                    // Turret Vision (values based on packet data, placeholders)
-                    _game.PacketNotifier.NotifyAddRegion
-                    (
-                        _networkIdManager.GetNewNetId(), turret.Team, turret.Position,
-                        25000.0f, 800.0f, -2, 
-                        null, turret, turret.CharData.PathfindingCollisionRadius,
-                        130.0f, 1.0f, 0,
-                        true, true
-                    );
-
-                    // To suppress game HP-related errors for enemy turrets out of vision
-                    _game.PacketNotifier.NotifyEnterLocalVisibilityClient(turret, userId, ignoreVision: true);
-
-                    foreach (var item in turret.Inventory)
-                    {
-                        if (item == null)
-                        {
-                            continue;
-                        }
-
-                        _game.PacketNotifier.NotifyBuyItem((int)turret.NetId, turret, item as IItem);
-                    }
+                    _game.PacketNotifier.NotifyS2C_CreateTurret(turret, userId);
                 }
                 else if (kv.Value is ILevelProp levelProp)
                 {
-                     _game.PacketNotifier.NotifyLevelPropSpawn(userId, levelProp);
-                }
-                else if (kv.Value is IInhibitor || kv.Value is INexus)
-                {
-                    var inhibtor = (IAttackableUnit)kv.Value;
-                     _game.PacketNotifier.NotifyStaticObjectSpawn(userId, inhibtor.NetId);
-                    _game.PacketNotifier.NotifyEnterLocalVisibilityClient(userId, inhibtor.NetId);
-                }
-                else if (kv.Value is ISpellMissile missile)
-                {
-                    if (missile.IsVisibleByTeam(peerInfo.Champion.Team))
-                    {
-                         _game.PacketNotifier.NotifyMissileReplication(missile);
-                    }
+                    _game.PacketNotifier.NotifySpawnLevelPropS2C(levelProp, userId);
                 }
                 else
                 {
@@ -138,7 +101,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                 _game.PacketNotifier.NotifyEnterLocalVisibilityClient(userId, 0xffa6170e);
             }
 
-             _game.PacketNotifier.NotifySpawnEnd(userId);
+            _game.PacketNotifier.NotifySpawnEnd(userId);
             return true;
         }
     }

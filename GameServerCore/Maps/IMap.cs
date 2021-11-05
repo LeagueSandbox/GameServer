@@ -68,6 +68,7 @@ namespace GameServerCore.Maps
         /// <param name="protectionDependsOfAll"></param>
         /// <param name="protectedBy"></param>
         void SpawnTurret(ILaneTurret turret, bool hasProtection, bool protectionDependsOfAll = false, IAttackableUnit[] protectedBy = null);
+        void SpawnCapturePoints();
         IInhibitor GetInhibitorById(uint id);
         bool AllInhibitorsDestroyedFromTeam(TeamId team);
         bool IsMinionSpawnEnabled();
@@ -79,7 +80,7 @@ namespace GameServerCore.Maps
         /// <param name="minionNo"></param>
         /// <param name="barracksName"></param>
         /// <param name="waypoints"></param>
-        void SpawnMinion(List<MinionSpawnType> list, int minionNo, string barracksName, List<Vector2> waypoints);
+        void SpawnLaneMinion(List<MinionSpawnType> list, int minionNo, string barracksName, List<Vector2> waypoints);
         /// <summary>
         /// Adds an annoucement
         /// </summary>
@@ -99,7 +100,7 @@ namespace GameServerCore.Maps
         /// <param name="model"></param>
         /// <param name="skin"></param>
         /// <param name="NetId"></param>
-        void AddObject(Vector2 position, float height, Vector3 direction, float unk1, float unk2, string name, string model, byte skin = 0, uint NetId = 0);
+        void AddLevelProp(string name, string model, Vector2 position, float height, Vector3 direction, Vector3 posOffset, Vector3 scale, int skinId = 0, byte skillLevel = 0, byte rank = 0, byte type = 0, uint netId = 0, byte netNodeId = 0);
         /// <summary>
         /// Sets up the surrender functionality
         /// </summary>

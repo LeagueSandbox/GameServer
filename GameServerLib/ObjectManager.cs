@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using GameServerCore;
+using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Domain.GameObjects.Spell.Missile;
 using GameServerCore.Enums;
@@ -23,6 +24,8 @@ namespace LeagueSandbox.GameServer
 
         // Dictionaries of GameObjects.
         private Dictionary<uint, IGameObject> _objects;
+        // For the initial spawning (networking) of newly added objects.
+        private Dictionary<uint, IGameObject> _queuedObjects;
         private Dictionary<uint, IChampion> _champions;
         private Dictionary<uint, IBaseTurret> _turrets;
         private Dictionary<uint, IInhibitor> _inhibitors;
@@ -48,6 +51,7 @@ namespace LeagueSandbox.GameServer
         {
             _game = game;
             _objects = new Dictionary<uint, IGameObject>();
+            _queuedObjects = new Dictionary<uint, IGameObject>();
             _turrets = new Dictionary<uint, IBaseTurret>();
             _inhibitors = new Dictionary<uint, IInhibitor>();
             _champions = new Dictionary<uint, IChampion>();
@@ -74,6 +78,49 @@ namespace LeagueSandbox.GameServer
                 {
                     RemoveObject(obj);
                     continue;
+                }
+
+                if (_queuedObjects.ContainsKey(obj.NetId))
+                {
+                    bool doVis = true;
+
+                    if (obj is ILaneTurret turret)
+                    {
+                        _game.PacketNotifier.NotifySpawn(turret);
+
+                        // TODO: Implemnent a Region class so we can have a centralized (and cleaner) way of making new regions.
+                        // Turret Vision (values based on packet data, placeholders)
+                        //_game.PacketNotifier.NotifyAddRegion
+                        //(
+                        //    _game.NetworkIdManager.GetNewNetId(), _game.NetworkIdManager.GetNewNetId(), turret.Team, turret.Position,
+                        //    25000.0f, 800.0f, -2,
+                        //    null, turret, turret.CharData.PathfindingCollisionRadius,
+                        //    130.0f, 1.0f, 0,
+                        //    true, true
+                        //);
+
+                        foreach (var item in turret.Inventory)
+                        {
+                            if (item == null)
+                            {
+                                continue;
+                            }
+
+                            _game.PacketNotifier.NotifyBuyItem((int)turret.NetId, turret, item as IItem);
+                        }
+
+                        _queuedObjects.Remove(obj.NetId);
+
+                        return;
+                    }
+                    else if (obj is ILevelProp || obj is ISpellMissile)
+                    {
+                        doVis = false;
+                    }
+
+                    _game.PacketNotifier.NotifySpawn(obj, 0, doVis);
+
+                    _queuedObjects.Remove(obj.NetId);
                 }
 
                 obj.Update(diff);
@@ -136,7 +183,7 @@ namespace LeagueSandbox.GameServer
                 var u = obj as IAttackableUnit;
                 foreach (var team in Teams)
                 {
-                    if (u.Team == team || team == TeamId.TEAM_NEUTRAL)
+                    if (u.Team == team)
                         continue;
 
                     var visionUnitsTeam = GetVisionUnits(u.Team);
@@ -226,6 +273,10 @@ namespace LeagueSandbox.GameServer
             lock (_objectsLock)
             {
                 _objects.Add(o.NetId, o);
+                if (!(o is IChampion || o is IParticle))
+                {
+                    _queuedObjects.Add(o.NetId, o);
+                }
             }
 
             o.OnAdded();
@@ -240,6 +291,10 @@ namespace LeagueSandbox.GameServer
             lock (_objectsLock)
             {
                 _objects.Remove(o.NetId);
+                if (_queuedObjects.ContainsKey(o.NetId))
+                {
+                    _queuedObjects.Remove(o.NetId);
+                }
             }
 
             o.OnRemoved();

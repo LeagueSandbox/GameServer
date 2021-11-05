@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Numerics;
 using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
@@ -13,25 +14,25 @@ using LeagueSandbox.GameServer.Maps;
 
 namespace MapScripts
 {
-    public class Map12 : IMapScript
+    public class Map8 : IMapScript
     {
         public bool HasInnerTurrets { get; set; } = false;
         public bool EnableBuildingProtection { get; set; } = true;
-        public bool DoesntHaveLanes { get; set; } = false;
+        public bool DoesntHaveLanes { get; set; } = true;
 
         //General Map variable
         private IMap _map;
 
         //Stuff about minions
         public bool SpawnEnabled { get; set; }
-        public long FirstSpawnTime { get; set; } = 45 * 1000;
-        public long NextSpawnTime { get; set; } = 45 * 1000;
-        public long SpawnInterval { get; set; } = 30 * 1000;
+        public long FirstSpawnTime { get; set; } = 10 * 1000;
+        public long NextSpawnTime { get; set; } = 10 * 1000;
+        public long SpawnInterval { get; set; } = 10 * 1000;
         public bool MinionPathingOverride { get; set; } = false;
 
         //General things that will affect players globaly, such as default gold per-second, Starting gold....
-        public float GoldPerSecond { get; set; } = 5.0f;
-        public float StartingGold { get; set; } = 1375.0f;
+        public float GoldPerSecond { get; set; } = 1.9f;
+        public float StartingGold { get; set; } = 825.0f;
         public bool HasFirstBloodHappened { get; set; } = false;
         public bool IsKillGoldRewardReductionActive { get; set; } = true;
         public int BluePillId { get; set; } = 2001;
@@ -40,57 +41,23 @@ namespace MapScripts
         //Tower type enumeration might vary slightly from map to map, so we set that up here
         public TurretType GetTurretType(int trueIndex, LaneID lane, TeamId teamId)
         {
-            TurretType returnType = TurretType.FOUNTAIN_TURRET;
-
-            switch (trueIndex)
-            {
-                case 3:
-                case 4:
-                case 9:
-                case 10:
-                    returnType = TurretType.NEXUS_TURRET;
-                    break;
-                case 2:
-                case 7:
-                    returnType = TurretType.INHIBITOR_TURRET;
-                    break;
-                case 1:
-                case 8:
-                    returnType = TurretType.OUTER_TURRET;
-                    break;
-            }
-
-            return returnType;
+            return TurretType.NEXUS_TURRET;
         }
 
         //Nexus models
-        public Dictionary<TeamId, string> NexusModels { get; set; } = new Dictionary<TeamId, string>
-        {
-            {TeamId.TEAM_BLUE, "ARAMOrderNexus" },
-            {TeamId.TEAM_PURPLE, "ARAMChaosNexus" }
-        };
+        public Dictionary<TeamId, string> NexusModels { get; set; } = new Dictionary<TeamId, string>();
         //Inhib models
-        public Dictionary<TeamId, string> InhibitorModels { get; set; } = new Dictionary<TeamId, string>
-        {
-            {TeamId.TEAM_BLUE, "OrderInhibitor" },
-            {TeamId.TEAM_PURPLE, "ChaosInhibitor" }
-        };
+        public Dictionary<TeamId, string> InhibitorModels { get; set; } = new Dictionary<TeamId, string>();
         //Tower Models
         public Dictionary<TeamId, Dictionary<TurretType, string>> TowerModels { get; set; } = new Dictionary<TeamId, Dictionary<TurretType, string>>
         {
             {TeamId.TEAM_BLUE, new Dictionary<TurretType, string>
             {
-                {TurretType.FOUNTAIN_TURRET, "HA_AP_OrderShrineTurret" },
-                {TurretType.NEXUS_TURRET, "HA_AP_OrderTurret" },
-                {TurretType.INHIBITOR_TURRET, "HA_AP_OrderTurret2" },
-                {TurretType.OUTER_TURRET, "HA_AP_OrderTurret3" },
+                {TurretType.FOUNTAIN_TURRET, "OdinOrderTurretShrine" },
             } },
             {TeamId.TEAM_PURPLE, new Dictionary<TurretType, string>
             {
-                {TurretType.FOUNTAIN_TURRET, "HA_AP_ChaosTurretShrine" },
-                {TurretType.NEXUS_TURRET, "HA_AP_ChaosTurret" },
-                {TurretType.INHIBITOR_TURRET, "HA_AP_ChaosTurret2" },
-                {TurretType.OUTER_TURRET, "HA_AP_ChaosTurret3" },
+                {TurretType.FOUNTAIN_TURRET, "OdinChaosTurretShrine" },
             } }
         };
 
@@ -103,7 +70,9 @@ namespace MapScripts
             { TurretType.NEXUS_TURRET, new[] { 1501, 1502, 1503, 1505 } }
         };
 
+        //List of every path minions will take, separated by team and lane
         public Dictionary<LaneID, List<Vector2>> MinionPaths { get; set; }
+
         //List of every wave type
         public Dictionary<string, List<MinionSpawnType>> MinionWaveTypes = new Dictionary<string, List<MinionSpawnType>>
         { {"RegularMinionWave", new List<MinionSpawnType>
@@ -206,27 +175,32 @@ namespace MapScripts
             SpawnEnabled = map.IsMinionSpawnEnabled();
             map.AddSurrender(1200000.0f, 300000.0f, 30.0f);
 
-            //Due to riot's questionable map-naming scheme some towers are missplaced into other lanes during outomated setup, so we have to manually fix them.
-            map.ChangeTowerOnMapList("Turret_T2_L_04_A", TeamId.TEAM_PURPLE, LaneID.TOP, LaneID.MIDDLE);
-            map.ChangeTowerOnMapList("Turret_T2_L_01_A", TeamId.TEAM_PURPLE, LaneID.TOP, LaneID.MIDDLE);
-            map.ChangeTowerOnMapList("Turret_T2_L_02_A", TeamId.TEAM_PURPLE, LaneID.TOP, LaneID.MIDDLE);
-            map.ChangeTowerOnMapList("Turret_T2_L_03_A", TeamId.TEAM_PURPLE, LaneID.TOP, LaneID.MIDDLE);
-
             // Announcer events
             map.AddAnnouncement(FirstSpawnTime - 30 * 1000, Announces.THIRY_SECONDS_TO_MINIONS_SPAWN, true); // 30 seconds until minions spawn
             map.AddAnnouncement(FirstSpawnTime, Announces.MINIONS_HAVE_SPAWNED, false); // Minions have spawned (90 * 1000)
             map.AddAnnouncement(FirstSpawnTime, Announces.MINIONS_HAVE_SPAWNED2, false); // Minions have spawned [2] (90 * 1000)
 
-            //Map props
-            map.AddLevelProp("LevelProp_HA_AP_ShpSouth", "HA_AP_ShpSouth", new Vector2(454.5473f, 1901.90369f), -208.8816f, new Vector3(-40.0f, 0.0f, 0.0f), new Vector3(0.0f, 0.0f, 0.0f), Vector3.One);
-            //TODO: FIX THIS FLOATING LANTERN POSITION
-            map.AddLevelProp("LevelProp_HA_AP_ShpNorth.sco", "HA_AP_ShpNorth", new Vector2(11022.8477f, 12122.8457f), 106.7434f, new Vector3(0.0f, 0.0f, 0.0f), new Vector3(0.0f, 0.0f, 0.0f), Vector3.One);
-            map.AddLevelProp("LevelProp_HA_AP_Viking", "HA_AP_Viking", new Vector2(491.8021f, 1949.29626f), 111.1429f, new Vector3(120.0f, 0.0f, 0.0f), new Vector3(0.0f, 0.0f, -44.44f), Vector3.One);
-            map.AddLevelProp("LevelProp_HA_AP_Hermit", "HA_AP_Hermit", new Vector2(11129.8574f, 12007.2168f), -208.8816f, new Vector3(158.0f, 0.0f, 0.0f), new Vector3(0.0f, 0.0f, 0.0f), Vector3.One);
-            map.AddLevelProp("LevelProp_HA_AP_Hermit_Robot", "HA_AP_Hermit_Robot", new Vector2(11129.8574f, 12007.2168f), -208.8816f, new Vector3(158.0f, 0.0f, 0.0f), new Vector3(0.0f, 0.0f, 0.0f), Vector3.One);
+            map.AddLevelProp("LevelProp_Odin_Windmill_Gears", "Odin_Windmill_Gears", new Vector2(6946.143f, 11918.931f), -122.93308f, new Vector3(0.0f, 0.0f, 0.0f), new Vector3(11.1111f, 77.7777f, -122.2222f), Vector3.One, type: 2, netNodeId: 64);
+            map.AddLevelProp("LevelProp_Odin_Windmill_Propellers", "Odin_Windmill_Propellers", new Vector2(6922.032f, 11940.535f), -259.16052f, new Vector3(0.0f, 0.0f, 0.0f), new Vector3(-22.2222f, 0.0f, -111.1111f), Vector3.One, type: 2, netNodeId: 64);
+            map.AddLevelProp("LevelProp_Odin_Lifts_Buckets", "Odin_Lifts_Buckets", new Vector2(2123.782f, 8465.207f), -122.9331f, new Vector3(0.0f, 0.0f, 0.0f), new Vector3(188.8889f, 77.7777f, 444.4445f), Vector3.One, type: 2, netNodeId: 64);
+            map.AddLevelProp("LevelProp_Odin_Lifts_Crystal", "Odin_Lifts_Crystal", new Vector2(1578.0967f, 7505.5938f), -78.48851f, new Vector3(0.0f, 12.0f, 0.0f), new Vector3(-233.3335f, 100.0f, -544.4445f), Vector3.One, type: 2, netNodeId: 64);
+            map.AddLevelProp("LevelProp_OdinRockSaw02", "OdinRockSaw", new Vector2(5659.9004f, 1016.47925f), -11.821701f, new Vector3(0.0f, 40.0f, 0.0f), new Vector3(233.3334f, 133.3334f, -77.7778f), Vector3.One, type: 2, netNodeId: 64);
+            map.AddLevelProp("LevelProp_OdinRockSaw01", "OdinRockSaw", new Vector2(2543.822f, 1344.957f), -56.266106f, new Vector3(0.0f, 0.0f, 0.0f), new Vector3(-122.2222f, 111.1112f, -744.4445f), Vector3.One, type: 2, netNodeId: 64);
+            map.AddLevelProp("LevelProp_Odin_Drill", "Odin_Drill", new Vector2(11992.028f, 8547.805f), 343.7337f, new Vector3(0.0f, 244.0f, 0.0f), new Vector3(33.3333f, 311.1111f, 0.0f), Vector3.One, type: 2, netNodeId: 64);
+            map.AddLevelProp("LevelProp_Odin_SoG_Order", "Odin_SoG_Order", new Vector2(266.77225f, 3903.9998f), 139.9266f, new Vector3(0.0f, 0.0f, 0.0f), new Vector3(-288.8889f, 122.2222f, -188.8889f), Vector3.One, type: 2, netNodeId: 64);
+            map.AddLevelProp("LevelProp_OdinClaw", "OdinClaw", new Vector2(5187.914f, 2122.2627f), 261.546f, new Vector3(0.0f, 0.0f, 0.0f), new Vector3(422.2223f, 255.5555f, -200.0f), Vector3.One, type: 2, netNodeId: 64);
+            map.AddLevelProp("LevelProp_SwainBeam1", "SwainBeam", new Vector2(7207.073f, 1995.804f), 461.54602f, new Vector3(0.0f, 0.0f, 0.0f), new Vector3(-422.2222f, 355.5555f, -311.1111f), Vector3.One, type: 2, netNodeId: 64);
+            map.AddLevelProp("LevelProp_SwainBeam2", "SwainBeam", new Vector2(8142.406f, 2716.4258f), 639.324f, new Vector3(0.0f, 152.0f, 0.0f), new Vector3(-222.2222f, 444.4445f, -88.8889f), Vector3.One, type: 2, netNodeId: 64);
+            map.AddLevelProp("LevelProp_SwainBeam3", "SwainBeam", new Vector2(9885.076f, 3339.1853f), 350.435f, new Vector3(0.0f, 54.0f, 0.0f), new Vector3(144.4445f, 300.0f, -155.5555f), Vector3.One, type: 2, netNodeId: 64);
+            map.AddLevelProp("LevelProp_Odin_SoG_Chaos", "Odin_SoG_Chaos", new Vector2(13623.644f, 3884.6233f), 117.7046f, new Vector3(0.0f, 0.0f, 0.0f), new Vector3(288.8889f, 111.1112f, -211.1111f), Vector3.One, type: 2, netNodeId: 64);
+            map.AddLevelProp("LevelProp_OdinCrane", "OdinCrane", new Vector2(10287.527f, 10776.917f), -145.15509f, new Vector3(0.0f, 52.0f, 0.0f), new Vector3(-22.2222f, 66.6667f, 0.0f), Vector3.One, type: 2, netNodeId: 64);
+            map.AddLevelProp("LevelProp_OdinCrane1", "OdinCrane", new Vector2(9418.097f, -189.59952f), 12105.366f, new Vector3(0.0f, 118.0f, 0.0f), new Vector3(0.0f, 44.4445f, 0.0f), Vector3.One, type: 2, netNodeId: 64);
+            map.AddLevelProp("LevelProp_Odin_SOG_Order_Crystal", "Odin_SOG_Order_Crystal", new Vector2(1618.3121f, 4357.871f), 336.9458f, new Vector3(0.0f, 0.0f, 0.0f), new Vector3(-122.2222f, 277.7778f, -122.2222f), Vector3.One, type: 2, netNodeId: 64);
+            map.AddLevelProp("LevelProp_Odin_SOG_Chaos_Crystal", "Odin_SOG_Chaos_Crystal", new Vector2(12307.629f, 4535.6484f), 225.8346f, new Vector3(0.0f, 214.0f, 0.0f), new Vector3(144.4445f, 222.2222f, -33.3334f), Vector3.One, type: 2, netNodeId: 64);
         }
         public void OnMatchStart()
         {
+            _map.SpawnCapturePoints();
         }
         //This function gets executed every server tick
         public void Update(float diff)

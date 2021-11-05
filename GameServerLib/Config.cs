@@ -200,7 +200,7 @@ namespace LeagueSandbox.GameServer
                     // Inhibitors are dampeners for the enemy Nexus.
                     type = GameObjectTypes.ObjAnimated_BarracksDampener;
                 }
-                else if (Name.Contains("Turret"))
+                else if (Name.Contains("Turret") || Name.Contains("_Point"))
                 {
                     type = GameObjectTypes.ObjAIBase_Turret;
                 }

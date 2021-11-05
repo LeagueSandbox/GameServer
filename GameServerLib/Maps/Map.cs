@@ -63,6 +63,7 @@ namespace LeagueSandbox.GameServer.Maps
         private readonly Dictionary<TeamId, SurrenderHandler> _surrenders = new Dictionary<TeamId, SurrenderHandler>();
         public Dictionary<TeamId, Dictionary<LaneID, List<IInhibitor>>> _inhibitors { get; set; }
         public Dictionary<TeamId, Dictionary<LaneID, List<ILaneTurret>>> _turrets { get; set; }
+        public List<Tuple<IMinion, uint>> _capturePoints = new List<Tuple<IMinion, uint>>();
         public Dictionary<LaneID, List<Vector2>> BlueMinionPathing;
         public Dictionary<LaneID, List<Vector2>> PurpleMinionPathing;
 
@@ -170,27 +171,43 @@ namespace LeagueSandbox.GameServer.Maps
 
         public void LoadBuildings()
         {
-            _turrets = new Dictionary<TeamId, Dictionary<LaneID, List<ILaneTurret>>>
+            if (!MapScript.DoesntHaveLanes)
             {
-                { TeamId.TEAM_BLUE, new Dictionary<LaneID, List<ILaneTurret>>{{LaneID.TOP, new List<ILaneTurret>()}, {LaneID.MIDDLE, new List<ILaneTurret>()}, {LaneID.BOTTOM, new List<ILaneTurret>()} } },
-                { TeamId.TEAM_PURPLE, new Dictionary<LaneID, List<ILaneTurret>>{{LaneID.TOP, new List<ILaneTurret>()}, {LaneID.MIDDLE, new List<ILaneTurret>()}, {LaneID.BOTTOM, new List<ILaneTurret>()} }
-            }};
+                _turrets = new Dictionary<TeamId, Dictionary<LaneID, List<ILaneTurret>>>{
+                { TeamId.TEAM_BLUE, new Dictionary<LaneID, List<ILaneTurret>>{ { LaneID.NONE, new List<ILaneTurret>() },{ LaneID.TOP, new List<ILaneTurret>()}, {LaneID.MIDDLE, new List<ILaneTurret>()}, {LaneID.BOTTOM, new List<ILaneTurret>()} } },
+                { TeamId.TEAM_PURPLE, new Dictionary<LaneID, List<ILaneTurret>>{ { LaneID.NONE, new List<ILaneTurret>() }, { LaneID.TOP, new List<ILaneTurret>()}, {LaneID.MIDDLE, new List<ILaneTurret>()}, {LaneID.BOTTOM, new List<ILaneTurret>()} } },
+                { TeamId.TEAM_NEUTRAL, new Dictionary<LaneID, List<ILaneTurret>>{ { LaneID.NONE, new List<ILaneTurret>() }, { LaneID.TOP, new List<ILaneTurret>()}, {LaneID.MIDDLE, new List<ILaneTurret>()}, {LaneID.BOTTOM, new List<ILaneTurret>()} }}};
 
-            _inhibitors = new Dictionary<TeamId, Dictionary<LaneID, List<IInhibitor>>>
-            {
+                _inhibitors = new Dictionary<TeamId, Dictionary<LaneID, List<IInhibitor>>>{
                 { TeamId.TEAM_BLUE, new Dictionary<LaneID, List<IInhibitor>>{{LaneID.TOP, new List<IInhibitor>()}, {LaneID.MIDDLE, new List<IInhibitor>()}, {LaneID.BOTTOM, new List<IInhibitor>()} } },
-                { TeamId.TEAM_PURPLE, new Dictionary<LaneID, List<IInhibitor>>{{LaneID.TOP, new List<IInhibitor>()}, {LaneID.MIDDLE, new List<IInhibitor>()}, {LaneID.BOTTOM, new List<IInhibitor>()} }
-            }};
+                { TeamId.TEAM_PURPLE, new Dictionary<LaneID, List<IInhibitor>>{{LaneID.TOP, new List<IInhibitor>()}, {LaneID.MIDDLE, new List<IInhibitor>()}, {LaneID.BOTTOM, new List<IInhibitor>()} } },
+                { TeamId.TEAM_NEUTRAL, new Dictionary<LaneID, List<IInhibitor>>{{LaneID.TOP, new List<IInhibitor>()}, {LaneID.MIDDLE, new List<IInhibitor>()}, {LaneID.BOTTOM, new List<IInhibitor>()} }}};
 
-            BlueMinionPathing = new Dictionary<LaneID, List<Vector2>> { { LaneID.TOP, new List<Vector2>() }, { LaneID.MIDDLE, new List<Vector2>() }, { LaneID.BOTTOM, new List<Vector2>() } };
-            PurpleMinionPathing = new Dictionary<LaneID, List<Vector2>> { { LaneID.TOP, new List<Vector2>() }, { LaneID.MIDDLE, new List<Vector2>() }, { LaneID.BOTTOM, new List<Vector2>() } };
+                BlueMinionPathing = new Dictionary<LaneID, List<Vector2>> { { LaneID.TOP, new List<Vector2>() }, { LaneID.MIDDLE, new List<Vector2>() }, { LaneID.BOTTOM, new List<Vector2>() } };
+                PurpleMinionPathing = new Dictionary<LaneID, List<Vector2>> { { LaneID.TOP, new List<Vector2>() }, { LaneID.MIDDLE, new List<Vector2>() }, { LaneID.BOTTOM, new List<Vector2>() } };
+            }
+            else
+            {
+                _turrets = new Dictionary<TeamId, Dictionary<LaneID, List<ILaneTurret>>>{
+                { TeamId.TEAM_BLUE, new Dictionary<LaneID, List<ILaneTurret>>{{LaneID.NONE, new List<ILaneTurret>()}} },
+                { TeamId.TEAM_PURPLE, new Dictionary<LaneID, List<ILaneTurret>>{{LaneID.NONE, new List<ILaneTurret>()}} },
+                { TeamId.TEAM_NEUTRAL, new Dictionary<LaneID, List<ILaneTurret>>{{LaneID.NONE, new List<ILaneTurret>()} } } };
+
+                _inhibitors = new Dictionary<TeamId, Dictionary<LaneID, List<IInhibitor>>>{
+                { TeamId.TEAM_BLUE, new Dictionary<LaneID, List<IInhibitor>>{{LaneID.NONE, new List<IInhibitor>()} } },
+                { TeamId.TEAM_PURPLE, new Dictionary<LaneID, List<IInhibitor>>{{LaneID.NONE, new List<IInhibitor>()} } },
+                { TeamId.TEAM_NEUTRAL, new Dictionary<LaneID, List<IInhibitor>>{{LaneID.NONE, new List<IInhibitor>()}} }};
+
+                BlueMinionPathing = new Dictionary<LaneID, List<Vector2>> { { LaneID.NONE, new List<Vector2>() } };
+                PurpleMinionPathing = new Dictionary<LaneID, List<Vector2>> { { LaneID.NONE, new List<Vector2>() } };
+            }
+
             // Below is where we create the buildings.
             var inhibRadius = 214;
             var nexusRadius = 353;
             var sightRange = 1700;
             Dictionary<TeamId, List<IMapObject>> test = new Dictionary<TeamId, List<IMapObject>> { { TeamId.TEAM_BLUE, new List<IMapObject>() }, { TeamId.TEAM_PURPLE, new List<IMapObject>() } };
             List<IMapObject> missedTurrets = new List<IMapObject>();
-
             foreach (var mapObject in _mapData.MapObjects.Values)
             {
                 GameObjectTypes objectType = mapObject.GetGameObjectType();
@@ -208,12 +225,14 @@ namespace LeagueSandbox.GameServer.Maps
                 // Nexus
                 if (objectType == GameObjectTypes.ObjAnimated_HQ)
                 {
-                    _nexus.Add(new Nexus(_game, teamName + "Nexus", teamId, nexusRadius, position, sightRange, Crc32Algorithm.Compute(Encoding.UTF8.GetBytes(mapObject.Name)) | 0xFF000000));
+                    //Nexus model changes dont seem to take effect in-game
+                    _nexus.Add(new Nexus(_game, MapScript.NexusModels[teamId], teamId, nexusRadius, position, sightRange, Crc32Algorithm.Compute(Encoding.UTF8.GetBytes(mapObject.Name)) | 0xFF000000));
                 }
                 // Inhibitors
                 else if (objectType == GameObjectTypes.ObjAnimated_BarracksDampener)
                 {
-                    _inhibitors[teamId][lane].Add(new Inhibitor(_game, teamName + "Inhibitor", lane, teamId, inhibRadius, position, sightRange, Crc32Algorithm.Compute(Encoding.UTF8.GetBytes(mapObject.Name)) | 0xFF000000));
+                    //Inhibitor model changes dont seem to take effect in-game
+                    _inhibitors[teamId][lane].Add(new Inhibitor(_game, MapScript.InhibitorModels[teamId], lane, teamId, inhibRadius, position, sightRange, Crc32Algorithm.Compute(Encoding.UTF8.GetBytes(mapObject.Name)) | 0xFF000000));
                     test[teamId].Add(mapObject);
                 }
                 // Turrets
@@ -221,18 +240,11 @@ namespace LeagueSandbox.GameServer.Maps
                 {
                     if (mapObject.Name.Contains("Shrine"))
                     {
-                        _turrets[teamId][LaneID.MIDDLE].Add(new LaneTurret(_game, mapObject.Name + "_A", MapScript.TowerModels[teamId][TurretType.FOUNTAIN_TURRET], position, teamId, TurretType.FOUNTAIN_TURRET, GetTurretItems(TurretType.FOUNTAIN_TURRET), 0, LaneID.MIDDLE, mapObject));
+                        _turrets[teamId][lane].Add(new LaneTurret(_game, mapObject.Name + "_A", MapScript.TowerModels[teamId][TurretType.FOUNTAIN_TURRET], position, teamId, TurretType.FOUNTAIN_TURRET, GetTurretItems(TurretType.FOUNTAIN_TURRET), 0, LaneID.NONE, mapObject));
                         continue;
                     }
 
                     int index = mapObject.ParseIndex();
-
-                    // Failed to find an index in the turret's name, skip it altogether since it would be invalid.
-                    if (index == -1)
-                    {
-                        // TODO: Verify if we should still add them; they would be assigned to lane NONE as a fountain turret.
-                        continue;
-                    }
 
                     var turretType = MapScript.GetTurretType(index, lane, teamId);
 
@@ -242,7 +254,11 @@ namespace LeagueSandbox.GameServer.Maps
                         continue;
                     }
 
-                    // index - 1 as we need it to start at 0.
+                    if (mapObject.Name.Contains("_Point"))
+                    {
+                        _capturePoints.Add(new Tuple<IMinion, uint>(new Minion(_game, null, new Vector2(mapObject.CentralPoint.X, mapObject.CentralPoint.Z), "OdinNeutralGuardian", "OdinNeutralGuardian"), _game.NetworkIdManager.GetNewNetId()));
+                        continue;
+                    }
                     _turrets[teamId][lane].Add(new LaneTurret(_game, mapObject.Name + "_A", MapScript.TowerModels[teamId][turretType], position, teamId, turretType, GetTurretItems(turretType), 0, lane, mapObject));
                 }
                 else if (objectType == GameObjectTypes.ObjBuilding_SpawnPoint)
@@ -251,11 +267,6 @@ namespace LeagueSandbox.GameServer.Maps
                 }
                 else if (objectType == GameObjectTypes.ObjBuilding_NavPoint)
                 {
-                    if(lane == LaneID.NONE)
-                    {
-                        //Map8 seems to have some issues with their navigation file lane identification. This solves the issue for now, but has to be worked on later.
-                        continue;
-                    }
                     BlueMinionPathing[lane].Add(new Vector2(mapObject.CentralPoint.X, mapObject.CentralPoint.Z));
                 }
             }
@@ -266,7 +277,7 @@ namespace LeagueSandbox.GameServer.Maps
                 foreach (var lane in MapScript.MinionPaths.Keys)
                 {
                     //Makes sure the coordinate list is empty
-                    MapScript.MinionPaths[lane].Clear();
+                    BlueMinionPathing[lane].Clear();
                     foreach (var value in MapScript.MinionPaths[lane])
                     {
                         BlueMinionPathing[lane].Add(value);
@@ -275,9 +286,9 @@ namespace LeagueSandbox.GameServer.Maps
             }
 
             //Sets purple team pathing by reversing Blue Team's pathing and adds an extra path coordinate towards the minions' spawn point.
-            foreach(var lane in BlueMinionPathing.Keys)
+            foreach (var lane in BlueMinionPathing.Keys)
             {
-                foreach(var value in BlueMinionPathing[lane])
+                foreach (var value in BlueMinionPathing[lane])
                 {
                     PurpleMinionPathing[lane].Add(value);
                 }
@@ -288,10 +299,10 @@ namespace LeagueSandbox.GameServer.Maps
                 var SpawnBarracks = _mapData.SpawnBarracks.Values.ToList().FindAll(x => x.GetLaneID() == lane);
                 foreach (var SpawnBarrack in SpawnBarracks)
                 {
-                    if(SpawnBarrack.GetTeamID() == TeamId.TEAM_PURPLE)
+                    if (SpawnBarrack.GetTeamID() == TeamId.TEAM_PURPLE)
                     {
                         BlueMinionPathing[lane].Add(new Vector2(SpawnBarrack.CentralPoint.X, SpawnBarrack.CentralPoint.Z));
-                    }                    
+                    }
                     else
                     {
                         PurpleMinionPathing[lane].Add(new Vector2(SpawnBarrack.CentralPoint.X, SpawnBarrack.CentralPoint.Z));
@@ -307,9 +318,9 @@ namespace LeagueSandbox.GameServer.Maps
             {
                 _game.ObjectManager.AddObject(nexus);
             }
-            foreach(var team in _inhibitors.Keys)
+            foreach (var team in _inhibitors.Keys)
             {
-                foreach(var lane in _inhibitors[team].Keys)
+                foreach (var lane in _inhibitors[team].Keys)
                 {
                     //Spawn Inhibitors
                     foreach (var inhibitor in _inhibitors[team][lane])
@@ -323,23 +334,33 @@ namespace LeagueSandbox.GameServer.Maps
                         _game.ObjectManager.AddObject(turret);
                     }
                 }
+                //Spawn FountainTurrets
+                foreach (var turret in _turrets[team][LaneID.NONE])
+                {
+                    // Adds FountainTurret
+                    _game.ObjectManager.AddObject(turret);
+                }
             }
+        }
+        public void AddObject(IGameObject obj)
+        {
+            _game.ObjectManager.AddObject(obj);
         }
         //Load Building Protections
         public void LoadBuildingProtection()
         {
-            var teamInhibitors = new Dictionary<TeamId, List<IInhibitor>>
+            //I can't help but feel there's a better way to do this
+            Dictionary<TeamId, List<IInhibitor>> TeamInhibitors = new Dictionary<TeamId, List<IInhibitor>> { {TeamId.TEAM_BLUE, new List<IInhibitor>() }, { TeamId.TEAM_PURPLE, new List<IInhibitor>() } };
+            foreach (var teams in _inhibitors.Keys)
             {
-                { TeamId.TEAM_BLUE, new List<IInhibitor>() },
-                { TeamId.TEAM_PURPLE, new List<IInhibitor>() }
-            };
-
-            var teams = teamInhibitors.Keys.ToList();
-            foreach (var team in teams)
-            {
-                _inhibitors[team].Values.ToList().ForEach(l => teamInhibitors[team].AddRange(l));
+                foreach (var lane in _inhibitors[teams].Keys)
+                {
+                    foreach (var inhibs in _inhibitors[teams][lane])
+                    {
+                        TeamInhibitors[teams].Add(inhibs);
+                    }
+                }
             }
-
 
             foreach (var nexus in _nexus)
             {
@@ -347,49 +368,47 @@ namespace LeagueSandbox.GameServer.Maps
                 _game.ProtectionManager.AddProtection
                 (
                     nexus,
-                    _turrets[nexus.Team][LaneID.MIDDLE].FindAll(turret => turret.Type == TurretType.NEXUS_TURRET).ToArray(),
-                    teamInhibitors[nexus.Team].ToArray()
+                    _turrets[nexus.Team][LaneID.MIDDLE].FindAll(turret => turret.Type == TurretType.NEXUS_TURRET).ToArray(), TeamInhibitors[nexus.Team].ToArray()
+                    
                 );
+                var teste = TeamInhibitors[nexus.Team];
             }
 
-            // Iterate through all inhibitors for both teams.
-            List<IInhibitor> allInhibitors = new List<IInhibitor>();
-            allInhibitors.AddRange(teamInhibitors[TeamId.TEAM_BLUE]);
-            allInhibitors.AddRange(teamInhibitors[TeamId.TEAM_PURPLE]);
-
             TurretType inhibProtection = TurretType.INNER_TURRET;
-
             //If the map doesn't have Inner turrets, the outer turrets will be used for inhibitor protection instead
             if (!MapScript.HasInnerTurrets)
             {
                 inhibProtection = TurretType.OUTER_TURRET;
             }
 
-            foreach (var inhibitor in allInhibitors)
+            foreach(var InhibTeam in TeamInhibitors.Keys) 
             {
-                var inhibitorTurret = _turrets[inhibitor.Team][inhibitor.Lane].First(turret => turret.Type == TurretType.INHIBITOR_TURRET);
-
-                // Adds Protection to Inhibitors
-                if (inhibitorTurret != null)
+                foreach (var inhibitor in TeamInhibitors[InhibTeam])
                 {
-                    // Depends on the first available inhibitor turret.
-                    _game.ProtectionManager.AddProtection(inhibitor, false, inhibitorTurret);
-                }
+                    var inhibitorTurret = _turrets[inhibitor.Team][inhibitor.Lane].First(turret => turret.Type == TurretType.INHIBITOR_TURRET);
 
-                // Adds Protection to Turrets
-                foreach (var turret in _turrets[inhibitor.Team][inhibitor.Lane])
-                {
-                    if (turret.Type == TurretType.NEXUS_TURRET)
+                    // Adds Protection to Inhibitors
+                    if (inhibitorTurret != null)
                     {
-                        _game.ProtectionManager.AddProtection(turret, false, _inhibitors[inhibitor.Team][inhibitor.Lane].ToArray());
+                        // Depends on the first available inhibitor turret.
+                        _game.ProtectionManager.AddProtection(inhibitor, false, inhibitorTurret);
                     }
-                    else if (turret.Type == TurretType.INHIBITOR_TURRET)
+
+                    // Adds Protection to Turrets
+                    foreach (var turret in _turrets[inhibitor.Team][inhibitor.Lane])
                     {
-                        _game.ProtectionManager.AddProtection(turret, false, _turrets[inhibitor.Team][inhibitor.Lane].First(dependTurret => dependTurret.Type == inhibProtection));
-                    }
-                    else if (turret.Type == TurretType.INNER_TURRET)
-                    {
-                        _game.ProtectionManager.AddProtection(turret, false, _turrets[inhibitor.Team][inhibitor.Lane].First(dependTurret => dependTurret.Type == TurretType.OUTER_TURRET));
+                        if (turret.Type == TurretType.NEXUS_TURRET)
+                        {
+                            _game.ProtectionManager.AddProtection(turret, false, TeamInhibitors[inhibitor.Team].ToArray());
+                        }
+                        else if (turret.Type == TurretType.INHIBITOR_TURRET)
+                        {
+                            _game.ProtectionManager.AddProtection(turret, false, _turrets[inhibitor.Team][inhibitor.Lane].First(dependTurret => dependTurret.Type == inhibProtection));
+                        }
+                        else if (turret.Type == TurretType.INNER_TURRET)
+                        {
+                            _game.ProtectionManager.AddProtection(turret, false, _turrets[inhibitor.Team][inhibitor.Lane].First(dependTurret => dependTurret.Type == TurretType.OUTER_TURRET));
+                        }
                     }
                 }
             }
@@ -413,6 +432,16 @@ namespace LeagueSandbox.GameServer.Maps
             tower.SetLaneID(desiredLaneID);
             _turrets[team][currentLaneId].Remove(tower);
             _turrets[team][desiredLaneID].Add(tower);
+        }
+        public void SpawnCapturePoints()
+        {
+            foreach (var point in _capturePoints)
+            {
+                new Region(_game, TeamId.TEAM_BLUE, point.Item1.Position, -2, point.Item1, giveVision: true, visionRadius: 800.0f, revealStealth: true, hasCollision: true, collisionRadius: 120.0f, grassRadius: 150.0f, lifetime: 25000.0f);
+                //_game.PacketNotifier.NotifyAddRegion(point.Item1.NetId, point.Item2, TeamId.TEAM_BLUE, point.Item1.Position, 25000.0f, 800.0f, -2, collisionRadius: 120.0f, grassRadius: 150.0f, stealthVis: true);
+                point.Item1.PauseAi(true);
+                _game.ObjectManager.AddObject(point.Item1);
+            }
         }
         //The way the turret spawning is handled above is based on the inhibitor lanes, so for example, if there's no mid inhibitor, no midlane towers would be spawned. So this is so we can spawn them manually
         public void SpawnTurret(ILaneTurret turret, bool hasProtection, bool protectionDependsOfAll = false, IAttackableUnit[] protectedBy = null)
@@ -469,7 +498,7 @@ namespace LeagueSandbox.GameServer.Maps
             }
             return new Tuple<TeamId, Vector2>(teamID, new Vector2(coords.X, coords.Z));
         }
-        public void SpawnMinion(List<MinionSpawnType> list, int minionNo, string barracksName, List<Vector2> waypoints)
+        public void SpawnLaneMinion(List<MinionSpawnType> list, int minionNo, string barracksName, List<Vector2> waypoints)
         {
             if (list.Count <= minionNo)
             {
@@ -521,7 +550,7 @@ namespace LeagueSandbox.GameServer.Maps
                 var spawnWave = MapScript.MinionWaveToSpawn(_game.GameTime, _cannonMinionCount, isInhibitorDead, areAllInhibitorsDead);
                 cannonMinionCap = spawnWave.Item1;
 
-                SpawnMinion(spawnWave.Item2, _minionNumber, barrack.Value.Name, waypoints);
+                SpawnLaneMinion(spawnWave.Item2, _minionNumber, barrack.Value.Name, waypoints);
             }
 
             if (_minionNumber < 8)
@@ -546,9 +575,9 @@ namespace LeagueSandbox.GameServer.Maps
         {
             AnnouncerEvents.Add(new Announce(_game, time, ID, IsMapSpecific));
         }
-        public void AddObject(Vector2 position, float height, Vector3 direction, float unk1, float unk2, string name, string model, byte skin = 0, uint NetId = 0)
+        public void AddLevelProp(string name, string model, Vector2 position, float height, Vector3 direction, Vector3 posOffset, Vector3 scale, int skinId = 0, byte skillLevel = 0, byte rank = 0, byte type = 0, uint netId = 0, byte netNodeId = 0)
         {
-            _game.ObjectManager.AddObject(new LevelProp(_game, position, height, direction, unk1, unk2, name, model, skin, NetId));
+            _game.ObjectManager.AddObject(new LevelProp(_game, netNodeId, name, model, position, height, direction, posOffset, scale, skinId, skillLevel, rank, type, netId));
         }
         public void AddSurrender(float time, float restTime, float length)
         {

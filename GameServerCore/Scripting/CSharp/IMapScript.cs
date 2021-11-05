@@ -11,6 +11,7 @@ namespace GameServerCore.Domain
     {
         bool HasInnerTurrets { get; }
         bool EnableBuildingProtection { get; }
+        bool DoesntHaveLanes { get; }
         long FirstSpawnTime { get; }
         long NextSpawnTime { get; set; }
         long SpawnInterval { get; }
@@ -24,12 +25,15 @@ namespace GameServerCore.Domain
         long FirstGoldTime { get; }
         bool SpawnEnabled { get; set; }
         Dictionary<TurretType, int[]> TurretItems { get; }
+        Dictionary<TeamId, string> NexusModels { get; }
+        Dictionary<TeamId, string> InhibitorModels { get; }
         Dictionary<TeamId, Dictionary<TurretType, string>> TowerModels { get; }
         Dictionary<TeamId, Dictionary<MinionSpawnType, string>> MinionModels { get; }
         Dictionary<LaneID, List<Vector2>> MinionPaths { get; }
         Tuple<int, List<MinionSpawnType>> MinionWaveToSpawn(float gameTime, int cannonMinionCount, bool isInhibitorDead, bool areAllInhibitorsDead);
         TurretType GetTurretType(int trueIndex, LaneID lane, TeamId teamId);
         void Init(IMap map);
+        void OnMatchStart();
         void SetMinionStats(ILaneMinion m);
         float GetGoldFor(IAttackableUnit u);
         float GetExperienceFor(IAttackableUnit u);
