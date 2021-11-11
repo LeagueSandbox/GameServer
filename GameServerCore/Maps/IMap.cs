@@ -25,6 +25,7 @@ namespace GameServerCore.Maps
         /// Navigation Grid to be instanced by the map. Used for terrain data.
         /// </summary>
         INavigationGrid NavigationGrid { get; }
+        IMapData MapData { get; }
         /// <summary>
         /// MapProperties specific to a Map Id. Contains information about passive gold gen, lane minion spawns, experience to level, etc.
         /// </summary>
