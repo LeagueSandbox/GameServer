@@ -27,7 +27,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
         private static readonly object _particlesLock = new object();
 
         public override string Command => "debugmode";
-        public override string Syntax => $"{Command} self/champions/minions/projectiles/sectors";
+        public override string Syntax => $"{Command} self/all/champions/minions/projectiles/sectors";
 
         public DebugParticlesCommand(ChatCommandManager chatCommandManager, Game game)
             : base(chatCommandManager, game)
@@ -67,6 +67,11 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
                 if (_debugMode == 5)
                 {
                     _logger.Debug($"Stopped debugging sectors.");
+                }
+
+                if (_debugMode == 6)
+                {
+                    _logger.Debug($"Stopped debugging all.");
                 }
 
                 _debugMode = 0;
@@ -135,6 +140,11 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
                     _debugMode = 5;
                     DebugSectors(userId);
                 }
+                else if (split[1].Contains("all"))
+                {
+                    _debugMode = 6;
+                    DebugAll(userId);
+                }
                 else
                 {
                     ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.SYNTAXERROR);
@@ -166,6 +176,10 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
                 if (_debugMode == 5)
                 {
                     DrawSectors(_userId);
+                }
+                if (_debugMode == 6)
+                {
+                    DrawAll(_userId);
                 }
 
                 lastDrawTime = _game.GameTime;
@@ -584,7 +598,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
             // Arbitrary ratio is required for the DebugCircle particle to look accurate
             var circlesize = (1f / 100f) * _userChampion.CollisionRadius;
 
-            _logger.Debug($"Started debugging projectiles. Your Debug Circle Radius: " + "(1 / 100) * " + _userChampion.CollisionRadius + " = " + "(" + (1f / 100f) + ") * " + _userChampion.CollisionRadius + " = " + circlesize);
+            _logger.Debug($"Started debugging sectors. Your Debug Circle Radius: " + "(1 / 100) * " + _userChampion.CollisionRadius + " = " + "(" + (1f / 100f) + ") * " + _userChampion.CollisionRadius + " = " + circlesize);
             var startdebugmsg = $"Started debugging sectors. Your Debug Circle Radius: " + "(1 / 100) * " + _userChampion.CollisionRadius + " = " + "(" + (1f / 100f) + ") * " + _userChampion.CollisionRadius + " = " + circlesize;
             ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.NORMAL, startdebugmsg);
 
@@ -667,6 +681,56 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
                         }
                     }
                 }
+            }
+        }
+
+        // Draws the effected area of all game objects
+        public void DebugAll(int userId)
+        {
+            // Arbitrary ratio is required for the DebugCircle particle to look accurate
+            var circlesize = (1f / 100f) * _userChampion.CollisionRadius;
+
+            _logger.Debug($"Started debugging all. Your Debug Circle Radius: " + "(1 / 100) * " + _userChampion.CollisionRadius + " = " + "(" + (1f / 100f) + ") * " + _userChampion.CollisionRadius + " = " + circlesize);
+            var startdebugmsg = $"Started debugging all. Your Debug Circle Radius: " + "(1 / 100) * " + _userChampion.CollisionRadius + " = " + "(" + (1f / 100f) + ") * " + _userChampion.CollisionRadius + " = " + circlesize;
+            ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.NORMAL, startdebugmsg);
+
+            // Creates a blue flashing highlight around your unit
+            _game.PacketNotifier.NotifyCreateUnitHighlight(userId, _userChampion);
+        }
+
+        public void DrawAll(int userId)
+        {
+            if (_debugMode != 6)
+            {
+                return;
+            }
+
+            var tempObjects = Game.ObjectManager.GetObjects();
+
+            foreach (IGameObject obj in tempObjects.Values)
+            {
+                // Arbitrary ratio is required for the DebugCircle particle to look accurate
+                var circlesize = (1f / 100f) * obj.CollisionRadius;
+
+                if (obj.CollisionRadius < 5)
+                {
+                    circlesize = (1f / 100f) * 35;
+                }
+
+                // Clear circle particles every draw in case the unit changes its position
+                if (_circleParticles.ContainsKey(obj.NetId))
+                {
+                    if (_circleParticles[obj.NetId] != null)
+                    {
+                        _circleParticles.Remove(obj.NetId);
+                    }
+                }
+
+                var circleparticle = new Particle(_game, null, null, obj.Position, "DebugCircle_green.troy", circlesize, "", "", 0, default, false, 0.1f, false, false);
+                _circleParticles.Add(obj.NetId, circleparticle);
+                _game.PacketNotifier.NotifyFXCreateGroup(circleparticle, userId);
+
+                // TODO: Add check for AttackableUnit and draw waypoints.
             }
         }
     }

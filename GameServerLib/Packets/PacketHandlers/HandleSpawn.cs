@@ -68,12 +68,21 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                 {
                     if (champion.IsVisibleByTeam(peerInfo.Champion.Team))
                     {
+                        
                         _game.PacketNotifier.NotifyEnterVisibilityClient(champion, userId, false, false, true);
                     }
                 }
                 else if (kv.Value is ILaneTurret turret)
                 {
                     _game.PacketNotifier.NotifyS2C_CreateTurret(turret, userId);
+                }
+                else if (kv.Value is INexus nexus)
+                {
+                    _game.PacketNotifier.NotifyEnterVisibilityClient(nexus, userId, ignoreVision: true);
+                }
+                else if (kv.Value is IInhibitor inhib)
+                {
+                    _game.PacketNotifier.NotifyEnterVisibilityClient(inhib, userId, ignoreVision: true);
                 }
                 else if (kv.Value is ILevelProp levelProp)
                 {

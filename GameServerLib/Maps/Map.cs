@@ -30,7 +30,6 @@ namespace LeagueSandbox.GameServer.Maps
     {
         // Crucial Vars
         protected Game _game;
-        public MapData _mapData;
         public CSharpScriptEngine _scriptEngine;
         public MapData _loadMapStructures;
         private readonly ILog _logger;
@@ -47,6 +46,7 @@ namespace LeagueSandbox.GameServer.Maps
         /// Navigation Grid to be instanced by the map. Used for terrain data.
         /// </summary>
         public INavigationGrid NavigationGrid { get; private set; }
+        public IMapData MapData { get; private set; }
         /// <summary>
         /// MapProperties specific to a Map Id. Contains information about passive gold gen, lane minion spawns, experience to level, etc.
         /// </summary>
@@ -74,7 +74,7 @@ namespace LeagueSandbox.GameServer.Maps
         public Map(Game game)
         {
             _game = game;
-            _mapData = game.Config.MapData;
+            MapData = game.Config.MapData;
             _scriptEngine = game.ScriptEngine;
             _logger = LoggerProvider.GetLogger();
 
@@ -208,7 +208,7 @@ namespace LeagueSandbox.GameServer.Maps
             var sightRange = 1700;
             Dictionary<TeamId, List<IMapObject>> test = new Dictionary<TeamId, List<IMapObject>> { { TeamId.TEAM_BLUE, new List<IMapObject>() }, { TeamId.TEAM_PURPLE, new List<IMapObject>() } };
             List<IMapObject> missedTurrets = new List<IMapObject>();
-            foreach (var mapObject in _mapData.MapObjects.Values)
+            foreach (var mapObject in MapData.MapObjects.Values)
             {
                 GameObjectTypes objectType = mapObject.GetGameObjectType();
 
@@ -223,7 +223,7 @@ namespace LeagueSandbox.GameServer.Maps
                 string teamName = mapObject.GetTeamName();
 
                 // Nexus
-                if (objectType == GameObjectTypes.ObjAnimated_HQ)
+                if (objectType == GameObjectTypes.ObjAnimated_HQ || (teamId != TeamId.TEAM_NEUTRAL && mapObject.Name == MapScript.NexusModels[teamId]))
                 {
                     //Nexus model changes dont seem to take effect in-game
                     _nexus.Add(new Nexus(_game, MapScript.NexusModels[teamId], teamId, nexusRadius, position, sightRange, Crc32Algorithm.Compute(Encoding.UTF8.GetBytes(mapObject.Name)) | 0xFF000000));
@@ -296,7 +296,7 @@ namespace LeagueSandbox.GameServer.Maps
 
                 //The unhardcoded system results on minions stop walking right next to the nexus/nexus towers (since the last waypoint of a given minion, is the first one of the opsoite team, which isn't next to towers/nexus).
                 //TODO: Decide if we want to hardcode extra waypoints in order to force the minion to walk towards the nexus or let it somehow be handled automatically by the minion's A.I
-                var SpawnBarracks = _mapData.SpawnBarracks.Values.ToList().FindAll(x => x.GetLaneID() == lane);
+                var SpawnBarracks = MapData.SpawnBarracks.Values.ToList().FindAll(x => x.GetLaneID() == lane);
                 foreach (var SpawnBarrack in SpawnBarracks)
                 {
                     if (SpawnBarrack.GetTeamID() == TeamId.TEAM_PURPLE)
@@ -489,7 +489,7 @@ namespace LeagueSandbox.GameServer.Maps
         //Minion Stuff
         public Tuple<TeamId, Vector2> GetMinionSpawnPosition(string spawnPosition)
         {
-            var coords = _mapData.SpawnBarracks[spawnPosition].CentralPoint;
+            var coords = MapData.SpawnBarracks[spawnPosition].CentralPoint;
 
             var teamID = TeamId.TEAM_BLUE;
             if (spawnPosition.Contains("Chaos"))
@@ -498,6 +498,7 @@ namespace LeagueSandbox.GameServer.Maps
             }
             return new Tuple<TeamId, Vector2>(teamID, new Vector2(coords.X, coords.Z));
         }
+
         public void SpawnLaneMinion(List<MinionSpawnType> list, int minionNo, string barracksName, List<Vector2> waypoints)
         {
             if (list.Count <= minionNo)
@@ -509,14 +510,16 @@ namespace LeagueSandbox.GameServer.Maps
             var m = new LaneMinion(_game, list[minionNo], barracksName, waypoints, MapScript.MinionModels[team][list[minionNo]], 0, team);
             _game.ObjectManager.AddObject(m);
         }
+
         public bool IsMinionSpawnEnabled()
         {
             return _game.Config.MinionSpawnsEnabled;
         }
+
         public bool Spawn()
         {
             var spawnToWaypoints = new Dictionary<string, Tuple<List<Vector2>, uint>>();
-            foreach (var barrack in _mapData.SpawnBarracks)
+            foreach (var barrack in MapData.SpawnBarracks)
             {
                 TeamId opposed_team = barrack.Value.GetOpposingTeamID();
                 TeamId barrackTeam = barrack.Value.GetTeamID();
@@ -536,7 +539,7 @@ namespace LeagueSandbox.GameServer.Maps
             }
 
             int cannonMinionCap = 2;
-            foreach (var barrack in _mapData.SpawnBarracks)
+            foreach (var barrack in MapData.SpawnBarracks)
             {
                 var waypoints = spawnToWaypoints[barrack.Value.Name].Item1;
                 var inhibitorId = spawnToWaypoints[barrack.Value.Name].Item2;
