@@ -635,6 +635,13 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="data">Data of the death.</param>
         void NotifyS2C_NPC_Die_MapView(IDeathData data);
         /// <summary>
+        /// Sends a packet to either all players with vision of the specified GameObject or a specified user.
+        /// The packet contains details of which team gained visibility of the GameObject and is meant for after it is first initialized into vision.
+        /// </summary>
+        /// <param name="o">GameObject coming into vision.</param>
+        /// <param name="userId">User to send the packet to.</param>
+        void NotifyS2C_OnEnterTeamVisibility(IGameObject o, TeamId team, int userId = 0);
+        /// <summary>
         /// Sends a packet to all players with vision of the specified object detailing that it is playing the specified animation.
         /// </summary>
         /// <param name="obj">GameObject that is playing the animation.</param>
