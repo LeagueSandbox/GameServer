@@ -495,81 +495,81 @@ namespace PacketDefinitions420
             switch (changeType)
             {
                 case GameServerCore.Enums.ChangeSlotSpellDataType.TargetingType:
+                {
+                    if (targetingType != TargetingType.Invalid)
                     {
-                        if (targetingType != TargetingType.Invalid)
+                        spellData = new ChangeSpellDataTargetingType()
                         {
-                            spellData = new ChangeSpellDataTargetingType()
-                            {
-                                SpellSlot = slot,
-                                IsSummonerSpell = isSummonerSpell,
-                                TargetingType = (byte)targetingType
-                            };
-                        }
-                        break;
+                            SpellSlot = slot,
+                            IsSummonerSpell = isSummonerSpell,
+                            TargetingType = (byte)targetingType
+                        };
                     }
+                    break;
+                }
                 case GameServerCore.Enums.ChangeSlotSpellDataType.SpellName:
+                {
+                    spellData = new ChangeSpellDataSpellName()
                     {
-                        spellData = new ChangeSpellDataSpellName()
-                        {
-                            SpellSlot = slot,
-                            IsSummonerSpell = isSummonerSpell,
-                            SpellName = newName
-                        };
-                        break;
-                    }
+                        SpellSlot = slot,
+                        IsSummonerSpell = isSummonerSpell,
+                        SpellName = newName
+                    };
+                    break;
+                }
                 case GameServerCore.Enums.ChangeSlotSpellDataType.Range:
+                {
+                    spellData = new ChangeSpellDataRange()
                     {
-                        spellData = new ChangeSpellDataRange()
-                        {
-                            SpellSlot = slot,
-                            IsSummonerSpell = isSummonerSpell,
-                            CastRange = newRange
-                        };
-                        break;
-                    }
+                        SpellSlot = slot,
+                        IsSummonerSpell = isSummonerSpell,
+                        CastRange = newRange
+                    };
+                    break;
+                }
                 case GameServerCore.Enums.ChangeSlotSpellDataType.MaxGrowthRange:
+                {
+                    spellData = new ChangeSpellDataMaxGrowthRange()
                     {
-                        spellData = new ChangeSpellDataMaxGrowthRange()
-                        {
-                            SpellSlot = slot,
-                            IsSummonerSpell = isSummonerSpell,
-                            OverrideMaxCastRange = newMaxCastRange
-                        };
-                        break;
-                    }
+                        SpellSlot = slot,
+                        IsSummonerSpell = isSummonerSpell,
+                        OverrideMaxCastRange = newMaxCastRange
+                    };
+                    break;
+                }
                 case GameServerCore.Enums.ChangeSlotSpellDataType.RangeDisplay:
+                {
+                    spellData = new ChangeSpellDataRangeDisplay()
                     {
-                        spellData = new ChangeSpellDataRangeDisplay()
-                        {
-                            SpellSlot = slot,
-                            IsSummonerSpell = isSummonerSpell,
-                            OverrideCastRangeDisplay = newDisplayRange
-                        };
-                        break;
-                    }
+                        SpellSlot = slot,
+                        IsSummonerSpell = isSummonerSpell,
+                        OverrideCastRangeDisplay = newDisplayRange
+                    };
+                    break;
+                }
                 case GameServerCore.Enums.ChangeSlotSpellDataType.IconIndex:
+                {
+                    spellData = new ChangeSpellDataIconIndex()
                     {
-                        spellData = new ChangeSpellDataIconIndex()
+                        SpellSlot = slot,
+                        IsSummonerSpell = isSummonerSpell,
+                        IconIndex = newIconIndex
+                    };
+                    break;
+                }
+                case GameServerCore.Enums.ChangeSlotSpellDataType.OffsetTarget:
+                {
+                    if (offsetTargets != null)
+                    {
+                        spellData = new ChangeSpellDataOffsetTarget()
                         {
                             SpellSlot = slot,
                             IsSummonerSpell = isSummonerSpell,
-                            IconIndex = newIconIndex
+                            Targets = offsetTargets
                         };
-                        break;
                     }
-                case GameServerCore.Enums.ChangeSlotSpellDataType.OffsetTarget:
-                    {
-                        if (offsetTargets != null)
-                        {
-                            spellData = new ChangeSpellDataOffsetTarget()
-                            {
-                                SpellSlot = slot,
-                                IsSummonerSpell = isSummonerSpell,
-                                Targets = offsetTargets
-                            };
-                        }
-                        break;
-                    }
+                    break;
+                }
             }
 
             var changePacket = new ChangeSlotSpellData()
@@ -2348,6 +2348,31 @@ namespace PacketDefinitions420
                 }
             };
             _packetHandlerManager.BroadcastPacket(dieMapView.GetBytes(), Channel.CHL_S2C);
+        }
+
+        /// <summary>
+        /// Sends a packet to either all players with vision of the specified GameObject or a specified user.
+        /// The packet contains details of which team gained visibility of the GameObject and is meant for after it is first initialized into vision.
+        /// </summary>
+        /// <param name="o">GameObject coming into vision.</param>
+        /// <param name="userId">User to send the packet to.</param>
+        public void NotifyS2C_OnEnterTeamVisibility(IGameObject o, TeamId team, int userId = 0)
+        {
+            var enterTeamVis = new S2C_OnEnterTeamVisibility()
+            {
+                SenderNetID = o.NetId,
+                VisibilityTeam = (byte)team
+            };
+
+            if (userId == 0)
+            {
+                // TODO: Verify if we should use BroadcastPacketTeam instead.
+                _packetHandlerManager.BroadcastPacket(enterTeamVis.GetBytes(), Channel.CHL_S2C);
+            }
+            else
+            {
+                _packetHandlerManager.SendPacket(userId, enterTeamVis.GetBytes(), Channel.CHL_S2C);
+            }
         }
 
         /// <summary>
