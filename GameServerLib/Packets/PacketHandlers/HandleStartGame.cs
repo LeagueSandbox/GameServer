@@ -29,19 +29,19 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                 return true; */
             
             // Only one packet enter here
-            if (_game.PlayersReady == _playerManager.GetPlayers().Count)
+            if (_game.PlayersReady == _playerManager.GetPlayers(false).Count)
             {
                 _game.PacketNotifier.NotifyGameStart();
 
-                foreach (var player in _playerManager.GetPlayers())
+                foreach (var player in _playerManager.GetPlayers(false))
                 {
                     // Get notified about the spawn of other connected players - IMPORTANT: should only occur one-time
                     foreach (var p in _playerManager.GetPlayers())
                     {
                         if (!p.Item2.IsStartedClient) continue; //user still didn't connect, not get informed about it
                         if (player.Item2.PlayerId == p.Item2.PlayerId) continue; //Don't self-inform twice
-                        _game.PacketNotifier.NotifyS2C_CreateHero((int)player.Item2.PlayerId, p.Item2);
-                        _game.PacketNotifier.NotifyAvatarInfo((int)player.Item2.PlayerId, p.Item2);
+                        _game.PacketNotifier.NotifyS2C_CreateHero(p.Item2, (int)player.Item2.PlayerId);
+                        _game.PacketNotifier.NotifyAvatarInfo(p.Item2, (int)player.Item2.PlayerId);
                     }
 
                     if (player.Item2.PlayerId == userId && !player.Item2.IsMatchingVersion)
@@ -101,6 +101,11 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                 foreach (var p in _playerManager.GetPlayers())
                 {
                     _game.ObjectManager.AddObject(p.Item2.Champion);
+
+                    if (p.Item2.Champion.IsBot)
+                    {
+                        continue;
+                    }
 
                     // Send the initial game time sync packets, then let the map send another
                     var gameTime = _game.GameTime;

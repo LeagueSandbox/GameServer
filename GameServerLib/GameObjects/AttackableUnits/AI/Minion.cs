@@ -32,10 +32,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         /// </summary>
         public bool IsLaneMinion { get; protected set; }
         /// <summary>
-        /// Whether or not this minion is considered a bot.
-        /// </summary>
-        public bool IsBot { get; protected set; }
-        /// <summary>
         /// Whether or not this minion is considered a pet.
         /// </summary>
         public bool IsPet { get; protected set; }

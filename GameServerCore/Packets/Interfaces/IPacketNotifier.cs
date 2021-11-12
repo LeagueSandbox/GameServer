@@ -23,7 +23,7 @@ namespace GameServerCore.Packets.Interfaces
         /// Sends a packet to the specified user which is intended to creates a client-side debug object. *NOTE*: Has not been tested, function implementation may be incorrect.
         /// </summary>
         /// <param name="userId">User to send the packet to.</param>
-        /// <param name="unit">Unit that </param>
+        /// <param name="unit">Unit that </param>N
         /// <param name="objNetId">NetID to assign to the debug object.</param>
         /// <param name="lifetime">How long the debug object should exist (in seconds).</param>
         /// <param name="radius">Distance from the center of the debug object to its edge.</param>
@@ -92,11 +92,11 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="isMapSpecific">Whether the announce is specific to the map ID.</param>
         void NotifyAnnounceEvent(int mapId, Announces messageId, bool isMapSpecific);
         /// <summary>
-        /// Sends a packet to the specified user that informs them of their summoner data such as runes, summoner spells, masteries (or talents as named internally), etc.
+        /// Sends a packet to the specified user or all users informing them of the given client's summoner data such as runes, summoner spells, masteries (or talents as named internally), etc.
         /// </summary>
-        /// <param name="userId">User to send the packet to.</param>
         /// <param name="client">Info about the player's summoner data.</param>
-        void NotifyAvatarInfo(int userId, ClientInfo client);
+        /// <param name="userId">User to send the packet to. Set to -1 to broadcast.</param>
+        void NotifyAvatarInfo(ClientInfo client, int userId = -1);
         /// <summary>
         /// Sends a packet to all players detailing that the specified  unit is starting their next auto attack.
         /// </summary>
@@ -606,16 +606,23 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="p">Projectile that has changed target.</param>
         void NotifyS2C_ChangeMissileTarget(ISpellMissile p);
         /// <summary>
-        /// Sends a packet to the specified user detailing that the hero designated to the given clientInfo has been created.
+        /// Sends a packet to the specified user or all users detailing that the hero designated to the given clientInfo has been created.
         /// </summary>
-        /// <param name="userId">User to send the packet to.</param>
         /// <param name="clientInfo">Information about the client which had their hero created.</param>
-        void NotifyS2C_CreateHero(int userId, ClientInfo clientInfo);
+        /// <param name="userId">User to send the packet to. Set to -1 to broadcast.</param>
+        void NotifyS2C_CreateHero(ClientInfo clientInfo, int userId = -1);
         /// <summary>
         /// Sends a packet to all players detailing that the specified unit has been killed by the specified killer.
         /// </summary>
         /// <param name="data">Data of the death.</param>
         void NotifyS2C_NPC_Die_MapView(IDeathData data);
+        /// <summary>
+        /// Sends a packet to either all players with vision of the specified GameObject or a specified user.
+        /// The packet contains details of which team gained visibility of the GameObject and is meant for after it is first initialized into vision.
+        /// </summary>
+        /// <param name="o">GameObject coming into vision.</param>
+        /// <param name="userId">User to send the packet to.</param>
+        void NotifyS2C_OnEnterTeamVisibility(IGameObject o, TeamId team, int userId = 0);
         /// <summary>
         /// Sends a packet to all players with vision of the specified object detailing that it is playing the specified animation.
         /// </summary>

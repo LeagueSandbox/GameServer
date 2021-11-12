@@ -66,6 +66,11 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             Stats.SetSpellEnabled((byte)SpellSlotType.BluePillSlot, true);
 
             Replication = new ReplicationHero(this);
+
+            if (clientInfo.PlayerId == -1)
+            {
+                IsBot = true;
+            }
         }
 
         private string GetPlayerIndex()

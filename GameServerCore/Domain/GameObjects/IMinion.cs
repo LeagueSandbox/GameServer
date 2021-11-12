@@ -25,10 +25,6 @@ namespace GameServerCore.Domain.GameObjects
         /// </summary>
         bool IsLaneMinion { get; }
         /// <summary>
-        /// Whether or not this minion is considered a bot.
-        /// </summary>
-        bool IsBot { get; }
-        /// <summary>
         /// Whether or not this minion is considered a pet.
         /// </summary>
         bool IsPet { get; }

@@ -246,11 +246,11 @@ namespace PacketDefinitions420
         }
 
         /// <summary>
-        /// Sends a packet to the specified user that informs them of their summoner data such as runes, summoner spells, masteries (or talents as named internally), etc.
+        /// Sends a packet to the specified user or all users informing them of the given client's summoner data such as runes, summoner spells, masteries (or talents as named internally), etc.
         /// </summary>
-        /// <param name="userId">User to send the packet to.</param>
         /// <param name="client">Info about the player's summoner data.</param>
-        public void NotifyAvatarInfo(int userId, ClientInfo client)
+        /// <param name="userId">User to send the packet to. Set to -1 to broadcast.</param>
+        public void NotifyAvatarInfo(ClientInfo client, int userId = -1)
         {
             var avatar = new AvatarInfo_Server();
             avatar.SenderNetID = client.Champion.NetId;
@@ -265,6 +265,13 @@ namespace PacketDefinitions420
                 avatar.ItemIDs[i] = (uint)runeValue;
             }
             // TODO: add talents
+
+            if (userId < 0)
+            {
+                _packetHandlerManager.BroadcastPacket(avatar.GetBytes(), Channel.CHL_S2C);
+                return;
+            }
+
             _packetHandlerManager.SendPacket(userId, avatar.GetBytes(), Channel.CHL_S2C);
         }
 
@@ -2203,11 +2210,11 @@ namespace PacketDefinitions420
         }
 
         /// <summary>
-        /// Sends a packet to the specified user detailing that the hero designated to the given clientInfo has been created.
+        /// Sends a packet to the specified user or all users detailing that the hero designated to the given clientInfo has been created.
         /// </summary>
-        /// <param name="userId">User to send the packet to.</param>
         /// <param name="clientInfo">Information about the client which had their hero created.</param>
-        public void NotifyS2C_CreateHero(int userId, ClientInfo clientInfo)
+        /// <param name="userId">User to send the packet to. Set to -1 to broadcast.</param>
+        public void NotifyS2C_CreateHero(ClientInfo clientInfo, int userId = -1)
         {
             var champion = clientInfo.Champion;
             var heroPacket = new S2C_CreateHero()
@@ -2217,8 +2224,7 @@ namespace PacketDefinitions420
                 // NetNodeID,
                 // For bots (0 = Beginner, 1 = Intermediate)
                 SkillLevel = 0,
-                // TODO: Implement bots and unhardcode this.
-                IsBot = false,
+                IsBot = champion.IsBot,
                 // BotRank, deprecated as of v4.18
                 // TODO: Unhardcode
                 SpawnPositionIndex = 0,
@@ -2236,6 +2242,12 @@ namespace PacketDefinitions420
             else
             {
                 heroPacket.TeamIsOrder = false;
+            }
+            
+            if (userId < 0)
+            {
+                _packetHandlerManager.BroadcastPacket(heroPacket.GetBytes(), Channel.CHL_S2C);
+                return;
             }
 
             _packetHandlerManager.SendPacket(userId, heroPacket.GetBytes(), Channel.CHL_S2C);
@@ -2261,6 +2273,31 @@ namespace PacketDefinitions420
                 }
             };
             _packetHandlerManager.BroadcastPacket(dieMapView.GetBytes(), Channel.CHL_S2C);
+        }
+
+        /// <summary>
+        /// Sends a packet to either all players with vision of the specified GameObject or a specified user.
+        /// The packet contains details of which team gained visibility of the GameObject and is meant for after it is first initialized into vision.
+        /// </summary>
+        /// <param name="o">GameObject coming into vision.</param>
+        /// <param name="userId">User to send the packet to.</param>
+        public void NotifyS2C_OnEnterTeamVisibility(IGameObject o, TeamId team, int userId = 0)
+        {
+            var enterTeamVis = new S2C_OnEnterTeamVisibility()
+            {
+                SenderNetID = o.NetId,
+                VisibilityTeam = (byte)team
+            };
+
+            if (userId == 0)
+            {
+                // TODO: Verify if we should use BroadcastPacketTeam instead.
+                _packetHandlerManager.BroadcastPacket(enterTeamVis.GetBytes(), Channel.CHL_S2C);
+            }
+            else
+            {
+                _packetHandlerManager.SendPacket(userId, enterTeamVis.GetBytes(), Channel.CHL_S2C);
+            }
         }
 
         /// <summary>

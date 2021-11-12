@@ -7,7 +7,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
         private readonly IPlayerManager _playerManager;
 
         public override string Command => "tp";
-        public override string Syntax => $"{Command} x y";
+        public override string Syntax => $"{Command} [target NetID (0 or none for self)] X Y";
 
         public TpCommand(ChatCommandManager chatCommandManager, Game game)
             : base(chatCommandManager, game)
@@ -18,15 +18,21 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
         public override void Execute(int userId, bool hasReceivedArguments, string arguments = "")
         {
             var split = arguments.ToLower().Split(' ');
+            uint targetNetID = 0;
             float x, y;
-            if (split.Length < 3)
+
+            if (split.Length < 3 || split.Length > 4)
             {
                 ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.SYNTAXERROR);
                 ShowSyntax();
                 return;
             }
 
-            if (float.TryParse(split[1], out x) && float.TryParse(split[2], out y))
+            if (split.Length > 3 && uint.TryParse(split[1], out targetNetID) && float.TryParse(split[2], out x) && float.TryParse(split[3], out y))
+            {
+                Game.ObjectManager.GetObjectById(targetNetID).TeleportTo(x, y);
+            }
+            else if (float.TryParse(split[1], out x) && float.TryParse(split[2], out y))
             {
                 _playerManager.GetPeerInfo(userId).Champion.TeleportTo(x, y);
             }

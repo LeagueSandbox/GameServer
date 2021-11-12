@@ -28,7 +28,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.Buildings.Animate
             //I'll use 110 as default here just to keep it simple for now.
             var cameraPosition = new Vector3 (this.Position.X, this.Position.Y, 110);
             _game.Stop();
-            _game.PacketNotifier.NotifyGameEnd(cameraPosition, this, _game.PlayerManager.GetPlayers());
+            _game.PacketNotifier.NotifyGameEnd(cameraPosition, this, _game.PlayerManager.GetPlayers(false));
             _game.SetGameToExit();
         }
 

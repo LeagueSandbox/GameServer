@@ -38,7 +38,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                 _logger.Debug("Accepted client version (" + req.Version + ") from client = " + req.ClientId + " & PlayerID = " + userId);
             }
 
-            foreach (var player in _playerManager.GetPlayers())
+            foreach (var player in _playerManager.GetPlayers(false))
             {
                 if (player.Item1 == userId)
                 {
