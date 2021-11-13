@@ -117,25 +117,20 @@ namespace LeagueSandbox.GameServer.Items
         {
             if (stacksToRemove < 0)
             {
-                stacksToRemove = 0;
+                throw new Exception("Stacks to be Removed can't be a negative number!");
             }
 
             var itemID = Items[slot].ItemData.ItemId;
             int finalStacks = Items[slot].StackCount - stacksToRemove;
 
-            if (finalStacks <= 0)
+            if ((finalStacks <= 0 || !HasItemWithID(itemID)) && owner != null && ItemScripts.ContainsKey(itemID))
             {
-                if (owner != null)
+                ItemScripts[itemID].OnDeactivate(owner);
+                if (ItemScripts[itemID].StatsModifier != null)
                 {
-                    owner.Stats.RemoveModifier(Items[slot].ItemData);
-
-                    ItemScripts[itemID].OnDeactivate(owner);
-                    if (ItemScripts[itemID].StatsModifier != null)
-                    {
-                        owner.Stats.RemoveModifier(ItemScripts[itemID].StatsModifier);
-                    }
-                    ItemScripts.Remove(itemID);
+                    owner.Stats.RemoveModifier(ItemScripts[itemID].StatsModifier);
                 }
+                ItemScripts.Remove(itemID);
                 Items[slot] = null;
             }
             else
