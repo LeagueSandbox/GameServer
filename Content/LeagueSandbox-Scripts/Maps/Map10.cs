@@ -247,7 +247,7 @@ namespace MapScripts
             _map.CreateRegion(TeamId.TEAM_BLUE, new Vector2(10071.5f, 6761.89f), -2, giveVision: true, visionRadius: 800f, lifeTime: float.MaxValue);
             _map.CreateRegion(TeamId.TEAM_BLUE, new Vector2(10071.5f, 6761.89f), -2, giveVision: true, visionRadius: 800f, lifeTime: float.MaxValue);
             BuffPlates[TeamId.TEAM_PURPLE] = _map.CreateMinion("TT_Buffplat_R", "TT_Buffplat_R", new Vector2(10071.5f, 6761.89f), 1073741891, ignoreCollision: true, isTargetable: true);
-            BuffPlates[TeamId.TEAM_PURPLE].PauseAi(true);
+            BuffPlates[TeamId.TEAM_PURPLE].PauseAi(true);*/
         }
 
         //This function gets executed every server tick

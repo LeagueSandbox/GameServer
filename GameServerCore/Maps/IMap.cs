@@ -72,7 +72,7 @@ namespace GameServerCore.Maps
         /// <summary>
         /// Spawns Map8's capture points
         /// </summary>
-        void SpawnCapturePoints();;
+        void SpawnCapturePoints();
         IInhibitor GetInhibitorById(uint id);
         bool AllInhibitorsDestroyedFromTeam(TeamId team);
         bool IsMinionSpawnEnabled();
