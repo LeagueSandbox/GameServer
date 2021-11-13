@@ -193,6 +193,7 @@ namespace LeagueSandbox.GameServer
                         {
                             u.SetVisibleByTeam(team, true);
                             // Might not be necessary, but just for good measure.
+                            _game.PacketNotifier.NotifyS2C_OnEnterTeamVisibility(u, team);
                             _game.PacketNotifier.NotifyEnterVisibilityClient(u, useTeleportID: true);
                             RemoveVisionUnit(u);
                             // TODO: send this in one place only
@@ -204,6 +205,7 @@ namespace LeagueSandbox.GameServer
                     if (!u.IsVisibleByTeam(team) && TeamHasVisionOn(team, u) && !u.IsDead)
                     {
                         u.SetVisibleByTeam(team, true);
+                        _game.PacketNotifier.NotifyS2C_OnEnterTeamVisibility(u, team);
                         _game.PacketNotifier.NotifyEnterVisibilityClient(u, useTeleportID: true);
                         // TODO: send this in one place only
                         _game.PacketNotifier.NotifyUpdatedStats(u, false);

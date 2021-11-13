@@ -171,36 +171,18 @@ namespace LeagueSandbox.GameServer.Maps
 
         public void LoadBuildings()
         {
-            if (!MapScript.DoesntHaveLanes)
-            {
-                _turrets = new Dictionary<TeamId, Dictionary<LaneID, List<ILaneTurret>>>{
+            _turrets = new Dictionary<TeamId, Dictionary<LaneID, List<ILaneTurret>>>{
                 { TeamId.TEAM_BLUE, new Dictionary<LaneID, List<ILaneTurret>>{ { LaneID.NONE, new List<ILaneTurret>() },{ LaneID.TOP, new List<ILaneTurret>()}, {LaneID.MIDDLE, new List<ILaneTurret>()}, {LaneID.BOTTOM, new List<ILaneTurret>()} } },
                 { TeamId.TEAM_PURPLE, new Dictionary<LaneID, List<ILaneTurret>>{ { LaneID.NONE, new List<ILaneTurret>() }, { LaneID.TOP, new List<ILaneTurret>()}, {LaneID.MIDDLE, new List<ILaneTurret>()}, {LaneID.BOTTOM, new List<ILaneTurret>()} } },
                 { TeamId.TEAM_NEUTRAL, new Dictionary<LaneID, List<ILaneTurret>>{ { LaneID.NONE, new List<ILaneTurret>() }, { LaneID.TOP, new List<ILaneTurret>()}, {LaneID.MIDDLE, new List<ILaneTurret>()}, {LaneID.BOTTOM, new List<ILaneTurret>()} }}};
 
-                _inhibitors = new Dictionary<TeamId, Dictionary<LaneID, List<IInhibitor>>>{
+            _inhibitors = new Dictionary<TeamId, Dictionary<LaneID, List<IInhibitor>>>{
                 { TeamId.TEAM_BLUE, new Dictionary<LaneID, List<IInhibitor>>{{LaneID.TOP, new List<IInhibitor>()}, {LaneID.MIDDLE, new List<IInhibitor>()}, {LaneID.BOTTOM, new List<IInhibitor>()} } },
                 { TeamId.TEAM_PURPLE, new Dictionary<LaneID, List<IInhibitor>>{{LaneID.TOP, new List<IInhibitor>()}, {LaneID.MIDDLE, new List<IInhibitor>()}, {LaneID.BOTTOM, new List<IInhibitor>()} } },
                 { TeamId.TEAM_NEUTRAL, new Dictionary<LaneID, List<IInhibitor>>{{LaneID.TOP, new List<IInhibitor>()}, {LaneID.MIDDLE, new List<IInhibitor>()}, {LaneID.BOTTOM, new List<IInhibitor>()} }}};
 
-                BlueMinionPathing = new Dictionary<LaneID, List<Vector2>> { { LaneID.TOP, new List<Vector2>() }, { LaneID.MIDDLE, new List<Vector2>() }, { LaneID.BOTTOM, new List<Vector2>() } };
-                PurpleMinionPathing = new Dictionary<LaneID, List<Vector2>> { { LaneID.TOP, new List<Vector2>() }, { LaneID.MIDDLE, new List<Vector2>() }, { LaneID.BOTTOM, new List<Vector2>() } };
-            }
-            else
-            {
-                _turrets = new Dictionary<TeamId, Dictionary<LaneID, List<ILaneTurret>>>{
-                { TeamId.TEAM_BLUE, new Dictionary<LaneID, List<ILaneTurret>>{{LaneID.NONE, new List<ILaneTurret>()}} },
-                { TeamId.TEAM_PURPLE, new Dictionary<LaneID, List<ILaneTurret>>{{LaneID.NONE, new List<ILaneTurret>()}} },
-                { TeamId.TEAM_NEUTRAL, new Dictionary<LaneID, List<ILaneTurret>>{{LaneID.NONE, new List<ILaneTurret>()} } } };
-
-                _inhibitors = new Dictionary<TeamId, Dictionary<LaneID, List<IInhibitor>>>{
-                { TeamId.TEAM_BLUE, new Dictionary<LaneID, List<IInhibitor>>{{LaneID.NONE, new List<IInhibitor>()} } },
-                { TeamId.TEAM_PURPLE, new Dictionary<LaneID, List<IInhibitor>>{{LaneID.NONE, new List<IInhibitor>()} } },
-                { TeamId.TEAM_NEUTRAL, new Dictionary<LaneID, List<IInhibitor>>{{LaneID.NONE, new List<IInhibitor>()}} }};
-
-                BlueMinionPathing = new Dictionary<LaneID, List<Vector2>> { { LaneID.NONE, new List<Vector2>() } };
-                PurpleMinionPathing = new Dictionary<LaneID, List<Vector2>> { { LaneID.NONE, new List<Vector2>() } };
-            }
+            BlueMinionPathing = new Dictionary<LaneID, List<Vector2>> { { LaneID.NONE, new List<Vector2>() }, { LaneID.TOP, new List<Vector2>() }, { LaneID.MIDDLE, new List<Vector2>() }, { LaneID.BOTTOM, new List<Vector2>() } };
+            PurpleMinionPathing = new Dictionary<LaneID, List<Vector2>> { { LaneID.NONE, new List<Vector2>() }, { LaneID.TOP, new List<Vector2>() }, { LaneID.MIDDLE, new List<Vector2>() }, { LaneID.BOTTOM, new List<Vector2>() } };
 
             // Below is where we create the buildings.
             var inhibRadius = 214;
@@ -342,15 +324,11 @@ namespace LeagueSandbox.GameServer.Maps
                 }
             }
         }
-        public void AddObject(IGameObject obj)
-        {
-            _game.ObjectManager.AddObject(obj);
-        }
         //Load Building Protections
         public void LoadBuildingProtection()
         {
             //I can't help but feel there's a better way to do this
-            Dictionary<TeamId, List<IInhibitor>> TeamInhibitors = new Dictionary<TeamId, List<IInhibitor>> { {TeamId.TEAM_BLUE, new List<IInhibitor>() }, { TeamId.TEAM_PURPLE, new List<IInhibitor>() } };
+            Dictionary<TeamId, List<IInhibitor>> TeamInhibitors = new Dictionary<TeamId, List<IInhibitor>> { { TeamId.TEAM_BLUE, new List<IInhibitor>() }, { TeamId.TEAM_PURPLE, new List<IInhibitor>() } };
             foreach (var teams in _inhibitors.Keys)
             {
                 foreach (var lane in _inhibitors[teams].Keys)
@@ -369,7 +347,7 @@ namespace LeagueSandbox.GameServer.Maps
                 (
                     nexus,
                     _turrets[nexus.Team][LaneID.MIDDLE].FindAll(turret => turret.Type == TurretType.NEXUS_TURRET).ToArray(), TeamInhibitors[nexus.Team].ToArray()
-                    
+
                 );
                 var teste = TeamInhibitors[nexus.Team];
             }
@@ -381,7 +359,7 @@ namespace LeagueSandbox.GameServer.Maps
                 inhibProtection = TurretType.OUTER_TURRET;
             }
 
-            foreach(var InhibTeam in TeamInhibitors.Keys) 
+            foreach (var InhibTeam in TeamInhibitors.Keys)
             {
                 foreach (var inhibitor in TeamInhibitors[InhibTeam])
                 {
@@ -510,7 +488,16 @@ namespace LeagueSandbox.GameServer.Maps
             var m = new LaneMinion(_game, list[minionNo], barracksName, waypoints, MapScript.MinionModels[team][list[minionNo]], 0, team);
             _game.ObjectManager.AddObject(m);
         }
-
+        public IMinion CreateMinion(string name, string model, Vector2 position, uint netId = 0, TeamId team = TeamId.TEAM_NEUTRAL, int skinId = 0, bool ignoreCollision = false, bool isTargetable = false)
+        {
+            var m = new Minion(_game, null, position, model, name, netId, team, skinId, ignoreCollision, isTargetable);
+            _game.PacketNotifier.NotifySpawn(m);
+            return m;
+        }
+        public void SpawnMinion(IMinion minion)
+        {
+            _game.ObjectManager.AddObject(minion);
+        }
         public bool IsMinionSpawnEnabled()
         {
             return _game.Config.MinionSpawnsEnabled;
@@ -574,6 +561,10 @@ namespace LeagueSandbox.GameServer.Maps
 
         //General Map stuff, such as Announcements and surrender
         //TODO: See if the "IsMapSpecific" parameter is actually needed.
+        public IRegion CreateRegion(TeamId team, Vector2 position, int type = -1, IGameObject collisionUnit = null, IGameObject visionTarget = null, bool giveVision = false, float visionRadius = 0, bool revealStealth = false, bool hasColision = false, float colisionRadius = 0, float grassRadius = 0, float scale = 1, float addedSize = 0, float lifeTime = 0, int clientID = 0)
+        {
+           return new Region(_game, team, position, type, collisionUnit, visionTarget, giveVision, visionRadius, revealStealth, hasColision, colisionRadius, grassRadius, scale, addedSize, lifeTime, clientID);
+        }
         public void AddAnnouncement(long time, Announces ID, bool IsMapSpecific)
         {
             AnnouncerEvents.Add(new Announce(_game, time, ID, IsMapSpecific));

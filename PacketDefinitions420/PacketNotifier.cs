@@ -495,81 +495,81 @@ namespace PacketDefinitions420
             switch (changeType)
             {
                 case GameServerCore.Enums.ChangeSlotSpellDataType.TargetingType:
-                {
-                    if (targetingType != TargetingType.Invalid)
                     {
-                        spellData = new ChangeSpellDataTargetingType()
+                        if (targetingType != TargetingType.Invalid)
                         {
-                            SpellSlot = slot,
-                            IsSummonerSpell = isSummonerSpell,
-                            TargetingType = (byte)targetingType
-                        };
+                            spellData = new ChangeSpellDataTargetingType()
+                            {
+                                SpellSlot = slot,
+                                IsSummonerSpell = isSummonerSpell,
+                                TargetingType = (byte)targetingType
+                            };
+                        }
+                        break;
                     }
-                    break;
-                }
                 case GameServerCore.Enums.ChangeSlotSpellDataType.SpellName:
-                {
-                    spellData = new ChangeSpellDataSpellName()
                     {
-                        SpellSlot = slot,
-                        IsSummonerSpell = isSummonerSpell,
-                        SpellName = newName
-                    };
-                    break;
-                }
-                case GameServerCore.Enums.ChangeSlotSpellDataType.Range:
-                {
-                    spellData = new ChangeSpellDataRange()
-                    {
-                        SpellSlot = slot,
-                        IsSummonerSpell = isSummonerSpell,
-                        CastRange = newRange
-                    };
-                    break;
-                }
-                case GameServerCore.Enums.ChangeSlotSpellDataType.MaxGrowthRange:
-                {
-                    spellData = new ChangeSpellDataMaxGrowthRange()
-                    {
-                        SpellSlot = slot,
-                        IsSummonerSpell = isSummonerSpell,
-                        OverrideMaxCastRange = newMaxCastRange
-                    };
-                    break;
-                }
-                case GameServerCore.Enums.ChangeSlotSpellDataType.RangeDisplay:
-                {
-                    spellData = new ChangeSpellDataRangeDisplay()
-                    {
-                        SpellSlot = slot,
-                        IsSummonerSpell = isSummonerSpell,
-                        OverrideCastRangeDisplay = newDisplayRange
-                    };
-                    break;
-                }
-                case GameServerCore.Enums.ChangeSlotSpellDataType.IconIndex:
-                {
-                    spellData = new ChangeSpellDataIconIndex()
-                    {
-                        SpellSlot = slot,
-                        IsSummonerSpell = isSummonerSpell,
-                        IconIndex = newIconIndex
-                    };
-                    break;
-                }
-                case GameServerCore.Enums.ChangeSlotSpellDataType.OffsetTarget:
-                {
-                    if (offsetTargets != null)
-                    {
-                        spellData = new ChangeSpellDataOffsetTarget()
+                        spellData = new ChangeSpellDataSpellName()
                         {
                             SpellSlot = slot,
                             IsSummonerSpell = isSummonerSpell,
-                            Targets = offsetTargets
+                            SpellName = newName
                         };
+                        break;
                     }
-                    break;
-                }
+                case GameServerCore.Enums.ChangeSlotSpellDataType.Range:
+                    {
+                        spellData = new ChangeSpellDataRange()
+                        {
+                            SpellSlot = slot,
+                            IsSummonerSpell = isSummonerSpell,
+                            CastRange = newRange
+                        };
+                        break;
+                    }
+                case GameServerCore.Enums.ChangeSlotSpellDataType.MaxGrowthRange:
+                    {
+                        spellData = new ChangeSpellDataMaxGrowthRange()
+                        {
+                            SpellSlot = slot,
+                            IsSummonerSpell = isSummonerSpell,
+                            OverrideMaxCastRange = newMaxCastRange
+                        };
+                        break;
+                    }
+                case GameServerCore.Enums.ChangeSlotSpellDataType.RangeDisplay:
+                    {
+                        spellData = new ChangeSpellDataRangeDisplay()
+                        {
+                            SpellSlot = slot,
+                            IsSummonerSpell = isSummonerSpell,
+                            OverrideCastRangeDisplay = newDisplayRange
+                        };
+                        break;
+                    }
+                case GameServerCore.Enums.ChangeSlotSpellDataType.IconIndex:
+                    {
+                        spellData = new ChangeSpellDataIconIndex()
+                        {
+                            SpellSlot = slot,
+                            IsSummonerSpell = isSummonerSpell,
+                            IconIndex = newIconIndex
+                        };
+                        break;
+                    }
+                case GameServerCore.Enums.ChangeSlotSpellDataType.OffsetTarget:
+                    {
+                        if (offsetTargets != null)
+                        {
+                            spellData = new ChangeSpellDataOffsetTarget()
+                            {
+                                SpellSlot = slot,
+                                IsSummonerSpell = isSummonerSpell,
+                                Targets = offsetTargets
+                            };
+                        }
+                        break;
+                    }
             }
 
             var changePacket = new ChangeSlotSpellData()
@@ -2747,6 +2747,15 @@ namespace PacketDefinitions420
                 case IRegion region:
                     NotifyAddRegion(region);
                     return;
+            }
+
+            if(o.IsVisibleByTeam(TeamId.TEAM_BLUE))
+            {
+                NotifyS2C_OnEnterTeamVisibility(o, TeamId.TEAM_BLUE);
+            }
+            if (o.IsVisibleByTeam(TeamId.TEAM_PURPLE))
+            {
+                NotifyS2C_OnEnterTeamVisibility(o, TeamId.TEAM_PURPLE);
             }
 
             if (doVision)

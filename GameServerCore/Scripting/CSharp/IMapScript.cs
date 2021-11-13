@@ -11,7 +11,6 @@ namespace GameServerCore.Domain
     {
         bool HasInnerTurrets { get; }
         bool EnableBuildingProtection { get; }
-        bool DoesntHaveLanes { get; }
         long FirstSpawnTime { get; }
         long NextSpawnTime { get; set; }
         long SpawnInterval { get; }

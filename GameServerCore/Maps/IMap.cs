@@ -69,7 +69,10 @@ namespace GameServerCore.Maps
         /// <param name="protectionDependsOfAll"></param>
         /// <param name="protectedBy"></param>
         void SpawnTurret(ILaneTurret turret, bool hasProtection, bool protectionDependsOfAll = false, IAttackableUnit[] protectedBy = null);
-        void SpawnCapturePoints();
+        /// <summary>
+        /// Spawns Map8's capture points
+        /// </summary>
+        void SpawnCapturePoints();;
         IInhibitor GetInhibitorById(uint id);
         bool AllInhibitorsDestroyedFromTeam(TeamId team);
         bool IsMinionSpawnEnabled();
@@ -82,6 +85,9 @@ namespace GameServerCore.Maps
         /// <param name="barracksName"></param>
         /// <param name="waypoints"></param>
         void SpawnLaneMinion(List<MinionSpawnType> list, int minionNo, string barracksName, List<Vector2> waypoints);
+        IMinion CreateMinion(string name, string model, Vector2 position, uint netId = 0, TeamId team = TeamId.TEAM_NEUTRAL, int skinId = 0, bool ignoreCollision = false, bool isTargetable = false);
+        public void SpawnMinion(IMinion minion);
+        IRegion CreateRegion(TeamId team, Vector2 position, int type = -1, IGameObject collisionUnit = null, IGameObject visionTarget = null, bool giveVision = false, float visionRadius = 0, bool revealStealth = false, bool hasColision = false, float colisionRadius = 0, float grassRadius = 0, float scale = 1, float addedSize = 0, float lifeTime = 0, int clientID = 0);
         /// <summary>
         /// Adds an annoucement
         /// </summary>

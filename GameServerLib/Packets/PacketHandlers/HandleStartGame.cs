@@ -64,7 +64,6 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                         player.Item2.Champion.Model, "", 0, player.Item2.Champion.NetId,
                         _game.NetworkIdManager.GetNewNetId());
                 }
-                _game.Map.MapScript.OnMatchStart();
                 _game.Start();
             }
 

@@ -19,7 +19,6 @@ namespace MapScripts
     {
         public bool HasInnerTurrets { get; set; } = false;
         public bool EnableBuildingProtection { get; set; } = true;
-        public bool DoesntHaveLanes { get; set; } = false;
 
         //General Map variable
         private IMap _map;

@@ -18,7 +18,6 @@ namespace MapScripts
     {
         public bool HasInnerTurrets { get; set; } = false;
         public bool EnableBuildingProtection { get; set; } = true;
-        public bool DoesntHaveLanes { get; set; } = true;
 
         //General Map variable
         private IMap _map;
@@ -45,9 +44,18 @@ namespace MapScripts
         }
 
         //Nexus models
-        public Dictionary<TeamId, string> NexusModels { get; set; } = new Dictionary<TeamId, string>();
+        //Nexus and Inhibitor model changes dont seem to take effect in-game, has to be investigated.
+        public Dictionary<TeamId, string> NexusModels { get; set; } = new Dictionary<TeamId, string>
+        {
+            {TeamId.TEAM_BLUE, "OrderNexus" },
+            {TeamId.TEAM_PURPLE, "ChaosNexus" }
+        };
         //Inhib models
-        public Dictionary<TeamId, string> InhibitorModels { get; set; } = new Dictionary<TeamId, string>();
+        public Dictionary<TeamId, string> InhibitorModels { get; set; } = new Dictionary<TeamId, string>
+        {
+            {TeamId.TEAM_BLUE, "OrderInhibitor" },
+            {TeamId.TEAM_PURPLE, "ChaosInhibitor" }
+        };
         //Tower Models
         public Dictionary<TeamId, Dictionary<TurretType, string>> TowerModels { get; set; } = new Dictionary<TeamId, Dictionary<TurretType, string>>
         {

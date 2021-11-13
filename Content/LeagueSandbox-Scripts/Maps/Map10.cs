@@ -18,7 +18,6 @@ namespace MapScripts
     {
         public bool HasInnerTurrets { get; set; } = false;
         public bool EnableBuildingProtection { get; set; } = true;
-        public bool DoesntHaveLanes { get; set; } = false;
 
         //General Map variable
         private IMap _map;
@@ -235,9 +234,20 @@ namespace MapScripts
             map.AddLevelProp("LevelProp_TT_Shopkeeper", "TT_Shopkeeper", new Vector2(1340.8141f, 7996.8691f), 126.2980f, new Vector3(208f, -66.6667f, 0.0f), new Vector3(22.2223f, 0.0f, -55.5556f), Vector3.One);
             map.AddLevelProp("LevelProp_TT_Speedshrine_Gears", "TT_Speedshrine_Gears", new Vector2(7706.3052f, 6720.3926f), -124.9320f, new Vector3(0.0f, 0.0f, 0.0f), new Vector3(0.0f, 0.0f, 0.0f), Vector3.One);
         }
+        //Dictionary<TeamId, IMinion> BuffPlates = new Dictionary<TeamId, IMinion> { { TeamId.TEAM_BLUE, null }, { TeamId.TEAM_PURPLE, null } };
         public void OnMatchStart()
-        {
+        {   //SPAWNING A MINION WITH THE "TT_Buffplat_L" MODEL BREAKS **ALL** OTHER MINIONS FOR SOME REASON
 
+            /*_map.CreateRegion(TeamId.TEAM_BLUE, new Vector2(5328.4f, 6757.1f), -2, giveVision: true, visionRadius: 800f, lifeTime: float.MaxValue);
+            _map.CreateRegion(TeamId.TEAM_BLUE, new Vector2(5328.4f, 6757.1f), -2, giveVision: true, visionRadius: 800f, lifeTime: float.MaxValue);
+            BuffPlates[TeamId.TEAM_BLUE] = _map.CreateMinion("TT_Buffplat_L", "TT_Buffplat_L", new Vector2(5328.4f, 6757.1f), 1073741885, ignoreCollision: true, isTargetable: true);
+            BuffPlates[TeamId.TEAM_BLUE].FaceDirection(new Vector3(14169.09f, 178.19215f, 7916.989f), true);
+            BuffPlates[TeamId.TEAM_BLUE].PauseAi(true);
+
+            _map.CreateRegion(TeamId.TEAM_BLUE, new Vector2(10071.5f, 6761.89f), -2, giveVision: true, visionRadius: 800f, lifeTime: float.MaxValue);
+            _map.CreateRegion(TeamId.TEAM_BLUE, new Vector2(10071.5f, 6761.89f), -2, giveVision: true, visionRadius: 800f, lifeTime: float.MaxValue);
+            BuffPlates[TeamId.TEAM_PURPLE] = _map.CreateMinion("TT_Buffplat_R", "TT_Buffplat_R", new Vector2(10071.5f, 6761.89f), 1073741891, ignoreCollision: true, isTargetable: true);
+            BuffPlates[TeamId.TEAM_PURPLE].PauseAi(true);
         }
 
         //This function gets executed every server tick

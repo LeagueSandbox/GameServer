@@ -204,7 +204,7 @@ namespace LeagueSandbox.GameServer
                 {
                     type = GameObjectTypes.ObjAIBase_Turret;
                 }
-                else if (Name.Contains("__Spawn" ) && !Name.Contains("____P"))
+                else if (Name.Contains("__Spawn" ))
                 {
                     type = GameObjectTypes.ObjBuilding_SpawnPoint;
                 }
