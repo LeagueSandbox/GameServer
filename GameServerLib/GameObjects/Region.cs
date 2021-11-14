@@ -44,10 +44,10 @@ namespace LeagueSandbox.GameServer.GameObjects
         /// <param name="scale">Scale of the Region.</param>
         /// <param name="netId">NetID that should be forced onto the Region. *NOTE*: Exceptions unhandled, expect crashes if NetID is already owned by a GameObject.</param>
         /// <param name="lifetime">Number of seconds the Region should exist.</param>
-        public Region(Game game, TeamId team, Vector2 pos, int type = -1, IGameObject collisionUnit = null, IGameObject visionTarget = null, bool giveVision = false, float visionRadius = 0, bool revealStealth = false, bool hasCollision = false, float collisionRadius = 0, float grassRadius = 0, float scale = 1.0f, float addedSize = 0, float lifetime = 0, int clientId = 0)
+        public Region(Game game, TeamId team, Vector2 pos, RegionType type = RegionType.Default, IGameObject collisionUnit = null, IGameObject visionTarget = null, bool giveVision = false, float visionRadius = 0, bool revealStealth = false, bool hasCollision = false, float collisionRadius = 0, float grassRadius = 0, float scale = 1.0f, float addedSize = 0, float lifetime = 0, int clientId = 0)
                : base(game, pos, collisionRadius, visionRadius, team: team)
         {
-            Type = type;
+            Type = (int)type;
             CollisionUnit = collisionUnit;
             OwnerClientID = clientId;
             VisionNetID = _game.NetworkIdManager.GetNewNetId();

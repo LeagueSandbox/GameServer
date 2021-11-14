@@ -7,6 +7,7 @@ using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Domain.GameObjects.Spell.Missile;
 using GameServerCore.Enums;
+using LeagueSandbox.GameServer.GameObjects;
 using LeagueSandbox.GameServer.GameObjects.Other;
 using LeagueSandbox.GameServer.Logging;
 
@@ -88,16 +89,7 @@ namespace LeagueSandbox.GameServer
                     {
                         _game.PacketNotifier.NotifySpawn(turret);
 
-                        // TODO: Implemnent a Region class so we can have a centralized (and cleaner) way of making new regions.
-                        // Turret Vision (values based on packet data, placeholders)
-                        //_game.PacketNotifier.NotifyAddRegion
-                        //(
-                        //    _game.NetworkIdManager.GetNewNetId(), _game.NetworkIdManager.GetNewNetId(), turret.Team, turret.Position,
-                        //    25000.0f, 800.0f, -2,
-                        //    null, turret, turret.CharData.PathfindingCollisionRadius,
-                        //    130.0f, 1.0f, 0,
-                        //    true, true
-                        //);
+                        new Region(_game, turret.Team, turret.Position, RegionType.Default, turret, turret, true, 800f, true, true, turret.CollisionRadius, lifetime: float.MaxValue);
 
                         foreach (var item in turret.Inventory)
                         {

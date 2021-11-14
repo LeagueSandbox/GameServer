@@ -37,19 +37,23 @@ namespace GameServerCore.Maps
         /// <summary>
         /// List of all nexus in-game
         /// </summary>
-        List<INexus> _nexus { get; }
+        List<INexus> NexusList { get; }
         /// <summary>
         /// List of all turrets in-game
         /// </summary>
-        Dictionary<TeamId, Dictionary<LaneID, List<ILaneTurret>>> _turrets { get; }
+        Dictionary<TeamId, Dictionary<LaneID, List<ILaneTurret>>> TurretList { get; }
+        /// <summary>
+        /// List of all capture points in-game
+        /// </summary>
+        List<Tuple<IMinion, uint>> CapturePointsList { get; }
         /// <summary>
         /// List of all inhibitors in-game
         /// </summary>
-        Dictionary<TeamId, Dictionary<LaneID, List<IInhibitor>>> _inhibitors { get; }
+        Dictionary<TeamId, Dictionary<LaneID, List<IInhibitor>>> InhibitorList { get; }
         /// <summary>
         /// List of fountains
         /// </summary>
-        Dictionary<TeamId, IFountain> _fountains { get; }
+        Dictionary<TeamId, IFountain> FountainList { get; }
         /// <summary>
         /// Initializes MapProperties. Usually only occurs once before players are added to Game.
         /// </summary>
@@ -69,10 +73,6 @@ namespace GameServerCore.Maps
         /// <param name="protectionDependsOfAll"></param>
         /// <param name="protectedBy"></param>
         void SpawnTurret(ILaneTurret turret, bool hasProtection, bool protectionDependsOfAll = false, IAttackableUnit[] protectedBy = null);
-        /// <summary>
-        /// Spawns Map8's capture points
-        /// </summary>
-        void SpawnCapturePoints();
         IInhibitor GetInhibitorById(uint id);
         bool AllInhibitorsDestroyedFromTeam(TeamId team);
         bool IsMinionSpawnEnabled();
@@ -84,10 +84,10 @@ namespace GameServerCore.Maps
         /// <param name="minionNo"></param>
         /// <param name="barracksName"></param>
         /// <param name="waypoints"></param>
-        void SpawnLaneMinion(List<MinionSpawnType> list, int minionNo, string barracksName, List<Vector2> waypoints);
+        void CreateLaneMinion(List<MinionSpawnType> list, int minionNo, string barracksName, List<Vector2> waypoints);
         IMinion CreateMinion(string name, string model, Vector2 position, uint netId = 0, TeamId team = TeamId.TEAM_NEUTRAL, int skinId = 0, bool ignoreCollision = false, bool isTargetable = false);
-        public void SpawnMinion(IMinion minion);
-        IRegion CreateRegion(TeamId team, Vector2 position, int type = -1, IGameObject collisionUnit = null, IGameObject visionTarget = null, bool giveVision = false, float visionRadius = 0, bool revealStealth = false, bool hasColision = false, float colisionRadius = 0, float grassRadius = 0, float scale = 1, float addedSize = 0, float lifeTime = 0, int clientID = 0);
+        void AddObject(IGameObject obj);
+        IRegion CreateRegion(TeamId team, Vector2 position, RegionType type = RegionType.Default, IGameObject collisionUnit = null, IGameObject visionTarget = null, bool giveVision = false, float visionRadius = 0, bool revealStealth = false, bool hasCollision = false, float collisionRadius = 0, float grassRadius = 0, float scale = 1, float addedSize = 0, float lifeTime = 0, int clientID = 0);
         /// <summary>
         /// Adds an annoucement
         /// </summary>

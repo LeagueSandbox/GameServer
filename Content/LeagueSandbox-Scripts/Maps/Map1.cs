@@ -5,17 +5,11 @@ using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
 using GameServerCore.Maps;
-using LeagueSandbox.GameServer;
-using LeagueSandbox.GameServer.GameObjects;
-using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
-using LeagueSandbox.GameServer.GameObjects.Other;
-using LeagueSandbox.GameServer.Maps;
 
 namespace MapScripts
 {
     public class Map1 : IMapScript
     {
-        public bool HasInnerTurrets { get; set; } = true;
         public bool EnableBuildingProtection { get; set; } = true;
 
         //General Map variable

@@ -1,22 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Numerics;
 using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
 using GameServerCore.Maps;
-using LeagueSandbox.GameServer;
-using LeagueSandbox.GameServer.GameObjects;
-using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
-using LeagueSandbox.GameServer.GameObjects.Other;
-using LeagueSandbox.GameServer.Maps;
+
 
 namespace MapScripts
 {
     public class Map8 : IMapScript
     {
-        public bool HasInnerTurrets { get; set; } = false;
         public bool EnableBuildingProtection { get; set; } = true;
 
         //General Map variable
@@ -209,7 +203,12 @@ namespace MapScripts
 
         public void OnMatchStart()
         {
-            _map.SpawnCapturePoints();
+            foreach (var point in _map.CapturePointsList)
+            {
+                _map.CreateRegion(TeamId.TEAM_BLUE, point.Item1.Position, RegionType.Unknown2, point.Item1, giveVision: true, visionRadius: 800.0f, revealStealth: true, hasCollision: true, collisionRadius: 120.0f, grassRadius: 150.0f, lifeTime: 25000.0f);
+                point.Item1.PauseAi(true);
+                _map.AddObject(point.Item1);
+            }
         }
         //This function gets executed every server tick
         public void Update(float diff)

@@ -5,19 +5,13 @@ using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
 using GameServerCore.Maps;
-using LeagueSandbox.GameServer;
-using LeagueSandbox.GameServer.GameObjects;
-using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
-using LeagueSandbox.GameServer.GameObjects.Other;
 using LeagueSandbox.GameServer.Logging;
-using LeagueSandbox.GameServer.Maps;
 using log4net;
 
 namespace MapScripts
 {
     public class Map12 : IMapScript
     {
-        public bool HasInnerTurrets { get; set; } = false;
         public bool EnableBuildingProtection { get; set; } = true;
 
         //General Map variable
@@ -58,7 +52,7 @@ namespace MapScripts
                     break;
                 case 1:
                 case 8:
-                    returnType = TurretType.OUTER_TURRET;
+                    returnType = TurretType.INNER_TURRET;
                     break;
             }
 

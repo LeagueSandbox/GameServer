@@ -1,22 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Numerics;
 using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
 using GameServerCore.Maps;
-using LeagueSandbox.GameServer;
-using LeagueSandbox.GameServer.GameObjects;
-using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
-using LeagueSandbox.GameServer.GameObjects.Other;
-using LeagueSandbox.GameServer.Maps;
 
 namespace MapScripts
 {
     public class Map10 : IMapScript
     {
-        public bool HasInnerTurrets { get; set; } = false;
         public bool EnableBuildingProtection { get; set; } = true;
 
         //General Map variable
@@ -49,7 +42,7 @@ namespace MapScripts
                     returnType = TurretType.INHIBITOR_TURRET;
                     break;
                 case 2:
-                    returnType = TurretType.OUTER_TURRET;
+                    returnType = TurretType.INNER_TURRET;
                     break;
             }
 

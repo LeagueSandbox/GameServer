@@ -5,6 +5,7 @@ using GameServerCore.Domain.GameObjects.Spell.Missile;
 using GameServerCore.Enums;
 using GameServerCore.Packets.Handlers;
 using GameServerCore.Packets.PacketDefinitions.Requests;
+using LeagueSandbox.GameServer.GameObjects;
 using LeagueSandbox.GameServer.Items;
 using LeagueSandbox.GameServer.Logging;
 using log4net;
@@ -68,12 +69,12 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                 {
                     if (champion.IsVisibleByTeam(peerInfo.Champion.Team))
                     {
-                        
                         _game.PacketNotifier.NotifyEnterVisibilityClient(champion, userId, false, false, true);
                     }
                 }
                 else if (kv.Value is ILaneTurret turret)
                 {
+                    new Region(_game, turret.Team, turret.Position, RegionType.Default, turret, turret, true, 800f, true, true, turret.CollisionRadius, lifetime: float.MaxValue);
                     _game.PacketNotifier.NotifyS2C_CreateTurret(turret, userId);
                 }
                 else if (kv.Value is INexus nexus)

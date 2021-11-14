@@ -4,11 +4,7 @@
 		<TargetFramework>netcoreapp3.0</TargetFramework>
 		<Platforms>AnyCPU;x86</Platforms>
 	</PropertyGroup>
-
-	<ItemGroup>
-		<Compile Remove="PacketNotifier-prev.cs" />
-	</ItemGroup>
-
+	
 	<ItemGroup>
 		<PackageReference Include="ENetSharpLeague" Version="1.2.1-beta" />
 	</ItemGroup>
