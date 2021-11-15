@@ -51,8 +51,8 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             Inventory = InventoryManager.CreateInventory(game.PacketNotifier, game.ScriptEngine);
             Shop = Items.Shop.CreateShop(this, game);
 
-            Stats.Gold = _game.Map.MapProperties.StartingGold;
-            Stats.GoldPerSecond.BaseValue = _game.Map.MapProperties.GoldPerSecond;
+            Stats.Gold = _game.Map.MapScript.StartingGold;
+            Stats.GoldPerSecond.BaseValue = _game.Map.MapScript.GoldPerSecond;
             Stats.IsGeneratingGold = false;
 
             //TODO: automaticaly rise spell levels with CharData.SpellLevelsUp
@@ -180,7 +180,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         {
             base.Update(diff);
 
-            if (!Stats.IsGeneratingGold && _game.GameTime >= _game.Map.MapProperties.FirstGoldTime)
+            if (!Stats.IsGeneratingGold && _game.GameTime >= _game.Map.MapScript.FirstGoldTime)
             {
                 Stats.IsGeneratingGold = true;
                 Logger.Debug("Generating Gold!");
@@ -270,7 +270,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                     ChampStats.NeutralMinionsKilled += 1;
                 }
 
-                var gold = _game.Map.MapProperties.GetGoldFor(deathData.Unit);
+                var gold = _game.Map.MapScript.GetGoldFor(deathData.Unit);
                 if (gold <= 0)
                 {
                     return;
@@ -323,7 +323,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             cKiller.ChampStats.Kills += 1;
             // TODO: add assists
 
-            var gold = _game.Map.MapProperties.GetGoldFor(this);
+            var gold = _game.Map.MapScript.GetGoldFor(this);
             Logger.Debug($"Before: getGoldFromChamp: {gold} Killer: {cKiller.KillDeathCounter} Victim {KillDeathCounter}");
 
             if (cKiller.KillDeathCounter < 0)
@@ -344,17 +344,17 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 return;
             }
 
-            if (_game.Map.MapProperties.IsKillGoldRewardReductionActive
-                && _game.Map.MapProperties.HasFirstBloodHappened)
+            if (_game.Map.MapScript.IsKillGoldRewardReductionActive
+                && _game.Map.MapScript.HasFirstBloodHappened)
             {
                 gold -= gold * 0.25f;
                 //CORE_INFO("Still some minutes for full gold reward on champion kills");
             }
 
-            if (!_game.Map.MapProperties.HasFirstBloodHappened)
+            if (!_game.Map.MapScript.HasFirstBloodHappened)
             {
                 gold += 100;
-                _game.Map.MapProperties.HasFirstBloodHappened = true;
+                _game.Map.MapScript.HasFirstBloodHappened = true;
             }
 
             _game.PacketNotifier.NotifyChampionDie(this, cKiller, (int)gold);

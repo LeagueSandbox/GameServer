@@ -1,17 +1,17 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>netcoreapp3.0</TargetFramework>
-    <Platforms>AnyCPU;x86</Platforms>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>netcoreapp3.0</TargetFramework>
+		<Platforms>AnyCPU;x86</Platforms>
+	</PropertyGroup>
+	
+	<ItemGroup>
+		<PackageReference Include="ENetSharpLeague" Version="1.2.1-beta" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="ENetSharpLeague" Version="1.2.1-beta" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\GameServerCore\GameServerCore.csproj" />
-    <ProjectReference Include="..\LeaguePackets\LeaguePackets\LeaguePackets.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\GameServerCore\GameServerCore.csproj" />
+		<ProjectReference Include="..\LeaguePackets\LeaguePackets\LeaguePackets.csproj" />
+	</ItemGroup>
 
 </Project>

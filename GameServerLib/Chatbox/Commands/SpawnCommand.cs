@@ -48,10 +48,10 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
             var championPos = _playerManager.GetPeerInfo(userId).Champion.Position;
             var random = new Random();
 
-            var casterModel = Game.Map.MapProperties.GetMinionModel(team, MinionSpawnType.MINION_TYPE_CASTER);
-            var cannonModel = Game.Map.MapProperties.GetMinionModel(team, MinionSpawnType.MINION_TYPE_CANNON);
-            var meleeModel = Game.Map.MapProperties.GetMinionModel(team, MinionSpawnType.MINION_TYPE_MELEE);
-            var superModel = Game.Map.MapProperties.GetMinionModel(team, MinionSpawnType.MINION_TYPE_SUPER);
+            var casterModel = Game.Map.MapScript.MinionModels[team][MinionSpawnType.MINION_TYPE_CASTER];
+            var cannonModel = Game.Map.MapScript.MinionModels[team][MinionSpawnType.MINION_TYPE_CANNON];
+            var meleeModel = Game.Map.MapScript.MinionModels[team][MinionSpawnType.MINION_TYPE_MELEE];
+            var superModel = Game.Map.MapScript.MinionModels[team][MinionSpawnType.MINION_TYPE_SUPER];
 
             var minions = new[]
             {

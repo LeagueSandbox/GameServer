@@ -130,18 +130,18 @@ namespace LeagueSandbox.GameServer
         }
     }
 
-    public class MapData
+    public class MapData : IMapData
     {
         public int Id { get; private set; }
         /// <summary>
         /// Collection of MapObjects present within a map's room file, with the key being the name present in the room file. Refer to <see cref="MapObject"/>.
         /// </summary>
-        public Dictionary<string, MapObject> MapObjects { get; private set; }
+        public Dictionary<string, IMapObject> MapObjects { get; private set; }
         /// <summary>
         /// Collection of MapObjects which represent lane minion spawn positions.
         /// Not present within the room file, therefor it is split into its own collection.
         /// </summary>
-        public Dictionary<string, MapObject> SpawnBarracks { get; private set; }
+        public Dictionary<string, IMapObject> SpawnBarracks { get; private set; }
         /// <summary>
         /// Experience required to level, ordered from 2 and up.
         /// </summary>
@@ -159,14 +159,14 @@ namespace LeagueSandbox.GameServer
         public MapData(int mapId)
         {
             Id = mapId;
-            MapObjects = new Dictionary<string, MapObject>();
-            SpawnBarracks = new Dictionary<string, MapObject>();
+            MapObjects = new Dictionary<string, IMapObject>();
+            SpawnBarracks = new Dictionary<string, IMapObject>();
             ExpCurve = new List<float>();
             DeathTimes = new List<float>();
             StatsProgression = new List<float>();
         }
 
-        public class MapObject
+        public class MapObject : IMapObject
         {
             public string Name { get; private set; }
             public Vector3 CentralPoint { get; private set; }
@@ -191,7 +191,7 @@ namespace LeagueSandbox.GameServer
                 {
                     type = GameObjectTypes.ObjAnimated_HQ;
                 }
-                else if (Name.Contains("Barracks"))
+                else if (Name.Contains("Barracks_T"))
                 {
                     // Inhibitors are dampeners for the enemy Nexus.
                     type = GameObjectTypes.ObjAnimated_BarracksDampener;
@@ -203,6 +203,14 @@ namespace LeagueSandbox.GameServer
                 else if (Name.Contains("__Spawn"))
                 {
                     type = GameObjectTypes.ObjBuilding_SpawnPoint;
+                }
+                else if (Name.Contains("__NAV"))
+                {
+                    type = GameObjectTypes.ObjBuilding_NavPoint;
+                }
+                else if (Name.Contains("Info_Point"))
+                {
+                    type = GameObjectTypes.InfoPoint;
                 }
 
                 return type;
@@ -264,7 +272,8 @@ namespace LeagueSandbox.GameServer
                 {
                     laneId = LaneID.TOP;
                 }
-                else if (Name.Contains("_C"))
+                //Using just _C would cause files with "_Chaos" to be mistakenly assigned as MidLane
+                else if (Name.Contains("_C0") || Name.Contains("_C1") || Name.Contains("_C_"))
                 {
                     laneId = LaneID.MIDDLE;
                 }
@@ -337,7 +346,6 @@ namespace LeagueSandbox.GameServer
             }
         }
     }
-
     public class MapSpawns
     {
         public Dictionary<int, PlayerSpawns> Blue = new Dictionary<int, PlayerSpawns>();

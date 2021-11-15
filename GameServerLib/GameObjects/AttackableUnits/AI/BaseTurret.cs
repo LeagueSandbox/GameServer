@@ -26,7 +26,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         /// <summary>
         /// MapObject that this turret was created from.
         /// </summary>
-        public MapData.MapObject ParentObject { get; private set; }
+        public IMapObject ParentObject { get; private set; }
         /// <summary>
         /// Internal name of this turret, used for packets so that clients know which visual turret to assign them to.
         /// </summary>
@@ -44,7 +44,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             TeamId team = TeamId.TEAM_BLUE,
             uint netId = 0,
             LaneID lane = LaneID.NONE,
-            MapData.MapObject mapObject = null,
+            IMapObject mapObject = null,
             int skinId = 0
         ) : base(game, model, new Stats.Stats(), 88, position, 1200, skinId, netId, team)
         {
@@ -175,12 +175,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         /// <param name="newId"></param>
         public void SetLaneID(LaneID newId)
         {
-            // Protect the current LaneID if it has already been set.
-            if (Lane != LaneID.NONE)
-            {
-                return;
-            }
-
             Lane = newId;
         }
 

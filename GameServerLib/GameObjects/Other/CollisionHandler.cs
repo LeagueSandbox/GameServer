@@ -12,7 +12,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Other
     /// </summary>
     public class CollisionHandler : ICollisionHandler
     {
-        private IMap _map;
+        private IMapScriptHandler _map;
 
         private readonly List<IGameObject> _objects = new List<IGameObject>();
         // This is the 'dynamic map', updated every update of the game.
@@ -20,7 +20,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Other
 
         public QuadTree<IGameObject> QuadDynamic { get; private set; }
 
-        public CollisionHandler(IMap map)
+        public CollisionHandler(IMapScriptHandler map)
         {
             _map = map;
 

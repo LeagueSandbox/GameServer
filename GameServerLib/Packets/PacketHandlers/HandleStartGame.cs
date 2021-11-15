@@ -51,7 +51,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                          _game.PacketNotifier.NotifyDebugMessage(userId, msg);
                     }
 
-                    _game.PacketNotifier.NotifyEnterLocalVisibilityClient(player.Item2.Champion, ignoreVision: true);
+                    _game.PacketNotifier.NotifySpawn(player.Item2.Champion, userId, false);
                     // TODO: send this in one place only
                     _game.PacketNotifier.NotifyUpdatedStats(player.Item2.Champion, false);
                     _game.PacketNotifier.NotifyBlueTip((int) player.Item2.PlayerId, "Welcome to League Sandbox!",
@@ -64,7 +64,6 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                         player.Item2.Champion.Model, "", 0, player.Item2.Champion.NetId,
                         _game.NetworkIdManager.GetNewNetId());
                 }
-
                 _game.Start();
             }
 
@@ -76,7 +75,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                     {
                         if (player.Item2.Team == peerInfo.Team)
                         {
-                            _game.PacketNotifier.NotifyEnterVisibilityClient(player.Item2.Champion, userId, true, true, true);
+                            _game.PacketNotifier.NotifySpawn(player.Item2.Champion, userId, false);
 
                             /* This is probably not the best way
                              * of updating a champion's level, but it works */

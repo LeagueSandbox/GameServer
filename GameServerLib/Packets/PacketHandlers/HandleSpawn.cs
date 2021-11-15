@@ -5,6 +5,7 @@ using GameServerCore.Domain.GameObjects.Spell.Missile;
 using GameServerCore.Enums;
 using GameServerCore.Packets.Handlers;
 using GameServerCore.Packets.PacketDefinitions.Requests;
+using LeagueSandbox.GameServer.GameObjects;
 using LeagueSandbox.GameServer.Items;
 using LeagueSandbox.GameServer.Logging;
 using log4net;
@@ -30,11 +31,11 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 
         public override bool HandlePacket(int userId, SpawnRequest req)
         {
-             _game.PacketNotifier.NotifyS2C_StartSpawn(userId);
+            _game.PacketNotifier.NotifyS2C_StartSpawn(userId);
             _logger.Debug("Spawning map");
 
             var peerInfo = _playerManager.GetPeerInfo(userId);
-            var bluePill = _itemManager.GetItemType(_game.Map.MapProperties.BluePillId);
+            var bluePill = _itemManager.GetItemType(_game.Map.MapScript.BluePillId);
             var itemInstance = peerInfo.Champion.Inventory.SetExtraItem(7, bluePill);
 
             // self-inform
@@ -68,59 +69,33 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                 {
                     if (champion.IsVisibleByTeam(peerInfo.Champion.Team))
                     {
-                        _game.PacketNotifier.NotifyEnterVisibilityClient(champion, userId, true, true, true);
+                        _game.PacketNotifier.NotifyEnterVisibilityClient(champion, userId, false, false, true);
                     }
                 }
                 else if (kv.Value is ILaneTurret turret)
                 {
-                     _game.PacketNotifier.NotifyTurretSpawn(userId, turret);
-
-                    // TODO: Implemnent a Region class so we can have a centralized (and cleaner) way of making new regions.
-                    // Turret Vision (values based on packet data, placeholders)
-                    _game.PacketNotifier.NotifyAddRegion
-                    (
-                        _networkIdManager.GetNewNetId(), turret.Team, turret.Position,
-                        25000.0f, 800.0f, -2, 
-                        null, turret, turret.CharData.PathfindingCollisionRadius,
-                        130.0f, 1.0f, 0,
-                        true, true
-                    );
-
-                    // To suppress game HP-related errors for enemy turrets out of vision
-                    _game.PacketNotifier.NotifyEnterLocalVisibilityClient(turret, userId, ignoreVision: true);
-
-                    foreach (var item in turret.Inventory)
-                    {
-                        if (item == null)
-                        {
-                            continue;
-                        }
-
-                        _game.PacketNotifier.NotifyBuyItem((int)turret.NetId, turret, item as IItem);
-                    }
+                    new Region(_game, turret.Team, turret.Position, RegionType.Default, turret, turret, true, 800f, true, true, turret.CollisionRadius, lifetime: float.MaxValue);
+                    _game.PacketNotifier.NotifyS2C_CreateTurret(turret, userId);
+                }
+                else if (kv.Value is INexus nexus)
+                {
+                    _game.PacketNotifier.NotifyEnterVisibilityClient(nexus, userId, ignoreVision: true);
+                }
+                else if (kv.Value is IInhibitor inhib)
+                {
+                    _game.PacketNotifier.NotifyEnterVisibilityClient(inhib, userId, ignoreVision: true);
                 }
                 else if (kv.Value is ILevelProp levelProp)
                 {
-                     _game.PacketNotifier.NotifyLevelPropSpawn(userId, levelProp);
-                }
-                else if (kv.Value is IInhibitor || kv.Value is INexus)
-                {
-                    var inhibtor = (IAttackableUnit)kv.Value;
-                     _game.PacketNotifier.NotifyStaticObjectSpawn(userId, inhibtor.NetId);
-                    _game.PacketNotifier.NotifyEnterLocalVisibilityClient(userId, inhibtor.NetId);
-                }
-                else if (kv.Value is ISpellMissile missile)
-                {
-                    if (missile.IsVisibleByTeam(peerInfo.Champion.Team))
-                    {
-                         _game.PacketNotifier.NotifyMissileReplication(missile);
-                    }
+                    _game.PacketNotifier.NotifySpawnLevelPropS2C(levelProp, userId);
                 }
                 else
                 {
                     _logger.Warn("Object of type: " + kv.Value.GetType() + " not handled in HandleSpawn.");
                 }
             }
+
+            _game.Map.MapScript.OnMatchStart();
 
             // TODO shop map specific?
             // Level props are just models, we need button-object minions to allow the client to interact with it
@@ -138,7 +113,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                 _game.PacketNotifier.NotifyEnterLocalVisibilityClient(userId, 0xffa6170e);
             }
 
-             _game.PacketNotifier.NotifySpawnEnd(userId);
+            _game.PacketNotifier.NotifySpawnEnd(userId);
             return true;
         }
     }

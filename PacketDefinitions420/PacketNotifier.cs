@@ -25,6 +25,7 @@ using static GameServerCore.Content.HashFunctions;
 using System.Text;
 using Force.Crc32;
 using System.Linq;
+using LeaguePackets;
 
 namespace PacketDefinitions420
 {
@@ -109,7 +110,8 @@ namespace PacketDefinitions420
         /// <summary>
         /// Sends a packet to the specified team that a part of the map has changed. Known to be used in League for initializing turret vision and collision.
         /// </summary>
-        /// <param name="newFogId">NetID of the owner of the region.</param>
+        /// <param name="unitNetId">NetID of the unit owning the region.</param>
+        /// <param name="bubbleNetId">NetID of the unit which owns the vision for this region. Functionality unknown.</param>
         /// <param name="team">Team to send the packet to.</param>
         /// <param name="position">2D top-down position of the region.</param>
         /// <param name="time">Amount of time the region lasts.</param>
@@ -124,14 +126,14 @@ namespace PacketDefinitions420
         /// <param name="grantVis">Whether or not the region should give the region's team vision of enemy units.</param>
         /// <param name="stealthVis">Whether or not invisible units should be visible in the region.</param>
         /// TODO: Implement a Region class so we can easily grab these parameters instead of listing them all in the function.
-        public void NotifyAddRegion(uint newFogId, TeamId team, Vector2 position, float time, float radius = 0, int regionType = 0, ClientInfo clientInfo = null, IGameObject obj = null, float collisionRadius = 0, float grassRadius = 0, float sizemult = 1.0f, float addsize = 0, bool grantVis = true, bool stealthVis = false)
+        public void NotifyAddRegion(uint unitNetId, uint bubbleNetId, TeamId team, Vector2 position, float time, float radius = 0, int regionType = 0, ClientInfo clientInfo = null, IGameObject obj = null, float collisionRadius = 0, float grassRadius = 0, float sizemult = 1.0f, float addsize = 0, bool grantVis = true, bool stealthVis = false)
         {
             var regionPacket = new AddRegion
             {
                 TeamID = (uint)team,
                 RegionType = regionType, // TODO: Find out what values this can be and make an enum for it (so far: -2 for turrets)
-                UnitNetID = newFogId, // TODO: Verify (usually 0 for vision only?)
-                BubbleNetID = newFogId, // TODO: Verify (is usually different from UnitNetID in packets, may also be a remnant or for internal use)
+                UnitNetID = unitNetId, // TODO: Verify (usually 0 for vision only?)
+                BubbleNetID = bubbleNetId, // TODO: Verify (is usually different from UnitNetID in packets, may also be a remnant or for internal use)
                 VisionTargetNetID = 0,
                 Position = position,
                 TimeToLive = time, // For turrets, usually 25000.0 is used
@@ -167,8 +169,50 @@ namespace PacketDefinitions420
                 regionPacket.HasCollision = true;
             }
 
-
             _packetHandlerManager.BroadcastPacketTeam(team, regionPacket.GetBytes(), Channel.CHL_S2C);
+        }
+
+        /// <summary>
+        /// Sends a packet to the specified team that a part of the map has changed. Known to be used in League for initializing turret vision and collision.
+        /// </summary>
+        /// <param name="region">Region to add.</param>
+        public void NotifyAddRegion(IRegion region)
+        {
+            var regionPacket = new AddRegion
+            {
+                TeamID = (uint)region.Team,
+                // TODO: Find out what values this can be and make an enum for it (so far: -2 & -1 for turrets)
+                RegionType = region.Type,
+                ClientID = region.OwnerClientID,
+                // TODO: Verify (usually 0 for vision only?)
+                UnitNetID = 0,
+                // TODO: Verify (is usually different from UnitNetID in packets, may also be a remnant or for internal use)
+                BubbleNetID = region.VisionNetID,
+                VisionTargetNetID = region.VisionBindNetID,
+                Position = region.Position,
+                // For turrets, usually 25000.0 is used
+                TimeToLive = region.Lifetime,
+                // 88.4 for turrets
+                ColisionRadius = region.CollisionRadius,
+                // 130.0 for turrets
+                GrassRadius = region.GrassRadius,
+                SizeMultiplier = region.Scale,
+                SizeAdditive = region.AdditionalSize,
+
+                HasCollision = region.HasCollision,
+                GrantVision = region.GrantVision,
+                RevealStealth = region.RevealsStealth,
+
+                BaseRadius = region.VisionRadius // 800.0 for turrets
+            };
+
+            if (region.CollisionUnit != null)
+            {
+                regionPacket.UnitNetID = region.CollisionUnit.NetId;
+            }
+
+            // Verify if this should be vision or team regulated.
+            _packetHandlerManager.BroadcastPacket(regionPacket.GetBytes(), Channel.CHL_S2C);
         }
 
         /// <summary>
@@ -451,81 +495,81 @@ namespace PacketDefinitions420
             switch (changeType)
             {
                 case GameServerCore.Enums.ChangeSlotSpellDataType.TargetingType:
-                {
-                    if (targetingType != TargetingType.Invalid)
                     {
-                        spellData = new ChangeSpellDataTargetingType()
+                        if (targetingType != TargetingType.Invalid)
                         {
-                            SpellSlot = slot,
-                            IsSummonerSpell = isSummonerSpell,
-                            TargetingType = (byte)targetingType
-                        };
+                            spellData = new ChangeSpellDataTargetingType()
+                            {
+                                SpellSlot = slot,
+                                IsSummonerSpell = isSummonerSpell,
+                                TargetingType = (byte)targetingType
+                            };
+                        }
+                        break;
                     }
-                    break;
-                }
                 case GameServerCore.Enums.ChangeSlotSpellDataType.SpellName:
-                {
-                    spellData = new ChangeSpellDataSpellName()
                     {
-                        SpellSlot = slot,
-                        IsSummonerSpell = isSummonerSpell,
-                        SpellName = newName
-                    };
-                    break;
-                }
-                case GameServerCore.Enums.ChangeSlotSpellDataType.Range:
-                {
-                    spellData = new ChangeSpellDataRange()
-                    {
-                        SpellSlot = slot,
-                        IsSummonerSpell = isSummonerSpell,
-                        CastRange = newRange
-                    };
-                    break;
-                }
-                case GameServerCore.Enums.ChangeSlotSpellDataType.MaxGrowthRange:
-                {
-                    spellData = new ChangeSpellDataMaxGrowthRange()
-                    {
-                        SpellSlot = slot,
-                        IsSummonerSpell = isSummonerSpell,
-                        OverrideMaxCastRange = newMaxCastRange
-                    };
-                    break;
-                }
-                case GameServerCore.Enums.ChangeSlotSpellDataType.RangeDisplay:
-                {
-                    spellData = new ChangeSpellDataRangeDisplay()
-                    {
-                        SpellSlot = slot,
-                        IsSummonerSpell = isSummonerSpell,
-                        OverrideCastRangeDisplay = newDisplayRange
-                    };
-                    break;
-                }
-                case GameServerCore.Enums.ChangeSlotSpellDataType.IconIndex:
-                {
-                    spellData = new ChangeSpellDataIconIndex()
-                    {
-                        SpellSlot = slot,
-                        IsSummonerSpell = isSummonerSpell,
-                        IconIndex = newIconIndex
-                    };
-                    break;
-                }
-                case GameServerCore.Enums.ChangeSlotSpellDataType.OffsetTarget:
-                {
-                    if (offsetTargets != null)
-                    {
-                        spellData = new ChangeSpellDataOffsetTarget()
+                        spellData = new ChangeSpellDataSpellName()
                         {
                             SpellSlot = slot,
                             IsSummonerSpell = isSummonerSpell,
-                            Targets = offsetTargets
+                            SpellName = newName
                         };
+                        break;
                     }
-                    break;
-                }
+                case GameServerCore.Enums.ChangeSlotSpellDataType.Range:
+                    {
+                        spellData = new ChangeSpellDataRange()
+                        {
+                            SpellSlot = slot,
+                            IsSummonerSpell = isSummonerSpell,
+                            CastRange = newRange
+                        };
+                        break;
+                    }
+                case GameServerCore.Enums.ChangeSlotSpellDataType.MaxGrowthRange:
+                    {
+                        spellData = new ChangeSpellDataMaxGrowthRange()
+                        {
+                            SpellSlot = slot,
+                            IsSummonerSpell = isSummonerSpell,
+                            OverrideMaxCastRange = newMaxCastRange
+                        };
+                        break;
+                    }
+                case GameServerCore.Enums.ChangeSlotSpellDataType.RangeDisplay:
+                    {
+                        spellData = new ChangeSpellDataRangeDisplay()
+                        {
+                            SpellSlot = slot,
+                            IsSummonerSpell = isSummonerSpell,
+                            OverrideCastRangeDisplay = newDisplayRange
+                        };
+                        break;
+                    }
+                case GameServerCore.Enums.ChangeSlotSpellDataType.IconIndex:
+                    {
+                        spellData = new ChangeSpellDataIconIndex()
+                        {
+                            SpellSlot = slot,
+                            IsSummonerSpell = isSummonerSpell,
+                            IconIndex = newIconIndex
+                        };
+                        break;
+                    }
+                case GameServerCore.Enums.ChangeSlotSpellDataType.OffsetTarget:
+                    {
+                        if (offsetTargets != null)
+                        {
+                            spellData = new ChangeSpellDataOffsetTarget()
+                            {
+                                SpellSlot = slot,
+                                IsSummonerSpell = isSummonerSpell,
+                                Targets = offsetTargets
+                            };
+                        }
+                        break;
+                    }
             }
 
             var changePacket = new ChangeSlotSpellData()
@@ -766,8 +810,9 @@ namespace PacketDefinitions420
         /// <param name="isChampion">Whether or not the GameObject entering vision is a Champion.</param>
         /// <param name="useTeleportID">Whether or not to teleport the object to its current position.</param>
         /// <param name="ignoreVision">Optionally ignore vision checks when sending this packet.</param>
+        /// <param name="packets">Takes in a list of packets to send alongside this vision packet.</param>
         /// TODO: Incomplete implementation.
-        public void NotifyEnterVisibilityClient(IGameObject o, int userId = 0, bool isChampion = false, bool useTeleportID = false, bool ignoreVision = false)
+        public void NotifyEnterVisibilityClient(IGameObject o, int userId = 0, bool isChampion = false, bool useTeleportID = false, bool ignoreVision = false, List<GamePacket> packets = null)
         {
             var itemData = new List<ItemData>(); //TODO: Fix item system so this can be finished
             var shields = new ShieldValues(); //TODO: Implement shields so this can be finished
@@ -850,6 +895,11 @@ namespace PacketDefinitions420
                 UnknownIsHero = isChampion,
                 MovementData = md
             };
+
+            if (packets != null)
+            {
+                enterVis.Packets = packets;
+            }
 
             if (userId != 0)
             {
@@ -1264,17 +1314,6 @@ namespace PacketDefinitions420
         }
 
         /// <summary>
-        /// Sends a packet to the specified player detailing that the specified GameObject of type LevelProp has spawned.
-        /// </summary>
-        /// <param name="userId">User to send the packet to.</param>
-        /// <param name="levelProp">LevelProp that has spawned.</param>
-        public void NotifyLevelPropSpawn(int userId, ILevelProp levelProp)
-        {
-            var levelPropSpawnPacket = new LevelPropSpawn(levelProp);
-            _packetHandlerManager.SendPacket(userId, levelPropSpawnPacket, Channel.CHL_S2C);
-        }
-
-        /// <summary>
         /// Sends a packet to the specified player detailing the order and size of both teams on the loading screen.
         /// </summary>
         /// <param name="userId">User to send the packet to.</param>
@@ -1308,10 +1347,12 @@ namespace PacketDefinitions420
         }
 
         /// <summary>
-        /// Sends a packet to all players who have vision of the specified Minion detailing that it has spawned.
+        /// Optionally sends a packet to all players who have vision of the specified Minion detailing that it has spawned.
         /// </summary>
+        /// <returns>A new and fully setup SpawnMinionS2C packet.</returns>
         /// <param name="minion">Minion that is spawning.</param>
-        public void NotifyMinionSpawned(IMinion minion)
+        /// <param name="send">Whether or not to send the created packet.</param>
+        public SpawnMinionS2C NotifyMinionSpawned(IMinion minion, bool send = true)
         {
             var spawnPacket = new SpawnMinionS2C
             {
@@ -1347,7 +1388,12 @@ namespace PacketDefinitions420
                 spawnPacket.OnlyVisibleToNetID = minion.VisibilityOwner.NetId;
             }
 
-            _packetHandlerManager.BroadcastPacketVision(minion, spawnPacket.GetBytes(), Channel.CHL_S2C);
+            if (send)
+            {
+                _packetHandlerManager.BroadcastPacketVision(minion, spawnPacket.GetBytes(), Channel.CHL_S2C);
+            }
+
+            return spawnPacket;
         }
 
         /// <summary>
@@ -2107,6 +2153,20 @@ namespace PacketDefinitions420
         }
 
         /// <summary>
+        /// Sends a packet to all players detailing that the specified region was removed.
+        /// </summary>
+        /// <param name="region">Region to remove.</param>
+        public void NotifyRemoveRegion(IRegion region)
+        {
+            var removeRegion = new RemoveRegion()
+            {
+                RegionNetID = region.NetId
+            };
+
+            _packetHandlerManager.BroadcastPacket(removeRegion.GetBytes(), Channel.CHL_S2C);
+        }
+
+        /// <summary>
         /// Sends a packet to the specified player detailing that the highlight of the specified GameObject was removed.
         /// </summary>
         /// <param name="userId">User to send the packet to.</param>
@@ -2242,6 +2302,33 @@ namespace PacketDefinitions420
         }
 
         /// <summary>
+        /// Sends a packet to either all players or the specified player detailing that the specified LaneTurret has spawned.
+        /// </summary>
+        /// <param name="turret">LaneTurret that spawned.</param>
+        /// <param name="userId">User to send the packet to.</param>
+        public void NotifyS2C_CreateTurret(ILaneTurret turret, int userId = 0)
+        {
+            var createTurret = new S2C_CreateTurret
+            {
+                SenderNetID = turret.NetId,
+                NetID = turret.NetId,
+                // Verify, taken from packets (does not seem to change)
+                NetNodeID = 64,
+                Name = turret.Name,
+                IsTargetable = turret.Stats.IsTargetable,
+                IsTargetableToTeamSpellFlags = (uint)turret.Stats.IsTargetableToTeam
+            };
+
+            if (userId != 0)
+            {
+                _packetHandlerManager.SendPacket(userId, createTurret.GetBytes(), Channel.CHL_S2C);
+                return;
+            }
+
+            _packetHandlerManager.BroadcastPacket(createTurret.GetBytes(), Channel.CHL_S2C);
+        }
+
+        /// <summary>
         /// Sends a packet to all players detailing that the specified unit has been killed by the specified killer.
         /// </summary>
         /// <param name="data">Data of the death.</param>
@@ -2261,6 +2348,31 @@ namespace PacketDefinitions420
                 }
             };
             _packetHandlerManager.BroadcastPacket(dieMapView.GetBytes(), Channel.CHL_S2C);
+        }
+
+        /// <summary>
+        /// Sends a packet to either all players with vision of the specified GameObject or a specified user.
+        /// The packet contains details of which team gained visibility of the GameObject and is meant for after it is first initialized into vision.
+        /// </summary>
+        /// <param name="o">GameObject coming into vision.</param>
+        /// <param name="userId">User to send the packet to.</param>
+        public void NotifyS2C_OnEnterTeamVisibility(IGameObject o, TeamId team, int userId = 0)
+        {
+            var enterTeamVis = new S2C_OnEnterTeamVisibility()
+            {
+                SenderNetID = o.NetId,
+                VisibilityTeam = (byte)team
+            };
+
+            if (userId == 0)
+            {
+                // TODO: Verify if we should use BroadcastPacketTeam instead.
+                _packetHandlerManager.BroadcastPacket(enterTeamVis.GetBytes(), Channel.CHL_S2C);
+            }
+            else
+            {
+                _packetHandlerManager.SendPacket(userId, enterTeamVis.GetBytes(), Channel.CHL_S2C);
+            }
         }
 
         /// <summary>
@@ -2595,28 +2707,61 @@ namespace PacketDefinitions420
         /// Calls for the appropriate spawn packet to be sent given the specified GameObject's type and calls for a vision packet to be sent for the specified GameObject.
         /// </summary>
         /// <param name="o">GameObject that has spawned.</param>
-        public void NotifySpawn(IGameObject o)
+        /// <param name="userId">UserId to send the packet to.</param>
+        /// <param name="doVision">Whether or not to package the packets into a vision packet.</param>
+        public void NotifySpawn(IGameObject o, int userId = 0, bool doVision = true)
         {
+            var visionPackets = new List<GamePacket>();
+
             switch (o)
             {
+                case ISpellMissile missile:
+                    NotifyMissileReplication(missile);
+                    break;
                 case ILaneMinion m:
                     NotifyLaneMinionSpawned(m);
                     break;
                 case IChampion c:
-                    NotifyEnterVisibilityClient(c, isChampion: true);
+                    bool ignoreVis = true;
+                    if (userId == 0)
+                    {
+                        ignoreVis = false;
+                    }
+                    NotifyEnterVisibilityClient(c, userId, false, false, ignoreVis);
                     return;
                 case IMonster monster:
                     NotifyMonsterSpawned(monster);
                     break;
                 case IMinion minion:
-                    NotifyMinionSpawned(minion);
+                    visionPackets.Add(NotifyMinionSpawned(minion, false));
                     break;
                 case IAzirTurret azirTurret:
                     NotifyAzirTurretSpawned(azirTurret);
                     break;
+                case ILevelProp prop:
+                    NotifySpawnLevelPropS2C(prop);
+                    break;
+                case IParticle particle:
+                    NotifyFXCreateGroup(particle, userId);
+                    break;
+                case IRegion region:
+                    NotifyAddRegion(region);
+                    return;
             }
 
-            NotifyEnterVisibilityClient(o);
+            if(o.IsVisibleByTeam(TeamId.TEAM_BLUE))
+            {
+                NotifyS2C_OnEnterTeamVisibility(o, TeamId.TEAM_BLUE);
+            }
+            if (o.IsVisibleByTeam(TeamId.TEAM_PURPLE))
+            {
+                NotifyS2C_OnEnterTeamVisibility(o, TeamId.TEAM_PURPLE);
+            }
+
+            if (doVision)
+            {
+                NotifyEnterVisibilityClient(o, userId, packets: visionPackets);
+            }
         }
 
         /// <summary>
@@ -2627,6 +2772,40 @@ namespace PacketDefinitions420
         {
             var endSpawnPacket = new S2C_EndSpawn();
             _packetHandlerManager.SendPacket(userId, endSpawnPacket.GetBytes(), Channel.CHL_S2C);
+        }
+
+        /// <summary>
+        /// Sends a packet to either all players or the specified player detailing that the specified GameObject of type LevelProp has spawned.
+        /// </summary>
+        /// <param name="levelProp">LevelProp that has spawned.</param>
+        /// <param name="userId">User to send the packet to.</param>
+        public void NotifySpawnLevelPropS2C(ILevelProp levelProp, int userId = 0)
+        {
+            var spawnPacket = new SpawnLevelPropS2C
+            {
+                NetID = levelProp.NetId,
+                NetNodeID = levelProp.NetNodeID,
+                SkinID = levelProp.SkinID,
+                Position = new Vector3(levelProp.Position.X, levelProp.Height, levelProp.Position.Y),
+                FacingDirection = levelProp.Direction,
+                PositionOffset = levelProp.PositionOffset,
+                Scale = levelProp.Scale,
+                TeamID = (ushort)levelProp.Team,
+                SkillLevel = levelProp.SkillLevel,
+                Rank = levelProp.Rank,
+                Type = levelProp.Type,
+                Name = levelProp.Name,
+                PropName = levelProp.Model
+            };
+
+
+            if (userId != 0)
+            {
+                _packetHandlerManager.SendPacket(userId, spawnPacket.GetBytes(), Channel.CHL_S2C);
+                return;
+            }
+
+            _packetHandlerManager.BroadcastPacket(spawnPacket.GetBytes(), Channel.CHL_S2C);
         }
 
         /// <summary>
@@ -2795,17 +2974,6 @@ namespace PacketDefinitions420
                 MaxWeight = (c.Alpha / 255.0f) // TODO: Implement this correctly, current implementation taken from old LS packet
             };
             _packetHandlerManager.BroadcastPacket(tint.GetBytes(), Channel.CHL_S2C);
-        }
-
-        /// <summary>
-        /// Sends a packet to the specified player detailing that the specified LaneTurret has spawned.
-        /// </summary>
-        /// <param name="userId">User to send the packet to.</param>
-        /// <param name="turret">LaneTurret that spawned.</param>
-        public void NotifyTurretSpawn(int userId, ILaneTurret turret)
-        {
-            var turretSpawn = new TurretSpawn(turret);
-            _packetHandlerManager.SendPacket(userId, turretSpawn, Channel.CHL_S2C);
         }
 
         /// <summary>

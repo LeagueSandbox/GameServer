@@ -102,9 +102,9 @@ namespace LeagueSandbox.GameServer
         /// </summary>
         public IProtectionManager ProtectionManager { get; private set; }
         /// <summary>
-        /// Interface for all map properties used for the game.
+        /// Contains all map related game settings such as collision handler, navigation grid, announcer events, and map properties. Doubles as a Handler/Manager for all MapScripts.
         /// </summary>
-        public IMap Map { get; private set; }
+        public IMapScriptHandler Map { get; private set; }
         /// <summary>
         /// Class containing all information about the game's configuration such as game content location, map spawn points, whether cheat commands are enabled, etc.
         /// </summary>
@@ -163,7 +163,7 @@ namespace LeagueSandbox.GameServer
 
             ObjectManager = new ObjectManager(this);
             ProtectionManager = new ProtectionManager(this);
-            Map = new Map(this);
+            Map = new MapScriptHandler(this);
             ApiFunctionManager.SetGame(this);
             ApiEventManager.SetGame(this);
             IsRunning = false;
