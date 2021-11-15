@@ -13,7 +13,7 @@ namespace MapScripts
         public bool EnableBuildingProtection { get; set; } = true;
 
         //General Map variable
-        private IMap _map;
+        private IMapScriptHandler _map;
 
         //Stuff about minions
         public bool SpawnEnabled { get; set; }
@@ -74,14 +74,14 @@ namespace MapScripts
                 {TurretType.FOUNTAIN_TURRET, "TT_OrderTurret4" },
                 {TurretType.NEXUS_TURRET, "TT_OrderTurret3" },
                 {TurretType.INHIBITOR_TURRET, "TT_OrderTurret1" },
-                {TurretType.OUTER_TURRET, "TT_OrderTurret2" },
+                {TurretType.INNER_TURRET, "TT_OrderTurret2" },
             } },
             {TeamId.TEAM_PURPLE, new Dictionary<TurretType, string>
             {
                 {TurretType.FOUNTAIN_TURRET, "TT_ChaosTurret4" },
                 {TurretType.NEXUS_TURRET, "TT_ChaosTurret3" },
                 {TurretType.INHIBITOR_TURRET, "TT_ChaosTurret1" },
-                {TurretType.OUTER_TURRET, "TT_ChaosTurret2" },
+                {TurretType.INNER_TURRET, "TT_ChaosTurret2" },
             } }
         };
 
@@ -192,7 +192,7 @@ namespace MapScripts
         };
 
         //This function is executed in-between Loading the map structures and applying the structure protections. Is the first thing on this script to be executed
-        public void Init(IMap map)
+        public void Init(IMapScriptHandler map)
         {
             _map = map;
 
@@ -209,38 +209,26 @@ namespace MapScripts
             map.AddAnnouncement(FirstSpawnTime, Announces.MINIONS_HAVE_SPAWNED2, false); // Minions have spawned [2] (90 * 1000)
 
             //Map props
-            map.AddLevelProp("LevelProp_TT_Brazier1", "TT_Brazier", new Vector2(1360.9241f, 5072.1309f), 291.2142f, new Vector3(134.0f, 11.1111f, 0.0f), new Vector3(288.8889f, 0.0f, -22.2222f), Vector3.One);
-            map.AddLevelProp("LevelProp_TT_Brazier2", "TT_Brazier", new Vector2(423.5712f, 6529.0327f), 385.9983f, new Vector3(0.0f, -33.3334f, 0.0f), new Vector3(277.7778f, 0.0f, -11.1111f), Vector3.One);
-            map.AddLevelProp("LevelProp_TT_Brazier3", "TT_Brazier", new Vector2(399.4241f, 8021.057f), 692.2211f, new Vector3(0.0f, -22.2222f, 0.0f), new Vector3(300f, 0.0f, 0.0f), Vector3.One);
-            map.AddLevelProp("LevelProp_TT_Brazier4", "TT_Brazier", new Vector2(1314.294f, 9495.576f), 582.8416f, new Vector3(48.0f, -33.3334f, 0.0f), new Vector3(277.7778f, 0.0f, 22.2223f), Vector3.One);
-            map.AddLevelProp("LevelProp_TT_Brazier5", "TT_Brazier", new Vector2(14080.0f, 9530.3379f), 305.0638f, new Vector3(120.0f, 11.1111f, 0.0f), new Vector3(277.7778f, 0.0f, 0.0f), Vector3.One);
-            map.AddLevelProp("LevelProp_TT_Brazier6", "TT_Brazier", new Vector2(14990.46f, 8053.91f), 675.8145f, new Vector3(0.0f, -22.2222f, 0.0f), new Vector3(266.6666f, 0.0f, -11.1111f), Vector3.One);
-            map.AddLevelProp("LevelProp_TT_Brazier7", "TT_Brazier", new Vector2(15016.35f, 6532.84f), 664.7033f, new Vector3(0.0f, -11.1111f, 0.0f), new Vector3(255.5555f, 0.0f, -11.1111f), Vector3.One);
-            map.AddLevelProp("LevelProp_TT_Brazier8", "TT_Brazier", new Vector2(14102.99f, 5098.367f), 580.504f, new Vector3(36.0f, 0.0f, 0.0f), new Vector3(244.4445f, 0.0f, 11.1111f), Vector3.One);
-            map.AddLevelProp("LevelProp_TT_Chains_Bot_Lane", "TT_Chains_Bot_Lane", new Vector2(3624.281f, 3730.965f), -100.4387f, new Vector3(0.0f, 88.8889f, 0.0f), new Vector3(-33.3334f, 0.0f, 66.6667f), Vector3.One);
-            map.AddLevelProp("LevelProp_TT_Chains_Order_Base", "TT_Chains_Order_Base", new Vector2(3778.364f, 7573.525f), -496.0713f, new Vector3(0.0f, -233.3334f, 0.0f), new Vector3(-333.3333f, 0.0f, 277.7778f), Vector3.One);
-            map.AddLevelProp("LevelProp_TT_Chains_Xaos_Base", "TT_Chains_Xaos_Base", new Vector2(11636.06f, 7618.667f), -551.6268f, new Vector3(0.0f, 200f, 0.0f), new Vector3(-388.8889f, 0.0f, 33.3334f), Vector3.One);
-            map.AddLevelProp("LevelProp_TT_Chains_Order_Periph", "TT_Chains_Order_Periph", new Vector2(759.1779f, 4740.938f), 507.9883f, new Vector3(0.0f, -155.5555f, 0.0f), new Vector3(44.4445f, 0.0f, 222.2222f), Vector3.One);
-            map.AddLevelProp("LevelProp_TT_Nexus_Gears", "TT_Nexus_Gears", new Vector2(3000.0f, 7289.682f), 19.51249f, new Vector3(0.0f, 0.0f, 0.0f), new Vector3(144.4445f, 0.0f, 0.0f), Vector3.One);
-            map.AddLevelProp("LevelProp_TT_Nexus_Gears1", "TT_Nexus_Gears", new Vector2(12436.4775f, 7366.5859f), -124.9320f, new Vector3(180.0f, -44.4445f, 0.0f), new Vector3(122.2222f, 0.0f, -122.2222f), Vector3.One);
-            map.AddLevelProp("LevelProp_TT_Shopkeeper1", "TT_Shopkeeper", new Vector2(14169.09f, 7916.989f), 178.1922f, new Vector3(150f, 22.2223f, 0.0f), new Vector3(33.3333f, 0.0f, -66.6667f), Vector3.One);
-            map.AddLevelProp("LevelProp_TT_Shopkeeper", "TT_Shopkeeper", new Vector2(1340.8141f, 7996.8691f), 126.2980f, new Vector3(208f, -66.6667f, 0.0f), new Vector3(22.2223f, 0.0f, -55.5556f), Vector3.One);
-            map.AddLevelProp("LevelProp_TT_Speedshrine_Gears", "TT_Speedshrine_Gears", new Vector2(7706.3052f, 6720.3926f), -124.9320f, new Vector3(0.0f, 0.0f, 0.0f), new Vector3(0.0f, 0.0f, 0.0f), Vector3.One);
+            map.AddLevelProp("LevelProp_TT_Brazier1", "TT_Brazier", new Vector2(1360.9241f, 5072.1309f), 291.2142f, new Vector3(11.1111f, 134.0f, 0.0f), new Vector3(0.0f, 288.8889f, -22.2222f), Vector3.One);
+            map.AddLevelProp("LevelProp_TT_Brazier2", "TT_Brazier", new Vector2(423.5712f, 6529.0327f), 385.9983f, new Vector3(-33.3334f, 0.0f, 0.0f), new Vector3(0.0f, 277.7778f, -11.1111f), Vector3.One);
+            map.AddLevelProp("LevelProp_TT_Brazier3", "TT_Brazier", new Vector2(399.4241f, 8021.057f), 692.2211f, new Vector3(-22.2222f, 0.0f, 0.0f), new Vector3(0.0f, 300f, 0.0f), Vector3.One);
+            map.AddLevelProp("LevelProp_TT_Brazier4", "TT_Brazier", new Vector2(1314.294f, 9495.576f), 582.8416f, new Vector3(-33.3334f, 48.0f,0.0f ), new Vector3(0.0f, 277.7778f, 22.2223f), Vector3.One);
+            map.AddLevelProp("LevelProp_TT_Brazier5", "TT_Brazier", new Vector2(14080.0f, 9530.3379f), 305.0638f, new Vector3(11.1111f, 120.0f, 0.0f), new Vector3(0.0f, 277.7778f, 0.0f), Vector3.One);
+            map.AddLevelProp("LevelProp_TT_Brazier6", "TT_Brazier", new Vector2(14990.46f, 8053.91f), 675.8145f, new Vector3(-22.2222f, 0.0f, 0.0f), new Vector3(0.0f, 266.6666f, -11.1111f), Vector3.One);
+            map.AddLevelProp("LevelProp_TT_Brazier7", "TT_Brazier", new Vector2(15016.35f, 6532.84f), 664.7033f, new Vector3(-11.1111f, 0.0f, 0.0f), new Vector3(0.0f, 255.5555f, -11.1111f), Vector3.One);
+            map.AddLevelProp("LevelProp_TT_Brazier8", "TT_Brazier", new Vector2(14102.99f, 5098.367f), 580.504f, new Vector3(0.0f, 36.0f, 0.0f), new Vector3(0.0f, 244.4445f, 11.1111f), Vector3.One);
+            map.AddLevelProp("LevelProp_TT_Chains_Bot_Lane", "TT_Chains_Bot_Lane", new Vector2(3624.281f, 3730.965f), -100.4387f, new Vector3(88.8889f,0.0f , 0.0f), new Vector3(0.0f, -33.3334f, 66.6667f), Vector3.One);
+            map.AddLevelProp("LevelProp_TT_Chains_Order_Base", "TT_Chains_Order_Base", new Vector2(3778.364f, 7573.525f), -496.0713f, new Vector3(-233.3334f, 0.0f, 0.0f), new Vector3(0.0f, -333.3333f, 277.7778f), Vector3.One);
+            map.AddLevelProp("LevelProp_TT_Chains_Xaos_Base", "TT_Chains_Xaos_Base", new Vector2(11636.06f, 7618.667f), -551.6268f, new Vector3(200.0f, 0.0f, 0.0f), new Vector3(0.0f, -388.8889f, 33.3334f), Vector3.One);
+            map.AddLevelProp("LevelProp_TT_Chains_Order_Periph", "TT_Chains_Order_Periph", new Vector2(759.1779f, 4740.938f), 507.9883f, new Vector3(-155.5555f, 0.0f, 0.0f), new Vector3(0.0f, 44.4445f, 222.2222f), Vector3.One);
+            map.AddLevelProp("LevelProp_TT_Nexus_Gears", "TT_Nexus_Gears", new Vector2(3000.0f, 7289.682f), 19.51249f, Vector3.Zero, new Vector3(0.0f, 144.4445f, 0.0f), Vector3.One);
+            map.AddLevelProp("LevelProp_TT_Nexus_Gears1", "TT_Nexus_Gears", new Vector2(12436.4775f, 7366.5859f), -124.9320f, new Vector3(-44.4445f, 180.0f,0.0f ), new Vector3(0.0f, 122.2222f, -122.2222f), Vector3.One);
+            map.AddLevelProp("LevelProp_TT_Shopkeeper1", "TT_Shopkeeper", new Vector2(14169.09f, 7916.989f), 178.1922f, new Vector3(22.2223f, 150f,0.0f ), new Vector3(33.3333f,0.0f , -66.6667f), Vector3.One);
+            map.AddLevelProp("LevelProp_TT_Shopkeeper", "TT_Shopkeeper", new Vector2(1340.8141f, 7996.8691f), 126.2980f, new Vector3(208f, -66.6667f, 0.0f), new Vector3(0.0f, 22.2223f, -55.5556f), Vector3.One);
+            map.AddLevelProp("LevelProp_TT_Speedshrine_Gears", "TT_Speedshrine_Gears", new Vector2(7706.3052f, 6720.3926f), -124.9320f, Vector3.Zero, Vector3.Zero, Vector3.One);
         }
-        //Dictionary<TeamId, IMinion> BuffPlates = new Dictionary<TeamId, IMinion> { { TeamId.TEAM_BLUE, null }, { TeamId.TEAM_PURPLE, null } };
         public void OnMatchStart()
-        {   //SPAWNING A MINION WITH THE "TT_Buffplat_L" MODEL BREAKS **ALL** OTHER MINIONS FOR SOME REASON
-
-            /*_map.CreateRegion(TeamId.TEAM_BLUE, new Vector2(5328.4f, 6757.1f), -2, giveVision: true, visionRadius: 800f, lifeTime: float.MaxValue);
-            _map.CreateRegion(TeamId.TEAM_BLUE, new Vector2(5328.4f, 6757.1f), -2, giveVision: true, visionRadius: 800f, lifeTime: float.MaxValue);
-            BuffPlates[TeamId.TEAM_BLUE] = _map.CreateMinion("TT_Buffplat_L", "TT_Buffplat_L", new Vector2(5328.4f, 6757.1f), 1073741885, ignoreCollision: true, isTargetable: true);
-            BuffPlates[TeamId.TEAM_BLUE].FaceDirection(new Vector3(14169.09f, 178.19215f, 7916.989f), true);
-            BuffPlates[TeamId.TEAM_BLUE].PauseAi(true);
-
-            _map.CreateRegion(TeamId.TEAM_BLUE, new Vector2(10071.5f, 6761.89f), -2, giveVision: true, visionRadius: 800f, lifeTime: float.MaxValue);
-            _map.CreateRegion(TeamId.TEAM_BLUE, new Vector2(10071.5f, 6761.89f), -2, giveVision: true, visionRadius: 800f, lifeTime: float.MaxValue);
-            BuffPlates[TeamId.TEAM_PURPLE] = _map.CreateMinion("TT_Buffplat_R", "TT_Buffplat_R", new Vector2(10071.5f, 6761.89f), 1073741891, ignoreCollision: true, isTargetable: true);
-            BuffPlates[TeamId.TEAM_PURPLE].PauseAi(true);*/
+        {
         }
 
         //This function gets executed every server tick

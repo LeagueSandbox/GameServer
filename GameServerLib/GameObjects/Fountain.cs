@@ -8,13 +8,13 @@ namespace LeagueSandbox.GameServer.GameObjects
     public class Fountain : IFountain
     {
         private Game _game;
-        public Vector2 Position { get; set; }
-        public TeamId Team { get; set; }
         private const float PERCENT_MAX_HEALTH_HEAL = 0.15f;
         private const float PERCENT_MAX_MANA_HEAL = 0.15f;
         private const float HEAL_FREQUENCY = 1000f;
         private float _fountainSize;
         private float _healTickTimer;
+        public Vector2 Position { get; set; }
+        public TeamId Team { get; set; }
 
         public Fountain(Game game, TeamId team, Vector2 position, float size)
         {

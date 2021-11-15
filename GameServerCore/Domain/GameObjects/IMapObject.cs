@@ -7,9 +7,9 @@ namespace GameServerCore.Domain
 {
     public interface IMapObject
     {
-        public string Name { get; }
-        public Vector3 CentralPoint { get; }
-        public int ParentMapId { get; }
+        string Name { get; }
+        Vector3 CentralPoint { get; }
+        int ParentMapId { get; }
         GameObjectTypes GetGameObjectType();
         TeamId GetTeamID();
         TeamId GetOpposingTeamID();

@@ -26,7 +26,7 @@ namespace LeagueSandbox.GameServer.Maps
     /// <summary>
     /// Class responsible for all map related game settings such as collision handler, navigation grid, announcer events, and map properties.
     /// </summary>
-    public class Map : IMap
+    public class MapScriptHandler : IMapScriptHandler
     {
         // Crucial Vars
         protected Game _game;
@@ -59,6 +59,7 @@ namespace LeagueSandbox.GameServer.Maps
         private int _minionNumber;
         private int _cannonMinionCount;
         public List<INexus> NexusList { get; set; } = new List<INexus>();
+        public Dictionary<string, IMapObject> SpawnBarracks { get; set; }
         public Dictionary<TeamId, IFountain> FountainList { get; set; } = new Dictionary<TeamId, IFountain>();
         private readonly Dictionary<TeamId, SurrenderHandler> _surrenders = new Dictionary<TeamId, SurrenderHandler>();
         public Dictionary<TeamId, Dictionary<LaneID, List<IInhibitor>>> InhibitorList { get; set; }
@@ -71,7 +72,7 @@ namespace LeagueSandbox.GameServer.Maps
         /// Instantiates map related game settings such as collision handler, navigation grid, announcer events, and map properties.
         /// </summary>
         /// <param name="game">Game instance.</param>
-        public Map(Game game)
+        public MapScriptHandler(Game game)
         {
             _game = game;
             MapData = game.Config.MapData;
@@ -94,6 +95,10 @@ namespace LeagueSandbox.GameServer.Maps
             CollisionHandler = new CollisionHandler(this);
 
             MapScript = _scriptEngine.CreateObject<IMapScript>("MapScripts", $"Map{Id}") ?? new EmptyMapScript();
+            if(game.Config.MapData.SpawnBarracks != null)
+            {
+                SpawnBarracks = game.Config.MapData.SpawnBarracks;
+            }
         }
 
         /// <summary>
@@ -188,7 +193,6 @@ namespace LeagueSandbox.GameServer.Maps
             var inhibRadius = 214;
             var nexusRadius = 353;
             var sightRange = 1700;
-            Dictionary<TeamId, List<IMapObject>> test = new Dictionary<TeamId, List<IMapObject>> { { TeamId.TEAM_BLUE, new List<IMapObject>() }, { TeamId.TEAM_PURPLE, new List<IMapObject>() } };
             List<IMapObject> missedTurrets = new List<IMapObject>();
             foreach (var mapObject in MapData.MapObjects.Values)
             {
@@ -215,7 +219,6 @@ namespace LeagueSandbox.GameServer.Maps
                 {
                     //Inhibitor model changes dont seem to take effect in-game
                     InhibitorList[teamId][lane].Add(new Inhibitor(_game, MapScript.InhibitorModels[teamId], lane, teamId, inhibRadius, position, sightRange, Crc32Algorithm.Compute(Encoding.UTF8.GetBytes(mapObject.Name)) | 0xFF000000));
-                    test[teamId].Add(mapObject);
                 }
                 // Turrets
                 else if (objectType == GameObjectTypes.ObjAIBase_Turret)
@@ -236,12 +239,11 @@ namespace LeagueSandbox.GameServer.Maps
                         continue;
                     }
 
-                    if (mapObject.Name.Contains("_Point"))
-                    {
-                        CapturePointsList.Add(new Tuple<IMinion, uint>(new Minion(_game, null, new Vector2(mapObject.CentralPoint.X, mapObject.CentralPoint.Z), "OdinNeutralGuardian", "OdinNeutralGuardian"), _game.NetworkIdManager.GetNewNetId()));
-                        continue;
-                    }
                     TurretList[teamId][lane].Add(new LaneTurret(_game, mapObject.Name + "_A", MapScript.TowerModels[teamId][turretType], position, teamId, turretType, GetTurretItems(turretType), 0, lane, mapObject));
+                }
+                else if (objectType == GameObjectTypes.InfoPoint)
+                {
+                    CapturePointsList.Add(new Tuple<IMinion, uint>(new Minion(_game, null, new Vector2(mapObject.CentralPoint.X, mapObject.CentralPoint.Z), "OdinNeutralGuardian", "OdinNeutralGuardian"), _game.NetworkIdManager.GetNewNetId()));
                 }
                 else if (objectType == GameObjectTypes.ObjBuilding_SpawnPoint)
                 {
@@ -254,7 +256,7 @@ namespace LeagueSandbox.GameServer.Maps
             }
 
             //If the map doesn't have any Minion pathing file but the map script has Minion pathing hardcoded
-            if (BlueMinionPathing.Count == 0 && MapScript.MinionPaths != null && MapScript.MinionPaths.Count != 0 || MapScript.MinionPathingOverride)
+            if ((BlueMinionPathing.Count == 0 || MapScript.MinionPathingOverride) && MapScript.MinionPaths != null && MapScript.MinionPaths.Count != 0)
             {
                 foreach (var lane in MapScript.MinionPaths.Keys)
                 {
@@ -278,16 +280,16 @@ namespace LeagueSandbox.GameServer.Maps
 
                 //The unhardcoded system results on minions stop walking right next to the nexus/nexus towers (since the last waypoint of a given minion, is the first one of the opsoite team, which isn't next to towers/nexus).
                 //TODO: Decide if we want to hardcode extra waypoints in order to force the minion to walk towards the nexus or let it somehow be handled automatically by the minion's A.I
-                var SpawnBarracks = MapData.SpawnBarracks.Values.ToList().FindAll(x => x.GetLaneID() == lane);
-                foreach (var SpawnBarrack in SpawnBarracks)
+                var Barracks = SpawnBarracks.Values.ToList().FindAll(x => x.GetLaneID() == lane);
+                foreach (var barrack in Barracks)
                 {
-                    if (SpawnBarrack.GetTeamID() == TeamId.TEAM_PURPLE)
+                    if (barrack.GetTeamID() == TeamId.TEAM_PURPLE)
                     {
-                        BlueMinionPathing[lane].Add(new Vector2(SpawnBarrack.CentralPoint.X, SpawnBarrack.CentralPoint.Z));
+                        BlueMinionPathing[lane].Add(new Vector2(barrack.CentralPoint.X, barrack.CentralPoint.Z));
                     }
                     else
                     {
-                        PurpleMinionPathing[lane].Add(new Vector2(SpawnBarrack.CentralPoint.X, SpawnBarrack.CentralPoint.Z));
+                        PurpleMinionPathing[lane].Add(new Vector2(barrack.CentralPoint.X, barrack.CentralPoint.Z));
                     }
                 }
             }
@@ -343,13 +345,7 @@ namespace LeagueSandbox.GameServer.Maps
             foreach (var nexus in NexusList)
             {
                 // Adds Protection to Nexus
-                _game.ProtectionManager.AddProtection
-                (
-                    nexus,
-                    TurretList[nexus.Team][LaneID.MIDDLE].FindAll(turret => turret.Type == TurretType.NEXUS_TURRET).ToArray(), TeamInhibitors[nexus.Team].ToArray()
-
-                );
-                var teste = TeamInhibitors[nexus.Team];
+                _game.ProtectionManager.AddProtection(nexus, TurretList[nexus.Team][LaneID.MIDDLE].FindAll(turret => turret.Type == TurretType.NEXUS_TURRET).ToArray(), TeamInhibitors[nexus.Team].ToArray());
             }
 
             foreach (var InhibTeam in TeamInhibitors.Keys)
@@ -454,7 +450,7 @@ namespace LeagueSandbox.GameServer.Maps
         //Minion Stuff
         public Tuple<TeamId, Vector2> GetMinionSpawnPosition(string spawnPosition)
         {
-            var coords = MapData.SpawnBarracks[spawnPosition].CentralPoint;
+            var coords = SpawnBarracks[spawnPosition].CentralPoint;
 
             var teamID = TeamId.TEAM_BLUE;
             if (spawnPosition.Contains("Chaos"))
@@ -493,7 +489,7 @@ namespace LeagueSandbox.GameServer.Maps
         public bool SetUpLaneMinion()
         {
             int cannonMinionCap = 2;
-            foreach (var barrack in MapData.SpawnBarracks)
+            foreach (var barrack in SpawnBarracks)
             {
                 List<Vector2> waypoint = new List<Vector2>();
                 TeamId opposed_team = barrack.Value.GetOpposingTeamID();
@@ -543,7 +539,7 @@ namespace LeagueSandbox.GameServer.Maps
         {
             AnnouncerEvents.Add(new Announce(_game, time, ID, IsMapSpecific));
         }
-        public void AddLevelProp(string name, string model, Vector2 position, float height, Vector3 direction, Vector3 posOffset, Vector3 scale, int skinId = 0, byte skillLevel = 0, byte rank = 0, byte type = 0, uint netId = 0, byte netNodeId = 0)
+        public void AddLevelProp(string name, string model, Vector2 position, float height, Vector3 direction, Vector3 posOffset, Vector3 scale, int skinId = 0, byte skillLevel = 0, byte rank = 0, byte type = 0, uint netId = 2, byte netNodeId = 64)
         {
             _game.ObjectManager.AddObject(new LevelProp(_game, netNodeId, name, model, position, height, direction, posOffset, scale, skinId, skillLevel, rank, type, netId));
         }

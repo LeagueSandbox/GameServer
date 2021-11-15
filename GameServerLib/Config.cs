@@ -5,12 +5,9 @@ using System.Linq;
 using System.Numerics;
 using System.Reflection;
 using GameServerCore.Domain;
-using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
 using LeagueSandbox.GameServer.Content;
-using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
 using Newtonsoft.Json.Linq;
-using static LeagueSandbox.GameServer.MapData;
 
 namespace LeagueSandbox.GameServer
 {
@@ -35,7 +32,6 @@ namespace LeagueSandbox.GameServer
         public bool MinionSpawnsEnabled { get; private set; }
         public string ContentPath { get; private set; }
         public bool IsDamageTextGlobal { get; private set; }
-        //public MapData LoadMapStructures { get; internal set; }
 
         private Config()
         {
@@ -195,22 +191,26 @@ namespace LeagueSandbox.GameServer
                 {
                     type = GameObjectTypes.ObjAnimated_HQ;
                 }
-                else if (Name.Contains("Barracks") && !Name.Contains("Spawn"))
+                else if (Name.Contains("Barracks_T"))
                 {
                     // Inhibitors are dampeners for the enemy Nexus.
                     type = GameObjectTypes.ObjAnimated_BarracksDampener;
                 }
-                else if (Name.Contains("Turret") || Name.Contains("_Point"))
+                else if (Name.Contains("Turret"))
                 {
                     type = GameObjectTypes.ObjAIBase_Turret;
                 }
-                else if (Name.Contains("__Spawn" ))
+                else if (Name.Contains("__Spawn"))
                 {
                     type = GameObjectTypes.ObjBuilding_SpawnPoint;
                 }
                 else if (Name.Contains("__NAV"))
                 {
                     type = GameObjectTypes.ObjBuilding_NavPoint;
+                }
+                else if (Name.Contains("_Point"))
+                {
+                    type = GameObjectTypes.InfoPoint;
                 }
 
                 return type;

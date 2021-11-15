@@ -30,7 +30,7 @@ namespace GameServerCore.Domain
         Dictionary<LaneID, List<Vector2>> MinionPaths { get; }
         Tuple<int, List<MinionSpawnType>> MinionWaveToSpawn(float gameTime, int cannonMinionCount, bool isInhibitorDead, bool areAllInhibitorsDead);
         TurretType GetTurretType(int trueIndex, LaneID lane, TeamId teamId);
-        void Init(IMap map);
+        void Init(IMapScriptHandler map);
         void OnMatchStart();
         void SetMinionStats(ILaneMinion m);
         float GetGoldFor(IAttackableUnit u);

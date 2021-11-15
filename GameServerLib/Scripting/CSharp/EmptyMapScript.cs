@@ -10,11 +10,10 @@ namespace MapScripts
 {
     public class EmptyMapScript : IMapScript
     {
-        public RegionType TurretRegionType { get; set; } = RegionType.Unknown2;
         public bool EnableBuildingProtection { get; set; } = false;
 
         //General Map variable
-        private IMap _map;
+        private IMapScriptHandler _map;
 
         //Stuff about minions
         public bool SpawnEnabled { get; set; }
@@ -107,7 +106,7 @@ namespace MapScripts
         };
 
         //This function is executed in-between Loading the map structures and applying the structure protections. Is the first thing on this script to be executed
-        public void Init(IMap map)
+        public void Init(IMapScriptHandler map)
         {
             _map = map;
 

@@ -234,23 +234,6 @@ namespace LeagueSandbox.GameServer.Content
                     toReturnMapData.SpawnBarracks.Add(name, barracks);
                 }
             }
-
-        //Map12 has different minion spawn names and extra spawns with the old names
-        //So this section checks for the presence of these different files and then removes the unnecessary ones 
-        restart:
-            foreach (var barrack in toReturnMapData.SpawnBarracks.Keys)
-            {
-                if (barrack.Contains("____P") && !hasExtraSpawnFiles)
-                {
-                    hasExtraSpawnFiles = true;
-                    goto restart;
-                }
-                else if (!barrack.Contains("____P") && hasExtraSpawnFiles)
-                {
-                    spawnBarracks.Remove(barrack);
-                }
-            }
-
             return toReturnMapData;
         }
 

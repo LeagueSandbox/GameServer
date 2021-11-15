@@ -11,7 +11,7 @@ namespace GameServerCore.Maps
     /// <summary>
     /// Contains all map related game settings such as collision handler, navigation grid, announcer events, and map properties.
     /// </summary>
-    public interface IMap : IUpdate
+    public interface IMapScriptHandler : IUpdate
     {
         /// <summary>
         /// Unique identifier for the Map (ex: 1 = Old SR, 11 = New SR)
@@ -54,6 +54,10 @@ namespace GameServerCore.Maps
         /// List of fountains
         /// </summary>
         Dictionary<TeamId, IFountain> FountainList { get; }
+        /// <summary>
+        /// List of LaneMinion's spawn points
+        /// </summary>
+        Dictionary<string, IMapObject> SpawnBarracks { get; }
         /// <summary>
         /// Initializes MapProperties. Usually only occurs once before players are added to Game.
         /// </summary>
@@ -107,7 +111,7 @@ namespace GameServerCore.Maps
         /// <param name="model"></param>
         /// <param name="skin"></param>
         /// <param name="NetId"></param>
-        void AddLevelProp(string name, string model, Vector2 position, float height, Vector3 direction, Vector3 posOffset, Vector3 scale, int skinId = 0, byte skillLevel = 0, byte rank = 0, byte type = 0, uint netId = 0, byte netNodeId = 0);
+        void AddLevelProp(string name, string model, Vector2 position, float height, Vector3 direction, Vector3 posOffset, Vector3 scale, int skinId = 0, byte skillLevel = 0, byte rank = 0, byte type = 0, uint netId = 2, byte netNodeId = 64);
         /// <summary>
         /// Sets up the surrender functionality
         /// </summary>

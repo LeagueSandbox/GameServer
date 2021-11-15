@@ -30,8 +30,8 @@ namespace LeagueSandbox.GameServer.GameObjects
             int skinId = 0,
             byte skillLevel = 0,
             byte rank = 0,
-            byte type = 0,
-            uint netId = 0
+            byte type = 2,
+            uint netId = 64
 
         ) : base(game, position, 0, 0, netId)
         {

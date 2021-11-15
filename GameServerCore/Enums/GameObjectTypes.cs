@@ -5,7 +5,7 @@
         // Most commented types are client-side.
 
         // LampBulb
-        // InfoPoint
+        InfoPoint,
         // EffectEmitter
         LevelProp = 1,
         // LevelPropSpawnerPoint

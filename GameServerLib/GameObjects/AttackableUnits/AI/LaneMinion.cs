@@ -75,7 +75,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             {
                 if (!RecalculateAttackPosition())
                 {
-                       KeepFocusingTarget(); // attack/follow target
+                    KeepFocusingTarget(); // attack/follow target
                 }
                 return false;
             }
