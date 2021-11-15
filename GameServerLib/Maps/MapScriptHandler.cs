@@ -64,7 +64,7 @@ namespace LeagueSandbox.GameServer.Maps
         private readonly Dictionary<TeamId, SurrenderHandler> _surrenders = new Dictionary<TeamId, SurrenderHandler>();
         public Dictionary<TeamId, Dictionary<LaneID, List<IInhibitor>>> InhibitorList { get; set; }
         public Dictionary<TeamId, Dictionary<LaneID, List<ILaneTurret>>> TurretList { get; set; }
-        public List<Tuple<IMinion, uint>> CapturePointsList { get; set; } = new List<Tuple<IMinion, uint>>();
+        public List<IMapObject> InfoPoints { get; set; } = new List<IMapObject>();
         public Dictionary<LaneID, List<Vector2>> BlueMinionPathing;
         public Dictionary<LaneID, List<Vector2>> PurpleMinionPathing;
 
@@ -243,7 +243,7 @@ namespace LeagueSandbox.GameServer.Maps
                 }
                 else if (objectType == GameObjectTypes.InfoPoint)
                 {
-                    CapturePointsList.Add(new Tuple<IMinion, uint>(new Minion(_game, null, new Vector2(mapObject.CentralPoint.X, mapObject.CentralPoint.Z), "OdinNeutralGuardian", "OdinNeutralGuardian"), _game.NetworkIdManager.GetNewNetId()));
+                    InfoPoints.Add(mapObject);
                 }
                 else if (objectType == GameObjectTypes.ObjBuilding_SpawnPoint)
                 {
@@ -474,7 +474,7 @@ namespace LeagueSandbox.GameServer.Maps
         public IMinion CreateMinion(string name, string model, Vector2 position, uint netId = 0, TeamId team = TeamId.TEAM_NEUTRAL, int skinId = 0, bool ignoreCollision = false, bool isTargetable = false)
         {
             var m = new Minion(_game, null, position, model, name, netId, team, skinId, ignoreCollision, isTargetable);
-            _game.PacketNotifier.NotifySpawn(m);
+            _game.ObjectManager.AddObject(m);
             return m;
         }
         public void AddObject(IGameObject obj)
@@ -539,7 +539,7 @@ namespace LeagueSandbox.GameServer.Maps
         {
             AnnouncerEvents.Add(new Announce(_game, time, ID, IsMapSpecific));
         }
-        public void AddLevelProp(string name, string model, Vector2 position, float height, Vector3 direction, Vector3 posOffset, Vector3 scale, int skinId = 0, byte skillLevel = 0, byte rank = 0, byte type = 0, uint netId = 2, byte netNodeId = 64)
+        public void AddLevelProp(string name, string model, Vector2 position, float height, Vector3 direction, Vector3 posOffset, Vector3 scale, int skinId = 0, byte skillLevel = 0, byte rank = 0, byte type = 2, uint netId = 0, byte netNodeId = 64)
         {
             _game.ObjectManager.AddObject(new LevelProp(_game, netNodeId, name, model, position, height, direction, posOffset, scale, skinId, skillLevel, rank, type, netId));
         }

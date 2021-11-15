@@ -208,7 +208,7 @@ namespace LeagueSandbox.GameServer
                 {
                     type = GameObjectTypes.ObjBuilding_NavPoint;
                 }
-                else if (Name.Contains("_Point"))
+                else if (Name.Contains("Info_Point"))
                 {
                     type = GameObjectTypes.InfoPoint;
                 }

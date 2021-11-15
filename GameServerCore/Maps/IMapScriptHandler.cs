@@ -9,7 +9,7 @@ using GameServerCore.Enums;
 namespace GameServerCore.Maps
 {
     /// <summary>
-    /// Contains all map related game settings such as collision handler, navigation grid, announcer events, and map properties.
+    /// Contains all map related game settings such as collision handler, navigation grid, announcer events, and map properties. Doubles as a Handler/Manager for all MapScripts.
     /// </summary>
     public interface IMapScriptHandler : IUpdate
     {
@@ -27,7 +27,7 @@ namespace GameServerCore.Maps
         INavigationGrid NavigationGrid { get; }
         IMapData MapData { get; }
         /// <summary>
-        /// MapProperties specific to a Map Id. Contains information about passive gold gen, lane minion spawns, experience to level, etc.
+        /// MapScript which determines functionality for a specific map. Contains information about passive gold gen, lane minion spawns, experience to level, etc.
         /// </summary>
         IMapScript MapScript { get; }
         /// <summary>
@@ -45,7 +45,7 @@ namespace GameServerCore.Maps
         /// <summary>
         /// List of all capture points in-game
         /// </summary>
-        List<Tuple<IMinion, uint>> CapturePointsList { get; }
+        List<IMapObject> InfoPoints { get; }
         /// <summary>
         /// List of all inhibitors in-game
         /// </summary>
@@ -111,7 +111,7 @@ namespace GameServerCore.Maps
         /// <param name="model"></param>
         /// <param name="skin"></param>
         /// <param name="NetId"></param>
-        void AddLevelProp(string name, string model, Vector2 position, float height, Vector3 direction, Vector3 posOffset, Vector3 scale, int skinId = 0, byte skillLevel = 0, byte rank = 0, byte type = 0, uint netId = 2, byte netNodeId = 64);
+        void AddLevelProp(string name, string model, Vector2 position, float height, Vector3 direction, Vector3 posOffset, Vector3 scale, int skinId = 0, byte skillLevel = 0, byte rank = 0, byte type = 2, uint netId = 0, byte netNodeId = 64);
         /// <summary>
         /// Sets up the surrender functionality
         /// </summary>

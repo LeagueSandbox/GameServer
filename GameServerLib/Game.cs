@@ -102,7 +102,7 @@ namespace LeagueSandbox.GameServer
         /// </summary>
         public IProtectionManager ProtectionManager { get; private set; }
         /// <summary>
-        /// Interface for all map properties used for the game.
+        /// Contains all map related game settings such as collision handler, navigation grid, announcer events, and map properties. Doubles as a Handler/Manager for all MapScripts.
         /// </summary>
         public IMapScriptHandler Map { get; private set; }
         /// <summary>

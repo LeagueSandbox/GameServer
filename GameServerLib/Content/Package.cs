@@ -202,7 +202,6 @@ namespace LeagueSandbox.GameServer.Content
             // SpawnBarracks (lane minion spawn positions)
 
             JObject spawnBarracks = new JObject();
-            bool hasExtraSpawnFiles = false;
             foreach (var file in Directory.GetFiles(sceneDirectory))
             {
                 if (file.Contains("Spawn_Barracks"))

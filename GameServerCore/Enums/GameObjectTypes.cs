@@ -5,9 +5,9 @@
         // Most commented types are client-side.
 
         // LampBulb
-        InfoPoint,
+        InfoPoint = 1,
         // EffectEmitter
-        LevelProp = 1,
+        LevelProp = 2,
         // LevelPropSpawnerPoint
         // GrassObject
         // Spell_Targeting_UnrevealedTarget

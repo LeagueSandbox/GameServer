@@ -181,7 +181,7 @@ namespace MapScripts
             map.AddAnnouncement(FirstSpawnTime - 30 * 1000, Announces.THIRY_SECONDS_TO_MINIONS_SPAWN, true); // 30 seconds until minions spawn
             map.AddAnnouncement(FirstSpawnTime, Announces.MINIONS_HAVE_SPAWNED, false); // Minions have spawned (90 * 1000)
             map.AddAnnouncement(FirstSpawnTime, Announces.MINIONS_HAVE_SPAWNED2, false); // Minions have spawned [2] (90 * 1000)
-
+            
             map.AddLevelProp("LevelProp_Odin_Windmill_Gears", "Odin_Windmill_Gears", new Vector2(6946.143f, 11918.931f), -122.93308f, new Vector3(0.0f, 0.0f, 0.0f), new Vector3(11.1111f, 77.7777f, -122.2222f), Vector3.One);
             map.AddLevelProp("LevelProp_Odin_Windmill_Propellers", "Odin_Windmill_Propellers", new Vector2(6922.032f, 11940.535f), -259.16052f, new Vector3(0.0f, 0.0f, 0.0f), new Vector3(-22.2222f, 0.0f, -111.1111f), Vector3.One);
             map.AddLevelProp("LevelProp_Odin_Lifts_Buckets", "Odin_Lifts_Buckets", new Vector2(2123.782f, 8465.207f), -122.9331f, new Vector3(0.0f, 0.0f, 0.0f), new Vector3(188.8889f, 77.7777f, 444.4445f), Vector3.One);
@@ -201,13 +201,14 @@ namespace MapScripts
             map.AddLevelProp("LevelProp_Odin_SOG_Chaos_Crystal", "Odin_SOG_Chaos_Crystal", new Vector2(12307.629f, 4535.6484f), 225.8346f, new Vector3(0.0f, 214.0f, 0.0f), new Vector3(144.4445f, 222.2222f, -33.3334f), Vector3.One);
         }
 
+        List<IMinion> infoPoints = new List<IMinion>();
         public void OnMatchStart()
         {
-            foreach (var point in _map.CapturePointsList)
+            for( int i = 0; i < _map.InfoPoints.Count; i++)
             {
-                _map.CreateRegion(TeamId.TEAM_BLUE, point.Item1.Position, RegionType.Unknown2, point.Item1, giveVision: true, visionRadius: 800.0f, revealStealth: true, hasCollision: true, collisionRadius: 120.0f, grassRadius: 150.0f, lifeTime: 25000.0f);
-                point.Item1.PauseAi(true);
-                _map.AddObject(point.Item1);
+                _map.CreateRegion(TeamId.TEAM_BLUE, new Vector2(_map.InfoPoints[i].CentralPoint.X, _map.InfoPoints[i].CentralPoint.Z), RegionType.Unknown2, null, giveVision: true, visionRadius: 800.0f, revealStealth: true, hasCollision: true, collisionRadius: 120.0f, grassRadius: 150.0f, lifeTime: 25000.0f);
+                infoPoints.Add(_map.CreateMinion("OdinNeutralGuardian", "OdinNeutralGuardian", new Vector2(_map.InfoPoints[i].CentralPoint.X, _map.InfoPoints[i].CentralPoint.Z), ignoreCollision: true));
+                infoPoints[i].PauseAi(true);
             }
         }
         //This function gets executed every server tick

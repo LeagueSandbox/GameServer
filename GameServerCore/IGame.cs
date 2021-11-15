@@ -23,7 +23,7 @@ namespace GameServerCore
         bool SetToExit { get; set; }
 
         /// <summary>
-        /// Interface for all map properties used for the game.
+        /// Contains all map related game settings such as collision handler, navigation grid, announcer events, and map properties. Doubles as a Handler/Manager for all MapScripts.
         /// </summary>
         IMapScriptHandler Map { get; }
         /// <summary>
