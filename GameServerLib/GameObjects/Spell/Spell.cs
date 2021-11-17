@@ -148,7 +148,14 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
                 }
             }
 
-            ApiEventManager.OnSpellHit.Publish(CastInfo.Owner, this, u, p, s);
+            if (CastInfo.IsAutoAttack)
+            {
+                ApiEventManager.OnBeingHit.Publish(u, CastInfo.Owner);
+            }
+            else
+            {
+                ApiEventManager.OnSpellHit.Publish(CastInfo.Owner, this, u, p, s);
+            }
         }
 
         public bool Cast(Vector2 start, Vector2 end, IAttackableUnit unit = null)

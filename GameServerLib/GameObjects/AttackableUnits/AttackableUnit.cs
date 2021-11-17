@@ -370,28 +370,9 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         public virtual void TakeDamage(IAttackableUnit attacker, float damage, DamageType type, DamageSource source,
             DamageResultType damageText)
         {
-            float defense = 0;
             float regain = 0;
             var attackerStats = attacker.Stats;
-
-            switch (type)
-            {
-                case DamageType.DAMAGE_TYPE_PHYSICAL:
-                    defense = Stats.Armor.Total;
-                    defense = (1 - attackerStats.ArmorPenetration.PercentBonus) * defense -
-                              attackerStats.ArmorPenetration.FlatBonus;
-
-                    break;
-                case DamageType.DAMAGE_TYPE_MAGICAL:
-                    defense = Stats.MagicResist.Total;
-                    defense = (1 - attackerStats.MagicPenetration.PercentBonus) * defense -
-                              attackerStats.MagicPenetration.FlatBonus;
-                    break;
-                case DamageType.DAMAGE_TYPE_TRUE:
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(type), type, null);
-            }
+            float postMitigationDamage = Stats.GetPostMitigationDamage(damage, type, attacker);
 
             switch (source)
             {
@@ -425,21 +406,22 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                     throw new ArgumentOutOfRangeException(nameof(source), source, null);
             }
 
-            if (damage < 0f)
+            IDamageData damageData = new DamageData
             {
-                damage = 0f;
-            }
-            else
-            {
-                //Damage dealing. (based on leagueoflegends' wikia)
-                damage = defense >= 0 ? 100 / (100 + defense) * damage : (2 - 100 / (100 - defense)) * damage;
-            }
+                IsAutoAttack = source == DamageSource.DAMAGE_SOURCE_ATTACK,
+                Attacker = attacker,
+                Target = this,
+                Damage = damage,
+                PostMitigationdDamage = postMitigationDamage,
+                DamageSource = source,
+                DamageType = type,
+            };
 
-            ApiEventManager.OnPreTakeDamage.Publish(this, attacker);
+            ApiEventManager.OnPreTakeDamage.Publish(damageData);
 
-            Stats.CurrentHealth = Math.Max(0.0f, Stats.CurrentHealth - damage);
+            Stats.CurrentHealth = Math.Max(0.0f, Stats.CurrentHealth - postMitigationDamage);
 
-            ApiEventManager.OnTakeDamage.Publish(this, attacker);
+            ApiEventManager.OnTakeDamage.Publish(damageData);
 
             if (!IsDead && Stats.CurrentHealth <= 0)
             {
@@ -476,7 +458,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
 
             if (attacker.Team != Team)
             {
-                _game.PacketNotifier.NotifyUnitApplyDamage(attacker, this, damage, type, damageText,
+                _game.PacketNotifier.NotifyUnitApplyDamage(attacker, this, postMitigationDamage, type, damageText,
                     _game.Config.IsDamageTextGlobal, attackerId, targetId);
             }
 
@@ -487,7 +469,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             if (regain > 0)
             {
                 attackerStats.CurrentHealth = Math.Min(attackerStats.HealthPoints.Total,
-                    attackerStats.CurrentHealth + regain * damage);
+                    attackerStats.CurrentHealth + regain * postMitigationDamage);
                 // TODO: send this in one place only (preferably a central EventHandler class)
                 _game.PacketNotifier.NotifyUpdatedStats(attacker, false);
             }
