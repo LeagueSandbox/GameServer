@@ -17,10 +17,10 @@ namespace MapScripts
         private IMapScriptHandler _map;
 
         //Stuff about minions
-        public bool SpawnEnabled { get; set; }
-        public long FirstSpawnTime { get; set; } = 10 * 1000;
-        public long NextSpawnTime { get; set; } = 10 * 1000;
-        public long SpawnInterval { get; set; } = 10 * 1000;
+        public bool SpawnEnabled { get; set; } = false;
+        public long FirstSpawnTime { get; set; } = 90 * 1000;
+        public long NextSpawnTime { get; set; } = 90 * 1000;
+        public long SpawnInterval { get; set; } = 30 * 1000;
         public bool MinionPathingOverride { get; set; } = false;
 
         //General things that will affect players globaly, such as default gold per-second, Starting gold....
@@ -174,7 +174,8 @@ namespace MapScripts
         {
             _map = map;
 
-            SpawnEnabled = map.IsMinionSpawnEnabled();
+            //TODO: Implement Dynamic Minion spawn mechanics for Map8
+            //SpawnEnabled = map.IsMinionSpawnEnabled();
             map.AddSurrender(1200000.0f, 300000.0f, 30.0f);
 
             // Announcer events
