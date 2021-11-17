@@ -26,6 +26,7 @@ namespace Buffs
             StatsModifier.MagicResist.FlatBonus += bonus;
             unit.AddStatModifier(StatsModifier);
 
+            // TODO: Use OnPreDamage instead.
             ApiEventManager.OnBeingHit.AddListener(this, unit, OnBeingHit, false);
         }
 
