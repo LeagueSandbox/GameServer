@@ -17,9 +17,9 @@ namespace MapScripts
 
         //Stuff about minions
         public bool SpawnEnabled { get; set; }
-        public long FirstSpawnTime { get; set; } = 10 * 1000;
-        public long NextSpawnTime { get; set; } = 10 * 1000;
-        public long SpawnInterval { get; set; } = 10 * 1000;
+        public long FirstSpawnTime { get; set; } = 90 * 1000;
+        public long NextSpawnTime { get; set; } = 90 * 1000;
+        public long SpawnInterval { get; set; } = 30 * 1000;
         public bool MinionPathingOverride { get; set; } = true;
 
         //General things that will affect players globaly, such as default gold per-second, Starting gold....
