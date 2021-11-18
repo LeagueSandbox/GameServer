@@ -69,7 +69,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.Buildings.Animate
             if (data.Killer is IChampion c)
             {
                 c.Stats.Gold += GOLD_WORTH;
-                _game.PacketNotifier.NotifyAddGold(c, this, GOLD_WORTH);
+                _game.PacketNotifier.NotifyUnitAddGold(c, this, GOLD_WORTH);
             }
 
             SetState(InhibitorState.DEAD, data.Killer);

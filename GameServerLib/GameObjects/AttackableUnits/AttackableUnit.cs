@@ -532,7 +532,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                 foreach (var c in champs)
                 {
                     c.Stats.Experience += expPerChamp;
-                    _game.PacketNotifier.NotifyAddXp(c, expPerChamp);
+                    _game.PacketNotifier.NotifyUnitAddEXP(c, expPerChamp);
                 }
             }
 
@@ -552,8 +552,8 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             {
                 return false;
             }
-            IsModelUpdated = true;
             Model = model;
+            IsModelUpdated = true;
             return true;
         }
 

@@ -54,13 +54,13 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                     _game.PacketNotifier.NotifySpawn(player.Item2.Champion, userId, false);
                     // TODO: send this in one place only
                     _game.PacketNotifier.NotifyUpdatedStats(player.Item2.Champion, false);
-                    _game.PacketNotifier.NotifyBlueTip((int) player.Item2.PlayerId, "Welcome to League Sandbox!",
+                    _game.PacketNotifier.NotifyS2C_HandleTipUpdatep((int) player.Item2.PlayerId, "Welcome to League Sandbox!",
                         "This is a WIP project.", "", 0, player.Item2.Champion.NetId,
                         _game.NetworkIdManager.GetNewNetId());
-                    _game.PacketNotifier.NotifyBlueTip((int) player.Item2.PlayerId, "Server Build Date",
+                    _game.PacketNotifier.NotifyS2C_HandleTipUpdatep((int) player.Item2.PlayerId, "Server Build Date",
                         ServerContext.BuildDateString, "", 0, player.Item2.Champion.NetId,
                         _game.NetworkIdManager.GetNewNetId());
-                    _game.PacketNotifier.NotifyBlueTip((int)player.Item2.PlayerId, "Your Champion:",
+                    _game.PacketNotifier.NotifyS2C_HandleTipUpdatep((int)player.Item2.PlayerId, "Your Champion:",
                         player.Item2.Champion.Model, "", 0, player.Item2.Champion.NetId,
                         _game.NetworkIdManager.GetNewNetId());
                 }

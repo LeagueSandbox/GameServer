@@ -237,7 +237,7 @@ namespace LeagueSandbox.GameServer
 
                 if (u.IsModelUpdated)
                 {
-                    _game.PacketNotifier.NotifyModelUpdate(u);
+                    _game.PacketNotifier.NotifyS2C_ChangeCharacterData(u);
                     u.IsModelUpdated = false;
                 }
 
