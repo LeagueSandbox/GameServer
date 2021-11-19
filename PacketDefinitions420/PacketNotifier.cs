@@ -2394,6 +2394,7 @@ namespace PacketDefinitions420
         /// <param name="sourceNetID">Not yet know it's use.</param>
         public void NotifyS2C_OnEventWorld(int mapId, EventID messageId, bool isMapSpecific)
         {
+            //Still has to be updated to LeaguePackets
             var announce = new Announce(messageId, isMapSpecific ? mapId : 0);
             _packetHandlerManager.BroadcastPacket(announce, Channel.CHL_S2C);
         }
