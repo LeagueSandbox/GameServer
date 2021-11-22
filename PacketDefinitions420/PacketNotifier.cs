@@ -2332,10 +2332,10 @@ namespace PacketDefinitions420
             var response = new S2C_MapPing
             {
                 // TODO: Verify if this is correct. Usually 0.
-                SourceNetID = client.Champion.NetId,
-                TargetNetID = (uint)targetNetId,
-                PingCategory = (byte)type,
                 SenderNetID = client.Champion.NetId,
+                SourceNetID = client.Champion.NetId,
+                TargetNetID = targetNetId,
+                PingCategory = (byte)type,
                 Position = pos,
                 //Unhardcode these bools later
                 PlayAudio = true,
