@@ -1855,6 +1855,8 @@ namespace PacketDefinitions420
         /// <param name="goldFromKill">Amount of gold the killer received.</param>
         public void NotifyNPC_Hero_Die(IDeathData deathData)
         {
+            NotifyS2C_UpdateDeathTimer(deathData.Unit as IChampion);
+
             var cd = new NPC_Hero_Die
             {
                 SenderNetID = deathData.Unit.NetId,
@@ -1869,8 +1871,6 @@ namespace PacketDefinitions420
                 }
             };
             _packetHandlerManager.BroadcastPacket(cd.GetBytes(), Channel.CHL_S2C);
-
-            NotifyS2C_UpdateDeathTimer(deathData.Unit as IChampion);
         }
         /// <summary>
         /// Sends a packet to all players with vision of the specified AttackableUnit detailing that the attacker has abrubtly stopped their attack (can be a spell or auto attack, although internally AAs are also spells).
