@@ -139,7 +139,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
 
                 player.Stats.Gold += goldEarn;
-                _game.PacketNotifier.NotifyAddGold(player, this, goldEarn);
+                _game.PacketNotifier.NotifyUnitAddGold(player, this, goldEarn);
             }
 
             _game.PacketNotifier.NotifyUnitAnnounceEvent(UnitAnnounces.TURRET_DESTROYED, this, data.Killer);

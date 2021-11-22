@@ -1,13 +1,13 @@
-﻿using GameServerCore.Enums;
+﻿using LeaguePackets.Game.Events;
 
 namespace GameServerCore.Packets.PacketDefinitions.Responses
 {
     public class AnnounceEventResponse : ICoreResponse
     {
         public int MapId { get; }
-        public Announces MessageId { get; }
+        public EventID MessageId { get; }
         public bool IsMapSpecific { get; }
-        public AnnounceEventResponse(int mapId, Announces messageId, bool isMapSpecific)
+        public AnnounceEventResponse(int mapId, EventID messageId, bool isMapSpecific)
         {
             MapId = mapId;
             MessageId = messageId;

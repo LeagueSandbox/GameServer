@@ -5,7 +5,7 @@ namespace PacketDefinitions420.PacketDefinitions.S2C
 {
     public class Announce : BasePacket
     {
-        public Announce(Announces messageId, int mapId = 0)
+        public Announce(EventID messageId, int mapId = 0)
             : base(PacketCmd.PKT_S2C_ANNOUNCE)
         {
             Write((byte)messageId);

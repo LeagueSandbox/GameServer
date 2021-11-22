@@ -26,6 +26,7 @@ using System.Text;
 using Force.Crc32;
 using System.Linq;
 using LeaguePackets;
+using LeaguePackets.LoadScreen;
 
 namespace PacketDefinitions420
 {
@@ -92,19 +93,6 @@ namespace PacketDefinitions420
                 StringBuffer = name
             };
             _packetHandlerManager.SendPacket(userId, debugObjPacket.GetBytes(), Channel.CHL_S2C);
-        }
-
-        /// <summary>
-        /// Sends a packet to all players that the specified Champion has killed a specified player and received a specified amount of gold.
-        /// </summary>
-        /// <param name="c">Champion that killed a unit.</param>
-        /// <param name="died">AttackableUnit that died to the Champion.</param>
-        /// <param name="gold">Amount of gold the Champion gained for the kill.</param>
-        /// TODO: Only use BroadcastPacket when the unit that died is a Champion.
-        public void NotifyAddGold(IChampion c, IAttackableUnit died, float gold)
-        {
-            var ag = new AddGold(c, died, gold);
-            _packetHandlerManager.BroadcastPacket(ag, Channel.CHL_S2C);
         }
 
         /// <summary>
@@ -216,18 +204,6 @@ namespace PacketDefinitions420
         }
 
         /// <summary>
-        /// Sends a packet to all players that the specified Champion has gained the specified amount of experience.
-        /// </summary>
-        /// <param name="champion">Champion that gained the experience.</param>
-        /// <param name="experience">Amount of experience gained.</param>
-        /// TODO: Verify if sending to all players is correct.
-        public void NotifyAddXp(IChampion champion, float experience)
-        {
-            var xp = new AddXp(champion, experience);
-            _packetHandlerManager.BroadcastPacket(xp, Channel.CHL_S2C);
-        }
-
-        /// <summary>
         /// Sends a packet to all players with vision of the specified attacker detailing that they have targeted the specified target.
         /// </summary>
         /// <param name="attacker">AI that is targeting an AttackableUnit.</param>
@@ -275,18 +251,6 @@ namespace PacketDefinitions420
             }
 
             _packetHandlerManager.BroadcastPacketVision(attacker, targetPacket.GetBytes(), Channel.CHL_S2C);
-        }
-
-        /// <summary>
-        /// Sends a packet to all players that announces a specified message (ex: "Minions have spawned.")
-        /// </summary>
-        /// <param name="mapId">Current map ID.</param>
-        /// <param name="messageId">Message ID to announce.</param>
-        /// <param name="isMapSpecific">Whether the announce is specific to the map ID.</param>
-        public void NotifyAnnounceEvent(int mapId, Announces messageId, bool isMapSpecific)
-        {
-            var announce = new Announce(messageId, isMapSpecific ? mapId : 0);
-            _packetHandlerManager.BroadcastPacket(announce, Channel.CHL_S2C);
         }
 
         /// <summary>
@@ -391,24 +355,6 @@ namespace PacketDefinitions420
         }
 
         /// <summary>
-        /// Sends a side bar tip to the specified player (ex: quest tips).
-        /// </summary>
-        /// <param name="userId">User to send the packet to.</param>
-        /// <param name="title">Title of the tip.</param>
-        /// <param name="text">Description text of the tip.</param>
-        /// <param name="imagePath">Path to an image that will be embedded in the tip.</param>
-        /// <param name="tipCommand">Action suggestion(? unconfirmed).</param>
-        /// <param name="playerNetId">NetID to send the packet to.</param>
-        /// <param name="targetNetId">NetID of the target referenced by the tip.</param>
-        /// TODO: tipCommand should be a lib/core enum that gets translated into a league version specific packet enum as it may change over time.
-        public void NotifyBlueTip(int userId, string title, string text, string imagePath, byte tipCommand, uint playerNetId,
-                uint targetNetId)
-        {
-            var packet = new BlueTip(title, text, imagePath, tipCommand, playerNetId, targetNetId);
-            _packetHandlerManager.SendPacket(userId, packet, Channel.CHL_S2C);
-        }
-
-        /// <summary>
         /// Sends a packet to the player attempting to buy an item that their purchase was successful.
         /// </summary>
         /// <param name="userId">User to send the packet to.</param>
@@ -433,40 +379,6 @@ namespace PacketDefinitions420
             };
 
             _packetHandlerManager.SendPacket(userId, buyItemPacket.GetBytes(), Channel.CHL_S2C);
-        }
-
-        /// <summary>
-        /// Sends a packet to all players updating a champion's death timer.
-        /// </summary>
-        /// <param name="champion">Champion that died.</param>
-        public void NotifyChampionDeathTimer(IChampion champion)
-        {
-            var cdt = new ChampionDeathTimer(champion);
-            _packetHandlerManager.BroadcastPacket(cdt, Channel.CHL_S2C);
-        }
-
-        /// <summary>
-        /// Sends a packet to all players that a champion has died and calls a death timer update packet.
-        /// </summary>
-        /// <param name="champion">Champion that died.</param>
-        /// <param name="killer">Unit that killed the Champion.</param>
-        /// <param name="goldFromKill">Amount of gold the killer received.</param>
-        public void NotifyChampionDie(IChampion champion, IAttackableUnit killer, int goldFromKill)
-        {
-            var cd = new ChampionDie(champion, killer, goldFromKill);
-            _packetHandlerManager.BroadcastPacket(cd, Channel.CHL_S2C);
-
-            NotifyChampionDeathTimer(champion);
-        }
-
-        /// <summary>
-        /// Sends a packet to all players that a champion has respawned.
-        /// </summary>
-        /// <param name="c">Champion that respawned.</param>
-        public void NotifyChampionRespawn(IChampion c)
-        {
-            var cr = new ChampionRespawn(c);
-            _packetHandlerManager.BroadcastPacket(cr, Channel.CHL_S2C);
         }
 
         /// <summary>
@@ -1325,28 +1237,6 @@ namespace PacketDefinitions420
         }
 
         /// <summary>
-        /// Sends a packet to the specified player detailing skin information of all specified players on the loading screen.
-        /// </summary>
-        /// <param name="userId">User to send the packet to.</param>
-        /// <param name="player">Player information to send.</param>
-        public void NotifyLoadScreenPlayerChampion(int userId, Tuple<uint, ClientInfo> player)
-        {
-            var loadChampion = new LoadScreenPlayerChampion(player);
-            _packetHandlerManager.SendPacket(userId, loadChampion, Channel.CHL_LOADING_SCREEN);
-        }
-
-        /// <summary>
-        /// Sends a packet to the specified player detailing skin and player name information of all soecified players on the loading screen.
-        /// </summary>
-        /// <param name="userId">User to send the packet to.</param>
-        /// <param name="player">Player information to send.</param>
-        public void NotifyLoadScreenPlayerName(int userId, Tuple<uint, ClientInfo> player)
-        {
-            var loadName = new LoadScreenPlayerName(player);
-            _packetHandlerManager.SendPacket(userId, loadName, Channel.CHL_LOADING_SCREEN);
-        }
-
-        /// <summary>
         /// Optionally sends a packet to all players who have vision of the specified Minion detailing that it has spawned.
         /// </summary>
         /// <returns>A new and fully setup SpawnMinionS2C packet.</returns>
@@ -1495,10 +1385,27 @@ namespace PacketDefinitions420
         /// Sends a packet to all players that updates the specified unit's model.
         /// </summary>
         /// <param name="obj">AttackableUnit to update.</param>
-        public void NotifyModelUpdate(IAttackableUnit obj)
+        /// <param name="skinID">Unit's skin ID after changing model.</param>
+        /// <param name="modelOnly">Wether or not it's only the model that it's being changed(?). I don't really know what's this for</param>
+        /// <param name="overrideSpells">Wether or not the user's spells should be overriden, i assume it would be used for things like Nidalee or Elise.</param>
+        /// <param name="replaceCharacterPackage">Unknown.</param>
+        public void NotifyS2C_ChangeCharacterData(IAttackableUnit obj, uint skinID = 0, bool modelOnly = true, bool overrideSpells = false, bool replaceCharacterPackage = false)
         {
-            var mp = new UpdateModel(obj.NetId, obj.Model);
-            _packetHandlerManager.BroadcastPacket(mp, Channel.CHL_S2C);
+            var newCharData = new S2C_ChangeCharacterData
+            {
+                SenderNetID = obj.NetId,
+                Data = new CharacterStackData
+                {
+                    SkinID = skinID,
+                    SkinName = obj.Model,
+                    OverrideSpells = overrideSpells,
+                    ModelOnly = modelOnly,
+                    ReplaceCharacterPackage = replaceCharacterPackage
+                    // TODO: ID variable, acts like a character ID, used later on in PopCharacterData packet for unloading.
+                    // Changes over time, or perhaps as new objects are added, does not have large values like NetID.
+                }
+            };
+            _packetHandlerManager.BroadcastPacketVision(obj, newCharData.GetBytes(), Channel.CHL_S2C);
         }
 
         /// <summary>
@@ -1941,6 +1848,31 @@ namespace PacketDefinitions420
         }
 
         /// <summary>
+        /// Sends a packet to all players that a champion has died and calls a death timer update packet.
+        /// </summary>
+        /// <param name="champion">Champion that died.</param>
+        /// <param name="killer">Unit that killed the Champion.</param>
+        /// <param name="goldFromKill">Amount of gold the killer received.</param>
+        public void NotifyNPC_Hero_Die(IDeathData deathData)
+        {
+            NotifyS2C_UpdateDeathTimer(deathData.Unit as IChampion);
+
+            var cd = new NPC_Hero_Die
+            {
+                SenderNetID = deathData.Unit.NetId,
+                DeathData = new DeathData
+                {
+                    KillerNetID = deathData.Killer.NetId,
+                    DieType = deathData.DieType,
+                    DamageType = (byte)deathData.DamageType,
+                    DamageSource = (byte)deathData.DamageSource,
+                    BecomeZombie = deathData.BecomeZombie,
+                    DeathDuration = deathData.DeathDuration
+                }
+            };
+            _packetHandlerManager.BroadcastPacket(cd.GetBytes(), Channel.CHL_S2C);
+        }
+        /// <summary>
         /// Sends a packet to all players with vision of the specified AttackableUnit detailing that the attacker has abrubtly stopped their attack (can be a spell or auto attack, although internally AAs are also spells).
         /// </summary>
         /// <param name="attacker">AttackableUnit that stopped their auto attack.</param>
@@ -2070,20 +2002,6 @@ namespace PacketDefinitions420
         }
 
         /// <summary>
-        /// Sends a packet to the specified client's team detailing a map ping.
-        /// </summary>
-        /// <param name="client">Info of the client that initiated the ping.</param>
-        /// <param name="pos">2D top-down position of the ping.</param>
-        /// <param name="targetNetId">Target of the ping (if applicable).</param>
-        /// <param name="type">Type of ping; COMMAND/ATTACK/DANGER/MISSING/ONMYWAY/FALLBACK/REQUESTHELP. *NOTE*: Not all ping types are supported yet.</param>
-        public void NotifyPing(ClientInfo client, Vector2 pos, int targetNetId, Pings type)
-        {
-            var ping = new AttentionPingRequest(pos.X, pos.Y, targetNetId, type);
-            var response = new AttentionPingResponse(client, ping);
-            _packetHandlerManager.BroadcastPacketTeam(client.Team, response, Channel.CHL_S2C);
-        }
-
-        /// <summary>
         /// Sends a packet to all players detailing the specified client's loading screen progress.
         /// </summary>
         /// <param name="request">Info of the target client given via the client who requested loading screen progress.</param>
@@ -2116,6 +2034,21 @@ namespace PacketDefinitions420
         {
             var response = new QueryStatus();
             _packetHandlerManager.SendPacket(userId, response, Channel.CHL_S2C);
+        }
+
+        /// <summary>
+        /// Sends a packet to all players that a champion has respawned.
+        /// </summary>
+        /// <param name="c">Champion that respawned.</param>
+        public void NotifyHeroReincarnateAlive(IChampion c, float parToRestore)
+        {
+            var cr = new HeroReincarnateAlive
+            {
+                SenderNetID = c.NetId,
+                Position = new Vector2(c.Position.X, c.Position.Y),
+                PARValue = parToRestore
+            };
+            _packetHandlerManager.BroadcastPacket(cr.GetBytes(), Channel.CHL_S2C);
         }
 
         /// <summary>
@@ -2179,6 +2112,40 @@ namespace PacketDefinitions420
                 NetID = unit.NetId
             };
             _packetHandlerManager.SendPacket(userId, highlightPacket.GetBytes(), Channel.CHL_S2C);
+        }
+
+        /// <summary>
+        /// Sends a packet to the specified player detailing skin and player name information of all soecified players on the loading screen.
+        /// </summary>
+        /// <param name="userId">User to send the packet to.</param>
+        /// <param name="player">Player information to send.</param>
+        public void NotifyRequestRename(int userId, Tuple<uint, ClientInfo> player)
+        {
+            var loadName = new RequestRename
+            {
+                PlayerID = userId,
+                PlayerName = player.Item2.Name,
+                // TODO: Verify if this is correct.
+                // Most packets show a large default value which seems to be randomized per-game and used for every RequestRename packet during that game.
+                SkinID = player.Item2.SkinNo,
+            };
+            _packetHandlerManager.SendPacket(userId, loadName.GetBytes(), Channel.CHL_LOADING_SCREEN);
+        }
+
+        /// <summary>
+        /// Sends a packet to the specified player detailing skin information of all specified players on the loading screen.
+        /// </summary>
+        /// <param name="userId">User to send the packet to.</param>
+        /// <param name="player">Player information to send.</param>
+        public void NotifyRequestReskin(int userId, Tuple<uint, ClientInfo> player)
+        {
+            var loadChampion = new RequestReskin
+            {
+                PlayerID = player.Item2.PlayerId,
+                SkinID = player.Item2.SkinNo,
+                SkinName = player.Item2.Champion.Model
+            };
+            _packetHandlerManager.SendPacket(userId, loadChampion.GetBytes(), Channel.CHL_LOADING_SCREEN);
         }
 
         /// <summary>
@@ -2329,6 +2296,56 @@ namespace PacketDefinitions420
         }
 
         /// <summary>
+        /// Sends a side bar tip to the specified player (ex: quest tips).
+        /// </summary>
+        /// <param name="userId">User to send the packet to.</param>
+        /// <param name="title">Title of the tip.</param>
+        /// <param name="text">Description text of the tip.</param>
+        /// <param name="imagePath">Path to an image that will be embedded in the tip.</param>
+        /// <param name="tipCommand">Action suggestion(? unconfirmed).</param>
+        /// <param name="playerNetId">NetID to send the packet to.</param>
+        /// <param name="targetNetId">NetID of the target referenced by the tip.</param>
+        /// TODO: tipCommand should be a lib/core enum that gets translated into a league version specific packet enum as it may change over time.
+        public void NotifyS2C_HandleTipUpdatep(int userId, string title, string text, string imagePath, byte tipCommand, uint playerNetId, uint targetNetId)
+        {
+            var packet = new S2C_HandleTipUpdate
+            {
+                SenderNetID = playerNetId,
+                TipCommand = tipCommand,
+                TipImagePath = imagePath,
+                TipName = title,
+                TipOther = text,
+                TipID = targetNetId
+            };
+            _packetHandlerManager.SendPacket(userId, packet.GetBytes(), Channel.CHL_S2C);
+        }
+
+        /// <summary>
+        /// Sends a packet to the specified client's team detailing a map ping.
+        /// </summary>
+        /// <param name="client">Info of the client that initiated the ping.</param>
+        /// <param name="pos">2D top-down position of the ping.</param>
+        /// <param name="targetNetId">Target of the ping (if applicable).</param>
+        /// <param name="type">Type of ping; COMMAND/ATTACK/DANGER/MISSING/ONMYWAY/FALLBACK/REQUESTHELP. *NOTE*: Not all ping types are supported yet.</param>
+        public void NotifyS2C_MapPing(ClientInfo client, Vector2 pos, uint targetNetId, Pings type)
+        {
+            var response = new S2C_MapPing
+            {
+                // TODO: Verify if this is correct. Usually 0.
+                SenderNetID = client.Champion.NetId,
+                SourceNetID = client.Champion.NetId,
+                TargetNetID = targetNetId,
+                PingCategory = (byte)type,
+                Position = pos,
+                //Unhardcode these bools later
+                PlayAudio = true,
+                ShowChat = true,
+                PingThrottled = false,
+                PlayVO = true
+            };
+            _packetHandlerManager.BroadcastPacketTeam(client.Team, response.GetBytes(), Channel.CHL_S2C);
+        }
+        /// <summary>
         /// Sends a packet to all players detailing that the specified unit has been killed by the specified killer.
         /// </summary>
         /// <param name="data">Data of the death.</param>
@@ -2373,6 +2390,18 @@ namespace PacketDefinitions420
             {
                 _packetHandlerManager.SendPacket(userId, enterTeamVis.GetBytes(), Channel.CHL_S2C);
             }
+        }
+
+        /// <summary>
+        /// Sends a packet to all players that announces a specified message (ex: "Minions have spawned.")
+        /// </summary>
+        /// <param name="eventId">Id of the event to happen.</param>
+        /// <param name="sourceNetID">Not yet know it's use.</param>
+        public void NotifyS2C_OnEventWorld(int mapId, EventID messageId, bool isMapSpecific)
+        {
+            //Still has to be updated to LeaguePackets
+            var announce = new Announce(messageId, isMapSpecific ? mapId : 0);
+            _packetHandlerManager.BroadcastPacket(announce, Channel.CHL_S2C);
         }
 
         /// <summary>
@@ -2605,6 +2634,16 @@ namespace PacketDefinitions420
         }
 
         /// <summary>
+        /// Sends a packet to all players updating a champion's death timer.
+        /// </summary>
+        /// <param name="champion">Champion that died.</param>
+        public void NotifyS2C_UpdateDeathTimer(IChampion champion)
+        {
+            var cdt = new S2C_UpdateDeathTimer { SenderNetID = champion.NetId, DeathDuration = champion.RespawnTimer / 1000f };
+            _packetHandlerManager.BroadcastPacket(cdt.GetBytes(), Channel.CHL_S2C);
+        }
+
+        /// <summary>
         /// Sends a packet to the specified user detailing that the specified spell's toggle state has been updated.
         /// </summary>
         /// <param name="userId">User to send the packet to.</param>
@@ -2749,7 +2788,7 @@ namespace PacketDefinitions420
                     return;
             }
 
-            if(o.IsVisibleByTeam(TeamId.TEAM_BLUE))
+            if (o.IsVisibleByTeam(TeamId.TEAM_BLUE))
             {
                 NotifyS2C_OnEnterTeamVisibility(o, TeamId.TEAM_BLUE);
             }
@@ -2976,6 +3015,44 @@ namespace PacketDefinitions420
             _packetHandlerManager.BroadcastPacket(tint.GetBytes(), Channel.CHL_S2C);
         }
 
+        /// <summary>
+        /// Sends a packet to all players that the specified Champion has gained the specified amount of experience.
+        /// </summary>
+        /// <param name="champion">Champion that gained the experience.</param>
+        /// <param name="experience">Amount of experience gained.</param>
+        /// TODO: Verify if sending to all players is correct.
+        public void NotifyUnitAddEXP(IChampion champion, float experience)
+        {
+            var xp = new UnitAddEXP
+            {
+                // TODO: Verify if this is correct. Usually 0.
+                SenderNetID = champion.NetId,
+                TargetNetID = champion.NetId,
+                ExpAmmount = experience
+            };
+            // TODO: Verify if we should change to BroadcastPacketVision
+            _packetHandlerManager.BroadcastPacket(xp.GetBytes(), Channel.CHL_S2C);
+        }
+
+        /// <summary>
+        /// Sends a packet to all players that the specified Champion has killed a specified player and received a specified amount of gold.
+        /// </summary>
+        /// <param name="c">Champion that killed a unit.</param>
+        /// <param name="died">AttackableUnit that died to the Champion.</param>
+        /// <param name="gold">Amount of gold the Champion gained for the kill.</param>
+        /// TODO: Only use BroadcastPacket when the unit that died is a Champion.
+        public void NotifyUnitAddGold(IChampion c, IAttackableUnit died, float gold)
+        {
+            // TODO: Verify if this handles self-gold properly.
+            var ag = new UnitAddGold
+            {
+                SenderNetID = died.NetId,
+                TargetNetID = c.NetId,
+                SourceNetID = died.NetId,
+                GoldAmmount = gold
+            };
+            _packetHandlerManager.SendPacket((int)c.GetPlayerId(), ag.GetBytes(), Channel.CHL_S2C);
+        }
         /// <summary>
         /// Sends a packet to all players detailing that the specified event has occurred.
         /// </summary>

@@ -39,13 +39,6 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="b">Blue hex color value.</param>
         void NotifyAddDebugObject(int userId, IAttackableUnit unit, uint objNetId, float lifetime, float radius, Vector3 pos1, Vector3 pos2, int objID = 0, byte type = 0x0, string name = "debugobj", byte r = 0xFF, byte g = 0x46, byte b = 0x0);
         /// <summary>
-        /// Sends a packet to all players that the specified player has killed a specified player and received a specified amount of gold.
-        /// </summary>
-        /// <param name="c">Champion that killed a unit.</param>
-        /// <param name="died">AttackableUnit that died to the Champion.</param>
-        /// <param name="gold">Amount of gold the Champion gained for the kill.</param>
-        void NotifyAddGold(IChampion c, IAttackableUnit died, float gold);
-        /// <summary>
         /// Sends a packet to the specified team that a part of the map has changed. Known to be used in League for initializing turret vision and collision.
         /// </summary>
         /// <param name="unitNetId">NetID of the unit owning the region.</param>
@@ -71,12 +64,6 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="azirTurret">AzirTurret instance.</param>
         void NotifyAzirTurretSpawned(IAzirTurret azirTurret);
         /// <summary>
-        /// Sends a packet to all players that the specified Champion has gained the specified amount of experience.
-        /// </summary>
-        /// <param name="champion">Champion that gained the experience.</param>
-        /// <param name="experience">Amount of experience gained.</param>
-        void NotifyAddXp(IChampion champion, float experience);
-        /// <summary>
         /// Sends a packet to all players with vision of the specified attacker detailing that they have targeted the specified target.
         /// </summary>
         /// <param name="attacker">AI that is targeting an AttackableUnit.</param>
@@ -88,13 +75,6 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="attacker">AI that is targeting a champion.</param>
         /// <param name="target">Champion that is being targeted by the attacker.</param>
         void NotifyAI_TargetHeroS2C(IObjAiBase attacker, IChampion target);
-        /// <summary>
-        /// Sends a packet to all players that announces a specified message (ex: "Minions have spawned.")
-        /// </summary>
-        /// <param name="mapId">Current map ID.</param>
-        /// <param name="messageId">Message ID to announce.</param>
-        /// <param name="isMapSpecific">Whether the announce is specific to the map ID.</param>
-        void NotifyAnnounceEvent(int mapId, Announces messageId, bool isMapSpecific);
         /// <summary>
         /// Sends a packet to the specified user that informs them of their summoner data such as runes, summoner spells, masteries (or talents as named internally), etc.
         /// </summary>
@@ -121,41 +101,12 @@ namespace GameServerCore.Packets.Interfaces
         /// TODO: Verify the differences between BasicAttackPos and normal BasicAttack.
         void NotifyBasic_Attack_Pos(IObjAiBase attacker, IAttackableUnit target, uint futureProjNetId, bool isCrit);
         /// <summary>
-        /// Sends a side bar tip to the specified player (ex: quest tips).
-        /// </summary>
-        /// <param name="userId">User to send the packet to.</param>
-        /// <param name="title">Title of the tip.</param>
-        /// <param name="text">Description text of the tip.</param>
-        /// <param name="imagePath">Path to an image that will be embedded in the tip.</param>
-        /// <param name="tipCommand">Action suggestion(? unconfirmed).</param>
-        /// <param name="playerNetId">NetID to send the packet to.</param>
-        /// <param name="targetNetId">NetID of the target referenced by the tip.</param>
-        /// TODO: tipCommand should be a lib/core enum that gets translated into a league version specific packet enum as it may change over time.
-        void NotifyBlueTip(int userId, string title, string text, string imagePath, byte tipCommand, uint playerNetId, uint targetNetId);
-        /// <summary>
         /// Sends a packet to the player attempting to buy an item that their purchase was successful.
         /// </summary>
         /// <param name="userId">User to send the packet to.</param>
         /// <param name="gameObject">GameObject of type ObjAiBase that can buy items.</param>
         /// <param name="itemInstance">Item instance housing all information about the item that has been bought.</param>
         void NotifyBuyItem(int userId, IObjAiBase gameObject, IItem itemInstance);
-        /// <summary>
-        /// Sends a packet to all players updating a player's death timer.
-        /// </summary>
-        /// <param name="champion">Champion that died.</param>
-        void NotifyChampionDeathTimer(IChampion champion);
-        /// <summary>
-        /// Sends a packet to all players that a champion has died and calls a death timer update packet.
-        /// </summary>
-        /// <param name="champion">Champion that died.</param>
-        /// <param name="killer">Unit that killed the Champion.</param>
-        /// <param name="goldFromKill">Amount of gold the killer received.</param>
-        void NotifyChampionDie(IChampion champion, IAttackableUnit killer, int goldFromKill);
-        /// <summary>
-        /// Sends a packet to all players that a champion has respawned.
-        /// </summary>
-        /// <param name="c">Champion that respawned.</param>
-        void NotifyChampionRespawn(IChampion c);
         /// <summary>
         /// Sends a packet to the specified user detailing that the specified owner unit's spell in the specified slot has been changed.
         /// </summary>
@@ -367,18 +318,6 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="players">Client info of all players in the loading screen.</param>
         void NotifyLoadScreenInfo(int userId, List<Tuple<uint, ClientInfo>> players);
         /// <summary>
-        /// Sends a packet to the specified player detailing skin information of all specified players on the loading screen.
-        /// </summary>
-        /// <param name="userId">User to send the packet to.</param>
-        /// <param name="player">Player information to send.</param>
-        void NotifyLoadScreenPlayerChampion(int userId, Tuple<uint, ClientInfo> player);
-        /// <summary>
-        /// Sends a packet to the specified player detailing skin and player name information of all soecified players on the loading screen.
-        /// </summary>
-        /// <param name="userId">User to send the packet to.</param>
-        /// <param name="player">Player information to send.</param>
-        void NotifyLoadScreenPlayerName(int userId, Tuple<uint, ClientInfo> player);
-        /// <summary>
         /// Optionally sends a packet to all players who have vision of the specified Minion detailing that it has spawned.
         /// </summary>
         /// <returns>A new and fully setup SpawnMinionS2C packet.</returns>
@@ -394,7 +333,11 @@ namespace GameServerCore.Packets.Interfaces
         /// Sends a packet to all players that updates the specified unit's model.
         /// </summary>
         /// <param name="obj">AttackableUnit to update.</param>
-        void NotifyModelUpdate(IAttackableUnit obj);
+        /// <param name="skinID">Unit's skin ID after changing model.</param>
+        /// <param name="modelOnly">Wether or not it's only the model that it's being changed(?). I don't really know what's this for</param>
+        /// <param name="overrideSpells">Wether or not the user's spells should be overriden, i assume it would be used for things like Nidalee or Elise.</param>
+        /// <param name="replaceCharacterPackage">Unknown.</param>
+        void NotifyS2C_ChangeCharacterData(IAttackableUnit obj, uint skinID = 0, bool modelOnly = true, bool overrideSpells = false, bool replaceCharacterPackage = false);
         /// <summary>
         /// Sends a packet to the specified player detailing that the specified debug object's radius has changed.
         /// </summary>
@@ -505,6 +448,13 @@ namespace GameServerCore.Packets.Interfaces
         /// TODO: Use this. Seems to be often used when the killer = the attacker.
         void NotifyNPC_Die_Broadcast(IDeathData data);
         /// <summary>
+        /// Sends a packet to all players that a champion has died and calls a death timer update packet.
+        /// </summary>
+        /// <param name="champion">Champion that died.</param>
+        /// <param name="killer">Unit that killed the Champion.</param>
+        /// <param name="goldFromKill">Amount of gold the killer received.</param>
+        void NotifyNPC_Hero_Die(IDeathData deathData);
+        /// <summary>
         /// Sends a packet to all players with vision of the specified AttackableUnit detailing that the attacker has abrubtly stopped their attack (can be a spell or auto attack, although internally AAs are also spells).
         /// </summary>
         /// <param name="attacker">AttackableUnit that stopped their auto attack.</param>
@@ -553,14 +503,6 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="showWindow">Whether or not to show a pause window.</param>
         void NotifyPauseGame(int seconds, bool showWindow);
         /// <summary>
-        /// Sends a packet to the specified client's team detailing a map ping.
-        /// </summary>
-        /// <param name="client">Info of the client that initiated the ping.</param>
-        /// <param name="pos">2D top-down position of the ping.</param>
-        /// <param name="targetNetId">Target of the ping (if applicable).</param>
-        /// <param name="type">Type of ping; COMMAND/ATTACK/DANGER/MISSING/ONMYWAY/FALLBACK/REQUESTHELP. *NOTE*: Not all ping types are supported yet.</param>
-        void NotifyPing(ClientInfo client, Vector2 position, int targetNetId, Pings type);
-        /// <summary>
         /// Sends a packet to all players detailing the specified client's loading screen progress.
         /// </summary>
         /// <param name="request">Info of the target client given via the client who requested loading screen progress.</param>
@@ -576,6 +518,11 @@ namespace GameServerCore.Packets.Interfaces
         /// </summary>
         /// <param name="userId">User to send the packet to; player that sent the query.</param>
         void NotifyQueryStatus(int userId);
+        /// <summary>
+        /// Sends a packet to all players that a champion has respawned.
+        /// </summary>
+        /// <param name="c">Champion that respawned.</param>
+        void NotifyHeroReincarnateAlive(IChampion c, float parToRestore);
         /// <summary>
         /// Sends a packet to the specified player detailing that the specified Debug Object has been removed.
         /// </summary>
@@ -601,6 +548,18 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="userId">User to send the packet to.</param>
         /// <param name="unit">GameObject that had the highlight.</param>
         void NotifyRemoveUnitHighlight(int userId, IGameObject unit);
+        /// <summary>
+        /// Sends a packet to the specified player detailing skin and player name information of all specified players on the loading screen.
+        /// </summary>
+        /// <param name="userId">User to send the packet to.</param>
+        /// <param name="player">Player information to send.</param>
+        void NotifyRequestRename(int userId, Tuple<uint, ClientInfo> player);
+        /// <summary>
+        /// Sends a packet to the specified player detailing skin information of all specified players on the loading screen.
+        /// </summary>
+        /// <param name="userId">User to send the packet to.</param>
+        /// <param name="player">Player information to send.</param>
+        void NotifyRequestReskin(int userId, Tuple<uint, ClientInfo> player);
         /// <summary>
         /// Sends a packet to all players detailing that the game has been unpaused.
         /// </summary>
@@ -630,6 +589,26 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="userId">User to send the packet to.</param>
         void NotifyS2C_CreateTurret(ILaneTurret turret, int userId = 0);
         /// <summary>
+        /// Sends a side bar tip to the specified player (ex: quest tips).
+        /// </summary>
+        /// <param name="userId">User to send the packet to.</param>
+        /// <param name="title">Title of the tip.</param>
+        /// <param name="text">Description text of the tip.</param>
+        /// <param name="imagePath">Path to an image that will be embedded in the tip.</param>
+        /// <param name="tipCommand">Action suggestion(? unconfirmed).</param>
+        /// <param name="playerNetId">NetID to send the packet to.</param>
+        /// <param name="targetNetId">NetID of the target referenced by the tip.</param>
+        /// TODO: tipCommand should be a lib/core enum that gets translated into a league version specific packet enum as it may change over time.
+        void NotifyS2C_HandleTipUpdatep(int userId, string title, string text, string imagePath, byte tipCommand, uint playerNetId, uint targetNetId);
+        /// <summary>
+        /// Sends a packet to the specified client's team detailing a map ping.
+        /// </summary>
+        /// <param name="client">Info of the client that initiated the ping.</param>
+        /// <param name="pos">2D top-down position of the ping.</param>
+        /// <param name="targetNetId">Target of the ping (if applicable).</param>
+        /// <param name="type">Type of ping; COMMAND/ATTACK/DANGER/MISSING/ONMYWAY/FALLBACK/REQUESTHELP. *NOTE*: Not all ping types are supported yet.</param>
+        void NotifyS2C_MapPing(ClientInfo client, Vector2 pos, uint targetNetId, Pings type);
+        /// <summary>
         /// Sends a packet to all players detailing that the specified unit has been killed by the specified killer.
         /// </summary>
         /// <param name="data">Data of the death.</param>
@@ -653,6 +632,12 @@ namespace GameServerCore.Packets.Interfaces
         /// TODO: Verify if this description is correct, if not, correct it.
         /// <param name="speedScale">How much the speed of the GameObject should affect the animation.</param>
         void NotifyS2C_PlayAnimation(IGameObject obj, string animation, AnimationFlags flags = 0, float timeScale = 1.0f, float startTime = 0.0f, float speedScale = 1.0f);
+        /// <summary>
+        /// Sends a packet to all players that announces a specified message (ex: "Minions have spawned.")
+        /// </summary>
+        /// <param name="eventId">Id of the event to happen.</param>
+        /// <param name="sourceNetID">Not yet know it's use.</param>
+        void NotifyS2C_OnEventWorld(int mapId, EventID messageId, bool isMapSpecific);
         /// <summary>
         /// Sends a packet to all players detailing that the specified object's current animations have been paused/unpaused.
         /// </summary>
@@ -722,6 +707,11 @@ namespace GameServerCore.Packets.Interfaces
         /// </summary>
         /// <param name="p">Missile that has been updated.</param>
         void NotifyS2C_UpdateBounceMissile(ISpellMissile p);
+        /// <summary>
+        /// Sends a packet to all players updating a player's death timer.
+        /// </summary>
+        /// <param name="champion">Champion that died.</param>
+        void NotifyS2C_UpdateDeathTimer(IChampion champion);
         /// <summary>
         /// Sends a packet to the specified user detailing that the specified spell's toggle state has been updated.
         /// </summary>
@@ -849,6 +839,21 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="assists">Optional number of assists of the killer.</param>
         /// TODO: Replace this with LeaguePackets, rename UnitAnnounces to EventID, and complete its enum (refer to LeaguePackets.Game.Events.EventID).
         void NotifyUnitAnnounceEvent(UnitAnnounces messageId, IAttackableUnit target, IGameObject killer = null, List<IChampion> assists = null);
+        /// <summary>
+        /// Sends a packet to all players that the specified Champion has gained the specified amount of experience.
+        /// </summary>
+        /// <param name="champion">Champion that gained the experience.</param>
+        /// <param name="experience">Amount of experience gained.</param>
+        void NotifyUnitAddEXP(IChampion champion, float experience);
+        /// <summary>
+        /// Sends a packet to all players that the specified Champion has killed a specified player and received a specified amount of gold.
+        /// </summary>
+        /// <param name="c">Champion that killed a unit.</param>
+        /// <param name="died">AttackableUnit that died to the Champion.</param>
+        /// <param name="gold">Amount of gold the Champion gained for the kill.</param>
+        /// TODO: Only use BroadcastPacket when the unit that died is a Champion.
+        void NotifyUnitAddGold(IChampion c, IAttackableUnit died, float gold);
+
         /// <summary>
         /// Sends a packet to optionally all players (given isGlobal), a specified user that is the source of damage, or a specified user that is receiving the damage. The packet details an instance of damage being applied to a unit by another unit.
         /// </summary>
