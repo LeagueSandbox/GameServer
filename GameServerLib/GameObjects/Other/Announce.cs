@@ -1,6 +1,5 @@
 ﻿using GameServerCore.Domain;
 using GameServerCore.Enums;
-using LeaguePackets.Game.Events;
 
 namespace LeagueSandbox.GameServer.GameObjects.Other
 {

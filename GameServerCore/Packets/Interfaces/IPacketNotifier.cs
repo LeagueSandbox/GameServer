@@ -11,7 +11,6 @@ using GameServerCore.Packets.Enums;
 using GameServerCore.Packets.PacketDefinitions.Requests;
 using LeaguePackets.Game;
 using LeaguePackets;
-using LeaguePackets.Game.Events;
 
 namespace GameServerCore.Packets.Interfaces
 {
@@ -550,7 +549,7 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="unit">GameObject that had the highlight.</param>
         void NotifyRemoveUnitHighlight(int userId, IGameObject unit);
         /// <summary>
-        /// Sends a packet to the specified player detailing skin and player name information of all soecified players on the loading screen.
+        /// Sends a packet to the specified player detailing skin and player name information of all specified players on the loading screen.
         /// </summary>
         /// <param name="userId">User to send the packet to.</param>
         /// <param name="player">Player information to send.</param>
@@ -608,7 +607,7 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="pos">2D top-down position of the ping.</param>
         /// <param name="targetNetId">Target of the ping (if applicable).</param>
         /// <param name="type">Type of ping; COMMAND/ATTACK/DANGER/MISSING/ONMYWAY/FALLBACK/REQUESTHELP. *NOTE*: Not all ping types are supported yet.</param>
-        void NotifyS2C_MapPing(ClientInfo client, Vector2 pos, int targetNetId, Pings type);
+        void NotifyS2C_MapPing(ClientInfo client, Vector2 pos, uint targetNetId, Pings type);
         /// <summary>
         /// Sends a packet to all players detailing that the specified unit has been killed by the specified killer.
         /// </summary>
@@ -638,7 +637,7 @@ namespace GameServerCore.Packets.Interfaces
         /// </summary>
         /// <param name="eventId">Id of the event to happen.</param>
         /// <param name="sourceNetID">Not yet know it's use.</param>
-        public void NotifyS2C_OnEventWorld(int mapId, EventID messageId, bool isMapSpecific);
+        void NotifyS2C_OnEventWorld(int mapId, EventID messageId, bool isMapSpecific);
         /// <summary>
         /// Sends a packet to all players detailing that the specified object's current animations have been paused/unpaused.
         /// </summary>

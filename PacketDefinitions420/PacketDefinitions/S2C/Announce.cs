@@ -1,6 +1,5 @@
 using GameServerCore.Enums;
 using GameServerCore.Packets.Enums;
-using LeaguePackets.Game.Events;
 
 namespace PacketDefinitions420.PacketDefinitions.S2C
 {

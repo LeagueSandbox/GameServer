@@ -11,7 +11,6 @@ using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
 using GameServerCore.Maps;
-using LeaguePackets.Game.Events;
 using LeagueSandbox.GameServer.Content;
 using LeagueSandbox.GameServer.GameObjects;
 using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
@@ -536,9 +535,9 @@ namespace LeagueSandbox.GameServer.Maps
         {
            return new Region(_game, team, position, type, collisionUnit, visionTarget, giveVision, visionRadius, revealStealth, hasCollision, collisionRadius, grassRadius, scale, addedSize, lifeTime, clientID);
         }
-        public void AddAnnouncement(long time, byte ID, bool isMapSpecific)
+        public void AddAnnouncement(long time, EventID ID, bool isMapSpecific)
         {
-            AnnouncerEvents.Add(new Announce(_game, time, (EventID)ID, isMapSpecific));
+            AnnouncerEvents.Add(new Announce(_game, time, ID, isMapSpecific));
         }
         public void AddLevelProp(string name, string model, Vector2 position, float height, Vector3 direction, Vector3 posOffset, Vector3 scale, int skinId = 0, byte skillLevel = 0, byte rank = 0, byte type = 2, uint netId = 0, byte netNodeId = 64)
         {

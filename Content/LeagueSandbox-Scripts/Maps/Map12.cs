@@ -218,9 +218,9 @@ namespace MapScripts
             map.ChangeTowerOnMapList("Turret_T2_L_03_A", TeamId.TEAM_PURPLE, LaneID.TOP, LaneID.MIDDLE);
 
             // Announcer events
-            map.AddAnnouncement(30 * 1000, 0x77, true); // Welcome to "Map"
-            map.AddAnnouncement(FirstSpawnTime - 30 * 1000, 0x78, true); // 30 seconds until minions spawn
-            map.AddAnnouncement(FirstSpawnTime, 0x76, false); // Minions have spawned
+            map.AddAnnouncement(30 * 1000, EventID.OnStartGameMessage1, true); // Welcome to "Map"
+            map.AddAnnouncement(FirstSpawnTime - 30 * 1000, EventID.OnStartGameMessage2, true); // 30 seconds until minions spawn
+            map.AddAnnouncement(FirstSpawnTime, EventID.OnMinionsSpawn, false); // Minions have spawned
 
             // Level Props
             _map.AddLevelProp("LevelProp_HA_AP_HeroTower", "HA_AP_HeroTower", new Vector2(1637.6909f, 6079.676f), -3986.0718f, new Vector3(0f, 316f, 0f), new Vector3(0f, -1000f, 0f), Vector3.One);

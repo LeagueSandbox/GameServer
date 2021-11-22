@@ -26,7 +26,6 @@ using System.Text;
 using Force.Crc32;
 using System.Linq;
 using LeaguePackets;
-using LeaguePackets.Game.Events;
 using LeaguePackets.LoadScreen;
 
 namespace PacketDefinitions420
@@ -1402,6 +1401,8 @@ namespace PacketDefinitions420
                     OverrideSpells = overrideSpells,
                     ModelOnly = modelOnly,
                     ReplaceCharacterPackage = replaceCharacterPackage
+                    // TODO: ID variable, acts like a character ID, used later on in PopCharacterData packet for unloading.
+                    // Changes over time, or perhaps as new objects are added, does not have large values like NetID.
                 }
             };
             _packetHandlerManager.BroadcastPacketVision(obj, newCharData.GetBytes(), Channel.CHL_S2C);
@@ -2124,6 +2125,8 @@ namespace PacketDefinitions420
             {
                 PlayerID = userId,
                 PlayerName = player.Item2.Name,
+                // TODO: Verify if this is correct.
+                // Most packets show a large default value which seems to be randomized per-game and used for every RequestRename packet during that game.
                 SkinID = player.Item2.SkinNo,
             };
             _packetHandlerManager.SendPacket(userId, loadName.GetBytes(), Channel.CHL_LOADING_SCREEN);
@@ -2324,10 +2327,11 @@ namespace PacketDefinitions420
         /// <param name="pos">2D top-down position of the ping.</param>
         /// <param name="targetNetId">Target of the ping (if applicable).</param>
         /// <param name="type">Type of ping; COMMAND/ATTACK/DANGER/MISSING/ONMYWAY/FALLBACK/REQUESTHELP. *NOTE*: Not all ping types are supported yet.</param>
-        public void NotifyS2C_MapPing(ClientInfo client, Vector2 pos, int targetNetId, Pings type)
+        public void NotifyS2C_MapPing(ClientInfo client, Vector2 pos, uint targetNetId, Pings type)
         {
             var response = new S2C_MapPing
             {
+                // TODO: Verify if this is correct. Usually 0.
                 SourceNetID = client.Champion.NetId,
                 TargetNetID = (uint)targetNetId,
                 PingCategory = (byte)type,
@@ -2336,7 +2340,8 @@ namespace PacketDefinitions420
                 //Unhardcode these bools later
                 PlayAudio = true,
                 ShowChat = true,
-                PlayVO = true,
+                PingThrottled = false,
+                PlayVO = true
             };
             _packetHandlerManager.BroadcastPacketTeam(client.Team, response.GetBytes(), Channel.CHL_S2C);
         }
@@ -3020,6 +3025,7 @@ namespace PacketDefinitions420
         {
             var xp = new UnitAddEXP
             {
+                // TODO: Verify if this is correct. Usually 0.
                 SenderNetID = champion.NetId,
                 TargetNetID = champion.NetId,
                 ExpAmmount = experience
@@ -3037,6 +3043,7 @@ namespace PacketDefinitions420
         /// TODO: Only use BroadcastPacket when the unit that died is a Champion.
         public void NotifyUnitAddGold(IChampion c, IAttackableUnit died, float gold)
         {
+            // TODO: Verify if this handles self-gold properly.
             var ag = new UnitAddGold
             {
                 SenderNetID = died.NetId,

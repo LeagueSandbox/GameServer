@@ -5,7 +5,6 @@ using GameServerCore.Content;
 using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
-using LeaguePackets.Game.Events;
 
 namespace GameServerCore.Maps
 {
@@ -98,7 +97,7 @@ namespace GameServerCore.Maps
         /// </summary>
         /// <param name="time"></param>
         /// <param name="ID"></param>
-        void AddAnnouncement(long time, byte ID, bool isMapSpecific);
+        void AddAnnouncement(long time, EventID ID, bool isMapSpecific);
         /// <summary>
         /// Adds a prop to the map
         /// </summary>
