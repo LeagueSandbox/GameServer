@@ -1919,7 +1919,7 @@ namespace PacketDefinitions420
                     DamageType = (byte)deathData.DamageType,
                     DamageSource = (byte)deathData.DamageSource,
                     BecomeZombie = deathData.BecomeZombie,
-                    DeathDuration = deathData.DeathDuration
+                    DeathDuration = (deathData.Unit as IChampion).RespawnTimer / 1000f
                 }
             };
             _packetHandlerManager.BroadcastPacket(cd.GetBytes(), Channel.CHL_S2C);
