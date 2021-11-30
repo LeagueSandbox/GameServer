@@ -218,7 +218,7 @@ namespace LeagueSandbox.GameServer
             RequestHandler.Register<SyncSimTimeRequest>(new HandleSyncSimTime(this).HandlePacket);
             RequestHandler.Register<PingLoadInfoRequest>(new HandleLoadPing(this).HandlePacket);
             RequestHandler.Register<LockCameraRequest>(new HandleLockCamera(this).HandlePacket);
-            RequestHandler.Register<MapRequest>(new HandleMap(this).HandlePacket);
+            RequestHandler.Register<JoinTeamRequest>(new HandleJoinTeam(this).HandlePacket);
             RequestHandler.Register<MovementRequest>(new HandleMove(this).HandlePacket);
             RequestHandler.Register<MoveConfirmRequest>(new HandleMoveConfirm(this).HandlePacket);
             RequestHandler.Register<PauseRequest>(new HandlePauseReq(this).HandlePacket);

@@ -9,6 +9,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
         public IStatModifier HealthRegeneration { get; } = new StatModifier();
         public IStatModifier AttackDamage { get; } = new StatModifier();
         public IStatModifier AbilityPower { get; } = new StatModifier();
+        public IStatModifier CooldownReduction { get; } = new StatModifier();
         public IStatModifier CriticalChance { get; } = new StatModifier();
         public IStatModifier CriticalDamage { get; } = new StatModifier();
         public IStatModifier Armor { get; } = new StatModifier();

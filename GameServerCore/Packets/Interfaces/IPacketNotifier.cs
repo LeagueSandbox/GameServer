@@ -279,6 +279,9 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="fromSlot">Slot the item was previously in.</param>
         /// <param name="toSlot">Slot the item was swapped to.</param>
         void NotifyItemsSwapped(IChampion c, byte fromSlot, byte toSlot);
+        /// Sends a basic heartbeat packet to either the given player or all players.
+        /// </summary>
+        void NotifyKeyCheck(int clientID, long playerId, uint version, ulong checkSum = 0, byte action = 0, bool broadcast = false);
         /// <summary>
         /// Sends a packet to all players detailing that the specified LaneMinion has spawned.
         /// </summary>

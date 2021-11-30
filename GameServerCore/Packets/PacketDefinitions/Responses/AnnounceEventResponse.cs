@@ -1,4 +1,4 @@
-﻿using LeaguePackets.Game.Events;
+﻿using GameServerCore.Enums;
 
 namespace GameServerCore.Packets.PacketDefinitions.Responses
 {
