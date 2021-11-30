@@ -1139,6 +1139,32 @@ namespace PacketDefinitions420
         }
 
         /// <summary>
+        /// Sends a basic heartbeat packet to either the given player or all players.
+        /// </summary>
+        public void NotifyKeyCheck(int clientID, long playerId, uint version, ulong checkSum = 0, byte action = 0, bool broadcast = false)
+        {
+            var keyCheck = new KeyCheckPacket
+            {
+                Action = action,
+                ClientID = clientID,
+                PlayerID = playerId,
+                VersionNumber = version,
+                CheckSum = checkSum,
+                // Padding
+                ExtraBytes = new byte[4]
+            };
+
+            if (broadcast)
+            {
+                _packetHandlerManager.BroadcastPacket(keyCheck.GetBytes(), Channel.CHL_HANDSHAKE);
+            }
+            else
+            {
+                _packetHandlerManager.SendPacket((int)playerId, keyCheck.GetBytes(), Channel.CHL_HANDSHAKE);
+            }
+        }
+
+        /// <summary>
         /// Sends a packet to all players detailing that the specified LaneMinion has spawned.
         /// </summary>
         /// <param name="m">LaneMinion that spawned.</param>
@@ -1232,8 +1258,34 @@ namespace PacketDefinitions420
         /// <param name="players">Client info of all players in the loading screen.</param>
         public void NotifyLoadScreenInfo(int userId, List<Tuple<uint, ClientInfo>> players)
         {
-            var screenInfo = new LoadScreenInfo(players);
-            _packetHandlerManager.SendPacket(userId, screenInfo, Channel.CHL_LOADING_SCREEN);
+            uint orderSizeCurrent = 0;
+            uint chaosSizeCurrent = 0;
+
+            var teamRoster = new TeamRosterUpdate
+            {
+                TeamSizeOrder = 6,
+                TeamSizeChaos = 6
+            };
+
+            foreach (var player in players)
+            {
+                if (player.Item2.Team == TeamId.TEAM_BLUE)
+                {
+                    teamRoster.OrderMembers[orderSizeCurrent] = player.Item2.PlayerId;
+                    orderSizeCurrent++;
+                }
+                // TODO: Verify if it is ok to allow neutral
+                else
+                {
+                    teamRoster.ChaosMembers[chaosSizeCurrent] = player.Item2.PlayerId;
+                    chaosSizeCurrent++;
+                }
+            }
+
+            teamRoster.TeamSizeOrderCurrent = orderSizeCurrent;
+            teamRoster.TeamSIzeChaosCurrent = chaosSizeCurrent;
+
+            _packetHandlerManager.SendPacket(userId, teamRoster.GetBytes(), Channel.CHL_LOADING_SCREEN);
         }
 
         /// <summary>
@@ -1867,7 +1919,7 @@ namespace PacketDefinitions420
                     DamageType = (byte)deathData.DamageType,
                     DamageSource = (byte)deathData.DamageSource,
                     BecomeZombie = deathData.BecomeZombie,
-                    DeathDuration = deathData.DeathDuration
+                    DeathDuration = (deathData.Unit as IChampion).RespawnTimer / 1000f
                 }
             };
             _packetHandlerManager.BroadcastPacket(cd.GetBytes(), Channel.CHL_S2C);
@@ -2115,7 +2167,7 @@ namespace PacketDefinitions420
         }
 
         /// <summary>
-        /// Sends a packet to the specified player detailing skin and player name information of all soecified players on the loading screen.
+        /// Sends a packet to the specified user detailing skin and player name information of the specified player on the loading screen.
         /// </summary>
         /// <param name="userId">User to send the packet to.</param>
         /// <param name="player">Player information to send.</param>
@@ -2123,17 +2175,18 @@ namespace PacketDefinitions420
         {
             var loadName = new RequestRename
             {
-                PlayerID = userId,
+                PlayerID = player.Item2.PlayerId,
                 PlayerName = player.Item2.Name,
-                // TODO: Verify if this is correct.
-                // Most packets show a large default value which seems to be randomized per-game and used for every RequestRename packet during that game.
+                // Most packets show a large default value (in place of what you would expect to be 0)
+                // Seems to be randomized per-game and used for every RequestRename packet during that game.
+                // So, using this SkinNo may be incorrect.
                 SkinID = player.Item2.SkinNo,
             };
             _packetHandlerManager.SendPacket(userId, loadName.GetBytes(), Channel.CHL_LOADING_SCREEN);
         }
 
         /// <summary>
-        /// Sends a packet to the specified player detailing skin information of all specified players on the loading screen.
+        /// Sends a packet to the specified user detailing skin information of the specified player on the loading screen.
         /// </summary>
         /// <param name="userId">User to send the packet to.</param>
         /// <param name="player">Player information to send.</param>
@@ -2913,8 +2966,92 @@ namespace PacketDefinitions420
         /// <param name="mapId">ID of the map being played.</param>
         public void NotifySynchVersion(int userId, List<Tuple<uint, ClientInfo>> players, string version, string gameMode, int mapId)
         {
-            var response = new SynchVersionResponse(players, version, "CLASSIC", mapId);
-            _packetHandlerManager.SendPacket(userId, response, Channel.CHL_S2C);
+            var syncVersion = new SynchVersionS2C
+            {
+                // TODO: Unhardcode all booleans below
+                VersionMatches = true,
+                // Logs match to file.
+                WriteToClientFile = false,
+                // Whether or not this game is considered a match.
+                MatchedGame = true,
+                // Unknown
+                DradisInit = false,
+
+                MapToLoad = mapId,
+                VersionString = version,
+                MapMode = gameMode,
+                // TODO: Unhardcode all below
+                PlatformID = "NA1",
+                MutatorsNum = 0,
+                OrderRankedTeamName = "",
+                OrderRankedTeamTag = "",
+                ChaosRankedTeamName = "",
+                ChaosRankedTeamTag = "",
+                // site.com
+                MetricsServerWebAddress = "",
+                // /messages
+                MetricsServerWebPath = "",
+                // 80
+                MetricsServerPort = 0,
+                // site.com
+                DradisProdAddress = "",
+                // /messages
+                DradisProdResource = "",
+                // 80
+                DradisProdPort = 0,
+                // test-lb-#.us-west-#.elb.someaws.com
+                DradisTestAddress = "",
+                // /messages
+                DradisTestResource = "",
+                // 80
+                DradisTestPort = 0,
+                // TODO: Create a new TipConfig class and use it here (basically, unhardcode this).
+                TipConfig = new TipConfig
+                {
+                    TipID = 34,
+                    ColorID = 1,
+                    DurationID = 1,
+                    Flags = 15
+                },
+                // Turret Range Indicators and others (taken from Map11 replay)
+                GameFeatures = 662166610
+            };
+
+            for (int i = 0; i < players.Count; i++)
+            {
+                syncVersion.PlayerInfo[i] = new PlayerLoadInfo
+                {
+                    PlayerID = players[i].Item2.PlayerId,
+                    // TODO: Change to players[i].Item2.SummonerLevel
+                    SummonorLevel = 30,
+                    SummonorSpell1 = HashString(players[i].Item2.SummonerSkills[0]),
+                    SummonorSpell2 = HashString(players[i].Item2.SummonerSkills[1]),
+                    // TODO
+                    Bitfield = 0,
+                    TeamId = (uint)players[i].Item2.Team,
+                    // TODO: Change to players[i].Item2.Champion.Model + "Bot" (if players[i].Item2.IsBot)
+                    BotName = "",
+                    // TODO: Change to players[i].Item2.Champion.Model (if players[i].Item2.IsBot)
+                    BotSkinName = "",
+                    EloRanking = players[i].Item2.Rank,
+                    // TODO: Change to players[i].Item2.SkinNo (if players[i].Item2.IsBot)
+                    BotSkinID = 0,
+                    // TODO: Change to players[i].Item2.BotDifficulty (if players[i].Item2.IsBot)
+                    BotDifficulty = 0,
+                    ProfileIconId = players[i].Item2.Icon,
+                    // TODO: Unhardcode these two.
+                    AllyBadgeID = 0,
+                    EnemyBadgeID = 0
+                };
+            }
+
+            // TODO: syncVersion.Mutators
+
+            // TODO: syncVersion.DisabledItems
+
+            // TODO: syncVersion.EnabledDradisMessages
+
+            _packetHandlerManager.SendPacket(userId, syncVersion.GetBytes(), Channel.CHL_S2C);
         }
 
         /// <summary>

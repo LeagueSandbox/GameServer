@@ -136,6 +136,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
             ArmorPenetration.ApplyStatModifier(modifier.ArmorPenetration);
             AttackDamage.ApplyStatModifier(modifier.AttackDamage);
             AttackSpeedMultiplier.ApplyStatModifier(modifier.AttackSpeed);
+            CooldownReduction.ApplyStatModifier(modifier.CooldownReduction);
             CriticalChance.ApplyStatModifier(modifier.CriticalChance);
             CriticalDamage.ApplyStatModifier(modifier.CriticalDamage);
             GoldPerSecond.ApplyStatModifier(modifier.GoldPerSecond);
@@ -160,6 +161,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
             ArmorPenetration.RemoveStatModifier(modifier.ArmorPenetration);
             AttackDamage.RemoveStatModifier(modifier.AttackDamage);
             AttackSpeedMultiplier.RemoveStatModifier(modifier.AttackSpeed);
+            CooldownReduction.RemoveStatModifier(modifier.CooldownReduction);
             CriticalChance.RemoveStatModifier(modifier.CriticalChance);
             CriticalDamage.RemoveStatModifier(modifier.CriticalDamage);
             GoldPerSecond.RemoveStatModifier(modifier.GoldPerSecond);
