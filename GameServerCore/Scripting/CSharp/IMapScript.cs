@@ -9,8 +9,9 @@ namespace GameServerCore.Domain
 {
     public interface IMapScript : IUpdate
     {
+        IGlobalData GlobalData { get; }
+        IGameFeatures GameFeatures { get; }
         bool EnableBuildingProtection { get; }
-        long FirstSpawnTime { get; }
         long NextSpawnTime { get; set; }
         long SpawnInterval { get; }
         //In case someone wishes to use a custom, hardcoded path instead of the one from files

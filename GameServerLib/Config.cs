@@ -23,13 +23,11 @@ namespace LeagueSandbox.GameServer
         public MapData MapData { get; private set; }
         public MapSpawns MapSpawns { get; private set; }
         public ContentManager ContentManager { get; private set; }
+        public IGameFeatures GameFeatures { get; set; }
         public const string VERSION_STRING = "Version 4.20.0.315 [PUBLIC]";
         public static readonly Version VERSION = new Version(4, 20, 0, 315);
 
-        public bool CooldownsEnabled { get; private set; }
-        public bool ManaCostsEnabled { get; private set; }
         public bool ChatCheatsEnabled { get; private set; }
-        public bool MinionSpawnsEnabled { get; private set; }
         public string ContentPath { get; private set; }
         public bool IsDamageTextGlobal { get; private set; }
 
@@ -65,16 +63,18 @@ namespace LeagueSandbox.GameServer
                 Players.Add($"player{playerConfig.PlayerID}", playerConfig);
             }
 
-            // Read cost/cd info
             var gameInfo = data.SelectToken("gameInfo");
-            CooldownsEnabled = (bool)gameInfo.SelectToken("COOLDOWNS_ENABLED");
-            ManaCostsEnabled = (bool)gameInfo.SelectToken("MANACOSTS_ENABLED");
+            GameFeatures = new GameFeatures
+            {
+                // Read cost/cd info
+                CooldownsEnabled = (bool)gameInfo.SelectToken("COOLDOWNS_ENABLED"),
+                ManaCostsEnabled = (bool)gameInfo.SelectToken("MANACOSTS_ENABLED"),
+                // Read if minion spawns are enabled
+                MinionSpawnsEnabled = (bool)gameInfo.SelectToken("MINION_SPAWNS_ENABLED")
+            };
 
             // Read if chat commands are enabled
             ChatCheatsEnabled = (bool)gameInfo.SelectToken("CHEATS_ENABLED");
-
-            // Read if minion spawns are enabled
-            MinionSpawnsEnabled = (bool)gameInfo.SelectToken("MINION_SPAWNS_ENABLED");
 
             // Read where the content is
             ContentPath = (string)gameInfo.SelectToken("CONTENT_PATH");
@@ -129,7 +129,12 @@ namespace LeagueSandbox.GameServer
             return result;
         }
     }
-
+    public class GameFeatures : IGameFeatures
+    {
+        public bool CooldownsEnabled { get; set; }
+        public bool ManaCostsEnabled { get; set; }
+        public bool MinionSpawnsEnabled { get; set; }
+    }
     public class MapData : IMapData
     {
         public int Id { get; private set; }
@@ -382,6 +387,7 @@ namespace LeagueSandbox.GameServer
     public class GameConfig
     {
         public int Map => (int)_gameData.SelectToken("map");
+        public string GameMode => _gameData.SelectToken("GameMode").ToString().ToUpper().Replace(" ", string.Empty);
         public string DataPackage => (string)_gameData.SelectToken("dataPackage");
 
         private JToken _gameData;

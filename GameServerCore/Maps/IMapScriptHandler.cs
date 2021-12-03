@@ -77,6 +77,10 @@ namespace GameServerCore.Maps
         /// <param name="protectionDependsOfAll"></param>
         /// <param name="protectedBy"></param>
         void SpawnTurret(ILaneTurret turret, bool hasProtection, bool protectionDependsOfAll = false, IAttackableUnit[] protectedBy = null);
+        /// <summary>
+        /// Loads the Buildings protection system (Note: This can break a lot of maps if turrets types and lanes arent properly setup)
+        /// </summary>
+        void LoadBuildingProtection();
         IInhibitor GetInhibitorById(uint id);
         bool AllInhibitorsDestroyedFromTeam(TeamId team);
         bool IsMinionSpawnEnabled();
@@ -124,6 +128,15 @@ namespace GameServerCore.Maps
         /// </summary>
         /// <returns></returns>
         float GameTime();
-        void LoadBuildingProtection();
+        /// <summary>
+        /// Returns a list of all players present
+        /// </summary>
+        /// <returns></returns>
+        List<IChampion> GetPlayers();
+        /// <summary>
+        /// Return map bools, such as wether or not Mana, MinionSpawns or Cooldowns are enabled or not
+        /// </summary>
+        /// <returns></returns>
+        IGameFeatures GetGameFeatures();
     }
 }

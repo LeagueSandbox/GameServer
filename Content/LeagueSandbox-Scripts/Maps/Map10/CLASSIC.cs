@@ -5,11 +5,14 @@ using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
 using GameServerCore.Maps;
+using GameServerLib.GameObjects.GlobalData;
 
-namespace MapScripts
+namespace MapScripts.Map10
 {
-    public class Map10 : IMapScript
+    public class CLASSIC : IMapScript
     {
+        public virtual IGlobalData GlobalData { get; set; } = new GlobalData();
+        public virtual IGameFeatures GameFeatures { get; set; }
         public bool EnableBuildingProtection { get; set; } = true;
 
         //General Map variable
@@ -17,7 +20,6 @@ namespace MapScripts
 
         //Stuff about minions
         public bool SpawnEnabled { get; set; }
-        public long FirstSpawnTime { get; set; } = 45 * 1000;
         public long NextSpawnTime { get; set; } = 45 * 1000;
         public long SpawnInterval { get; set; } = 30 * 1000;
         public bool MinionPathingOverride { get; set; } = false;
@@ -205,8 +207,8 @@ namespace MapScripts
 
             // Announcer events
             map.AddAnnouncement(30 * 1000, EventID.OnStartGameMessage1, true); // Welcome to "Map"
-            map.AddAnnouncement(FirstSpawnTime - 30 * 1000, EventID.OnStartGameMessage2, true); // 30 seconds until minions spawn
-            map.AddAnnouncement(FirstSpawnTime, EventID.OnMinionsSpawn, false); // Minions have spawned
+            map.AddAnnouncement(NextSpawnTime - 30 * 1000, EventID.OnStartGameMessage2, true); // 30 seconds until minions spawn
+            map.AddAnnouncement(NextSpawnTime, EventID.OnMinionsSpawn, false); // Minions have spawned
 
             //Map props
             map.AddLevelProp("LevelProp_TT_Brazier1", "TT_Brazier", new Vector2(1360.9241f, 5072.1309f), 291.2142f, new Vector3(11.1111f, 134.0f, 0.0f), new Vector3(0.0f, 288.8889f, -22.2222f), Vector3.One);
