@@ -177,10 +177,6 @@ namespace LeagueSandbox.GameServer.Maps
         {
             LoadBuildings();
             MapScript.Init(this);
-            if(MapScript.GameFeatures != null && MapScript.GameFeatures != _game.Config.GameFeatures)
-            {
-                _game.Config.GameFeatures = MapScript.GameFeatures;
-            }
             if (MapScript.EnableBuildingProtection)
             {
                 LoadBuildingProtection();
@@ -497,7 +493,7 @@ namespace LeagueSandbox.GameServer.Maps
         }
         public bool IsMinionSpawnEnabled()
         {
-            return _game.Config.GameFeatures.MinionSpawnsEnabled;
+            return _game.Config.GameFeatures.HasFlag(FeatureFlags.EnableLaneMinions);
         }
 
         public bool SetUpLaneMinion()
@@ -571,18 +567,9 @@ namespace LeagueSandbox.GameServer.Maps
         {
             FountainList.Add(team, new Fountain(_game, team, position, 1000));
         }
-        public List<IChampion> GetPlayers()
+        public void SetGameFeatures(FeatureFlags featureFlag, bool isEnabled)
         {
-            var toreturn = new List<IChampion>();
-            foreach(var player in _game.PlayerManager.GetPlayers())
-            {
-                toreturn.Add(player.Item2.Champion);
-            }
-            return toreturn;
-        }
-        public IGameFeatures GetGameFeatures()
-        {
-            return _game.Config.GameFeatures;
+            _game.Config.SetGameFeatures(featureFlag, isEnabled);
         }
         //Game Time
         public float GameTime()

@@ -1,10 +1,8 @@
 ﻿using System;
 using GameServerCore.Domain;
-using GameServerLib.GameObjects.GlobalData;
-using LeagueSandbox.GameServer.GameObjects.Spell;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
-using LeagueSandbox.GameServer;
 using GameServerCore.Maps;
+using LeagueSandbox.GameServer.Content;
 
 namespace MapScripts.Map1
 {
@@ -14,17 +12,12 @@ namespace MapScripts.Map1
         public override void Init(IMapScriptHandler map)
         {
             base.Init(map);
-            base.GameFeatures = new GameFeatures
-            {
-                CooldownsEnabled = map.GetGameFeatures().CooldownsEnabled,
-                ManaCostsEnabled = false,
-                MinionSpawnsEnabled = map.GetGameFeatures().MinionSpawnsEnabled
-            };
+            map.SetGameFeatures(GameServerCore.Enums.FeatureFlags.EnableManaCosts, false);
         }
 
         public override void OnMatchStart()
         {
-            foreach(var player in base._map.GetPlayers())
+            foreach(var player in GetAllPlayers())
             {
                 //There are mentions to a "rewindcof" buff being loaded too, but it's functions are yet unknown
                 AddBuff("InternalTestBuff", float.MaxValue, 1, null, player, null, true);

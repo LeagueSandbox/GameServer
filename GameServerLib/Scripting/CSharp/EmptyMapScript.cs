@@ -5,7 +5,7 @@ using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
 using GameServerCore.Maps;
-using GameServerLib.GameObjects.GlobalData;
+using LeagueSandbox.GameServer.Content;
 
 namespace MapScripts
 {

@@ -1,9 +1,10 @@
 ﻿using GameServerCore.Domain;
 
-namespace GameServerLib.GameObjects.GlobalData
+namespace LeagueSandbox.GameServer.Content
 {
     public class GlobalData : IGlobalData
     {
+        // TODO: Add Constants.var files to each Map's Content folder and assign values by reading them, currently this Data is only for Map1 as a placeholder.
         public float AttackDelay { get; set; } = 1.600f;
         public float AttackDelayCastPercent { get; set; } = 0.300f;
         public float AttackMinDelay { get; set; } = 0.400f;

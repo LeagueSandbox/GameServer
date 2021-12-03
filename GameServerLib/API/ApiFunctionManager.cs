@@ -841,5 +841,19 @@ namespace LeagueSandbox.GameServer.API
                 DeathDuration = duration
             };
         }
+
+        /// <summary>
+        /// Returns a list of all players present
+        /// </summary>
+        /// <returns></returns>
+        public static List<IChampion> GetAllPlayers()
+        {
+            var toreturn = new List<IChampion>();
+            foreach (var player in _game.PlayerManager.GetPlayers())
+            {
+                toreturn.Add(player.Item2.Champion);
+            }
+            return toreturn;
+        }
     }
 }

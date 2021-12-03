@@ -129,14 +129,9 @@ namespace GameServerCore.Maps
         /// <returns></returns>
         float GameTime();
         /// <summary>
-        /// Returns a list of all players present
-        /// </summary>
-        /// <returns></returns>
-        List<IChampion> GetPlayers();
-        /// <summary>
         /// Return map bools, such as wether or not Mana, MinionSpawns or Cooldowns are enabled or not
         /// </summary>
         /// <returns></returns>
-        IGameFeatures GetGameFeatures();
+        void SetGameFeatures(FeatureFlags featureFlag, bool isEnabled);
     }
 }

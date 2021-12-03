@@ -4,14 +4,12 @@ using System.IO;
 using System.Text.RegularExpressions;
 using GameServerCore.Domain;
 using GameServerCore.Enums;
-using GameServerLib.GameObjects.GlobalData;
 using LeagueSandbox.GameServer.Logging;
 using log4net;
 using Newtonsoft.Json;
 
 namespace LeagueSandbox.GameServer.Content
 {
-    // TODO: Add Constants.var files to each Map's Content folder and assign values by reading them, currently this Data is only for Map1 as a placeholder.
     public class PassiveData : IPassiveData
     {
         public string PassiveAbilityName { get; set; } = "";

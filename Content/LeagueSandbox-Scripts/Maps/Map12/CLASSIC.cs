@@ -5,7 +5,7 @@ using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
 using GameServerCore.Maps;
-using GameServerLib.GameObjects.GlobalData;
+using LeagueSandbox.GameServer.Content;
 using LeagueSandbox.GameServer.Logging;
 using log4net;
 
@@ -14,7 +14,6 @@ namespace MapScripts.Map12
     public class CLASSIC : IMapScript
     {
         public virtual IGlobalData GlobalData { get; set; } = new GlobalData();
-        public virtual IGameFeatures GameFeatures { get; set; }
         public bool EnableBuildingProtection { get; set; } = true;
 
         //General Map variable

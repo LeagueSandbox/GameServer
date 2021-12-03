@@ -10,7 +10,6 @@ namespace GameServerCore.Domain
     public interface IMapScript : IUpdate
     {
         IGlobalData GlobalData { get; }
-        IGameFeatures GameFeatures { get; }
         bool EnableBuildingProtection { get; }
         long NextSpawnTime { get; set; }
         long SpawnInterval { get; }
