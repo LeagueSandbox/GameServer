@@ -45,7 +45,7 @@ namespace LeagueSandbox.GameServer.Maps
         /// </summary>
         public ICollisionHandler CollisionHandler { get; private set; }
         /// <summary>
-        /// Set of features to enable for this map.
+        /// Gamemode name designated by the game config. Determines which MapScript to load.
         /// </summary>
         public string GameMode { get; private set; }
         /// <summary>
