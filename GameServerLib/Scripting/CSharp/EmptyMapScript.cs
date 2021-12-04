@@ -12,7 +12,6 @@ namespace MapScripts
     public class EmptyMapScript : IMapScript
     {
         public virtual IGlobalData GlobalData { get; set; } = new GlobalData();
-        public virtual IGameFeatures GameFeatures { get; set; }
         public bool EnableBuildingProtection { get; set; } = false;
 
         //General Map variable
