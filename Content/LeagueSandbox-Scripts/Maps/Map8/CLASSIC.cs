@@ -12,7 +12,6 @@ namespace MapScripts.Map8
     public class CLASSIC : IMapScript
     {
         public virtual IGlobalData GlobalData { get; set; } = new GlobalData();
-        public virtual IGameFeatures GameFeatures { get; set; }
         public bool EnableBuildingProtection { get; set; } = true;
 
         //General Map variable
