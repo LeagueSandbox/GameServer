@@ -129,7 +129,7 @@ namespace GameServerCore.Maps
         /// <returns></returns>
         float GameTime();
         /// <summary>
-        /// Return map bools, such as wether or not Mana, MinionSpawns or Cooldowns are enabled or not
+        /// Sets the features which should be enabled for this map. EX: Mana, Cooldowns, Lane Minions, etc. Refer to FeatureFlags enum.
         /// </summary>
         /// <returns></returns>
         void SetGameFeatures(FeatureFlags featureFlag, bool isEnabled);
