@@ -45,6 +45,10 @@ namespace LeagueSandbox.GameServer.Maps
         /// </summary>
         public ICollisionHandler CollisionHandler { get; private set; }
         /// <summary>
+        /// Set of features to enable for this map.
+        /// </summary>
+        public string GameMode { get; private set; }
+        /// <summary>
         /// Navigation Grid to be instanced by the map. Used for terrain data.
         /// </summary>
         public INavigationGrid NavigationGrid { get; private set; }
@@ -69,7 +73,6 @@ namespace LeagueSandbox.GameServer.Maps
         public List<IMapObject> InfoPoints { get; set; } = new List<IMapObject>();
         public Dictionary<LaneID, List<Vector2>> BlueMinionPathing;
         public Dictionary<LaneID, List<Vector2>> PurpleMinionPathing;
-        public string GameMode;
 
         /// <summary>
         /// Instantiates map related game settings such as collision handler, navigation grid, announcer events, and map properties.
