@@ -48,16 +48,16 @@
         }
     ],
     "game": {
-      "map": 1,
-      "gameMode": "CLASSIC",
-      "dataPackage": "LeagueSandbox-Scripts"
+        "map": 1,
+        "gameMode": "CLASSIC",
+        "dataPackage": "LeagueSandbox-Scripts"
     },
     "gameInfo": {
-    "MANACOSTS_ENABLED": false,
-    "COOLDOWNS_ENABLED": false,
-    "CHEATS_ENABLED": true,
-    "MINION_SPAWNS_ENABLED": false,
-    "CONTENT_PATH": "../../../../../Content",
-    "IS_DAMAGE_TEXT_GLOBAL": false
+        "MANACOSTS_ENABLED": false,
+        "COOLDOWNS_ENABLED": false,
+        "CHEATS_ENABLED": true,
+        "MINION_SPAWNS_ENABLED": false,
+        "CONTENT_PATH": "../../../../../Content",
+        "IS_DAMAGE_TEXT_GLOBAL": false
     }
 }
