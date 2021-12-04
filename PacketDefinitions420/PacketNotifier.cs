@@ -1587,11 +1587,17 @@ namespace PacketDefinitions420
                 Count = (byte)b.StackCount,
                 IsHidden = b.IsHidden,
                 BuffNameHash = HashFunctions.HashString(b.Name),
-                PackageHash = b.SourceUnit.GetObjHash(), // TODO: Verify
+                PackageHash = 0,
                 RunningTime = runningTime,
                 Duration = duration,
-                CasterNetID = b.SourceUnit.NetId
+                CasterNetID = 0
             };
+            if (b.SourceUnit != null)
+            {
+                // TODO: Verify
+                addPacket.PackageHash = b.SourceUnit.GetObjHash();
+                addPacket.CasterNetID = b.SourceUnit.NetId;
+            }
             _packetHandlerManager.BroadcastPacketVision(b.TargetUnit, addPacket.GetBytes(), Channel.CHL_S2C);
         }
 
@@ -1621,11 +1627,17 @@ namespace PacketDefinitions420
                 var entry = new BuffAddGroupEntry
                 {
                     OwnerNetID = buffs[i].TargetUnit.NetId,
-                    CasterNetID = buffs[i].OriginSpell.CastInfo.Owner.NetId,
+                    CasterNetID = 0,
                     Slot = buffs[i].Slot,
                     Count = (byte)buffs[i].StackCount,
                     IsHidden = buffs[i].IsHidden
                 };
+
+                if(buffs[i].OriginSpell != null)
+                {
+                    entry.CasterNetID = buffs[i].OriginSpell.CastInfo.Owner.NetId;
+                }
+
                 entries.Add(entry);
             }
             addGroupPacket.Entries = entries;
@@ -1690,8 +1702,14 @@ namespace PacketDefinitions420
                 BuffSlot = b.Slot,
                 RunningTime = b.TimeElapsed,
                 Duration = b.Duration,
-                CasterNetID = b.OriginSpell.CastInfo.Owner.NetId
+                CasterNetID = 0
             };
+
+            if(b.OriginSpell != null)
+            {
+                replacePacket.CasterNetID = b.OriginSpell.CastInfo.Owner.NetId;
+            }
+
             _packetHandlerManager.BroadcastPacketVision(b.TargetUnit, replacePacket.GetBytes(), Channel.CHL_S2C);
         }
 
@@ -1716,9 +1734,15 @@ namespace PacketDefinitions420
                 var entry = new BuffReplaceGroupEntry
                 {
                     OwnerNetID = buffs[i].TargetUnit.NetId,
-                    CasterNetID = buffs[i].OriginSpell.CastInfo.Owner.NetId,
+                    CasterNetID = 0,
                     Slot = buffs[i].Slot
                 };
+
+                if(buffs[i].OriginSpell != null)
+                {
+                    entry.CasterNetID = buffs[i].OriginSpell.CastInfo.Owner.NetId;
+                }
+
                 entries.Add(entry);
             }
             replaceGroupPacket.Entries = entries;
@@ -1741,8 +1765,12 @@ namespace PacketDefinitions420
                 Count = (byte)b.StackCount,
                 Duration = duration,
                 RunningTime = runningTime,
-                CasterNetID = b.SourceUnit.NetId
+                CasterNetID = 0
             };
+            if (b.SourceUnit != null)
+            {
+                updatePacket.CasterNetID = b.SourceUnit.NetId;
+            }
             _packetHandlerManager.BroadcastPacketVision(b.TargetUnit, updatePacket.GetBytes(), Channel.CHL_S2C);
         }
 
@@ -1767,10 +1795,15 @@ namespace PacketDefinitions420
                 var entry = new BuffUpdateCountGroupEntry
                 {
                     OwnerNetID = buffs[i].TargetUnit.NetId,
-                    CasterNetID = buffs[i].OriginSpell.CastInfo.Owner.NetId,
+                    CasterNetID = 0,
                     BuffSlot = buffs[i].Slot,
                     Count = (byte)buffs[i].StackCount
                 };
+
+                if(buffs[i].OriginSpell != null)
+                {
+                    entry.CasterNetID = buffs[i].OriginSpell.CastInfo.Owner.NetId;
+                }
                 entries.Add(entry);
             }
             updateGroupPacket.Entries = entries;

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Numerics;
+using System.Reflection;
 using System.Text;
 using Force.Crc32;
 using GameServerCore;
@@ -11,6 +12,7 @@ using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
 using GameServerCore.Maps;
+using GameServerCore.NetInfo;
 using LeagueSandbox.GameServer.Content;
 using LeagueSandbox.GameServer.GameObjects;
 using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
@@ -42,6 +44,10 @@ namespace LeagueSandbox.GameServer.Maps
         /// Collision Handler to be instanced by the map. Used for collisions between GameObjects or GameObjects and terrain.
         /// </summary>
         public ICollisionHandler CollisionHandler { get; private set; }
+        /// <summary>
+        /// Gamemode name designated by the game config. Determines which MapScript to load.
+        /// </summary>
+        public string GameMode { get; private set; }
         /// <summary>
         /// Navigation Grid to be instanced by the map. Used for terrain data.
         /// </summary>
@@ -78,7 +84,7 @@ namespace LeagueSandbox.GameServer.Maps
             MapData = game.Config.MapData;
             _scriptEngine = game.ScriptEngine;
             _logger = LoggerProvider.GetLogger();
-
+            GameMode = game.Config.GameConfig.GameMode;
             Id = _game.Config.GameConfig.Map;
 
             try
@@ -94,8 +100,14 @@ namespace LeagueSandbox.GameServer.Maps
             AnnouncerEvents = new List<IAnnounce>();
             CollisionHandler = new CollisionHandler(this);
 
-            MapScript = _scriptEngine.CreateObject<IMapScript>("MapScripts", $"Map{Id}") ?? new EmptyMapScript();
-            if(game.Config.MapData.SpawnBarracks != null)
+            if (String.IsNullOrEmpty(GameMode))
+            {
+                _logger.Error("No GameMode Specified, Defaulting to CLASSIC...");
+                GameMode = "CLASSIC";
+            }
+            MapScript = _scriptEngine.CreateObject<IMapScript>($"MapScripts.Map{Id}", $"{GameMode}") ?? new EmptyMapScript();
+
+            if (game.Config.MapData.SpawnBarracks != null)
             {
                 SpawnBarracks = game.Config.MapData.SpawnBarracks;
             }
@@ -125,8 +137,9 @@ namespace LeagueSandbox.GameServer.Maps
             {
                 if (_minionNumber > 0)
                 {
+                    // Spawn new Minion every 0.8s
                     if (_game.GameTime >= MapScript.NextSpawnTime + _minionNumber * 8 * 100)
-                    { // Spawn new wave every 0.8s
+                    { 
                         if (SetUpLaneMinion())
                         {
                             _minionNumber = 0;
@@ -483,7 +496,7 @@ namespace LeagueSandbox.GameServer.Maps
         }
         public bool IsMinionSpawnEnabled()
         {
-            return _game.Config.MinionSpawnsEnabled;
+            return _game.Config.GameFeatures.HasFlag(FeatureFlags.EnableLaneMinions);
         }
 
         public bool SetUpLaneMinion()
@@ -557,7 +570,10 @@ namespace LeagueSandbox.GameServer.Maps
         {
             FountainList.Add(team, new Fountain(_game, team, position, 1000));
         }
-
+        public void SetGameFeatures(FeatureFlags featureFlag, bool isEnabled)
+        {
+            _game.Config.SetGameFeatures(featureFlag, isEnabled);
+        }
         //Game Time
         public float GameTime()
         {

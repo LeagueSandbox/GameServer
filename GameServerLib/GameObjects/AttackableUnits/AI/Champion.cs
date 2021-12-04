@@ -268,6 +268,8 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
         public void OnKill(IDeathData deathData)
         {
+            ApiEventManager.OnKillUnit.Publish(deathData);
+
             if (deathData.Unit is IMinion)
             {
                 ChampStats.MinionsKilled += 1;
@@ -297,7 +299,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                     KillDeathCounter += 1;
                 }
             }
-            ApiEventManager.OnKillUnit.Publish(deathData);
         }
 
         public override void Die(IDeathData data)

@@ -61,7 +61,6 @@ namespace LeagueSandbox.GameServer.Players
             c.SetPosition(pos, false);
             c.StopMovement();
             c.UpdateMoveOrder(OrderType.Stop);
-            c.LevelUp();
 
             player.Champion = c;
             var pair = new Tuple<uint, ClientInfo> ((uint)player.PlayerId, player);

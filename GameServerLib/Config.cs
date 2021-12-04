@@ -23,13 +23,11 @@ namespace LeagueSandbox.GameServer
         public MapData MapData { get; private set; }
         public MapSpawns MapSpawns { get; private set; }
         public ContentManager ContentManager { get; private set; }
+        public FeatureFlags GameFeatures { get; private set; }
         public const string VERSION_STRING = "Version 4.20.0.315 [PUBLIC]";
         public static readonly Version VERSION = new Version(4, 20, 0, 315);
 
-        public bool CooldownsEnabled { get; private set; }
-        public bool ManaCostsEnabled { get; private set; }
         public bool ChatCheatsEnabled { get; private set; }
-        public bool MinionSpawnsEnabled { get; private set; }
         public string ContentPath { get; private set; }
         public bool IsDamageTextGlobal { get; private set; }
 
@@ -65,16 +63,13 @@ namespace LeagueSandbox.GameServer
                 Players.Add($"player{playerConfig.PlayerID}", playerConfig);
             }
 
-            // Read cost/cd info
             var gameInfo = data.SelectToken("gameInfo");
-            CooldownsEnabled = (bool)gameInfo.SelectToken("COOLDOWNS_ENABLED");
-            ManaCostsEnabled = (bool)gameInfo.SelectToken("MANACOSTS_ENABLED");
+            SetGameFeatures(FeatureFlags.EnableCooldowns, (bool)gameInfo.SelectToken("COOLDOWNS_ENABLED"));
+            SetGameFeatures(FeatureFlags.EnableManaCosts, (bool)gameInfo.SelectToken("MANACOSTS_ENABLED"));
+            SetGameFeatures(FeatureFlags.EnableLaneMinions, (bool)gameInfo.SelectToken("MINION_SPAWNS_ENABLED"));
 
             // Read if chat commands are enabled
             ChatCheatsEnabled = (bool)gameInfo.SelectToken("CHEATS_ENABLED");
-
-            // Read if minion spawns are enabled
-            MinionSpawnsEnabled = (bool)gameInfo.SelectToken("MINION_SPAWNS_ENABLED");
 
             // Read where the content is
             ContentPath = (string)gameInfo.SelectToken("CONTENT_PATH");
@@ -128,305 +123,319 @@ namespace LeagueSandbox.GameServer
 
             return result;
         }
-    }
 
-    public class MapData : IMapData
-    {
-        public int Id { get; private set; }
-        /// <summary>
-        /// Collection of MapObjects present within a map's room file, with the key being the name present in the room file. Refer to <see cref="MapObject"/>.
-        /// </summary>
-        public Dictionary<string, IMapObject> MapObjects { get; private set; }
-        /// <summary>
-        /// Collection of MapObjects which represent lane minion spawn positions.
-        /// Not present within the room file, therefor it is split into its own collection.
-        /// </summary>
-        public Dictionary<string, IMapObject> SpawnBarracks { get; private set; }
-        /// <summary>
-        /// Experience required to level, ordered from 2 and up.
-        /// </summary>
-        public List<float> ExpCurve { get; private set; }
-        /// <summary>
-        /// Amount of time death should last depending on level.
-        /// </summary>
-        public List<float> DeathTimes { get; private set; }
-        /// <summary>
-        /// Potential progression of stats per-level of jungle monsters.
-        /// </summary>
-        /// TODO: Figure out what this is and how to implement it.
-        public List<float> StatsProgression { get; private set; }
-
-        public MapData(int mapId)
+        public void SetGameFeatures(FeatureFlags flag, bool enabled)
         {
-            Id = mapId;
-            MapObjects = new Dictionary<string, IMapObject>();
-            SpawnBarracks = new Dictionary<string, IMapObject>();
-            ExpCurve = new List<float>();
-            DeathTimes = new List<float>();
-            StatsProgression = new List<float>();
-        }
-
-        public class MapObject : IMapObject
-        {
-            public string Name { get; private set; }
-            public Vector3 CentralPoint { get; private set; }
-            public int ParentMapId { get; private set; }
-
-            public MapObject(string name, Vector3 point, int id)
+            // Toggle the flag on.
+            if (enabled)
             {
-                Name = name;
-                CentralPoint = point;
-                ParentMapId = id;
+                GameFeatures |= flag;
             }
-
-            public GameObjectTypes GetGameObjectType()
-            {
-                GameObjectTypes type = 0;
-
-                if (Name.Contains("LevelProp"))
-                {
-                    type = GameObjectTypes.LevelProp;
-                }
-                else if (Name.Contains("HQ"))
-                {
-                    type = GameObjectTypes.ObjAnimated_HQ;
-                }
-                else if (Name.Contains("Barracks_T"))
-                {
-                    // Inhibitors are dampeners for the enemy Nexus.
-                    type = GameObjectTypes.ObjAnimated_BarracksDampener;
-                }
-                else if (Name.Contains("Turret"))
-                {
-                    type = GameObjectTypes.ObjAIBase_Turret;
-                }
-                else if (Name.Contains("__Spawn"))
-                {
-                    type = GameObjectTypes.ObjBuilding_SpawnPoint;
-                }
-                else if (Name.Contains("__NAV"))
-                {
-                    type = GameObjectTypes.ObjBuilding_NavPoint;
-                }
-                else if (Name.Contains("Info_Point"))
-                {
-                    type = GameObjectTypes.InfoPoint;
-                }
-
-                return type;
-            }
-
-            public TeamId GetTeamID()
-            {
-                var team = TeamId.TEAM_NEUTRAL;
-
-                if (Name.Contains("T1") || Name.Contains("Order"))
-                {
-                    team = TeamId.TEAM_BLUE;
-                }
-                else if (Name.Contains("T2") || Name.Contains("Chaos"))
-                {
-                    team = TeamId.TEAM_PURPLE;
-                }
-
-                return team;
-            }
-
-            public TeamId GetOpposingTeamID()
-            {
-                var team = TeamId.TEAM_NEUTRAL;
-
-                if (Name.Contains("T1") || Name.Contains("Order"))
-                {
-                    team = TeamId.TEAM_PURPLE;
-                }
-                else if (Name.Contains("T2") || Name.Contains("Chaos"))
-                {
-                    team = TeamId.TEAM_BLUE;
-                }
-
-                return team;
-            }
-
-            public string GetTeamName()
-            {
-                string teamName = "";
-                if (GetTeamID() == TeamId.TEAM_BLUE)
-                {
-                    teamName = "Order";
-                }
-                // Chaos and Neutral
-                else
-                {
-                    teamName = "Chaos";
-                }
-
-                return teamName;
-            }
-
-            public LaneID GetLaneID()
-            {
-                var laneId = LaneID.NONE;
-
-                if (Name.Contains("_L"))
-                {
-                    laneId = LaneID.TOP;
-                }
-                //Using just _C would cause files with "_Chaos" to be mistakenly assigned as MidLane
-                else if (Name.Contains("_C0") || Name.Contains("_C1") || Name.Contains("_C_"))
-                {
-                    laneId = LaneID.MIDDLE;
-                }
-                else if (Name.Contains("_R"))
-                {
-                    laneId = LaneID.BOTTOM;
-                }
-
-                return laneId;
-            }
-
-            public LaneID GetSpawnBarrackLaneID()
-            {
-                var laneId = LaneID.NONE;
-
-                if (Name.Contains("__L"))
-                {
-                    laneId = LaneID.TOP;
-                }
-                else if (Name.Contains("__C"))
-                {
-                    laneId = LaneID.MIDDLE;
-                }
-                else if (Name.Contains("__R"))
-                {
-                    laneId = LaneID.BOTTOM;
-                }
-
-                return laneId;
-            }
-
-            public int ParseIndex()
-            {
-                int index = -1;
-
-                if (GetGameObjectType() == 0)
-                {
-                    return index;
-                }
-
-                var underscoreIndices = new List<int>();
-
-                // While there are underscores, it loops,
-                for (int i = Name.IndexOf('_'); i > -1; i = Name.IndexOf('_', i + 1))
-                {
-                    // and ends when i = -1 (no underscore found).
-                    underscoreIndices.Add(i);
-                }
-
-                // If the above failed to find any underscores or the underscore is the last character in the string.
-                if (underscoreIndices.Count == 0 || underscoreIndices.Last() == underscoreIndices.Count)
-                {
-                    return index;
-                }
-
-                // Otherwise, we make a new string which starts at the last underscore (+1 character to the right),
-                string startString = Name.Substring(underscoreIndices.Last() + 1);
-
-                // and we check it for an index.
-                try
-                {
-                    index = int.Parse(startString);
-                }
-                catch (FormatException)
-                {
-                    return index;
-                }
-
-                return index;
-            }
-        }
-    }
-    public class MapSpawns
-    {
-        public Dictionary<int, PlayerSpawns> Blue = new Dictionary<int, PlayerSpawns>();
-        public Dictionary<int, PlayerSpawns> Purple = new Dictionary<int, PlayerSpawns>();
-
-        public void SetSpawns(string team, PlayerSpawns spawns, int playerCount)
-        {
-            if (team.ToLower().Equals("blue"))
-            {
-                Blue[playerCount] = spawns;
-            }
+            // Toggle off.
             else
             {
-                Purple[playerCount] = spawns;
+                GameFeatures &= ~flag;
             }
         }
     }
+}
+public class MapData : IMapData
+{
+    public int Id { get; private set; }
+    /// <summary>
+    /// Collection of MapObjects present within a map's room file, with the key being the name present in the room file. Refer to <see cref="MapObject"/>.
+    /// </summary>
+    public Dictionary<string, IMapObject> MapObjects { get; private set; }
+    /// <summary>
+    /// Collection of MapObjects which represent lane minion spawn positions.
+    /// Not present within the room file, therefor it is split into its own collection.
+    /// </summary>
+    public Dictionary<string, IMapObject> SpawnBarracks { get; private set; }
+    /// <summary>
+    /// Experience required to level, ordered from 2 and up.
+    /// </summary>
+    public List<float> ExpCurve { get; private set; }
+    /// <summary>
+    /// Amount of time death should last depending on level.
+    /// </summary>
+    public List<float> DeathTimes { get; private set; }
+    /// <summary>
+    /// Potential progression of stats per-level of jungle monsters.
+    /// </summary>
+    /// TODO: Figure out what this is and how to implement it.
+    public List<float> StatsProgression { get; private set; }
 
-    public class PlayerSpawns
+    public MapData(int mapId)
     {
-        private JArray _spawns;
-
-        public PlayerSpawns(JArray spawns)
-        {
-            _spawns = spawns;
-        }
-
-        internal Vector2 GetCoordsForPlayer(int playerId)
-        {
-            return new Vector2((int)((JArray)_spawns[playerId])[0], (int)((JArray)_spawns[playerId])[1]);
-        }
+        Id = mapId;
+        MapObjects = new Dictionary<string, IMapObject>();
+        SpawnBarracks = new Dictionary<string, IMapObject>();
+        ExpCurve = new List<float>();
+        DeathTimes = new List<float>();
+        StatsProgression = new List<float>();
     }
 
-    public class GameConfig
+    public class MapObject : IMapObject
     {
-        public int Map => (int)_gameData.SelectToken("map");
-        public string DataPackage => (string)_gameData.SelectToken("dataPackage");
+        public string Name { get; private set; }
+        public Vector3 CentralPoint { get; private set; }
+        public int ParentMapId { get; private set; }
 
-        private JToken _gameData;
-
-        public GameConfig(JToken gameData)
+        public MapObject(string name, Vector3 point, int id)
         {
-            _gameData = gameData;
+            Name = name;
+            CentralPoint = point;
+            ParentMapId = id;
         }
-    }
 
-
-    public class PlayerConfig
-    {
-        public long PlayerID => (long)_playerData.SelectToken("playerId");
-        public string Rank => (string)_playerData.SelectToken("rank");
-        public string Name => (string)_playerData.SelectToken("name");
-        public string Champion => (string)_playerData.SelectToken("champion");
-        public string Team => (string)_playerData.SelectToken("team");
-        public short Skin => (short)_playerData.SelectToken("skin");
-        public string Summoner1 => (string)_playerData.SelectToken("summoner1");
-        public string Summoner2 => (string)_playerData.SelectToken("summoner2");
-        public short Ribbon => (short)_playerData.SelectToken("ribbon");
-        public int Icon => (int)_playerData.SelectToken("icon");
-        public string BlowfishKey => (string)_playerData.SelectToken("blowfishKey");
-        public IRuneCollection Runes { get; }
-
-        private JToken _playerData;
-
-        public PlayerConfig(JToken playerData)
+        public GameObjectTypes GetGameObjectType()
         {
-            _playerData = playerData;
+            GameObjectTypes type = 0;
+
+            if (Name.Contains("LevelProp"))
+            {
+                type = GameObjectTypes.LevelProp;
+            }
+            else if (Name.Contains("HQ"))
+            {
+                type = GameObjectTypes.ObjAnimated_HQ;
+            }
+            else if (Name.Contains("Barracks_T"))
+            {
+                // Inhibitors are dampeners for the enemy Nexus.
+                type = GameObjectTypes.ObjAnimated_BarracksDampener;
+            }
+            else if (Name.Contains("Turret"))
+            {
+                type = GameObjectTypes.ObjAIBase_Turret;
+            }
+            else if (Name.Contains("__Spawn"))
+            {
+                type = GameObjectTypes.ObjBuilding_SpawnPoint;
+            }
+            else if (Name.Contains("__NAV"))
+            {
+                type = GameObjectTypes.ObjBuilding_NavPoint;
+            }
+            else if (Name.Contains("Info_Point"))
+            {
+                type = GameObjectTypes.InfoPoint;
+            }
+
+            return type;
+        }
+
+        public TeamId GetTeamID()
+        {
+            var team = TeamId.TEAM_NEUTRAL;
+
+            if (Name.Contains("T1") || Name.Contains("Order"))
+            {
+                team = TeamId.TEAM_BLUE;
+            }
+            else if (Name.Contains("T2") || Name.Contains("Chaos"))
+            {
+                team = TeamId.TEAM_PURPLE;
+            }
+
+            return team;
+        }
+
+        public TeamId GetOpposingTeamID()
+        {
+            var team = TeamId.TEAM_NEUTRAL;
+
+            if (Name.Contains("T1") || Name.Contains("Order"))
+            {
+                team = TeamId.TEAM_PURPLE;
+            }
+            else if (Name.Contains("T2") || Name.Contains("Chaos"))
+            {
+                team = TeamId.TEAM_BLUE;
+            }
+
+            return team;
+        }
+
+        public string GetTeamName()
+        {
+            string teamName = "";
+            if (GetTeamID() == TeamId.TEAM_BLUE)
+            {
+                teamName = "Order";
+            }
+            // Chaos and Neutral
+            else
+            {
+                teamName = "Chaos";
+            }
+
+            return teamName;
+        }
+
+        public LaneID GetLaneID()
+        {
+            var laneId = LaneID.NONE;
+
+            if (Name.Contains("_L"))
+            {
+                laneId = LaneID.TOP;
+            }
+            //Using just _C would cause files with "_Chaos" to be mistakenly assigned as MidLane
+            else if (Name.Contains("_C0") || Name.Contains("_C1") || Name.Contains("_C_"))
+            {
+                laneId = LaneID.MIDDLE;
+            }
+            else if (Name.Contains("_R"))
+            {
+                laneId = LaneID.BOTTOM;
+            }
+
+            return laneId;
+        }
+
+        public LaneID GetSpawnBarrackLaneID()
+        {
+            var laneId = LaneID.NONE;
+
+            if (Name.Contains("__L"))
+            {
+                laneId = LaneID.TOP;
+            }
+            else if (Name.Contains("__C"))
+            {
+                laneId = LaneID.MIDDLE;
+            }
+            else if (Name.Contains("__R"))
+            {
+                laneId = LaneID.BOTTOM;
+            }
+
+            return laneId;
+        }
+
+        public int ParseIndex()
+        {
+            int index = -1;
+
+            if (GetGameObjectType() == 0)
+            {
+                return index;
+            }
+
+            var underscoreIndices = new List<int>();
+
+            // While there are underscores, it loops,
+            for (int i = Name.IndexOf('_'); i > -1; i = Name.IndexOf('_', i + 1))
+            {
+                // and ends when i = -1 (no underscore found).
+                underscoreIndices.Add(i);
+            }
+
+            // If the above failed to find any underscores or the underscore is the last character in the string.
+            if (underscoreIndices.Count == 0 || underscoreIndices.Last() == underscoreIndices.Count)
+            {
+                return index;
+            }
+
+            // Otherwise, we make a new string which starts at the last underscore (+1 character to the right),
+            string startString = Name.Substring(underscoreIndices.Last() + 1);
+
+            // and we check it for an index.
             try
             {
-                var runes = _playerData.SelectToken("runes");
-                Runes = new RuneCollection();
-
-                foreach (JProperty runeCategory in runes)
-                {
-                    Runes.Add(Convert.ToInt32(runeCategory.Name), Convert.ToInt32(runeCategory.Value));
-                }
+                index = int.Parse(startString);
             }
-            catch (Exception)
+            catch (FormatException)
             {
-                // no runes set in config
+                return index;
             }
+
+            return index;
+        }
+    }
+}
+public class MapSpawns
+{
+    public Dictionary<int, PlayerSpawns> Blue = new Dictionary<int, PlayerSpawns>();
+    public Dictionary<int, PlayerSpawns> Purple = new Dictionary<int, PlayerSpawns>();
+
+    public void SetSpawns(string team, PlayerSpawns spawns, int playerCount)
+    {
+        if (team.ToLower().Equals("blue"))
+        {
+            Blue[playerCount] = spawns;
+        }
+        else
+        {
+            Purple[playerCount] = spawns;
+        }
+    }
+}
+
+public class PlayerSpawns
+{
+    private JArray _spawns;
+
+    public PlayerSpawns(JArray spawns)
+    {
+        _spawns = spawns;
+    }
+
+    internal Vector2 GetCoordsForPlayer(int playerId)
+    {
+        return new Vector2((int)((JArray)_spawns[playerId])[0], (int)((JArray)_spawns[playerId])[1]);
+    }
+}
+
+public class GameConfig
+{
+    public int Map => (int)_gameData.SelectToken("map");
+    public string GameMode => _gameData.SelectToken("GameMode").ToString().ToUpper().Replace(" ", string.Empty);
+    public string DataPackage => (string)_gameData.SelectToken("dataPackage");
+
+    private JToken _gameData;
+
+    public GameConfig(JToken gameData)
+    {
+        _gameData = gameData;
+    }
+}
+
+
+public class PlayerConfig
+{
+    public long PlayerID => (long)_playerData.SelectToken("playerId");
+    public string Rank => (string)_playerData.SelectToken("rank");
+    public string Name => (string)_playerData.SelectToken("name");
+    public string Champion => (string)_playerData.SelectToken("champion");
+    public string Team => (string)_playerData.SelectToken("team");
+    public short Skin => (short)_playerData.SelectToken("skin");
+    public string Summoner1 => (string)_playerData.SelectToken("summoner1");
+    public string Summoner2 => (string)_playerData.SelectToken("summoner2");
+    public short Ribbon => (short)_playerData.SelectToken("ribbon");
+    public int Icon => (int)_playerData.SelectToken("icon");
+    public string BlowfishKey => (string)_playerData.SelectToken("blowfishKey");
+    public IRuneCollection Runes { get; }
+
+    private JToken _playerData;
+
+    public PlayerConfig(JToken playerData)
+    {
+        _playerData = playerData;
+        try
+        {
+            var runes = _playerData.SelectToken("runes");
+            Runes = new RuneCollection();
+
+            foreach (JProperty runeCategory in runes)
+            {
+                Runes.Add(Convert.ToInt32(runeCategory.Name), Convert.ToInt32(runeCategory.Value));
+            }
+        }
+        catch (Exception)
+        {
+            // no runes set in config
         }
     }
 }

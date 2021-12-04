@@ -5,11 +5,13 @@ using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
 using GameServerCore.Maps;
+using LeagueSandbox.GameServer.Content;
 
 namespace MapScripts
 {
     public class EmptyMapScript : IMapScript
     {
+        public virtual IGlobalData GlobalData { get; set; } = new GlobalData();
         public bool EnableBuildingProtection { get; set; } = false;
 
         //General Map variable
