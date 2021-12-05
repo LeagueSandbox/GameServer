@@ -391,7 +391,7 @@ public class PlayerSpawns
 public class GameConfig
 {
     public int Map => (int)_gameData.SelectToken("map");
-    public string GameMode => _gameData.SelectToken("GameMode").ToString().ToUpper().Replace(" ", string.Empty);
+    public string GameMode => _gameData.SelectToken("gameMode").ToString().ToUpper().Replace(" ", string.Empty);
     public string DataPackage => (string)_gameData.SelectToken("dataPackage");
 
     private JToken _gameData;
