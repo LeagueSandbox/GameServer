@@ -531,8 +531,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                 var expPerChamp = exp / champs.Count;
                 foreach (var c in champs)
                 {
-                    c.Stats.Experience += expPerChamp;
-                    _game.PacketNotifier.NotifyUnitAddEXP(c, expPerChamp);
+                    c.AddExperience(expPerChamp);
                 }
             }
 

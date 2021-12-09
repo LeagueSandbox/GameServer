@@ -128,12 +128,7 @@ namespace LeagueSandbox.GameServer.Maps
                 }
             }
 
-            if (_game.GameTime >= 120 * 1000)
-            {
-                MapScript.IsKillGoldRewardReductionActive = false;
-            }
-
-            if (MapScript.SpawnEnabled)
+            if (MapScript.MapScriptMetadata.MinionSpawnEnabled)
             {
                 if (_minionNumber > 0)
                 {
@@ -143,7 +138,7 @@ namespace LeagueSandbox.GameServer.Maps
                         if (SetUpLaneMinion())
                         {
                             _minionNumber = 0;
-                            MapScript.NextSpawnTime = (long)_game.GameTime + MapScript.SpawnInterval;
+                            MapScript.NextSpawnTime = (long)_game.GameTime + MapScript.MapScriptMetadata.SpawnInterval;
                         }
                         else
                         {
@@ -162,7 +157,7 @@ namespace LeagueSandbox.GameServer.Maps
                 surrender.Update(diff);
             }
 
-            if (FountainList != null)
+            if (MapScript.MapScriptMetadata.EnableFountainHealing)
             {
                 foreach (var fountain in FountainList.Values)
                 {
@@ -180,7 +175,7 @@ namespace LeagueSandbox.GameServer.Maps
         {
             LoadBuildings();
             MapScript.Init(this);
-            if (MapScript.EnableBuildingProtection)
+            if (MapScript.MapScriptMetadata.EnableBuildingProtection)
             {
                 LoadBuildingProtection();
             }
@@ -269,7 +264,7 @@ namespace LeagueSandbox.GameServer.Maps
             }
 
             //If the map doesn't have any Minion pathing file but the map script has Minion pathing hardcoded
-            if ((BlueMinionPathing.Count == 0 || MapScript.MinionPathingOverride) && MapScript.MinionPaths != null && MapScript.MinionPaths.Count != 0)
+            if ((BlueMinionPathing.Count == 0 || MapScript.MapScriptMetadata.MinionPathingOverride) && MapScript.MinionPaths != null && MapScript.MinionPaths.Count != 0)
             {
                 foreach (var lane in MapScript.MinionPaths.Keys)
                 {

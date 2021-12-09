@@ -5,34 +5,28 @@ using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
 using GameServerCore.Maps;
+using GameServerCore.Scripting.CSharp;
 using LeagueSandbox.GameServer.Content;
 using LeagueSandbox.GameServer.Logging;
+using LeagueSandbox.GameServer.Scripting.CSharp;
 using log4net;
 
 namespace MapScripts.Map12
 {
     public class CLASSIC : IMapScript
     {
+        public IMapScriptMetadata MapScriptMetadata { get; set; } = new MapScriptMetadata
+        {
+            StartingGold = 1375.0f,
+            GoldPerSecond = 5.0f,
+            //TODO: Figure out what to do with the recall spell, if ARAM has an special item or just Seals it
+            RecallSpellItemId = 2001,
+            EnableFountainHealing = false
+        };
         public virtual IGlobalData GlobalData { get; set; } = new GlobalData();
-        public bool EnableBuildingProtection { get; set; } = true;
-
-        //General Map variable
-        private IMapScriptHandler _map;
-        private static ILog _logger = LoggerProvider.GetLogger();
-
-        //Stuff about minions
-        public bool SpawnEnabled { get; set; }
-        public long NextSpawnTime { get; set; } = 45 * 1000;
-        public long SpawnInterval { get; set; } = 30 * 1000;
-        public bool MinionPathingOverride { get; set; } = false;
-
-        //General things that will affect players globaly, such as default gold per-second, Starting gold....
-        public float GoldPerSecond { get; set; } = 5.0f;
-        public float StartingGold { get; set; } = 1375.0f;
         public bool HasFirstBloodHappened { get; set; } = false;
-        public bool IsKillGoldRewardReductionActive { get; set; } = true;
-        public int BluePillId { get; set; } = 2001;
-        public long FirstGoldTime { get; set; } = 90 * 1000;
+        public long NextSpawnTime { get; set; } = 45 * 1000;
+        private IMapScriptHandler _map;
 
         //Tower type enumeration might vary slightly from map to map, so we set that up here
         public TurretType GetTurretType(int trueIndex, LaneID lane, TeamId teamId)
@@ -200,7 +194,7 @@ namespace MapScripts.Map12
         {
             _map = map;
 
-            SpawnEnabled = map.IsMinionSpawnEnabled();
+            MapScriptMetadata.MinionSpawnEnabled = map.IsMinionSpawnEnabled();
 
             foreach (var key in map.SpawnBarracks.Keys)
             {

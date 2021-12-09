@@ -51,8 +51,8 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             Inventory = InventoryManager.CreateInventory(game.PacketNotifier, game.ScriptEngine);
             Shop = Items.Shop.CreateShop(this, game);
 
-            Stats.Gold = _game.Map.MapScript.StartingGold;
-            Stats.GoldPerSecond.BaseValue = _game.Map.MapScript.GoldPerSecond;
+            Stats.Gold = _game.Map.MapScript.MapScriptMetadata.StartingGold;
+            Stats.GoldPerSecond.BaseValue = _game.Map.MapScript.MapScriptMetadata.GoldPerSecond;
             Stats.IsGeneratingGold = false;
 
             //TODO: automaticaly rise spell levels with CharData.SpellLevelsUp
@@ -180,7 +180,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         {
             base.Update(diff);
 
-            if (!Stats.IsGeneratingGold && _game.GameTime >= _game.Map.MapScript.FirstGoldTime)
+            if (!Stats.IsGeneratingGold && _game.GameTime >= _game.Map.MapScript.MapScriptMetadata.FirstGoldTime)
             {
                 Stats.IsGeneratingGold = true;
                 Logger.Debug("Generating Gold!");
@@ -193,14 +193,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 {
                     Respawn();
                 }
-            }
-
-            if (LevelUp())
-            {
-                ApiEventManager.OnLevelUp.Publish(this);
-                _game.PacketNotifier.NotifyNPC_LevelUp(this);
-                // TODO: send this in one place only
-                _game.PacketNotifier.NotifyUpdatedStats(this, false);
             }
 
             if (_championHitFlagTimer > 0)
@@ -246,7 +238,18 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             TeleportTo(spawnPos.X, spawnPos.Y);
         }
 
-        public bool LevelUp()
+        public void AddExperience(float experience)
+        {
+            Stats.Experience += experience;
+            _game.PacketNotifier.NotifyUnitAddEXP(this, experience);
+
+            if (Stats.Experience >= _game.Config.MapData.ExpCurve[Stats.Level - 1])
+            {
+                LevelUp();
+            }
+        }
+
+        public void LevelUp()
         {
             var stats = Stats;
             var expMap = _game.Config.MapData.ExpCurve;
@@ -261,9 +264,10 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 {
                     SkillPoints++;
                 }
-                return true;
+                ApiEventManager.OnLevelUp.Publish(this);
+                _game.PacketNotifier.NotifyNPC_LevelUp(this);
+                _game.PacketNotifier.NotifyUpdatedStats(this, false);
             }
-            return false;
         }
 
         public void OnKill(IDeathData deathData)
@@ -351,7 +355,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 return;
             }
 
-            if (_game.Map.MapScript.IsKillGoldRewardReductionActive
+            if (_game.Map.MapScript.MapScriptMetadata.IsKillGoldRewardReductionActive
                 && _game.Map.MapScript.HasFirstBloodHappened)
             {
                 gold -= gold * 0.25f;
