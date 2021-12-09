@@ -266,6 +266,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 }
                 ApiEventManager.OnLevelUp.Publish(this);
                 _game.PacketNotifier.NotifyNPC_LevelUp(this);
+                _game.PacketNotifier.NotifyUpdatedStats(this, false);
             }
         }
 
