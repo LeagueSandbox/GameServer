@@ -4,24 +4,16 @@ using System.Numerics;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
 using GameServerCore.Maps;
+using GameServerCore.Scripting.CSharp;
 
 namespace GameServerCore.Domain
 {
     public interface IMapScript : IUpdate
     {
         IGlobalData GlobalData { get; }
-        bool EnableBuildingProtection { get; }
-        long NextSpawnTime { get; set; }
-        long SpawnInterval { get; }
-        //In case someone wishes to use a custom, hardcoded path instead of the one from files
-        bool MinionPathingOverride { get; }
-        float GoldPerSecond { get; }
-        float StartingGold { get; }
+        IMapScriptMetadata MapScriptMetadata { get; }
         bool HasFirstBloodHappened { get; set; }
-        bool IsKillGoldRewardReductionActive { get; set; }
-        int BluePillId { get; }
-        long FirstGoldTime { get; }
-        bool SpawnEnabled { get; set; }
+        long NextSpawnTime { get; set; }
         Dictionary<TurretType, int[]> TurretItems { get; }
         Dictionary<TeamId, string> NexusModels { get; }
         Dictionary<TeamId, string> InhibitorModels { get; }

@@ -6,29 +6,23 @@ using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
 using GameServerCore.Maps;
 using LeagueSandbox.GameServer.Content;
+using GameServerCore.Scripting.CSharp;
+using LeagueSandbox.GameServer.Scripting.CSharp;
 
 namespace MapScripts.Map1
 {
     public class CLASSIC : IMapScript
     {
+        public IMapScriptMetadata MapScriptMetadata { get; set; } = new MapScriptMetadata 
+        {
+            MinionPathingOverride = true,
+            EnableBuildingProtection = true
+        };
         public virtual IGlobalData GlobalData { get; set; } = new GlobalData();
-        public bool EnableBuildingProtection { get; set; } = true;
-        //General Map variable
+        public bool HasFirstBloodHappened { get; set; } = false;
+        public long NextSpawnTime { get; set; } = 90 * 1000;
         public IMapScriptHandler _map;
 
-        //Stuff about minions
-        public bool SpawnEnabled { get; set; }
-        public long NextSpawnTime { get; set; } = 90 * 1000;
-        public long SpawnInterval { get; set; } = 30 * 1000;
-        public bool MinionPathingOverride { get; set; } = true;
-
-        //General things that will affect players globaly, such as default gold per-second, Starting gold....
-        public float GoldPerSecond { get; set; } = 1.9f;
-        public float StartingGold { get; set; } = 475.0f;
-        public bool HasFirstBloodHappened { get; set; } = false;
-        public bool IsKillGoldRewardReductionActive { get; set; } = true;
-        public int BluePillId { get; set; } = 2001;
-        public long FirstGoldTime { get; set; } = 90 * 1000;
 
         //Tower type enumeration might vary slightly from map to map, so we set that up here
         public TurretType GetTurretType(int trueIndex, LaneID lane, TeamId teamId)
@@ -248,7 +242,7 @@ namespace MapScripts.Map1
         public virtual void Init(IMapScriptHandler map)
         {
             _map = map;
-            SpawnEnabled = map.IsMinionSpawnEnabled();
+            MapScriptMetadata.MinionSpawnEnabled = map.IsMinionSpawnEnabled();
             map.AddSurrender(1200000.0f, 300000.0f, 30.0f);
 
             //Due to riot's questionable map-naming scheme some towers are missplaced into other lanes during outomated setup, so we have to manually fix them.
@@ -275,6 +269,10 @@ namespace MapScripts.Map1
         //This function gets executed every server tick
         public void Update(float diff)
         {
+            if (_map.GameTime() >= 120 * 1000)
+            {
+                MapScriptMetadata.IsKillGoldRewardReductionActive = false;
+            }
         }
 
 
