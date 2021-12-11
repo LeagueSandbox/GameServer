@@ -254,18 +254,6 @@ namespace PacketDefinitions420
         }
 
         /// <summary>
-        /// Sends a packet to all players that announces a specified message (ex: "Minions have spawned.")
-        /// </summary>
-        /// <param name="mapId">Current map ID.</param>
-        /// <param name="messageId">Message ID to announce.</param>
-        /// <param name="isMapSpecific">Whether the announce is specific to the map ID.</param>
-        public void NotifyAnnounceEvent(int mapId, Announces messageId, bool isMapSpecific)
-        {
-            var announce = new Announce(messageId, isMapSpecific ? mapId : 0);
-            _packetHandlerManager.BroadcastPacket(announce, Channel.CHL_S2C);
-        }
-
-        /// <summary>
         /// Sends a packet to the specified user or all users informing them of the given client's summoner data such as runes, summoner spells, masteries (or talents as named internally), etc.
         /// </summary>
         /// <param name="client">Info about the player's summoner data.</param>
