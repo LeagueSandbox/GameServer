@@ -4,6 +4,7 @@ using LeagueSandbox.GameServer.Scripting.CSharp;
 using System.Numerics;
 using GameServerCore.Domain.GameObjects.Spell;
 using GameServerCore.Scripting.CSharp;
+using GameServerCore.Domain;
 
 namespace Passives
 {
@@ -13,7 +14,7 @@ namespace Passives
         {
             ApiEventManager.OnTakeDamage.AddListener(this, owner, SelfWasDamaged, false);
         }
-        private void SelfWasDamaged(IAttackableUnit unit, IAttackableUnit source)
+        private void SelfWasDamaged(IDamageData damageData)
         {
         }
         public void OnDeactivate(IObjAiBase owner, ISpell spell)

@@ -148,7 +148,7 @@ namespace LeagueSandbox.GameServer.Content
                     toReturnMapData.MapObjects.Add($"__Spawn_T{i}", AddMapObject($"__Spawn_T{i}", contentType, mapName, mapId));
                 }
             }
-            
+
             // EXPCurve, DeathTimes, and StatsProgression.
 
             var expFile = new ContentFile();
@@ -233,7 +233,6 @@ namespace LeagueSandbox.GameServer.Content
                     toReturnMapData.SpawnBarracks.Add(name, barracks);
                 }
             }
-
             return toReturnMapData;
         }
 

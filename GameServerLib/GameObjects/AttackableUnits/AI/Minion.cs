@@ -91,9 +91,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
             VisibilityOwner = visibilityOwner;
 
-            SetVisibleByTeam(Team, true);
-
-            MoveOrder = OrderType.MoveTo;
+            MoveOrder = OrderType.Stop;
 
             Replication = new ReplicationMinion(this);
         }
@@ -106,7 +104,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         public override void OnAdded()
         {
             base.OnAdded();
-            _game.PacketNotifier.NotifySpawn(this);
         }
 
         public override void Update(float diff)
@@ -150,12 +147,13 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             //Find target closest to max attack range.
             foreach (var it in nearestObjects.OrderBy(x => Vector2.DistanceSquared(Position, x.Position) - (Stats.Range.Total * Stats.Range.Total)))
             {
-                if (!(it is IAttackableUnit u) ||
-                    u.IsDead ||
-                    u.Team == Team ||
-                    Vector2.DistanceSquared(Position, u.Position) > DETECT_RANGE * DETECT_RANGE ||
-                    !_game.ObjectManager.TeamHasVisionOn(Team, u)
-                    || !u.Status.HasFlag(StatusFlags.Targetable))
+                if (!(it is IAttackableUnit u)
+                    || u.IsDead
+                    || u.Team == Team
+                    || Vector2.DistanceSquared(Position, u.Position) > DETECT_RANGE * DETECT_RANGE
+                    || !_game.ObjectManager.TeamHasVisionOn(Team, u)
+                    || !u.Status.HasFlag(StatusFlags.Targetable)
+                    || _game.ProtectionManager.IsProtected(u))
                 {
                     continue;
                 }

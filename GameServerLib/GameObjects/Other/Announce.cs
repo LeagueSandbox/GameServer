@@ -7,11 +7,11 @@ namespace LeagueSandbox.GameServer.GameObjects.Other
     {
         public bool IsAnnounced { get; private set; }
         public long EventTime { get; }
-        private Announces _messageId;
+        private EventID _messageId;
         private bool _isMapSpecific;
         private Game _game;
 
-        public Announce(Game game, long eventTime, Announces id, bool isMapSpecific)
+        public Announce(Game game, long eventTime, EventID id, bool isMapSpecific)
         {
             IsAnnounced = false;
             EventTime = eventTime;
@@ -22,7 +22,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Other
 
         public void Execute()
         {
-            _game.PacketNotifier.NotifyAnnounceEvent(_game.Map.Id, _messageId, _isMapSpecific);
+            _game.PacketNotifier.NotifyS2C_OnEventWorld(_game.Map.Id, _messageId, _isMapSpecific);
             IsAnnounced = true;
         }
     }

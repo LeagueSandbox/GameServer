@@ -148,7 +148,14 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
                 }
             }
 
-            ApiEventManager.OnSpellHit.Publish(CastInfo.Owner, this, u, p, s);
+            if (CastInfo.IsAutoAttack)
+            {
+                ApiEventManager.OnBeingHit.Publish(u, CastInfo.Owner);
+            }
+            else
+            {
+                ApiEventManager.OnSpellHit.Publish(CastInfo.Owner, this, u, p, s);
+            }
         }
 
         public bool Cast(Vector2 start, Vector2 end, IAttackableUnit unit = null)
@@ -178,7 +185,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
 
             CastInfo.AttackSpeedModifier = stats.AttackSpeedMultiplier.Total;
 
-            if (_game.Config.ManaCostsEnabled)
+            if (_game.Config.GameFeatures.HasFlag(FeatureFlags.EnableManaCosts))
             {
                 stats.CurrentMana -= SpellData.ManaCost[CastInfo.SpellLevel] * (1 - stats.SpellCostReduction);
             }
@@ -427,7 +434,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
                     return false;
                 }
 
-                if (_game.Config.ManaCostsEnabled)
+                if (_game.Config.GameFeatures.HasFlag(FeatureFlags.EnableManaCosts))
                 {
                     stats.CurrentMana -= SpellData.ManaCost[CastInfo.SpellLevel] * (1 - stats.SpellCostReduction);
                 }
@@ -959,7 +966,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
 
         public float GetCooldown()
         {
-            return _game.Config.CooldownsEnabled ? SpellData.Cooldown[CastInfo.SpellLevel] * (1 - CastInfo.Owner.Stats.CooldownReduction.Total) : 0;
+            return _game.Config.GameFeatures.HasFlag(FeatureFlags.EnableCooldowns) ? SpellData.Cooldown[CastInfo.SpellLevel] * (1 - CastInfo.Owner.Stats.CooldownReduction.Total) : 0;
         }
 
         public float GetCurrentCastRange()

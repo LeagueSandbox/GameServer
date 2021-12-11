@@ -25,6 +25,8 @@ using static GameServerCore.Content.HashFunctions;
 using System.Text;
 using Force.Crc32;
 using System.Linq;
+using LeaguePackets;
+using LeaguePackets.LoadScreen;
 
 namespace PacketDefinitions420
 {
@@ -94,22 +96,10 @@ namespace PacketDefinitions420
         }
 
         /// <summary>
-        /// Sends a packet to all players that the specified Champion has killed a specified player and received a specified amount of gold.
-        /// </summary>
-        /// <param name="c">Champion that killed a unit.</param>
-        /// <param name="died">AttackableUnit that died to the Champion.</param>
-        /// <param name="gold">Amount of gold the Champion gained for the kill.</param>
-        /// TODO: Only use BroadcastPacket when the unit that died is a Champion.
-        public void NotifyAddGold(IChampion c, IAttackableUnit died, float gold)
-        {
-            var ag = new AddGold(c, died, gold);
-            _packetHandlerManager.BroadcastPacket(ag, Channel.CHL_S2C);
-        }
-
-        /// <summary>
         /// Sends a packet to the specified team that a part of the map has changed. Known to be used in League for initializing turret vision and collision.
         /// </summary>
-        /// <param name="newFogId">NetID of the owner of the region.</param>
+        /// <param name="unitNetId">NetID of the unit owning the region.</param>
+        /// <param name="bubbleNetId">NetID of the unit which owns the vision for this region. Functionality unknown.</param>
         /// <param name="team">Team to send the packet to.</param>
         /// <param name="position">2D top-down position of the region.</param>
         /// <param name="time">Amount of time the region lasts.</param>
@@ -124,14 +114,14 @@ namespace PacketDefinitions420
         /// <param name="grantVis">Whether or not the region should give the region's team vision of enemy units.</param>
         /// <param name="stealthVis">Whether or not invisible units should be visible in the region.</param>
         /// TODO: Implement a Region class so we can easily grab these parameters instead of listing them all in the function.
-        public void NotifyAddRegion(uint newFogId, TeamId team, Vector2 position, float time, float radius = 0, int regionType = 0, ClientInfo clientInfo = null, IGameObject obj = null, float collisionRadius = 0, float grassRadius = 0, float sizemult = 1.0f, float addsize = 0, bool grantVis = true, bool stealthVis = false)
+        public void NotifyAddRegion(uint unitNetId, uint bubbleNetId, TeamId team, Vector2 position, float time, float radius = 0, int regionType = 0, ClientInfo clientInfo = null, IGameObject obj = null, float collisionRadius = 0, float grassRadius = 0, float sizemult = 1.0f, float addsize = 0, bool grantVis = true, bool stealthVis = false)
         {
             var regionPacket = new AddRegion
             {
                 TeamID = (uint)team,
                 RegionType = regionType, // TODO: Find out what values this can be and make an enum for it (so far: -2 for turrets)
-                UnitNetID = newFogId, // TODO: Verify (usually 0 for vision only?)
-                BubbleNetID = newFogId, // TODO: Verify (is usually different from UnitNetID in packets, may also be a remnant or for internal use)
+                UnitNetID = unitNetId, // TODO: Verify (usually 0 for vision only?)
+                BubbleNetID = bubbleNetId, // TODO: Verify (is usually different from UnitNetID in packets, may also be a remnant or for internal use)
                 VisionTargetNetID = 0,
                 Position = position,
                 TimeToLive = time, // For turrets, usually 25000.0 is used
@@ -167,20 +157,50 @@ namespace PacketDefinitions420
                 regionPacket.HasCollision = true;
             }
 
-
             _packetHandlerManager.BroadcastPacketTeam(team, regionPacket.GetBytes(), Channel.CHL_S2C);
         }
 
         /// <summary>
-        /// Sends a packet to all players that the specified Champion has gained the specified amount of experience.
+        /// Sends a packet to the specified team that a part of the map has changed. Known to be used in League for initializing turret vision and collision.
         /// </summary>
-        /// <param name="champion">Champion that gained the experience.</param>
-        /// <param name="experience">Amount of experience gained.</param>
-        /// TODO: Verify if sending to all players is correct.
-        public void NotifyAddXp(IChampion champion, float experience)
+        /// <param name="region">Region to add.</param>
+        public void NotifyAddRegion(IRegion region)
         {
-            var xp = new AddXp(champion, experience);
-            _packetHandlerManager.BroadcastPacket(xp, Channel.CHL_S2C);
+            var regionPacket = new AddRegion
+            {
+                TeamID = (uint)region.Team,
+                // TODO: Find out what values this can be and make an enum for it (so far: -2 & -1 for turrets)
+                RegionType = region.Type,
+                ClientID = region.OwnerClientID,
+                // TODO: Verify (usually 0 for vision only?)
+                UnitNetID = 0,
+                // TODO: Verify (is usually different from UnitNetID in packets, may also be a remnant or for internal use)
+                BubbleNetID = region.VisionNetID,
+                VisionTargetNetID = region.VisionBindNetID,
+                Position = region.Position,
+                // For turrets, usually 25000.0 is used
+                TimeToLive = region.Lifetime,
+                // 88.4 for turrets
+                ColisionRadius = region.CollisionRadius,
+                // 130.0 for turrets
+                GrassRadius = region.GrassRadius,
+                SizeMultiplier = region.Scale,
+                SizeAdditive = region.AdditionalSize,
+
+                HasCollision = region.HasCollision,
+                GrantVision = region.GrantVision,
+                RevealStealth = region.RevealsStealth,
+
+                BaseRadius = region.VisionRadius // 800.0 for turrets
+            };
+
+            if (region.CollisionUnit != null)
+            {
+                regionPacket.UnitNetID = region.CollisionUnit.NetId;
+            }
+
+            // Verify if this should be vision or team regulated.
+            _packetHandlerManager.BroadcastPacket(regionPacket.GetBytes(), Channel.CHL_S2C);
         }
 
         /// <summary>
@@ -354,24 +374,6 @@ namespace PacketDefinitions420
         }
 
         /// <summary>
-        /// Sends a side bar tip to the specified player (ex: quest tips).
-        /// </summary>
-        /// <param name="userId">User to send the packet to.</param>
-        /// <param name="title">Title of the tip.</param>
-        /// <param name="text">Description text of the tip.</param>
-        /// <param name="imagePath">Path to an image that will be embedded in the tip.</param>
-        /// <param name="tipCommand">Action suggestion(? unconfirmed).</param>
-        /// <param name="playerNetId">NetID to send the packet to.</param>
-        /// <param name="targetNetId">NetID of the target referenced by the tip.</param>
-        /// TODO: tipCommand should be a lib/core enum that gets translated into a league version specific packet enum as it may change over time.
-        public void NotifyBlueTip(int userId, string title, string text, string imagePath, byte tipCommand, uint playerNetId,
-                uint targetNetId)
-        {
-            var packet = new BlueTip(title, text, imagePath, tipCommand, playerNetId, targetNetId);
-            _packetHandlerManager.SendPacket(userId, packet, Channel.CHL_S2C);
-        }
-
-        /// <summary>
         /// Sends a packet to the player attempting to buy an item that their purchase was successful.
         /// </summary>
         /// <param name="userId">User to send the packet to.</param>
@@ -396,40 +398,6 @@ namespace PacketDefinitions420
             };
 
             _packetHandlerManager.SendPacket(userId, buyItemPacket.GetBytes(), Channel.CHL_S2C);
-        }
-
-        /// <summary>
-        /// Sends a packet to all players updating a champion's death timer.
-        /// </summary>
-        /// <param name="champion">Champion that died.</param>
-        public void NotifyChampionDeathTimer(IChampion champion)
-        {
-            var cdt = new ChampionDeathTimer(champion);
-            _packetHandlerManager.BroadcastPacket(cdt, Channel.CHL_S2C);
-        }
-
-        /// <summary>
-        /// Sends a packet to all players that a champion has died and calls a death timer update packet.
-        /// </summary>
-        /// <param name="champion">Champion that died.</param>
-        /// <param name="killer">Unit that killed the Champion.</param>
-        /// <param name="goldFromKill">Amount of gold the killer received.</param>
-        public void NotifyChampionDie(IChampion champion, IAttackableUnit killer, int goldFromKill)
-        {
-            var cd = new ChampionDie(champion, killer, goldFromKill);
-            _packetHandlerManager.BroadcastPacket(cd, Channel.CHL_S2C);
-
-            NotifyChampionDeathTimer(champion);
-        }
-
-        /// <summary>
-        /// Sends a packet to all players that a champion has respawned.
-        /// </summary>
-        /// <param name="c">Champion that respawned.</param>
-        public void NotifyChampionRespawn(IChampion c)
-        {
-            var cr = new ChampionRespawn(c);
-            _packetHandlerManager.BroadcastPacket(cr, Channel.CHL_S2C);
         }
 
         /// <summary>
@@ -458,81 +426,81 @@ namespace PacketDefinitions420
             switch (changeType)
             {
                 case GameServerCore.Enums.ChangeSlotSpellDataType.TargetingType:
-                {
-                    if (targetingType != TargetingType.Invalid)
                     {
-                        spellData = new ChangeSpellDataTargetingType()
+                        if (targetingType != TargetingType.Invalid)
                         {
-                            SpellSlot = slot,
-                            IsSummonerSpell = isSummonerSpell,
-                            TargetingType = (byte)targetingType
-                        };
+                            spellData = new ChangeSpellDataTargetingType()
+                            {
+                                SpellSlot = slot,
+                                IsSummonerSpell = isSummonerSpell,
+                                TargetingType = (byte)targetingType
+                            };
+                        }
+                        break;
                     }
-                    break;
-                }
                 case GameServerCore.Enums.ChangeSlotSpellDataType.SpellName:
-                {
-                    spellData = new ChangeSpellDataSpellName()
                     {
-                        SpellSlot = slot,
-                        IsSummonerSpell = isSummonerSpell,
-                        SpellName = newName
-                    };
-                    break;
-                }
-                case GameServerCore.Enums.ChangeSlotSpellDataType.Range:
-                {
-                    spellData = new ChangeSpellDataRange()
-                    {
-                        SpellSlot = slot,
-                        IsSummonerSpell = isSummonerSpell,
-                        CastRange = newRange
-                    };
-                    break;
-                }
-                case GameServerCore.Enums.ChangeSlotSpellDataType.MaxGrowthRange:
-                {
-                    spellData = new ChangeSpellDataMaxGrowthRange()
-                    {
-                        SpellSlot = slot,
-                        IsSummonerSpell = isSummonerSpell,
-                        OverrideMaxCastRange = newMaxCastRange
-                    };
-                    break;
-                }
-                case GameServerCore.Enums.ChangeSlotSpellDataType.RangeDisplay:
-                {
-                    spellData = new ChangeSpellDataRangeDisplay()
-                    {
-                        SpellSlot = slot,
-                        IsSummonerSpell = isSummonerSpell,
-                        OverrideCastRangeDisplay = newDisplayRange
-                    };
-                    break;
-                }
-                case GameServerCore.Enums.ChangeSlotSpellDataType.IconIndex:
-                {
-                    spellData = new ChangeSpellDataIconIndex()
-                    {
-                        SpellSlot = slot,
-                        IsSummonerSpell = isSummonerSpell,
-                        IconIndex = newIconIndex
-                    };
-                    break;
-                }
-                case GameServerCore.Enums.ChangeSlotSpellDataType.OffsetTarget:
-                {
-                    if (offsetTargets != null)
-                    {
-                        spellData = new ChangeSpellDataOffsetTarget()
+                        spellData = new ChangeSpellDataSpellName()
                         {
                             SpellSlot = slot,
                             IsSummonerSpell = isSummonerSpell,
-                            Targets = offsetTargets
+                            SpellName = newName
                         };
+                        break;
                     }
-                    break;
-                }
+                case GameServerCore.Enums.ChangeSlotSpellDataType.Range:
+                    {
+                        spellData = new ChangeSpellDataRange()
+                        {
+                            SpellSlot = slot,
+                            IsSummonerSpell = isSummonerSpell,
+                            CastRange = newRange
+                        };
+                        break;
+                    }
+                case GameServerCore.Enums.ChangeSlotSpellDataType.MaxGrowthRange:
+                    {
+                        spellData = new ChangeSpellDataMaxGrowthRange()
+                        {
+                            SpellSlot = slot,
+                            IsSummonerSpell = isSummonerSpell,
+                            OverrideMaxCastRange = newMaxCastRange
+                        };
+                        break;
+                    }
+                case GameServerCore.Enums.ChangeSlotSpellDataType.RangeDisplay:
+                    {
+                        spellData = new ChangeSpellDataRangeDisplay()
+                        {
+                            SpellSlot = slot,
+                            IsSummonerSpell = isSummonerSpell,
+                            OverrideCastRangeDisplay = newDisplayRange
+                        };
+                        break;
+                    }
+                case GameServerCore.Enums.ChangeSlotSpellDataType.IconIndex:
+                    {
+                        spellData = new ChangeSpellDataIconIndex()
+                        {
+                            SpellSlot = slot,
+                            IsSummonerSpell = isSummonerSpell,
+                            IconIndex = newIconIndex
+                        };
+                        break;
+                    }
+                case GameServerCore.Enums.ChangeSlotSpellDataType.OffsetTarget:
+                    {
+                        if (offsetTargets != null)
+                        {
+                            spellData = new ChangeSpellDataOffsetTarget()
+                            {
+                                SpellSlot = slot,
+                                IsSummonerSpell = isSummonerSpell,
+                                Targets = offsetTargets
+                            };
+                        }
+                        break;
+                    }
             }
 
             var changePacket = new ChangeSlotSpellData()
@@ -773,8 +741,9 @@ namespace PacketDefinitions420
         /// <param name="isChampion">Whether or not the GameObject entering vision is a Champion.</param>
         /// <param name="useTeleportID">Whether or not to teleport the object to its current position.</param>
         /// <param name="ignoreVision">Optionally ignore vision checks when sending this packet.</param>
+        /// <param name="packets">Takes in a list of packets to send alongside this vision packet.</param>
         /// TODO: Incomplete implementation.
-        public void NotifyEnterVisibilityClient(IGameObject o, int userId = 0, bool isChampion = false, bool useTeleportID = false, bool ignoreVision = false)
+        public void NotifyEnterVisibilityClient(IGameObject o, int userId = 0, bool isChampion = false, bool useTeleportID = false, bool ignoreVision = false, List<GamePacket> packets = null)
         {
             var itemData = new List<ItemData>(); //TODO: Fix item system so this can be finished
             var shields = new ShieldValues(); //TODO: Implement shields so this can be finished
@@ -857,6 +826,11 @@ namespace PacketDefinitions420
                 UnknownIsHero = isChampion,
                 MovementData = md
             };
+
+            if (packets != null)
+            {
+                enterVis.Packets = packets;
+            }
 
             if (userId != 0)
             {
@@ -1184,6 +1158,32 @@ namespace PacketDefinitions420
         }
 
         /// <summary>
+        /// Sends a basic heartbeat packet to either the given player or all players.
+        /// </summary>
+        public void NotifyKeyCheck(int clientID, long playerId, uint version, ulong checkSum = 0, byte action = 0, bool broadcast = false)
+        {
+            var keyCheck = new KeyCheckPacket
+            {
+                Action = action,
+                ClientID = clientID,
+                PlayerID = playerId,
+                VersionNumber = version,
+                CheckSum = checkSum,
+                // Padding
+                ExtraBytes = new byte[4]
+            };
+
+            if (broadcast)
+            {
+                _packetHandlerManager.BroadcastPacket(keyCheck.GetBytes(), Channel.CHL_HANDSHAKE);
+            }
+            else
+            {
+                _packetHandlerManager.SendPacket((int)playerId, keyCheck.GetBytes(), Channel.CHL_HANDSHAKE);
+            }
+        }
+
+        /// <summary>
         /// Sends a packet to all players detailing that the specified LaneMinion has spawned.
         /// </summary>
         /// <param name="m">LaneMinion that spawned.</param>
@@ -1271,54 +1271,49 @@ namespace PacketDefinitions420
         }
 
         /// <summary>
-        /// Sends a packet to the specified player detailing that the specified GameObject of type LevelProp has spawned.
-        /// </summary>
-        /// <param name="userId">User to send the packet to.</param>
-        /// <param name="levelProp">LevelProp that has spawned.</param>
-        public void NotifyLevelPropSpawn(int userId, ILevelProp levelProp)
-        {
-            var levelPropSpawnPacket = new LevelPropSpawn(levelProp);
-            _packetHandlerManager.SendPacket(userId, levelPropSpawnPacket, Channel.CHL_S2C);
-        }
-
-        /// <summary>
         /// Sends a packet to the specified player detailing the order and size of both teams on the loading screen.
         /// </summary>
         /// <param name="userId">User to send the packet to.</param>
         /// <param name="players">Client info of all players in the loading screen.</param>
         public void NotifyLoadScreenInfo(int userId, List<Tuple<uint, ClientInfo>> players)
         {
-            var screenInfo = new LoadScreenInfo(players);
-            _packetHandlerManager.SendPacket(userId, screenInfo, Channel.CHL_LOADING_SCREEN);
+            uint orderSizeCurrent = 0;
+            uint chaosSizeCurrent = 0;
+
+            var teamRoster = new TeamRosterUpdate
+            {
+                TeamSizeOrder = 6,
+                TeamSizeChaos = 6
+            };
+
+            foreach (var player in players)
+            {
+                if (player.Item2.Team == TeamId.TEAM_BLUE)
+                {
+                    teamRoster.OrderMembers[orderSizeCurrent] = player.Item2.PlayerId;
+                    orderSizeCurrent++;
+                }
+                // TODO: Verify if it is ok to allow neutral
+                else
+                {
+                    teamRoster.ChaosMembers[chaosSizeCurrent] = player.Item2.PlayerId;
+                    chaosSizeCurrent++;
+                }
+            }
+
+            teamRoster.TeamSizeOrderCurrent = orderSizeCurrent;
+            teamRoster.TeamSIzeChaosCurrent = chaosSizeCurrent;
+
+            _packetHandlerManager.SendPacket(userId, teamRoster.GetBytes(), Channel.CHL_LOADING_SCREEN);
         }
 
         /// <summary>
-        /// Sends a packet to the specified player detailing skin information of all specified players on the loading screen.
+        /// Optionally sends a packet to all players who have vision of the specified Minion detailing that it has spawned.
         /// </summary>
-        /// <param name="userId">User to send the packet to.</param>
-        /// <param name="player">Player information to send.</param>
-        public void NotifyLoadScreenPlayerChampion(int userId, Tuple<uint, ClientInfo> player)
-        {
-            var loadChampion = new LoadScreenPlayerChampion(player);
-            _packetHandlerManager.SendPacket(userId, loadChampion, Channel.CHL_LOADING_SCREEN);
-        }
-
-        /// <summary>
-        /// Sends a packet to the specified player detailing skin and player name information of all soecified players on the loading screen.
-        /// </summary>
-        /// <param name="userId">User to send the packet to.</param>
-        /// <param name="player">Player information to send.</param>
-        public void NotifyLoadScreenPlayerName(int userId, Tuple<uint, ClientInfo> player)
-        {
-            var loadName = new LoadScreenPlayerName(player);
-            _packetHandlerManager.SendPacket(userId, loadName, Channel.CHL_LOADING_SCREEN);
-        }
-
-        /// <summary>
-        /// Sends a packet to all players who have vision of the specified Minion detailing that it has spawned.
-        /// </summary>
+        /// <returns>A new and fully setup SpawnMinionS2C packet.</returns>
         /// <param name="minion">Minion that is spawning.</param>
-        public void NotifyMinionSpawned(IMinion minion)
+        /// <param name="send">Whether or not to send the created packet.</param>
+        public SpawnMinionS2C NotifyMinionSpawned(IMinion minion, bool send = true)
         {
             var spawnPacket = new SpawnMinionS2C
             {
@@ -1354,7 +1349,12 @@ namespace PacketDefinitions420
                 spawnPacket.OnlyVisibleToNetID = minion.VisibilityOwner.NetId;
             }
 
-            _packetHandlerManager.BroadcastPacketVision(minion, spawnPacket.GetBytes(), Channel.CHL_S2C);
+            if (send)
+            {
+                _packetHandlerManager.BroadcastPacketVision(minion, spawnPacket.GetBytes(), Channel.CHL_S2C);
+            }
+
+            return spawnPacket;
         }
 
         /// <summary>
@@ -1456,10 +1456,27 @@ namespace PacketDefinitions420
         /// Sends a packet to all players that updates the specified unit's model.
         /// </summary>
         /// <param name="obj">AttackableUnit to update.</param>
-        public void NotifyModelUpdate(IAttackableUnit obj)
+        /// <param name="skinID">Unit's skin ID after changing model.</param>
+        /// <param name="modelOnly">Wether or not it's only the model that it's being changed(?). I don't really know what's this for</param>
+        /// <param name="overrideSpells">Wether or not the user's spells should be overriden, i assume it would be used for things like Nidalee or Elise.</param>
+        /// <param name="replaceCharacterPackage">Unknown.</param>
+        public void NotifyS2C_ChangeCharacterData(IAttackableUnit obj, uint skinID = 0, bool modelOnly = true, bool overrideSpells = false, bool replaceCharacterPackage = false)
         {
-            var mp = new UpdateModel(obj.NetId, obj.Model);
-            _packetHandlerManager.BroadcastPacket(mp, Channel.CHL_S2C);
+            var newCharData = new S2C_ChangeCharacterData
+            {
+                SenderNetID = obj.NetId,
+                Data = new CharacterStackData
+                {
+                    SkinID = skinID,
+                    SkinName = obj.Model,
+                    OverrideSpells = overrideSpells,
+                    ModelOnly = modelOnly,
+                    ReplaceCharacterPackage = replaceCharacterPackage
+                    // TODO: ID variable, acts like a character ID, used later on in PopCharacterData packet for unloading.
+                    // Changes over time, or perhaps as new objects are added, does not have large values like NetID.
+                }
+            };
+            _packetHandlerManager.BroadcastPacketVision(obj, newCharData.GetBytes(), Channel.CHL_S2C);
         }
 
         /// <summary>
@@ -1589,11 +1606,17 @@ namespace PacketDefinitions420
                 Count = (byte)b.StackCount,
                 IsHidden = b.IsHidden,
                 BuffNameHash = HashFunctions.HashString(b.Name),
-                PackageHash = b.SourceUnit.GetObjHash(), // TODO: Verify
+                PackageHash = 0,
                 RunningTime = runningTime,
                 Duration = duration,
-                CasterNetID = b.SourceUnit.NetId
+                CasterNetID = 0
             };
+            if (b.SourceUnit != null)
+            {
+                // TODO: Verify
+                addPacket.PackageHash = b.SourceUnit.GetObjHash();
+                addPacket.CasterNetID = b.SourceUnit.NetId;
+            }
             _packetHandlerManager.BroadcastPacketVision(b.TargetUnit, addPacket.GetBytes(), Channel.CHL_S2C);
         }
 
@@ -1623,11 +1646,17 @@ namespace PacketDefinitions420
                 var entry = new BuffAddGroupEntry
                 {
                     OwnerNetID = buffs[i].TargetUnit.NetId,
-                    CasterNetID = buffs[i].OriginSpell.CastInfo.Owner.NetId,
+                    CasterNetID = 0,
                     Slot = buffs[i].Slot,
                     Count = (byte)buffs[i].StackCount,
                     IsHidden = buffs[i].IsHidden
                 };
+
+                if(buffs[i].OriginSpell != null)
+                {
+                    entry.CasterNetID = buffs[i].OriginSpell.CastInfo.Owner.NetId;
+                }
+
                 entries.Add(entry);
             }
             addGroupPacket.Entries = entries;
@@ -1692,8 +1721,14 @@ namespace PacketDefinitions420
                 BuffSlot = b.Slot,
                 RunningTime = b.TimeElapsed,
                 Duration = b.Duration,
-                CasterNetID = b.OriginSpell.CastInfo.Owner.NetId
+                CasterNetID = 0
             };
+
+            if(b.OriginSpell != null)
+            {
+                replacePacket.CasterNetID = b.OriginSpell.CastInfo.Owner.NetId;
+            }
+
             _packetHandlerManager.BroadcastPacketVision(b.TargetUnit, replacePacket.GetBytes(), Channel.CHL_S2C);
         }
 
@@ -1718,9 +1753,15 @@ namespace PacketDefinitions420
                 var entry = new BuffReplaceGroupEntry
                 {
                     OwnerNetID = buffs[i].TargetUnit.NetId,
-                    CasterNetID = buffs[i].OriginSpell.CastInfo.Owner.NetId,
+                    CasterNetID = 0,
                     Slot = buffs[i].Slot
                 };
+
+                if(buffs[i].OriginSpell != null)
+                {
+                    entry.CasterNetID = buffs[i].OriginSpell.CastInfo.Owner.NetId;
+                }
+
                 entries.Add(entry);
             }
             replaceGroupPacket.Entries = entries;
@@ -1743,8 +1784,12 @@ namespace PacketDefinitions420
                 Count = (byte)b.StackCount,
                 Duration = duration,
                 RunningTime = runningTime,
-                CasterNetID = b.SourceUnit.NetId
+                CasterNetID = 0
             };
+            if (b.SourceUnit != null)
+            {
+                updatePacket.CasterNetID = b.SourceUnit.NetId;
+            }
             _packetHandlerManager.BroadcastPacketVision(b.TargetUnit, updatePacket.GetBytes(), Channel.CHL_S2C);
         }
 
@@ -1769,10 +1814,15 @@ namespace PacketDefinitions420
                 var entry = new BuffUpdateCountGroupEntry
                 {
                     OwnerNetID = buffs[i].TargetUnit.NetId,
-                    CasterNetID = buffs[i].OriginSpell.CastInfo.Owner.NetId,
+                    CasterNetID = 0,
                     BuffSlot = buffs[i].Slot,
                     Count = (byte)buffs[i].StackCount
                 };
+
+                if(buffs[i].OriginSpell != null)
+                {
+                    entry.CasterNetID = buffs[i].OriginSpell.CastInfo.Owner.NetId;
+                }
                 entries.Add(entry);
             }
             updateGroupPacket.Entries = entries;
@@ -1902,6 +1952,31 @@ namespace PacketDefinitions420
         }
 
         /// <summary>
+        /// Sends a packet to all players that a champion has died and calls a death timer update packet.
+        /// </summary>
+        /// <param name="champion">Champion that died.</param>
+        /// <param name="killer">Unit that killed the Champion.</param>
+        /// <param name="goldFromKill">Amount of gold the killer received.</param>
+        public void NotifyNPC_Hero_Die(IDeathData deathData)
+        {
+            NotifyS2C_UpdateDeathTimer(deathData.Unit as IChampion);
+
+            var cd = new NPC_Hero_Die
+            {
+                SenderNetID = deathData.Unit.NetId,
+                DeathData = new DeathData
+                {
+                    KillerNetID = deathData.Killer.NetId,
+                    DieType = deathData.DieType,
+                    DamageType = (byte)deathData.DamageType,
+                    DamageSource = (byte)deathData.DamageSource,
+                    BecomeZombie = deathData.BecomeZombie,
+                    DeathDuration = (deathData.Unit as IChampion).RespawnTimer / 1000f
+                }
+            };
+            _packetHandlerManager.BroadcastPacket(cd.GetBytes(), Channel.CHL_S2C);
+        }
+        /// <summary>
         /// Sends a packet to all players with vision of the specified AttackableUnit detailing that the attacker has abrubtly stopped their attack (can be a spell or auto attack, although internally AAs are also spells).
         /// </summary>
         /// <param name="attacker">AttackableUnit that stopped their auto attack.</param>
@@ -1945,7 +2020,7 @@ namespace PacketDefinitions420
                 // TODO: Typo :(
                 AveliablePoints = c.SkillPoints
             };
-
+            
             _packetHandlerManager.BroadcastPacketVision(c, levelUp.GetBytes(), Channel.CHL_S2C);
         }
 
@@ -2031,20 +2106,6 @@ namespace PacketDefinitions420
         }
 
         /// <summary>
-        /// Sends a packet to the specified client's team detailing a map ping.
-        /// </summary>
-        /// <param name="client">Info of the client that initiated the ping.</param>
-        /// <param name="pos">2D top-down position of the ping.</param>
-        /// <param name="targetNetId">Target of the ping (if applicable).</param>
-        /// <param name="type">Type of ping; COMMAND/ATTACK/DANGER/MISSING/ONMYWAY/FALLBACK/REQUESTHELP. *NOTE*: Not all ping types are supported yet.</param>
-        public void NotifyPing(ClientInfo client, Vector2 pos, int targetNetId, Pings type)
-        {
-            var ping = new AttentionPingRequest(pos.X, pos.Y, targetNetId, type);
-            var response = new AttentionPingResponse(client, ping);
-            _packetHandlerManager.BroadcastPacketTeam(client.Team, response, Channel.CHL_S2C);
-        }
-
-        /// <summary>
         /// Sends a packet to all players detailing the specified client's loading screen progress.
         /// </summary>
         /// <param name="request">Info of the target client given via the client who requested loading screen progress.</param>
@@ -2077,6 +2138,21 @@ namespace PacketDefinitions420
         {
             var response = new QueryStatus();
             _packetHandlerManager.SendPacket(userId, response, Channel.CHL_S2C);
+        }
+
+        /// <summary>
+        /// Sends a packet to all players that a champion has respawned.
+        /// </summary>
+        /// <param name="c">Champion that respawned.</param>
+        public void NotifyHeroReincarnateAlive(IChampion c, float parToRestore)
+        {
+            var cr = new HeroReincarnateAlive
+            {
+                SenderNetID = c.NetId,
+                Position = new Vector2(c.Position.X, c.Position.Y),
+                PARValue = parToRestore
+            };
+            _packetHandlerManager.BroadcastPacket(cr.GetBytes(), Channel.CHL_S2C);
         }
 
         /// <summary>
@@ -2114,6 +2190,20 @@ namespace PacketDefinitions420
         }
 
         /// <summary>
+        /// Sends a packet to all players detailing that the specified region was removed.
+        /// </summary>
+        /// <param name="region">Region to remove.</param>
+        public void NotifyRemoveRegion(IRegion region)
+        {
+            var removeRegion = new RemoveRegion()
+            {
+                RegionNetID = region.NetId
+            };
+
+            _packetHandlerManager.BroadcastPacket(removeRegion.GetBytes(), Channel.CHL_S2C);
+        }
+
+        /// <summary>
         /// Sends a packet to the specified player detailing that the highlight of the specified GameObject was removed.
         /// </summary>
         /// <param name="userId">User to send the packet to.</param>
@@ -2126,6 +2216,41 @@ namespace PacketDefinitions420
                 NetID = unit.NetId
             };
             _packetHandlerManager.SendPacket(userId, highlightPacket.GetBytes(), Channel.CHL_S2C);
+        }
+
+        /// <summary>
+        /// Sends a packet to the specified user detailing skin and player name information of the specified player on the loading screen.
+        /// </summary>
+        /// <param name="userId">User to send the packet to.</param>
+        /// <param name="player">Player information to send.</param>
+        public void NotifyRequestRename(int userId, Tuple<uint, ClientInfo> player)
+        {
+            var loadName = new RequestRename
+            {
+                PlayerID = player.Item2.PlayerId,
+                PlayerName = player.Item2.Name,
+                // Most packets show a large default value (in place of what you would expect to be 0)
+                // Seems to be randomized per-game and used for every RequestRename packet during that game.
+                // So, using this SkinNo may be incorrect.
+                SkinID = player.Item2.SkinNo,
+            };
+            _packetHandlerManager.SendPacket(userId, loadName.GetBytes(), Channel.CHL_LOADING_SCREEN);
+        }
+
+        /// <summary>
+        /// Sends a packet to the specified user detailing skin information of the specified player on the loading screen.
+        /// </summary>
+        /// <param name="userId">User to send the packet to.</param>
+        /// <param name="player">Player information to send.</param>
+        public void NotifyRequestReskin(int userId, Tuple<uint, ClientInfo> player)
+        {
+            var loadChampion = new RequestReskin
+            {
+                PlayerID = player.Item2.PlayerId,
+                SkinID = player.Item2.SkinNo,
+                SkinName = player.Item2.Champion.Model
+            };
+            _packetHandlerManager.SendPacket(userId, loadChampion.GetBytes(), Channel.CHL_LOADING_SCREEN);
         }
 
         /// <summary>
@@ -2254,6 +2379,83 @@ namespace PacketDefinitions420
         }
 
         /// <summary>
+        /// Sends a packet to either all players or the specified player detailing that the specified LaneTurret has spawned.
+        /// </summary>
+        /// <param name="turret">LaneTurret that spawned.</param>
+        /// <param name="userId">User to send the packet to.</param>
+        public void NotifyS2C_CreateTurret(ILaneTurret turret, int userId = 0)
+        {
+            var createTurret = new S2C_CreateTurret
+            {
+                SenderNetID = turret.NetId,
+                NetID = turret.NetId,
+                // Verify, taken from packets (does not seem to change)
+                NetNodeID = 64,
+                Name = turret.Name,
+                IsTargetable = turret.Stats.IsTargetable,
+                IsTargetableToTeamSpellFlags = (uint)turret.Stats.IsTargetableToTeam
+            };
+
+            if (userId != 0)
+            {
+                _packetHandlerManager.SendPacket(userId, createTurret.GetBytes(), Channel.CHL_S2C);
+                return;
+            }
+
+            _packetHandlerManager.BroadcastPacket(createTurret.GetBytes(), Channel.CHL_S2C);
+        }
+
+        /// <summary>
+        /// Sends a side bar tip to the specified player (ex: quest tips).
+        /// </summary>
+        /// <param name="userId">User to send the packet to.</param>
+        /// <param name="title">Title of the tip.</param>
+        /// <param name="text">Description text of the tip.</param>
+        /// <param name="imagePath">Path to an image that will be embedded in the tip.</param>
+        /// <param name="tipCommand">Action suggestion(? unconfirmed).</param>
+        /// <param name="playerNetId">NetID to send the packet to.</param>
+        /// <param name="targetNetId">NetID of the target referenced by the tip.</param>
+        /// TODO: tipCommand should be a lib/core enum that gets translated into a league version specific packet enum as it may change over time.
+        public void NotifyS2C_HandleTipUpdatep(int userId, string title, string text, string imagePath, byte tipCommand, uint playerNetId, uint targetNetId)
+        {
+            var packet = new S2C_HandleTipUpdate
+            {
+                SenderNetID = playerNetId,
+                TipCommand = tipCommand,
+                TipImagePath = imagePath,
+                TipName = title,
+                TipOther = text,
+                TipID = targetNetId
+            };
+            _packetHandlerManager.SendPacket(userId, packet.GetBytes(), Channel.CHL_S2C);
+        }
+
+        /// <summary>
+        /// Sends a packet to the specified client's team detailing a map ping.
+        /// </summary>
+        /// <param name="client">Info of the client that initiated the ping.</param>
+        /// <param name="pos">2D top-down position of the ping.</param>
+        /// <param name="targetNetId">Target of the ping (if applicable).</param>
+        /// <param name="type">Type of ping; COMMAND/ATTACK/DANGER/MISSING/ONMYWAY/FALLBACK/REQUESTHELP. *NOTE*: Not all ping types are supported yet.</param>
+        public void NotifyS2C_MapPing(ClientInfo client, Vector2 pos, uint targetNetId, Pings type)
+        {
+            var response = new S2C_MapPing
+            {
+                // TODO: Verify if this is correct. Usually 0.
+                SenderNetID = client.Champion.NetId,
+                SourceNetID = client.Champion.NetId,
+                TargetNetID = targetNetId,
+                PingCategory = (byte)type,
+                Position = pos,
+                //Unhardcode these bools later
+                PlayAudio = true,
+                ShowChat = true,
+                PingThrottled = false,
+                PlayVO = true
+            };
+            _packetHandlerManager.BroadcastPacketTeam(client.Team, response.GetBytes(), Channel.CHL_S2C);
+        }
+        /// <summary>
         /// Sends a packet to all players detailing that the specified unit has been killed by the specified killer.
         /// </summary>
         /// <param name="data">Data of the death.</param>
@@ -2298,6 +2500,18 @@ namespace PacketDefinitions420
             {
                 _packetHandlerManager.SendPacket(userId, enterTeamVis.GetBytes(), Channel.CHL_S2C);
             }
+        }
+
+        /// <summary>
+        /// Sends a packet to all players that announces a specified message (ex: "Minions have spawned.")
+        /// </summary>
+        /// <param name="eventId">Id of the event to happen.</param>
+        /// <param name="sourceNetID">Not yet know it's use.</param>
+        public void NotifyS2C_OnEventWorld(int mapId, EventID messageId, bool isMapSpecific)
+        {
+            //Still has to be updated to LeaguePackets
+            var announce = new Announce(messageId, isMapSpecific ? mapId : 0);
+            _packetHandlerManager.BroadcastPacket(announce, Channel.CHL_S2C);
         }
 
         /// <summary>
@@ -2530,6 +2744,16 @@ namespace PacketDefinitions420
         }
 
         /// <summary>
+        /// Sends a packet to all players updating a champion's death timer.
+        /// </summary>
+        /// <param name="champion">Champion that died.</param>
+        public void NotifyS2C_UpdateDeathTimer(IChampion champion)
+        {
+            var cdt = new S2C_UpdateDeathTimer { SenderNetID = champion.NetId, DeathDuration = champion.RespawnTimer / 1000f };
+            _packetHandlerManager.BroadcastPacket(cdt.GetBytes(), Channel.CHL_S2C);
+        }
+
+        /// <summary>
         /// Sends a packet to the specified user detailing that the specified spell's toggle state has been updated.
         /// </summary>
         /// <param name="userId">User to send the packet to.</param>
@@ -2632,28 +2856,61 @@ namespace PacketDefinitions420
         /// Calls for the appropriate spawn packet to be sent given the specified GameObject's type and calls for a vision packet to be sent for the specified GameObject.
         /// </summary>
         /// <param name="o">GameObject that has spawned.</param>
-        public void NotifySpawn(IGameObject o)
+        /// <param name="userId">UserId to send the packet to.</param>
+        /// <param name="doVision">Whether or not to package the packets into a vision packet.</param>
+        public void NotifySpawn(IGameObject o, int userId = 0, bool doVision = true)
         {
+            var visionPackets = new List<GamePacket>();
+
             switch (o)
             {
+                case ISpellMissile missile:
+                    NotifyMissileReplication(missile);
+                    break;
                 case ILaneMinion m:
                     NotifyLaneMinionSpawned(m);
                     break;
                 case IChampion c:
-                    NotifyEnterVisibilityClient(c, isChampion: true);
+                    bool ignoreVis = true;
+                    if (userId == 0)
+                    {
+                        ignoreVis = false;
+                    }
+                    NotifyEnterVisibilityClient(c, userId, false, false, ignoreVis);
                     return;
                 case IMonster monster:
                     NotifyMonsterSpawned(monster);
                     break;
                 case IMinion minion:
-                    NotifyMinionSpawned(minion);
+                    visionPackets.Add(NotifyMinionSpawned(minion, false));
                     break;
                 case IAzirTurret azirTurret:
                     NotifyAzirTurretSpawned(azirTurret);
                     break;
+                case ILevelProp prop:
+                    NotifySpawnLevelPropS2C(prop);
+                    break;
+                case IParticle particle:
+                    NotifyFXCreateGroup(particle, userId);
+                    break;
+                case IRegion region:
+                    NotifyAddRegion(region);
+                    return;
             }
 
-            NotifyEnterVisibilityClient(o);
+            if (o.IsVisibleByTeam(TeamId.TEAM_BLUE))
+            {
+                NotifyS2C_OnEnterTeamVisibility(o, TeamId.TEAM_BLUE);
+            }
+            if (o.IsVisibleByTeam(TeamId.TEAM_PURPLE))
+            {
+                NotifyS2C_OnEnterTeamVisibility(o, TeamId.TEAM_PURPLE);
+            }
+
+            if (doVision)
+            {
+                NotifyEnterVisibilityClient(o, userId, packets: visionPackets);
+            }
         }
 
         /// <summary>
@@ -2664,6 +2921,40 @@ namespace PacketDefinitions420
         {
             var endSpawnPacket = new S2C_EndSpawn();
             _packetHandlerManager.SendPacket(userId, endSpawnPacket.GetBytes(), Channel.CHL_S2C);
+        }
+
+        /// <summary>
+        /// Sends a packet to either all players or the specified player detailing that the specified GameObject of type LevelProp has spawned.
+        /// </summary>
+        /// <param name="levelProp">LevelProp that has spawned.</param>
+        /// <param name="userId">User to send the packet to.</param>
+        public void NotifySpawnLevelPropS2C(ILevelProp levelProp, int userId = 0)
+        {
+            var spawnPacket = new SpawnLevelPropS2C
+            {
+                NetID = levelProp.NetId,
+                NetNodeID = levelProp.NetNodeID,
+                SkinID = levelProp.SkinID,
+                Position = new Vector3(levelProp.Position.X, levelProp.Height, levelProp.Position.Y),
+                FacingDirection = levelProp.Direction,
+                PositionOffset = levelProp.PositionOffset,
+                Scale = levelProp.Scale,
+                TeamID = (ushort)levelProp.Team,
+                SkillLevel = levelProp.SkillLevel,
+                Rank = levelProp.Rank,
+                Type = levelProp.Type,
+                Name = levelProp.Name,
+                PropName = levelProp.Model
+            };
+
+
+            if (userId != 0)
+            {
+                _packetHandlerManager.SendPacket(userId, spawnPacket.GetBytes(), Channel.CHL_S2C);
+                return;
+            }
+
+            _packetHandlerManager.BroadcastPacket(spawnPacket.GetBytes(), Channel.CHL_S2C);
         }
 
         /// <summary>
@@ -2732,8 +3023,92 @@ namespace PacketDefinitions420
         /// <param name="mapId">ID of the map being played.</param>
         public void NotifySynchVersion(int userId, List<Tuple<uint, ClientInfo>> players, string version, string gameMode, int mapId)
         {
-            var response = new SynchVersionResponse(players, version, "CLASSIC", mapId);
-            _packetHandlerManager.SendPacket(userId, response, Channel.CHL_S2C);
+            var syncVersion = new SynchVersionS2C
+            {
+                // TODO: Unhardcode all booleans below
+                VersionMatches = true,
+                // Logs match to file.
+                WriteToClientFile = false,
+                // Whether or not this game is considered a match.
+                MatchedGame = true,
+                // Unknown
+                DradisInit = false,
+
+                MapToLoad = mapId,
+                VersionString = version,
+                MapMode = gameMode,
+                // TODO: Unhardcode all below
+                PlatformID = "NA1",
+                MutatorsNum = 0,
+                OrderRankedTeamName = "",
+                OrderRankedTeamTag = "",
+                ChaosRankedTeamName = "",
+                ChaosRankedTeamTag = "",
+                // site.com
+                MetricsServerWebAddress = "",
+                // /messages
+                MetricsServerWebPath = "",
+                // 80
+                MetricsServerPort = 0,
+                // site.com
+                DradisProdAddress = "",
+                // /messages
+                DradisProdResource = "",
+                // 80
+                DradisProdPort = 0,
+                // test-lb-#.us-west-#.elb.someaws.com
+                DradisTestAddress = "",
+                // /messages
+                DradisTestResource = "",
+                // 80
+                DradisTestPort = 0,
+                // TODO: Create a new TipConfig class and use it here (basically, unhardcode this).
+                TipConfig = new TipConfig
+                {
+                    TipID = 34,
+                    ColorID = 1,
+                    DurationID = 1,
+                    Flags = 15
+                },
+                // Turret Range Indicators and others (taken from Map11 replay)
+                GameFeatures = 662166610
+            };
+
+            for (int i = 0; i < players.Count; i++)
+            {
+                syncVersion.PlayerInfo[i] = new PlayerLoadInfo
+                {
+                    PlayerID = players[i].Item2.PlayerId,
+                    // TODO: Change to players[i].Item2.SummonerLevel
+                    SummonorLevel = 30,
+                    SummonorSpell1 = HashString(players[i].Item2.SummonerSkills[0]),
+                    SummonorSpell2 = HashString(players[i].Item2.SummonerSkills[1]),
+                    // TODO
+                    Bitfield = 0,
+                    TeamId = (uint)players[i].Item2.Team,
+                    // TODO: Change to players[i].Item2.Champion.Model + "Bot" (if players[i].Item2.IsBot)
+                    BotName = "",
+                    // TODO: Change to players[i].Item2.Champion.Model (if players[i].Item2.IsBot)
+                    BotSkinName = "",
+                    EloRanking = players[i].Item2.Rank,
+                    // TODO: Change to players[i].Item2.SkinNo (if players[i].Item2.IsBot)
+                    BotSkinID = 0,
+                    // TODO: Change to players[i].Item2.BotDifficulty (if players[i].Item2.IsBot)
+                    BotDifficulty = 0,
+                    ProfileIconId = players[i].Item2.Icon,
+                    // TODO: Unhardcode these two.
+                    AllyBadgeID = 0,
+                    EnemyBadgeID = 0
+                };
+            }
+
+            // TODO: syncVersion.Mutators
+
+            // TODO: syncVersion.DisabledItems
+
+            // TODO: syncVersion.EnabledDradisMessages
+
+            _packetHandlerManager.SendPacket(userId, syncVersion.GetBytes(), Channel.CHL_S2C);
         }
 
         /// <summary>
@@ -2835,16 +3210,43 @@ namespace PacketDefinitions420
         }
 
         /// <summary>
-        /// Sends a packet to the specified player detailing that the specified LaneTurret has spawned.
+        /// Sends a packet to all players that the specified Champion has gained the specified amount of experience.
         /// </summary>
-        /// <param name="userId">User to send the packet to.</param>
-        /// <param name="turret">LaneTurret that spawned.</param>
-        public void NotifyTurretSpawn(int userId, ILaneTurret turret)
+        /// <param name="champion">Champion that gained the experience.</param>
+        /// <param name="experience">Amount of experience gained.</param>
+        /// TODO: Verify if sending to all players is correct.
+        public void NotifyUnitAddEXP(IChampion champion, float experience)
         {
-            var turretSpawn = new TurretSpawn(turret);
-            _packetHandlerManager.SendPacket(userId, turretSpawn, Channel.CHL_S2C);
+            var xp = new UnitAddEXP
+            {
+                // TODO: Verify if this is correct. Usually 0.
+                SenderNetID = champion.NetId,
+                TargetNetID = champion.NetId,
+                ExpAmmount = experience
+            };
+            // TODO: Verify if we should change to BroadcastPacketVision
+            _packetHandlerManager.BroadcastPacket(xp.GetBytes(), Channel.CHL_S2C);
         }
 
+        /// <summary>
+        /// Sends a packet to all players that the specified Champion has killed a specified player and received a specified amount of gold.
+        /// </summary>
+        /// <param name="c">Champion that killed a unit.</param>
+        /// <param name="died">AttackableUnit that died to the Champion.</param>
+        /// <param name="gold">Amount of gold the Champion gained for the kill.</param>
+        /// TODO: Only use BroadcastPacket when the unit that died is a Champion.
+        public void NotifyUnitAddGold(IChampion c, IAttackableUnit died, float gold)
+        {
+            // TODO: Verify if this handles self-gold properly.
+            var ag = new UnitAddGold
+            {
+                SenderNetID = died.NetId,
+                TargetNetID = c.NetId,
+                SourceNetID = died.NetId,
+                GoldAmmount = gold
+            };
+            _packetHandlerManager.SendPacket((int)c.GetPlayerId(), ag.GetBytes(), Channel.CHL_S2C);
+        }
         /// <summary>
         /// Sends a packet to all players detailing that the specified event has occurred.
         /// </summary>

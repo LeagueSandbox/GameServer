@@ -136,6 +136,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
             ArmorPenetration.ApplyStatModifier(modifier.ArmorPenetration);
             AttackDamage.ApplyStatModifier(modifier.AttackDamage);
             AttackSpeedMultiplier.ApplyStatModifier(modifier.AttackSpeed);
+            CooldownReduction.ApplyStatModifier(modifier.CooldownReduction);
             CriticalChance.ApplyStatModifier(modifier.CriticalChance);
             CriticalDamage.ApplyStatModifier(modifier.CriticalDamage);
             GoldPerSecond.ApplyStatModifier(modifier.GoldPerSecond);
@@ -160,6 +161,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
             ArmorPenetration.RemoveStatModifier(modifier.ArmorPenetration);
             AttackDamage.RemoveStatModifier(modifier.AttackDamage);
             AttackSpeedMultiplier.RemoveStatModifier(modifier.AttackSpeed);
+            CooldownReduction.RemoveStatModifier(modifier.CooldownReduction);
             CriticalChance.RemoveStatModifier(modifier.CriticalChance);
             CriticalDamage.RemoveStatModifier(modifier.CriticalDamage);
             GoldPerSecond.RemoveStatModifier(modifier.GoldPerSecond);
@@ -269,6 +271,35 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
         public bool GetActionState(ActionState state)
         {
             return ActionState.HasFlag(state);
+        }
+
+        public float GetPostMitigationDamage(float damage, DamageType type, IAttackableUnit attacker)
+        {
+            float defense = 0;
+            switch (type)
+            {
+                case DamageType.DAMAGE_TYPE_PHYSICAL:
+                    defense = Armor.Total;
+                    defense = (1 - attacker.Stats.ArmorPenetration.PercentBonus) * defense -
+                              attacker.Stats.ArmorPenetration.FlatBonus;
+
+                    break;
+                case DamageType.DAMAGE_TYPE_MAGICAL:
+                    defense = MagicResist.Total;
+                    defense = (1 - attacker.Stats.MagicPenetration.PercentBonus) * defense -
+                              attacker.Stats.MagicPenetration.FlatBonus;
+                    break;
+                case DamageType.DAMAGE_TYPE_TRUE:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(type), type, null);
+            }
+            if (damage < 0f)
+            {
+                damage = 0f;
+            }
+            damage = defense >= 0 ? 100 / (100 + defense) * damage : (2 - 100 / (100 - defense)) * damage;
+            return damage;
         }
 
         public void SetActionState(ActionState state, bool enabled)

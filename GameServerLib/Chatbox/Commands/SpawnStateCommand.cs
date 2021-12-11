@@ -22,7 +22,7 @@
             }
             else
             {
-                Game.Map.MapProperties.SpawnEnabled = input != 0;
+                Game.Map.MapScript.MapScriptMetadata.MinionSpawnEnabled = input != 0;
             }
         }
     }

@@ -6,6 +6,7 @@
         IStatModifier HealthRegeneration { get; }
         IStatModifier AttackDamage { get; }
         IStatModifier AbilityPower { get; }
+        IStatModifier CooldownReduction { get; }
         IStatModifier CriticalChance { get; }
         IStatModifier CriticalDamage { get; }
         IStatModifier Armor { get; }

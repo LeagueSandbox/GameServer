@@ -49,6 +49,7 @@
     ],
     "game": {
         "map": 1,
+        "gameMode": "CLASSIC",
         "dataPackage": "LeagueSandbox-Scripts"
     },
     "gameInfo": {

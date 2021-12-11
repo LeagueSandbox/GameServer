@@ -15,7 +15,8 @@ namespace GameServerCore.Domain.GameObjects
         // basic
         void UpdateSkin(int skinNo);
         uint GetPlayerId();
-        bool LevelUp();
+        void AddExperience(float experience);
+        void LevelUp();
         void Recall();
         void Respawn();
         bool OnDisconnect();

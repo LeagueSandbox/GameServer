@@ -480,6 +480,31 @@ namespace LeagueSandbox.GameServer.API
         }
 
         /// <summary>
+        /// Returns a new list of all players in the game.
+        /// Players are designated as clients, this includes bot champions.
+        /// Currently only a single champion is designated to each player.
+        /// </summary>
+        /// <returns></returns>
+        public static List<IChampion> GetAllPlayers()
+        {
+            var toreturn = new List<IChampion>();
+            foreach (var player in _game.PlayerManager.GetPlayers())
+            {
+                toreturn.Add(player.Item2.Champion);
+            }
+            return toreturn;
+        }
+        
+        /// <summary>
+        /// Returns a new list of all champions in the game.
+        /// </summary>
+        /// <returns></returns>
+        public static List<IChampion> GetAllChampions()
+        {
+            return _game.ObjectManager.GetAllChampions();
+        }
+
+        /// <summary>
         /// Instantly cancels any dashes the specified unit is performing.
         /// </summary>
         /// <param name="unit">Unit to stop dashing.</param>
