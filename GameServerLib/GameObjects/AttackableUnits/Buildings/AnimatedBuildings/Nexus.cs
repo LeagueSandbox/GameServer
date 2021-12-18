@@ -23,12 +23,15 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.Buildings.Animate
 
         public override void Die(IDeathData data)
         {
-            //On SR the Z value was hardcoded to 188 for blue, 110 Purple, but it seemed fine with for both sides with only 110
-            //Double check from where those values came from and if they're accurate.
-            //I'll use 110 as default here just to keep it simple for now.
-            var cameraPosition = new Vector3 (this.Position.X, this.Position.Y, 110);
+            var players = _game.PlayerManager.GetPlayers();
             _game.Stop();
-            _game.PacketNotifier.NotifyGameEnd(cameraPosition, this, _game.PlayerManager.GetPlayers());
+            _game.PacketNotifier.NotifyBuilding_Die(data);
+            _game.PacketNotifier.NotifyS2C_EndGame(this, 5000.0f);
+            foreach(var player in players)
+            {
+                _game.PacketNotifier.NotifyS2C_DisableHUDForEndOfGame(player);
+                _game.PacketNotifier.NotifyS2C_MoveCameraToPoint(player, Vector3.Zero, new Vector3(this.Position.X, this.GetHeight(), this.Position.Y), 3.0f);
+            }
             _game.SetGameToExit();
         }
 

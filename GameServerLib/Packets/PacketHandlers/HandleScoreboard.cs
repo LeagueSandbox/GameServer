@@ -24,7 +24,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             _logger.Debug($"Player {_playerManager.GetPeerInfo(userId).Name} has looked at the scoreboard.");
             // Send to that player stats packet
             var champion = _playerManager.GetPeerInfo(userId).Champion;
-             _game.PacketNotifier.NotifyPlayerStats(champion);
+             _game.PacketNotifier.NotifyS2C_HeroStats(champion);
             return true;
         }
     }

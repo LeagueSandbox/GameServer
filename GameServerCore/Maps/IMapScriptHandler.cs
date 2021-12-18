@@ -55,6 +55,10 @@ namespace GameServerCore.Maps
         /// </summary>
         Dictionary<TeamId, IFountain> FountainList { get; }
         /// <summary>
+        /// List of map Shops
+        /// </summary>
+        Dictionary<TeamId, IGameObject> ShopList { get; set; }
+        /// <summary>
         /// List of LaneMinion's spawn points
         /// </summary>
         Dictionary<string, IMapObject> SpawnBarracks { get; }

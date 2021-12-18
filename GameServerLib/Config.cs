@@ -221,7 +221,10 @@ public class MapData : IMapData
             {
                 type = GameObjectTypes.InfoPoint;
             }
-
+            else if (Name.Contains("Shop"))
+            {
+                type = GameObjectTypes.ObjBuilding_Shop;
+            }
             return type;
         }
 
@@ -229,11 +232,11 @@ public class MapData : IMapData
         {
             var team = TeamId.TEAM_NEUTRAL;
 
-            if (Name.Contains("T1") || Name.Contains("Order"))
+            if (Name.Contains("T1") || Name.ToLower().Contains("order"))
             {
                 team = TeamId.TEAM_BLUE;
             }
-            else if (Name.Contains("T2") || Name.Contains("Chaos"))
+            else if (Name.Contains("T2") || Name.ToLower().Contains("chaos"))
             {
                 team = TeamId.TEAM_PURPLE;
             }

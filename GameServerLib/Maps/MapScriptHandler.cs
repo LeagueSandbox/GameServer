@@ -71,6 +71,7 @@ namespace LeagueSandbox.GameServer.Maps
         public Dictionary<TeamId, Dictionary<LaneID, List<IInhibitor>>> InhibitorList { get; set; }
         public Dictionary<TeamId, Dictionary<LaneID, List<ILaneTurret>>> TurretList { get; set; }
         public List<IMapObject> InfoPoints { get; set; } = new List<IMapObject>();
+        public Dictionary<TeamId, IGameObject> ShopList { get; set; } = new Dictionary<TeamId, IGameObject>();
         public Dictionary<LaneID, List<Vector2>> BlueMinionPathing;
         public Dictionary<LaneID, List<Vector2>> PurpleMinionPathing;
 
@@ -260,6 +261,10 @@ namespace LeagueSandbox.GameServer.Maps
                 else if (objectType == GameObjectTypes.ObjBuilding_NavPoint)
                 {
                     BlueMinionPathing[lane].Add(new Vector2(mapObject.CentralPoint.X, mapObject.CentralPoint.Z));
+                }
+                else if (objectType == GameObjectTypes.ObjBuilding_Shop)
+                {
+                    ShopList.Add(teamId, new GameObject(_game, position, netId: Crc32Algorithm.Compute(Encoding.UTF8.GetBytes(mapObject.Name)) | 0xFF000000, team: teamId));
                 }
             }
 

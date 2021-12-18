@@ -20,8 +20,9 @@ namespace MapScripts.Map12
             StartingGold = 1375.0f,
             GoldPerSecond = 5.0f,
             //TODO: Figure out what to do with the recall spell, if ARAM has an special item or just Seals it
-            RecallSpellItemId = 2001,
-            EnableFountainHealing = false
+            RecallSpellItemId = 2007,
+            EnableFountainHealing = false,
+            EnableBuildingProtection = true
         };
         public virtual IGlobalData GlobalData { get; set; } = new GlobalData();
         public bool HasFirstBloodHappened { get; set; } = false;
