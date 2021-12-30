@@ -6,6 +6,7 @@ using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
 using GameServerCore.Maps;
 using GameServerCore.Scripting.CSharp;
+using LeagueSandbox.GameServer.API;
 using LeagueSandbox.GameServer.Content;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 
@@ -222,6 +223,10 @@ namespace MapScripts.Map10
         }
         public void OnMatchStart()
         {
+            foreach (var nexus in _map.NexusList)
+            {
+                ApiEventManager.OnDeath.AddListener(this, nexus, OnNexusDeath, true);
+            }
         }
 
         //This function gets executed every server tick
@@ -229,6 +234,11 @@ namespace MapScripts.Map10
         {
         }
 
+        public void OnNexusDeath(IDeathData deathaData)
+        {
+            var nexus = deathaData.Unit;
+            _map.EndGame(nexus.Team, new Vector3(nexus.Position.X, nexus.GetHeight(), nexus.Position.Y), deathData: deathaData);
+        }
 
         public float GetGoldFor(IAttackableUnit u)
         {

@@ -8,6 +8,7 @@ using GameServerCore.Maps;
 using LeagueSandbox.GameServer.Content;
 using GameServerCore.Scripting.CSharp;
 using LeagueSandbox.GameServer.Scripting.CSharp;
+using LeagueSandbox.GameServer.API;
 
 namespace MapScripts.Map1
 {
@@ -257,6 +258,7 @@ namespace MapScripts.Map1
             map.AddAnnouncement(NextSpawnTime - 30 * 1000, EventID.OnStartGameMessage2, true);
             // Minions have spawned
             map.AddAnnouncement(NextSpawnTime, EventID.OnMinionsSpawn, false);
+
             //Map props
             _map.AddLevelProp("LevelProp_Yonkey", "Yonkey", new Vector2(12465.0f, 14422.257f), 101.0f, new Vector3(0.0f, 66.0f, 0.0f), new Vector3(-33.3334f, 122.2222f, -133.3333f), Vector3.One);
             _map.AddLevelProp("LevelProp_Yonkey1", "Yonkey", new Vector2(-76.0f, 1769.1589f), 94.0f, new Vector3(0.0f, 30.0f, 0.0f), new Vector3(0.0f, -11.1111f, -22.2222f), Vector3.One);
@@ -265,7 +267,12 @@ namespace MapScripts.Map1
         }
         public virtual void OnMatchStart()
         {
+            foreach(var nexus in _map.NexusList)
+            {
+                ApiEventManager.OnDeath.AddListener(this, nexus, OnNexusDeath, true);
+            }
         }
+
         //This function gets executed every server tick
         public void Update(float diff)
         {
@@ -275,6 +282,11 @@ namespace MapScripts.Map1
             }
         }
 
+        public void OnNexusDeath(IDeathData deathaData)
+        {
+            var nexus = deathaData.Unit;
+            _map.EndGame(nexus.Team, new Vector3(nexus.Position.X, nexus.GetHeight(), nexus.Position.Y), deathData: deathaData);
+        }
 
         public float GetGoldFor(IAttackableUnit u)
         {

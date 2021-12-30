@@ -24,18 +24,18 @@ namespace Spells
             {
                 if (c.SkinID == 0)
                 {
-                    pcastname = "Aatrox_Base_R_Activate.troy";
-                    phitname = "Aatrox_Base_R_active_hit_tar.troy";
+                    pcastname = "Aatrox_Base_R_Activate";
+                    phitname = "Aatrox_Base_R_active_hit_tar";
                 }
                 else if (c.SkinID == 1)
                 {
-                    pcastname = "Aatrox_Skin01_R_Activate.troy";
-                    phitname = "Aatrox_Skin01_R_active_hit_tar.troy";
+                    pcastname = "Aatrox_Skin01_R_Activate";
+                    phitname = "Aatrox_Skin01_R_active_hit_tar";
                 }
                 else if (c.SkinID == 2)
                 {
-                    pcastname = "Aatrox_Skin02_R_Activate.troy";
-                    phitname = "Aatrox_Skin02_R_active_hit_tar.troy";
+                    pcastname = "Aatrox_Skin02_R_Activate";
+                    phitname = "Aatrox_Skin02_R_active_hit_tar";
                 }
             }
         }

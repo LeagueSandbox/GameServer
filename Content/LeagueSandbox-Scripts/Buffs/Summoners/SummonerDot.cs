@@ -28,7 +28,7 @@ namespace Buffs
             Owner = ownerSpell.CastInfo.Owner;
             Target = unit;
             damage = 10 + Owner.Stats.Level * 4;
-            ignite = AddParticleTarget(Owner, unit, "Global_SS_Ignite.troy", unit, buff.Duration, bone: "C_BUFFBONE_GLB_CHEST_LOC");
+            ignite = AddParticleTarget(Owner, unit, "Global_SS_Ignite", unit, buff.Duration, bone: "C_BUFFBONE_GLB_CHEST_LOC");
         }
 
         public void OnDeactivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)

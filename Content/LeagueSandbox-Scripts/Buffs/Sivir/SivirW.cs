@@ -25,7 +25,7 @@ namespace Buffs
         public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
             thisBuff = buff;
-            pbuff = AddParticleTarget(ownerSpell.CastInfo.Owner, unit, "Sivir_Base_W_Buff.troy", unit, buff.Duration, bone: "BUFFBONE_CSTM_WEAPON_1");
+            pbuff = AddParticleTarget(ownerSpell.CastInfo.Owner, unit, "Sivir_Base_W_Buff", unit, buff.Duration, bone: "BUFFBONE_CSTM_WEAPON_1");
 
             if (unit is IObjAiBase ai)
             {

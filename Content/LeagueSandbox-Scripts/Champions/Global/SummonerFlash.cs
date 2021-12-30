@@ -45,8 +45,8 @@ namespace Spells
             owner.FaceDirection(new Vector3(to.X, 0.0f, to.Y));
             owner.StopChanneling(ChannelingStopCondition.Cancel, ChannelingStopSource.Move);
 
-            AddParticle(owner, null, "global_ss_flash.troy", owner.Position);
-            AddParticleTarget(owner, owner, "global_ss_flash_02.troy", owner);
+            AddParticle(owner, null, "global_ss_flash", owner.Position);
+            AddParticleTarget(owner, owner, "global_ss_flash_02", owner);
 
             TeleportTo(owner, trueCoords.X, trueCoords.Y);
         }

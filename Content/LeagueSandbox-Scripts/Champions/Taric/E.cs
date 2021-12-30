@@ -64,8 +64,8 @@ namespace Spells
 
             AddBuff("TaricEHud", time, 1, spell, target, owner);
             AddBuff("Stun", time, 1, spell, target, owner);
-            AddParticleTarget(owner, target, "Dazzle_tar.troy", target);
-            var p103 = AddParticleTarget(owner, target, "Taric_HammerFlare.troy", target);
+            AddParticleTarget(owner, target, "Dazzle_tar", target);
+            var p103 = AddParticleTarget(owner, target, "Taric_HammerFlare", target);
 
             CreateTimer(time, () =>
             {

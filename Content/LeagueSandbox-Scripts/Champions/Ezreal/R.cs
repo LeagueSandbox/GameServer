@@ -41,7 +41,7 @@ namespace Spells
         public void OnSpellCast(ISpell spell)
         {
             var owner = spell.CastInfo.Owner;
-            AddParticleTarget(owner, owner, "Ezreal_bow_huge.troy", owner, bone: "L_HAND");
+            AddParticleTarget(owner, owner, "Ezreal_bow_huge", owner, bone: "L_HAND");
         }
 
         public void OnSpellPostCast(ISpell spell)

@@ -38,7 +38,7 @@ namespace Buffs
                 float damage = ap + 10f + (obj.Spells[2].CastInfo.SpellLevel * 10f);
 
                 attacker.TakeDamage(obj, damage, DamageType.DAMAGE_TYPE_MAGICAL, DamageSource.DAMAGE_SOURCE_ATTACK, false);
-                AddParticleTarget(obj, null, "global_armor_pos_buf.troy", attacker);
+                AddParticleTarget(obj, null, "global_armor_pos_buf", attacker);
             }
         }
 

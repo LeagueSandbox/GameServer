@@ -20,7 +20,7 @@ namespace Buffs
         public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
             buff.SetStatusEffect(StatusFlags.Stunned, true);
-            stun = AddParticleTarget(ownerSpell.CastInfo.Owner, unit, "LOC_Stun.troy", unit, buff.Duration, bone: "head");
+            stun = AddParticleTarget(ownerSpell.CastInfo.Owner, unit, "LOC_Stun", unit, buff.Duration, bone: "head");
         }
 
         public void OnDeactivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)

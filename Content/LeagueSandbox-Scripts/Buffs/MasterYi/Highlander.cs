@@ -21,7 +21,7 @@ namespace Buffs
         public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
             var owner = ownerSpell.CastInfo.Owner;
-            highlander = AddParticleTarget(owner, unit, "Highlander_buf.troy", unit);
+            highlander = AddParticleTarget(owner, unit, "Highlander_buf", unit);
 
             StatsModifier.MoveSpeed.PercentBonus = StatsModifier.MoveSpeed.PercentBonus + (15f + ownerSpell.CastInfo.SpellLevel * 10) / 100f;
             StatsModifier.AttackSpeed.PercentBonus = StatsModifier.AttackSpeed.PercentBonus + (5f + ownerSpell.CastInfo.SpellLevel * 25) / 100f;

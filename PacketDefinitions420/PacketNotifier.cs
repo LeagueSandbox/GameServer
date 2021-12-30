@@ -2357,10 +2357,8 @@ namespace PacketDefinitions420
         /// </summary>
         /// <param name="nexus">Nexus which got destroyed</param>
         /// <param name="time">Delay time for the packet to be actually be sent (Used so the camera has enough time to reach the nexus and watch it's explosion animation)</param>
-        public void NotifyS2C_EndGame(INexus nexus, float time = 5000)
+        public void NotifyS2C_EndGame(TeamId losingTeam, float time = 5000)
         {
-            var losingTeam = nexus.Team;
-
             var timer = new Timer(time) { AutoReset = false };
             timer.Elapsed += (a, b) =>
             {

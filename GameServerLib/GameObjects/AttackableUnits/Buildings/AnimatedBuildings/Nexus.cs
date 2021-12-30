@@ -21,20 +21,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.Buildings.Animate
             Stats.HealthPoints.BaseValue = 5500;
         }
 
-        public override void Die(IDeathData data)
-        {
-            var players = _game.PlayerManager.GetPlayers();
-            _game.Stop();
-            _game.PacketNotifier.NotifyBuilding_Die(data);
-            _game.PacketNotifier.NotifyS2C_EndGame(this, 5000.0f);
-            foreach(var player in players)
-            {
-                _game.PacketNotifier.NotifyS2C_DisableHUDForEndOfGame(player);
-                _game.PacketNotifier.NotifyS2C_MoveCameraToPoint(player, Vector3.Zero, new Vector3(this.Position.X, this.GetHeight(), this.Position.Y), 3.0f);
-            }
-            _game.SetGameToExit();
-        }
-
         public override void SetToRemove()
         {
 

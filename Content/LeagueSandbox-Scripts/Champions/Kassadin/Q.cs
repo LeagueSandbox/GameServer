@@ -27,7 +27,7 @@ namespace Spells
 
         public void OnSpellPreCast(IObjAiBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
         {
-            AddParticleTarget(owner, owner, "Kassadin_Base_cas.troy", owner, bone: "L_HAND");
+            AddParticleTarget(owner, owner, "Kassadin_Base_cas", owner, bone: "L_HAND");
         }
 
         public void OnSpellCast(ISpell spell)

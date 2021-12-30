@@ -24,7 +24,7 @@ namespace Buffs
         public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
             thisBuff = buff;
-            pbuff = AddParticleTarget(ownerSpell.CastInfo.Owner, unit, "Leona_ShieldOfDaybreak_cas.troy", unit, buff.Duration, bone: "BUFFBONE_CSTM_SHIELD_TOP");
+            pbuff = AddParticleTarget(ownerSpell.CastInfo.Owner, unit, "Leona_ShieldOfDaybreak_cas", unit, buff.Duration, bone: "BUFFBONE_CSTM_SHIELD_TOP");
 
             StatsModifier.Range.FlatBonus = 30.0f;
 

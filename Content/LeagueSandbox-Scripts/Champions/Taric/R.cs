@@ -38,8 +38,8 @@ namespace Spells
         public void OnSpellPostCast(ISpell spell)
         {
             var owner = spell.CastInfo.Owner;
-            var p1 = AddParticleTarget(owner, owner, "TaricHammerSmash_nova.troy", owner);
-            var p2 = AddParticleTarget(owner, owner, "TaricHammerSmash_shatter.troy", owner);
+            var p1 = AddParticleTarget(owner, owner, "TaricHammerSmash_nova", owner);
+            var p2 = AddParticleTarget(owner, owner, "TaricHammerSmash_shatter", owner);
             var hasbuff = owner.HasBuff("Radiance");
             var ap = owner.Stats.AbilityPower.Total * 0.5f;
             var damage = 50 + spell.CastInfo.SpellLevel * 100 + ap;
@@ -50,9 +50,9 @@ namespace Spells
                 if (enemyTarget is IAttackableUnit)
                 {
                     enemyTarget.TakeDamage(spell.CastInfo.Owner, damage, DamageType.DAMAGE_TYPE_MAGICAL, DamageSource.DAMAGE_SOURCE_SPELL, false);
-                    var ep1 = AddParticleTarget(owner, owner, "Taric_GemStorm_Tar.troy", enemyTarget, size: 1.25f);
-                    var ep2 = AddParticleTarget(owner, owner, "Taric_GemStorm_Aura.troy", enemyTarget, size: 1.25f);
-                    var ep3 = AddParticleTarget(owner, owner, "Taric_ShoulderFlare.troy", enemyTarget, size: 1.25f);
+                    var ep1 = AddParticleTarget(owner, owner, "Taric_GemStorm_Tar", enemyTarget, size: 1.25f);
+                    var ep2 = AddParticleTarget(owner, owner, "Taric_GemStorm_Aura", enemyTarget, size: 1.25f);
+                    var ep3 = AddParticleTarget(owner, owner, "Taric_ShoulderFlare", enemyTarget, size: 1.25f);
                     CreateTimer(1f, () =>
                     {
                         RemoveParticle(ep1);
@@ -72,7 +72,7 @@ namespace Spells
             }
             if (owner == spell.CastInfo.Targets[0].Unit && hasbuff == false)
             {
-                var p3 = AddParticleTarget(owner, owner, "taricgemstorm.troy", owner);
+                var p3 = AddParticleTarget(owner, owner, "taricgemstorm", owner);
                 AddBuff("Radiance", 10.0f, 1, spell, owner, owner);
                 CreateTimer(10.0f, () =>
                 {

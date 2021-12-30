@@ -39,11 +39,11 @@ namespace Spells
 
             if (ownerSkinID == 5)
             {
-                AddParticleTarget(owner, target, "DisintegrateHit_tar_frost.troy", target);
+                AddParticleTarget(owner, target, "DisintegrateHit_tar_frost", target);
             }
             else
             {
-                AddParticleTarget(owner, target, "DisintegrateHit_tar.troy", target);
+                AddParticleTarget(owner, target, "DisintegrateHit_tar", target);
             }
         }
 

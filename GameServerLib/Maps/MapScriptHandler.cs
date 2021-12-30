@@ -579,5 +579,28 @@ namespace LeagueSandbox.GameServer.Maps
         {
             return _game.GameTime;
         }
+        public void EndGame(TeamId loosingTeam, Vector3 finalCameraPosition, float endGameTimer = 5000.0f, bool moveCamera = true, float cameraTimer = 3.0f, bool disableUI = true, IDeathData deathData = null)
+        {
+            //TODO: check if mapScripts should handle this directly
+            var players = _game.PlayerManager.GetPlayers();
+            _game.Stop();
+            if(deathData != null)
+            {
+                _game.PacketNotifier.NotifyBuilding_Die(deathData);
+            }
+            _game.PacketNotifier.NotifyS2C_EndGame(loosingTeam, endGameTimer);
+            foreach (var player in players)
+            {
+                if (disableUI)
+                {
+                    _game.PacketNotifier.NotifyS2C_DisableHUDForEndOfGame(player);
+                }
+                if (moveCamera)
+                {
+                    _game.PacketNotifier.NotifyS2C_MoveCameraToPoint(player, Vector3.Zero, finalCameraPosition, cameraTimer);
+                }
+            }
+            _game.SetGameToExit();
+        }
     }
 }

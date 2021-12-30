@@ -28,7 +28,7 @@ namespace Buffs
         {
             var owner = ownerSpell.CastInfo.Owner;
             OwnerSpell = ownerSpell;
-            cast = AddParticleTarget(owner, unit, "Lulu_R_cas.troy", unit);
+            cast = AddParticleTarget(owner, unit, "Lulu_R_cas", unit);
 
             StatsModifier.Size.PercentBonus = StatsModifier.Size.PercentBonus + 1;
             _healthBefore = unit.Stats.CurrentHealth;
@@ -41,7 +41,7 @@ namespace Buffs
         public void OnDeactivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
             RemoveParticle(cast);
-            AddParticleTarget(OwnerSpell.CastInfo.Owner, unit, "Lulu_R_expire.troy", unit);
+            AddParticleTarget(OwnerSpell.CastInfo.Owner, unit, "Lulu_R_expire", unit);
             _healthNow = unit.Stats.CurrentHealth - _healthBonus;
             _meantimeDamage = _healthBefore - _healthNow;
             var bonusDamage = _healthBonus - _meantimeDamage;

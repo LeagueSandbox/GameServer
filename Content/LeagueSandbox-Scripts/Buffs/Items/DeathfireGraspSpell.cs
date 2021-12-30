@@ -21,7 +21,7 @@ namespace Buffs
         public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
             var owner = ownerSpell.CastInfo.Owner;
-            debuff = AddParticleTarget(owner, unit, "obj_DeathfireGrasp_debuff.troy", unit);
+            debuff = AddParticleTarget(owner, unit, "obj_DeathfireGrasp_debuff", unit);
 
             // TODO: Implement damage amp. stat modifier or OnTakeDamage listener
         }

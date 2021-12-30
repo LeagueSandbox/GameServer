@@ -49,14 +49,14 @@ namespace Spells
             if (HasBuff(owner, "YasuoE"))
             {
                 //spell.CastInfo.Owner.SpellAnimation("SPELL3b");
-                AddParticleTarget(owner, owner, "Yasuo_Base_EQ_cas.troy", owner);
-                AddParticleTarget(owner, owner, "Yasuo_Base_EQ_SwordGlow.troy", owner, 0, 1, "C_BUFFBONE_GLB_Weapon_1");
+                AddParticleTarget(owner, owner, "Yasuo_Base_EQ_cas", owner);
+                AddParticleTarget(owner, owner, "Yasuo_Base_EQ_SwordGlow", owner, 0, 1, "C_BUFFBONE_GLB_Weapon_1");
                 foreach (var affectEnemys in GetUnitsInRange(owner.Position, 270f, true))
                 {
                     if (affectEnemys is IAttackableUnit && affectEnemys.Team != owner.Team)
                     {
                         affectEnemys.TakeDamage(owner, spell.CastInfo.SpellLevel * 20f + owner.Stats.AttackDamage.Total, DamageType.DAMAGE_TYPE_PHYSICAL, DamageSource.DAMAGE_SOURCE_ATTACK, false);
-                        AddParticleTarget(owner, owner, "Yasuo_Base_Q_hit_tar.troy", affectEnemys);
+                        AddParticleTarget(owner, owner, "Yasuo_Base_Q_hit_tar", affectEnemys);
                     }
                 }
                 AddBuff("YasuoQ02", 6f, 1, spell, owner, owner);
@@ -66,14 +66,14 @@ namespace Spells
             {
                 //spell.CastInfo.Owner.SpellAnimation("SPELL1B");
                 //spell.AddLaser("YasuoQ", trueCoords);
-                AddParticleTarget(owner, owner, "Yasuo_Q_Hand.troy", owner);
-                AddParticleTarget(owner, owner, "Yasuo_Base_Q2_cast_sound.troy", owner);
+                AddParticleTarget(owner, owner, "Yasuo_Q_Hand", owner);
+                AddParticleTarget(owner, owner, "Yasuo_Base_Q2_cast_sound", owner);
             }
         }
 
         public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, ISpellMissile missile)
         {
-            AddParticleTarget(owner, owner, "Yasuo_Base_Q_hit_tar.troy", target);
+            AddParticleTarget(owner, owner, "Yasuo_Base_Q_hit_tar", target);
             target.TakeDamage(owner, spell.CastInfo.SpellLevel * 20f + owner.Stats.AttackDamage.Total,DamageType.DAMAGE_TYPE_PHYSICAL, DamageSource.DAMAGE_SOURCE_ATTACK, false);
             if (!HasBuff(owner, "YasuoQ02"))
             {
