@@ -39,8 +39,8 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             var itemInstance = peerInfo.Champion.Inventory.SetExtraItem(7, bluePill);
 
             // self-inform
-            _game.PacketNotifier.NotifyS2C_CreateHero(userId, peerInfo);
-            _game.PacketNotifier.NotifyAvatarInfo(userId, peerInfo);
+            _game.PacketNotifier.NotifyS2C_CreateHero(peerInfo, userId);
+            _game.PacketNotifier.NotifyAvatarInfo(peerInfo, userId);
 
             _game.PacketNotifier.NotifyBuyItem(userId, peerInfo.Champion, itemInstance);
 
