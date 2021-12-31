@@ -66,6 +66,11 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             Stats.SetSpellEnabled((byte)SpellSlotType.BluePillSlot, true);
 
             Replication = new ReplicationHero(this);
+
+            if (clientInfo.PlayerId == -1)
+            {
+                IsBot = true;
+            }
         }
 
         private string GetPlayerIndex()
@@ -243,7 +248,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             Stats.Experience += experience;
             _game.PacketNotifier.NotifyUnitAddEXP(this, experience);
 
-            if (Stats.Experience >= _game.Config.MapData.ExpCurve[Stats.Level - 1])
+            while (Stats.Experience >= _game.Config.MapData.ExpCurve[Stats.Level - 1] && Stats.Level < _game.Config.MapData.ExpCurve.Count)
             {
                 LevelUp();
             }

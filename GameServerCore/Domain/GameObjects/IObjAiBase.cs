@@ -66,6 +66,8 @@ namespace GameServerCore.Domain.GameObjects
         /// Unit this AI will auto attack when it is in auto attack range.
         /// </summary>
         IAttackableUnit TargetUnit { get; set; }
+        // TODO: Implement AI Scripting for this (for AI in general).
+        bool IsBot { get; }
 
         void LoadPassiveScript(ISpell spell);
         /// <summary>

@@ -76,11 +76,11 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="target">Champion that is being targeted by the attacker.</param>
         void NotifyAI_TargetHeroS2C(IObjAiBase attacker, IChampion target);
         /// <summary>
-        /// Sends a packet to the specified user that informs them of their summoner data such as runes, summoner spells, masteries (or talents as named internally), etc.
+        /// Sends a packet to the specified user or all users informing them of the given client's summoner data such as runes, summoner spells, masteries (or talents as named internally), etc.
         /// </summary>
-        /// <param name="userId">User to send the packet to.</param>
         /// <param name="client">Info about the player's summoner data.</param>
-        void NotifyAvatarInfo(int userId, ClientInfo client);
+        /// <param name="userId">User to send the packet to. Set to -1 to broadcast.</param>
+        void NotifyAvatarInfo(ClientInfo client, int userId = -1);
         /// <summary>
         /// Sends a packet to all players detailing that the specified  unit is starting their next auto attack.
         /// </summary>
@@ -566,25 +566,27 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="p">Projectile that has changed target.</param>
         void NotifyS2C_ChangeMissileTarget(ISpellMissile p);
         /// <summary>
-        /// Sends a packet to the specified user detailing that the hero designated to the given clientInfo has been created.
+        /// Sends a packet to the specified user or all users detailing that the hero designated to the given clientInfo has been created.
         /// </summary>
-        /// <param name="userId">User to send the packet to.</param>
         /// <param name="clientInfo">Information about the client which had their hero created.</param>
-        void NotifyS2C_CreateHero(int userId, ClientInfo clientInfo);
+        /// <param name="userId">User to send the packet to. Set to -1 to broadcast.</param>
+        void NotifyS2C_CreateHero(ClientInfo clientInfo, int userId = -1);
         /// <summary>
         /// Sends a packet to either all players or the specified player detailing that the specified LaneTurret has spawned.
         /// </summary>
         /// <param name="turret">LaneTurret that spawned.</param>
         /// <param name="userId">User to send the packet to.</param>
         void NotifyS2C_CreateTurret(ILaneTurret turret, int userId = 0);
-        void NotifyS2C_DisableHUDForEndOfGame(Tuple<uint, ClientInfo> player);
-
         /// <summary>
-        /// Sends packets to all players which force the players' cameras to the nexus being destroyed, hides their UI, and ends the game.
+        /// Disables the UI for ther end of the game
         /// </summary>
-        /// <param name="cameraPosition">Position of the nexus being destroyed.</param>
-        /// <param name="nexus">Nexus being destroyed.</param>
-        /// <param name="players">All players that can receive packets.</param>
+        /// <param name="player">Player for the UI to be disabled</param>
+        void NotifyS2C_DisableHUDForEndOfGame(Tuple<uint, ClientInfo> player);
+        /// <summary>
+        /// Sends packets to all players notifying the result of a match (Victory or defeat)
+        /// </summary>
+        /// <param name="losingTeam">The Team that lost the match</param>
+        /// <param name="time">The offset for the result to actually be displayed</param>
         void NotifyS2C_EndGame(TeamId losingTeam, float time = 5000);
         /// <summary>
         /// Sends a side bar tip to the specified player (ex: quest tips).

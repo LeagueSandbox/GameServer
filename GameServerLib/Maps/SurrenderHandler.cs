@@ -79,7 +79,7 @@ namespace LeagueSandbox.GameServer.Maps
             if (voteCounts.Item1 >= total - 1)
             {
                 IsSurrenderActive = false;
-                foreach (var p in _game.PlayerManager.GetPlayers())
+                foreach (var p in _game.PlayerManager.GetPlayers(true))
                 {
                     _game.PacketNotifier.NotifyTeamSurrenderStatus((int)p.Item1, Team, SurrenderReason.SURRENDER_PASSED, (byte)voteCounts.Item1, (byte)voteCounts.Item2); // TOOD: fix id casting
                 }
