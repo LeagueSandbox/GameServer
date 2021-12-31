@@ -140,13 +140,13 @@ namespace GameServerCore.Maps
         /// <summary>
         /// Sets the game to exit
         /// </summary>
-        /// <param name="loosingTeam">The team who lost the game</param>
+        /// <param name="losingTeam">The team who lost the game</param>
         /// <param name="finalCameraPosition">The position which the camera has to move to for the end-game screen</param>
         /// <param name="endGameTimer">Offset for the Endgame screend (victory or defeat) to be actually announced</param>
         /// <param name="moveCamera">Wether or not the camera should move</param>
         /// <param name="cameraTimer">The ammount of time the camera has to arrive to it's destination</param>
         /// <param name="disableUI">Whether or not the UI should get disabled</param>
         /// <param name="deathData">DeathData of what triggered the End of the Game, such as necus death</param>
-        void EndGame(TeamId loosingTeam, Vector3 finalCameraPosition, float endGameTimer = 5000.0f, bool moveCamera = true, float cameraTimer = 3.0f, bool disableUI = true, IDeathData deathData = null);
+        void EndGame(TeamId losingTeam, Vector3 finalCameraPosition, float endGameTimer = 5000.0f, bool moveCamera = true, float cameraTimer = 3.0f, bool disableUI = true, IDeathData deathData = null);
     }
 }
