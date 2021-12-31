@@ -354,7 +354,7 @@ namespace PacketDefinitions420
             _packetHandlerManager.BroadcastPacketVision(attacker, basicAttackPacket.GetBytes(), Channel.CHL_S2C);
         }
         /// <summary>
-        /// Notifies a building, such as towers, inhibs or nexus has died
+        /// Sends a packet to all players detailing that the specified building has died.
         /// </summary>
         /// <param name="deathData"></param>
         public void NotifyBuilding_Die(IDeathData deathData)
@@ -2342,6 +2342,7 @@ namespace PacketDefinitions420
 
             _packetHandlerManager.BroadcastPacket(createTurret.GetBytes(), Channel.CHL_S2C);
         }
+
         /// <summary>
         /// Disables the U.I when the game ends 
         /// </summary>
@@ -2353,9 +2354,9 @@ namespace PacketDefinitions420
         }
 
         /// <summary>
-        /// Sends packets to all players that the game is over.
+        /// Send a packet to all players after a specified delay detailing that the game has ended.
         /// </summary>
-        /// <param name="nexus">Nexus which got destroyed</param>
+        /// <param name="losingTeam">TeamID which lost the game.</param>
         /// <param name="time">Delay time for the packet to be actually be sent (Used so the camera has enough time to reach the nexus and watch it's explosion animation)</param>
         public void NotifyS2C_EndGame(TeamId losingTeam, float time = 5000)
         {
@@ -2372,6 +2373,7 @@ namespace PacketDefinitions420
 
             timer.Start();
         }
+
         /// <summary>
         /// Sends a side bar tip to the specified player (ex: quest tips).
         /// </summary>
@@ -2435,7 +2437,7 @@ namespace PacketDefinitions420
         }
 
         /// <summary>
-        /// Notifies the camera of a given player to move
+        /// Sends a packet to the specified player which forces their camera to move to a specified point given certain parameters.
         /// </summary>
         /// <param name="player">Player who'll it's camera moved</param>
         /// <param name="startPosition">The starting position of the camera (Not yet known how to get it's values)</param>
@@ -2460,6 +2462,7 @@ namespace PacketDefinitions420
 
             _packetHandlerManager.SendPacket((int)player.Item2.PlayerId, cam.GetBytes(), Channel.CHL_S2C);
         }
+
         /// <summary>
         /// Sends a packet to all players detailing that the specified unit has been killed by the specified killer.
         /// </summary>
@@ -2493,24 +2496,6 @@ namespace PacketDefinitions420
             var enterTeamVis = new S2C_OnEnterTeamVisibility()
             {
                 SenderNetID = o.NetId,
-                VisibilityTeam = (byte)team
-            };
-
-            if (userId == 0)
-            {
-                // TODO: Verify if we should use BroadcastPacketTeam instead.
-                _packetHandlerManager.BroadcastPacket(enterTeamVis.GetBytes(), Channel.CHL_S2C);
-            }
-            else
-            {
-                _packetHandlerManager.SendPacket(userId, enterTeamVis.GetBytes(), Channel.CHL_S2C);
-            }
-        }
-        public void NotifyS2C_OnEnterTeamVisibility(uint netID, TeamId team, int userId = 0)
-        {
-            var enterTeamVis = new S2C_OnEnterTeamVisibility()
-            {
-                SenderNetID = netID,
                 VisibilityTeam = (byte)team
             };
 
