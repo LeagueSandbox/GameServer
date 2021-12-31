@@ -23,7 +23,7 @@ namespace PacketDefinitions420.PacketDefinitions.C2S
                 NetId = reader.ReadUInt32();
                 Position = reader.ReadInt32();
                 UserId = reader.ReadInt64();
-                Loaded = reader.ReadSingle();
+                Loaded = reader.ReadSingle(); //Ping
                 Unk2 = reader.ReadSingle();
                 Ping = reader.ReadInt16();
                 Unk3 = reader.ReadInt16();

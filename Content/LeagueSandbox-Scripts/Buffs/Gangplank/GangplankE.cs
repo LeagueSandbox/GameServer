@@ -29,9 +29,9 @@ namespace Buffs
 
             //_hudvisual = AddBuffHUDVisual("RaiseMorale", time, 1, unit);
 
-            Particles.Add(AddParticleTarget(owner, null, "pirate_raiseMorale_cas.troy", unit));
-            Particles.Add(AddParticleTarget(owner, null, "pirate_raiseMorale_mis.troy", unit));
-            Particles.Add(AddParticleTarget(owner, null, "pirate_raiseMorale_tar.troy", unit));
+            Particles.Add(AddParticleTarget(owner, null, "pirate_raiseMorale_cas", unit));
+            Particles.Add(AddParticleTarget(owner, null, "pirate_raiseMorale_mis", unit));
+            Particles.Add(AddParticleTarget(owner, null, "pirate_raiseMorale_tar", unit));
         }
 
         public void OnDeactivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)

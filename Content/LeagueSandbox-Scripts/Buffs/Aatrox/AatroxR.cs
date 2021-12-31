@@ -26,15 +26,15 @@ namespace Buffs
                 // TODO: Implement Animation Overrides for spells like these
                 if (c.SkinID == 0)
                 {
-                    pmodelname = "Aatrox_Base_RModel.troy";
+                    pmodelname = "Aatrox_Base_RModel";
                 }
                 else if (c.SkinID == 1)
                 {
-                    pmodelname = "Aatrox_Skin01_RModel.troy";
+                    pmodelname = "Aatrox_Skin01_RModel";
                 }
                 else if (c.SkinID == 2)
                 {
-                    pmodelname = "Aatrox_Skin02_RModel.troy";
+                    pmodelname = "Aatrox_Skin02_RModel";
                 }
                 pmodel = AddParticleTarget(c, c, pmodelname, c);
                 pmodel.SetToRemove();

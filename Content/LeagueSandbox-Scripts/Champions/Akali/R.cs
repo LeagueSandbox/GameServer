@@ -46,7 +46,7 @@ namespace Spells
             //TODO: Dash to the correct location (in front of the enemy IChampion) instead of far behind or inside them
             ForceMovement(owner, target, "Spell4", 2200, 0, 0, 0, 20000);
             //ForceMovement(spell.CastInfo.Owner, "Spell4", trueCoords, 2200, 0, 0, 0);
-            AddParticleTarget(owner, target, "akali_shadowDance_tar.troy", target);
+            AddParticleTarget(owner, target, "akali_shadowDance_tar", target);
         }
 
         public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, ISpellMissile missile)

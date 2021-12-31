@@ -37,7 +37,7 @@ namespace Spells
             var owner = spell.CastInfo.Owner;
             var endPoint = GetPointFromUnit(owner, 1100f);
             //AddParticleTarget(owner, null, "Lucian_Q_cas.troy", owner, lifetime: 1.0f);
-            AddParticle(owner, owner, "Lucian_Q_laser_red.troy", endPoint, bone: "C_BUFFBONE_GLB_CENTER_LOC", lifetime: 1.0f);
+            AddParticle(owner, owner, "Lucian_Q_laser_red", endPoint, bone: "C_BUFFBONE_GLB_CENTER_LOC", lifetime: 1.0f);
         }
 
         public void OnSpellPostCast(ISpell spell)
@@ -62,7 +62,7 @@ namespace Spells
                 Type = SectorType.Polygon
             });
 
-            AddParticle(owner, owner, "Lucian_Q_laser.troy", endPoint, bone: "C_BUFFBONE_GLB_CENTER_LOC", lifetime: 1.0f);
+            AddParticle(owner, owner, "Lucian_Q_laser", endPoint, bone: "C_BUFFBONE_GLB_CENTER_LOC", lifetime: 1.0f);
         }
 
         public void TargetExecute(ISpell spell, IAttackableUnit target, ISpellMissile missile, ISpellSector sector)
@@ -72,7 +72,7 @@ namespace Spells
             var damage = owner.Stats.AttackDamage.Total * (0.45f + spell.CastInfo.SpellLevel * 0.15f) + (50 + spell.CastInfo.SpellLevel * 30);
             target.TakeDamage(owner, damage, DamageType.DAMAGE_TYPE_PHYSICAL, DamageSource.DAMAGE_SOURCE_SPELL,
                 false);
-            AddParticleTarget(owner, target, "Lucian_Q_tar.troy", target, 1.0f);
+            AddParticleTarget(owner, target, "Lucian_Q_tar", target, 1.0f);
         }
 
         public void OnSpellChannel(ISpell spell)

@@ -24,7 +24,7 @@ namespace Buffs
             StatsModifier.MoveSpeed.PercentBonus = StatsModifier.MoveSpeed.PercentBonus + (12f + ownerSpell.CastInfo.SpellLevel * 4) / 100f;
             StatsModifier.AttackSpeed.PercentBonus = StatsModifier.AttackSpeed.PercentBonus + (22f + 8f * ownerSpell.CastInfo.SpellLevel) / 100f;
             unit.AddStatModifier(StatsModifier);
-            p = AddParticleTarget(ownerSpell.CastInfo.Owner, unit, "Overdrive_buf.troy", unit, buff.Duration);
+            p = AddParticleTarget(ownerSpell.CastInfo.Owner, unit, "Overdrive_buf", unit, buff.Duration);
         }
 
         public void OnDeactivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)

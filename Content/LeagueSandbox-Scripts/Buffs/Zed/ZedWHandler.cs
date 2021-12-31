@@ -97,9 +97,9 @@ namespace Buffs
                 }
                 var ownerPos = owner.Position;
                 TeleportTo(owner, Shadow.Position.X, Shadow.Position.Y);
-                AddParticleTarget(owner, owner, "zed_base_cloneswap.troy", owner);
+                AddParticleTarget(owner, owner, "zed_base_cloneswap", owner);
                 TeleportTo(Shadow, ownerPos.X, ownerPos.Y);
-                AddParticleTarget(owner, Shadow, "zed_base_cloneswap.troy", Shadow);
+                AddParticleTarget(owner, Shadow, "zed_base_cloneswap", Shadow);
 
                 owner.RemoveBuffsWithName("ZedW2");
                 owner.RemoveBuff(ThisBuff);

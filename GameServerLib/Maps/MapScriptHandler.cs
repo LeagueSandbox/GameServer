@@ -71,6 +71,7 @@ namespace LeagueSandbox.GameServer.Maps
         public Dictionary<TeamId, Dictionary<LaneID, List<IInhibitor>>> InhibitorList { get; set; }
         public Dictionary<TeamId, Dictionary<LaneID, List<ILaneTurret>>> TurretList { get; set; }
         public List<IMapObject> InfoPoints { get; set; } = new List<IMapObject>();
+        public Dictionary<TeamId, IGameObject> ShopList { get; set; } = new Dictionary<TeamId, IGameObject>();
         public Dictionary<LaneID, List<Vector2>> BlueMinionPathing;
         public Dictionary<LaneID, List<Vector2>> PurpleMinionPathing;
 
@@ -260,6 +261,10 @@ namespace LeagueSandbox.GameServer.Maps
                 else if (objectType == GameObjectTypes.ObjBuilding_NavPoint)
                 {
                     BlueMinionPathing[lane].Add(new Vector2(mapObject.CentralPoint.X, mapObject.CentralPoint.Z));
+                }
+                else if (objectType == GameObjectTypes.ObjBuilding_Shop)
+                {
+                    ShopList.Add(teamId, new GameObject(_game, position, netId: Crc32Algorithm.Compute(Encoding.UTF8.GetBytes(mapObject.Name)) | 0xFF000000, team: teamId));
                 }
             }
 
@@ -573,6 +578,29 @@ namespace LeagueSandbox.GameServer.Maps
         public float GameTime()
         {
             return _game.GameTime;
+        }
+        public void EndGame(TeamId losingTeam, Vector3 finalCameraPosition, float endGameTimer = 5000.0f, bool moveCamera = true, float cameraTimer = 3.0f, bool disableUI = true, IDeathData deathData = null)
+        {
+            //TODO: check if mapScripts should handle this directly
+            var players = _game.PlayerManager.GetPlayers();
+            _game.Stop();
+            if(deathData != null)
+            {
+                _game.PacketNotifier.NotifyBuilding_Die(deathData);
+            }
+            _game.PacketNotifier.NotifyS2C_EndGame(losingTeam, endGameTimer);
+            foreach (var player in players)
+            {
+                if (disableUI)
+                {
+                    _game.PacketNotifier.NotifyS2C_DisableHUDForEndOfGame(player);
+                }
+                if (moveCamera)
+                {
+                    _game.PacketNotifier.NotifyS2C_MoveCameraToPoint(player, Vector3.Zero, finalCameraPosition, cameraTimer);
+                }
+            }
+            _game.SetGameToExit();
         }
     }
 }

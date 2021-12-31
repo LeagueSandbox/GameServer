@@ -20,7 +20,7 @@ namespace Buffs
 
         public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
-            grab = AddParticleTarget(ownerSpell.CastInfo.Owner, unit, "FistReturn_mis.troy", ownerSpell.CastInfo.Owner, buff.Duration, 1, "head", "R_hand");
+            grab = AddParticleTarget(ownerSpell.CastInfo.Owner, unit, "FistReturn_mis", ownerSpell.CastInfo.Owner, buff.Duration, 1, "head", "R_hand");
         }
 
         public void OnDeactivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)

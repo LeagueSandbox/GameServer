@@ -48,8 +48,8 @@ namespace Spells
             var ad = owner.Stats.AttackDamage.Total * 0.9f;
             var damage = 50 + (spell.CastInfo.SpellLevel * 30) + ad;
             target.TakeDamage(owner, damage, DamageType.DAMAGE_TYPE_PHYSICAL, DamageSource.DAMAGE_SOURCE_ATTACK, false);
-            AddParticleTarget(owner, target, "blindMonk_Q_resonatingStrike_tar.troy", target, bone: "C_BuffBone_Glb_Center_Loc");
-            AddParticleTarget(owner, target, "blindMonk_Q_tar.troy", target, bone: "C_BuffBone_Glb_Center_Loc");
+            AddParticleTarget(owner, target, "blindMonk_Q_resonatingStrike_tar", target, bone: "C_BuffBone_Glb_Center_Loc");
+            AddParticleTarget(owner, target, "blindMonk_Q_tar", target, bone: "C_BuffBone_Glb_Center_Loc");
             if (target is IObjAiBase u)
             {
                 AddBuff("BlindMonkSonicWave", 3f, 1, spell, u, owner);

@@ -20,7 +20,7 @@ namespace Buffs
 
         public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
-            p = AddParticleTarget(ownerSpell.CastInfo.Owner, unit, "spectral_fury_activate_speed.troy", unit, buff.Duration, size: 2);
+            p = AddParticleTarget(ownerSpell.CastInfo.Owner, unit, "spectral_fury_activate_speed", unit, buff.Duration, size: 2);
             StatsModifier.MoveSpeed.PercentBonus = 0.2f;
             StatsModifier.AttackSpeed.PercentBonus = 0.4f;
             unit.AddStatModifier(StatsModifier);

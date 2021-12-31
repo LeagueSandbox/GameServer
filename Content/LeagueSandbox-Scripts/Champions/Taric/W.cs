@@ -43,7 +43,7 @@ namespace Spells
             var armor = owner.Stats.Armor.Total;
             var damage = spell.CastInfo.SpellLevel * 40 + armor * 0.2f;
             var reduce = spell.CastInfo.SpellLevel * 5 + armor * 0.05f;
-            AddParticleTarget(owner, owner, "Shatter_nova.troy", owner);
+            AddParticleTarget(owner, owner, "Shatter_nova", owner);
 
             foreach (var enemy in GetUnitsInRange(owner.Position, 375, true)
                 .Where(x => x.Team == CustomConvert.GetEnemyTeam(owner.Team)))
@@ -52,7 +52,7 @@ namespace Spells
                 if (enemy is IObjAiBase)
                 {
                     enemy.TakeDamage(owner, damage, DamageType.DAMAGE_TYPE_MAGICAL, DamageSource.DAMAGE_SOURCE_SPELL, false);
-                    var p2 = AddParticleTarget(owner, enemy, "Shatter_tar.troy", enemy);
+                    var p2 = AddParticleTarget(owner, enemy, "Shatter_tar", enemy);
                     AddBuff("TaricWDis", 4.0f, 1, spell, enemy, owner);
 
                     if (hasbuff == true)

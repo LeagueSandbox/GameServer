@@ -101,7 +101,6 @@ namespace LeagueSandbox.GameServer.GameObjects
             BindObject = bindObj;
             TargetObject = target;
             StartPosition = TargetObject.Position;
-            Name = particleName;
             BoneName = boneName;
             TargetBoneName = targetBoneName;
             Scale = scale;
@@ -111,6 +110,15 @@ namespace LeagueSandbox.GameServer.GameObjects
             SpecificTeam = teamOnly;
             FollowsGroundTilt = followGroundTilt;
             Flags = flags;
+
+            if (Name.Contains(".troy"))
+            {
+                Name = particleName;
+            }
+            else
+            {
+                Name = $"{particleName}.troy";
+            }
 
             _game.ObjectManager.AddObject(this);
 
@@ -153,7 +161,6 @@ namespace LeagueSandbox.GameServer.GameObjects
 
             TargetObject = null;
             StartPosition = targetPos;
-            Name = particleName;
             BoneName = boneName;
             TargetBoneName = targetBoneName;
             Scale = scale;
@@ -163,6 +170,15 @@ namespace LeagueSandbox.GameServer.GameObjects
             SpecificTeam = teamOnly;
             FollowsGroundTilt = followGroundTilt;
             Flags = flags;
+
+            if (Name.Contains(".troy"))
+            {
+                Name = particleName;
+            }
+            else
+            {
+                Name = $"{particleName}.troy";
+            }
 
             _game.ObjectManager.AddObject(this);
 
@@ -201,7 +217,6 @@ namespace LeagueSandbox.GameServer.GameObjects
             TargetObject = null;
             StartPosition = startPos;
             EndPosition = endPos;
-            Name = particleName;
             BoneName = boneName;
             TargetBoneName = targetBoneName;
             Scale = scale;
@@ -211,6 +226,15 @@ namespace LeagueSandbox.GameServer.GameObjects
             SpecificTeam = teamOnly;
             FollowsGroundTilt = followGroundTilt;
             Flags = flags;
+
+            if (Name.Contains(".troy"))
+            {
+                Name = particleName;
+            }
+            else
+            {
+                Name = $"{particleName}.troy";
+            }
 
             _game.ObjectManager.AddObject(this);
 

@@ -40,8 +40,8 @@ namespace Spells
             var target = spell.CastInfo.Targets[0].Unit;
             if (target.Team == owner.Team)
             {
-                var p1 = AddParticleTarget(owner, target, "Imbue_glow.troy", target);
-                var p2 = AddParticleTarget(owner, owner, "Imbue_cas.troy", owner);
+                var p1 = AddParticleTarget(owner, target, "Imbue_glow", target);
+                var p2 = AddParticleTarget(owner, owner, "Imbue_cas", owner);
                 CreateTimer(1.75f, () =>
                 {
                     RemoveParticle(p1);
@@ -74,8 +74,8 @@ namespace Spells
 
             var newHealth = target.Stats.CurrentHealth + healthGain;
             target.Stats.CurrentHealth = Math.Min(newHealth, target.Stats.HealthPoints.Total);
-            AddParticleTarget(owner, target, "global_ss_heal_02.troy", target);
-            AddParticleTarget(owner, target, "global_ss_heal_speedboost.troy", target);
+            AddParticleTarget(owner, target, "global_ss_heal_02", target);
+            AddParticleTarget(owner, target, "global_ss_heal_speedboost", target);
         }
 
         public void OnSpellChannel(ISpell spell)

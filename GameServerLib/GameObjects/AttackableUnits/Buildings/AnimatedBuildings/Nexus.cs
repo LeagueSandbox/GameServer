@@ -21,17 +21,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.Buildings.Animate
             Stats.HealthPoints.BaseValue = 5500;
         }
 
-        public override void Die(IDeathData data)
-        {
-            //On SR the Z value was hardcoded to 188 for blue, 110 Purple, but it seemed fine with for both sides with only 110
-            //Double check from where those values came from and if they're accurate.
-            //I'll use 110 as default here just to keep it simple for now.
-            var cameraPosition = new Vector3 (this.Position.X, this.Position.Y, 110);
-            _game.Stop();
-            _game.PacketNotifier.NotifyGameEnd(cameraPosition, this, _game.PlayerManager.GetPlayers());
-            _game.SetGameToExit();
-        }
-
         public override void SetToRemove()
         {
 

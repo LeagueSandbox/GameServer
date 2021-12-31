@@ -30,11 +30,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             champion.Inventory.SwapItems(req.SlotFrom, req.SlotTo);
             champion.SwapSpells((byte)(req.SlotFrom + Shop.ITEM_ACTIVE_OFFSET),
                 (byte)(req.SlotTo + Shop.ITEM_ACTIVE_OFFSET));
-            _game.PacketNotifier.NotifyItemsSwapped(
-                champion,
-                req.SlotFrom,
-                req.SlotTo
-            );
+            _game.PacketNotifier.NotifySwapItemAns(champion, req.SlotFrom, req.SlotTo);
 
             return true;
         }

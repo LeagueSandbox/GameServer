@@ -23,7 +23,7 @@ namespace Buffs
             var caster = ownerSpell.CastInfo.Owner;
             StatsModifier.HealthRegeneration.FlatBonus = 10f;
             unit.AddStatModifier(StatsModifier);
-            potion = AddParticleTarget(caster, unit, "GLOBAL_Item_HealthPotion.troy", unit, buff.Duration, bone: "Buffbone_Glb_Ground_Loc");
+            potion = AddParticleTarget(caster, unit, "GLOBAL_Item_HealthPotion", unit, buff.Duration, bone: "Buffbone_Glb_Ground_Loc");
         }
 
         public void OnDeactivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)

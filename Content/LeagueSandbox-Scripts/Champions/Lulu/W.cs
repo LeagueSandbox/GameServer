@@ -57,7 +57,7 @@ namespace Spells
             var model = champion.Model;
             ChangeModel(owner.SkinID, target);
 
-            var p = AddParticleTarget(owner, owner, "Lulu_W_polymorph_01.troy", target);
+            var p = AddParticleTarget(owner, owner, "Lulu_W_polymorph_01", target);
             CreateTimer(time, () =>
             {
                 RemoveParticle(p);

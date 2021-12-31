@@ -68,7 +68,7 @@ namespace Spells
             target.TakeDamage(owner, finaldamage, DamageType.DAMAGE_TYPE_MAGICAL, DamageSource.DAMAGE_SOURCE_SPELL, false);
             if (!target.IsDead)
             {
-                AddParticleTarget(owner, target, "Nidalee_Base_Q_Tar.troy", target, bone: "C_BUFFBONE_GLB_CHEST_LOC");
+                AddParticleTarget(owner, target, "Nidalee_Base_Q_Tar", target, bone: "C_BUFFBONE_GLB_CHEST_LOC");
             }
 
             missile.SetToRemove();

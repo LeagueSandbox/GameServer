@@ -32,7 +32,7 @@ namespace Spells
 
             (owner as IChampion).Respawn();
             AddBuff("SummonerReviveSpeedBoost", 12.0f, 1, spell, owner, owner);
-            AddParticleTarget(owner, owner, "Global_SS_Revive.troy", owner);
+            AddParticleTarget(owner, owner, "Global_SS_Revive", owner);
         }
 
         public void OnSpellCast(ISpell spell)

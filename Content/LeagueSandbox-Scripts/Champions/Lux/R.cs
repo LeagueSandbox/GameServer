@@ -92,9 +92,9 @@ namespace Spells
 
             // TODO: Vision
 
-            AddParticle(owner, tempMinion, "luxmalicecannon_beam.troy", endPoint, bone: "top", lifetime: 2.0f);
-            AddParticle(owner, tempMinion, "luxmalicecannon_cas.troy", endPoint, bone: "top", lifetime: 2.0f);
-            AddParticle(owner, null, "luxmalicecannon_beammiddle.troy", GetPointFromUnit(owner, 1650f));
+            AddParticle(owner, tempMinion, "luxmalicecannon_beam", endPoint, bone: "top", lifetime: 2.0f);
+            AddParticle(owner, tempMinion, "luxmalicecannon_cas", endPoint, bone: "top", lifetime: 2.0f);
+            AddParticle(owner, null, "luxmalicecannon_beammiddle", GetPointFromUnit(owner, 1650f));
         }
 
         public void OnSpellPostCast(ISpell spell)
@@ -127,7 +127,7 @@ namespace Spells
             var damage = 300f + (100f * spell.CastInfo.SpellLevel - 1) + (owner.Stats.AbilityPower.Total * 0.75f);
             target.TakeDamage(owner, damage, DamageType.DAMAGE_TYPE_MAGICAL, DamageSource.DAMAGE_SOURCE_SPELL,
                 false);
-            AddParticleTarget(owner, target, "luxmalicecannon_tar.troy", target, 1.0f);
+            AddParticleTarget(owner, target, "luxmalicecannon_tar", target, 1.0f);
         }
 
         public void OnSpellChannel(ISpell spell)

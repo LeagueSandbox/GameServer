@@ -25,7 +25,7 @@ namespace Buffs
         public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
             var owner = ownerSpell.CastInfo.Owner;
-            activate = AddParticleTarget(owner, unit, "Graves_Move_OnBuffActivate.troy", unit);
+            activate = AddParticleTarget(owner, unit, "Graves_Move_OnBuffActivate", unit);
             StatsModifier.AttackSpeed.PercentBonus = 0.2f + (0.1f * ownerSpell.CastInfo.SpellLevel);
             unit.AddStatModifier(StatsModifier);
         }
