@@ -585,7 +585,7 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="cameraPosition">Position of the nexus being destroyed.</param>
         /// <param name="nexus">Nexus being destroyed.</param>
         /// <param name="players">All players that can receive packets.</param>
-        void NotifyS2C_EndGame(TeamId loosingTeam, float time = 5000);
+        void NotifyS2C_EndGame(TeamId losingTeam, float time = 5000);
         /// <summary>
         /// Sends a side bar tip to the specified player (ex: quest tips).
         /// </summary>
