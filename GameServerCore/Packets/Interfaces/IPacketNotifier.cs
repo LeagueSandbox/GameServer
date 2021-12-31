@@ -633,7 +633,6 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="o">GameObject coming into vision.</param>
         /// <param name="userId">User to send the packet to.</param>
         void NotifyS2C_OnEnterTeamVisibility(IGameObject o, TeamId team, int userId = 0);
-        void NotifyS2C_OnEnterTeamVisibility(uint netID, TeamId team, int userId = 0);
         /// <summary>
         /// Sends a packet to all players with vision of the specified object detailing that it is playing the specified animation.
         /// </summary>
