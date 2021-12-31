@@ -111,7 +111,7 @@ namespace LeagueSandbox.GameServer.GameObjects
             FollowsGroundTilt = followGroundTilt;
             Flags = flags;
 
-            if (Name.Contains(".troy"))
+            if (particleName.Contains(".troy"))
             {
                 Name = particleName;
             }
@@ -171,7 +171,7 @@ namespace LeagueSandbox.GameServer.GameObjects
             FollowsGroundTilt = followGroundTilt;
             Flags = flags;
 
-            if (Name.Contains(".troy"))
+            if (particleName.Contains(".troy"))
             {
                 Name = particleName;
             }
@@ -227,7 +227,7 @@ namespace LeagueSandbox.GameServer.GameObjects
             FollowsGroundTilt = followGroundTilt;
             Flags = flags;
 
-            if (Name.Contains(".troy"))
+            if (particleName.Contains(".troy"))
             {
                 Name = particleName;
             }
