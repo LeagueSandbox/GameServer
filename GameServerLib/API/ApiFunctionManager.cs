@@ -488,7 +488,7 @@ namespace LeagueSandbox.GameServer.API
         public static List<IChampion> GetAllPlayers()
         {
             var toreturn = new List<IChampion>();
-            foreach (var player in _game.PlayerManager.GetPlayers())
+            foreach (var player in _game.PlayerManager.GetPlayers(true))
             {
                 toreturn.Add(player.Item2.Champion);
             }

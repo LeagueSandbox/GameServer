@@ -254,11 +254,11 @@ namespace PacketDefinitions420
         }
 
         /// <summary>
-        /// Sends a packet to the specified user that informs them of their summoner data such as runes, summoner spells, masteries (or talents as named internally), etc.
+        /// Sends a packet to the specified user or all users informing them of the given client's summoner data such as runes, summoner spells, masteries (or talents as named internally), etc.
         /// </summary>
-        /// <param name="userId">User to send the packet to.</param>
         /// <param name="client">Info about the player's summoner data.</param>
-        public void NotifyAvatarInfo(int userId, ClientInfo client)
+        /// <param name="userId">User to send the packet to. Set to -1 to broadcast.</param>
+        public void NotifyAvatarInfo(ClientInfo client, int userId = -1)
         {
             var avatar = new AvatarInfo_Server();
             avatar.SenderNetID = client.Champion.NetId;
@@ -273,6 +273,13 @@ namespace PacketDefinitions420
                 avatar.ItemIDs[i] = (uint)runeValue;
             }
             // TODO: add talents
+
+            if (userId < 0)
+            {
+                _packetHandlerManager.BroadcastPacket(avatar.GetBytes(), Channel.CHL_S2C);
+                return;
+            }
+
             _packetHandlerManager.SendPacket(userId, avatar.GetBytes(), Channel.CHL_S2C);
         }
 
@@ -2278,11 +2285,11 @@ namespace PacketDefinitions420
         }
 
         /// <summary>
-        /// Sends a packet to the specified user detailing that the hero designated to the given clientInfo has been created.
+        /// Sends a packet to the specified user or all users detailing that the hero designated to the given clientInfo has been created.
         /// </summary>
-        /// <param name="userId">User to send the packet to.</param>
         /// <param name="clientInfo">Information about the client which had their hero created.</param>
-        public void NotifyS2C_CreateHero(int userId, ClientInfo clientInfo)
+        /// <param name="userId">User to send the packet to. Set to -1 to broadcast.</param>
+        public void NotifyS2C_CreateHero(ClientInfo clientInfo, int userId = -1)
         {
             var champion = clientInfo.Champion;
             var heroPacket = new S2C_CreateHero()
@@ -2293,7 +2300,7 @@ namespace PacketDefinitions420
                 // For bots (0 = Beginner, 1 = Intermediate)
                 SkillLevel = 0,
                 // TODO: Implement bots and unhardcode this.
-                IsBot = false,
+                IsBot = champion.IsBot,
                 // BotRank, deprecated as of v4.18
                 // TODO: Unhardcode
                 SpawnPositionIndex = 0,
@@ -2311,6 +2318,12 @@ namespace PacketDefinitions420
             else
             {
                 heroPacket.TeamIsOrder = false;
+            }
+
+            if (userId < 0)
+            {
+                _packetHandlerManager.BroadcastPacket(heroPacket.GetBytes(), Channel.CHL_S2C);
+                return;
             }
 
             _packetHandlerManager.SendPacket(userId, heroPacket.GetBytes(), Channel.CHL_S2C);
@@ -2354,10 +2367,10 @@ namespace PacketDefinitions420
         }
 
         /// <summary>
-        /// Send a packet to all players after a specified delay detailing that the game has ended.
+        /// Sends packets to all players notifying the result of a match (Victory or defeat)
         /// </summary>
-        /// <param name="losingTeam">TeamID which lost the game.</param>
-        /// <param name="time">Delay time for the packet to be actually be sent (Used so the camera has enough time to reach the nexus and watch it's explosion animation)</param>
+        /// <param name="losingTeam">The Team that lost the match</param>
+        /// <param name="time">The offset for the result to actually be displayed</param>
         public void NotifyS2C_EndGame(TeamId losingTeam, float time = 5000)
         {
             var timer = new Timer(time) { AutoReset = false };

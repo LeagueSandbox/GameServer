@@ -66,6 +66,11 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             Stats.SetSpellEnabled((byte)SpellSlotType.BluePillSlot, true);
 
             Replication = new ReplicationHero(this);
+
+            if (clientInfo.PlayerId == -1)
+            {
+                IsBot = true;
+            }
         }
 
         private string GetPlayerIndex()
@@ -243,20 +248,17 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             Stats.Experience += experience;
             _game.PacketNotifier.NotifyUnitAddEXP(this, experience);
 
-            if (Stats.Experience >= _game.Config.MapData.ExpCurve[Stats.Level - 1])
-            {
-                LevelUp();
-            }
+            while (Stats.Experience >= _game.Config.MapData.ExpCurve[Stats.Level - 1] && LevelUp());
         }
 
-        public void LevelUp()
+        public bool LevelUp(bool force = false)
         {
             var stats = Stats;
             var expMap = _game.Config.MapData.ExpCurve;
 
             //Ideally we'd use "stats.Level < expMap.Count + 1", but since we still don't have gamemodes implemented yet, i'll be hardcoding the EXP level to cap at lvl 18,
             //Since the SR Map has 30 levels in total because of URF
-            if (stats.Level < 18 && (stats.Level < 1 || stats.Experience >= expMap[stats.Level - 1])) //The + and - 1s are there because the XP files don't have level 1
+            if (stats.Level < 18 && (stats.Level < 1 || (stats.Experience >= expMap[stats.Level - 1] || force))) //The + and - 1s are there because the XP files don't have level 1
             {
                 Stats.LevelUp();
                 Logger.Debug("Champion " + Model + " leveled up to " + stats.Level);
@@ -267,7 +269,11 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 ApiEventManager.OnLevelUp.Publish(this);
                 _game.PacketNotifier.NotifyNPC_LevelUp(this);
                 _game.PacketNotifier.NotifyUpdatedStats(this, false);
+
+                return true;
             }
+
+            return false;
         }
 
         public void OnKill(IDeathData deathData)

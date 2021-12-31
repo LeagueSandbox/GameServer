@@ -17,7 +17,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 
         public override bool HandlePacket(int userId, JoinTeamRequest req)
         {
-            var players = _playerManager.GetPlayers();
+            var players = _playerManager.GetPlayers(true);
             uint version = uint.Parse(Config.VERSION.ToString().Replace(".", string.Empty));
 
             // Builds team info e.g. first UserId set on Blue has PlayerId 0

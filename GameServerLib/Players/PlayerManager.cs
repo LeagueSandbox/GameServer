@@ -6,6 +6,7 @@ using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
 using LeagueSandbox.GameServer.Packets;
 using System.Collections.Generic;
 using System;
+using GameServerCore.Domain;
 
 namespace LeagueSandbox.GameServer.Players
 {
@@ -27,7 +28,7 @@ namespace LeagueSandbox.GameServer.Players
             _networkIdManager = game.NetworkIdManager;
         }
 
-        private TeamId GetTeamIdFromConfig(PlayerConfig p)
+        private TeamId GetTeamIdFromConfig(IPlayerConfig p)
         {
             if (p.Team.ToLower().Equals("blue"))
             {
@@ -37,7 +38,7 @@ namespace LeagueSandbox.GameServer.Players
             return TeamId.TEAM_PURPLE;
         }
 
-        public void AddPlayer(KeyValuePair<string, PlayerConfig> p)
+        public void AddPlayer(KeyValuePair<string, IPlayerConfig> p)
         {
             var summonerSkills = new[]
             {
@@ -67,6 +68,11 @@ namespace LeagueSandbox.GameServer.Players
             _players.Add(pair);
         }
 
+        public void AddPlayer(Tuple<uint, ClientInfo> p)
+        {
+            _players.Add(p);
+        }
+
         // GetPlayerFromPeer
         public ClientInfo GetPeerInfo(long playerId)
         {
@@ -83,11 +89,16 @@ namespace LeagueSandbox.GameServer.Players
 
         public ClientInfo GetClientInfoByChampion(IChampion champ)
         {
-            return GetPlayers().Find(c => c.Item2.Champion == champ).Item2;
+            return GetPlayers(true).Find(c => c.Item2.Champion == champ).Item2;
         }
 
-        public List<Tuple<uint, ClientInfo>> GetPlayers()
+        public List<Tuple<uint, ClientInfo>> GetPlayers(bool includeBots = true)
         {
+            if (!includeBots)
+            {
+                return _players.FindAll(c => !c.Item2.Champion.IsBot);
+            }
+
             return _players;
         }
     }

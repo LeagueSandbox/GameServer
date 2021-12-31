@@ -215,7 +215,7 @@ namespace PacketDefinitions420
         public bool BroadcastPacketTeam(TeamId team, byte[] data, Channel channelNo,
             PacketFlags flag = PacketFlags.Reliable)
         {
-            foreach (var ci in _playerManager.GetPlayers())
+            foreach (var ci in _playerManager.GetPlayers(true))
             {
                 if (ci.Item2 != null && ci.Item2.Team == team)
                 {
