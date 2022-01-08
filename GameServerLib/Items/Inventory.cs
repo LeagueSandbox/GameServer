@@ -123,14 +123,15 @@ namespace LeagueSandbox.GameServer.Items
             var itemID = Items[slot].ItemData.ItemId;
             int finalStacks = Items[slot].StackCount - stacksToRemove;
 
-            if (finalStacks <= 0 || !HasItemWithID(itemID))
+            if (finalStacks <= 0)
             {
-                if(Items[slot] != null && owner != null)
-                {
-                    owner.Stats.RemoveModifier(Items[slot].ItemData);
-                }
+                if (Items[slot] == null || owner == null)
+                    return;
 
-                if (ItemScripts.ContainsKey(itemID))
+                owner.Stats.RemoveModifier(Items[slot].ItemData);
+
+                Items[slot] = null;
+                if (!HasItemWithID(itemID) && ItemScripts.ContainsKey(itemID))
                 {
                     if (owner != null)
                     {
@@ -142,13 +143,13 @@ namespace LeagueSandbox.GameServer.Items
                     }
                     ItemScripts.Remove(itemID);
                 }
-                Items[slot] = null;
             }
             else
             {
                 Items[slot].SetStacks(finalStacks);
             }
         }
+
         public bool HasItemWithID(int ItemID)
         {
             foreach (var item in Items)
@@ -160,6 +161,7 @@ namespace LeagueSandbox.GameServer.Items
             }
             return false;
         }
+
         public byte GetItemSlot(IItem item)
         {
             for (byte i = 0; i < Items.Length; i++)
