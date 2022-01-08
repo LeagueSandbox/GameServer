@@ -1,11 +1,12 @@
-﻿using GameServerCore.Domain;
-using GameServerCore.Domain.GameObjects;
-using GameServerCore.Enums;
-using GameServerCore.Scripting.CSharp;
-using LeagueSandbox.GameServer.Scripting.CSharp;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using GameServerCore.Domain;
+using GameServerCore.Domain.GameObjects;
+using GameServerCore.Enums;
+using GameServerCore.Packets.Interfaces;
+using GameServerCore.Scripting.CSharp;
+using LeagueSandbox.GameServer.Scripting.CSharp;
 
 namespace LeagueSandbox.GameServer.Items
 {
@@ -124,25 +125,29 @@ namespace LeagueSandbox.GameServer.Items
 
             if (finalStacks <= 0)
             {
-                if (Items[slot] == null)
+                if (Items[slot] == null )
                     return;
+
+                if(owner != null)
+                {
+                    owner.Stats.RemoveModifier(Items[slot].ItemData);
+                }
 
                 Items[slot] = null;
 
-                if (owner == null)
-                    return;
-
-                owner.Stats.RemoveModifier(Items[slot].ItemData);
                 if (!HasItemWithID(itemID) && ItemScripts.ContainsKey(itemID))
                 {
-                    ItemScripts[itemID].OnDeactivate(owner);
-                    if (ItemScripts[itemID].StatsModifier != null)
+                    if (owner != null)
                     {
-                        owner.Stats.RemoveModifier(ItemScripts[itemID].StatsModifier);
+                        ItemScripts[itemID].OnDeactivate(owner);
+                        if (ItemScripts[itemID].StatsModifier != null)
+                        {
+                            owner.Stats.RemoveModifier(ItemScripts[itemID].StatsModifier);
+                        }
                     }
                     ItemScripts.Remove(itemID);
                 }
-
+                
             }
             else
             {
