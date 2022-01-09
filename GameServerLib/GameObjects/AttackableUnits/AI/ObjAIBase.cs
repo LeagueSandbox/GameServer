@@ -523,18 +523,9 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 return;
             }
 
-            if (MoveOrder == OrderType.AttackMove
-                || MoveOrder == OrderType.AttackTo
-                || MoveOrder == OrderType.AttackTerrainOnce
-                || MoveOrder == OrderType.AttackTerrainSustained)
-            {
-                idealRange = Stats.Range.Total;
-            }
-
             if (MoveOrder != OrderType.AttackTo && TargetUnit != null)
             {
                 UpdateMoveOrder(OrderType.AttackTo, true);
-                idealRange = Stats.Range.Total;
             }
 
             if (SpellToCast != null)
@@ -944,7 +935,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
             var idealRange = Stats.Range.Total;
 
-            if (TargetUnit is IObjBuilding)
+            if (TargetUnit != null)
             {
                 idealRange = Stats.Range.Total + TargetUnit.CollisionRadius;
             }
@@ -1010,7 +1001,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                         if (AutoAttackSpell.State == SpellState.STATE_READY)
                         {
                             // Stops us from continuing to move towards the target.
-                            RefreshWaypoints(Stats.Range.Total);
+                            RefreshWaypoints(idealRange);
 
                             if (CanAttack())
                             {
