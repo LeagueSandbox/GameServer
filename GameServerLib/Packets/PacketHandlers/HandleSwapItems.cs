@@ -24,14 +24,15 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                 return false;
             }
 
+           
+
             var champion = _playerManager.GetPeerInfo(userId).Champion;
 
             // "Holy shit this needs refactoring" - Mythic, April 13th 2016
             champion.Inventory.SwapItems(req.SlotFrom, req.SlotTo);
-            champion.SwapSpells((byte)(req.SlotFrom + Shop.ITEM_ACTIVE_OFFSET),
-                (byte)(req.SlotTo + Shop.ITEM_ACTIVE_OFFSET));
             _game.PacketNotifier.NotifySwapItemAns(champion, req.SlotFrom, req.SlotTo);
-
+            champion.SwapSpells((byte)(req.SlotFrom + Shop.ITEM_ACTIVE_OFFSET),
+               (byte)(req.SlotTo + Shop.ITEM_ACTIVE_OFFSET));
             return true;
         }
     }
