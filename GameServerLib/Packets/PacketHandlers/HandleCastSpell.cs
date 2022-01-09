@@ -35,17 +35,21 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                 return false;
             }
 
-            if (s.CastInfo.SpellSlot >= (int)SpellSlotType.InventorySlots && s.CastInfo.SpellSlot < (int)SpellSlotType.BluePillSlot)
+            if(s.Cast(req.Position, req.EndPosition, targetUnit))
             {
-                var item = s.CastInfo.Owner.Inventory.GetItem(s.SpellName);
-                if (item != null && item.ItemData.Consumed)
+                if (s.CastInfo.SpellSlot >= (int)SpellSlotType.InventorySlots && s.CastInfo.SpellSlot < (int)SpellSlotType.BluePillSlot)
                 {
-                    var inventory = owner.Inventory;
-                    inventory.RemoveItem(inventory.GetItemSlot(item), owner);
+                    var item = s.CastInfo.Owner.Inventory.GetItem(s.SpellName);
+                    if (item != null && item.ItemData.Consumed)
+                    {
+                        var inventory = owner.Inventory;
+                        inventory.RemoveItem(inventory.GetItemSlot(item), owner);
+                    }
                 }
+                return true;
             }
 
-            return s.Cast(req.Position, req.EndPosition, targetUnit);
+            return false;
         }
     }
 }
