@@ -399,7 +399,7 @@ namespace LeagueSandbox.GameServer.API
         /// <param name="msg">String to print.</param>
         public static void PrintChat(string msg)
         {
-            _game.PacketNotifier.NotifyDebugMessage(msg); // TODO: Move PacketNotifier usage to less abstract classes
+            _game.PacketNotifier.NotifyS2C_SystemMessage(msg); // TODO: Move PacketNotifier usage to less abstract classes
         }
 
         /// <summary>

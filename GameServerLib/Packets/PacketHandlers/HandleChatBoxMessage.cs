@@ -56,7 +56,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                     catch
                     {
                         _logger.Warn(command + " sent an exception.");
-                         _game.PacketNotifier.NotifyDebugMessage(userId, "Something went wrong...Did you wrote the command well ? ");
+                         _game.PacketNotifier.NotifyS2C_SystemMessage(userId, "Something went wrong...Did you wrote the command well ? ");
                     }
                     return true;
                 }
@@ -81,19 +81,19 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 
             if (_game.Config.ChatCheatsEnabled)
             {
-                 _game.PacketNotifier.NotifyDebugMessage(ownTeam, dmTeam);
-                 _game.PacketNotifier.NotifyDebugMessage(enemyTeam, dmEnemy);
+                 _game.PacketNotifier.NotifyS2C_SystemMessage(ownTeam, dmTeam);
+                 _game.PacketNotifier.NotifyS2C_SystemMessage(enemyTeam, dmEnemy);
                 return true;
             }
 
             switch (req.Type)
             {
                 case ChatType.CHAT_ALL:
-                     _game.PacketNotifier.NotifyDebugMessage(ownTeam, dmTeam);
-                     _game.PacketNotifier.NotifyDebugMessage(enemyTeam, dmEnemy);
+                     _game.PacketNotifier.NotifyS2C_SystemMessage(ownTeam, dmTeam);
+                     _game.PacketNotifier.NotifyS2C_SystemMessage(enemyTeam, dmEnemy);
                     return true;
                 case ChatType.CHAT_TEAM:
-                     _game.PacketNotifier.NotifyDebugMessage(ownTeam, dmTeam);
+                     _game.PacketNotifier.NotifyS2C_SystemMessage(ownTeam, dmTeam);
                     return true;
                 default:
                     _logger.Error("Unknown ChatMessageType:" + req.Type.ToString());
