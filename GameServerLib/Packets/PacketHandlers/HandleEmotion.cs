@@ -43,7 +43,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                     break;
             }
 
-            _game.PacketNotifier.NotifyEmotions(req.Id, req.NetId);
+            _game.PacketNotifier.NotifyS2C_PlayEmote(req.Id, req.NetId);
             return true;
         }
     }

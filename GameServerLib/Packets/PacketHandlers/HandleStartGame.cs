@@ -82,7 +82,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                             _game.PacketNotifier.NotifyNPC_LevelUp(player.Item2.Champion);
                             if (_game.IsPaused)
                             {
-                                 _game.PacketNotifier.NotifyPauseGame((int)_game.PauseTimeLeft, true);
+                                 _game.PacketNotifier.NotifyPausePacket(_playerManager.GetClientInfoWithPlayerId((int)peerInfo.PlayerId), (int)_game.PauseTimeLeft, true);
                             }
                         }
                     }

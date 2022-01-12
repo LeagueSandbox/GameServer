@@ -72,13 +72,13 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.Buildings.Animate
                 _game.PacketNotifier.NotifyUnitAddGold(c, this, GOLD_WORTH);
             }
 
-            SetState(InhibitorState.DEAD, data.Killer);
+            SetState(InhibitorState.DEAD, data);
             RespawnAnnounced = false;
 
             base.Die(data);
         }
 
-        public void SetState(InhibitorState state, IGameObject killer = null)
+        public void SetState(InhibitorState state, IDeathData data = null)
         {
             if (_respawnTimer != null && state == InhibitorState.ALIVE)
             {
@@ -86,7 +86,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.Buildings.Animate
             }
 
             InhibitorState = state;
-            _game.PacketNotifier.NotifyInhibitorState(this, killer);
+            _game.PacketNotifier.NotifyInhibitorState(this, data);
         }
 
         public double GetRespawnTimer()
