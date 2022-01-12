@@ -13,6 +13,5 @@ namespace GameServerCore
         ClientInfo GetClientInfoByChampion(IChampion champ);
         ClientInfo GetPeerInfo(long playerId);
         List<Tuple<uint, ClientInfo>> GetPlayers(bool includeBots = false);
-        ClientInfo GetClientInfoWithPlayerId(int playerId);
     }
 }

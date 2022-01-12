@@ -101,17 +101,5 @@ namespace LeagueSandbox.GameServer.Players
 
             return _players;
         }
-
-        public ClientInfo GetClientInfoWithPlayerId(int playerId)
-        {
-            foreach(var player in _players)
-            {
-                if(player.Item2.PlayerId == playerId)
-                {
-                    return player.Item2;
-                }
-            }
-            return null;
-        }
     }
 }
