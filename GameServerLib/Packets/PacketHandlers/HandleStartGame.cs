@@ -48,7 +48,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                     {
                         var msg = "Your client version does not match the server. " +
                                   "Check the server log for more information.";
-                         _game.PacketNotifier.NotifyDebugMessage(userId, msg);
+                         _game.PacketNotifier.NotifyS2C_SystemMessage(userId, msg);
                     }
 
                     _game.PacketNotifier.NotifySpawn(player.Item2.Champion, userId, false);
@@ -82,7 +82,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                             _game.PacketNotifier.NotifyNPC_LevelUp(player.Item2.Champion);
                             if (_game.IsPaused)
                             {
-                                 _game.PacketNotifier.NotifyPauseGame((int)_game.PauseTimeLeft, true);
+                                 _game.PacketNotifier.NotifyPausePacket(peerInfo, (int)_game.PauseTimeLeft, true);
                             }
                         }
                     }

@@ -7,7 +7,7 @@ namespace GameServerCore.Domain.GameObjects
         bool RespawnAnnounced { get; }
         InhibitorState InhibitorState { get; }
         LaneID Lane { get; }
-        void SetState(InhibitorState state, IGameObject killer);
+        void SetState(InhibitorState state, IDeathData data = null);
         double GetRespawnTimer();
     }
 }

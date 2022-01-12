@@ -410,7 +410,10 @@ namespace LeagueSandbox.GameServer
                 return;
             }
             IsPaused = true;
-            PacketNotifier.NotifyPauseGame((int)PauseTimeLeft, true);
+            foreach(var player in PlayerManager.GetPlayers())
+            {
+                PacketNotifier.NotifyPausePacket(player.Item2, (int)PauseTimeLeft, true);
+            }
         }
 
         /// <summary>

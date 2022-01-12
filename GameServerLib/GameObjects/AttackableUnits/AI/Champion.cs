@@ -216,13 +216,13 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             SetPosition(spawnPos.X, spawnPos.Y);
             float parToRestore = 0;
             // TODO: Find a better way to do this, perhaps through scripts. Otherwise, make sure all types are accounted for.
-            if (Stats.ParType == PrimaryAbilityResourceType.MANA || Stats.ParType == PrimaryAbilityResourceType.Energy || Stats.ParType == PrimaryAbilityResourceType.Wind   )
+            if (Stats.ParType == PrimaryAbilityResourceType.MANA || Stats.ParType == PrimaryAbilityResourceType.Energy || Stats.ParType == PrimaryAbilityResourceType.Wind)
             {
                 parToRestore = Stats.ManaPoints.Total;
+                Stats.CurrentMana = parToRestore;
             }
             _game.PacketNotifier.NotifyHeroReincarnateAlive(this, parToRestore);
             Stats.CurrentHealth = Stats.HealthPoints.Total;
-            Stats.CurrentMana = parToRestore;
             IsDead = false;
             RespawnTimer = -1;
             ApiEventManager.OnResurrect.Publish(this);
@@ -248,7 +248,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             Stats.Experience += experience;
             _game.PacketNotifier.NotifyUnitAddEXP(this, experience);
 
-            while (Stats.Experience >= _game.Config.MapData.ExpCurve[Stats.Level - 1] && LevelUp());
+            while (Stats.Experience >= _game.Config.MapData.ExpCurve[Stats.Level - 1] && LevelUp()) ;
         }
 
         public bool LevelUp(bool force = false)

@@ -59,11 +59,6 @@ namespace GameServerCore.Packets.Interfaces
         /// TODO: Implement a Region class so we can easily grab these parameters instead of listing them all in the function.
         void NotifyAddRegion(uint unitNetId, uint bubbleNetId, TeamId team, Vector2 position, float time, float radius = 0, int regionType = 0, ClientInfo clientInfo = null, IGameObject obj = null, float collisionRadius = 0, float grassRadius = 0, float sizemult = 1.0f, float addsize = 0, bool grantVis = true, bool stealthVis = false);
         /// <summary>
-        /// Sends a packet to all players that have vision of the specified Azir turret that it has spawned.
-        /// </summary>
-        /// <param name="azirTurret">AzirTurret instance.</param>
-        void NotifyAzirTurretSpawned(IAzirTurret azirTurret);
-        /// <summary>
         /// Sends a packet to all players with vision of the specified attacker detailing that they have targeted the specified target.
         /// </summary>
         /// <param name="attacker">AI that is targeting an AttackableUnit.</param>
@@ -142,23 +137,7 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="userId">ID of the user to send the packet to.</param>
         /// <param name="unit">GameObject to highlght.</param>
         void NotifyCreateUnitHighlight(int userId, IGameObject unit);
-        /// <summary>
-        /// Sends a packet to all players detailing a debug message.
-        /// </summary>
-        /// <param name="htmlDebugMessage">Debug message to send.</param>
-        void NotifyDebugMessage(string htmlDebugMessage);
-        /// <summary>
-        /// Sends a packet to the specified user detailing a debug message.
-        /// </summary>
-        /// <param name="userId">ID of the user to send the packet to.</param>
-        /// <param name="message">Debug message to send.</param>
-        void NotifyDebugMessage(int userId, string message);
-        /// <summary>
-        /// Sends a packet to the specified team detailing a debug message.
-        /// </summary>
-        /// <param name="team">TeamId to send the packet to; BLUE/PURPLE/NEUTRAL.</param>
-        /// <param name="message">Debug message to send.</param>
-        void NotifyDebugMessage(TeamId team, string message);
+        void NotifyDampenerSwitchStates(IInhibitor inhibitor);
         /// <summary>
         /// Sends a packet to the specified user which is intended for debugging.
         /// </summary>
@@ -187,12 +166,6 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="userId">User to send to. 0 = sends to all in vision.</param>
         /// <param name="param">Optional parameters for the text. Untested, function unknown.</param>
         void NotifyDisplayFloatingText(IGameObject target, string message, FloatTextType textType = FloatTextType.Debug, int userId = 0, int param = 0);
-        /// <summary>
-        /// Sends a packet to all players detailing an emotion that is being performed by the unit that owns the specified netId.
-        /// </summary>
-        /// <param name="type">Type of emotion being performed; DANCE/TAUNT/LAUGH/JOKE/UNK.</param>
-        /// <param name="netId">NetID of the unit performing the emotion.</param>
-        void NotifyEmotions(Emotions type, uint netId);
         /// <summary>
         /// Sends a packet to the specified user detailing that the GameObject that owns the specified netId has finished being initialized into vision.
         /// </summary>
@@ -269,7 +242,7 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="inhibitor">Inhibitor to check.</param>
         /// <param name="killer">Killer of the inhibitor (if applicable).</param>
         /// <param name="assists">Assists of the killer (if applicable).</param>
-        void NotifyInhibitorState(IInhibitor inhibitor, IGameObject killer = null, List<IChampion> assists = null);
+        void NotifyInhibitorState(IInhibitor inhibitor, IDeathData deathData, List<IChampion> assists = null);
         /// Sends a basic heartbeat packet to either the given player or all players.
         /// </summary>
         void NotifyKeyCheck(int clientID, long playerId, uint version, ulong checkSum = 0, byte action = 0, bool broadcast = false);
@@ -359,11 +332,6 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="IsMagical">Whether or not the shield being modified is of the Magical type.</param>
         /// <param name="StopShieldFade">Whether the shield should stay static or fade.</param>
         void NotifyModifyShield(IAttackableUnit unit, float amount, bool IsPhysical, bool IsMagical, bool StopShieldFade);
-        /// <summary>
-        /// Sends a packet to all players with vision of the specified Monster that it has spawned.
-        /// </summary>
-        /// <param name="m">GameObject of type Monster that spawned.</param>
-        void NotifyMonsterSpawned(IMonster m);
         /// <summary>
         /// Sends a packet to all players detailing the movement driver homing data for the given unit.
         /// Used to sync homing (target-based) dashes between client and server.
@@ -495,18 +463,13 @@ namespace GameServerCore.Packets.Interfaces
         /// </summary>
         /// <param name="seconds">Amount of time till the pause ends.</param>
         /// <param name="showWindow">Whether or not to show a pause window.</param>
-        void NotifyPauseGame(int seconds, bool showWindow);
+        void NotifyPausePacket(ClientInfo player, int seconds, bool isTournament);
         /// <summary>
         /// Sends a packet to all players detailing the specified client's loading screen progress.
         /// </summary>
         /// <param name="request">Info of the target client given via the client who requested loading screen progress.</param>
         /// <param name="clientInfo">Client info of the client who's progress is being requested.</param>
         void NotifyPingLoadInfo(PingLoadInfoRequest request, ClientInfo clientInfo);
-        /// <summary>
-        /// Sends a packet to the specified player which is meant as a response to the players query about the status of the game.
-        /// </summary>
-        /// <param name="userId">User to send the packet to; player that sent the query.</param>
-        void NotifyQueryStatus(int userId);
         /// <summary>
         /// Sends a packet to all players that a champion has respawned.
         /// </summary>
@@ -554,7 +517,7 @@ namespace GameServerCore.Packets.Interfaces
         /// </summary>
         /// <param name="unpauser">Unit that unpaused the game.</param>
         /// <param name="showWindow">Whether or not to show a window before unpausing (delay).</param>
-        void NotifyResumeGame(IAttackableUnit unpauser, bool showWindow);
+        void NotifyResumePacket(IChampion unpauser, ClientInfo player, bool isDelayed);
         /// <summary>
         /// Sends a packet to all players with vision of the given chain missile that it has updated (unit/position).
         /// </summary>
@@ -636,6 +599,18 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="userId">User to send the packet to.</param>
         void NotifyS2C_OnEnterTeamVisibility(IGameObject o, TeamId team, int userId = 0);
         /// <summary>
+        /// Sends a packet to all players that announces a specified message (ex: "Minions have spawned.")
+        /// </summary>
+        /// <param name="eventId">Id of the event to happen.</param>
+        /// <param name="sourceNetID">Not yet know it's use.</param>
+        void NotifyS2C_OnEventWorld(int mapId, EventID messageId, bool isMapSpecific);
+        /// <summary>
+        /// Sends a packet to all players detailing that the specified object's current animations have been paused/unpaused.
+        /// </summary>
+        /// <param name="obj">GameObject that is playing the animation.</param>
+        /// <param name="pause">Whether or not to pause/unpause animations.</param>
+        void NotifyS2C_PauseAnimation(IGameObject obj, bool pause);
+        /// <summary>
         /// Sends a packet to all players with vision of the specified object detailing that it is playing the specified animation.
         /// </summary>
         /// <param name="obj">GameObject that is playing the animation.</param>
@@ -648,17 +623,16 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="speedScale">How much the speed of the GameObject should affect the animation.</param>
         void NotifyS2C_PlayAnimation(IGameObject obj, string animation, AnimationFlags flags = 0, float timeScale = 1.0f, float startTime = 0.0f, float speedScale = 1.0f);
         /// <summary>
-        /// Sends a packet to all players that announces a specified message (ex: "Minions have spawned.")
+        /// Sends a packet to all players detailing an emotion that is being performed by the unit that owns the specified netId.
         /// </summary>
-        /// <param name="eventId">Id of the event to happen.</param>
-        /// <param name="sourceNetID">Not yet know it's use.</param>
-        void NotifyS2C_OnEventWorld(int mapId, EventID messageId, bool isMapSpecific);
+        /// <param name="type">Type of emotion being performed; DANCE/TAUNT/LAUGH/JOKE/UNK.</param>
+        /// <param name="netId">NetID of the unit performing the emotion.</param>
+        void NotifyS2C_PlayEmote(Emotions type, uint netId);
         /// <summary>
-        /// Sends a packet to all players detailing that the specified object's current animations have been paused/unpaused.
+        /// Sends a packet to the specified player which is meant as a response to the players query about the status of the game.
         /// </summary>
-        /// <param name="obj">GameObject that is playing the animation.</param>
-        /// <param name="pause">Whether or not to pause/unpause animations.</param>
-        void NotifyS2C_PauseAnimation(IGameObject obj, bool pause);
+        /// <param name="userId">User to send the packet to; player that sent the query.</param>
+        void NotifyS2C_QueryStatusAns(int userId);
         /// <summary>
         /// Sends a packet to all players with vision of the specified unit detailing that its animation states have changed to the specified animation pairs.
         /// Replaces the unit's normal animation behaviors with the given animation pairs. Structure of the animationPairs is expected to follow the same structure from before the replacement.
@@ -733,6 +707,23 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="userId">User to send the packet to.</param>
         /// <param name="s">Spell being updated.</param>
         void NotifyS2C_UpdateSpellToggle(int userId, ISpell s);
+        /// <summary>
+        /// Sends a packet to all players detailing a debug message.
+        /// </summary>
+        /// <param name="htmlDebugMessage">Debug message to send.</param>
+        void NotifyS2C_SystemMessage(string htmlDebugMessage);
+        /// <summary>
+        /// Sends a packet to the specified user detailing a debug message.
+        /// </summary>
+        /// <param name="userId">ID of the user to send the packet to.</param>
+        /// <param name="message">Debug message to send.</param>
+        void NotifyS2C_SystemMessage(int userId, string message);
+        /// <summary>
+        /// Sends a packet to the specified team detailing a debug message.
+        /// </summary>
+        /// <param name="team">TeamId to send the packet to; BLUE/PURPLE/NEUTRAL.</param>
+        /// <param name="message">Debug message to send.</param>
+        void NotifyS2C_SystemMessage(TeamId team, string message);
         /// <summary>
         /// Sends a packet to all players detailing that the server has ticked within the specified time delta.
         /// </summary>
@@ -909,13 +900,6 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="itemInstance">Item instance housing all information about the item that has been used.</param>
         void NotifyUseItemAns(int userId, IObjAiBase ai, IItem itemInstance);
         /// <summary>
-        /// Sends a packet to the specified player detailing that their request to view something with their camera has been acknowledged.
-        /// </summary>
-        /// <param name="userId">User to send the packet to.</param>
-        /// <param name="request">ViewRequest housing information about the camera's view.</param>
-        /// TODO: Verify if this is the correct implementation.
-        void NotifyViewResponse(int userId, ViewRequest request);
-        /// <summary>
         /// Sends a packet to all players that have vision of the specified unit that it has made a movement.
         /// </summary>
         /// <param name="u">AttackableUnit that is moving.</param>
@@ -963,5 +947,13 @@ namespace GameServerCore.Packets.Interfaces
             float backDistance = 0,
             float travelTime = 0
         );
+        /// <summary>
+        /// Sends a packet to the specified player detailing that their request to view something with their camera has been acknowledged.
+        /// </summary>
+        /// <param name="userId">User to send the packet to.</param>
+        /// <param name="request">ViewRequest housing information about the camera's view.</param>
+        /// TODO: Verify if this is the correct implementation.
+        /// TODO: Fix LeaguePackets Typos.
+        void NotifyWorld_SendCamera_Server_Acknologment(int userId, ViewRequest request);
     }
 }

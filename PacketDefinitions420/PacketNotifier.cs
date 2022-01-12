@@ -284,16 +284,6 @@ namespace PacketDefinitions420
         }
 
         /// <summary>
-        /// Sends a packet to all players that have vision of the specified Azir turret that it has spawned.
-        /// </summary>
-        /// <param name="azirTurret">AzirTurret instance.</param>
-        public void NotifyAzirTurretSpawned(IAzirTurret azirTurret)
-        {
-            var spawnPacket = new SpawnAzirTurret(azirTurret);
-            _packetHandlerManager.BroadcastPacketVision(azirTurret, spawnPacket, Channel.CHL_S2C);
-        }
-
-        /// <summary>
         /// Sends a packet to all players detailing that the specified  unit is starting their next auto attack.
         /// </summary>
         /// <param name="attacker">Unit that is attacking.</param>
@@ -555,36 +545,16 @@ namespace PacketDefinitions420
             _packetHandlerManager.SendPacket(userId, highlightPacket.GetBytes(), Channel.CHL_S2C);
         }
 
-        /// <summary>
-        /// Sends a packet to all players detailing a debug message.
-        /// </summary>
-        /// <param name="htmlDebugMessage">Debug message to send.</param>
-        public void NotifyDebugMessage(string htmlDebugMessage)
+        public void NotifyDampenerSwitchStates(IInhibitor inhibitor)
         {
-            var dm = new DebugMessage(htmlDebugMessage);
-            _packetHandlerManager.BroadcastPacket(dm, Channel.CHL_S2C);
-        }
-
-        /// <summary>
-        /// Sends a packet to the specified user detailing a debug message.
-        /// </summary>
-        /// <param name="userId">ID of the user to send the packet to.</param>
-        /// <param name="message">Debug message to send.</param>
-        public void NotifyDebugMessage(int userId, string message)
-        {
-            var dm = new DebugMessage(message);
-            _packetHandlerManager.SendPacket(userId, dm, Channel.CHL_S2C);
-        }
-
-        /// <summary>
-        /// Sends a packet to the specified team detailing a debug message.
-        /// </summary>
-        /// <param name="team">TeamId to send the packet to; BLUE/PURPLE/NEUTRAL.</param>
-        /// <param name="message">Debug message to send.</param>
-        public void NotifyDebugMessage(TeamId team, string message)
-        {
-            var dm = new DebugMessage(message);
-            _packetHandlerManager.BroadcastPacketTeam(team, dm, Channel.CHL_S2C);
+            var inhibState = new DampenerSwitchStates
+            {
+                SenderNetID = inhibitor.NetId,
+                State = (byte)inhibitor.InhibitorState,
+                //Not sure if this is right
+                Duration = (ushort)inhibitor.GetRespawnTimer()
+            };
+            _packetHandlerManager.BroadcastPacket(inhibState.GetBytes(), Channel.CHL_S2C);
         }
 
         /// <summary>
@@ -648,40 +618,6 @@ namespace PacketDefinitions420
             }
 
             _packetHandlerManager.SendPacket(userId, textPacket.GetBytes(), Channel.CHL_S2C);
-        }
-
-        /// <summary>
-        /// Sends a packet to all players detailing an emotion that is being performed by the unit that owns the specified netId.
-        /// </summary>
-        /// <param name="type">Type of emotion being performed; DANCE/TAUNT/LAUGH/JOKE/UNK.</param>
-        /// <param name="netId">NetID of the unit performing the emotion.</param>
-        public void NotifyEmotions(Emotions type, uint netId)
-        {
-            // convert type
-            EmotionType targetType;
-            switch (type)
-            {
-                case Emotions.DANCE:
-                    targetType = EmotionType.DANCE;
-                    break;
-                case Emotions.TAUNT:
-                    targetType = EmotionType.TAUNT;
-                    break;
-                case Emotions.LAUGH:
-                    targetType = EmotionType.LAUGH;
-                    break;
-                case Emotions.JOKE:
-                    targetType = EmotionType.JOKE;
-                    break;
-                case Emotions.UNK:
-                    targetType = (EmotionType)type;
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(type), type, null);
-            }
-
-            var packet = new EmotionPacketResponse((byte)targetType, netId);
-            _packetHandlerManager.BroadcastPacket(packet, Channel.CHL_S2C);
         }
 
         /// <summary>
@@ -1097,27 +1033,25 @@ namespace PacketDefinitions420
         /// <param name="inhibitor">Inhibitor to check.</param>
         /// <param name="killer">Killer of the inhibitor (if applicable).</param>
         /// <param name="assists">Assists of the killer (if applicable).</param>
-        public void NotifyInhibitorState(IInhibitor inhibitor, IGameObject killer = null, List<IChampion> assists = null)
+        public void NotifyInhibitorState(IInhibitor inhibitor, IDeathData deathData, List<IChampion> assists = null)
         {
             UnitAnnounce announce;
             switch (inhibitor.InhibitorState)
             {
                 case InhibitorState.DEAD:
-                    announce = new UnitAnnounce(UnitAnnounces.INHIBITOR_DESTROYED, inhibitor, killer, assists);
+                    announce = new UnitAnnounce(UnitAnnounces.INHIBITOR_DESTROYED, inhibitor, deathData.Killer, assists);
                     _packetHandlerManager.BroadcastPacket(announce, Channel.CHL_S2C);
 
-                    var anim = new InhibitorDeathAnimation(inhibitor, killer);
-                    _packetHandlerManager.BroadcastPacket(anim, Channel.CHL_S2C);
+                    NotifyBuilding_Die(deathData);
+
                     break;
                 case InhibitorState.ALIVE:
-                    announce = new UnitAnnounce(UnitAnnounces.INHIBITOR_SPAWNED, inhibitor, killer, assists);
+                    announce = new UnitAnnounce(UnitAnnounces.INHIBITOR_SPAWNED, inhibitor, deathData.Killer, assists);
                     _packetHandlerManager.BroadcastPacket(announce, Channel.CHL_S2C);
                     break;
             }
-            var packet = new InhibitorStateUpdate(inhibitor);
-            _packetHandlerManager.BroadcastPacket(packet, Channel.CHL_S2C);
+            NotifyDampenerSwitchStates(inhibitor);
         }
-
         /// <summary>
         /// Sends a basic heartbeat packet to either the given player or all players.
         /// </summary>
@@ -1500,16 +1434,6 @@ namespace PacketDefinitions420
                 Amount = amount
             };
             _packetHandlerManager.BroadcastPacket(mods.GetBytes(), Channel.CHL_S2C);
-        }
-
-        /// <summary>
-        /// Sends a packet to all players with vision of the specified Monster that it has spawned.
-        /// </summary>
-        /// <param name="m">GameObject of type Monster that spawned.</param>
-        public void NotifyMonsterSpawned(IMonster m)
-        {
-            var sp = new SpawnMonster(_navGrid, m);
-            _packetHandlerManager.BroadcastPacketVision(m, sp, Channel.CHL_S2C);
         }
 
         /// <summary>
@@ -2060,10 +1984,18 @@ namespace PacketDefinitions420
         /// </summary>
         /// <param name="seconds">Amount of time till the pause ends.</param>
         /// <param name="showWindow">Whether or not to show a pause window.</param>
-        public void NotifyPauseGame(int seconds, bool showWindow)
+        public void NotifyPausePacket(ClientInfo player, int seconds, bool isTournament)
         {
-            var pg = new PauseGame(seconds, showWindow);
-            _packetHandlerManager.BroadcastPacket(pg, Channel.CHL_S2C);
+            var pg = new PausePacket
+            {
+                //Check if sender ID should be the person that requested the pause or just 0
+                SenderNetID = 0,
+                ClientID = (int)player.ClientId,
+                IsTournament = isTournament,
+                PauseTimeRemaining = seconds
+            };
+            //I Assumed that, since the packet requires idividual client IDs, that it also sends the packets individually, by useing the SendPacket Channel, double check if that's valid.
+            _packetHandlerManager.SendPacket((int)player.PlayerId, pg.GetBytes(), Channel.CHL_S2C);
         }
 
         /// <summary>
@@ -2078,16 +2010,6 @@ namespace PacketDefinitions420
 
             //Logging->writeLine("loaded: %f, ping: %f, %f", loadInfo->loaded, loadInfo->ping, loadInfo->f3);
             _packetHandlerManager.BroadcastPacket(response, Channel.CHL_LOW_PRIORITY, PacketFlags.None);
-        }
-
-        /// <summary>
-        /// Sends a packet to the specified player which is meant as a response to the players query about the status of the game.
-        /// </summary>
-        /// <param name="userId">User to send the packet to; player that sent the query.</param>
-        public void NotifyQueryStatus(int userId)
-        {
-            var response = new QueryStatus();
-            _packetHandlerManager.SendPacket(userId, response, Channel.CHL_S2C);
         }
 
         /// <summary>
@@ -2208,19 +2130,23 @@ namespace PacketDefinitions420
         /// </summary>
         /// <param name="unpauser">Unit that unpaused the game.</param>
         /// <param name="showWindow">Whether or not to show a window before unpausing (delay).</param>
-        public void NotifyResumeGame(IAttackableUnit unpauser, bool showWindow)
+        public void NotifyResumePacket(IChampion unpauser, ClientInfo player, bool isDelayed)
         {
-            UnpauseGame upg;
+            var resume = new ResumePacket
+            {
+                Delayed = isDelayed,
+                ClientID = (int)player.ClientId
+            };
             if (unpauser == null)
             {
-                upg = new UnpauseGame(0, showWindow);
+                resume.SenderNetID = 0;
             }
             else
             {
-                upg = new UnpauseGame(unpauser.NetId, showWindow);
+                resume.SenderNetID = unpauser.NetId;
             }
 
-            _packetHandlerManager.BroadcastPacket(upg, Channel.CHL_S2C);
+            _packetHandlerManager.SendPacket((int)player.PlayerId, resume.GetBytes(), Channel.CHL_S2C);
         }
 
         /// <summary>
@@ -2536,6 +2462,22 @@ namespace PacketDefinitions420
         }
 
         /// <summary>
+        /// Sends a packet to all players detailing that the specified object's current animations have been paused/unpaused.
+        /// </summary>
+        /// <param name="obj">GameObject that is playing the animation.</param>
+        /// <param name="pause">Whether or not to pause/unpause animations.</param>
+        public void NotifyS2C_PauseAnimation(IGameObject obj, bool pause)
+        {
+            var animPacket = new S2C_PauseAnimation
+            {
+                SenderNetID = obj.NetId,
+                Pause = pause
+            };
+
+            _packetHandlerManager.BroadcastPacket(animPacket.GetBytes(), Channel.CHL_S2C);
+        }
+
+        /// <summary>
         /// Sends a packet to all players with vision of the specified object detailing that it is playing the specified animation.
         /// </summary>
         /// <param name="obj">GameObject that is playing the animation.</param>
@@ -2562,19 +2504,55 @@ namespace PacketDefinitions420
         }
 
         /// <summary>
-        /// Sends a packet to all players detailing that the specified object's current animations have been paused/unpaused.
+        /// Sends a packet to all players detailing an emotion that is being performed by the unit that owns the specified netId.
         /// </summary>
-        /// <param name="obj">GameObject that is playing the animation.</param>
-        /// <param name="pause">Whether or not to pause/unpause animations.</param>
-        public void NotifyS2C_PauseAnimation(IGameObject obj, bool pause)
+        /// <param name="type">Type of emotion being performed; DANCE/TAUNT/LAUGH/JOKE/UNK.</param>
+        /// <param name="netId">NetID of the unit performing the emotion.</param>
+        public void NotifyS2C_PlayEmote(Emotions type, uint netId)
         {
-            var animPacket = new S2C_PauseAnimation
+            // convert type
+            EmotionType targetType;
+            switch (type)
             {
-                SenderNetID = obj.NetId,
-                Pause = pause
-            };
+                case Emotions.DANCE:
+                    targetType = EmotionType.DANCE;
+                    break;
+                case Emotions.TAUNT:
+                    targetType = EmotionType.TAUNT;
+                    break;
+                case Emotions.LAUGH:
+                    targetType = EmotionType.LAUGH;
+                    break;
+                case Emotions.JOKE:
+                    targetType = EmotionType.JOKE;
+                    break;
+                case Emotions.UNK:
+                    targetType = (EmotionType)type;
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(type), type, null);
+            }
 
-            _packetHandlerManager.BroadcastPacket(animPacket.GetBytes(), Channel.CHL_S2C);
+            var packet = new S2C_PlayEmote
+            {
+                SenderNetID = netId,
+                EmoteID = (byte)targetType
+            };
+            _packetHandlerManager.BroadcastPacket(packet.GetBytes(), Channel.CHL_S2C);
+        }
+
+        /// <summary>
+        /// Sends a packet to the specified player which is meant as a response to the players query about the status of the game.
+        /// </summary>
+        /// <param name="userId">User to send the packet to; player that sent the query.</param>
+        public void NotifyS2C_QueryStatusAns(int userId)
+        {
+            var response = new S2C_QueryStatusAns
+            {
+                SenderNetID = 0,
+                Response = true
+            };
+            _packetHandlerManager.SendPacket(userId, response.GetBytes(), Channel.CHL_S2C);
         }
 
         /// <summary>
@@ -2792,6 +2770,56 @@ namespace PacketDefinitions420
         }
 
         /// <summary>
+        /// Sends a packet to all players detailing a debug message.
+        /// </summary>
+        /// <param name="htmlDebugMessage">Debug message to send.</param>
+        public void NotifyS2C_SystemMessage(string htmlDebugMessage)
+        {
+            var dm = new S2C_SystemMessage
+            {
+                SourceNetID = 0,
+                //TODO: Ivestigate the cases where sender NetID is used
+                SenderNetID = 0,
+                Message = htmlDebugMessage
+            };
+            _packetHandlerManager.BroadcastPacket(dm.GetBytes(), Channel.CHL_S2C);
+        }
+
+        /// <summary>
+        /// Sends a packet to the specified user detailing a debug message.
+        /// </summary>
+        /// <param name="userId">ID of the user to send the packet to.</param>
+        /// <param name="message">Debug message to send.</param>
+        public void NotifyS2C_SystemMessage(int userId, string message)
+        {
+            var dm = new S2C_SystemMessage
+            {
+                SourceNetID = 0,
+                //TODO: Ivestigate the cases where sender NetID is used
+                SenderNetID = 0,
+                Message = message
+            };
+            _packetHandlerManager.SendPacket(userId, dm.GetBytes(), Channel.CHL_S2C);
+        }
+
+        /// <summary>
+        /// Sends a packet to the specified team detailing a debug message.
+        /// </summary>
+        /// <param name="team">TeamId to send the packet to; BLUE/PURPLE/NEUTRAL.</param>
+        /// <param name="message">Debug message to send.</param>
+        public void NotifyS2C_SystemMessage(TeamId team, string message)
+        {
+            var dm = new S2C_SystemMessage
+            {
+                SourceNetID = 0,
+                //TODO: Ivestigate the cases where sender NetID is used
+                SenderNetID = 0,
+                Message = message
+            };
+            _packetHandlerManager.BroadcastPacketTeam(team, dm.GetBytes(), Channel.CHL_S2C);
+        }
+
+        /// <summary>
         /// Sends a packet to all players detailing that the server has ticked within the specified time delta.
         /// Unused.
         /// </summary>
@@ -2900,13 +2928,13 @@ namespace PacketDefinitions420
                     NotifyEnterVisibilityClient(c, userId, false, false, ignoreVis);
                     return;
                 case IMonster monster:
-                    NotifyMonsterSpawned(monster);
+                    NotifyEnterVisibilityClient(monster, userId);
                     break;
                 case IMinion minion:
                     visionPackets.Add(NotifyMinionSpawned(minion, false));
                     break;
                 case IAzirTurret azirTurret:
-                    NotifyAzirTurretSpawned(azirTurret);
+                    NotifyEnterVisibilityClient(azirTurret, userId, ignoreVision: true);
                     break;
                 case ILevelProp prop:
                     NotifySpawnLevelPropS2C(prop);
@@ -3384,27 +3412,6 @@ namespace PacketDefinitions420
         }
 
         /// <summary>
-        /// Sends a packet to the specified player detailing that their request to view something with their camera has been acknowledged.
-        /// </summary>
-        /// <param name="userId">User to send the packet to.</param>
-        /// <param name="request">ViewRequest housing information about the camera's view.</param>
-        /// TODO: Verify if this is the correct implementation.
-        public void NotifyViewResponse(int userId, ViewRequest request)
-        {
-            var answer = new ViewResponse(request.NetId);
-            if (request.RequestNo == 0xFE)
-            {
-                answer.SetRequestNo(0xFF);
-            }
-            else
-            {
-                answer.SetRequestNo(request.RequestNo);
-            }
-
-            _packetHandlerManager.SendPacket(userId, answer, Channel.CHL_S2C, PacketFlags.None);
-        }
-
-        /// <summary>
         /// Sends a packet to all players that have vision of the specified unit that it has made a movement.
         /// </summary>
         /// <param name="u">AttackableUnit that is moving.</param>
@@ -3552,6 +3559,23 @@ namespace PacketDefinitions420
             };
 
             _packetHandlerManager.BroadcastPacketVision(u, speedWpGroup.GetBytes(), Channel.CHL_S2C);
+        }
+
+        /// <summary>
+        /// Sends a packet to the specified player detailing that their request to view something with their camera has been acknowledged.
+        /// </summary>
+        /// <param name="userId">User to send the packet to.</param>
+        /// <param name="request">ViewRequest housing information about the camera's view.</param>
+        /// TODO: Verify if this is the correct implementation.
+        public void NotifyWorld_SendCamera_Server_Acknologment(int userId, ViewRequest request)
+        {
+            var answer = new World_SendCamera_Server_Acknologment
+            {
+                //TODO: Check these values
+                SenderNetID = (uint)request.NetId,
+                SyncID = request.RequestNo
+            };
+            _packetHandlerManager.SendPacket(userId, answer.GetBytes(), Channel.CHL_S2C, PacketFlags.None);
         }
     }
 }

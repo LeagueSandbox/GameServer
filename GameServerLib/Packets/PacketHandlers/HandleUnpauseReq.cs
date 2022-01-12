@@ -27,8 +27,10 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             IChampion unpauser = null;
 
             unpauser = _playerManager.GetPeerInfo(userId).Champion;
-
-            _game.PacketNotifier.NotifyResumeGame(unpauser, true);
+            foreach(var player in _playerManager.GetPlayers())
+            {
+                _game.PacketNotifier.NotifyResumePacket(unpauser, player.Item2, true);
+            }
             var timer = new Timer
             {
                 AutoReset = false,
@@ -37,7 +39,10 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             };
             timer.Elapsed += (sender, args) =>
             {
-                _game.PacketNotifier.NotifyResumeGame(unpauser, false);
+                foreach(var player in _playerManager.GetPlayers())
+                {
+                    _game.PacketNotifier.NotifyResumePacket(unpauser, player.Item2, false);
+                }
                 _game.Unpause();
             };
             return true;
