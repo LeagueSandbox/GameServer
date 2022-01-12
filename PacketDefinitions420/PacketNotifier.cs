@@ -1984,18 +1984,18 @@ namespace PacketDefinitions420
         /// </summary>
         /// <param name="seconds">Amount of time till the pause ends.</param>
         /// <param name="showWindow">Whether or not to show a pause window.</param>
-        public void NotifyPausePacket(Tuple<uint, ClientInfo> player, int seconds, bool isTournament)
+        public void NotifyPausePacket(ClientInfo player, int seconds, bool isTournament)
         {
             var pg = new PausePacket
             {
                 //Check if sender ID should be the person that requested the pause or just 0
                 SenderNetID = 0,
-                ClientID = (int)player.Item2.ClientId,
+                ClientID = (int)player.ClientId,
                 IsTournament = isTournament,
                 PauseTimeRemaining = seconds
             };
             //I Assumed that, since the packet requires idividual client IDs, that it also sends the packets individually, by useing the SendPacket Channel, double check if that's valid.
-            _packetHandlerManager.SendPacket((int)player.Item2.Champion.GetPlayerId(), pg.GetBytes(), Channel.CHL_S2C);
+            _packetHandlerManager.SendPacket((int)player.PlayerId, pg.GetBytes(), Channel.CHL_S2C);
         }
 
         /// <summary>
@@ -2130,12 +2130,12 @@ namespace PacketDefinitions420
         /// </summary>
         /// <param name="unpauser">Unit that unpaused the game.</param>
         /// <param name="showWindow">Whether or not to show a window before unpausing (delay).</param>
-        public void NotifyResumePacket(IChampion unpauser, Tuple<uint, ClientInfo> player, bool isDelayed)
+        public void NotifyResumePacket(IChampion unpauser, ClientInfo player, bool isDelayed)
         {
             var resume = new ResumePacket
             {
                 Delayed = isDelayed,
-                ClientID = (int)player.Item2.ClientId
+                ClientID = (int)player.ClientId
             };
             if (unpauser == null)
             {
@@ -2146,7 +2146,7 @@ namespace PacketDefinitions420
                 resume.SenderNetID = unpauser.NetId;
             }
 
-            _packetHandlerManager.SendPacket((int)player.Item2.PlayerId, resume.GetBytes(), Channel.CHL_S2C);
+            _packetHandlerManager.SendPacket((int)player.PlayerId, resume.GetBytes(), Channel.CHL_S2C);
         }
 
         /// <summary>

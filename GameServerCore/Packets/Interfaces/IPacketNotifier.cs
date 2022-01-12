@@ -463,7 +463,7 @@ namespace GameServerCore.Packets.Interfaces
         /// </summary>
         /// <param name="seconds">Amount of time till the pause ends.</param>
         /// <param name="showWindow">Whether or not to show a pause window.</param>
-        void NotifyPausePacket(Tuple<uint, ClientInfo> player, int seconds, bool isTournament);
+        void NotifyPausePacket(ClientInfo player, int seconds, bool isTournament);
         /// <summary>
         /// Sends a packet to all players detailing the specified client's loading screen progress.
         /// </summary>
@@ -517,7 +517,7 @@ namespace GameServerCore.Packets.Interfaces
         /// </summary>
         /// <param name="unpauser">Unit that unpaused the game.</param>
         /// <param name="showWindow">Whether or not to show a window before unpausing (delay).</param>
-        void NotifyResumePacket(IChampion unpauser, Tuple<uint, ClientInfo> player, bool isDelayed);
+        void NotifyResumePacket(IChampion unpauser, ClientInfo player, bool isDelayed);
         /// <summary>
         /// Sends a packet to all players with vision of the given chain missile that it has updated (unit/position).
         /// </summary>
@@ -953,6 +953,7 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="userId">User to send the packet to.</param>
         /// <param name="request">ViewRequest housing information about the camera's view.</param>
         /// TODO: Verify if this is the correct implementation.
+        /// TODO: Fix LeaguePackets Typos.
         void NotifyWorld_SendCamera_Server_Acknologment(int userId, ViewRequest request);
     }
 }

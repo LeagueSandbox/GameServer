@@ -412,7 +412,7 @@ namespace LeagueSandbox.GameServer
             IsPaused = true;
             foreach(var player in PlayerManager.GetPlayers())
             {
-                PacketNotifier.NotifyPausePacket(player, (int)PauseTimeLeft, true);
+                PacketNotifier.NotifyPausePacket(player.Item2, (int)PauseTimeLeft, true);
             }
         }
 

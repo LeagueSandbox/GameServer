@@ -102,13 +102,13 @@ namespace LeagueSandbox.GameServer.Players
             return _players;
         }
 
-        public Tuple<uint, ClientInfo> GetClientInfoWithPlayerId(int playerId)
+        public ClientInfo GetClientInfoWithPlayerId(int playerId)
         {
             foreach(var player in _players)
             {
                 if(player.Item2.PlayerId == playerId)
                 {
-                    return player;
+                    return player.Item2;
                 }
             }
             return null;
