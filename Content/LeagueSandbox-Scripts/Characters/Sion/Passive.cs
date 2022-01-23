@@ -10,13 +10,13 @@ using GameServerLib.GameObjects.AttackableUnits;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 
 
-namespace Passives
+namespace CharScripts
 {
-    public class SionPassive : ICharScript
+    public class CharScriptSion : ICharScript
     {
         ISpell Spell;
         int counter;
-        public void OnActivate(IObjAiBase owner, ISpell spell)
+        public void OnActivate(IObjAiBase owner, ISpell spell = null)
         {
             ApiEventManager.OnDeath.AddListener(this, owner, OnDeath, true);
             ApiEventManager.OnResurrect.AddListener(this, owner, OnRessurect, false);
@@ -36,7 +36,7 @@ namespace Passives
                 counter = 0;
             }
         }
-        public void OnDeactivate(IObjAiBase owner, ISpell spell)
+        public void OnDeactivate(IObjAiBase owner, ISpell spell = null)
         {
         }
         public void OnUpdate(float diff)

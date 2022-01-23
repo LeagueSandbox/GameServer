@@ -103,7 +103,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
             }
             else
             {
-                owner.LoadPassiveScript(this);
+                owner.LoadCharScript(this);
             }
         }
 
