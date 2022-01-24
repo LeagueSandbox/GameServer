@@ -7,7 +7,7 @@ using System.Numerics;
 using GameServerCore.Scripting.CSharp;
 using System.Linq;
 
-namespace AiScripts
+namespace AIScripts
 {
     public class MinonAI : IAIScript
     {

@@ -214,7 +214,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 IsMelee = true;
             }
 
-            AIScript = game.ScriptEngine.CreateObject<IAIScript>($"AiScripts", aiScript) ?? new EmptyAIScript();
+            AIScript = game.ScriptEngine.CreateObject<IAIScript>($"AIScripts", aiScript) ?? new EmptyAIScript();
             AIScript.OnActivate(this);
         }
 

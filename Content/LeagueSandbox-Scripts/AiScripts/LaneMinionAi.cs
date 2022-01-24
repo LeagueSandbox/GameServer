@@ -8,7 +8,7 @@ using GameServerCore.Scripting.CSharp;
 using System.Linq;
 using System.Collections.Generic;
 
-namespace AiScripts
+namespace AIScripts
 {
     public class LaneMinionAI : IAIScript
     {
