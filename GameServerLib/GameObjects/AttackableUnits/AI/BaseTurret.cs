@@ -4,6 +4,7 @@ using Force.Crc32;
 using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
+using GameServerCore.Scripting.CSharp;
 using LeagueSandbox.GameServer.GameObjects.Stats;
 using LeagueSandbox.GameServer.Items;
 
@@ -35,6 +36,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         /// Supposed to be the NetID for the visual counterpart of this turret. Used only for packets.
         /// </summary>
         public uint ParentNetId { get; private set; }
+        public IAiScript AiScript { get; protected set; }
 
         public BaseTurret(
             Game game,
@@ -45,7 +47,8 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             uint netId = 0,
             LaneID lane = LaneID.NONE,
             IMapObject mapObject = null,
-            int skinId = 0
+            int skinId = 0,
+            string aiScript = ""
         ) : base(game, model, new Stats.Stats(), 88, position, 1200, skinId, netId, team)
         {
             ParentNetId = Crc32Algorithm.Compute(Encoding.UTF8.GetBytes(name)) | 0xFF000000;
@@ -55,67 +58,10 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             SetTeam(team);
             Inventory = InventoryManager.CreateInventory(game.PacketNotifier, game.ScriptEngine);
             Replication = new ReplicationAiTurret(this);
+            AiScript = game.ScriptEngine.CreateObject<IAiScript>($"AiScripts", aiScript) ?? new EmptyAiScript();
         }
 
-        /// <summary>
-        /// Simple target scanning function.
-        /// </summary>
-        /// TODO: Verify if this needs a rewrite or additions to account for special cases.
-        public void CheckForTargets()
-        {
-            var units = _game.ObjectManager.GetUnitsInRange(Position, Stats.Range.Total, true);
-            IAttackableUnit nextTarget = null;
-            var nextTargetPriority = ClassifyUnit.DEFAULT;
 
-            foreach (var u in units)
-            {
-                if (u.IsDead || u.Team == Team || !u.Status.HasFlag(StatusFlags.Targetable))
-                {
-                    continue;
-                }
-
-                // Note: this method means that if there are two champions within turret range,
-                // The player to have been added to the game first will always be targeted before the others
-                if (TargetUnit == null)
-                {
-                    var priority = ClassifyTarget(u);
-                    if (priority < nextTargetPriority)
-                    {
-                        nextTarget = u;
-                        nextTargetPriority = priority;
-                    }
-                }
-                else
-                {
-                    // Is the current target a champion? If it is, don't do anything
-                    if (TargetUnit is IChampion)
-                    {
-                        continue;
-                    }
-                    // Find the next champion in range targeting an enemy champion who is also in range
-                    if (!(u is IChampion enemyChamp) || enemyChamp.TargetUnit == null)
-                    {
-                        continue;
-                    }
-                    if (!(enemyChamp.TargetUnit is IChampion enemyChampTarget) ||
-                        Vector2.DistanceSquared(enemyChamp.Position, enemyChampTarget.Position) > enemyChamp.Stats.Range.Total * enemyChamp.Stats.Range.Total ||
-                        Vector2.DistanceSquared(Position, enemyChampTarget.Position) > Stats.Range.Total * Stats.Range.Total)
-                    {
-                        continue;
-                    }
-
-                    nextTarget = enemyChamp; // No priority required
-                    break;
-                }
-            }
-
-            if (nextTarget == null)
-            {
-                return;
-            }
-
-            SetTargetUnit(nextTarget, true);
-        }
 
         /// <summary>
         /// Called when this unit dies.
@@ -153,6 +99,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         {
             base.OnAdded();
             _game.ObjectManager.AddTurret(this);
+            AiScript.OnActivate(this);
         }
 
         public override void OnCollision(IGameObject collider, bool isTerrain = false)
@@ -184,18 +131,8 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         /// <param name="diff">Amount of milliseconds passed since this tick started.</param>
         public override void Update(float diff)
         {
-            if (!IsAttacking)
-            {
-                CheckForTargets();
-            }
-
-            // Lose focus of the unit target if the target is out of range
-            if (TargetUnit != null && Vector2.DistanceSquared(Position, TargetUnit.Position) > Stats.Range.Total * Stats.Range.Total)
-            {
-                SetTargetUnit(null, true);
-            }
-
             base.Update(diff);
+            AiScript.OnUpdate(diff);
         }
     }
 }

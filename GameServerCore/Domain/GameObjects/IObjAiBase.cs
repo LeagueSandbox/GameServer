@@ -178,5 +178,8 @@ namespace GameServerCore.Domain.GameObjects
         /// <param name="order">OrderType to set.</param>
         /// <param name="publish">Whether or not to trigger the move order update event.</param>
         void UpdateMoveOrder(OrderType order, bool publish = true);
+        ClassifyUnit ClassifyTarget(IAttackableUnit target);
+        bool RecalculateAttackPosition();
+        void InstantStopAttack();
     }
 }

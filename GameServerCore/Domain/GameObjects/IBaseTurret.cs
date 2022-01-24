@@ -21,12 +21,6 @@ namespace GameServerCore.Domain.GameObjects
         /// Internal name of this turret.
         /// </summary>
         string Name { get; }
-
-        /// <summary>
-        /// Simple target scanning function.
-        /// </summary>
-        /// TODO: Verify if this needs a rewrite or additions to account for special cases.
-        void CheckForTargets();
         /// <summary>
         /// Sets this turret's LaneID to the specified LaneID.
         /// Only sets if its current LaneID is NONE.

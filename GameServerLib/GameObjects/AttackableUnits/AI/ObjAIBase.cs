@@ -1107,5 +1107,11 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 ApiEventManager.OnUnitUpdateMoveOrder.Publish(this, order);
             }
         }
+        public void InstantStopAttack()
+        {
+            _game.PacketNotifier.NotifyNPC_InstantStop_Attack(this, false);
+            SetTargetUnit(null);
+            IsAttacking = false;
+        }
     }
 }
