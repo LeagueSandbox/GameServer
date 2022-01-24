@@ -14,7 +14,6 @@ namespace AiScripts
         public IAIScriptMetaData AIScriptMetaData { get; set; } = new AIScriptMetaData();
         IMinion minion;
         internal const float DETECT_RANGE = 475.0f;
-        internal const int EXP_RANGE = 1400;
         public void OnActivate(IObjAiBase owner)
         {
             minion = owner as IMinion;

@@ -2,7 +2,7 @@
 {
     public interface IAIScriptMetaData
     {
-        public byte BehaviorTree { get; }
-        public uint MinionRoamState { get; }
+        byte BehaviorTree { get; }
+        uint MinionRoamState { get; }
     }
 }

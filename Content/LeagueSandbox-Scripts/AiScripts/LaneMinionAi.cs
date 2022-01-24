@@ -16,7 +16,6 @@ namespace AiScripts
         ILaneMinion LaneMinion;
         int _curMainWaypoint = 0;
         internal const float DETECT_RANGE = 475.0f;
-        internal const int EXP_RANGE = 1400;
         float minionActionTimer = 2500.0f;
         public void OnActivate(IObjAiBase owner)
         {
