@@ -3,9 +3,9 @@ using LeagueSandbox.GameServer.Scripting.CSharp;
 
 namespace GameServerCore.Scripting.CSharp
 {
-    public class EmptyAiScript : IAiScript
+    public class EmptyAIScript : IAIScript
     {
-        public IAiScriptMetaData AiScriptMetaData { get; set; } = new AiScriptMetaData();
+        public IAIScriptMetaData AIScriptMetaData { get; set; } = new AIScriptMetaData();
         public void OnActivate(IObjAiBase owner)
         {
         }

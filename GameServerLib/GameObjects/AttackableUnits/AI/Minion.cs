@@ -51,7 +51,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         /// Only unit which is allowed to see this minion.
         /// </summary>
         public IObjAiBase VisibilityOwner { get; }
-        public IAiScript AiScript { get; protected set; }
+        public IAIScript AIScript { get; protected set; }
 
         //TODO: Implement these variables
         public int DamageBonus { get; protected set; }
@@ -106,7 +106,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             DamageBonus = damageBonus;
             HealthBonus = healthBonus;
             InitialLevel = initialLevel;
-            AiScript = game.ScriptEngine.CreateObject<IAiScript>($"AiScripts", aiScript) ?? new EmptyAiScript();
+            AIScript = game.ScriptEngine.CreateObject<IAIScript>($"AiScripts", aiScript) ?? new EmptyAIScript();
 
             MoveOrder = OrderType.Stop;
 
@@ -124,7 +124,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         public override void OnAdded()
         {
             base.OnAdded();
-            AiScript.OnActivate(this);
+            AIScript.OnActivate(this);
         }
 
         public override void Update(float diff)
@@ -132,7 +132,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             base.Update(diff);
             if (!_aiPaused)
             {
-                AiScript.OnUpdate(diff);
+                AIScript.OnUpdate(diff);
             }
         }
     }

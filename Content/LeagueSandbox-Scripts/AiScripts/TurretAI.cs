@@ -9,9 +9,9 @@ using System.Linq;
 
 namespace AiScripts
 {
-    public class BaseTurretAi : IAiScript
+    public class TurretAI : IAIScript
     {
-        public IAiScriptMetaData AiScriptMetaData { get; set; } = new AiScriptMetaData();
+        public IAIScriptMetaData AIScriptMetaData { get; set; } = new AIScriptMetaData();
         IBaseTurret baseTurret;
 
         public void OnActivate(IObjAiBase owner)

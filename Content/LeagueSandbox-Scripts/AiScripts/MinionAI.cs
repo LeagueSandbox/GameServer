@@ -9,9 +9,9 @@ using System.Linq;
 
 namespace AiScripts
 {
-    public class BaseMinonAi : IAiScript
+    public class MinonAi : IAIScript
     {
-        public IAiScriptMetaData AiScriptMetaData { get; set; } = new AiScriptMetaData();
+        public IAIScriptMetaData AIScriptMetaData { get; set; } = new AIScriptMetaData();
         IMinion minion;
         internal const float DETECT_RANGE = 475.0f;
         internal const int EXP_RANGE = 1400;

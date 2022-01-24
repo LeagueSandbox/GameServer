@@ -2,9 +2,9 @@
 
 namespace GameServerCore.Scripting.CSharp
 {
-    public interface IAiScript
+    public interface IAIScript
     {
-        IAiScriptMetaData AiScriptMetaData { get; set; }
+        IAIScriptMetaData AIScriptMetaData { get; set; }
         public void OnActivate(IObjAiBase owner)
         {
         }

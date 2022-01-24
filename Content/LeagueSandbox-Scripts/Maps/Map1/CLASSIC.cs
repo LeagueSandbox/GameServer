@@ -22,8 +22,8 @@ namespace MapScripts.Map1
         public virtual IGlobalData GlobalData { get; set; } = new GlobalData();
         public bool HasFirstBloodHappened { get; set; } = false;
         public long NextSpawnTime { get; set; } = 90 * 1000;
-        public string LaneMinionAi { get; set; } = "LaneMinionAi";
-        public string LaneTurretAi { get; set; } = "BaseTurretAi";
+        public string LaneMinionAi { get; set; } = "LaneMinionAI";
+        public string LaneTurretAi { get; set; } = "TurretAI";
         public IMapScriptHandler _map;
 
 

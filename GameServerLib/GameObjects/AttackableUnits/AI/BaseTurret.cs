@@ -36,7 +36,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         /// Supposed to be the NetID for the visual counterpart of this turret. Used only for packets.
         /// </summary>
         public uint ParentNetId { get; private set; }
-        public IAiScript AiScript { get; protected set; }
+        public IAIScript AIScript { get; protected set; }
 
         public BaseTurret(
             Game game,
@@ -58,7 +58,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             SetTeam(team);
             Inventory = InventoryManager.CreateInventory(game.PacketNotifier, game.ScriptEngine);
             Replication = new ReplicationAiTurret(this);
-            AiScript = game.ScriptEngine.CreateObject<IAiScript>($"AiScripts", aiScript) ?? new EmptyAiScript();
+            AIScript = game.ScriptEngine.CreateObject<IAIScript>($"AiScripts", aiScript) ?? new EmptyAIScript();
         }
 
 
@@ -99,7 +99,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         {
             base.OnAdded();
             _game.ObjectManager.AddTurret(this);
-            AiScript.OnActivate(this);
+            AIScript.OnActivate(this);
         }
 
         public override void OnCollision(IGameObject collider, bool isTerrain = false)
@@ -132,7 +132,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         public override void Update(float diff)
         {
             base.Update(diff);
-            AiScript.OnUpdate(diff);
+            AIScript.OnUpdate(diff);
         }
     }
 }

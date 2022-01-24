@@ -28,8 +28,8 @@ namespace MapScripts.Map12
         public virtual IGlobalData GlobalData { get; set; } = new GlobalData();
         public bool HasFirstBloodHappened { get; set; } = false;
         public long NextSpawnTime { get; set; } = 45 * 1000;
-        public string LaneMinionAi { get; set; } = "LaneMinionAi";
-        public string LaneTurretAi { get; set; } = "BaseTurretAi";
+        public string LaneMinionAi { get; set; } = "LaneMinionAI";
+        public string LaneTurretAi { get; set; } = "TurretAI";
         private IMapScriptHandler _map;
 
         //Tower type enumeration might vary slightly from map to map, so we set that up here

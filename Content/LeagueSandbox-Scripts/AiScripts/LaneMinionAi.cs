@@ -10,9 +10,9 @@ using System.Collections.Generic;
 
 namespace AiScripts
 {
-    public class LaneMinionAi : IAiScript
+    public class LaneMinionAi : IAIScript
     {
-        public IAiScriptMetaData AiScriptMetaData { get; set; } = new AiScriptMetaData();
+        public IAIScriptMetaData AIScriptMetaData { get; set; } = new AIScriptMetaData();
         ILaneMinion LaneMinion;
         int _curMainWaypoint = 0;
         internal const float DETECT_RANGE = 475.0f;

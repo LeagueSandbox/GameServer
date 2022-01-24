@@ -41,7 +41,7 @@ namespace GameServerCore.Domain.GameObjects
         /// Only unit which is allowed to see this minion.
         /// </summary>
         IObjAiBase VisibilityOwner { get; }
-        IAiScript AiScript { get; }
+        IAIScript AIScript { get; }
         int DamageBonus { get; }
         int HealthBonus { get; }
         int InitialLevel { get; }
