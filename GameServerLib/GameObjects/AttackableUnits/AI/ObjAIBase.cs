@@ -28,6 +28,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         private Random _random = new Random();
         private readonly CSharpScriptEngine _charScriptEngine;
         protected ItemManager _itemManager;
+        protected bool _aiPaused;
 
         /// <summary>
         /// Variable storing all the data related to this AI's current auto attack. *NOTE*: Will be deprecated as the spells system gets finished.
@@ -82,9 +83,9 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         public Dictionary<short, ISpell> Spells { get; }
         public ICharScript CharScript { get; private set; }
         public bool IsBot { get; set; }
-
+        public IAIScript AIScript { get; protected set; }
         public ObjAiBase(Game game, string model, Stats.Stats stats, int collisionRadius = 40,
-            Vector2 position = new Vector2(), int visionRadius = 0, int skinId = 0, uint netId = 0, TeamId team = TeamId.TEAM_NEUTRAL) :
+            Vector2 position = new Vector2(), int visionRadius = 0, int skinId = 0, uint netId = 0, TeamId team = TeamId.TEAM_NEUTRAL, string aiScript = "") :
             base(game, model, stats, collisionRadius, position, visionRadius, netId, team)
         {
             _itemManager = game.ItemManager;
@@ -212,6 +213,9 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             {
                 IsMelee = true;
             }
+
+            AIScript = game.ScriptEngine.CreateObject<IAIScript>($"AIScripts", aiScript) ?? new EmptyAIScript();
+            AIScript.OnActivate(this);
         }
 
         /// <summary>
@@ -394,13 +398,19 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         /// Cancels any auto attacks this AI is performing and resets the time between the next auto attack if specified.
         /// </summary>
         /// <param name="reset">Whether or not to reset the delay between the next auto attack.</param>
-        public void CancelAutoAttack(bool reset)
+        public void CancelAutoAttack(bool reset, bool fullCancel = false)
         {
             AutoAttackSpell.SetSpellState(SpellState.STATE_READY);
             if (reset)
             {
                 _autoAttackCurrentCooldown = 0;
                 AutoAttackSpell.ResetSpellDelay();
+            }
+
+            if (fullCancel)
+            {
+                SetTargetUnit(null);
+                IsAttacking = false;
             }
             _game.PacketNotifier.NotifyNPC_InstantStop_Attack(this, false);
         }
@@ -902,6 +912,10 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         {
             base.Update(diff);
             CharScript.OnUpdate(diff);
+            if (!_aiPaused)
+            {
+                AIScript.OnUpdate(diff);
+            }
             foreach (var s in Spells.Values)
             {
                 s.Update(diff);
@@ -1106,6 +1120,16 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             {
                 ApiEventManager.OnUnitUpdateMoveOrder.Publish(this, order);
             }
+        }
+
+        public bool IsAiPaused()
+        {
+            return _aiPaused;
+        }
+
+        public void PauseAi(bool isPaused)
+        {
+            _aiPaused = isPaused;
         }
     }
 }

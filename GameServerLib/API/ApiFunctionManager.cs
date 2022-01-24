@@ -866,5 +866,35 @@ namespace LeagueSandbox.GameServer.API
                 DeathDuration = duration
             };
         }
+        /// <summary>
+        /// Returns whether or not the designed team has vision over an unit or not
+        /// </summary>
+        /// <param name="team"></param>
+        /// <param name="unit"></param>
+        /// <returns></returns>
+        public static bool TeamHasVision(TeamId team, IGameObject unit)
+        {
+            return _game.ObjectManager.TeamHasVisionOn(team, unit);
+        }
+        /// <summary>
+        /// Returns wether or not an unit is protected from attacks (Monstly used to check tower protection)
+        /// </summary>
+        /// <param name="unit"></param>
+        /// <returns></returns>
+        public static bool UnitIsProtected(IAttackableUnit unit)
+        {
+            return _game.ProtectionManager.IsProtected(unit);
+        }
+        /// <summary>
+        /// Gets a list of waypoints, whihc forms a path to the desired destination
+        /// </summary>
+        /// <param name="from"></param>
+        /// <param name="to"></param>
+        /// <param name="distanceThreshold"></param>
+        /// <returns></returns>
+        public static List<Vector2> GetPath(Vector2 from, Vector2 to, float distanceThreshold = 0)
+        {
+            return _game.Map.NavigationGrid.GetPath(from, to, distanceThreshold);
+        }
     }
 }

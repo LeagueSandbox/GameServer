@@ -135,7 +135,7 @@ namespace LeagueSandbox.GameServer.Maps
                 {
                     // Spawn new Minion every 0.8s
                     if (_game.GameTime >= MapScript.NextSpawnTime + _minionNumber * 8 * 100)
-                    { 
+                    {
                         if (SetUpLaneMinion())
                         {
                             _minionNumber = 0;
@@ -234,7 +234,7 @@ namespace LeagueSandbox.GameServer.Maps
                 {
                     if (mapObject.Name.Contains("Shrine"))
                     {
-                        TurretList[teamId][lane].Add(new LaneTurret(_game, mapObject.Name + "_A", MapScript.TowerModels[teamId][TurretType.FOUNTAIN_TURRET], position, teamId, TurretType.FOUNTAIN_TURRET, GetTurretItems(TurretType.FOUNTAIN_TURRET), 0, LaneID.NONE, mapObject));
+                        TurretList[teamId][lane].Add(new LaneTurret(_game, mapObject.Name + "_A", MapScript.TowerModels[teamId][TurretType.FOUNTAIN_TURRET], position, teamId, TurretType.FOUNTAIN_TURRET, GetTurretItems(TurretType.FOUNTAIN_TURRET), 0, LaneID.NONE, mapObject, MapScript.LaneTurretAI));
                         continue;
                     }
 
@@ -248,7 +248,7 @@ namespace LeagueSandbox.GameServer.Maps
                         continue;
                     }
 
-                    TurretList[teamId][lane].Add(new LaneTurret(_game, mapObject.Name + "_A", MapScript.TowerModels[teamId][turretType], position, teamId, turretType, GetTurretItems(turretType), 0, lane, mapObject));
+                    TurretList[teamId][lane].Add(new LaneTurret(_game, mapObject.Name + "_A", MapScript.TowerModels[teamId][turretType], position, teamId, turretType, GetTurretItems(turretType), 0, lane, mapObject, MapScript.LaneTurretAI));
                 }
                 else if (objectType == GameObjectTypes.InfoPoint)
                 {
@@ -388,7 +388,7 @@ namespace LeagueSandbox.GameServer.Maps
                         else if (turret.Type == TurretType.INNER_TURRET)
                         {
                             //Checks if there are outer turrets
-                            if(TurretList[inhibitor.Team][inhibitor.Lane].Any(outerTurret => outerTurret.Type == TurretType.OUTER_TURRET))
+                            if (TurretList[inhibitor.Team][inhibitor.Lane].Any(outerTurret => outerTurret.Type == TurretType.OUTER_TURRET))
                             {
                                 _game.ProtectionManager.AddProtection(turret, false, TurretList[inhibitor.Team][inhibitor.Lane].First(dependTurret => dependTurret.Type == TurretType.OUTER_TURRET));
                             }
@@ -481,12 +481,16 @@ namespace LeagueSandbox.GameServer.Maps
             }
 
             var team = GetMinionSpawnPosition(barracksName).Item1;
-            var m = new LaneMinion(_game, list[minionNo], barracksName, waypoints, MapScript.MinionModels[team][list[minionNo]], 0, team);
+            var m = new LaneMinion(_game, list[minionNo], barracksName, waypoints, MapScript.MinionModels[team][list[minionNo]], 0, team, MapScript.LaneMinionAI);
             _game.ObjectManager.AddObject(m);
         }
-        public IMinion CreateMinion(string name, string model, Vector2 position, uint netId = 0, TeamId team = TeamId.TEAM_NEUTRAL, int skinId = 0, bool ignoreCollision = false, bool isTargetable = false)
+        public IMinion CreateMinion(
+            string name, string model, Vector2 position, uint netId = 0,
+            TeamId team = TeamId.TEAM_NEUTRAL, int skinId = 0, bool ignoreCollision = false,
+            bool isTargetable = false, string aiScript = "", int damageBonus = 0,
+            int healthBonus = 0, int initialLevel = 1)
         {
-            var m = new Minion(_game, null, position, model, name, netId, team, skinId, ignoreCollision, isTargetable);
+            var m = new Minion(_game, null, position, model, name, netId, team, skinId, ignoreCollision, isTargetable, null, aiScript, damageBonus, healthBonus, initialLevel);
             _game.ObjectManager.AddObject(m);
             return m;
         }
@@ -544,9 +548,9 @@ namespace LeagueSandbox.GameServer.Maps
 
         //General Map stuff, such as Announcements and surrender
         //TODO: See if the "IsMapSpecific" parameter is actually needed.
-        public IRegion CreateRegion(TeamId team, Vector2 position, RegionType type = RegionType.Default , IGameObject collisionUnit = null, IGameObject visionTarget = null, bool giveVision = false, float visionRadius = 0, bool revealStealth = false, bool hasCollision = false, float collisionRadius = 0, float grassRadius = 0, float scale = 1, float addedSize = 0, float lifeTime = 0, int clientID = 0)
+        public IRegion CreateRegion(TeamId team, Vector2 position, RegionType type = RegionType.Default, IGameObject collisionUnit = null, IGameObject visionTarget = null, bool giveVision = false, float visionRadius = 0, bool revealStealth = false, bool hasCollision = false, float collisionRadius = 0, float grassRadius = 0, float scale = 1, float addedSize = 0, float lifeTime = 0, int clientID = 0)
         {
-           return new Region(_game, team, position, type, collisionUnit, visionTarget, giveVision, visionRadius, revealStealth, hasCollision, collisionRadius, grassRadius, scale, addedSize, lifeTime, clientID);
+            return new Region(_game, team, position, type, collisionUnit, visionTarget, giveVision, visionRadius, revealStealth, hasCollision, collisionRadius, grassRadius, scale, addedSize, lifeTime, clientID);
         }
         public void AddAnnouncement(long time, EventID ID, bool isMapSpecific)
         {
@@ -584,7 +588,7 @@ namespace LeagueSandbox.GameServer.Maps
             //TODO: check if mapScripts should handle this directly
             var players = _game.PlayerManager.GetPlayers();
             _game.Stop();
-            if(deathData != null)
+            if (deathData != null)
             {
                 _game.PacketNotifier.NotifyBuilding_Die(deathData);
             }

@@ -14,6 +14,8 @@ namespace GameServerCore.Domain
         IMapScriptMetadata MapScriptMetadata { get; }
         bool HasFirstBloodHappened { get; set; }
         long NextSpawnTime { get; set; }
+        string LaneMinionAI { get; }
+        string LaneTurretAI { get; }
         Dictionary<TurretType, int[]> TurretItems { get; }
         Dictionary<TeamId, string> NexusModels { get; }
         Dictionary<TeamId, string> InhibitorModels { get; }

@@ -1,4 +1,6 @@
 ﻿using GameServerCore.Enums;
+using System.Collections.Generic;
+using System.Numerics;
 
 namespace GameServerCore.Domain.GameObjects
 {
@@ -9,7 +11,6 @@ namespace GameServerCore.Domain.GameObjects
         /// </summary>
         string BarracksName { get; }
         MinionSpawnType MinionSpawnType { get; }
-
-        void WalkToDestination();
+        List<Vector2> PathingWaypoints { get; }
     }
 }

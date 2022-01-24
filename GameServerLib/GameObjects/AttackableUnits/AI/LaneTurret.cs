@@ -21,8 +21,9 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             int[] items = null,
             uint netId = 0,
             LaneID lane = LaneID.NONE,
-            IMapObject mapObject = null
-        ) : base(game, name, model, position, team, netId, lane, mapObject)
+            IMapObject mapObject = null,
+            string aiScript = ""
+        ) : base(game, name, model, position, team, netId, lane, mapObject, aiScript: aiScript)
         {
             Type = type;
 
@@ -153,6 +154,8 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         public override void Update(float diff)
         {
             //Update Stats if it's time
+
+            //Maybe consider moving this to CharScripts?
             switch (Type)
             {
                 case TurretType.OUTER_TURRET:

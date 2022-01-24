@@ -1,4 +1,5 @@
 ﻿using GameServerCore.Enums;
+using GameServerCore.Scripting.CSharp;
 
 namespace GameServerCore.Domain.GameObjects
 {
@@ -40,7 +41,8 @@ namespace GameServerCore.Domain.GameObjects
         /// Only unit which is allowed to see this minion.
         /// </summary>
         IObjAiBase VisibilityOwner { get; }
-
-        void PauseAi(bool pause);
+        int DamageBonus { get; }
+        int HealthBonus { get; }
+        int InitialLevel { get; }
     }
 }

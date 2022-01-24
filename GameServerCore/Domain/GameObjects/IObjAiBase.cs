@@ -78,7 +78,7 @@ namespace GameServerCore.Domain.GameObjects
         /// Cancels any auto attacks this AI is performing and resets the time between the next auto attack if specified.
         /// </summary>
         /// <param name="reset">Whether or not to reset the delay between the next auto attack.</param>
-        void CancelAutoAttack(bool reset);
+        void CancelAutoAttack(bool reset, bool fullCancel = false);
         /// <summary>
         /// Forces this AI unit to perform a dash which follows the specified AttackableUnit.
         /// </summary>
@@ -178,5 +178,9 @@ namespace GameServerCore.Domain.GameObjects
         /// <param name="order">OrderType to set.</param>
         /// <param name="publish">Whether or not to trigger the move order update event.</param>
         void UpdateMoveOrder(OrderType order, bool publish = true);
+        ClassifyUnit ClassifyTarget(IAttackableUnit target);
+        bool RecalculateAttackPosition();
+        bool IsAiPaused();
+        void PauseAi(bool isPaused);
     }
 }
