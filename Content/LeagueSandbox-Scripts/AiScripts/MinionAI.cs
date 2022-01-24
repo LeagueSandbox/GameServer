@@ -9,7 +9,7 @@ using System.Linq;
 
 namespace AiScripts
 {
-    public class MinonAi : IAIScript
+    public class MinonAI : IAIScript
     {
         public IAIScriptMetaData AIScriptMetaData { get; set; } = new AIScriptMetaData();
         IMinion minion;

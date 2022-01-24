@@ -10,7 +10,7 @@ using System.Collections.Generic;
 
 namespace AiScripts
 {
-    public class LaneMinionAi : IAIScript
+    public class LaneMinionAI : IAIScript
     {
         public IAIScriptMetaData AIScriptMetaData { get; set; } = new AIScriptMetaData();
         ILaneMinion LaneMinion;
