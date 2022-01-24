@@ -234,7 +234,7 @@ namespace LeagueSandbox.GameServer.Maps
                 {
                     if (mapObject.Name.Contains("Shrine"))
                     {
-                        TurretList[teamId][lane].Add(new LaneTurret(_game, mapObject.Name + "_A", MapScript.TowerModels[teamId][TurretType.FOUNTAIN_TURRET], position, teamId, TurretType.FOUNTAIN_TURRET, GetTurretItems(TurretType.FOUNTAIN_TURRET), 0, LaneID.NONE, mapObject, MapScript.LaneTurretAi));
+                        TurretList[teamId][lane].Add(new LaneTurret(_game, mapObject.Name + "_A", MapScript.TowerModels[teamId][TurretType.FOUNTAIN_TURRET], position, teamId, TurretType.FOUNTAIN_TURRET, GetTurretItems(TurretType.FOUNTAIN_TURRET), 0, LaneID.NONE, mapObject, MapScript.LaneTurretAI));
                         continue;
                     }
 
@@ -248,7 +248,7 @@ namespace LeagueSandbox.GameServer.Maps
                         continue;
                     }
 
-                    TurretList[teamId][lane].Add(new LaneTurret(_game, mapObject.Name + "_A", MapScript.TowerModels[teamId][turretType], position, teamId, turretType, GetTurretItems(turretType), 0, lane, mapObject, MapScript.LaneTurretAi));
+                    TurretList[teamId][lane].Add(new LaneTurret(_game, mapObject.Name + "_A", MapScript.TowerModels[teamId][turretType], position, teamId, turretType, GetTurretItems(turretType), 0, lane, mapObject, MapScript.LaneTurretAI));
                 }
                 else if (objectType == GameObjectTypes.InfoPoint)
                 {
@@ -481,7 +481,7 @@ namespace LeagueSandbox.GameServer.Maps
             }
 
             var team = GetMinionSpawnPosition(barracksName).Item1;
-            var m = new LaneMinion(_game, list[minionNo], barracksName, waypoints, MapScript.MinionModels[team][list[minionNo]], 0, team, MapScript.LaneMinionAi);
+            var m = new LaneMinion(_game, list[minionNo], barracksName, waypoints, MapScript.MinionModels[team][list[minionNo]], 0, team, MapScript.LaneMinionAI);
             _game.ObjectManager.AddObject(m);
         }
         public IMinion CreateMinion(
