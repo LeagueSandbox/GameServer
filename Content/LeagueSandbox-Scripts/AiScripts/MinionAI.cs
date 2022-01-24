@@ -90,7 +90,7 @@ namespace AIScripts
             if (minion.IsAttacking && (minion.TargetUnit == null || minion.TargetUnit.IsDead || Vector2.DistanceSquared(minion.Position, minion.TargetUnit.Position) > minion.Stats.Range.Total * minion.Stats.Range.Total))
             // If target is dead or out of range
             {
-                minion.InstantStopAttack();
+                minion.CancelAutoAttack(true, true);
             }
         }
     }
