@@ -107,7 +107,7 @@ namespace AIScripts
                 || Vector2.DistanceSquared(LaneMinion.Position, LaneMinion.TargetUnit.Position) > LaneMinion.Stats.Range.Total * LaneMinion.Stats.Range.Total))
             // If target is dead or out of range
             {
-                LaneMinion.InstantStopAttack();
+                LaneMinion.CancelAutoAttack(false, true);
             }
         }
         public void WalkToDestination()

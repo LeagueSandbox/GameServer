@@ -398,13 +398,19 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         /// Cancels any auto attacks this AI is performing and resets the time between the next auto attack if specified.
         /// </summary>
         /// <param name="reset">Whether or not to reset the delay between the next auto attack.</param>
-        public void CancelAutoAttack(bool reset)
+        public void CancelAutoAttack(bool reset, bool fullCancel = false)
         {
             AutoAttackSpell.SetSpellState(SpellState.STATE_READY);
             if (reset)
             {
                 _autoAttackCurrentCooldown = 0;
                 AutoAttackSpell.ResetSpellDelay();
+            }
+
+            if (fullCancel)
+            {
+                SetTargetUnit(null);
+                IsAttacking = false;
             }
             _game.PacketNotifier.NotifyNPC_InstantStop_Attack(this, false);
         }
@@ -1114,13 +1120,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             {
                 ApiEventManager.OnUnitUpdateMoveOrder.Publish(this, order);
             }
-        }
-
-        public void InstantStopAttack()
-        {
-            _game.PacketNotifier.NotifyNPC_InstantStop_Attack(this, false);
-            SetTargetUnit(null);
-            IsAttacking = false;
         }
 
         public bool IsAiPaused()
