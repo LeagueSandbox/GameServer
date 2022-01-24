@@ -6,9 +6,9 @@ using GameServerCore.Domain.GameObjects.Spell.Missile;
 using System.Numerics;
 using GameServerCore.Scripting.CSharp;
 
-namespace Passives
+namespace CharScripts
 {
-    public class DianaPassive : ICharScript
+    public class CharScriptDiana : ICharScript
     {
         IObjAiBase diana = null;
         float stanceTime = 500;
@@ -16,12 +16,12 @@ namespace Passives
         bool beginStance = false;
         bool stance = false;
 
-        public void OnActivate(IObjAiBase owner, ISpell spell)
+        public void OnActivate(IObjAiBase owner, ISpell spell = null)
         {
             diana = owner;
         }
 
-        public void OnDeactivate(IObjAiBase owner, ISpell spell)
+        public void OnDeactivate(IObjAiBase owner, ISpell spell = null)
         {
         }
 

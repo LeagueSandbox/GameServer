@@ -69,7 +69,7 @@ namespace GameServerCore.Domain.GameObjects
         // TODO: Implement AI Scripting for this (for AI in general).
         bool IsBot { get; }
 
-        void LoadPassiveScript(ISpell spell);
+        void LoadCharScript(ISpell spell);
         /// <summary>
         /// Function called by this AI's auto attack projectile when it hits its target.
         /// </summary>

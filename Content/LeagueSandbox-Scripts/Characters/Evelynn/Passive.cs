@@ -6,18 +6,18 @@ using GameServerCore.Domain.GameObjects.Spell;
 using GameServerCore.Scripting.CSharp;
 using GameServerCore.Domain;
 
-namespace Passives
+namespace CharScripts
 {
-    public class EvelynnPassive : ICharScript
+    public class CharScriptEvelynn : ICharScript
     {
-        public void OnActivate(IObjAiBase owner, ISpell spell)
+        public void OnActivate(IObjAiBase owner, ISpell spell = null)
         {
             ApiEventManager.OnTakeDamage.AddListener(this, owner, SelfWasDamaged, false);
         }
         private void SelfWasDamaged(IDamageData damageData)
         {
         }
-        public void OnDeactivate(IObjAiBase owner, ISpell spell)
+        public void OnDeactivate(IObjAiBase owner, ISpell spell = null)
         {
         }
         public void OnUpdate(float diff)

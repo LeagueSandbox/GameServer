@@ -7,9 +7,9 @@ namespace GameServerCore.Scripting.CSharp
 {
     public interface ICharScript
     {
-        void OnActivate(IObjAiBase owner, ISpell spell);
+        void OnActivate(IObjAiBase owner, ISpell spell = null);
 
-        void OnDeactivate(IObjAiBase owner, ISpell spell);
+        void OnDeactivate(IObjAiBase owner, ISpell spell = null);
 
         void OnUpdate(float diff);
     }

@@ -145,13 +145,17 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                         Spells[i] = new Spell.Spell(game, this, CharData.SpellNames[i], (byte)i);
                     }
                 }
-                //Passive
-                var passiveSpellName = "BaseSpell";
+
+                //If character has a passive spell, it'll initialize the CharScript with it
                 if (!string.IsNullOrEmpty(CharData.PassiveData.PassiveLuaName))
                 {
-                    passiveSpellName = CharData.PassiveData.PassiveLuaName;
+                    Spells[(int)SpellSlotType.PassiveSpellSlot] = new Spell.Spell(game, this, CharData.PassiveData.PassiveLuaName, (int)SpellSlotType.PassiveSpellSlot);
                 }
-                Spells[(int)SpellSlotType.PassiveSpellSlot] = new Spell.Spell(game, this, passiveSpellName, (int)SpellSlotType.PassiveSpellSlot);
+                //If there's no passive spell, it'll just initialize the CharScript with Spell = null
+                else
+                {
+                    LoadCharScript();
+                }
 
                 Spells[(int)SpellSlotType.SummonerSpellSlots] = new Spell.Spell(game, this, "BaseSpell", (int)SpellSlotType.SummonerSpellSlots);
                 Spells[(int)SpellSlotType.SummonerSpellSlots + 1] = new Spell.Spell(game, this, "BaseSpell", (int)SpellSlotType.SummonerSpellSlots + 1);
@@ -213,9 +217,9 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         /// <summary>
         /// Loads the Passive Script
         /// </summary>
-        public void LoadPassiveScript(ISpell spell)
+        public void LoadCharScript(ISpell spell = null)
         {
-            CharScript = _charScriptEngine.CreateObject<ICharScript>("Passives", spell.SpellName) ?? new CharScriptEmpty();
+            CharScript = _charScriptEngine.CreateObject<ICharScript>("CharScripts", $"CharScript{Model}") ?? new CharScriptEmpty();
             CharScript.OnActivate(this, spell);
         }
 
