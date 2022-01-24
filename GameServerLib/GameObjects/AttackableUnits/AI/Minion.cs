@@ -13,8 +13,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 {
     public class Minion : ObjAiBase, IMinion
     {
-        protected bool _aiPaused;
-
         /// <summary>
         /// Unit which spawned this minion.
         /// </summary>
@@ -51,7 +49,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         /// Only unit which is allowed to see this minion.
         /// </summary>
         public IObjAiBase VisibilityOwner { get; }
-        public IAIScript AIScript { get; protected set; }
 
         //TODO: Implement these variables
         public int DamageBonus { get; protected set; }
@@ -74,7 +71,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             int damageBonus = 0,
             int healthBonus = 0,
             int initialLevel = 1
-        ) : base(game, model, new Stats.Stats(), 40, position, 1100, skinId, netId, team)
+        ) : base(game, model, new Stats.Stats(), 40, position, 1100, skinId, netId, team, aiScript)
         {
             Name = name;
             Owner = owner;
@@ -106,34 +103,9 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             DamageBonus = damageBonus;
             HealthBonus = healthBonus;
             InitialLevel = initialLevel;
-            AIScript = game.ScriptEngine.CreateObject<IAIScript>($"AiScripts", aiScript) ?? new EmptyAIScript();
-
             MoveOrder = OrderType.Stop;
 
             Replication = new ReplicationMinion(this);
-        }
-
-        public void PauseAi(bool b)
-        {
-            _aiPaused = b;
-        }
-        public bool IsAiPaused()
-        {
-            return _aiPaused;
-        }
-        public override void OnAdded()
-        {
-            base.OnAdded();
-            AIScript.OnActivate(this);
-        }
-
-        public override void Update(float diff)
-        {
-            base.Update(diff);
-            if (!_aiPaused)
-            {
-                AIScript.OnUpdate(diff);
-            }
         }
     }
 }

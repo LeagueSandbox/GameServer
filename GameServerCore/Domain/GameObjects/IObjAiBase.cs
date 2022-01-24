@@ -181,5 +181,7 @@ namespace GameServerCore.Domain.GameObjects
         ClassifyUnit ClassifyTarget(IAttackableUnit target);
         bool RecalculateAttackPosition();
         void InstantStopAttack();
+        bool IsAiPaused();
+        void PauseAi(bool isPaused);
     }
 }

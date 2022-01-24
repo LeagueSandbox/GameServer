@@ -28,6 +28,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         private Random _random = new Random();
         private readonly CSharpScriptEngine _charScriptEngine;
         protected ItemManager _itemManager;
+        protected bool _aiPaused;
 
         /// <summary>
         /// Variable storing all the data related to this AI's current auto attack. *NOTE*: Will be deprecated as the spells system gets finished.
@@ -82,9 +83,9 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         public Dictionary<short, ISpell> Spells { get; }
         public ICharScript CharScript { get; private set; }
         public bool IsBot { get; set; }
-
+        public IAIScript AIScript { get; protected set; }
         public ObjAiBase(Game game, string model, Stats.Stats stats, int collisionRadius = 40,
-            Vector2 position = new Vector2(), int visionRadius = 0, int skinId = 0, uint netId = 0, TeamId team = TeamId.TEAM_NEUTRAL) :
+            Vector2 position = new Vector2(), int visionRadius = 0, int skinId = 0, uint netId = 0, TeamId team = TeamId.TEAM_NEUTRAL, string aiScript = "") :
             base(game, model, stats, collisionRadius, position, visionRadius, netId, team)
         {
             _itemManager = game.ItemManager;
@@ -212,6 +213,9 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             {
                 IsMelee = true;
             }
+
+            AIScript = game.ScriptEngine.CreateObject<IAIScript>($"AiScripts", aiScript) ?? new EmptyAIScript();
+            AIScript.OnActivate(this);
         }
 
         /// <summary>
@@ -902,6 +906,10 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         {
             base.Update(diff);
             CharScript.OnUpdate(diff);
+            if (!_aiPaused)
+            {
+                AIScript.OnUpdate(diff);
+            }
             foreach (var s in Spells.Values)
             {
                 s.Update(diff);
@@ -1107,11 +1115,22 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 ApiEventManager.OnUnitUpdateMoveOrder.Publish(this, order);
             }
         }
+
         public void InstantStopAttack()
         {
             _game.PacketNotifier.NotifyNPC_InstantStop_Attack(this, false);
             SetTargetUnit(null);
             IsAttacking = false;
+        }
+
+        public bool IsAiPaused()
+        {
+            return _aiPaused;
+        }
+
+        public void PauseAi(bool isPaused)
+        {
+            _aiPaused = isPaused;
         }
     }
 }
