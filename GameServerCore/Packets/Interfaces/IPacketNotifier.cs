@@ -242,7 +242,7 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="inhibitor">Inhibitor to check.</param>
         /// <param name="killer">Killer of the inhibitor (if applicable).</param>
         /// <param name="assists">Assists of the killer (if applicable).</param>
-        void NotifyInhibitorState(IInhibitor inhibitor, IDeathData deathData, List<IChampion> assists = null);
+        void NotifyInhibitorState(IInhibitor inhibitor, IDeathData deathData = null, List<IChampion> assists = null);
         /// Sends a basic heartbeat packet to either the given player or all players.
         /// </summary>
         void NotifyKeyCheck(int clientID, long playerId, uint version, ulong checkSum = 0, byte action = 0, bool broadcast = false);
@@ -518,6 +518,7 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="unpauser">Unit that unpaused the game.</param>
         /// <param name="showWindow">Whether or not to show a window before unpausing (delay).</param>
         void NotifyResumePacket(IChampion unpauser, ClientInfo player, bool isDelayed);
+        void NotifyS2C_ActivateMinionCamp(IMonsterCamp monsterCamp);
         /// <summary>
         /// Sends a packet to all players with vision of the given chain missile that it has updated (unit/position).
         /// </summary>
@@ -528,12 +529,15 @@ namespace GameServerCore.Packets.Interfaces
         /// </summary>
         /// <param name="p">Projectile that has changed target.</param>
         void NotifyS2C_ChangeMissileTarget(ISpellMissile p);
+
         /// <summary>
         /// Sends a packet to the specified user or all users detailing that the hero designated to the given clientInfo has been created.
         /// </summary>
         /// <param name="clientInfo">Information about the client which had their hero created.</param>
         /// <param name="userId">User to send the packet to. Set to -1 to broadcast.</param>
         void NotifyS2C_CreateHero(ClientInfo clientInfo, int userId = -1);
+        void NotifyS2C_CreateMinionCamp(IMonsterCamp monsterCamp);
+        void NotifyS2C_CreateNeutral(IMonster monster, float time);
         /// <summary>
         /// Sends a packet to either all players or the specified player detailing that the specified LaneTurret has spawned.
         /// </summary>
@@ -586,6 +590,7 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="startFromCurretPosition">Wheter or not it starts from current position</param>
         /// <param name="unlockCamera">Whether or not the camera is unlocked</param>
         void NotifyS2C_MoveCameraToPoint(Tuple<uint, ClientInfo> player, Vector3 startPosition, Vector3 endPosition, float travelTime = 0, bool startFromCurretPosition = true, bool unlockCamera = false);
+        void NotifyS2C_Neutral_Camp_Empty(IMonsterCamp monsterCamp, IDeathData deathData = null);
         /// <summary>
         /// Sends a packet to all players detailing that the specified unit has been killed by the specified killer.
         /// </summary>
@@ -671,6 +676,23 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="ignoreLock">Whether or not locked animations should still be stopped.</param>
         void NotifyS2C_StopAnimation(IGameObject obj, string animation, bool stopAll = false, bool fade = false, bool ignoreLock = true);
         /// <summary>
+        /// Sends a packet to all players detailing a debug message.
+        /// </summary>
+        /// <param name="htmlDebugMessage">Debug message to send.</param>
+        void NotifyS2C_SystemMessage(string htmlDebugMessage);
+        /// <summary>
+        /// Sends a packet to the specified user detailing a debug message.
+        /// </summary>
+        /// <param name="userId">ID of the user to send the packet to.</param>
+        /// <param name="message">Debug message to send.</param>
+        void NotifyS2C_SystemMessage(int userId, string message);
+        /// <summary>
+        /// Sends a packet to the specified team detailing a debug message.
+        /// </summary>
+        /// <param name="team">TeamId to send the packet to; BLUE/PURPLE/NEUTRAL.</param>
+        /// <param name="message">Debug message to send.</param>
+        void NotifyS2C_SystemMessage(TeamId team, string message);
+        /// <summary>
         /// Sends a packet to the given user detailing that the specified input locking flags have been toggled.
         /// </summary>
         /// <param name="userId">User to send the packet to.</param>
@@ -683,6 +705,7 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="attacked">Unit that is being attacked.</param>
         /// <param name="attackType">AttackType that the attacker is using to attack.</param>
         void NotifyS2C_UnitSetLookAt(IAttackableUnit attacker, IAttackableUnit attacked, AttackType attackType);
+        void NotifyS2C_UnitSetMinimapIcon(IAttackableUnit unit, string iconCategory = "", bool changeIcon = false, string borderCategory = "", bool changeBorder = false);
         /// <summary>
         /// Sends a packet to all players detailing the attack speed cap overrides for this game.
         /// </summary>
@@ -707,23 +730,6 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="userId">User to send the packet to.</param>
         /// <param name="s">Spell being updated.</param>
         void NotifyS2C_UpdateSpellToggle(int userId, ISpell s);
-        /// <summary>
-        /// Sends a packet to all players detailing a debug message.
-        /// </summary>
-        /// <param name="htmlDebugMessage">Debug message to send.</param>
-        void NotifyS2C_SystemMessage(string htmlDebugMessage);
-        /// <summary>
-        /// Sends a packet to the specified user detailing a debug message.
-        /// </summary>
-        /// <param name="userId">ID of the user to send the packet to.</param>
-        /// <param name="message">Debug message to send.</param>
-        void NotifyS2C_SystemMessage(int userId, string message);
-        /// <summary>
-        /// Sends a packet to the specified team detailing a debug message.
-        /// </summary>
-        /// <param name="team">TeamId to send the packet to; BLUE/PURPLE/NEUTRAL.</param>
-        /// <param name="message">Debug message to send.</param>
-        void NotifyS2C_SystemMessage(TeamId team, string message);
         /// <summary>
         /// Sends a packet to all players detailing that the server has ticked within the specified time delta.
         /// </summary>
@@ -763,7 +769,7 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="o">GameObject that has spawned.</param>
         /// <param name="userId">UserId to send the packet to.</param>
         /// <param name="doVision">Whether or not to package the packets into a vision packet.</param>
-        void NotifySpawn(IGameObject o, int userId = 0, bool doVision = true);
+        void NotifySpawn(IGameObject o, int userId = 0, bool doVision = true, float gameTime = 0);
         /// <summary>
         /// Sends a packet to the specified player detailing that the spawning (of champions & buildings) that occurs at the start of the game has ended.
         /// </summary>

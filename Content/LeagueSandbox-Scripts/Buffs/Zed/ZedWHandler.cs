@@ -43,7 +43,7 @@ namespace Buffs
             var owner = ThisSpell.CastInfo.Owner;
 
             var spellPos = new Vector2(ThisSpell.CastInfo.TargetPositionEnd.X, ThisSpell.CastInfo.TargetPositionEnd.Z);
-            Shadow = AddMinion(owner, "ZedShadow", "ZedShadow", spellPos, owner.SkinID, true, false);
+            Shadow = AddMinion(owner, "ZedShadow", "ZedShadow", spellPos, owner.Team, owner.SkinID, true, false);
 
             var goingTo = new Vector2(ThisSpell.CastInfo.TargetPositionEnd.X, ThisSpell.CastInfo.TargetPositionEnd.Z) - owner.Position;
             var dirTemp = Vector2.Normalize(goingTo);

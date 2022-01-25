@@ -136,6 +136,11 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
 
         public void ApplyEffects(IAttackableUnit u, ISpellMissile p = null, ISpellSector s = null)
         {
+            if (!u.Status.HasFlag(StatusFlags.Targetable))
+            {
+                return;
+            }
+
             if (SpellData.HaveHitEffect && !string.IsNullOrEmpty(SpellData.HitEffectName) && !CastInfo.IsAutoAttack && HasEmptyScript)
             {
                 if (SpellData.HaveHitBone)

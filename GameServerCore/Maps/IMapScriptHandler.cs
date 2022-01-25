@@ -131,6 +131,15 @@ namespace GameServerCore.Maps
         /// <param name="length"></param>
         void AddSurrender(float time, float restTime, float length);
         void HandleSurrender(int userId, IChampion who, bool vote);
+        IMonsterCamp CreateJungleCamp(Vector3 position, byte groupNumber, TeamId teamSideOfTheMap, string campTypeIcon, float respawnTimer, bool doPlayVO = false, byte revealEvent = 74, float spawnDuration = 0.0f);
+        void CreateJungleMonster
+        (
+            string name, string model, Vector2 position, Vector3 faceDirection,
+            IMonsterCamp monsterCamp, TeamId team = TeamId.TEAM_NEUTRAL, string spawnAnimation = "", uint netId = 0,
+            bool isTargetable = true, bool ignoresCollision = false, string aiScript = "",
+            int damageBonus = 0, int healthBonus = 0, int initialLevel = 1
+        );
+        void SpawnCamp(IMonsterCamp monsterCamp);
         /// <summary>
         /// Returns how long the match has been going on for.
         /// </summary>

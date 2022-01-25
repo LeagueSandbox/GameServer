@@ -87,7 +87,7 @@ namespace Spells
             SetStatus(owner, StatusFlags.ForceRenderParticles, true);
             var startPoint = GetPointFromUnit(owner, 145f);
             var endPoint = GetPointFromUnit(owner, 3400f);
-            var tempMinion = AddMinion(owner, "TestCubeRender", "TestCubeRender", startPoint, ignoreCollision: true, targetable: false);
+            var tempMinion = AddMinion(owner, "TestCubeRender", "TestCubeRender", startPoint, owner.Team, ignoreCollision: true, targetable: false);
             AddBuff("ExpirationTimer", 2.0f, 1, spell, tempMinion, owner);
 
             // TODO: Vision

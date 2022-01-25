@@ -26,6 +26,10 @@ namespace GameServerCore.Domain.GameObjects
         /// TODO: Move to AttackableUnit as it relates to stats..
         ICharData CharData { get; }
         /// <summary>
+        /// An unit's A.I Script
+        /// </summary>
+        IAIScript AIScript { get; }
+        /// <summary>
         /// The ID of the skin this unit should use for its model.
         /// </summary>
         int SkinID { get; }

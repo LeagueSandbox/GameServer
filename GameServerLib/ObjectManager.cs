@@ -110,7 +110,7 @@ namespace LeagueSandbox.GameServer
                         doVis = false;
                     }
 
-                    _game.PacketNotifier.NotifySpawn(obj, 0, doVis);
+                    _game.PacketNotifier.NotifySpawn(obj, 0, doVis, _game.GameTime);
 
                     _queuedObjects.Remove(obj.NetId);
                 }

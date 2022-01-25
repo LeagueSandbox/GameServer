@@ -376,6 +376,7 @@ namespace LeagueSandbox.GameServer.API
             string model,
             string name,
             Vector2 position,
+            TeamId team = TeamId.TEAM_NEUTRAL,
             int skinId = 0,
             bool ignoreCollision = false,
             bool targetable = true,
@@ -385,10 +386,13 @@ namespace LeagueSandbox.GameServer.API
             bool aiPaused = true
         )
         {
-            var m = new Minion(_game, owner, position, model, name, 0, owner.Team, skinId, ignoreCollision, targetable, visibilityOwner);
+            var m = new Minion(_game, owner, position, model, name, 0, team, skinId, ignoreCollision, targetable, visibilityOwner);
             m.Stats.IsTargetableToTeam = targetingFlags;
             _game.ObjectManager.AddObject(m);
-            m.SetVisibleByTeam(owner.Team, isVisible);
+            if (owner != null)
+            {
+                m.SetVisibleByTeam(owner.Team, isVisible);
+            }
             m.PauseAi(aiPaused);
             return m;
         }
@@ -494,7 +498,7 @@ namespace LeagueSandbox.GameServer.API
             }
             return toreturn;
         }
-        
+
         /// <summary>
         /// Returns a new list of all champions in the game.
         /// </summary>
@@ -895,6 +899,10 @@ namespace LeagueSandbox.GameServer.API
         public static List<Vector2> GetPath(Vector2 from, Vector2 to, float distanceThreshold = 0)
         {
             return _game.Map.NavigationGrid.GetPath(from, to, distanceThreshold);
+        }
+        public static void NotifyUnitMinimapIconUpdate(IAttackableUnit unit, string iconCategory = "", bool changeIcon = false, string borderCategory = "", bool changeBorder = false)
+        {
+            _game.PacketNotifier.NotifyS2C_UnitSetMinimapIcon(unit, iconCategory, changeIcon, borderCategory, changeBorder);
         }
     }
 }

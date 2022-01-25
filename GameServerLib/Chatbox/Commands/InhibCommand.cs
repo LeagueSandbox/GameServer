@@ -19,14 +19,14 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
         public override void Execute(int userId, bool hasReceivedArguments, string arguments = "")
         {
             var sender = _playerManager.GetPeerInfo(userId);
-            var min = new Monster(
+            /*var min = new Monster(
                 Game,
                 sender.Champion.Position,
                 sender.Champion.Position,
                 "Worm",
                 "Worm"
                 );
-            Game.ObjectManager.AddObject(min);
+            Game.ObjectManager.AddObject(min);*/
         }
     }
 }
