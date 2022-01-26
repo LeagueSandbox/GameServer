@@ -1033,7 +1033,7 @@ namespace PacketDefinitions420
         /// <param name="inhibitor">Inhibitor to check.</param>
         /// <param name="killer">Killer of the inhibitor (if applicable).</param>
         /// <param name="assists">Assists of the killer (if applicable).</param>
-        public void NotifyInhibitorState(IInhibitor inhibitor, IDeathData deathData, List<IChampion> assists = null)
+        public void NotifyInhibitorState(IInhibitor inhibitor, IDeathData deathData = null, List<IChampion> assists = null)
         {
             UnitAnnounce announce;
             switch (inhibitor.InhibitorState)
@@ -1046,7 +1046,7 @@ namespace PacketDefinitions420
 
                     break;
                 case InhibitorState.ALIVE:
-                    announce = new UnitAnnounce(UnitAnnounces.INHIBITOR_SPAWNED, inhibitor, deathData.Killer, assists);
+                    announce = new UnitAnnounce(UnitAnnounces.INHIBITOR_SPAWNED, inhibitor, null, assists);
                     _packetHandlerManager.BroadcastPacket(announce, Channel.CHL_S2C);
                     break;
             }
