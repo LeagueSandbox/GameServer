@@ -16,14 +16,46 @@ namespace MapScripts.Map8
         public IMapScriptMetadata MapScriptMetadata { get; set; } = new MapScriptMetadata
         {
             MinionSpawnEnabled = false,
-            StartingGold = 825.0f
+            StartingGold = 825.0f,
+            OverrideSpawnPoints = true
         };
+        private IMapScriptHandler _map;
         public virtual IGlobalData GlobalData { get; set; } = new GlobalData();
         public bool HasFirstBloodHappened { get; set; } = false;
         public long NextSpawnTime { get; set; } = 90 * 1000;
         public string LaneMinionAI { get; set; } = "LaneMinionAI";
         public string LaneTurretAI { get; set; } = "TurretAI";
-        private IMapScriptHandler _map;
+
+        //Values i got the values for 5 players from replay packets, the value for 1 player is just a guess of mine by using !coords command in-game
+        public Dictionary<TeamId, Dictionary<int, Dictionary<int, Vector2>>> PlayerSpawnPoints { get; } = new Dictionary<TeamId, Dictionary<int, Dictionary<int, Vector2>>>
+        {
+            {TeamId.TEAM_BLUE, new Dictionary<int, Dictionary<int, Vector2>>{
+                { 5, new Dictionary<int, Vector2>{
+                    { 1, new Vector2(687.99036f, 4281.2314f) },
+                    { 2, new Vector2(687.99036f, 4061.2314f) },
+                    { 3, new Vector2(478.79034f,3993.2314f) },
+                    { 4, new Vector2(349.39032f,4171.2314f) },
+                    { 5, new Vector2(438.79034f,4349.2314f) }
+                }},
+                {1, new Dictionary<int, Vector2>{
+                    { 1, new Vector2(580f, 4124f) }
+                }}
+            }},
+
+            {TeamId.TEAM_PURPLE, new Dictionary<int, Dictionary<int, Vector2>>
+                { { 5, new Dictionary<int, Vector2>{
+                    { 1, new Vector2(13468.365f,4281.2324f) },
+                    { 2, new Vector2(13468.365f,4061.2324f) },
+                    { 3, new Vector2(13259.165f,3993.2324f) },
+                    { 4, new Vector2(13129.765f,4171.2324f) },
+                    { 5, new Vector2(13219.165f,4349.2324f) }
+                }},
+                {1, new Dictionary<int, Vector2>{
+                    { 1, new Vector2(13310f, 4124f) }
+                }}
+            }},
+
+        };
 
         //Tower type enumeration might vary slightly from map to map, so we set that up here
         public TurretType GetTurretType(int trueIndex, LaneID lane, TeamId teamId)
@@ -199,7 +231,7 @@ namespace MapScripts.Map8
         List<IMinion> infoPoints = new List<IMinion>();
         public void OnMatchStart()
         {
-            for( int i = 0; i < _map.InfoPoints.Count; i++)
+            for (int i = 0; i < _map.InfoPoints.Count; i++)
             {
                 _map.CreateRegion(TeamId.TEAM_BLUE, new Vector2(_map.InfoPoints[i].CentralPoint.X, _map.InfoPoints[i].CentralPoint.Z), RegionType.Unknown2, null, giveVision: true, visionRadius: 800.0f, revealStealth: true, hasCollision: true, collisionRadius: 120.0f, grassRadius: 150.0f, lifeTime: 25000.0f);
                 infoPoints.Add(_map.CreateMinion("OdinNeutralGuardian", "OdinNeutralGuardian", new Vector2(_map.InfoPoints[i].CentralPoint.X, _map.InfoPoints[i].CentralPoint.Z), ignoreCollision: true));
