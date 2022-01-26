@@ -302,10 +302,7 @@ namespace LeagueSandbox.GameServer.Content
             {
                 var team = teamSpawn.Name;
                 var spawnsByPlayerCount = (JArray)teamSpawn.Value;
-                
-                    //var playerSpawns = new PlayerSpawns((JArray)spawnsByPlayerCount[i]);
-                    toReturnMapSpawns.Add(team, spawnsByPlayerCount);
-        
+                toReturnMapSpawns.Add(team, spawnsByPlayerCount);
             }
 
             return toReturnMapSpawns;
