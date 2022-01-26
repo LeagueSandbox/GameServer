@@ -59,6 +59,10 @@ namespace GameServerCore.Maps
         /// </summary>
         Dictionary<TeamId, IGameObject> ShopList { get; set; }
         /// <summary>
+        /// Coordinates for player SpawnPositions when the match first begins
+        /// </summary>
+        Dictionary<TeamId, Dictionary<int, Dictionary<int, Vector2>>> PlayerSpawnPoints { get; set; }
+        /// <summary>
         /// List of LaneMinion's spawn points
         /// </summary>
         Dictionary<string, IMapObject> SpawnBarracks { get; }

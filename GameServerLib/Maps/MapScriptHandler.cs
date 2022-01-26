@@ -62,18 +62,21 @@ namespace LeagueSandbox.GameServer.Maps
         /// </summary>
         public List<IAnnounce> AnnouncerEvents { get; private set; }
 
-        private int _minionNumber;
-        private int _cannonMinionCount;
-        public List<INexus> NexusList { get; set; } = new List<INexus>();
-        public Dictionary<string, IMapObject> SpawnBarracks { get; set; }
-        public Dictionary<TeamId, IFountain> FountainList { get; set; } = new Dictionary<TeamId, IFountain>();
-        private readonly Dictionary<TeamId, SurrenderHandler> _surrenders = new Dictionary<TeamId, SurrenderHandler>();
-        public Dictionary<TeamId, Dictionary<LaneID, List<IInhibitor>>> InhibitorList { get; set; }
-        public Dictionary<TeamId, Dictionary<LaneID, List<ILaneTurret>>> TurretList { get; set; }
-        public List<IMapObject> InfoPoints { get; set; } = new List<IMapObject>();
-        public Dictionary<TeamId, IGameObject> ShopList { get; set; } = new Dictionary<TeamId, IGameObject>();
+
         public Dictionary<LaneID, List<Vector2>> BlueMinionPathing;
         public Dictionary<LaneID, List<Vector2>> PurpleMinionPathing;
+        public Dictionary<string, IMapObject> SpawnBarracks { get; set; }
+        public List<INexus> NexusList { get; set; } = new List<INexus>();
+        public List<IMapObject> InfoPoints { get; set; } = new List<IMapObject>();
+        public Dictionary<TeamId, Dictionary<LaneID, List<ILaneTurret>>> TurretList { get; set; }
+        public Dictionary<TeamId, Dictionary<LaneID, List<IInhibitor>>> InhibitorList { get; set; }
+        public Dictionary<TeamId, IFountain> FountainList { get; set; } = new Dictionary<TeamId, IFountain>();
+        public Dictionary<TeamId, IGameObject> ShopList { get; set; } = new Dictionary<TeamId, IGameObject>();
+        public Dictionary<TeamId, Dictionary<int, Dictionary<int, Vector2>>> PlayerSpawnPoints { get; set; } = new Dictionary<TeamId, Dictionary<int, Dictionary<int, Vector2>>>();
+
+        private int _minionNumber;
+        private int _cannonMinionCount;
+        private readonly Dictionary<TeamId, SurrenderHandler> _surrenders = new Dictionary<TeamId, SurrenderHandler>();
 
         /// <summary>
         /// Instantiates map related game settings such as collision handler, navigation grid, announcer events, and map properties.
@@ -111,6 +114,15 @@ namespace LeagueSandbox.GameServer.Maps
             if (game.Config.MapData.SpawnBarracks != null)
             {
                 SpawnBarracks = game.Config.MapData.SpawnBarracks;
+            }
+
+            if (MapScript.PlayerSpawnPoints != null && MapScript.MapScriptMetadata.OverrideSpawnPoints)
+            {
+                PlayerSpawnPoints = MapScript.PlayerSpawnPoints;
+            }
+            else
+            {
+                PlayerSpawnPoints = _game.Config.GetMapSpawns();
             }
         }
 

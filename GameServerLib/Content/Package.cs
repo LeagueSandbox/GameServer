@@ -270,11 +270,11 @@ namespace LeagueSandbox.GameServer.Content
             return mapObject;
         }
 
-        public MapSpawns GetMapSpawns(int mapId)
+        public Dictionary<string, JArray> GetMapSpawns(int mapId)
         {
             var mapName = $"Map{mapId}";
             var contentType = "Maps";
-            var toReturnMapSpawns = new MapSpawns();
+            var toReturnMapSpawns = new Dictionary<string, JArray>();
 
 
             if (!_content.ContainsKey(contentType) || !_content[contentType].ContainsKey(mapName))
@@ -302,11 +302,7 @@ namespace LeagueSandbox.GameServer.Content
             {
                 var team = teamSpawn.Name;
                 var spawnsByPlayerCount = (JArray)teamSpawn.Value;
-                for (var i = 0; i < spawnsByPlayerCount.Count; i++)
-                {
-                    var playerSpawns = new PlayerSpawns((JArray)spawnsByPlayerCount[i]);
-                    toReturnMapSpawns.SetSpawns(team, playerSpawns, i);
-                }
+                toReturnMapSpawns.Add(team, spawnsByPlayerCount);
             }
 
             return toReturnMapSpawns;

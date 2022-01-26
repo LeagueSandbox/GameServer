@@ -242,7 +242,7 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="inhibitor">Inhibitor to check.</param>
         /// <param name="killer">Killer of the inhibitor (if applicable).</param>
         /// <param name="assists">Assists of the killer (if applicable).</param>
-        void NotifyInhibitorState(IInhibitor inhibitor, IDeathData deathData, List<IChampion> assists = null);
+        void NotifyInhibitorState(IInhibitor inhibitor, IDeathData deathData = null, List<IChampion> assists = null);
         /// Sends a basic heartbeat packet to either the given player or all players.
         /// </summary>
         void NotifyKeyCheck(int clientID, long playerId, uint version, ulong checkSum = 0, byte action = 0, bool broadcast = false);

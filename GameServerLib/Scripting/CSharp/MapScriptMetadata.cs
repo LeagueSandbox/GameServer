@@ -23,5 +23,6 @@ namespace LeagueSandbox.GameServer.Scripting.CSharp
         public int RecallSpellItemId { get; set; } = 2001;
         public long FirstGoldTime { get; set; } = 90 * 1000;
         public bool EnableFountainHealing { get; set; } = true;
+        public bool OverrideSpawnPoints { get; set; } = false;
     }
 }
