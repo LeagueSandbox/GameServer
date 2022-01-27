@@ -950,6 +950,11 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             {
                 UpdateTarget(diff);
             }
+
+            if (_autoAttackCurrentCooldown > 0)
+            {
+                _autoAttackCurrentCooldown -= diff / 1000.0f;
+            }
         }
 
         /// <summary>
@@ -1120,11 +1125,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                     }
 
                     HasMadeInitialAttack = false;
-                }
-
-                if (_autoAttackCurrentCooldown > 0)
-                {
-                    _autoAttackCurrentCooldown -= diff / 1000.0f;
                 }
             }
         }
