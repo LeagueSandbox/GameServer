@@ -310,6 +310,18 @@ namespace MapScripts.Map12
             _map.EndGame(nexus.Team, new Vector3(nexus.Position.X, nexus.GetHeight(), nexus.Position.Y), deathData: deathaData);
         }
 
+        public void SpawnAllCamps()
+        {
+            foreach (var camp in HealthPacks)
+            {
+                if (!camp.IsAlive)
+                {
+                    _map.SpawnCamp(camp);
+                    camp.RespawnTimer = 40.0f * 1000;
+                }
+            }
+        }
+
         public float GetGoldFor(IAttackableUnit u)
         {
             if (!(u is ILaneMinion m))

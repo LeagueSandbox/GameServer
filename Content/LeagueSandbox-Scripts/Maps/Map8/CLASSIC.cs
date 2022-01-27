@@ -239,7 +239,8 @@ namespace MapScripts.Map8
         //Since the center crystals are treated as simple minions intead of camp/monster, we have to hand everything individually
         Dictionary<TeamId, IMinion> Crystals = new Dictionary<TeamId, IMinion>();
         List<IMinionTemplate> CrystalsTemplates = new List<IMinionTemplate>();
-        Dictionary<TeamId, float> CrystalTimers = new Dictionary<TeamId, float> { { TeamId.TEAM_BLUE, 10 * 1000 }, { TeamId.TEAM_PURPLE, 10 * 1000 } };
+        Dictionary<TeamId, float> CrystalTimers = new Dictionary<TeamId, float> { { TeamId.TEAM_BLUE, 180.0f * 1000 }, { TeamId.TEAM_PURPLE, 180.0f * 1000 } };
+        Dictionary<TeamId, List<IRegion>> CrystalRegions = new Dictionary<TeamId, List<IRegion>> { { TeamId.TEAM_BLUE, new List<IRegion>() }, { TeamId.TEAM_PURPLE, new List<IRegion>() } };
         public void OnMatchStart()
         {
             for (int i = 0; i < _map.InfoPoints.Count; i++)
@@ -291,8 +292,8 @@ namespace MapScripts.Map8
                                 crystalTemplate.NetId, crystalTemplate.Team, crystalTemplate.SkinId,
                                 crystalTemplate.IgnoresCollision, crystalTemplate.IsTargetable);
 
-                        _map.CreateRegion(TeamId.TEAM_BLUE, crystal.Position, RegionType.Default, visionTarget: crystal, grassRadius: 38.08f, collisionRadius: 25000.0f, lifeTime: 6462.0273f);
-                        _map.CreateRegion(TeamId.TEAM_PURPLE, crystal.Position, RegionType.Default, visionTarget: crystal, grassRadius: 38.08f, collisionRadius: 25000.0f, lifeTime: 6462.0273f);
+                        CrystalRegions[crystalTemplate.Team].Add(_map.CreateRegion(TeamId.TEAM_BLUE, crystal.Position, RegionType.Default, visionTarget: crystal, grassRadius: 38.08f, collisionRadius: 25000.0f, lifeTime: 6462.0273f));
+                        CrystalRegions[crystalTemplate.Team].Add(_map.CreateRegion(TeamId.TEAM_PURPLE, crystal.Position, RegionType.Default, visionTarget: crystal, grassRadius: 38.08f, collisionRadius: 25000.0f, lifeTime: 6462.0273f));
 
                         ApiEventManager.OnDeath.AddListener(crystal, crystal, OnCrystalDeath, true);
 
@@ -306,6 +307,38 @@ namespace MapScripts.Map8
         public void OnCrystalDeath(IDeathData deathData)
         {
             Crystals.Remove(deathData.Unit.Team);
+            foreach (var region in CrystalRegions[deathData.Unit.Team])
+            {
+                region.SetToRemove();
+            }
+        }
+        public void SpawnAllCamps()
+        {
+            foreach (var camp in HealthPacks)
+            {
+                if (!camp.IsAlive)
+                {
+                    _map.SpawnCamp(camp);
+                    camp.RespawnTimer = 30.0f * 1000f;
+                }
+            }
+            foreach (var crystalTemplate in CrystalsTemplates)
+            {
+                if (!Crystals.ContainsKey(crystalTemplate.Team))
+                {
+                    var crystal = _map.CreateMinion(crystalTemplate.Name, crystalTemplate.Model, crystalTemplate.Position,
+                            crystalTemplate.NetId, crystalTemplate.Team, crystalTemplate.SkinId,
+                            crystalTemplate.IgnoresCollision, crystalTemplate.IsTargetable);
+
+                    CrystalRegions[crystalTemplate.Team].Add(_map.CreateRegion(TeamId.TEAM_BLUE, crystal.Position, RegionType.Default, visionTarget: crystal, grassRadius: 38.08f, collisionRadius: 25000.0f, lifeTime: 6462.0273f));
+                    CrystalRegions[crystalTemplate.Team].Add(_map.CreateRegion(TeamId.TEAM_PURPLE, crystal.Position, RegionType.Default, visionTarget: crystal, grassRadius: 38.08f, collisionRadius: 25000.0f, lifeTime: 6462.0273f));
+
+                    ApiEventManager.OnDeath.AddListener(crystal, crystal, OnCrystalDeath, true);
+
+                    Crystals.Add(crystal.Team, crystal);
+                    CrystalTimers[crystalTemplate.Team] = 180.0f * 1000f;
+                }
+            }
         }
 
         public float GetGoldFor(IAttackableUnit u)

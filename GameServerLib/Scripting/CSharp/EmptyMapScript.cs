@@ -117,10 +117,13 @@ namespace MapScripts
         {
         }
 
-
         public float GetGoldFor(IAttackableUnit u)
         {
             return 0;
+        }
+
+        public void SpawnAllCamps()
+        {
         }
 
         public float GetExperienceFor(IAttackableUnit u)
