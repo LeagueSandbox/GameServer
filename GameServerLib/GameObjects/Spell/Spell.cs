@@ -676,9 +676,9 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
                 return;
             }
 
-            if (CastInfo.Owner.SpellToCast != null)
+            if (CastInfo.Owner.GetCastSpell() != null)
             {
-                var spellTarget = CastInfo.Owner.SpellToCast.CastInfo.Targets[0].Unit;
+                var spellTarget = CastInfo.Owner.GetCastSpell().CastInfo.Targets[0].Unit;
 
                 if (spellTarget != null
                 && !spellTarget.IsVisibleByTeam(CastInfo.Owner.Team))
@@ -733,8 +733,8 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
                 return;
             }
 
-            if (CastInfo.Owner.SpellToCast != null
-            && !CastInfo.Owner.SpellToCast.SpellData.DoesntBreakChannels
+            if (CastInfo.Owner.GetCastSpell() != null
+            && !CastInfo.Owner.GetCastSpell().SpellData.DoesntBreakChannels
             && (order == OrderType.CastSpell
             || order == OrderType.TempCastSpell))
             {
@@ -836,6 +836,11 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
             if (CastInfo.Owner.SpellToCast != null)
             {
                 CastInfo.Owner.SetSpellToCast(null, Vector2.Zero);
+            }
+
+            if (CastInfo.Owner.GetCastSpell() != null)
+            {
+                CastInfo.Owner.SetCastSpell(null);
             }
 
             // Updates move order before script PostCast so teleports are sent to clients correctly (not sent if MoveOrder == CastSpell).

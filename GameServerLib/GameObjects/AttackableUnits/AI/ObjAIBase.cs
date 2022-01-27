@@ -25,6 +25,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         // Crucial Vars
         private float _autoAttackCurrentCooldown;
         private bool _skipNextAutoAttack;
+        private ISpell _castingSpell;
         private Random _random = new Random();
         private readonly CSharpScriptEngine _charScriptEngine;
         protected ItemManager _itemManager;
@@ -84,6 +85,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         public ICharScript CharScript { get; private set; }
         public bool IsBot { get; set; }
         public IAIScript AIScript { get; protected set; }
+
         public ObjAiBase(Game game, string model, Stats.Stats stats, int collisionRadius = 40,
             Vector2 position = new Vector2(), int visionRadius = 0, int skinId = 0, uint netId = 0, TeamId team = TeamId.TEAM_NEUTRAL, string aiScript = "") :
             base(game, model, stats, collisionRadius, position, visionRadius, netId, team)
@@ -835,7 +837,16 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         /// <param name="s">Spell that is being cast.</param>
         public void SetCastSpell(ISpell s)
         {
-            SpellToCast = s;
+            _castingSpell = s;
+        }
+
+        /// <summary>
+        /// Gets the spell this unit is currently casting.
+        /// </summary>
+        /// <returns>Spell that is being cast.</returns>
+        public ISpell GetCastSpell()
+        {
+            return _castingSpell;
         }
 
         /// <summary>

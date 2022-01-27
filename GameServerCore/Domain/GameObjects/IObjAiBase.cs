@@ -154,6 +154,11 @@ namespace GameServerCore.Domain.GameObjects
         /// <param name="s">Spell that is being cast.</param>
         void SetCastSpell(ISpell s);
         /// <summary>
+        /// Gets the spell this unit is currently casting.
+        /// </summary>
+        /// <returns>Spell that is being cast.</returns>
+        ISpell GetCastSpell();
+        /// <summary>
         /// Sets this AI's current target unit. This relates to both auto attacks as well as general spell targeting.
         /// </summary>
         /// <param name="target">Unit to target.</param>
