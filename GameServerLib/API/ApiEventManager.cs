@@ -605,10 +605,10 @@ namespace LeagueSandbox.GameServer.API
 
     public class EventOnSpellChannelCancel
     {
-        private readonly List<Tuple<object, ISpell, Action<ISpell>>> _listeners = new List<Tuple<object, ISpell, Action<ISpell>>>();
-        public void AddListener(object owner, ISpell spell, Action<ISpell> callback)
+        private readonly List<Tuple<object, ISpell, Action<ISpell, ChannelingStopSource>>> _listeners = new List<Tuple<object, ISpell, Action<ISpell, ChannelingStopSource>>>();
+        public void AddListener(object owner, ISpell spell, Action<ISpell, ChannelingStopSource> callback)
         {
-            var listenerTuple = new Tuple<object, ISpell, Action<ISpell>>(owner, spell, callback);
+            var listenerTuple = new Tuple<object, ISpell, Action<ISpell, ChannelingStopSource>>(owner, spell, callback);
             _listeners.Add(listenerTuple);
         }
         public void RemoveListener(object owner, ISpell spell)
@@ -619,7 +619,7 @@ namespace LeagueSandbox.GameServer.API
         {
             _listeners.RemoveAll((listener) => listener.Item1 == owner);
         }
-        public void Publish(ISpell spell)
+        public void Publish(ISpell spell, ChannelingStopSource reason)
         {
             var count = _listeners.Count;
 
@@ -632,7 +632,7 @@ namespace LeagueSandbox.GameServer.API
             {
                 if (_listeners[i].Item2 == spell)
                 {
-                    _listeners[i].Item3(spell);
+                    _listeners[i].Item3(spell, reason);
                 }
             }
         }

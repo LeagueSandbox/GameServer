@@ -6,6 +6,7 @@ using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using System.Numerics;
 using GameServerCore.Scripting.CSharp;
+using GameServerCore.Enums;
 
 namespace Spells
 {
@@ -82,7 +83,7 @@ namespace Spells
         {
         }
 
-        public void OnSpellChannelCancel(ISpell spell)
+        public void OnSpellChannelCancel(ISpell spell, ChannelingStopSource reason)
         {
         }
 

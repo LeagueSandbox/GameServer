@@ -25,6 +25,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         // Crucial Vars
         private float _autoAttackCurrentCooldown;
         private bool _skipNextAutoAttack;
+        private ISpell _castingSpell;
         private Random _random = new Random();
         private readonly CSharpScriptEngine _charScriptEngine;
         protected ItemManager _itemManager;
@@ -84,6 +85,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         public ICharScript CharScript { get; private set; }
         public bool IsBot { get; set; }
         public IAIScript AIScript { get; protected set; }
+
         public ObjAiBase(Game game, string model, Stats.Stats stats, int collisionRadius = 40,
             Vector2 position = new Vector2(), int visionRadius = 0, int skinId = 0, uint netId = 0, TeamId team = TeamId.TEAM_NEUTRAL, string aiScript = "") :
             base(game, model, stats, collisionRadius, position, visionRadius, netId, team)
@@ -260,7 +262,8 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             return !IsDead
                 // TODO: Verify if priority is still maintained with the MovementParameters checks.
                 && ((Status.HasFlag(StatusFlags.CanMove) && Status.HasFlag(StatusFlags.CanMoveEver)) || MovementParameters != null)
-                && (MoveOrder != OrderType.CastSpell || MovementParameters != null)
+                && ((MoveOrder != OrderType.CastSpell || _castingSpell == null) || MovementParameters != null)
+                && (ChannelSpell == null || (ChannelSpell != null && (ChannelSpell.SpellData.CanMoveWhileChanneling || !ChannelSpell.SpellData.CantCancelWhileChanneling)))
                 && (!(Status.HasFlag(StatusFlags.Netted)
                 || Status.HasFlag(StatusFlags.Rooted)
                 || Status.HasFlag(StatusFlags.Sleep)
@@ -284,7 +287,9 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 && !Status.HasFlag(StatusFlags.Pacified)
                 && !Status.HasFlag(StatusFlags.Sleep)
                 && !Status.HasFlag(StatusFlags.Stunned)
-                && !Status.HasFlag(StatusFlags.Suppressed);
+                && !Status.HasFlag(StatusFlags.Suppressed)
+                && _castingSpell == null
+                && ChannelSpell == null;
         }
 
         /// <summary>
@@ -404,7 +409,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             if (reset)
             {
                 _autoAttackCurrentCooldown = 0;
-                AutoAttackSpell.ResetSpellDelay();
+                AutoAttackSpell.ResetSpellCast();
             }
 
             if (fullCancel)
@@ -537,13 +542,15 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 return;
             }
 
-            if (MoveOrder != OrderType.AttackTo && TargetUnit != null)
+            if (TargetUnit != null && _castingSpell == null && ChannelSpell == null
+                && MoveOrder != OrderType.AttackTo)
             {
                 UpdateMoveOrder(OrderType.AttackTo, true);
             }
 
             if (SpellToCast != null)
             {
+                // Spell casts usually do not take into account collision radius, thus range is center -> center VS edge -> edge for attacks.
                 idealRange = SpellToCast.GetCurrentCastRange();
             }
 
@@ -830,6 +837,24 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         }
 
         /// <summary>
+        /// Sets the spell that this unit is currently casting.
+        /// </summary>
+        /// <param name="s">Spell that is being cast.</param>
+        public void SetCastSpell(ISpell s)
+        {
+            _castingSpell = s;
+        }
+
+        /// <summary>
+        /// Gets the spell this unit is currently casting.
+        /// </summary>
+        /// <returns>Spell that is being cast.</returns>
+        public ISpell GetCastSpell()
+        {
+            return _castingSpell;
+        }
+
+        /// <summary>
         /// Sets this AI's current target unit. This relates to both auto attacks as well as general spell targeting.
         /// </summary>
         /// <param name="target">Unit to target.</param>
@@ -923,7 +948,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
             if (CanMove())
             {
-                UpdateAttackTarget(diff);
+                UpdateTarget(diff);
             }
         }
 
@@ -932,7 +957,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         /// Used for both auto and spell attacks.
         /// </summary>
         /// <param name="diff">Number of milliseconds that passed before this tick occurred.</param>
-        private void UpdateAttackTarget(float diff)
+        private void UpdateTarget(float diff)
         {
             if (IsDead)
             {
@@ -945,6 +970,11 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 return;
             }
 
+            if (TargetUnit == null && MoveOrder != OrderType.AttackMove)
+            {
+                return;
+            }
+
             if (MovementParameters != null)
             {
                 RefreshWaypoints(0);
@@ -953,13 +983,9 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
             var idealRange = Stats.Range.Total;
 
-            if (TargetUnit != null)
+            if (TargetUnit != null && SpellToCast != null && !IsAttacking && SpellToCast.SpellData.IsValidTarget(this, TargetUnit))
             {
-                idealRange = Stats.Range.Total + TargetUnit.CollisionRadius;
-            }
-
-            if (SpellToCast != null && !IsAttacking)
-            {
+                // Spell casts usually do not take into account collision radius, thus range is center -> center VS edge -> edge for attacks.
                 idealRange = SpellToCast.GetCurrentCastRange();
 
                 if (MoveOrder == OrderType.AttackTo
@@ -980,8 +1006,11 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             }
             else
             {
-                if (TargetUnit != null && MoveOrder != OrderType.CastSpell)
+                // TODO: Verify if there are any other cases we want to avoid.
+                if (TargetUnit != null && TargetUnit.Team != Team && MoveOrder != OrderType.CastSpell)
                 {
+                    idealRange = Stats.Range.Total + TargetUnit.CollisionRadius;
+
                     // TODO: Implement True Sight for turrets instead of using an exception for turret targeting in relation to vision here.
                     if (TargetUnit.IsDead || (!_game.ObjectManager.TeamHasVisionOn(Team, TargetUnit) && !(this is IBaseTurret) && !(TargetUnit is IBaseTurret) && !(TargetUnit is IObjBuilding) && MovementParameters == null))
                     {
@@ -1027,7 +1056,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                                 if (_autoAttackCurrentCooldown <= 0)
                                 {
                                     HasAutoAttacked = false;
-                                    AutoAttackSpell.ResetSpellDelay();
+                                    AutoAttackSpell.ResetSpellCast();
                                     // TODO: ApiEventManager.OnUnitPreAttack.Publish(this);
                                     IsAttacking = true;
                                 }
@@ -1086,7 +1115,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                         }
 
                         AutoAttackSpell.SetSpellState(SpellState.STATE_READY);
-                        AutoAttackSpell.ResetSpellDelay();
+                        AutoAttackSpell.ResetSpellCast();
                         _game.PacketNotifier.NotifyNPC_InstantStop_Attack(this, false);
                     }
 

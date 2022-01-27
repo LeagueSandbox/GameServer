@@ -17,62 +17,39 @@ namespace Buffs
 
         public IStatsModifier StatsModifier { get; private set; }
 
-        private IParticle _createdParticle;
         private IChampion owner;
         private IBuff sourceBuff;
+        bool willRemove;
 
         public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
-            IChampion champion = unit as IChampion;
-            owner = champion;
+            owner = unit as IChampion;
             sourceBuff = buff;
 
             ApiEventManager.OnTakeDamage.AddListener(this, unit, OnTakeDamage, true);
-            ApiEventManager.OnUnitUpdateMoveOrder.AddListener(this, champion, OnUpdateMoveOrder, true);
-
-            _createdParticle = AddParticleTarget(champion, champion, "TeleportHome", champion, lifetime: buff.Duration);
         }
 
         public void OnDeactivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
-            if (sourceBuff.TimeElapsed >= sourceBuff.Duration)
-            {
-                // This is the only case where removing the listener works. Outside of this if statement will crash the server due to the listener being removed before it completes the callback.
-                ApiEventManager.OnTakeDamage.RemoveListener(this, ownerSpell.CastInfo.Owner);
-                ApiEventManager.OnUnitUpdateMoveOrder.RemoveListener(this, ownerSpell.CastInfo.Owner);
-                owner.Recall();
-            }
-            RemoveParticle(_createdParticle);
+            ApiEventManager.OnTakeDamage.RemoveListener(this, ownerSpell.CastInfo.Owner);
         }
 
         private void OnTakeDamage(IDamageData damageData)
         {
-            var buff = damageData.Target.GetBuffWithName("Recall");
-            if (buff != null)
+            if (damageData.DamageSource != DamageSource.DAMAGE_SOURCE_PERIODIC)
             {
-                buff.DeactivateBuff();
-            }
-        }
-
-        public void OnUpdateMoveOrder(IObjAiBase unit, OrderType order)
-        {
-            var buff = unit.GetBuffWithName("Recall");
-            if (buff != null)
-            {
-                if (order != OrderType.Hold && order != OrderType.Stop)
-                {
-                    buff.DeactivateBuff();
-                }
-                else
-                {
-                    // After the callback ends, it will remove the listener, so we make a new one before the callback ends.
-                    ApiEventManager.OnUnitUpdateMoveOrder.AddListener(this, unit, OnUpdateMoveOrder, true);
-                }
+                willRemove = true;
             }
         }
 
         public void OnUpdate(float diff)
         {
+            if (willRemove)
+            {
+                owner.StopChanneling(ChannelingStopCondition.Cancel, ChannelingStopSource.LostTarget);
+
+                RemoveBuff(sourceBuff);
+            }
         }
     }
 }
