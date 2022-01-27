@@ -1006,6 +1006,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             }
             else
             {
+                // TODO: Verify if there are any other cases we want to avoid.
                 if (TargetUnit != null && TargetUnit.Team != Team && MoveOrder != OrderType.CastSpell)
                 {
                     idealRange = Stats.Range.Total + TargetUnit.CollisionRadius;
