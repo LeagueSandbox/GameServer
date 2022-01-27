@@ -354,6 +354,7 @@ namespace LeagueSandbox.GameServer.Maps
                 }
             }
         }
+
         //Load Building Protections
         public void LoadBuildingProtection()
         {
@@ -561,11 +562,12 @@ namespace LeagueSandbox.GameServer.Maps
             return true;
         }
 
-        //Jungle
+        //Jungle/Camps
         public IMonsterCamp CreateJungleCamp(Vector3 position, byte groupNumber, TeamId teamSideOfTheMap, string campTypeIcon, float respawnTimer, bool doPlayVO = false, byte revealEvent = 74, float spawnDuration = 0.0f)
         {
             return new MonsterCamp(_game, position, groupNumber, teamSideOfTheMap, campTypeIcon, respawnTimer, doPlayVO, revealEvent, spawnDuration);
         }
+
         public void CreateJungleMonster
         (
             string name, string model, Vector2 position, Vector3 faceDirection,
@@ -583,6 +585,7 @@ namespace LeagueSandbox.GameServer.Maps
                 MonsterTemplates.Add(monsterCamp.CampIndex, new List<IMonsterTemplate> { new MonsterTemplate(name, model, position, faceDirection, monsterCamp, team, spawnAnimation, netId, isTargetable, ignoresCollision, aiScript, damageBonus, healthBonus, initialLevel) });
             }
         }
+
         public void SpawnCamp(IMonsterCamp monsterCamp)
         {
             if (MonsterTemplates.ContainsKey(monsterCamp.CampIndex))
