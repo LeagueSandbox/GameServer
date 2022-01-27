@@ -158,6 +158,66 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
             }
         }
 
+        public void CastCancelCheck()
+        {
+            if (CastInfo.Owner.IsDead
+            && !SpellData.CanOnlyCastWhileDead)
+            {
+                ResetSpellCast();
+                return;
+            }
+
+            if (CastInfo.Targets[0].Unit != null)
+            {
+                var spellTarget = CastInfo.Targets[0].Unit;
+
+                if (spellTarget != null)
+                {
+                    if (!spellTarget.IsVisibleByTeam(CastInfo.Owner.Team)
+                    || !spellTarget.Status.HasFlag(StatusFlags.Targetable))
+                    {
+                        if (CastInfo.IsAutoAttack)
+                        {
+                            CastInfo.Owner.CancelAutoAttack(true);
+                            return;
+                        }
+
+                        ResetSpellCast();
+                        return;
+                    }
+
+                    // Regular auto attacks can lose their target due to untargetability and distance. The limit for range is 3x attack range.
+                    if (CastInfo.IsAutoAttack
+                    && (Vector2.Distance(spellTarget.Position, CastInfo.Owner.Position) > (CastInfo.Owner.Stats.Range.Total + spellTarget.CollisionRadius) * 3f
+                    || CastInfo.Owner.GetCastSpell() != null
+                    || CastInfo.Owner.ChannelSpell != null))
+                    {
+                        CastInfo.Owner.CancelAutoAttack(true);
+                        return;
+                    }
+                }
+            }
+
+            // Uncancellable
+            if (SpellData.CantCancelWhileWindingUp)
+            {
+                return;
+            }
+
+            var status = CastInfo.Owner.Status;
+
+            if (status == StatusFlags.Charmed
+            || status == StatusFlags.Feared
+            || status == StatusFlags.Stunned
+            || status == StatusFlags.Suppressed
+            || status == StatusFlags.Taunted
+            || (CastInfo.IsAutoAttack && (status == StatusFlags.Disarmed || !status.HasFlag(StatusFlags.CanAttack)))
+            || (!CastInfo.IsAutoAttack && (status == StatusFlags.Silenced || !status.HasFlag(StatusFlags.CanCast))))
+            {
+                ResetSpellCast();
+            }
+        }
+
         public bool Cast(Vector2 start, Vector2 end, IAttackableUnit unit = null)
         {
             if (unit == null && SpellData.TargetingType == TargetingType.Target)
@@ -297,8 +357,13 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
 
             // All spell checks and steps passed, set the casting spell on the owner.
             // TODO: Verify if we should also do this for manual SpellCasts
-            CastInfo.Owner.SetCastSpell(this);
+            if (!CastInfo.IsAutoAttack)
+            {
+                CastInfo.Owner.SetCastSpell(this);
+                CastInfo.Owner.CancelAutoAttack(false, true);
+            }
 
+            CastInfo.Owner.SetTargetUnit(unit, true);
             CastInfo.Owner.UpdateMoveOrder(OrderType.TempCastSpell, true);
 
             Script.OnSpellPreCast(CastInfo.Owner, this, unit, start, end);
@@ -676,9 +741,9 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
                 return;
             }
 
-            if (CastInfo.Owner.GetCastSpell() != null)
+            if (CastInfo.Targets[0].Unit != null)
             {
-                var spellTarget = CastInfo.Owner.GetCastSpell().CastInfo.Targets[0].Unit;
+                var spellTarget = CastInfo.Targets[0].Unit;
 
                 if (spellTarget != null
                 && !spellTarget.IsVisibleByTeam(CastInfo.Owner.Team))
@@ -838,7 +903,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
                 CastInfo.Owner.SetSpellToCast(null, Vector2.Zero);
             }
 
-            if (CastInfo.Owner.GetCastSpell() != null)
+            if (CastInfo.Owner.GetCastSpell() == this)
             {
                 CastInfo.Owner.SetCastSpell(null);
             }
@@ -1141,8 +1206,11 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
             SetCooldown(CurrentCooldown - lowerValue);
         }
 
-        public void ResetSpellDelay()
+        public void ResetSpellCast()
         {
+            State = SpellState.STATE_READY;
+            CurrentCastTime = 0;
+            CurrentChannelDuration = 0;
             CurrentDelayTime = 0;
         }
 
@@ -1256,6 +1324,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
                     break;
                 case SpellState.STATE_CASTING:
                 {
+                    CastCancelCheck();
                     if (!CastInfo.IsAutoAttack && !CastInfo.UseAttackCastTime)
                     {
                         CurrentCastTime -= diff / 1000.0f;
