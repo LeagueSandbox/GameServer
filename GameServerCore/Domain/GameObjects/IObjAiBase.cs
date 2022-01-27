@@ -66,6 +66,8 @@ namespace GameServerCore.Domain.GameObjects
         /// Unit this AI will auto attack when it is in auto attack range.
         /// </summary>
         IAttackableUnit TargetUnit { get; set; }
+        Dictionary<IAttackableUnit, int> unitsAttackingAllies { get; }
+        void CallForHelp(IAttackableUnit attacker, IAttackableUnit victium = null);
         // TODO: Implement AI Scripting for this (for AI in general).
         bool IsBot { get; }
 
@@ -178,7 +180,7 @@ namespace GameServerCore.Domain.GameObjects
         /// <param name="order">OrderType to set.</param>
         /// <param name="publish">Whether or not to trigger the move order update event.</param>
         void UpdateMoveOrder(OrderType order, bool publish = true);
-        ClassifyUnit ClassifyTarget(IAttackableUnit target);
+        ClassifyUnit ClassifyTarget(IAttackableUnit target, IAttackableUnit victium = null);
         bool RecalculateAttackPosition();
         bool IsAiPaused();
         void PauseAi(bool isPaused);

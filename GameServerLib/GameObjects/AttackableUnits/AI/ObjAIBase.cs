@@ -317,35 +317,35 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         /// <returns>Classification for the given unit.</returns>
         /// TODO: Verify if we want to rename this to something which relates more to the internal League name "Call for Help".
         /// TODO: Move to AttackableUnit.
-        public ClassifyUnit ClassifyTarget(IAttackableUnit target)
+        public ClassifyUnit ClassifyTarget(IAttackableUnit target, IAttackableUnit victium = null)
         {
-            if (target is IObjAiBase ai && ai.TargetUnit != null && (ai.TargetUnit.Team == Team && ai.TargetUnit.IsInDistress())) // If an ally is in distress, target this unit. (Priority 1~5)
+            if (target is IObjAiBase ai && victium != null) // If an ally is in distress, target this unit. (Priority 1~5)
             {
                 switch (target)
                 {
                     // Champion attacking an allied champion
-                    case IChampion _ when ai.TargetUnit is IChampion:
+                    case IChampion _ when victium is IChampion:
                         return ClassifyUnit.CHAMPION_ATTACKING_CHAMPION;
                     // Champion attacking lane minion
-                    case IChampion _ when ai.TargetUnit is ILaneMinion:
+                    case IChampion _ when victium is ILaneMinion:
                         return ClassifyUnit.CHAMPION_ATTACKING_MINION;
                     // Champion attacking minion
-                    case IChampion _ when ai.TargetUnit is IMinion:
+                    case IChampion _ when victium is IMinion:
                         return ClassifyUnit.CHAMPION_ATTACKING_MINION;
                     // Minion attacking an allied champion.
-                    case IMinion _ when ai.TargetUnit is IChampion:
+                    case IMinion _ when victium is IChampion:
                         return ClassifyUnit.MINION_ATTACKING_CHAMPION;
                     // Minion attacking lane minion
-                    case IMinion _ when ai.TargetUnit is ILaneMinion:
+                    case IMinion _ when victium is ILaneMinion:
                         return ClassifyUnit.MINION_ATTACKING_MINION;
                     // Minion attacking minion
-                    case IMinion _ when ai.TargetUnit is IMinion:
+                    case IMinion _ when victium is IMinion:
                         return ClassifyUnit.MINION_ATTACKING_MINION;
                     // Turret attacking lane minion
-                    case IBaseTurret _ when ai.TargetUnit is ILaneMinion:
+                    case IBaseTurret _ when victium is ILaneMinion:
                         return ClassifyUnit.TURRET_ATTACKING_MINION;
                     // Turret attacking minion
-                    case IBaseTurret _ when ai.TargetUnit is IMinion:
+                    case IBaseTurret _ when victium is IMinion:
                         return ClassifyUnit.TURRET_ATTACKING_MINION;
                 }
             }
@@ -549,13 +549,11 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
             Vector2 targetPos = Vector2.Zero;
 
-            if ((MoveOrder == OrderType.AttackTo)
-                && TargetUnit != null)
+            if (MoveOrder == OrderType.AttackTo
+                && TargetUnit != null
+                && !TargetUnit.IsDead)
             {
-                if (!TargetUnit.IsDead)
-                {
-                    targetPos = TargetUnit.Position;
-                }
+                targetPos = TargetUnit.Position;
             }
 
             if (MoveOrder == OrderType.AttackMove
@@ -915,6 +913,9 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             if (!_aiPaused)
             {
                 AIScript.OnUpdate(diff);
+
+                //TODO: public void ClearAllCalls? LaneMinionAI.targetUnitAttackedAlly?
+                unitsAttackingAllies.Clear();
             }
             foreach (var s in Spells.Values)
             {
@@ -925,6 +926,68 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             {
                 UpdateAttackTarget(diff);
             }
+        }
+
+        public override void TakeDamage(IAttackableUnit attacker, float damage, DamageType type, DamageSource source, DamageResultType damageText)
+        {
+            base.TakeDamage(attacker, damage, type, source, damageText);
+            OnTakeDamage(attacker);
+        }
+        /*
+        public override void TakeDamage(IAttackableUnit attacker, float damage, DamageType type, DamageSource source, bool isCrit)
+        {
+            base.TakeDamage(attacker, damage, type, source, isCrit);
+            OnTakeDamage(attacker);
+        }
+        */
+        void OnTakeDamage(IAttackableUnit attacker)
+        {
+            /*
+            ApiFunctionManager.LogDebug(
+                "#{0}({1}) takes damage from #{2}({3}) and calls for help",
+                NetId, Model,
+                attacker.NetId, attacker.Model
+            );
+            */
+            var objects = _game.ObjectManager.GetObjects();
+            foreach (var it in objects)
+            {
+                if (
+                    it.Value is IObjAiBase u
+                  //&& u != null
+                    && u != this
+                    && u.Team == Team
+                    && Vector2.DistanceSquared(u.Position, Position) <= (DETECT_RANGE * DETECT_RANGE) //TODO: use (u and attacker).autoacquisitionRange
+                    && Vector2.DistanceSquared(u.Position, attacker.Position) <= (DETECT_RANGE * DETECT_RANGE) //TODO: Leave only one line?
+                )
+                {
+                    u.CallForHelp(attacker, this);
+                }
+            }
+        }
+
+        // < NetId, priority >
+        public Dictionary<IAttackableUnit, int> unitsAttackingAllies { get; private set; } = new Dictionary<IAttackableUnit, int>();
+        public void CallForHelp(IAttackableUnit attacker, IAttackableUnit victium)
+        {
+            int priority = Math.Min(
+                unitsAttackingAllies.GetValueOrDefault(attacker, (int)ClassifyUnit.DEFAULT),
+                (int)ClassifyTarget(attacker, victium)
+            );
+            unitsAttackingAllies[attacker] = priority;
+            /*
+            ApiFunctionManager.LogDebug(
+                "#{0}({1}) received call for help from #{2}({3}) against #{4}({5}) prio = {6}",
+                NetId, Model,
+                victium.NetId, victium.Model,
+                attacker.NetId, attacker.Model,
+                priority
+            );
+            */
+        }
+
+        public void ClearCallsForHelp(){
+            unitsAttackingAllies.Clear();
         }
 
         /// <summary>
