@@ -21,7 +21,6 @@ namespace LeagueSandbox.GameServer
         public Dictionary<string, IPlayerConfig> Players { get; private set; }
         public GameConfig GameConfig { get; private set; }
         public MapData MapData { get; private set; }
-        public MapSpawns MapSpawns { get; private set; }
         public ContentManager ContentManager { get; private set; }
         public FeatureFlags GameFeatures { get; private set; }
         public const string VERSION_STRING = "Version 4.20.0.315 [PUBLIC]";
@@ -92,7 +91,6 @@ namespace LeagueSandbox.GameServer
 
             // Read data & spawns info
             MapData = ContentManager.GetMapData(GameConfig.Map);
-            MapSpawns = ContentManager.GetMapSpawns(GameConfig.Map);
         }
 
         private string GetContentPath()
@@ -136,6 +134,44 @@ namespace LeagueSandbox.GameServer
             {
                 GameFeatures &= ~flag;
             }
+        }
+
+        public Dictionary<TeamId, Dictionary<int, Dictionary<int, Vector2>>> GetMapSpawns()
+        {
+            Dictionary<TeamId, Dictionary<int, Dictionary<int, Vector2>>> toReturn = new Dictionary<TeamId, Dictionary<int, Dictionary<int, Vector2>>>();
+            foreach (var rawInfo in ContentManager.GetMapSpawns(GameConfig.Map))
+            {
+                var team = TeamId.TEAM_BLUE;
+                if (rawInfo.Key.ToLower().Equals("purple"))
+                {
+                    team = TeamId.TEAM_PURPLE;
+                }
+
+                for (int i = 0; i < rawInfo.Value.Count; i++)
+                {
+                    for (int j = 0; j < rawInfo.Value[i].Count(); j++)
+                    {
+                        if (toReturn.ContainsKey(team))
+                        {
+                            if (toReturn[team].ContainsKey(i + 1))
+                            {
+                                toReturn[team][i + 1].Add(j + 1, new Vector2((int)((JArray)rawInfo.Value[i][j])[0], (int)((JArray)rawInfo.Value[i][j])[1]));
+                            }
+                            else
+                            {
+                                toReturn[team].Add(rawInfo.Value[i].Count(), new Dictionary<int, Vector2>{
+                                    { j + 1, new Vector2((int)((JArray)rawInfo.Value[i][j])[0], (int)((JArray)rawInfo.Value[i][j])[1]) } });
+                            }
+                        }
+                        else
+                        {
+                            toReturn.Add(team, new Dictionary<int, Dictionary<int, Vector2>> { { rawInfo.Value[i].Count(), new Dictionary<int, Vector2> {
+                                { j + 1, new Vector2((int)((JArray)rawInfo.Value[i][j])[0], (int)((JArray)rawInfo.Value[i][j])[1]) } } } });
+                        }
+                    }
+                }
+            }
+            return toReturn;
         }
     }
 }
@@ -356,39 +392,6 @@ public class MapData : IMapData
 
             return index;
         }
-    }
-}
-
-public class MapSpawns
-{
-    public Dictionary<int, PlayerSpawns> Blue = new Dictionary<int, PlayerSpawns>();
-    public Dictionary<int, PlayerSpawns> Purple = new Dictionary<int, PlayerSpawns>();
-
-    public void SetSpawns(string team, PlayerSpawns spawns, int playerCount)
-    {
-        if (team.ToLower().Equals("blue"))
-        {
-            Blue[playerCount] = spawns;
-        }
-        else
-        {
-            Purple[playerCount] = spawns;
-        }
-    }
-}
-
-public class PlayerSpawns
-{
-    private JArray _spawns;
-
-    public PlayerSpawns(JArray spawns)
-    {
-        _spawns = spawns;
-    }
-
-    internal Vector2 GetCoordsForPlayer(int playerId)
-    {
-        return new Vector2((int)((JArray)_spawns[playerId])[0], (int)((JArray)_spawns[playerId])[1]);
     }
 }
 

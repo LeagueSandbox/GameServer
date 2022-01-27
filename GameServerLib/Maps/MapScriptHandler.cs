@@ -13,7 +13,6 @@ using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
 using GameServerCore.Maps;
 using GameServerCore.NetInfo;
-using GameServerLib.GameObjects;
 using LeagueSandbox.GameServer.Content;
 using LeagueSandbox.GameServer.GameObjects;
 using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
@@ -34,6 +33,7 @@ namespace LeagueSandbox.GameServer.Maps
         // Crucial Vars
         protected Game _game;
         public CSharpScriptEngine _scriptEngine;
+        public MapData _loadMapStructures;
         private readonly ILog _logger;
 
         /// <summary>
@@ -62,19 +62,21 @@ namespace LeagueSandbox.GameServer.Maps
         /// </summary>
         public List<IAnnounce> AnnouncerEvents { get; private set; }
 
-        private int _minionNumber;
-        private int _cannonMinionCount;
-        public List<INexus> NexusList { get; set; } = new List<INexus>();
-        public Dictionary<string, IMapObject> SpawnBarracks { get; set; }
-        public Dictionary<TeamId, IFountain> FountainList { get; set; } = new Dictionary<TeamId, IFountain>();
-        private readonly Dictionary<TeamId, SurrenderHandler> _surrenders = new Dictionary<TeamId, SurrenderHandler>();
-        public Dictionary<TeamId, Dictionary<LaneID, List<IInhibitor>>> InhibitorList { get; set; }
-        public Dictionary<TeamId, Dictionary<LaneID, List<ILaneTurret>>> TurretList { get; set; }
-        public List<IMapObject> InfoPoints { get; set; } = new List<IMapObject>();
-        public Dictionary<TeamId, IGameObject> ShopList { get; set; } = new Dictionary<TeamId, IGameObject>();
+
         public Dictionary<LaneID, List<Vector2>> BlueMinionPathing;
         public Dictionary<LaneID, List<Vector2>> PurpleMinionPathing;
-        public Dictionary<int, List<IMonsterTemplate>> MonsterTemplates = new Dictionary<int, List<IMonsterTemplate>>();
+        public Dictionary<string, IMapObject> SpawnBarracks { get; set; }
+        public List<INexus> NexusList { get; set; } = new List<INexus>();
+        public List<IMapObject> InfoPoints { get; set; } = new List<IMapObject>();
+        public Dictionary<TeamId, Dictionary<LaneID, List<ILaneTurret>>> TurretList { get; set; }
+        public Dictionary<TeamId, Dictionary<LaneID, List<IInhibitor>>> InhibitorList { get; set; }
+        public Dictionary<TeamId, IFountain> FountainList { get; set; } = new Dictionary<TeamId, IFountain>();
+        public Dictionary<TeamId, IGameObject> ShopList { get; set; } = new Dictionary<TeamId, IGameObject>();
+        public Dictionary<TeamId, Dictionary<int, Dictionary<int, Vector2>>> PlayerSpawnPoints { get; set; } = new Dictionary<TeamId, Dictionary<int, Dictionary<int, Vector2>>>();
+
+        private int _minionNumber;
+        private int _cannonMinionCount;
+        private readonly Dictionary<TeamId, SurrenderHandler> _surrenders = new Dictionary<TeamId, SurrenderHandler>();
 
         /// <summary>
         /// Instantiates map related game settings such as collision handler, navigation grid, announcer events, and map properties.
@@ -112,6 +114,15 @@ namespace LeagueSandbox.GameServer.Maps
             if (game.Config.MapData.SpawnBarracks != null)
             {
                 SpawnBarracks = game.Config.MapData.SpawnBarracks;
+            }
+
+            if (MapScript.PlayerSpawnPoints != null && MapScript.MapScriptMetadata.OverrideSpawnPoints)
+            {
+                PlayerSpawnPoints = MapScript.PlayerSpawnPoints;
+            }
+            else
+            {
+                PlayerSpawnPoints = _game.Config.GetMapSpawns();
             }
         }
 
@@ -578,46 +589,6 @@ namespace LeagueSandbox.GameServer.Maps
         public void SetGameFeatures(FeatureFlags featureFlag, bool isEnabled)
         {
             _game.Config.SetGameFeatures(featureFlag, isEnabled);
-        }
-
-        //Jungle
-        public IMonsterCamp CreateJungleCamp(Vector3 position, byte groupNumber, TeamId teamSideOfTheMap, string campTypeIcon, float respawnTimer, bool doPlayVO = false, byte revealEvent = 74, float spawnDuration = 0.0f)
-        {
-            return new MonsterCamp(_game, position, groupNumber, teamSideOfTheMap, campTypeIcon, respawnTimer, doPlayVO, revealEvent, spawnDuration);
-        }
-        public void CreateJungleMonster
-        (
-            string name, string model, Vector2 position, Vector3 faceDirection,
-            IMonsterCamp monsterCamp, TeamId team = TeamId.TEAM_NEUTRAL, string spawnAnimation = "", uint netId = 0,
-            bool isTargetable = true, bool ignoresCollision = false, string aiScript = "",
-            int damageBonus = 0, int healthBonus = 0, int initialLevel = 1
-        )
-        {
-            if (MonsterTemplates.ContainsKey(monsterCamp.CampIndex))
-            {
-                MonsterTemplates[monsterCamp.CampIndex].Add(new MonsterTemplate(name, model, position, faceDirection, monsterCamp, team, spawnAnimation, netId, isTargetable, ignoresCollision, aiScript, damageBonus, healthBonus, initialLevel));
-            }
-            else
-            {
-                MonsterTemplates.Add(monsterCamp.CampIndex, new List<IMonsterTemplate> { new MonsterTemplate(name, model, position, faceDirection, monsterCamp, team, spawnAnimation, netId, isTargetable, ignoresCollision, aiScript, damageBonus, healthBonus, initialLevel) });
-            }
-        }
-        public void SpawnCamp(IMonsterCamp monsterCamp)
-        {
-            if (MonsterTemplates.ContainsKey(monsterCamp.CampIndex))
-            {
-                foreach (var template in MonsterTemplates[monsterCamp.CampIndex])
-                {
-                    monsterCamp.AddMonster(new Monster(_game, template.Name, template.Model, template.Position, template.FaceDirection, template.Camp, template.Team, template.NetId,
-                        template.SpawnAnimation, template.IsTargetable, template.IgnoresCollision, template.AiScript, template.DamageBonus, template.HealthBonus, template.InitialLevel));
-                }
-                monsterCamp.IsAlive = true;
-                monsterCamp.NotifyCampActivation();
-            }
-            else
-            {
-                _logger.Warn($"No Monster Camp with ID: {monsterCamp.CampIndex} found");
-            }
         }
         //Game Time
         public float GameTime()

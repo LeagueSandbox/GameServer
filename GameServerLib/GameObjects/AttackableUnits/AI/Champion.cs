@@ -127,46 +127,31 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             return _playerId;
         }
 
-        public Vector2 GetSpawnPosition()
+        public Vector2 GetSpawnPosition(int index)
         {
-            var config = _game.Config;
-            var playerIndex = GetPlayerIndex();
-            var playerTeam = "";
             var teamSize = GetTeamSize();
 
-            if (config.Players.ContainsKey(playerIndex))
+            if (_game.Map.PlayerSpawnPoints[Team].ContainsKey(teamSize))
             {
-                var p = config.Players[playerIndex];
-                playerTeam = p.Team;
+                return _game.Map.PlayerSpawnPoints[Team][teamSize][index];
             }
 
-            var spawnsByTeam = new Dictionary<TeamId, Dictionary<int, PlayerSpawns>>
+            if(_game.Map.PlayerSpawnPoints[Team].ContainsKey(1) && _game.Map.PlayerSpawnPoints[Team][1][1] != null)
             {
-                {TeamId.TEAM_BLUE, config.MapSpawns.Blue},
-                {TeamId.TEAM_PURPLE, config.MapSpawns.Purple}
-            };
-
-            if (teamSize > config.MapSpawns.Blue.Count || teamSize > config.MapSpawns.Purple.Count)
-            {
-                var spawns1 = spawnsByTeam[Team];
-                return spawns1[0].GetCoordsForPlayer(0);
+                return _game.Map.PlayerSpawnPoints[Team][1][1];
             }
 
-            var spawns = spawnsByTeam[Team];
-            return spawns[teamSize - 1].GetCoordsForPlayer((int)_playerTeamSpecialId);
+            if (_game.Map.FountainList.ContainsKey(Team))
+            {
+                return _game.Map.FountainList[Team].Position;
+            }
+
+            return Vector2.Zero;
         }
 
         public Vector2 GetRespawnPosition()
         {
-            var config = _game.Config;
-
-            var spawnsByTeam = new Dictionary<TeamId, Dictionary<int, PlayerSpawns>>
-            {
-                {TeamId.TEAM_BLUE, config.MapSpawns.Blue},
-                {TeamId.TEAM_PURPLE, config.MapSpawns.Purple}
-            };
-            var spawns1 = spawnsByTeam[Team];
-            return spawns1[0].GetCoordsForPlayer(0);
+            return _game.Map.FountainList[Team].Position;
         }
 
         public override ISpell LevelUpSpell(byte slot)
