@@ -14,6 +14,7 @@ namespace CharScripts
     {
         public void OnActivate(IObjAiBase owner, ISpell spell = null)
         {
+            SetStatus(owner, StatusFlags.Rooted, true);
             SetStatus(owner, StatusFlags.CanMove, false);
             SetStatus(owner, StatusFlags.Ghosted, true);
             SetStatus(owner, StatusFlags.Targetable, false);
