@@ -3020,7 +3020,6 @@ namespace PacketDefinitions420
                     return;
                 case IMonster monster:
                     NotifyS2C_CreateNeutral(monster, gameTime);
-                    //NotifyEnterVisibilityClient(monster, userId);
                     break;
                 case IMinion minion:
                     visionPackets.Add(NotifyMinionSpawned(minion, false));

@@ -22,7 +22,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
         {
             _game.Map.MapScript.SpawnAllCamps();
             _logger.Info($"{ChatCommandManager.CommandStarterCharacter}{Command} Jungle Spawned!");
-            ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.INFO, "Jungle Spawned!");
+            ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.in, "Jungle Spawned!");
         }
     }
 }
