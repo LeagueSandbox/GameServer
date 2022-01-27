@@ -8,7 +8,7 @@ using LeagueSandbox.GameServer.API;
 using GameServerCore.Domain;
 using GameServerLib.GameObjects.AttackableUnits;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
-
+using GameServerCore.Enums;
 
 namespace Spells
 {
@@ -39,7 +39,7 @@ namespace Spells
         public void OnSpellChannel(ISpell spell)
         {
         }
-        public void OnSpellChannelCancel(ISpell spell)
+        public void OnSpellChannelCancel(ISpell spell, ChannelingStopSource reason)
         {
         }
         public void OnSpellPostChannel(ISpell spell)

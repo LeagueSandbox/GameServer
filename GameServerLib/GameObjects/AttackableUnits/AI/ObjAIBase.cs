@@ -830,6 +830,15 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         }
 
         /// <summary>
+        /// Sets the spell that this unit is currently casting.
+        /// </summary>
+        /// <param name="s">Spell that is being cast.</param>
+        public void SetCastSpell(ISpell s)
+        {
+            SpellToCast = s;
+        }
+
+        /// <summary>
         /// Sets this AI's current target unit. This relates to both auto attacks as well as general spell targeting.
         /// </summary>
         /// <param name="target">Unit to target.</param>

@@ -205,6 +205,12 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
             // TODO: Unhardcode (extra windup?)
             CastInfo.StartCastTime = 0.0f;
 
+            var trueChannel = SpellData.ChannelDuration[CastInfo.SpellLevel];
+            if (Script.ScriptMetadata.ChannelDuration > 0)
+            {
+                trueChannel = Script.ScriptMetadata.ChannelDuration;
+            }
+
             // For things like Garen Q, Leona Q, and TF W (and probably more)
             if (SpellData.ConsideredAsAutoAttack || SpellData.UseAutoattackCastTime || CastInfo.UseAttackCastDelay) // TODO: Verify
             {
@@ -216,17 +222,19 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
             else
             {
                 CastInfo.DesignerCastTime = SpellData.GetCastTime();
-                CastInfo.DesignerTotalTime = SpellData.GetCastTime() + SpellData.ChannelDuration[CastInfo.SpellLevel];
+                CastInfo.DesignerTotalTime = CastInfo.DesignerCastTime + trueChannel;
             }
 
             if (SpellData.OverrideCastTime > 0)
             {
                 CastInfo.DesignerCastTime = SpellData.OverrideCastTime;
+                CastInfo.DesignerTotalTime = SpellData.OverrideCastTime + trueChannel;
             }
 
             if (Script.ScriptMetadata.CastTime > 0)
             {
                 CastInfo.DesignerCastTime = Script.ScriptMetadata.CastTime;
+                CastInfo.DesignerTotalTime = Script.ScriptMetadata.CastTime + trueChannel;
             }
 
             // Otherwise, use the normal auto attack setup
@@ -287,6 +295,10 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
                 }
             }
 
+            // All spell checks and steps passed, set the casting spell on the owner.
+            // TODO: Verify if we should also do this for manual SpellCasts
+            CastInfo.Owner.SetCastSpell(this);
+
             CastInfo.Owner.UpdateMoveOrder(OrderType.TempCastSpell, true);
 
             Script.OnSpellPreCast(CastInfo.Owner, this, unit, start, end);
@@ -296,7 +308,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
                         && !SpellData.Flags.HasFlag(SpellDataFlags.InstantCast)
                         && SpellData.CantCancelWhileWindingUp))
             {
-                if (Script.ScriptMetadata.TriggersSpellCasts)
+                if (Script.ScriptMetadata.TriggersSpellCasts || SpellData.ChannelDuration[CastInfo.SpellLevel] > 0 || Script.ScriptMetadata.ChannelDuration > 0)
                 {
                     if (!SpellData.Flags.HasFlag(SpellDataFlags.InstantCast))
                     {
@@ -371,7 +383,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
                 if (CastInfo.UseAttackCastTime)
                 {
                     // TODO: Verify
-                    CastInfo.DesignerTotalTime = CastInfo.DesignerCastTime + SpellData.ChannelDuration[CastInfo.SpellLevel];
+                    CastInfo.DesignerTotalTime = CastInfo.DesignerCastTime + trueChannel;
                 }
             }
 
@@ -448,6 +460,12 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
             CastInfo.Cooldown = GetCooldown();
             CastInfo.StartCastTime = 0.0f; // TODO: Unhardcode
 
+            var trueChannel = SpellData.ChannelDuration[CastInfo.SpellLevel];
+            if (Script.ScriptMetadata.ChannelDuration > 0)
+            {
+                trueChannel = Script.ScriptMetadata.ChannelDuration;
+            }
+
             // For things like Garen Q, Leona Q, and TF W (and probably more)
             if (SpellData.ConsideredAsAutoAttack || SpellData.UseAutoattackCastTime || CastInfo.UseAttackCastDelay) // TODO: Verify
             {
@@ -459,17 +477,19 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
             else
             {
                 CastInfo.DesignerCastTime = SpellData.GetCastTime();
-                CastInfo.DesignerTotalTime = SpellData.GetCastTime() + SpellData.ChannelDuration[CastInfo.SpellLevel];
+                CastInfo.DesignerTotalTime = CastInfo.DesignerCastTime + trueChannel;
             }
 
             if (SpellData.OverrideCastTime > 0)
             {
                 CastInfo.DesignerCastTime = SpellData.OverrideCastTime;
+                CastInfo.DesignerTotalTime = SpellData.OverrideCastTime + trueChannel;
             }
 
             if (Script.ScriptMetadata.CastTime > 0)
             {
                 CastInfo.DesignerCastTime = Script.ScriptMetadata.CastTime;
+                CastInfo.DesignerTotalTime = Script.ScriptMetadata.CastTime + trueChannel;
             }
 
             // Otherwise, use the normal auto attack setup
@@ -502,7 +522,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
                         && !SpellData.Flags.HasFlag(SpellDataFlags.InstantCast)
                         && SpellData.CantCancelWhileWindingUp)))
             {
-                if (Script.ScriptMetadata.TriggersSpellCasts)
+                if (Script.ScriptMetadata.TriggersSpellCasts || SpellData.ChannelDuration[CastInfo.SpellLevel] > 0 || Script.ScriptMetadata.ChannelDuration > 0)
                 {
                     if (!SpellData.Flags.HasFlag(SpellDataFlags.InstantCast))
                     {
@@ -571,7 +591,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
                 if (CastInfo.UseAttackCastTime)
                 {
                     // TODO: Verify
-                    CastInfo.DesignerTotalTime = CastInfo.DesignerCastTime + SpellData.ChannelDuration[CastInfo.SpellLevel];
+                    CastInfo.DesignerTotalTime = CastInfo.DesignerCastTime + trueChannel;
                 }
             }
 
@@ -648,11 +668,93 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
             }
         }
 
+        public void ChannelCancelCheck()
+        {
+            // Uncancellable
+            if (SpellData.CantCancelWhileChanneling)
+            {
+                return;
+            }
+
+            if (CastInfo.Owner.SpellToCast != null)
+            {
+                var spellTarget = CastInfo.Owner.SpellToCast.CastInfo.Targets[0].Unit;
+
+                if (spellTarget != null
+                && !spellTarget.IsVisibleByTeam(CastInfo.Owner.Team))
+                {
+                    CastInfo.Owner.StopChanneling(ChannelingStopCondition.Cancel, ChannelingStopSource.LostTarget);
+                    return;
+                }
+            }
+
+            var status = CastInfo.Owner.Status;
+
+            if (status == StatusFlags.Charmed
+            || status == StatusFlags.Feared
+            || status == StatusFlags.Silenced
+            || status == StatusFlags.Stunned
+            || status == StatusFlags.Suppressed
+            || status == StatusFlags.Taunted)
+            {
+                CastInfo.Owner.StopChanneling(ChannelingStopCondition.Cancel, ChannelingStopSource.StunnedOrSilencedOrTaunted);
+            }
+
+            if (CastInfo.Owner.IsDead)
+            {
+                CastInfo.Owner.StopChanneling(ChannelingStopCondition.Cancel, ChannelingStopSource.Die);
+                return;
+            }
+
+            // TODO: ChannelingStopSource.HeroReincarnate
+
+            var order = CastInfo.Owner.MoveOrder;
+
+            if (!SpellData.CanMoveWhileChanneling
+            && (order == OrderType.MoveTo
+                || order == OrderType.AttackMove
+                || order == OrderType.PetHardMove))
+            {
+                if (order == OrderType.MoveTo
+                || order == OrderType.AttackMove
+                || order == OrderType.PetHardMove)
+                {
+                    CastInfo.Owner.StopChanneling(ChannelingStopCondition.Cancel, ChannelingStopSource.Move);
+                    return;
+                }
+            }
+
+            if (order == OrderType.AttackTo
+            || order == OrderType.AttackTerrainOnce
+            || order == OrderType.AttackTerrainSustained
+            || order == OrderType.PetHardAttack)
+            {
+                CastInfo.Owner.StopChanneling(ChannelingStopCondition.Cancel, ChannelingStopSource.Attack);
+                return;
+            }
+
+            if (CastInfo.Owner.SpellToCast != null
+            && !CastInfo.Owner.SpellToCast.SpellData.DoesntBreakChannels
+            && (order == OrderType.CastSpell
+            || order == OrderType.TempCastSpell))
+            {
+                CastInfo.Owner.StopChanneling(ChannelingStopCondition.Cancel, ChannelingStopSource.Casting);
+                return;
+            }
+
+            // TODO: ChannelingStopSource.Unknown
+        }
+
         public void StopChanneling(ChannelingStopCondition condition, ChannelingStopSource reason)
         {
             if (condition == ChannelingStopCondition.Cancel)
             {
-                ApiEventManager.OnSpellChannelCancel.Publish(this);
+                ApiEventManager.OnSpellChannelCancel.Publish(this, reason);
+
+                // For some reason this is the packet used for manually cancelling channels.
+                _game.PacketNotifier.NotifyNPC_InstantStop_Attack(CastInfo.Owner, false);
+
+                // TODO: Find out how League calculates cooldown reduction for incomplete channels (assuming it isn't done in-script).
             }
 
             State = SpellState.STATE_READY;
@@ -1191,6 +1293,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
                 case SpellState.STATE_CHANNELING:
                 {
                     CurrentChannelDuration -= diff / 1000.0f;
+                    ChannelCancelCheck();
                     if (CurrentChannelDuration <= 0)
                     {
                         FinishChanneling();
