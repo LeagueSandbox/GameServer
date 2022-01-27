@@ -637,7 +637,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             // TODO: Verify if we want these explicitly defined instead of taken via iteration of all spells.
             var basicAttackSpells = Spells.Where(s =>
             {
-                if (s.Key - 64 >= 0 && s.Key - 64 < 9)
+                if (s.Key - 64 >= 0 && s.Key - 64 <= 9)
                 {
                     if (CharData.AttackProbabilities[s.Key - 64] > 0.0f)
                     {

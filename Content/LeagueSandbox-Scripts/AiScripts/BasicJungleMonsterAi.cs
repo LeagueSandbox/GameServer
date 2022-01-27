@@ -11,6 +11,7 @@ namespace AIScripts
 {
     public class BasicJungleMonsterAi : IAIScript
     {
+        //NOTE: This is a EXTREMELY basic A.I just so the jungle monsters aren't just complete dummies
         public IAIScriptMetaData AIScriptMetaData { get; set; } = new AIScriptMetaData();
         IMonster monster;
         Vector2 initialPosition;
@@ -38,7 +39,7 @@ namespace AIScripts
         {
             if (monster != null)
             {
-                if(isInCombat)
+                if (isInCombat)
                 {
                     //Find a better way to do this
                     if (Vector2.DistanceSquared(new Vector2(monster.Camp.Position.X, monster.Camp.Position.Z), monster.Position) > 800f * 800f)
@@ -48,16 +49,15 @@ namespace AIScripts
                 }
                 else
                 {
-                    if(monster.Position != initialPosition)
+                    if (monster.Position != initialPosition)
                     {
                         ResetCamp();
                     }
-                    else
+                    else if (monster.Direction != initialFacingDirection)
                     {
                         monster.FaceDirection(initialFacingDirection);
                     }
                 }
-
             }
         }
         public void ResetCamp()
@@ -65,7 +65,17 @@ namespace AIScripts
             foreach (var campMonster in monster.Camp.Monsters)
             {
                 campMonster.SetTargetUnit(null);
-                monster.SetWaypoints(GetPath(monster.Position, initialPosition));
+                var waypoints = GetPath(monster.Position, initialPosition);
+                if (waypoints != null)
+                {
+                    monster.SetWaypoints(waypoints);
+                }
+                else
+                {
+                    //One of the Red-side wolves in summoners rift actually spawn somewhat inside the wall, so it really can't
+                    //Path back to it's spawn position. So this is just to solve that issue.
+                    initialPosition = monster.Position;
+                }
                 monster.Stats.CurrentHealth = monster.Stats.HealthPoints.Total;
                 if (campMonster.AIScript is BasicJungleMonsterAi basicJungleScript)
                 {
