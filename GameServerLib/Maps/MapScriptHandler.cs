@@ -13,6 +13,7 @@ using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
 using GameServerCore.Maps;
 using GameServerCore.NetInfo;
+using GameServerLib.GameObjects;
 using LeagueSandbox.GameServer.Content;
 using LeagueSandbox.GameServer.GameObjects;
 using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
@@ -72,6 +73,7 @@ namespace LeagueSandbox.GameServer.Maps
         public Dictionary<TeamId, Dictionary<LaneID, List<IInhibitor>>> InhibitorList { get; set; }
         public Dictionary<TeamId, IFountain> FountainList { get; set; } = new Dictionary<TeamId, IFountain>();
         public Dictionary<TeamId, IGameObject> ShopList { get; set; } = new Dictionary<TeamId, IGameObject>();
+        public Dictionary<int, List<IMonsterTemplate>> MonsterTemplates = new Dictionary<int, List<IMonsterTemplate>>();
         public Dictionary<TeamId, Dictionary<int, Dictionary<int, Vector2>>> PlayerSpawnPoints { get; set; } = new Dictionary<TeamId, Dictionary<int, Dictionary<int, Vector2>>>();
 
         private int _minionNumber;
@@ -319,6 +321,7 @@ namespace LeagueSandbox.GameServer.Maps
                 }
             }
         }
+
         //Spawn Buildings
         public void SpawnBuildings()
         {
@@ -422,6 +425,7 @@ namespace LeagueSandbox.GameServer.Maps
 
             return MapScript.TurretItems[type];
         }
+
         public void ChangeTowerOnMapList(string towerName, TeamId team, LaneID currentLaneId, LaneID desiredLaneID)
         {
             var tower = TurretList[team][currentLaneId].Find(x => x.Name == towerName);
@@ -429,6 +433,7 @@ namespace LeagueSandbox.GameServer.Maps
             TurretList[team][currentLaneId].Remove(tower);
             TurretList[team][desiredLaneID].Add(tower);
         }
+
         //The way the turret spawning is handled above is based on the inhibitor lanes, so for example, if there's no mid inhibitor, no midlane towers would be spawned. So this is so we can spawn them manually
         public void SpawnTurret(ILaneTurret turret, bool hasProtection, bool protectionDependsOfAll = false, IAttackableUnit[] protectedBy = null)
         {
@@ -457,6 +462,7 @@ namespace LeagueSandbox.GameServer.Maps
             }
             return null;
         }
+
         public bool AllInhibitorsDestroyedFromTeam(TeamId team)
         {
             foreach (LaneID lane in InhibitorList[team].Keys)
@@ -506,10 +512,7 @@ namespace LeagueSandbox.GameServer.Maps
             _game.ObjectManager.AddObject(m);
             return m;
         }
-        public void AddObject(IGameObject obj)
-        {
-            _game.ObjectManager.AddObject(obj);
-        }
+
         public bool IsMinionSpawnEnabled()
         {
             return _game.Config.GameFeatures.HasFlag(FeatureFlags.EnableLaneMinions);
@@ -558,25 +561,69 @@ namespace LeagueSandbox.GameServer.Maps
             return true;
         }
 
+        //Jungle
+        public IMonsterCamp CreateJungleCamp(Vector3 position, byte groupNumber, TeamId teamSideOfTheMap, string campTypeIcon, float respawnTimer, bool doPlayVO = false, byte revealEvent = 74, float spawnDuration = 0.0f)
+        {
+            return new MonsterCamp(_game, position, groupNumber, teamSideOfTheMap, campTypeIcon, respawnTimer, doPlayVO, revealEvent, spawnDuration);
+        }
+        public void CreateJungleMonster
+        (
+            string name, string model, Vector2 position, Vector3 faceDirection,
+            IMonsterCamp monsterCamp, TeamId team = TeamId.TEAM_NEUTRAL, string spawnAnimation = "", uint netId = 0,
+            bool isTargetable = true, bool ignoresCollision = false, string aiScript = "",
+            int damageBonus = 0, int healthBonus = 0, int initialLevel = 1
+        )
+        {
+            if (MonsterTemplates.ContainsKey(monsterCamp.CampIndex))
+            {
+                MonsterTemplates[monsterCamp.CampIndex].Add(new MonsterTemplate(name, model, position, faceDirection, monsterCamp, team, spawnAnimation, netId, isTargetable, ignoresCollision, aiScript, damageBonus, healthBonus, initialLevel));
+            }
+            else
+            {
+                MonsterTemplates.Add(monsterCamp.CampIndex, new List<IMonsterTemplate> { new MonsterTemplate(name, model, position, faceDirection, monsterCamp, team, spawnAnimation, netId, isTargetable, ignoresCollision, aiScript, damageBonus, healthBonus, initialLevel) });
+            }
+        }
+        public void SpawnCamp(IMonsterCamp monsterCamp)
+        {
+            if (MonsterTemplates.ContainsKey(monsterCamp.CampIndex))
+            {
+                foreach (var template in MonsterTemplates[monsterCamp.CampIndex])
+                {
+                    monsterCamp.AddMonster(new Monster(_game, template.Name, template.Model, template.Position, template.FaceDirection, template.Camp, template.Team, template.NetId,
+                        template.SpawnAnimation, template.IsTargetable, template.IgnoresCollision, template.AiScript, template.DamageBonus, template.HealthBonus, template.InitialLevel));
+                }
+                monsterCamp.IsAlive = true;
+                monsterCamp.NotifyCampActivation();
+            }
+            else
+            {
+                _logger.Warn($"No Monster Camp with ID: {monsterCamp.CampIndex} found");
+            }
+        }
+
         //General Map stuff, such as Announcements and surrender
         //TODO: See if the "IsMapSpecific" parameter is actually needed.
         public IRegion CreateRegion(TeamId team, Vector2 position, RegionType type = RegionType.Default, IGameObject collisionUnit = null, IGameObject visionTarget = null, bool giveVision = false, float visionRadius = 0, bool revealStealth = false, bool hasCollision = false, float collisionRadius = 0, float grassRadius = 0, float scale = 1, float addedSize = 0, float lifeTime = 0, int clientID = 0)
         {
             return new Region(_game, team, position, type, collisionUnit, visionTarget, giveVision, visionRadius, revealStealth, hasCollision, collisionRadius, grassRadius, scale, addedSize, lifeTime, clientID);
         }
+
         public void AddAnnouncement(long time, EventID ID, bool isMapSpecific)
         {
             AnnouncerEvents.Add(new Announce(_game, time, ID, isMapSpecific));
         }
+
         public void AddLevelProp(string name, string model, Vector2 position, float height, Vector3 direction, Vector3 posOffset, Vector3 scale, int skinId = 0, byte skillLevel = 0, byte rank = 0, byte type = 2, uint netId = 0, byte netNodeId = 64)
         {
             _game.ObjectManager.AddObject(new LevelProp(_game, netNodeId, name, model, position, height, direction, posOffset, scale, skinId, skillLevel, rank, type, netId));
         }
+
         public void AddSurrender(float time, float restTime, float length)
         {
             _surrenders.Add(TeamId.TEAM_BLUE, new SurrenderHandler(_game, TeamId.TEAM_BLUE, time, restTime, length));
             _surrenders.Add(TeamId.TEAM_PURPLE, new SurrenderHandler(_game, TeamId.TEAM_PURPLE, time, restTime, length));
         }
+
         public void HandleSurrender(int userId, IChampion who, bool vote)
         {
             if (_surrenders.ContainsKey(who.Team))
@@ -586,15 +633,18 @@ namespace LeagueSandbox.GameServer.Maps
         {
             FountainList.Add(team, new Fountain(_game, team, position, 1000));
         }
+
         public void SetGameFeatures(FeatureFlags featureFlag, bool isEnabled)
         {
             _game.Config.SetGameFeatures(featureFlag, isEnabled);
         }
+
         //Game Time
         public float GameTime()
         {
             return _game.GameTime;
         }
+
         public void EndGame(TeamId losingTeam, Vector3 finalCameraPosition, float endGameTimer = 5000.0f, bool moveCamera = true, float cameraTimer = 3.0f, bool disableUI = true, IDeathData deathData = null)
         {
             //TODO: check if mapScripts should handle this directly
