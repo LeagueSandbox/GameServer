@@ -37,7 +37,6 @@ namespace LeagueSandbox.GameServer.GameObjects
                 null, aiScript, damageBonus, healthBonus, initialLevel
             )
         {
-            //MoveOrder = OrderType.MoveTo;
             Camp = monsterCamp;
             Team = team;
             SpawnAnimation = spawnAnimation;
@@ -46,15 +45,6 @@ namespace LeagueSandbox.GameServer.GameObjects
             FaceDirection(faceDirection);
             IsTargetable = isTargetable;
             IgnoresCollision = ignoresCollision;
-        }
-
-        public override void OnAdded()
-        {
-            base.OnAdded();
-        }
-        public override void Update(float diff)
-        {
-            base.Update(diff);
         }
     }
 }

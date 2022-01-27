@@ -9,10 +9,11 @@ using GameServerCore.Domain.GameObjects.Spell.Sector;
 using GameServerCore.Domain.GameObjects.Spell.Missile;
 using System.Linq;
 using System.Numerics;
+using GameServerCore.Domain;
 
 namespace Buffs
 {
-    internal class TT_RelicAura : IBuffGameScript
+    internal class HowlingAbyssRelicAura : IBuffGameScript
     {
         public BuffType BuffType => BuffType.INTERNAL;
         public BuffAddType BuffAddType => BuffAddType.RENEW_EXISTING;
@@ -21,48 +22,33 @@ namespace Buffs
 
         public IStatsModifier StatsModifier { get; private set; }
 
-        bool setToKill;
         IBuff thisBuff;
         IParticle buffParticle;
-        IParticle buffParticle2;
+        bool setToKill;
+
         IAttackableUnit Unit;
         float timer = 250f;
-        IMinion InvisibleMinion;
         public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
-            thisBuff = buff;
             Unit = unit;
-
-            SetStatus(unit, StatusFlags.Targetable, false);
+            thisBuff = buff;
+            SetStatus(unit, StatusFlags.NoRender, true);
             SetStatus(unit, StatusFlags.Invulnerable, true);
             SetStatus(unit, StatusFlags.ForceRenderParticles, true);
-            SetStatus(unit, StatusFlags.NoRender, true);
 
-            InvisibleMinion = AddMinion(null, "TestCubeRender", "HiddenMinion", unit.Position, ignoreCollision: true);
-
-            if (unit is IObjAiBase obj)
-            {
-                AddBuff("ResistantSkinDragon", 25000f, 1, null, InvisibleMinion, obj, false);
-            }
-
-            buffParticle = AddParticleTarget(unit, unit, "TT_Heal_Rune", unit, -1f, reqVision: false);
-            buffParticle2 = AddParticleTarget(unit, unit, "TT_Heal_RuneWell", unit, -1f, reqVision: false);
-
+            buffParticle = AddParticleTarget(Unit, null, "ha_ap_healingbuff", Unit, buff.Duration, reqVision: false);
             setToKill = false;
         }
 
         public void OnDeactivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
             buffParticle.SetToRemove();
-            buffParticle2.SetToRemove();
 
             SetStatus(unit, StatusFlags.Targetable, true);
             SetStatus(unit, StatusFlags.Invulnerable, false);
+            SetStatus(unit, StatusFlags.NoRender, true);
 
             unit.TakeDamage(unit, 250000.0f, DamageType.DAMAGE_TYPE_TRUE, DamageSource.DAMAGE_SOURCE_INTERNALRAW, false);
-            InvisibleMinion.TakeDamage(unit, 250000.0f, DamageType.DAMAGE_TYPE_TRUE, DamageSource.DAMAGE_SOURCE_INTERNALRAW, false);
-
-            SetStatus(unit, StatusFlags.NoRender, true);
         }
 
         public void OnUpdate(float diff)
@@ -80,9 +66,7 @@ namespace Buffs
                 {
                     if (!setToKill)
                     {
-                        AddParticle(Unit, null, "TT_Heal_RuneCapture", Unit.Position);
-                        AddBuff("TT_RelicHeal", 0.1f, 1, null, units[0], null);
-                        AddBuff("TT_SpeedShrine_Buff", 5, 1, null, units[0], null);
+                        AddBuff("HowlingAbyssFBHeal", 0.1f, 1, null, units[0], null);
 
                         setToKill = true;
                     }

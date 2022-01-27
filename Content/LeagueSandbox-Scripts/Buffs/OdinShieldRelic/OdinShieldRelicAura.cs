@@ -30,7 +30,7 @@ namespace Buffs
         {
             thisBuff = buff;
             Unit = unit;
-            // Beginning of the actual RelicAura buff
+
             SetStatus(unit, StatusFlags.Targetable, false);
             SetStatus(unit, StatusFlags.Invulnerable, true);
             SetStatus(unit, StatusFlags.ForceRenderParticles, true);

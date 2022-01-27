@@ -18,7 +18,7 @@ namespace Buffs
 
         public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
-            //TODO: Make it a decaying over time effect
+            //TODO: Make it decay over the duration of the buff
             StatsModifier.MoveSpeed.PercentBonus += 0.3f;
             unit.AddStatModifier(StatsModifier);
         }

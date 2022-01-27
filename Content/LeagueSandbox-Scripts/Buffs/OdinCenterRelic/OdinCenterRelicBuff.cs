@@ -22,6 +22,7 @@ namespace Buffs
 
         public IStatsModifier StatsModifier { get; private set; }
 
+        bool hasNotified = false;
         IBuff thisBuff;
         IParticle blueTeamParticle1;
         IParticle blueTeamParticle2;
@@ -73,6 +74,18 @@ namespace Buffs
 
         public void OnUpdate(float diff)
         {
+            if(!hasNotified && Unit != null)
+            {
+                string iconCategory = "CenterRelicLeft";
+
+                if (Unit.Team == TeamId.TEAM_PURPLE)
+                {
+                    iconCategory = "CenterRelicRight";
+                }
+                //For some Reason this only works here
+                NotifyUnitMinimapIconUpdate(Unit, iconCategory, true);
+                hasNotified = true;
+            }
         }
     }
 }

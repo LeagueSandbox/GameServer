@@ -7,20 +7,21 @@ using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 
 namespace Buffs
 {
-    internal class TT_SpeedShrine_Buff : IBuffGameScript
+    internal class HowlingAbyssFBHeal : IBuffGameScript
     {
         public BuffType BuffType => BuffType.HEAL;
         public BuffAddType BuffAddType => BuffAddType.REPLACE_EXISTING;
         public int MaxStacks => 1;
-        public bool IsHidden => false;
+        public bool IsHidden => true;
 
         public IStatsModifier StatsModifier { get; private set; } = new StatsModifier();
 
         public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
-            //TODO: Make it decay over the duration of the buff
-            StatsModifier.MoveSpeed.PercentBonus += 0.2f;
-            unit.AddStatModifier(StatsModifier);
+            unit.Stats.CurrentHealth += 94 + 13 * (unit.Stats.Level - 1);
+            unit.Stats.CurrentMana += 90 + 14 * (unit.Stats.Level - 1);
+            AddParticleTarget(unit, unit, "odin_healthpackheal", unit);
+            AddParticleTarget(unit, unit, "summoner_mana", unit);
         }
 
         public void OnDeactivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)

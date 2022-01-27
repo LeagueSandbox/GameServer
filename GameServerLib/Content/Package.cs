@@ -64,7 +64,12 @@ namespace LeagueSandbox.GameServer.Content
         {
             if (!_content.ContainsKey(contentType) || !_content[contentType].ContainsKey(itemName))
             {
-                _logger.Debug($"Package: {PackageName} does not contain file for {itemName}.");
+                //This is just to avoid console Spamm due to it looking for content in the Scripts folder,
+                //since it isn't supposed to be any content there anyway
+                if (!PackageName.Contains("Scripts"))
+                {
+                    _logger.Debug($"Package: {PackageName} does not contain file for {itemName}.");
+                }
                 return null;
             }
 

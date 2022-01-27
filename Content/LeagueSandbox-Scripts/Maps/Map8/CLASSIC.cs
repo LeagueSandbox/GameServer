@@ -197,13 +197,16 @@ namespace MapScripts.Map8
             map.AddLevelProp("LevelProp_OdinCrane1", "OdinCrane", new Vector2(9418.097f, -189.59952f), 12105.366f, new Vector3(0.0f, 118.0f, 0.0f), new Vector3(0.0f, 44.4445f, 0.0f), Vector3.One);
             map.AddLevelProp("LevelProp_Odin_SOG_Order_Crystal", "Odin_SOG_Order_Crystal", new Vector2(1618.3121f, 4357.871f), 336.9458f, new Vector3(0.0f, 0.0f, 0.0f), new Vector3(-122.2222f, 277.7778f, -122.2222f), Vector3.One);
             map.AddLevelProp("LevelProp_Odin_SOG_Chaos_Crystal", "Odin_SOG_Chaos_Crystal", new Vector2(12307.629f, 4535.6484f), 225.8346f, new Vector3(0.0f, 214.0f, 0.0f), new Vector3(144.4445f, 222.2222f, -33.3334f), Vector3.One);
+
         }
 
         List<IMinion> infoPoints = new List<IMinion>();
         List<IMonsterCamp> SpeedShrines = new List<IMonsterCamp>();
-        List<IMonsterCamp> HealthPackets = new List<IMonsterCamp>();
-        List<IMinionTemplate> CrystalsTemplates = new List<IMinionTemplate>();
+        List<IMonsterCamp> HealthPacks = new List<IMonsterCamp>();
+
+        //Since the center crystals are treated as simple minions intead of camp/monster, we have to hand everything individually
         Dictionary<TeamId, IMinion> Crystals = new Dictionary<TeamId, IMinion>();
+        List<IMinionTemplate> CrystalsTemplates = new List<IMinionTemplate>();
         Dictionary<TeamId, float> CrystalTimers = new Dictionary<TeamId, float> { { TeamId.TEAM_BLUE, 10 * 1000 }, { TeamId.TEAM_PURPLE, 10 * 1000 } };
         public void OnMatchStart()
         {
@@ -229,10 +232,10 @@ namespace MapScripts.Map8
                 }
             }
         }
-        //This function gets executed every server tick
+
         public void Update(float diff)
         {
-            foreach (var camp in HealthPackets)
+            foreach (var camp in HealthPacks)
             {
                 if (!camp.IsAlive)
                 {
@@ -244,30 +247,21 @@ namespace MapScripts.Map8
                     }
                 }
             }
-
             foreach (var crystalTemplate in CrystalsTemplates)
             {
                 if (!Crystals.ContainsKey(crystalTemplate.Team))
                 {
                     CrystalTimers[crystalTemplate.Team] -= diff;
+
                     if (CrystalTimers[crystalTemplate.Team] <= 0)
                     {
                         var crystal = _map.CreateMinion(crystalTemplate.Name, crystalTemplate.Model, crystalTemplate.Position,
                                 crystalTemplate.NetId, crystalTemplate.Team, crystalTemplate.SkinId,
-                                crystalTemplate.IgnoresCollision, crystalTemplate.IsTargetable, crystalTemplate.AiScript,
-                                crystalTemplate.DamageBonus, crystalTemplate.HealthBonus, crystalTemplate.InitialLevel);
+                                crystalTemplate.IgnoresCollision, crystalTemplate.IsTargetable);
 
-                        crystal.StopMovement();
                         _map.CreateRegion(TeamId.TEAM_BLUE, crystal.Position, RegionType.Default, visionTarget: crystal, grassRadius: 38.08f, collisionRadius: 25000.0f, lifeTime: 6462.0273f);
                         _map.CreateRegion(TeamId.TEAM_PURPLE, crystal.Position, RegionType.Default, visionTarget: crystal, grassRadius: 38.08f, collisionRadius: 25000.0f, lifeTime: 6462.0273f);
 
-                        string iconCategory = "CenterRelicLeft";
-
-                        if (crystalTemplate.Team == TeamId.TEAM_PURPLE)
-                        {
-                            iconCategory = "CenterRelicRight";
-                        }
-                        NotifyUnitMinimapIconUpdate(crystal, iconCategory, true);
                         ApiEventManager.OnDeath.AddListener(crystal, crystal, OnCrystalDeath, true);
 
                         Crystals.Add(crystal.Team, crystal);
@@ -276,10 +270,12 @@ namespace MapScripts.Map8
                 }
             }
         }
+
         public void OnCrystalDeath(IDeathData deathData)
         {
             Crystals.Remove(deathData.Unit.Team);
         }
+
         public float GetGoldFor(IAttackableUnit u)
         {
             if (!(u is ILaneMinion m))
@@ -432,43 +428,43 @@ namespace MapScripts.Map8
 
             var healthPacket1 = _map.CreateJungleCamp(new Vector3(4948.231f, 60.0f, 9329.905f), 100, 0, "HealthPack", 120.0f * 1000f);
             _map.CreateJungleMonster("OdinShieldRelic", "OdinShieldRelic", new Vector2(4948.231f, 9329.905f), new Vector3(-0.0f, 0.0f, 1.0f), healthPacket1);
-            HealthPackets.Add(healthPacket1);
+            HealthPacks.Add(healthPacket1);
 
             var healthPacket2 = _map.CreateJungleCamp(new Vector3(8972.231f, 60.0f, 9329.905f), 101, 0, "HealthPack", 120.0f * 1000f);
             _map.CreateJungleMonster("OdinShieldRelic", "OdinShieldRelic", new Vector2(8972.231f, 9329.905f), new Vector3(-0.0f, 0.0f, 1.0f), healthPacket2);
-            HealthPackets.Add(healthPacket2);
+            HealthPacks.Add(healthPacket2);
 
             var healthPacket3 = _map.CreateJungleCamp(new Vector3(6949.8193f, 60.0f, 2855.0513f), 112, 0, "HealthPack", 120.0f * 1000f);
             _map.CreateJungleMonster("OdinShieldRelic", "OdinShieldRelic", new Vector2(6949.8193f, 2855.0513f), new Vector3(-0.0f, 0.0f, 1.0f), healthPacket3);
-            HealthPackets.Add(healthPacket3);
+            HealthPacks.Add(healthPacket3);
 
             var healthPacket4 = _map.CreateJungleCamp(new Vector3(6947.838f, 60.0f, 12116.367f), 108, 0, "HealthPack", 120.0f * 1000f);
             _map.CreateJungleMonster("OdinShieldRelic", "OdinShieldRelic", new Vector2(6947.838f, 12116.367f), new Vector3(-0.0f, 0.0f, 1.0f), healthPacket4);
-            HealthPackets.Add(healthPacket4);
+            HealthPacks.Add(healthPacket4);
 
             var healthPacket5 = _map.CreateJungleCamp(new Vector3(12881.534f, 60.0f, 8294.764f), 109, 0, "HealthPack", 120.0f * 1000f);
             _map.CreateJungleMonster("OdinShieldRelic", "OdinShieldRelic", new Vector2(12881.534f, 8294.764f), new Vector3(-0.0f, 0.0f, 1.0f), healthPacket5);
-            HealthPackets.Add(healthPacket5);
+            HealthPacks.Add(healthPacket5);
 
             var healthPacket6 = _map.CreateJungleCamp(new Vector3(10242.127f, 60.0f, 1519.5938f), 105, 0, "HealthPack", 120.0f * 1000f);
             _map.CreateJungleMonster("OdinShieldRelic", "OdinShieldRelic", new Vector2(10242.127f, 1519.5938f), new Vector3(-0.0f, 0.0f, 1.0f), healthPacket6);
-            HealthPackets.Add(healthPacket6);
+            HealthPacks.Add(healthPacket6);
 
             var healthPacket7 = _map.CreateJungleCamp(new Vector3(3639.7327f, 60.0f, 1490.0762f), 106, 0, "HealthPack", 120.0f * 1000f);
             _map.CreateJungleMonster("OdinShieldRelic", "OdinShieldRelic", new Vector2(3639.7327f, 1490.0762f), new Vector3(-0.0f, 0.0f, 1.0f), healthPacket7);
-            HealthPackets.Add(healthPacket7);
+            HealthPacks.Add(healthPacket7);
 
             var healthPacket8 = _map.CreateJungleCamp(new Vector3(1027.4365f, 60.0f, 8288.714f), 107, 0, "HealthPack", 120.0f * 1000f);
             _map.CreateJungleMonster("OdinShieldRelic", "OdinShieldRelic", new Vector2(1027.4365f, 8288.714f), new Vector3(-0.0f, 0.0f, 1.0f), healthPacket8);
-            HealthPackets.Add(healthPacket8);
+            HealthPacks.Add(healthPacket8);
 
             var healthPacket9 = _map.CreateJungleCamp(new Vector3(4324.928f, 60.0f, 5500.919f), 110, 0, "HealthPack", 120.0f * 1000f);
             _map.CreateJungleMonster("OdinShieldRelic", "OdinShieldRelic", new Vector2(4324.928f, 5500.919f), new Vector3(-0.0f, 0.0f, 1.0f), healthPacket9);
-            HealthPackets.Add(healthPacket9);
+            HealthPacks.Add(healthPacket9);
 
             var healthPacket10 = _map.CreateJungleCamp(new Vector3(9573.432f, 60.0f, 5530.13f), 111, 0, "HealthPack", 120.0f * 1000f);
             _map.CreateJungleMonster("OdinShieldRelic", "OdinShieldRelic", new Vector2(9573.432f, 5530.13f), new Vector3(-0.0f, 0.0f, 1.0f), healthPacket10);
-            HealthPackets.Add(healthPacket10);
+            HealthPacks.Add(healthPacket10);
         }
     }
 }
