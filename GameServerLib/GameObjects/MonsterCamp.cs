@@ -58,7 +58,6 @@ namespace GameServerLib.GameObjects
             {
                 IsAlive = false;
                 NotifyCampDeactivation(deathData);
-                //Trigger to start elapsing the timer to respawn here
             }
         }
 
@@ -70,7 +69,5 @@ namespace GameServerLib.GameObjects
         {
             _game.PacketNotifier.NotifyS2C_Neutral_Camp_Empty(this, deathData);
         }
-        //TODO: Add Support for non-monster camps.
-        //Maybe there's no need to a separate implementation, we could just use character scripts to handle everything those non-monsters do
     }
 }
