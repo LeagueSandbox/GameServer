@@ -84,6 +84,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         public ICharScript CharScript { get; private set; }
         public bool IsBot { get; set; }
         public IAIScript AIScript { get; protected set; }
+        public int AcquisitionRange { get; set; } = 475;
         public ObjAiBase(Game game, string model, Stats.Stats stats, int collisionRadius = 40,
             Vector2 position = new Vector2(), int visionRadius = 0, int skinId = 0, uint netId = 0, TeamId team = TeamId.TEAM_NEUTRAL, string aiScript = "") :
             base(game, model, stats, collisionRadius, position, visionRadius, netId, team)
@@ -913,9 +914,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             if (!_aiPaused)
             {
                 AIScript.OnUpdate(diff);
-
-                //TODO: public void ClearAllCalls? LaneMinionAI.targetUnitAttackedAlly?
-                unitsAttackingAllies.Clear();
             }
             foreach (var s in Spells.Values)
             {
@@ -957,8 +955,10 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                   //&& u != null
                     && u != this
                     && u.Team == Team
-                    && Vector2.DistanceSquared(u.Position, Position) <= (DETECT_RANGE * DETECT_RANGE) //TODO: use (u and attacker).autoacquisitionRange
-                    && Vector2.DistanceSquared(u.Position, attacker.Position) <= (DETECT_RANGE * DETECT_RANGE) //TODO: Leave only one line?
+                    && !u.IsDead
+                    && u.HandlesCallsForHelp
+                    && Vector2.DistanceSquared(u.Position, Position) <= (AcquisitionRange * AcquisitionRange)
+                    && Vector2.DistanceSquared(u.Position, attacker.Position) <= (AcquisitionRange * AcquisitionRange)
                 )
                 {
                     u.CallForHelp(attacker, this);
@@ -966,6 +966,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             }
         }
 
+        public bool HandlesCallsForHelp { get; set; } = false;
         // < NetId, priority >
         public Dictionary<IAttackableUnit, int> unitsAttackingAllies { get; private set; } = new Dictionary<IAttackableUnit, int>();
         public void CallForHelp(IAttackableUnit attacker, IAttackableUnit victium)
@@ -1111,7 +1112,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                         var objects = _game.ObjectManager.GetObjects();
                         var distanceSqrToTarget = 25000f * 25000f;
                         IAttackableUnit nextTarget = null;
-                        var range = Math.Max(Stats.Range.Total, DETECT_RANGE);
+                        var range = Math.Max(Stats.Range.Total, AcquisitionRange);
 
                         foreach (var it in objects)
                         {

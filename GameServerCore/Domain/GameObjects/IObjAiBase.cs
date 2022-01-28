@@ -66,8 +66,29 @@ namespace GameServerCore.Domain.GameObjects
         /// Unit this AI will auto attack when it is in auto attack range.
         /// </summary>
         IAttackableUnit TargetUnit { get; set; }
+        /// <summary>
+        /// A unit's acquisition range is the distance at which they will automatically acquire attack targets, referred to as 'auto-attacking'.
+        /// </summary>
+        float AcquisitionRange { get; set; }
+        /// <summary>
+        /// AIScript should set this to true if it can handle incoming calls for help.
+        /// To have callers populate a list of units attacking allies.
+        /// </summary>
+        bool HandlesCallsForHelp { get; set; }
+        /// <summary>
+        /// List of attacking allied units that are asking for help and their priorities.
+        /// </summary>
         Dictionary<IAttackableUnit, int> unitsAttackingAllies { get; }
+        /// <summary>
+        /// Function that populates a list of units attacking allies.
+        /// </summary>
         void CallForHelp(IAttackableUnit attacker, IAttackableUnit victium = null);
+        /// <summary>
+        /// Function that clears a list of units attacking allies.
+        /// It should be called after the list has been processed and is no longer needed to avoid its uncontrolled growth.
+        /// </summary>
+        void ClearCallsForHelp();
+        
         // TODO: Implement AI Scripting for this (for AI in general).
         bool IsBot { get; }
 
