@@ -71,21 +71,10 @@ namespace GameServerCore.Domain.GameObjects
         /// </summary>
         IAttackableUnit TargetUnit { get; set; }
         /// <summary>
-        /// AIScript should set this to true if it can handle incoming calls for help.
-        /// To have callers populate a list of units attacking allies.
-        /// </summary>
-        bool HandlesCallsForHelp { get; }
-        /// <summary>
         /// Function that populates a list of units attacking allies.
         /// </summary>
         /// TODO: Move this to a dedicated AIScriptHandler
         void CallForHelp(IAttackableUnit attacker, IAttackableUnit victium = null);
-        /// <summary>
-        /// Function that clears a list of units attacking allies.
-        /// It should be called after the list has been processed and is no longer needed to avoid its uncontrolled growth.
-        /// </summary>
-        /// TODO: Move this to a dedicated AIScriptHandler
-        void ClearCallsForHelp();
         
         // TODO: Implement AI Scripting for this (for AI in general).
         bool IsBot { get; }

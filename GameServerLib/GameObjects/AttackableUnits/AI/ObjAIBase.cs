@@ -86,7 +86,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         public ICharScript CharScript { get; private set; }
         public bool IsBot { get; set; }
         public IAIScript AIScript { get; protected set; }
-        public bool HandlesCallsForHelp { get; protected set; } = false;
         public ObjAiBase(Game game, string model, Stats.Stats stats, int collisionRadius = 40,
             Vector2 position = new Vector2(), int visionRadius = 0, int skinId = 0, uint netId = 0, TeamId team = TeamId.TEAM_NEUTRAL, string aiScript = "") :
             base(game, model, stats, collisionRadius, position, visionRadius, netId, team)
@@ -218,13 +217,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             }
 
             AIScript = game.ScriptEngine.CreateObject<IAIScript>($"AIScripts", aiScript) ?? new EmptyAIScript();
-            
-            var ai = AIScript as IAIScriptHearingCallsForHelp;
-            if(ai != null && ai.AIScriptMetaData.HandlesCallsForHelp && ai.unitsAttackingAllies != null)
-            {
-                HandlesCallsForHelp = true;
-            }
-            
             AIScript.OnActivate(this);
         }
 
@@ -994,7 +986,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                         u != this
                         && u.Team == Team
                         && !u.IsDead
-                        && u.HandlesCallsForHelp
+                        && u.AIScript.unitsAttackingAllies != null
                         && Vector2.DistanceSquared(u.Position, Position) <= acquisitionRangeSquared
                         && Vector2.DistanceSquared(u.Position, attacker.Position) <= acquisitionRangeSquared
                     )
@@ -1007,22 +999,13 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         
         public void CallForHelp(IAttackableUnit attacker, IAttackableUnit victium)
         {
-            if(HandlesCallsForHelp)
+            if(AIScript.unitsAttackingAllies != null)
             {
-                var ai = AIScript as IAIScriptHearingCallsForHelp;
                 int priority = Math.Min(
-                    ai.unitsAttackingAllies.GetValueOrDefault(attacker, (int)ClassifyUnit.DEFAULT),
+                    AIScript.unitsAttackingAllies.GetValueOrDefault(attacker, (int)ClassifyUnit.DEFAULT),
                     (int)ClassifyTarget(attacker, victium)
                 );
-                ai.unitsAttackingAllies[attacker] = priority;
-            }
-        }
-
-        public void ClearCallsForHelp(){
-            if(HandlesCallsForHelp)
-            {
-                var ai = AIScript as IAIScriptHearingCallsForHelp;
-                ai.unitsAttackingAllies.Clear();
+                AIScript.unitsAttackingAllies[attacker] = priority;
             }
         }
 

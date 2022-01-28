@@ -10,12 +10,9 @@ using System.Collections.Generic;
 
 namespace AIScripts
 {
-    public class LaneMinionAI : IAIScriptHearingCallsForHelp
+    public class LaneMinionAI : IAIScript
     {
-        public IAIScriptMetaData AIScriptMetaData { get; set; } = new AIScriptMetaData
-        {
-            HandlesCallsForHelp = true
-        };
+        public IAIScriptMetaData AIScriptMetaData { get; set; } = new AIScriptMetaData();
         ILaneMinion LaneMinion;
         int currentWaypointIndex = 0;
         float minionActionTimer = 250f;
@@ -80,7 +77,7 @@ namespace AIScripts
                 if(callsForHelpMayBeCleared)
                 {
                     callsForHelpMayBeCleared = false;
-                    LaneMinion.ClearCallsForHelp();
+                    unitsAttackingAllies.Clear();
                 }
             }
         }
@@ -194,7 +191,7 @@ namespace AIScripts
                 LaneMinion.SetTargetUnit(nextTarget, true);
                 targetUnitPriority = nextTargetPriority;
                 timeSinceLastAttack = 0f;
-    
+
                 return true;
             }
             return false;
