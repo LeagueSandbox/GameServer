@@ -103,6 +103,11 @@ namespace GameServerCore.Domain.GameObjects
         /// <returns>Random auto attack spell.</returns>
         ISpell GetNewAutoAttack();
         /// <summary>
+        /// Whether or not this AI is able to auto attack.
+        /// </summary>
+        /// <returns></returns>
+        bool CanAttack();
+        /// <summary>
         /// Whether or not this AI is able to cast spells.
         /// </summary>
         bool CanCast();
