@@ -334,6 +334,59 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         }
 
         /// <summary>
+        /// Whether or not this unit can move itself.
+        /// </summary>
+        /// <returns></returns>
+        public virtual bool CanMove()
+        {
+            // Only case where AttackableUnit should move is if it is forced.
+            return MovementParameters != null;
+        }
+
+        /// <summary>
+        /// Whether or not this unit can take damage of the given type.
+        /// </summary>
+        /// <param name="type">Type of damage to check.</param>
+        /// <returns>True/False</returns>
+        public bool CanTakeDamage(DamageType type)
+        {
+            if (Status.HasFlag(StatusFlags.Invulnerable))
+            {
+                return false;
+            }
+
+            switch (type)
+            {
+                case DamageType.DAMAGE_TYPE_PHYSICAL:
+                {
+                    if (Status.HasFlag(StatusFlags.PhysicalImmune))
+                    {
+                        return false;
+                    }
+                    break;
+                }
+                case DamageType.DAMAGE_TYPE_MAGICAL:
+                {
+                    if (Status.HasFlag(StatusFlags.MagicImmune))
+                    {
+                        return false;
+                    }
+                    break;
+                }
+                case DamageType.DAMAGE_TYPE_MIXED:
+                {
+                    if (Status.HasFlag(StatusFlags.MagicImmune) || Status.HasFlag(StatusFlags.PhysicalImmune))
+                    {
+                        return false;
+                    }
+                    break;
+                }
+            }
+
+            return true;
+        }
+
+        /// <summary>
         /// Adds a modifier to this unit's stats, ex: Armor, Attack Damage, Movespeed, etc.
         /// </summary>
         /// <param name="statModifier">Modifier to add.</param>
@@ -365,6 +418,19 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             float regain = 0;
             var attackerStats = attacker.Stats;
             float postMitigationDamage = Stats.GetPostMitigationDamage(damage, type, attacker);
+
+            IDamageData damageData = new DamageData
+            {
+                IsAutoAttack = source == DamageSource.DAMAGE_SOURCE_ATTACK,
+                Attacker = attacker,
+                Target = this,
+                Damage = damage,
+                PostMitigationdDamage = postMitigationDamage,
+                DamageSource = source,
+                DamageType = type,
+            };
+
+            ApiEventManager.OnPreTakeDamage.Publish(damageData);
 
             switch (source)
             {
@@ -398,24 +464,10 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                     throw new ArgumentOutOfRangeException(nameof(source), source, null);
             }
 
-            IDamageData damageData = new DamageData
+            if (!CanTakeDamage(type))
             {
-                IsAutoAttack = source == DamageSource.DAMAGE_SOURCE_ATTACK,
-                Attacker = attacker,
-                Target = this,
-                Damage = damage,
-                PostMitigationdDamage = postMitigationDamage,
-                DamageSource = source,
-                DamageType = type,
-            };
-
-            // TODO: Verify if we should place this in ObjAiBase.AutoAttackHit
-            if (damageData.Attacker is IObjAiBase ai && damageData.IsAutoAttack)
-            {
-                ApiEventManager.OnHitUnit.Publish(ai, damageData);
+                return;
             }
-
-            ApiEventManager.OnPreTakeDamage.Publish(damageData);
 
             Stats.CurrentHealth = Math.Max(0.0f, Stats.CurrentHealth - postMitigationDamage);
 
@@ -493,7 +545,15 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             TakeDamage(attacker, damage, type, source, text);
         }
 
-        public void TakeDamage(IDamageData damageData, DamageResultType damageText)
+        /// <summary>
+        /// Applies damage to this unit.
+        /// </summary>
+        /// <param name="attacker">Unit that is dealing the damage.</param>
+        /// <param name="damage">Amount of damage to deal.</param>
+        /// <param name="type">Whether the damage is physical, magical, or true.</param>
+        /// <param name="source">What the damage came from: attack, spell, summoner spell, or passive.</param>
+        /// <param name="damageText">Type of damage the damage text should be.</param>
+        public virtual void TakeDamage(IDamageData damageData, DamageResultType damageText)
         {
             float regain = 0;
             var attacker = damageData.Attacker;
@@ -501,6 +561,8 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             var type = damageData.DamageType;
             var source = damageData.DamageSource;
             var postMitigationDamage = damageData.PostMitigationdDamage;
+
+            ApiEventManager.OnPreTakeDamage.Publish(damageData);
 
             switch (source)
             {
@@ -534,13 +596,10 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                     throw new ArgumentOutOfRangeException(nameof(source), source, null);
             }
 
-            // TODO: Verify if we should place this in ObjAiBase.AutoAttackHit
-            if (damageData.Attacker is IObjAiBase ai && damageData.IsAutoAttack)
+            if (!CanTakeDamage(type))
             {
-                ApiEventManager.OnHitUnit.Publish(ai, damageData);
+                return;
             }
-
-            ApiEventManager.OnPreTakeDamage.Publish(damageData);
 
             Stats.CurrentHealth = Math.Max(0.0f, Stats.CurrentHealth - postMitigationDamage);
 
@@ -573,7 +632,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             {
                 targetId = (int)_game.PlayerManager.GetClientInfoByChampion(targetChamp).PlayerId;
             }
-
             // Show damage text for owner of pet
             if (attacker is IMinion attackerMinion && attackerMinion.IsPet && attackerMinion.Owner is IChampion)
             {
@@ -670,6 +728,376 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             Model = model;
             IsModelUpdated = true;
             return true;
+        }
+
+        /// <summary>
+        /// Gets the movement speed stat of this unit (units/sec).
+        /// </summary>
+        /// <returns>Float units/sec.</returns>
+        public float GetMoveSpeed()
+        {
+            if (MovementParameters != null)
+            {
+                return MovementParameters.PathSpeedOverride;
+            }
+
+            return Stats.MoveSpeed.Total;
+        }
+
+        /// <summary>
+        /// Enables or disables the given status on this unit.
+        /// </summary>
+        /// <param name="status">StatusFlag to enable/disable.</param>
+        /// <param name="enabled">Whether or not to enable the flag.</param>
+        public void SetStatus(StatusFlags status, bool enabled)
+        {
+            if (enabled)
+            {
+                Status |= status;
+            }
+            else
+            {
+                Status &= ~status;
+            }
+
+            switch (status)
+            {
+                // CallForHelpSuppressor
+                case StatusFlags.CanAttack:
+                {
+                    Stats.SetActionState(ActionState.CAN_ATTACK, enabled);
+                    return;
+                }
+                case StatusFlags.CanCast:
+                {
+                    Stats.SetActionState(ActionState.CAN_CAST, enabled);
+                    return;
+                }
+                case StatusFlags.CanMove:
+                {
+                    Stats.SetActionState(ActionState.CAN_MOVE, enabled);
+                    return;
+                }
+                case StatusFlags.CanMoveEver:
+                {
+                    Stats.SetActionState(ActionState.CAN_NOT_MOVE, !enabled);
+                    return;
+                }
+                case StatusFlags.Charmed:
+                {
+                    Stats.SetActionState(ActionState.CHARMED, enabled);
+                    return;
+                }
+                // DisableAmbientGold
+                case StatusFlags.Feared:
+                {
+                    Stats.SetActionState(ActionState.FEARED, enabled);
+                    // TODO: Verify
+                    Stats.SetActionState(ActionState.IS_FLEEING, enabled);
+                    return;
+                }
+                case StatusFlags.ForceRenderParticles:
+                {
+                    Stats.SetActionState(ActionState.FORCE_RENDER_PARTICLES, enabled);
+                    return;
+                }
+                // GhostProof
+                case StatusFlags.Ghosted:
+                {
+                    Stats.SetActionState(ActionState.IS_GHOSTED, enabled);
+                    return;
+                }
+                // IgnoreCallForHelp
+                // Immovable
+                // Invulnerable
+                // MagicImmune
+                case StatusFlags.NearSighted:
+                {
+                    Stats.SetActionState(ActionState.IS_NEAR_SIGHTED, enabled);
+                    return;
+                }
+                // Netted
+                case StatusFlags.NoRender:
+                {
+                    Stats.SetActionState(ActionState.NO_RENDER, enabled);
+                    return;
+                }
+                // PhysicalImmune
+                case StatusFlags.RevealSpecificUnit:
+                {
+                    Stats.SetActionState(ActionState.REVEAL_SPECIFIC_UNIT, enabled);
+                    return;
+                }
+                // Rooted
+                // Silenced
+                case StatusFlags.Sleep:
+                {
+                    Stats.SetActionState(ActionState.IS_ASLEEP, enabled);
+                    return;
+                }
+                case StatusFlags.Stealthed:
+                {
+                    Stats.SetActionState(ActionState.STEALTHED, enabled);
+                    return;
+                }
+                // SuppressCallForHelp
+                case StatusFlags.Targetable:
+                {
+                    Stats.IsTargetable = enabled;
+                    // TODO: Verify.
+                    Stats.SetActionState(ActionState.TARGETABLE, enabled);
+                    return;
+                }
+                case StatusFlags.Taunted:
+                {
+                    Stats.SetActionState(ActionState.TAUNTED, enabled);
+                    return;
+                }
+            }
+
+            if (!(Status.HasFlag(StatusFlags.CanAttack)
+                    && !Status.HasFlag(StatusFlags.Charmed)
+                    && !Status.HasFlag(StatusFlags.Disarmed)
+                    && !Status.HasFlag(StatusFlags.Feared)
+                    // TODO: Verify
+                    && !Status.HasFlag(StatusFlags.Pacified)
+                    && !Status.HasFlag(StatusFlags.Sleep)
+                    && !Status.HasFlag(StatusFlags.Stunned)
+                    && !Status.HasFlag(StatusFlags.Suppressed)))
+            {
+                Stats.SetActionState(ActionState.CAN_NOT_ATTACK, true);
+            }
+            else if (Stats.GetActionState(ActionState.CAN_NOT_ATTACK))
+            {
+                Stats.SetActionState(ActionState.CAN_NOT_ATTACK, false);
+            }
+        }
+
+        public void UpdateStatus()
+        {
+            // Combine the status effects of all the buffs
+            Dictionary<StatusFlags, bool> finalEffects = new Dictionary<StatusFlags, bool>();
+            foreach (IBuff buff in GetBuffs())
+            {
+                foreach (KeyValuePair<StatusFlags, bool> effect in buff.StatusEffects)
+                {
+                    if (finalEffects.ContainsKey(effect.Key))
+                    {
+                        // If the effect should be enabled, it overrides disable.
+                        if (finalEffects[effect.Key])
+                        {
+                            continue;
+                        }
+                        else
+                        {
+                            finalEffects[effect.Key] = effect.Value;
+                        }
+                    }
+                    else
+                    {
+                        finalEffects.Add(effect.Key, effect.Value);
+                    }
+                }
+            }
+
+            // Set the status effects of this unit.
+            foreach (KeyValuePair<StatusFlags, bool> effect in finalEffects)
+            {
+                SetStatus(effect.Key, effect.Value);
+            }
+        }
+
+        /// <summary>
+        /// Teleports this unit to the given position, and optionally repaths from the new position.
+        /// </summary>
+        /// <param name="x">X coordinate to teleport to.</param>
+        /// <param name="y">Y coordinate to teleport to.</param>
+        /// <param name="repath">Whether or not to repath from the new position.</param>
+        public void TeleportTo(float x, float y, bool repath = false)
+        {
+            var position = new Vector2(x, y);
+
+            if (!_game.Map.NavigationGrid.IsWalkable(x, y, CollisionRadius))
+            {
+                position = _game.Map.NavigationGrid.GetClosestTerrainExit(new Vector2(x, y), CollisionRadius + 1.0f);
+            }
+
+            SetPosition(position, repath);
+            TeleportID++;
+            _game.PacketNotifier.NotifyTeleport(this, position);
+        }
+
+        /// <summary>
+        /// Moves this unit to its specified waypoints, updating its position along the way.
+        /// </summary>
+        /// <param name="diff">The amount of milliseconds the unit is supposed to move</param>
+        /// TODO: Implement interpolation (assuming all other desync related issues are already fixed).
+        public virtual bool Move(float diff)
+        {
+            // current -> next positions
+            var cur = new Vector2(Position.X, Position.Y);
+            var next = CurrentWaypoint.Value;
+
+            var goingTo = next - cur;
+
+            var dirTemp = Vector2.Normalize(goingTo);
+
+            // usually doesn't happen
+            if (float.IsNaN(dirTemp.X) || float.IsNaN(dirTemp.Y))
+            {
+                dirTemp = new Vector2(0, 0);
+            }
+
+            Direction = new Vector3(dirTemp.X, 0.0f, dirTemp.Y);
+
+            FaceDirection(Direction, false);
+
+            var moveSpeed = GetMoveSpeed();
+
+            var distSqr = MathF.Abs(Vector2.DistanceSquared(cur, next));
+
+            var deltaMovement = moveSpeed * 0.001f * diff;
+
+            // Prevent moving past the next waypoint.
+            if (deltaMovement * deltaMovement > distSqr)
+            {
+                deltaMovement = MathF.Sqrt(distSqr);
+            }
+
+            var xx = Direction.X * deltaMovement;
+            var yy = Direction.Z * deltaMovement;
+
+            Vector2 nextPos = new Vector2(Position.X + xx, Position.Y + yy);
+            // TODO: Implement ForceMovementType so this specifically applies to dashes that can't move past walls.
+            if (MovementParameters == null)
+            {
+                // Prevent moving past obstacles. TODO: Verify if works at high speeds.
+                // TODO: Implement range based (CollisionRadius) pathfinding so we don't keep getting stuck because of IsAnythingBetween.
+                // TODO: After the above, implement repathing if our position within the next tick or two will intersect with another GameObject.
+                KeyValuePair<bool, Vector2> pathBlocked = _game.Map.NavigationGrid.IsAnythingBetween(Position, nextPos);
+                if (pathBlocked.Key)
+                {
+                    nextPos = _game.Map.NavigationGrid.GetClosestTerrainExit(pathBlocked.Value, CollisionRadius + 1.0f);
+                }
+            }
+
+            Position = nextPos;
+
+            // (X, Y) have now moved to the next position
+            cur = new Vector2(Position.X, Position.Y);
+
+            // Check if we reached the next waypoint
+            // REVIEW (of previous code): (deltaMovement * 2) being used here is problematic; if the server lags, the diff will be much greater than the usual values
+            if ((cur - next).LengthSquared() < MOVEMENT_EPSILON * MOVEMENT_EPSILON)
+            {
+                var nextIndex = CurrentWaypoint.Key + 1;
+                // stop moving because we have reached our last waypoint
+                if (nextIndex >= Waypoints.Count)
+                {
+                    ResetWaypoints();
+
+                    if (MovementParameters != null)
+                    {
+                        SetDashingState(false);
+                        return true;
+                    }
+
+                    return true;
+                }
+                // start moving to our next waypoint
+                else
+                {
+                    CurrentWaypoint = new KeyValuePair<int, Vector2>(nextIndex, Waypoints[nextIndex]);
+                }
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Returns the next waypoint. If all waypoints have been reached then this returns a -inf Vector2
+        /// </summary>
+        public Vector2 GetNextWaypoint()
+        {
+            if (CurrentWaypoint.Key < Waypoints.Count)
+            {
+                return CurrentWaypoint.Value;
+            }
+            return new Vector2(float.NegativeInfinity, float.NegativeInfinity);
+        }
+
+        /// <summary>
+        /// Resets this unit's waypoints.
+        /// </summary>
+        public void ResetWaypoints()
+        {
+            Waypoints = new List<Vector2> { Position };
+            CurrentWaypoint = new KeyValuePair<int, Vector2>(1, Position);
+        }
+
+        /// <summary>
+        /// Returns whether this unit has reached the last waypoint in its path of waypoints.
+        /// </summary>
+        public bool IsPathEnded()
+        {
+            return CurrentWaypoint.Key >= Waypoints.Count;
+        }
+
+        /// <summary>
+        /// Sets this unit's movement path to the given waypoints. *NOTE*: Requires current position to be prepended.
+        /// </summary>
+        /// <param name="newWaypoints">New path of Vector2 coordinates that the unit will move to.</param>
+        /// <param name="networked">Whether or not clients should be notified of this change in waypoints at the next ObjectManager.Update.</param>
+        public void SetWaypoints(List<Vector2> newWaypoints, bool networked = true)
+        {
+            // Waypoints should always have an origin at the current position.
+            // Can't set waypoints if we can't move. Dashes are also excluded as their paths should be set before being applied.
+            if (newWaypoints.Count <= 1 || newWaypoints[0] != Position || !CanMove())
+            {
+                return;
+            }
+
+            if (networked)
+            {
+                _movementUpdated = true;
+            }
+            Waypoints = newWaypoints;
+            CurrentWaypoint = new KeyValuePair<int, Vector2>(1, Waypoints[1]);
+        }
+
+        /// <summary>
+        /// Forces this unit to stop moving.
+        /// </summary>
+        public virtual void StopMovement()
+        {
+            // Stop movements are always networked.
+            _movementUpdated = true;
+
+            if (MovementParameters != null)
+            {
+                SetDashingState(false);
+                return;
+            }
+
+            ResetWaypoints();
+        }
+
+        /// <summary>
+        /// Returns whether this unit's waypoints will be networked to clients the next update. Movement updates do not occur for dash based movements.
+        /// </summary>
+        /// <returns>True/False</returns>
+        /// TODO: Refactor movement update logic so this can be applied to any kind of movement.
+        public bool IsMovementUpdated()
+        {
+            return _movementUpdated;
+        }
+
+        /// <summary>
+        /// Used each object manager update after this unit has set its waypoints and the server has networked it.
+        /// </summary>
+        public void ClearMovementUpdated()
+        {
+            _movementUpdated = false;
         }
 
         /// <summary>
@@ -1149,386 +1577,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                 BuffList.FindAll(b =>
                 b.IsBuffSame(buffName)).ForEach(b =>
                 b.DeactivateBuff());
-            }
-        }
-
-        /// <summary>
-        /// Gets the movement speed stat of this unit (units/sec).
-        /// </summary>
-        /// <returns>Float units/sec.</returns>
-        public float GetMoveSpeed()
-        {
-            if (MovementParameters != null)
-            {
-                return MovementParameters.PathSpeedOverride;
-            }
-
-            return Stats.MoveSpeed.Total;
-        }
-
-        /// <summary>
-        /// Whether or not this unit can move itself.
-        /// </summary>
-        /// <returns></returns>
-        public virtual bool CanMove()
-        {
-            // Only case where AttackableUnit should move is if it is forced.
-            return MovementParameters != null;
-        }
-
-        /// <summary>
-        /// Teleports this unit to the given position, and optionally repaths from the new position.
-        /// </summary>
-        /// <param name="x">X coordinate to teleport to.</param>
-        /// <param name="y">Y coordinate to teleport to.</param>
-        /// <param name="repath">Whether or not to repath from the new position.</param>
-        public void TeleportTo(float x, float y, bool repath = false)
-        {
-            var position = new Vector2(x, y);
-
-            if (!_game.Map.NavigationGrid.IsWalkable(x, y, CollisionRadius))
-            {
-                position = _game.Map.NavigationGrid.GetClosestTerrainExit(new Vector2(x, y), CollisionRadius + 1.0f);
-            }
-
-            SetPosition(position, repath);
-            TeleportID++;
-            _game.PacketNotifier.NotifyTeleport(this, position);
-        }
-
-        /// <summary>
-        /// Moves this unit to its specified waypoints, updating its position along the way.
-        /// </summary>
-        /// <param name="diff">The amount of milliseconds the unit is supposed to move</param>
-        /// TODO: Implement interpolation (assuming all other desync related issues are already fixed).
-        public virtual bool Move(float diff)
-        {
-            // current -> next positions
-            var cur = new Vector2(Position.X, Position.Y);
-            var next = CurrentWaypoint.Value;
-
-            var goingTo = next - cur;
-
-            var dirTemp = Vector2.Normalize(goingTo);
-
-            // usually doesn't happen
-            if (float.IsNaN(dirTemp.X) || float.IsNaN(dirTemp.Y))
-            {
-                dirTemp = new Vector2(0, 0);
-            }
-
-            Direction = new Vector3(dirTemp.X, 0.0f, dirTemp.Y);
-
-            FaceDirection(Direction, false);
-
-            var moveSpeed = GetMoveSpeed();
-
-            var distSqr = MathF.Abs(Vector2.DistanceSquared(cur, next));
-
-            var deltaMovement = moveSpeed * 0.001f * diff;
-
-            // Prevent moving past the next waypoint.
-            if (deltaMovement * deltaMovement > distSqr)
-            {
-                deltaMovement = MathF.Sqrt(distSqr);
-            }
-
-            var xx = Direction.X * deltaMovement;
-            var yy = Direction.Z * deltaMovement;
-
-            Vector2 nextPos = new Vector2(Position.X + xx, Position.Y + yy);
-            // TODO: Implement ForceMovementType so this specifically applies to dashes that can't move past walls.
-            if (MovementParameters == null)
-            {
-                // Prevent moving past obstacles. TODO: Verify if works at high speeds.
-                // TODO: Implement range based (CollisionRadius) pathfinding so we don't keep getting stuck because of IsAnythingBetween.
-                // TODO: After the above, implement repathing if our position within the next tick or two will intersect with another GameObject.
-                KeyValuePair<bool, Vector2> pathBlocked = _game.Map.NavigationGrid.IsAnythingBetween(Position, nextPos);
-                if (pathBlocked.Key)
-                {
-                    nextPos = _game.Map.NavigationGrid.GetClosestTerrainExit(pathBlocked.Value, CollisionRadius + 1.0f);
-                }
-            }
-
-            Position = nextPos;
-
-            // (X, Y) have now moved to the next position
-            cur = new Vector2(Position.X, Position.Y);
-
-            // Check if we reached the next waypoint
-            // REVIEW (of previous code): (deltaMovement * 2) being used here is problematic; if the server lags, the diff will be much greater than the usual values
-            if ((cur - next).LengthSquared() < MOVEMENT_EPSILON * MOVEMENT_EPSILON)
-            {
-                var nextIndex = CurrentWaypoint.Key + 1;
-                // stop moving because we have reached our last waypoint
-                if (nextIndex >= Waypoints.Count)
-                {
-                    ResetWaypoints();
-
-                    if (MovementParameters != null)
-                    {
-                        SetDashingState(false);
-                        return true;
-                    }
-
-                    return true;
-                }
-                // start moving to our next waypoint
-                else
-                {
-                    CurrentWaypoint = new KeyValuePair<int, Vector2>(nextIndex, Waypoints[nextIndex]);
-                }
-            }
-
-            return true;
-        }
-
-        /// <summary>
-        /// Returns the next waypoint. If all waypoints have been reached then this returns a -inf Vector2
-        /// </summary>
-        public Vector2 GetNextWaypoint()
-        {
-            if (CurrentWaypoint.Key < Waypoints.Count)
-            {
-                return CurrentWaypoint.Value;
-            }
-            return new Vector2(float.NegativeInfinity, float.NegativeInfinity);
-        }
-
-        /// <summary>
-        /// Resets this unit's waypoints.
-        /// </summary>
-        public void ResetWaypoints()
-        {
-            Waypoints = new List<Vector2> { Position };
-            CurrentWaypoint = new KeyValuePair<int, Vector2>(1, Position);
-        }
-
-        /// <summary>
-        /// Returns whether this unit has reached the last waypoint in its path of waypoints.
-        /// </summary>
-        public bool IsPathEnded()
-        {
-            return CurrentWaypoint.Key >= Waypoints.Count;
-        }
-
-        /// <summary>
-        /// Sets this unit's movement path to the given waypoints. *NOTE*: Requires current position to be prepended.
-        /// </summary>
-        /// <param name="newWaypoints">New path of Vector2 coordinates that the unit will move to.</param>
-        /// <param name="networked">Whether or not clients should be notified of this change in waypoints at the next ObjectManager.Update.</param>
-        public void SetWaypoints(List<Vector2> newWaypoints, bool networked = true)
-        {
-            // Waypoints should always have an origin at the current position.
-            // Can't set waypoints if we can't move. Dashes are also excluded as their paths should be set before being applied.
-            if (newWaypoints.Count <= 1 || newWaypoints[0] != Position || !CanMove())
-            {
-                return;
-            }
-
-            if (networked)
-            {
-                _movementUpdated = true;
-            }
-            Waypoints = newWaypoints;
-            CurrentWaypoint = new KeyValuePair<int, Vector2>(1, Waypoints[1]);
-        }
-
-        /// <summary>
-        /// Forces this unit to stop moving.
-        /// </summary>
-        public virtual void StopMovement()
-        {
-            // Stop movements are always networked.
-            _movementUpdated = true;
-
-            if (MovementParameters != null)
-            {
-                SetDashingState(false);
-                return;
-            }
-
-            ResetWaypoints();
-        }
-
-        /// <summary>
-        /// Returns whether this unit's waypoints will be networked to clients the next update. Movement updates do not occur for dash based movements.
-        /// </summary>
-        /// <returns>True/False</returns>
-        /// TODO: Refactor movement update logic so this can be applied to any kind of movement.
-        public bool IsMovementUpdated()
-        {
-            return _movementUpdated;
-        }
-
-        /// <summary>
-        /// Used each object manager update after this unit has set its waypoints and the server has networked it.
-        /// </summary>
-        public void ClearMovementUpdated()
-        {
-            _movementUpdated = false;
-        }
-
-        /// <summary>
-        /// Enables or disables the given status on this unit.
-        /// </summary>
-        /// <param name="status">StatusFlag to enable/disable.</param>
-        /// <param name="enabled">Whether or not to enable the flag.</param>
-        public void SetStatus(StatusFlags status, bool enabled)
-        {
-            if (enabled)
-            {
-                Status |= status;
-            }
-            else
-            {
-                Status &= ~status;
-            }
-
-            switch (status)
-            {
-                // CallForHelpSuppressor
-                case StatusFlags.CanAttack:
-                {
-                    Stats.SetActionState(ActionState.CAN_ATTACK, enabled);
-                    return;
-                }
-                case StatusFlags.CanCast:
-                {
-                    Stats.SetActionState(ActionState.CAN_CAST, enabled);
-                    return;
-                }
-                case StatusFlags.CanMove:
-                {
-                    Stats.SetActionState(ActionState.CAN_MOVE, enabled);
-                    return;
-                }
-                case StatusFlags.CanMoveEver:
-                {
-                    Stats.SetActionState(ActionState.CAN_NOT_MOVE, !enabled);
-                    return;
-                }
-                case StatusFlags.Charmed:
-                {
-                    Stats.SetActionState(ActionState.CHARMED, enabled);
-                    return;
-                }
-                // DisableAmbientGold
-                case StatusFlags.Feared:
-                {
-                    Stats.SetActionState(ActionState.FEARED, enabled);
-                    // TODO: Verify
-                    Stats.SetActionState(ActionState.IS_FLEEING, enabled);
-                    return;
-                }
-                case StatusFlags.ForceRenderParticles:
-                {
-                    Stats.SetActionState(ActionState.FORCE_RENDER_PARTICLES, enabled);
-                    return;
-                }
-                // GhostProof
-                case StatusFlags.Ghosted:
-                {
-                    Stats.SetActionState(ActionState.IS_GHOSTED, enabled);
-                    return;
-                }
-                // IgnoreCallForHelp
-                // Immovable
-                // Invulnerable
-                // MagicImmune
-                case StatusFlags.NearSighted:
-                {
-                    Stats.SetActionState(ActionState.IS_NEAR_SIGHTED, enabled);
-                    return;
-                }
-                // Netted
-                case StatusFlags.NoRender:
-                {
-                    Stats.SetActionState(ActionState.NO_RENDER, enabled);
-                    return;
-                }
-                // PhysicalImmune
-                case StatusFlags.RevealSpecificUnit:
-                {
-                    Stats.SetActionState(ActionState.REVEAL_SPECIFIC_UNIT, enabled);
-                    return;
-                }
-                // Rooted
-                // Silenced
-                case StatusFlags.Sleep:
-                {
-                    Stats.SetActionState(ActionState.IS_ASLEEP, enabled);
-                    return;
-                }
-                case StatusFlags.Stealthed:
-                {
-                    Stats.SetActionState(ActionState.STEALTHED, enabled);
-                    return;
-                }
-                // SuppressCallForHelp
-                case StatusFlags.Targetable:
-                {
-                    Stats.IsTargetable = enabled;
-                    // TODO: Verify.
-                    Stats.SetActionState(ActionState.TARGETABLE, enabled);
-                    return;
-                }
-                case StatusFlags.Taunted:
-                {
-                    Stats.SetActionState(ActionState.TAUNTED, enabled);
-                    return;
-                }   
-            }
-
-            if (!(Status.HasFlag(StatusFlags.CanAttack)
-                    && !Status.HasFlag(StatusFlags.Charmed)
-                    && !Status.HasFlag(StatusFlags.Disarmed)
-                    && !Status.HasFlag(StatusFlags.Feared)
-                    // TODO: Verify
-                    && !Status.HasFlag(StatusFlags.Pacified)
-                    && !Status.HasFlag(StatusFlags.Sleep)
-                    && !Status.HasFlag(StatusFlags.Stunned)
-                    && !Status.HasFlag(StatusFlags.Suppressed)))
-            {
-                Stats.SetActionState(ActionState.CAN_NOT_ATTACK, true);
-            }
-            else if (Stats.GetActionState(ActionState.CAN_NOT_ATTACK))
-            {
-                Stats.SetActionState(ActionState.CAN_NOT_ATTACK, false);
-            }
-        }
-
-        public void UpdateStatus()
-        {
-            // Combine the status effects of all the buffs
-            Dictionary<StatusFlags, bool> finalEffects = new Dictionary<StatusFlags, bool>();
-            foreach (IBuff buff in GetBuffs())
-            {
-                foreach (KeyValuePair<StatusFlags, bool> effect in buff.StatusEffects)
-                {
-                    if (finalEffects.ContainsKey(effect.Key))
-                    {
-                        // If the effect should be enabled, it overrides disable.
-                        if (finalEffects[effect.Key])
-                        {
-                            continue;
-                        }
-                        else
-                        {
-                            finalEffects[effect.Key] = effect.Value;
-                        }
-                    }
-                    else
-                    {
-                        finalEffects.Add(effect.Key, effect.Value);
-                    }
-                }
-            }
-
-            // Set the status effects of this unit.
-            foreach (KeyValuePair<StatusFlags, bool> effect in finalEffects)
-            {
-                SetStatus(effect.Key, effect.Value);
             }
         }
 

@@ -245,7 +245,7 @@ namespace MapScripts.Map8
         {
             for (int i = 0; i < _map.InfoPoints.Count; i++)
             {
-                _map.CreateRegion(TeamId.TEAM_BLUE, new Vector2(_map.InfoPoints[i].CentralPoint.X, _map.InfoPoints[i].CentralPoint.Z), RegionType.Unknown2, null, giveVision: true, visionRadius: 800.0f, revealStealth: true, hasCollision: true, collisionRadius: 120.0f, grassRadius: 150.0f, lifeTime: 25000.0f);
+                AddPosPerceptionBubble(new Vector2(_map.InfoPoints[i].CentralPoint.X, _map.InfoPoints[i].CentralPoint.Z), 800.0f, 25000.0f, TeamId.TEAM_BLUE, true, collisionArea: 120.0f);
                 infoPoints.Add(_map.CreateMinion("OdinNeutralGuardian", "OdinNeutralGuardian", new Vector2(_map.InfoPoints[i].CentralPoint.X, _map.InfoPoints[i].CentralPoint.Z), ignoreCollision: true));
                 infoPoints[i].PauseAi(true);
             }
@@ -259,8 +259,8 @@ namespace MapScripts.Map8
             {
                 if (!camp.IsAlive)
                 {
-                    _map.CreateRegion(TeamId.TEAM_BLUE, new Vector2(camp.Position.X, camp.Position.Z), RegionType.Default, collisionRadius: 1.0f, lifeTime: 7780.0f);
-                    _map.CreateRegion(TeamId.TEAM_PURPLE, new Vector2(camp.Position.X, camp.Position.Z), RegionType.Default, collisionRadius: 1.0f, lifeTime: 7780.0f);
+                    AddPosPerceptionBubble(new Vector2(camp.Position.X, camp.Position.Z), 250.0f, 1.0f, TeamId.TEAM_BLUE);
+                    AddPosPerceptionBubble(new Vector2(camp.Position.X, camp.Position.Z), 250.0f, 1.0f, TeamId.TEAM_PURPLE);
                     _map.SpawnCamp(camp);
                 }
             }
@@ -292,8 +292,8 @@ namespace MapScripts.Map8
                                 crystalTemplate.NetId, crystalTemplate.Team, crystalTemplate.SkinId,
                                 crystalTemplate.IgnoresCollision, crystalTemplate.IsTargetable);
 
-                        CrystalRegions[crystalTemplate.Team].Add(_map.CreateRegion(TeamId.TEAM_BLUE, crystal.Position, RegionType.Default, visionTarget: crystal, grassRadius: 38.08f, collisionRadius: 25000.0f, lifeTime: 6462.0273f));
-                        CrystalRegions[crystalTemplate.Team].Add(_map.CreateRegion(TeamId.TEAM_PURPLE, crystal.Position, RegionType.Default, visionTarget: crystal, grassRadius: 38.08f, collisionRadius: 25000.0f, lifeTime: 6462.0273f));
+                        AddUnitPerceptionBubble(crystal, 350.0f, 25000.0f, TeamId.TEAM_BLUE, collisionArea: 38.08f);
+                        AddUnitPerceptionBubble(crystal, 350.0f, 25000.0f, TeamId.TEAM_PURPLE, collisionArea: 38.08f);
 
                         ApiEventManager.OnDeath.AddListener(crystal, crystal, OnCrystalDeath, true);
 
@@ -330,8 +330,8 @@ namespace MapScripts.Map8
                             crystalTemplate.NetId, crystalTemplate.Team, crystalTemplate.SkinId,
                             crystalTemplate.IgnoresCollision, crystalTemplate.IsTargetable);
 
-                    CrystalRegions[crystalTemplate.Team].Add(_map.CreateRegion(TeamId.TEAM_BLUE, crystal.Position, RegionType.Default, visionTarget: crystal, grassRadius: 38.08f, collisionRadius: 25000.0f, lifeTime: 6462.0273f));
-                    CrystalRegions[crystalTemplate.Team].Add(_map.CreateRegion(TeamId.TEAM_PURPLE, crystal.Position, RegionType.Default, visionTarget: crystal, grassRadius: 38.08f, collisionRadius: 25000.0f, lifeTime: 6462.0273f));
+                    CrystalRegions[crystalTemplate.Team].Add(AddUnitPerceptionBubble(crystal, 350.0f, 25000.0f, TeamId.TEAM_BLUE, collisionArea: 38.08f));
+                    CrystalRegions[crystalTemplate.Team].Add(AddUnitPerceptionBubble(crystal, 350.0f, 25000.0f, TeamId.TEAM_PURPLE, collisionArea: 38.08f));
 
                     ApiEventManager.OnDeath.AddListener(crystal, crystal, OnCrystalDeath, true);
 

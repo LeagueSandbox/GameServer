@@ -13,7 +13,7 @@ using GameServerCore.Domain;
 
 namespace Buffs
 {
-    internal class OdinCenterRelicBuff : IBuffGameScript
+    internal class OdinBombBuff : IBuffGameScript
     {
         public BuffType BuffType => BuffType.INTERNAL;
         public BuffAddType BuffAddType => BuffAddType.RENEW_EXISTING;
@@ -36,8 +36,9 @@ namespace Buffs
         {
             Unit = unit;
             thisBuff = buff;
-            //SetStatus(unit, StatusFlags.Invulnerable, true);
+            SetStatus(unit, StatusFlags.CanMove, false);
             SetStatus(unit, StatusFlags.ForceRenderParticles, true);
+            SetStatus(unit, StatusFlags.Targetable, false);
             ApiEventManager.OnDeath.AddListener(this, unit, OnDeath, true);
             if (unit.Team == TeamId.TEAM_BLUE)
             {

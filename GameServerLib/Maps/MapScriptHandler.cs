@@ -604,13 +604,6 @@ namespace LeagueSandbox.GameServer.Maps
             }
         }
 
-        //General Map stuff, such as Announcements and surrender
-        //TODO: See if the "IsMapSpecific" parameter is actually needed.
-        public IRegion CreateRegion(TeamId team, Vector2 position, RegionType type = RegionType.Default, IGameObject collisionUnit = null, IGameObject visionTarget = null, bool giveVision = false, float visionRadius = 0, bool revealStealth = false, bool hasCollision = false, float collisionRadius = 0, float grassRadius = 0, float scale = 1, float addedSize = 0, float lifeTime = 0, int clientID = 0)
-        {
-            return new Region(_game, team, position, type, collisionUnit, visionTarget, giveVision, visionRadius, revealStealth, hasCollision, collisionRadius, grassRadius, scale, addedSize, lifeTime, clientID);
-        }
-
         public void AddAnnouncement(long time, EventID ID, bool isMapSpecific)
         {
             AnnouncerEvents.Add(new Announce(_game, time, ID, isMapSpecific));
