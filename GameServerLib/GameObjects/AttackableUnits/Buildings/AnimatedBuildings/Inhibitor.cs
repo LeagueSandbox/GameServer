@@ -85,6 +85,9 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.Buildings.Animate
                 _respawnTimer.Stop();
             }
 
+            var opposingTeam = Team == TeamId.TEAM_BLUE ? TeamId.TEAM_PURPLE : TeamId.TEAM_BLUE;
+            SetIsTargetableToTeam(opposingTeam, state == InhibitorState.ALIVE);
+
             InhibitorState = state;
             _game.PacketNotifier.NotifyInhibitorState(this, data);
         }

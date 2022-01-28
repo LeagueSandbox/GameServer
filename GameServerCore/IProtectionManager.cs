@@ -5,14 +5,15 @@ namespace GameServerCore
 {
     public interface IProtectionManager : IUpdate
     {
-        public void AddProtection(IAttackableUnit element, IAttackableUnit[] dependOnAll,
+        void AddProtection(IAttackableUnit element, IAttackableUnit[] dependOnAll,
             IAttackableUnit[] dependOnSingle);
 
-        public void AddProtection(IAttackableUnit element, bool dependAll,
+        void AddProtection(IAttackableUnit element, bool dependAll,
             params IAttackableUnit[] dependOn);
 
-        public void RemoveProtection(IAttackableUnit element);
-        public bool IsProtected(IAttackableUnit element);
-        public void HandleFountainProtection(IChampion champion);
+        void RemoveProtection(IAttackableUnit element);
+        bool IsProtected(IAttackableUnit element);
+        bool IsProtectionActive(IAttackableUnit element);
+        void HandleFountainProtection(IChampion champion);
     }
 }

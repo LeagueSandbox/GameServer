@@ -59,6 +59,11 @@ namespace LeagueSandbox.GameServer
             return _protectedElements.Contains(element);
         }
 
+        public bool IsProtectionActive(IAttackableUnit element)
+        {
+            return _hasProtectionElements.Contains(element);
+        }
+
         public void Update(float diff)
         {
             foreach (var element in _protectedElements)
