@@ -241,7 +241,7 @@ namespace MapScripts.Map8
 
         //Since the center crystals are treated as simple minions intead of camp/monster, we have to hand everything individually
         Dictionary<TeamId, IMinion> Crystals = new Dictionary<TeamId, IMinion>();
-        List<IMinionTemplate> CrystalsTemplates = new List<IMinionTemplate>();
+        List<MinionTemplate> CrystalsTemplates = new List<MinionTemplate>();
         Dictionary<TeamId, float> CrystalTimers = new Dictionary<TeamId, float> { { TeamId.TEAM_BLUE, 180.0f * 1000 }, { TeamId.TEAM_PURPLE, 180.0f * 1000 } };
         Dictionary<TeamId, List<IRegion>> CrystalRegions = new Dictionary<TeamId, List<IRegion>> { { TeamId.TEAM_BLUE, new List<IRegion>() }, { TeamId.TEAM_PURPLE, new List<IRegion>() } };
         public void OnMatchStart()
@@ -556,5 +556,56 @@ namespace MapScripts.Map8
             _map.CreateJungleMonster("OdinShieldRelic", "OdinShieldRelic", new Vector2(9573.432f, 5530.13f), new Vector3(-0.0f, 0.0f, 1.0f), healthPacket10);
             HealthPacks.Add(healthPacket10);
         }
+    }
+}
+
+public class MinionTemplate
+{
+    public IObjAiBase Owner { get; set; }
+    public string Name { get; set; }
+    public string Model { get; set; }
+    public Vector2 Position { get; set; }
+    public int SkinId { get; set; }
+    public TeamId Team { get; set; }
+    public uint NetId { get; set; }
+    public bool IsTargetable { get; set; }
+    public bool IgnoresCollision { get; set; }
+    public string AiScript { get; set; }
+    public int DamageBonus { get; set; }
+    public int HealthBonus { get; set; }
+    public int InitialLevel { get; set; }
+    public IObjAiBase VisibilityOwner { get; set; }
+
+    public MinionTemplate(
+        IObjAiBase owner,
+        string model,
+        string name,
+        Vector2 position,
+        uint netId = 0,
+        TeamId team = TeamId.TEAM_NEUTRAL,
+        int skinId = 0,
+        bool ignoreCollision = false,
+        bool targetable = true,
+        IObjAiBase visibilityOwner = null,
+        string aiScript = "",
+        int damageBonus = 0,
+        int healthBonus = 0,
+        int initialLevel = 1
+    )
+    {
+        Owner = owner;
+        Name = name;
+        Model = model;
+        Team = team;
+        Position = position;
+        NetId = netId;
+        IsTargetable = targetable;
+        IgnoresCollision = ignoreCollision;
+        AiScript = aiScript;
+        DamageBonus = damageBonus;
+        HealthBonus = healthBonus;
+        InitialLevel = initialLevel;
+        VisibilityOwner = visibilityOwner;
+        SkinId = skinId;
     }
 }

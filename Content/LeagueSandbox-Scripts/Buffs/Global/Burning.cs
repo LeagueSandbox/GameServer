@@ -26,28 +26,28 @@ namespace Buffs
         {
             thisBuff  = buff;
             Unit = unit;
-            float slowAmmount = 0;
+            float slowAmount = 0;
             if (buff.SourceUnit != null)
             {
                 if (buff.SourceUnit.Stats.Level < 6)
                 {
-                    slowAmmount = 0.05f;
+                    slowAmount = 0.05f;
                 }
                 else if (buff.SourceUnit.Stats.Level < 11)
                 {
-                    slowAmmount = 0.075f;
+                    slowAmount = 0.075f;
                 }
                 else
                 {
-                    slowAmmount = 0.1f;
+                    slowAmount = 0.1f;
                 }
 
                 if (!buff.SourceUnit.IsMelee)
                 {
-                    slowAmmount /= 2;
+                    slowAmount /= 2;
                 }
   
-                StatsModifier.MoveSpeed.PercentBonus -= slowAmmount;
+                StatsModifier.MoveSpeed.PercentBonus -= slowAmount;
                 unit.AddStatModifier(StatsModifier);
             }
         }
