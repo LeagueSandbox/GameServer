@@ -200,10 +200,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                 _statUpdateTimer -= 500;
             }
 
-            // TODO: Move this to AttackableUnit alongside the scriptengine variable.
-            var onUpdate = _game.ScriptEngine.GetStaticMethod<Action<IAttackableUnit, double>>(Model, "Passive", "OnUpdate");
-            onUpdate?.Invoke(this, diff);
-
             Replication.Update();
 
             if (Waypoints.Count > 1 && CanMove())
@@ -256,9 +252,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
 
             if (isTerrain)
             {
-                // TODO: Replace this with event listener publishing.
-                var onCollideWithTerrain = _game.ScriptEngine.GetStaticMethod<Action<IGameObject>>(Model, "Passive", "onCollideWithTerrain");
-                onCollideWithTerrain?.Invoke(this);
+                ApiEventManager.OnCollisionTerrain.Publish(this);
 
                 if (MovementParameters != null)
                 {
@@ -271,9 +265,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             }
             else
             {
-                // TODO: Replace this with event listener publishing.
-                var onCollide = _game.ScriptEngine.GetStaticMethod<Action<IAttackableUnit, IGameObject>>(Model, "Passive", "onCollide");
-                onCollide?.Invoke(this, collider);
+                ApiEventManager.OnCollision.Publish(this, collider);
 
                 if (MovementParameters != null || Status.HasFlag(StatusFlags.Ghosted)
                     || (collider is IAttackableUnit unit &&
