@@ -98,6 +98,8 @@ namespace LeagueSandbox.GameServer.API
             OnSpellMissileEnd.RemoveListener(owner);
             OnSpellPostCast.RemoveListener(owner);
             OnSpellPostChannel.RemoveListener(owner);
+            OnPreDealDamage.RemoveListener(owner);
+            OnDealDamage.RemoveListener(owner);
             OnPreTakeDamage.RemoveListener(owner);
             OnTakeDamage.RemoveListener(owner);
             OnUnitCrowdControlled.RemoveListener(owner);
@@ -123,6 +125,8 @@ namespace LeagueSandbox.GameServer.API
         public static EventOnSpellMissileEnd OnSpellMissileEnd = new EventOnSpellMissileEnd();
         public static EventOnSpellPostCast OnSpellPostCast = new EventOnSpellPostCast();
         public static EventOnSpellPostChannel OnSpellPostChannel = new EventOnSpellPostChannel();
+        public static EventOnPreDealDamage OnPreDealDamage = new EventOnPreDealDamage();
+        public static EventOnDealDamage OnDealDamage = new EventOnDealDamage();
         public static EventOnPreTakeDamage OnPreTakeDamage = new EventOnPreTakeDamage();
         public static EventOnTakeDamage OnTakeDamage = new EventOnTakeDamage();
         // TODO: Handle crowd control the same as normal dashes.
@@ -208,10 +212,10 @@ namespace LeagueSandbox.GameServer.API
 
     public class EventOnHitUnit
     {
-        private readonly List<Tuple<object, IObjAiBase, Action<IAttackableUnit, bool>, bool>> _listeners = new List<Tuple<object, IObjAiBase, Action<IAttackableUnit, bool>, bool>>();
-        public void AddListener(object owner, IObjAiBase unit, Action<IAttackableUnit, bool> callback, bool singleInstance)
+        private readonly List<Tuple<object, IObjAiBase, Action<IDamageData>, bool>> _listeners = new List<Tuple<object, IObjAiBase, Action<IDamageData>, bool>>();
+        public void AddListener(object owner, IObjAiBase unit, Action<IDamageData> callback, bool singleInstance)
         {
-            var listenerTuple = new Tuple<object, IObjAiBase, Action<IAttackableUnit, bool>, bool>(owner, unit, callback, singleInstance);
+            var listenerTuple = new Tuple<object, IObjAiBase, Action<IDamageData>, bool>(owner, unit, callback, singleInstance);
             _listeners.Add(listenerTuple);
         }
         public void RemoveListener(object owner, IObjAiBase unit)
@@ -222,7 +226,7 @@ namespace LeagueSandbox.GameServer.API
         {
             _listeners.RemoveAll((listener) => listener.Item1 == owner);
         }
-        public void Publish(IObjAiBase unit, IAttackableUnit target, bool isCrit)
+        public void Publish(IObjAiBase unit, IDamageData data)
         {
             var count = _listeners.Count;
 
@@ -236,7 +240,7 @@ namespace LeagueSandbox.GameServer.API
             {
                 if (_listeners[i].Item2 == unit)
                 {
-                    _listeners[i].Item3(target, isCrit);
+                    _listeners[i].Item3(data);
                     if (_listeners[i].Item4 == true)
                     {
                         _listeners.RemoveAt(i);
@@ -902,6 +906,95 @@ namespace LeagueSandbox.GameServer.API
             }
         }
     }
+
+    public class EventOnPreDealDamage
+    {
+        private readonly List<Tuple<object, IAttackableUnit, Action<IDamageData>, bool>> _listeners = new List<Tuple<object, IAttackableUnit, Action<IDamageData>, bool>>();
+        public void AddListener(object owner, IAttackableUnit unit, Action<IDamageData> callback, bool singleInstance)
+        {
+            var listenerTuple = new Tuple<object, IAttackableUnit, Action<IDamageData>, bool>(owner, unit, callback, singleInstance);
+            _listeners.Add(listenerTuple);
+        }
+        public void RemoveListener(object owner, IAttackableUnit unit)
+        {
+            _listeners.RemoveAll(listener => listener.Item1 == owner && listener.Item2 == unit);
+        }
+        public void RemoveListener(object owner)
+        {
+            _listeners.RemoveAll(listener => listener.Item1 == owner);
+        }
+        public void Publish(IDamageData damageData)
+        {
+            var count = _listeners.Count;
+
+            if (count == 0)
+            {
+                return;
+            }
+
+            for (int i = count - 1; i >= 0; i--)
+            {
+                if (_listeners[i].Item2 == damageData.Attacker)
+                {
+                    _listeners[i].Item3(damageData);
+                    if (_listeners[i].Item4 == true)
+                    {
+                        _listeners.RemoveAt(i);
+                    }
+                }
+            }
+        }
+    }
+
+    public class EventOnDealDamage
+    {
+        private readonly List<Tuple<object, IAttackableUnit, Action<IDamageData>, bool>> _listeners = new List<Tuple<object, IAttackableUnit, Action<IDamageData>, bool>>();
+        /// <summary>
+        /// Adds a listener for this event, wherein, if the unit that took damage was the given unit, it will call the <paramref name="callback"/> function.
+        /// </summary>
+        /// <param name="owner">Object which will own this listener. Used in removal. Often times "this" will suffice.</param>
+        /// <param name="unit">Unit that should be checked when this event fires.</param>
+        /// <param name="callback">Function to call when this event fires.</param>
+        /// <param name="singleInstance">Whether or not to remove the event listener after calling the <paramref name="callback"/> function.</param>
+        public void AddListener(object owner, IAttackableUnit unit, Action<IDamageData> callback, bool singleInstance)
+        {
+            var listenerTuple = new Tuple<object, IAttackableUnit, Action<IDamageData>, bool>(owner, unit, callback, singleInstance);
+            _listeners.Add(listenerTuple);
+        }
+
+        public void RemoveListener(object owner, IAttackableUnit unit)
+        {
+            _listeners.RemoveAll(listener => listener.Item1 == owner && listener.Item2 == unit);
+        }
+
+        public void RemoveListener(object owner)
+        {
+            _listeners.RemoveAll(listener => listener.Item1 == owner);
+        }
+
+        public void Publish(IDamageData damageData)
+        {
+            var count = _listeners.Count;
+
+            if (count == 0)
+            {
+                return;
+            }
+
+            for (int i = count - 1; i >= 0; i--)
+            {
+                if (_listeners[i].Item2 == damageData.Attacker)
+                {
+                    _listeners[i].Item3(damageData);
+                    if (_listeners[i].Item4 == true)
+                    {
+                        _listeners.RemoveAt(i);
+                    }
+                }
+            }
+        }
+    }
+
     public class EventOnPreTakeDamage
     {
         private readonly List<Tuple<object, IAttackableUnit, Action<IDamageData>, bool>> _listeners = new List<Tuple<object, IAttackableUnit, Action<IDamageData>, bool>>();

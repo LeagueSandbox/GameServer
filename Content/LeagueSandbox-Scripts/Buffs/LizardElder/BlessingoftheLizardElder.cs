@@ -20,39 +20,95 @@ namespace Buffs
         public IStatsModifier StatsModifier { get; private set; } = new StatsModifier();
 
         IBuff thisBuff;
-        IObjAiBase Obj;
+        IObjAiBase owner;
         IParticle particle;
         public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
             thisBuff  = buff;
-            if(unit is IObjAiBase obj)
+
+            if (unit is IChampion champ)
             {
-                Obj = obj;
-                ApiEventManager.OnDeath.AddListener(this, obj, OnDeath, false);
-                if(!(unit is IMonster))
-                {
-                    ApiEventManager.OnHitUnit.AddListener(this, obj, OnHitUnit, false);
-                }
+                particle = AddParticleTarget(unit, unit, "NeutralMonster_buf_red_offense", unit, buff.Duration);
+            }
+            else
+            {
+                particle = AddParticleTarget(unit, unit, "NeutralMonster_buf_red_offense_big", unit, buff.Duration);
             }
 
-            particle = AddParticleTarget(unit, unit, "NeutralMonster_buf_red_offense_big", unit, buff.Duration);
+            ApiEventManager.OnDeath.AddListener(this, unit, OnDeath, true);
+            ApiEventManager.OnPreDealDamage.AddListener(this, unit, OnPreDealDamage, false);
         }
 
         public void OnDeath(IDeathData deathData)
         {
-            if (deathData.Killer is IChampion)
+            var unit = deathData.Unit as IObjAiBase;
+            var killer = deathData.Killer as IChampion;
+
+            if (unit != null && killer != null && !killer.IsDead)
             {
                 thisBuff.DeactivateBuff();
-                AddBuff("BlessingoftheLizardElder", 120f, 1, null, deathData.Killer, deathData.Unit as IObjAiBase);
-            } 
-        }
-        public void OnHitUnit(IAttackableUnit target, bool IsCrit)
-        {
-            if(!(target is IBaseTurret || target is IObjAnimatedBuilding || target is IObjBuilding))
+
+                // Talent ID 4332 (Runic Affinity)
+                var duration = 150f;
+                if (HasBuff(deathData.Killer, "MonsterBuffs"))
+                {
+                    duration *= 1.2f;
+                }
+
+                AddBuff("BlessingoftheLizardElder", duration, 1, null, killer, unit);
+            }
+            else if (killer == null)
             {
-                AddBuff("Burning", 3.0f, 1, null, target, Obj);
+                var pet = deathData.Killer as IMinion;
+                if (pet != null && pet.IsPet)
+                {
+                    var petOwner = pet.Owner;
+
+                    if (petOwner != null && petOwner is IChampion petChamp && !petChamp.IsDead)
+                    {
+                        var duration = 150f;
+                        if (HasBuff(deathData.Killer, "MonsterBuffs"))
+                        {
+                            duration *= 1.2f;
+                        }
+
+                        AddBuff("BlessingoftheLizardElder", duration, 1, null, killer, unit);
+                    }
+                }
             }
         }
+
+        public void OnPreDealDamage(IDamageData data)
+        {
+            if (data.Attacker is IObjAiBase ai && data.Target is IObjAiBase && !(data.Target is IBaseTurret || data.Target is IObjBuilding))
+            {
+                if (data.DamageSource == DamageSource.DAMAGE_SOURCE_ATTACK)
+                {
+                    AddBuff("Burning", 3.0f, 1, null, data.Target, ai);
+                    // TODO: Find out how we should handle dynamic buff stats (League transfers data from the parent buff to the basic slow buff).
+                    var slowBuffScript = AddBuff("Slow", 3.0f, 1, null, data.Target, ai).BuffScript as Slow;
+                    
+                    float slow = 0.08f;
+                    if (!ai.CharData.IsMelee || HasBuff(ai, "JudicatorRighteousFury"))
+                    {
+                        slow = 0.05f;
+                    }
+
+                    if (ai.Stats.Level > 5 && ai.Stats.Level < 11)
+                    {
+                        slow *= 2;
+                    }
+                    else if (ai.Stats.Level > 10)
+                    {
+                        slow *= 3;
+                    }
+
+                    // TODO: Find a better way to transfer data between scripts.
+                    slowBuffScript.SetSlowMod(slow);
+                }
+            }
+        }
+
         public void OnDeactivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
             ApiEventManager.OnDeath.RemoveListener(this);

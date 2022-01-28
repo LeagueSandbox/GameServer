@@ -417,6 +417,12 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                 DamageType = type,
             };
 
+            // TODO: Verify if we should place this in ObjAiBase.AutoAttackHit
+            if (damageData.Attacker is IObjAiBase ai && damageData.IsAutoAttack)
+            {
+                ApiEventManager.OnHitUnit.Publish(ai, damageData);
+            }
+
             ApiEventManager.OnPreTakeDamage.Publish(damageData);
 
             Stats.CurrentHealth = Math.Max(0.0f, Stats.CurrentHealth - postMitigationDamage);
@@ -493,6 +499,124 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             }
 
             TakeDamage(attacker, damage, type, source, text);
+        }
+
+        public void TakeDamage(IDamageData damageData, DamageResultType damageText)
+        {
+            float regain = 0;
+            var attacker = damageData.Attacker;
+            var attackerStats = damageData.Attacker.Stats;
+            var type = damageData.DamageType;
+            var source = damageData.DamageSource;
+            var postMitigationDamage = damageData.PostMitigationdDamage;
+
+            switch (source)
+            {
+                case DamageSource.DAMAGE_SOURCE_RAW:
+                    break;
+                case DamageSource.DAMAGE_SOURCE_INTERNALRAW:
+                    break;
+                case DamageSource.DAMAGE_SOURCE_PERIODIC:
+                    break;
+                case DamageSource.DAMAGE_SOURCE_PROC:
+                    break;
+                case DamageSource.DAMAGE_SOURCE_REACTIVE:
+                    break;
+                case DamageSource.DAMAGE_SOURCE_ONDEATH:
+                    break;
+                case DamageSource.DAMAGE_SOURCE_SPELL:
+                    regain = attackerStats.SpellVamp.Total;
+                    break;
+                case DamageSource.DAMAGE_SOURCE_ATTACK:
+                    regain = attackerStats.LifeSteal.Total;
+                    break;
+                case DamageSource.DAMAGE_SOURCE_DEFAULT:
+                    break;
+                case DamageSource.DAMAGE_SOURCE_SPELLAOE:
+                    break;
+                case DamageSource.DAMAGE_SOURCE_SPELLPERSIST:
+                    break;
+                case DamageSource.DAMAGE_SOURCE_PET:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(source), source, null);
+            }
+
+            // TODO: Verify if we should place this in ObjAiBase.AutoAttackHit
+            if (damageData.Attacker is IObjAiBase ai && damageData.IsAutoAttack)
+            {
+                ApiEventManager.OnHitUnit.Publish(ai, damageData);
+            }
+
+            ApiEventManager.OnPreTakeDamage.Publish(damageData);
+
+            Stats.CurrentHealth = Math.Max(0.0f, Stats.CurrentHealth - postMitigationDamage);
+
+            ApiEventManager.OnTakeDamage.Publish(damageData);
+
+            if (!IsDead && Stats.CurrentHealth <= 0)
+            {
+                IsDead = true;
+                _death = new DeathData
+                {
+                    BecomeZombie = false, // TODO: Unhardcode
+                    DieType = 0, // TODO: Unhardcode
+                    Unit = this,
+                    Killer = attacker,
+                    DamageType = type,
+                    DamageSource = source,
+                    DeathDuration = 0 // TODO: Unhardcode
+                };
+            }
+
+            int attackerId = 0, targetId = 0;
+
+            // todo: check if damage dealt by disconnected players cause anything bad 
+            if (attacker is IChampion attackerChamp)
+            {
+                attackerId = (int)_game.PlayerManager.GetClientInfoByChampion(attackerChamp).PlayerId;
+            }
+
+            if (this is IChampion targetChamp)
+            {
+                targetId = (int)_game.PlayerManager.GetClientInfoByChampion(targetChamp).PlayerId;
+            }
+
+            // Show damage text for owner of pet
+            if (attacker is IMinion attackerMinion && attackerMinion.IsPet && attackerMinion.Owner is IChampion)
+            {
+                attackerId = (int)_game.PlayerManager.GetClientInfoByChampion((IChampion)attackerMinion.Owner).PlayerId;
+            }
+
+            if (attacker.Team != Team)
+            {
+                _game.PacketNotifier.NotifyUnitApplyDamage(attacker, this, postMitigationDamage, type, damageText,
+                    _game.Config.IsDamageTextGlobal, attackerId, targetId);
+            }
+
+            // TODO: send this in one place only
+            _game.PacketNotifier.NotifyUpdatedStats(this, false);
+
+            // Get health from lifesteal/spellvamp
+            if (regain > 0)
+            {
+                attackerStats.CurrentHealth = Math.Min(attackerStats.HealthPoints.Total,
+                    attackerStats.CurrentHealth + regain * postMitigationDamage);
+                // TODO: send this in one place only (preferably a central EventHandler class)
+                _game.PacketNotifier.NotifyUpdatedStats(attacker, false);
+            }
+        }
+
+        public void TakeDamage(IDamageData damageData, bool isCrit)
+        {
+            var text = DamageResultType.RESULT_NORMAL;
+
+            if (isCrit)
+            {
+                text = DamageResultType.RESULT_CRITICAL;
+            }
+
+            TakeDamage(damageData, text);
         }
 
         /// <summary>

@@ -115,6 +115,8 @@ namespace GameServerCore.Domain.GameObjects
         /// <param name="source">What the damage came from: attack, spell, summoner spell, or passive.</param>
         /// <param name="isCrit">Whether or not the damage text should be shown as a crit.</param>
         void TakeDamage(IAttackableUnit attacker, float damage, DamageType type, DamageSource source, bool isCrit);
+        void TakeDamage(IDamageData damageData, DamageResultType damageText);
+        void TakeDamage(IDamageData damageData, bool isCrit);
         /// <summary>
         /// Whether or not this unit is currently calling for help. Unimplemented.
         /// </summary>
