@@ -245,11 +245,6 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
 
             CastInfo.AttackSpeedModifier = stats.AttackSpeedMultiplier.Total;
 
-            if (_game.Config.GameFeatures.HasFlag(FeatureFlags.EnableManaCosts))
-            {
-                stats.CurrentMana -= SpellData.ManaCost[CastInfo.SpellLevel] * (1 - stats.SpellCostReduction);
-            }
-
             _futureProjNetId = _networkIdManager.GetNewNetId();
 
             CastInfo.MissileNetID = _futureProjNetId;
@@ -367,6 +362,11 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
             CastInfo.Owner.UpdateMoveOrder(OrderType.TempCastSpell, true);
 
             Script.OnSpellPreCast(CastInfo.Owner, this, unit, start, end);
+
+            if (_game.Config.GameFeatures.HasFlag(FeatureFlags.EnableManaCosts))
+            {
+                stats.CurrentMana -= SpellData.ManaCost[CastInfo.SpellLevel] * (1 - stats.SpellCostReduction);
+            }
 
             if (!CastInfo.IsAutoAttack && !SpellData.IsToggleSpell
                         || (!SpellData.NoWinddownIfCancelled
