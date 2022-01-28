@@ -881,7 +881,7 @@ namespace LeagueSandbox.GameServer.API
         /// </summary>
         /// <param name="unit"></param>
         /// <returns></returns>
-        public static bool UnitIsProtected(IAttackableUnit unit)
+        public static bool UnitIsProtectionActive(IAttackableUnit unit)
         {
             return _game.ProtectionManager.IsProtectionActive(unit);
         }

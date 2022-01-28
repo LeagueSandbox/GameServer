@@ -58,7 +58,7 @@ namespace AIScripts
                     || Vector2.DistanceSquared(LaneMinion.Position, u.Position) > DETECT_RANGE * DETECT_RANGE
                     || !TeamHasVision(LaneMinion.Team, u)
                     || !u.Status.HasFlag(StatusFlags.Targetable)
-                    || UnitIsProtected(u))
+                    || UnitIsProtectionActive(u))
                 {
                     continue;
                 }
