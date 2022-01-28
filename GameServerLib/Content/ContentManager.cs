@@ -128,7 +128,7 @@ namespace LeagueSandbox.GameServer.Content
             throw new ContentNotFoundException($"No map data found for map with id: {mapId}");
         }
 
-        public MapSpawns GetMapSpawns(int mapId)
+        public Dictionary<string, JArray> GetMapSpawns(int mapId)
         {
             foreach (var dataPackage in _loadedPackages)
             {

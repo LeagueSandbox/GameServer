@@ -58,7 +58,7 @@ namespace LeagueSandbox.GameServer.Players
             );
             var c = new Champion(_game, p.Value.Champion, (uint)player.PlayerId, _userIdsPerTeam[teamId]++, p.Value.Runes, player, 0, teamId);
 
-            var pos = c.GetSpawnPosition();
+            var pos = c.GetSpawnPosition((int)_userIdsPerTeam[teamId]);
             c.SetPosition(pos, false);
             c.StopMovement();
             c.UpdateMoveOrder(OrderType.Stop);

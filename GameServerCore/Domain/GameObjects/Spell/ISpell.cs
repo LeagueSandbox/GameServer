@@ -138,7 +138,7 @@ namespace GameServerCore.Domain.GameObjects.Spell
         void LevelUp();
         string GetStringForSlot();
         float GetCooldown();
-        void ResetSpellDelay();
+        void ResetSpellCast();
         /// <summary>
         /// Overrides the normal cast range for this spell. Set to 0 to revert.
         /// </summary>

@@ -1,6 +1,7 @@
 ﻿using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Domain.GameObjects.Spell;
+using GameServerCore.Enums;
 using System.Numerics;
 
 namespace GameServerCore.Scripting.CSharp
@@ -21,7 +22,7 @@ namespace GameServerCore.Scripting.CSharp
 
         void OnSpellChannel(ISpell spell);
 
-        void OnSpellChannelCancel(ISpell spell);
+        void OnSpellChannelCancel(ISpell spell, ChannelingStopSource reason);
 
         void OnSpellPostChannel(ISpell spell);
 

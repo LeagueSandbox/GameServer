@@ -208,6 +208,8 @@ namespace LeagueSandbox.GameServer.GameObjects
         /// </summary>
         public virtual void OnCollision(IGameObject collider, bool isTerrain = false)
         {
+            // TODO: Verify if we should trigger events here.
+
             if (isTerrain)
             {
                 // Escape functionality should be moved to GameObject.OnCollision.
