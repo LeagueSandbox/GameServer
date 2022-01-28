@@ -26,6 +26,10 @@ namespace GameServerCore.Domain.GameObjects
         /// TODO: Move to AttackableUnit as it relates to stats..
         ICharData CharData { get; }
         /// <summary>
+        /// An unit's A.I Script
+        /// </summary>
+        IAIScript AIScript { get; }
+        /// <summary>
         /// The ID of the skin this unit should use for its model.
         /// </summary>
         int SkinID { get; }
@@ -122,6 +126,11 @@ namespace GameServerCore.Domain.GameObjects
         /// <returns>Random auto attack spell.</returns>
         ISpell GetNewAutoAttack();
         /// <summary>
+        /// Whether or not this AI is able to auto attack.
+        /// </summary>
+        /// <returns></returns>
+        bool CanAttack();
+        /// <summary>
         /// Whether or not this AI is able to cast spells.
         /// </summary>
         bool CanCast();
@@ -171,6 +180,16 @@ namespace GameServerCore.Domain.GameObjects
         /// <param name="location">Location to cast the spell on. May set to Vector2.Zero if unit parameter is used.</param>
         /// <param name="unit">Unit to cast the spell on.</param>
         void SetSpellToCast(ISpell s, Vector2 location, IAttackableUnit unit = null);
+        /// <summary>
+        /// Sets the spell that this unit is currently casting.
+        /// </summary>
+        /// <param name="s">Spell that is being cast.</param>
+        void SetCastSpell(ISpell s);
+        /// <summary>
+        /// Gets the spell this unit is currently casting.
+        /// </summary>
+        /// <returns>Spell that is being cast.</returns>
+        ISpell GetCastSpell();
         /// <summary>
         /// Sets this AI's current target unit. This relates to both auto attacks as well as general spell targeting.
         /// </summary>

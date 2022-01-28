@@ -16,6 +16,7 @@ namespace GameServerCore.Domain
         long NextSpawnTime { get; set; }
         string LaneMinionAI { get; }
         string LaneTurretAI { get; }
+        Dictionary<TeamId, Dictionary<int, Dictionary<int, Vector2>>> PlayerSpawnPoints { get; }
         Dictionary<TurretType, int[]> TurretItems { get; }
         Dictionary<TeamId, string> NexusModels { get; }
         Dictionary<TeamId, string> InhibitorModels { get; }
@@ -29,5 +30,6 @@ namespace GameServerCore.Domain
         void SetMinionStats(ILaneMinion m);
         float GetGoldFor(IAttackableUnit u);
         float GetExperienceFor(IAttackableUnit u);
+        void SpawnAllCamps();
     }
 }

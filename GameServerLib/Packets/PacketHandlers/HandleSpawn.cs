@@ -74,7 +74,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                 }
                 else if (kv.Value is ILaneTurret turret)
                 {
-                    new Region(_game, turret.Team, turret.Position, RegionType.Default, turret, turret, true, 800f, true, true, turret.CollisionRadius, lifetime: float.MaxValue);
+                    new Region(_game, turret.Team, turret.Position, RegionType.Default, turret, turret, true, 800f, true, true, turret.CollisionRadius, lifetime: 25000.0f);
                     _game.PacketNotifier.NotifyS2C_CreateTurret(turret, userId);
                 }
                 else if (kv.Value is INexus nexus)

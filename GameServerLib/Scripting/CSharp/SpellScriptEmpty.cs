@@ -1,6 +1,7 @@
 ﻿using GameServerCore.Domain.GameObjects;
 using GameServerCore.Domain.GameObjects.Spell;
 using GameServerCore.Domain.GameObjects.Spell.Missile;
+using GameServerCore.Enums;
 using GameServerCore.Scripting.CSharp;
 using System.Numerics;
 
@@ -34,7 +35,7 @@ namespace LeagueSandbox.GameServer.Scripting.CSharp
         {
         }
 
-        public void OnSpellChannelCancel(ISpell spell)
+        public void OnSpellChannelCancel(ISpell spell, ChannelingStopSource reason)
         {
         }
 

@@ -42,5 +42,9 @@ namespace GameServerCore.Scripting.CSharp
         /// Whether or not the fountain should heal the players (Default = true)
         /// </summary>
         bool EnableFountainHealing { get; set; }
+        /// <summary>
+        /// Wether or not the map's position is to be overriden
+        /// </summary>
+        bool OverrideSpawnPoints { get; set; }
     }
 }
