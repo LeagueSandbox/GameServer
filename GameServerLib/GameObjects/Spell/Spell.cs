@@ -245,11 +245,6 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
 
             CastInfo.AttackSpeedModifier = stats.AttackSpeedMultiplier.Total;
 
-            if (_game.Config.GameFeatures.HasFlag(FeatureFlags.EnableManaCosts))
-            {
-                stats.CurrentMana -= SpellData.ManaCost[CastInfo.SpellLevel] * (1 - stats.SpellCostReduction);
-            }
-
             _futureProjNetId = _networkIdManager.GetNewNetId();
 
             CastInfo.MissileNetID = _futureProjNetId;
@@ -367,6 +362,28 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
             CastInfo.Owner.UpdateMoveOrder(OrderType.TempCastSpell, true);
 
             Script.OnSpellPreCast(CastInfo.Owner, this, unit, start, end);
+
+            if (_game.Config.GameFeatures.HasFlag(FeatureFlags.EnableManaCosts))
+            {
+                // if the spell is targeted
+                if (targetingType == TargetingType.Target)
+                {
+                    var distance = Vector2.DistanceSquared(CastInfo.Owner.Position, unit.Position);
+                    var castRange = GetCurrentCastRange();
+                    // and the targeted unit is in range
+                    if (distance <= castRange * castRange)
+                    {
+                        // reduce the mana
+                        stats.CurrentMana -= SpellData.ManaCost[CastInfo.SpellLevel] * (1 - stats.SpellCostReduction);
+                    }
+                }
+                else // if the spell is not targeted
+                {
+                    // reduce the mana normally, i am assuming that the "resource consumption bug" is only on targeted abilities
+                    stats.CurrentMana -= SpellData.ManaCost[CastInfo.SpellLevel] * (1 - stats.SpellCostReduction);
+                }
+
+            }
 
             if (!CastInfo.IsAutoAttack && !SpellData.IsToggleSpell
                         || (!SpellData.NoWinddownIfCancelled
