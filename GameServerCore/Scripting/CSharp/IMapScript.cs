@@ -30,5 +30,6 @@ namespace GameServerCore.Domain
         void SetMinionStats(ILaneMinion m);
         float GetGoldFor(IAttackableUnit u);
         float GetExperienceFor(IAttackableUnit u);
+        void SpawnAllCamps();
     }
 }

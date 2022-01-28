@@ -14,7 +14,7 @@ namespace MapScripts.Map1
 {
     public class CLASSIC : IMapScript
     {
-        public IMapScriptMetadata MapScriptMetadata { get; set; } = new MapScriptMetadata 
+        public IMapScriptMetadata MapScriptMetadata { get; set; } = new MapScriptMetadata
         {
             MinionPathingOverride = true,
             EnableBuildingProtection = true
@@ -254,7 +254,7 @@ namespace MapScripts.Map1
             map.ChangeTowerOnMapList("Turret_T1_C_07_A", TeamId.TEAM_BLUE, LaneID.MIDDLE, LaneID.BOTTOM);
 
             // Announcer events
-            
+
             // Welcome to "Map"
             map.AddAnnouncement(30 * 1000, EventID.OnStartGameMessage1, true);
             // 30 seconds until minions spawn
@@ -268,12 +268,15 @@ namespace MapScripts.Map1
             _map.AddLevelProp("LevelProp_ShopMale", "ShopMale", new Vector2(13374.17f, 14245.673f), 194.9741f, new Vector3(0.0f, 224f, 0.0f), new Vector3(0.0f, 33.3333f, -44.4445f), Vector3.One);
             _map.AddLevelProp("LevelProp_ShopMale1", "ShopMale", new Vector2(-99.5613f, 855.6632f), 191.4039f, new Vector3(0.0f, 158.0f, 0.0f), Vector3.Zero, Vector3.One);
         }
+
+        List<IMonsterCamp> MonsterCamps = new List<IMonsterCamp>();
         public virtual void OnMatchStart()
         {
-            foreach(var nexus in _map.NexusList)
+            foreach (var nexus in _map.NexusList)
             {
                 ApiEventManager.OnDeath.AddListener(this, nexus, OnNexusDeath, true);
             }
+            SetupJungleCamps();
         }
 
         //This function gets executed every server tick
@@ -283,12 +286,55 @@ namespace MapScripts.Map1
             {
                 MapScriptMetadata.IsKillGoldRewardReductionActive = false;
             }
+
+            foreach (var camp in MonsterCamps)
+            {
+                if (!camp.IsAlive)
+                {
+                    camp.RespawnTimer -= diff;
+                    if (camp.RespawnTimer <= 0)
+                    {
+                        _map.SpawnCamp(camp);
+                        camp.RespawnTimer = GetRespawnTimer(camp);
+                    }
+                }
+            }
+        }
+
+        public float GetRespawnTimer(IMonsterCamp monsterCamp)
+        {
+            switch (monsterCamp.CampIndex)
+            {
+                case 1:
+                case 4:
+                case 7:
+                case 10:
+                    return 300.0f * 1000;
+                case 12:
+                    return 420.0f * 1000;
+                case 6:
+                    return 360.0f * 1000f;
+                default:
+                    return 50.0f * 1000;
+            }
         }
 
         public void OnNexusDeath(IDeathData deathaData)
         {
             var nexus = deathaData.Unit;
             _map.EndGame(nexus.Team, new Vector3(nexus.Position.X, nexus.GetHeight(), nexus.Position.Y), deathData: deathaData);
+        }
+
+        public void SpawnAllCamps()
+        {
+            foreach (var camp in MonsterCamps)
+            {
+                if (!camp.IsAlive)
+                {
+                    _map.SpawnCamp(camp);
+                    camp.RespawnTimer = GetRespawnTimer(camp);
+                }
+            }
         }
 
         public float GetGoldFor(IAttackableUnit u)
@@ -423,6 +469,99 @@ namespace MapScripts.Map1
                     m.IsMelee = true;
                     break;
             }
+        }
+        public void SetupJungleCamps()
+        {
+            //Blue Side Blue Buff
+            var blue_blueBuff = _map.CreateJungleCamp(new Vector3(3632.7002f, 60.0f, 7600.373f), 1, TeamId.TEAM_BLUE, "Camp", 115.0f * 1000);
+            _map.CreateJungleMonster("AncientGolem1.1.1", "AncientGolem", new Vector2(3632.7002f, 7600.373f), new Vector3(3013.98f, 55.0703f, 7969.72f), blue_blueBuff, aiScript: "BasicJungleMonsterAi");
+            _map.CreateJungleMonster("YoungLizard1.1.2", "YoungLizard", new Vector2(3552.7002f, 7799.373f), new Vector3(3013.98f, 55.0703f, 7969.72f), blue_blueBuff, aiScript: "BasicJungleMonsterAi");
+            _map.CreateJungleMonster("YoungLizard1.1.3", "YoungLizard", new Vector2(3452.7002f, 7590.373f), new Vector3(3013.98f, 55.0703f, 7969.72f), blue_blueBuff, aiScript: "BasicJungleMonsterAi");
+            MonsterCamps.Add(blue_blueBuff);
+
+            //Blue side Wolfs
+            var blueWolves = _map.CreateJungleCamp(new Vector3(3373.6782f, 60.0f, 6223.3457f), 2, TeamId.TEAM_BLUE, "LesserCamp", 125.0f * 1000);
+            _map.CreateJungleMonster("GiantWolf2.1.1", "GiantWolf", new Vector2(3373.6782f, 6223.3457f), new Vector3(3294.0f, 46.0f, 6165.0f), blueWolves, aiScript: "BasicJungleMonsterAi");
+            _map.CreateJungleMonster("Wolf2.1.2", "Wolf", new Vector2(3523.6782f, 6223.3457f), new Vector3(3294.0f, 46.0f, 6165.0f), blueWolves, aiScript: "BasicJungleMonsterAi");
+            _map.CreateJungleMonster("Wolf2.1.3", "Wolf", new Vector2(3323.6782f, 6373.3457f), new Vector3(3294.0f, 46.0f, 6165.0f), blueWolves, aiScript: "BasicJungleMonsterAi");
+            MonsterCamps.Add(blueWolves);
+
+
+            //Blue Side Wraiths
+            var blueWraiths = _map.CreateJungleCamp(new Vector3(6300.05f, 60.0f, 5300.06f), 3, TeamId.TEAM_BLUE, "LesserCamp", 125.0f * 1000);
+            _map.CreateJungleMonster("Wraith3.1.1", "Wraith", new Vector2(6300.05f, 5300.06f), new Vector3(6552.0f, 48.0f, 5240.0f), blueWraiths, aiScript: "BasicJungleMonsterAi");
+            _map.CreateJungleMonster("LesserWraith3.1.2", "LesserWraith", new Vector2(6523.0f, 5426.95f), new Vector3(6552.0f, 48.0f, 5240.0f), blueWraiths, aiScript: "BasicJungleMonsterAi");
+            _map.CreateJungleMonster("LesserWraith3.1.3", "LesserWraith", new Vector2(6653.83f, 5278.29f), new Vector3(6552.0f, 48.0f, 5240.0f), blueWraiths, aiScript: "BasicJungleMonsterAi");
+            _map.CreateJungleMonster("LesserWraith3.1.4", "LesserWraith", new Vector2(6582.915f, 5107.8857f), new Vector3(6552.0f, 48.0f, 5240.0f), blueWraiths, aiScript: "BasicJungleMonsterAi");
+            MonsterCamps.Add(blueWraiths);
+
+            //Blue Side RedBuff
+            var blue_RedBuff = _map.CreateJungleCamp(new Vector3(7455.615f, 60.0f, 3890.2026f), 4, TeamId.TEAM_BLUE, "Camp", 115.0f * 1000);
+            _map.CreateJungleMonster("LizardElder4.1.1", "LizardElder", new Vector2(7455.615f, 3890.2026f), new Vector3(7348.0f, 48.0f, 3829.0f), blue_RedBuff, aiScript: "BasicJungleMonsterAi");
+            _map.CreateJungleMonster("YoungLizard4.1.2", "YoungLizard", new Vector2(7460.615f, 3710.2026f), new Vector3(7348.0f, 48.0f, 3829.0f), blue_RedBuff, aiScript: "BasicJungleMonsterAi");
+            _map.CreateJungleMonster("YoungLizard4.1.3", "YoungLizard", new Vector2(7237.615f, 3890.2026f), new Vector3(7348.0f, 48.0f, 3829.0f), blue_RedBuff, aiScript: "BasicJungleMonsterAi");
+            MonsterCamps.Add(blue_RedBuff);
+
+            //Blue Side Golems
+            var blueGolems = _map.CreateJungleCamp(new Vector3(7916.8423f, 60.0f, 2533.9634f), 5, TeamId.TEAM_BLUE, "LesserCamp", 125.0f * 1000);
+            _map.CreateJungleMonster("SmallGolem5.1.1", "SmallGolem", new Vector2(7916.8423f, 2533.9634f), new Vector3(7913.0f, 45.0f, 2421.0f), blueGolems, aiScript: "BasicJungleMonsterAi");
+            _map.CreateJungleMonster("Golem5.1.2", "Golem", new Vector2(8216.842f, 2533.9634f), new Vector3(8163.0f, 45.0f, 2413.0f), blueGolems, aiScript: "BasicJungleMonsterAi");
+            MonsterCamps.Add(blueGolems);
+
+            //Dragon
+            var dragon = _map.CreateJungleCamp(new Vector3(9459.52f, 60.0f, 4193.03f), 6, 0, "Dragon", 150.0f * 1000);
+            _map.CreateJungleMonster("Dragon6.1.1", "Dragon", new Vector2(9459.52f, 4193.03f), new Vector3(9622.0f, -69.0f, 4490.0f), dragon, aiScript: "BasicJungleMonsterAi");
+            MonsterCamps.Add(dragon);
+
+            //Red Side BlueBuff
+            var red_BlueBuff = _map.CreateJungleCamp(new Vector3(10386.605f, 60.0f, 6811.1123f), 7, TeamId.TEAM_PURPLE, "Camp", 115.0f * 1000);
+            _map.CreateJungleMonster("AncientGolem7.1.1", "AncientGolem", new Vector2(10386.605f, 6811.1123f), new Vector3(11022.0f, 54.8568f, 6519.72f), red_BlueBuff, aiScript: "BasicJungleMonsterAi");
+            _map.CreateJungleMonster("YoungLizard7.1.2", "YoungLizard", new Vector2(10586.605f, 6831.1123f), new Vector3(11022.0f, 54.8568f, 6519.72f), red_BlueBuff, aiScript: "BasicJungleMonsterAi");
+            _map.CreateJungleMonster("YoungLizard4.1.3", "YoungLizard", new Vector2(10526.605f, 6601.1123f), new Vector3(11022.0f, 54.8568f, 6519.72f), red_BlueBuff, aiScript: "BasicJungleMonsterAi");
+            MonsterCamps.Add(red_BlueBuff);
+
+            //Red side Wolfs
+            var redWolves = _map.CreateJungleCamp(new Vector3(10651.523f, 60.0f, 8116.4243f), 8, TeamId.TEAM_PURPLE, "LesserCamp", 125.0f * 1000);
+            _map.CreateJungleMonster("GiantWolf8.1.1", "GiantWolf", new Vector2(10651.523f, 8116.4243f), new Vector3(10721.0f, 53.0f, 8282.0f), redWolves, aiScript: "BasicJungleMonsterAi");
+            _map.CreateJungleMonster("Wolf8.1.2", "Wolf", new Vector2(10651.523f, 7916.4243f), new Vector3(10721.0f, 53.0f, 8282.0f), redWolves, aiScript: "BasicJungleMonsterAi");
+            _map.CreateJungleMonster("Wolf8.1.3", "Wolf", new Vector2(10451.523f, 8116.4243f), new Vector3(10721.0f, 53.0f, 8282.0f), redWolves, aiScript: "BasicJungleMonsterAi");
+            MonsterCamps.Add(redWolves);
+
+            //Red Side Wraiths
+            var redWraiths = _map.CreateJungleCamp(new Vector3(7580.368f, 60.0f, 9250.405f), 9, TeamId.TEAM_PURPLE, "LesserCamp", 125.0f * 1000);
+            _map.CreateJungleMonster("Wraith9.1.1", "Wraith", new Vector2(7580.368f, 9250.405f), new Vector3(7495.0f, 46.0f, 9259.0f), redWraiths, aiScript: "BasicJungleMonsterAi");
+            _map.CreateJungleMonster("LesserWraith9.1.2", "LesserWraith", new Vector2(7480.368f, 9091.405f), new Vector3(7495.0f, 46.0f, 9259.0f), redWraiths, aiScript: "BasicJungleMonsterAi");
+            _map.CreateJungleMonster("LesserWraith9.1.3", "LesserWraith", new Vector2(7350.368f, 9230.405f), new Vector3(7495.0f, 46.0f, 9259.0f), redWraiths, aiScript: "BasicJungleMonsterAi");
+            _map.CreateJungleMonster("LesserWraith9.1.4", "LesserWraith", new Vector2(7450.368f, 9350.405f), new Vector3(7495.0f, 46.0f, 9259.0f), redWraiths, aiScript: "BasicJungleMonsterAi");
+            MonsterCamps.Add(redWraiths);
+
+            //Red Side RedBuff
+            var red_RedBuff = _map.CreateJungleCamp(new Vector3(6504.2407f, 60.0f, 10584.5625f), 10, TeamId.TEAM_PURPLE, "Camp", 115.0f * 1000);
+            _map.CreateJungleMonster("LizardElder10.1.1", "LizardElder", new Vector2(6504.2407f, 10584.5625f), new Vector3(6618.0f, 45.0f, 10709.0f), red_RedBuff, aiScript: "BasicJungleMonsterAi");
+            _map.CreateJungleMonster("YoungLizard10.1.2", "YoungLizard", new Vector2(6704.2407f, 10584.5625f), new Vector3(6618.0f, 45.0f, 10709.0f), red_RedBuff, aiScript: "BasicJungleMonsterAi");
+            _map.CreateJungleMonster("YoungLizard10.1.3", "YoungLizard", new Vector2(6504.2407f, 10784.5625f), new Vector3(6618.0f, 45.0f, 10709.0f), red_RedBuff, aiScript: "BasicJungleMonsterAi");
+            MonsterCamps.Add(red_RedBuff);
+
+            //Red Side Golems
+            var redGolems = _map.CreateJungleCamp(new Vector3(5810.464f, 60.0f, 11925.474f), 11, TeamId.TEAM_PURPLE, "LesserCamp", 125.0f * 1000);
+            _map.CreateJungleMonster("SmallGolem11.1.1", "SmallGolem", new Vector2(5810.464f, 11925.474f), new Vector3(5859.0f, 30.0f, 12006.0f), redGolems, aiScript: "BasicJungleMonsterAi");
+            _map.CreateJungleMonster("Golem11.1.2", "Golem", new Vector2(6140.464f, 11935.474f), new Vector3(6111.0f, 30.0f, 12012.0f), redGolems, aiScript: "BasicJungleMonsterAi");
+            MonsterCamps.Add(redGolems);
+
+            //Baron
+            var baron = _map.CreateJungleCamp(new Vector3(4600.495f, 60.0f, 10250.462f), 12, 0, "Baron", 900.0f * 1000);
+            _map.CreateJungleMonster("Worm12.1.1", "Worm", new Vector2(4600.495f, 10250.462f), new Vector3(4329.43f, -71.0f, 9887.0f), baron, aiScript: "BasicJungleMonsterAi");
+            MonsterCamps.Add(baron);
+
+            //Blue Side GreatWraith (Old gromp)
+            var blueGreatGromp = _map.CreateJungleCamp(new Vector3(1684.0f, 60.0f, 8207.0f), 13, TeamId.TEAM_BLUE, "LesserCamp", 125.0f * 1000);
+            _map.CreateJungleMonster("GreatWraith13.1.1", "GreatWraith", new Vector2(1684.0f, 8207.0f), new Vector3(2300.0f, 53.0f, 9720.0f), blueGreatGromp, aiScript: "BasicJungleMonsterAi");
+            MonsterCamps.Add(blueGreatGromp);
+
+            //Red Side GreatWraith (Old gromp)
+            var redGreatGromp = _map.CreateJungleCamp(new Vector3(12337.0f, 60.0f, 6263.0f), 14, TeamId.TEAM_BLUE, "LesserCamp", 125.0f * 1000);
+            _map.CreateJungleMonster("GreatWraith14.1.1", "GreatWraith", new Vector2(12337.0f, 6263.0f), new Vector3(11826.0f, 52.0f, 4788.0f), redGreatGromp, aiScript: "BasicJungleMonsterAi");
+            MonsterCamps.Add(redGreatGromp);
         }
     }
 }

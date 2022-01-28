@@ -26,6 +26,10 @@ namespace GameServerCore.Domain.GameObjects
         /// TODO: Move to AttackableUnit as it relates to stats..
         ICharData CharData { get; }
         /// <summary>
+        /// An unit's A.I Script
+        /// </summary>
+        IAIScript AIScript { get; }
+        /// <summary>
         /// The ID of the skin this unit should use for its model.
         /// </summary>
         int SkinID { get; }
@@ -98,6 +102,11 @@ namespace GameServerCore.Domain.GameObjects
         /// </summary>
         /// <returns>Random auto attack spell.</returns>
         ISpell GetNewAutoAttack();
+        /// <summary>
+        /// Whether or not this AI is able to auto attack.
+        /// </summary>
+        /// <returns></returns>
+        bool CanAttack();
         /// <summary>
         /// Whether or not this AI is able to cast spells.
         /// </summary>

@@ -1,4 +1,5 @@
-﻿using GameServerCore.Domain.GameObjects;
+﻿using GameServerCore.Domain;
+using GameServerCore.Domain.GameObjects;
 using GameServerCore.Domain.GameObjects.Spell;
 using GameServerCore.Enums;
 using GameServerCore.Scripting.CSharp;
@@ -16,11 +17,10 @@ namespace ItemSpells
             // TODO
         };
 
-        private void TargetExecute(IAttackableUnit Unit, bool crit)
+        private void TargetExecute(IDamageData data)
         {
             float Damage = 15 + (this._owner.Stats.AbilityPower.Total * 0.15f);
-            Unit.TakeDamage(this._owner, Damage, DamageType.DAMAGE_TYPE_MAGICAL, DamageSource.DAMAGE_SOURCE_RAW, false);
-
+            data.Target.TakeDamage(this._owner, Damage, DamageType.DAMAGE_TYPE_MAGICAL, DamageSource.DAMAGE_SOURCE_RAW, false);
         }
 
 

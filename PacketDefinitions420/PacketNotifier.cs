@@ -2149,6 +2149,19 @@ namespace PacketDefinitions420
             _packetHandlerManager.SendPacket((int)player.PlayerId, resume.GetBytes(), Channel.CHL_S2C);
         }
 
+        public void NotifyS2C_ActivateMinionCamp(IMonsterCamp monsterCamp)
+        {
+            var packet = new S2C_ActivateMinionCamp
+            {
+                SenderNetID = 0,
+                Position = monsterCamp.Position,
+                CampIndex = monsterCamp.CampIndex,
+                SpawnDuration = monsterCamp.SpawnDuration,
+                TimerType = monsterCamp.TimerType
+            };
+            _packetHandlerManager.BroadcastPacket(packet.GetBytes(), Channel.CHL_S2C);
+        }
+
         /// <summary>
         /// Sends a packet to all players with vision of the given chain missile that it has updated (unit/position).
         /// </summary>
@@ -2254,7 +2267,51 @@ namespace PacketDefinitions420
 
             _packetHandlerManager.SendPacket(userId, heroPacket.GetBytes(), Channel.CHL_S2C);
         }
-
+        public void NotifyS2C_CreateMinionCamp(IMonsterCamp monsterCamp)
+        {
+            var packet = new S2C_CreateMinionCamp
+            {
+                Position = monsterCamp.Position,
+                SenderNetID = 0,
+                CampIndex = monsterCamp.CampIndex,
+                MinimapIcon = monsterCamp.MinimapIcon,
+                RevealAudioVOComponentEvent = monsterCamp.RevealEvent,
+                SideTeamID = (byte)monsterCamp.SideTeamId,
+                Expire = monsterCamp.Expire,
+                TimerType = monsterCamp.TimerType
+            };
+            _packetHandlerManager.BroadcastPacket(packet.GetBytes(), Channel.CHL_S2C);
+        }
+        public void NotifyS2C_CreateNeutral(IMonster monster, float time)
+        {
+            var packet = new S2C_CreateNeutral
+            {
+                SenderNetID = monster.NetId,
+                UniqueName = monster.Name,
+                Name = monster.Name,
+                SkinName = monster.Model,
+                FaceDirectionPosition = monster.Direction,
+                DamageBonus = monster.DamageBonus,
+                HealthBonus = monster.HealthBonus,
+                InitialLevel = monster.InitialLevel,
+                NetID = monster.NetId,
+                GroupPosition = monster.Camp.Position,
+                BuffSideTeamID = (byte)monster.Camp.SideTeamId,
+                Position = new Vector3(monster.Position.X, monster.GetHeight(), monster.Position.Y),
+                SpawnAnimationName = monster.SpawnAnimation,
+                AIscript = "",
+                //Seems to be the time it is supposed to spawn, not the time when it spawned, check this later
+                SpawnTime = time,
+                BehaviorTree = monster.AIScript.AIScriptMetaData.BehaviorTree,
+                RevealEvent = monster.Camp.RevealEvent,
+                GroupNumber = monster.Camp.CampIndex,
+                MinionRoamState = monster.AIScript.AIScriptMetaData.MinionRoamState,
+                SpawnDuration = monster.Camp.SpawnDuration,
+                TeamID = (byte)monster.Team,
+                NetNodeID = (byte)NetNodeID.Spawned
+            };
+            _packetHandlerManager.BroadcastPacket(packet.GetBytes(), Channel.CHL_S2C);
+        }
         /// <summary>
         /// Sends a packet to either all players or the specified player detailing that the specified LaneTurret has spawned.
         /// </summary>
@@ -2400,6 +2457,25 @@ namespace PacketDefinitions420
             }
 
             _packetHandlerManager.SendPacket((int)player.Item2.PlayerId, cam.GetBytes(), Channel.CHL_S2C);
+        }
+        public void NotifyS2C_Neutral_Camp_Empty(IMonsterCamp monsterCamp, IDeathData deathData = null)
+        {
+            var packet = new S2C_Neutral_Camp_Empty
+            {
+                SenderNetID = 0,
+                KillerNetID = 0,
+                //Investigate what this does, from what i see on packets, my guess is a check if the enemy team had vision of the camp dying
+                DoPlayVO = true,
+                CampIndex = monsterCamp.CampIndex,
+                TimerType = monsterCamp.TimerType,
+                //Check what the hell this is for
+                TimerExpire = 0.0f
+            };
+            if (deathData != null)
+            {
+                packet.KillerNetID = deathData.Killer.NetId;
+            }
+            _packetHandlerManager.BroadcastPacket(packet.GetBytes(), Channel.CHL_S2C);
         }
 
         /// <summary>
@@ -2819,6 +2895,21 @@ namespace PacketDefinitions420
             _packetHandlerManager.BroadcastPacketTeam(team, dm.GetBytes(), Channel.CHL_S2C);
         }
 
+        public void NotifyS2C_UnitSetMinimapIcon(IAttackableUnit unit, string iconCategory = "", bool changeIcon = false, string borderCategory = "", bool changeBorder = false)
+        {
+            var packet = new S2C_UnitSetMinimapIcon
+            {
+                SenderNetID = 0,
+                UnitNetID = unit.NetId,
+                IconCategory = iconCategory,
+                ChangeIcon = changeIcon,
+                BorderCategory = borderCategory,
+                ChangeBorder = changeBorder,
+                BorderScriptName = "" //?
+            };
+            _packetHandlerManager.BroadcastPacket(packet.GetBytes(), Channel.CHL_S2C);
+        }
+
         /// <summary>
         /// Sends a packet to all players detailing that the server has ticked within the specified time delta.
         /// Unused.
@@ -2907,7 +2998,7 @@ namespace PacketDefinitions420
         /// <param name="o">GameObject that has spawned.</param>
         /// <param name="userId">UserId to send the packet to.</param>
         /// <param name="doVision">Whether or not to package the packets into a vision packet.</param>
-        public void NotifySpawn(IGameObject o, int userId = 0, bool doVision = true)
+        public void NotifySpawn(IGameObject o, int userId = 0, bool doVision = true, float gameTime = 0)
         {
             var visionPackets = new List<GamePacket>();
 
@@ -2928,7 +3019,7 @@ namespace PacketDefinitions420
                     NotifyEnterVisibilityClient(c, userId, false, false, ignoreVis);
                     return;
                 case IMonster monster:
-                    NotifyEnterVisibilityClient(monster, userId);
+                    NotifyS2C_CreateNeutral(monster, gameTime);
                     break;
                 case IMinion minion:
                     visionPackets.Add(NotifyMinionSpawned(minion, false));
@@ -3578,4 +3669,5 @@ namespace PacketDefinitions420
             _packetHandlerManager.SendPacket(userId, answer.GetBytes(), Channel.CHL_S2C, PacketFlags.None);
         }
     }
+
 }

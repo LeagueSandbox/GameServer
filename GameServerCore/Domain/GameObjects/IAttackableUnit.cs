@@ -88,6 +88,17 @@ namespace GameServerCore.Domain.GameObjects
         /// <param name="targetable">True/False.</param>
         void SetIsTargetableToTeam(TeamId team, bool targetable);
         /// <summary>
+        /// Whether or not this unit can move itself.
+        /// </summary>
+        /// <returns></returns>
+        bool CanMove();
+        /// <summary>
+        /// Whether or not this unit can take damage of the given type.
+        /// </summary>
+        /// <param name="type">Type of damage to check.</param>
+        /// <returns>True/False</returns>
+        bool CanTakeDamage(DamageType type);
+        /// <summary>
         /// Adds a modifier to this unit's stats, ex: Armor, Attack Damage, Movespeed, etc.
         /// </summary>
         /// <param name="statModifier">Modifier to add.</param>
@@ -115,6 +126,8 @@ namespace GameServerCore.Domain.GameObjects
         /// <param name="source">What the damage came from: attack, spell, summoner spell, or passive.</param>
         /// <param name="isCrit">Whether or not the damage text should be shown as a crit.</param>
         void TakeDamage(IAttackableUnit attacker, float damage, DamageType type, DamageSource source, bool isCrit);
+        void TakeDamage(IDamageData damageData, DamageResultType damageText);
+        void TakeDamage(IDamageData damageData, bool isCrit);
         /// <summary>
         /// Whether or not this unit is currently calling for help. Unimplemented.
         /// </summary>
@@ -208,11 +221,6 @@ namespace GameServerCore.Domain.GameObjects
         /// </summary>
         /// <returns>Float units/sec.</returns>
         float GetMoveSpeed();
-        /// <summary>
-        /// Whether or not this unit can move itself.
-        /// </summary>
-        /// <returns></returns>
-        bool CanMove();
         /// <summary>
         /// Teleports this unit to the given position, and optionally repaths from the new position.
         /// </summary>

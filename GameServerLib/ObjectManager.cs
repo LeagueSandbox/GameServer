@@ -89,7 +89,7 @@ namespace LeagueSandbox.GameServer
                     {
                         _game.PacketNotifier.NotifySpawn(turret);
 
-                        new Region(_game, turret.Team, turret.Position, RegionType.Default, turret, turret, true, 800f, true, true, turret.CollisionRadius, lifetime: float.MaxValue);
+                        new Region(_game, turret.Team, turret.Position, RegionType.Default, turret, turret, true, 800f, true, true, turret.CollisionRadius, lifetime: 25000.0f);
 
                         foreach (var item in turret.Inventory)
                         {
@@ -110,7 +110,7 @@ namespace LeagueSandbox.GameServer
                         doVis = false;
                     }
 
-                    _game.PacketNotifier.NotifySpawn(obj, 0, doVis);
+                    _game.PacketNotifier.NotifySpawn(obj, 0, doVis, _game.GameTime);
 
                     _queuedObjects.Remove(obj.NetId);
                 }

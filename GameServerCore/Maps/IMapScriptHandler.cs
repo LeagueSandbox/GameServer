@@ -101,13 +101,21 @@ namespace GameServerCore.Maps
         /// <param name="barracksName"></param>
         /// <param name="waypoints"></param>
         void CreateLaneMinion(List<MinionSpawnType> list, int minionNo, string barracksName, List<Vector2> waypoints);
-        IMinion CreateMinion(
-            string name, string model, Vector2 position, uint netId = 0,
-            TeamId team = TeamId.TEAM_NEUTRAL, int skinId = 0, bool ignoreCollision = false,
-            bool isTargetable = false, string aiScript = "", int damageBonus = 0,
-            int healthBonus = 0, int initialLevel = 1);
-        void AddObject(IGameObject obj);
-        IRegion CreateRegion(TeamId team, Vector2 position, RegionType type = RegionType.Default, IGameObject collisionUnit = null, IGameObject visionTarget = null, bool giveVision = false, float visionRadius = 0, bool revealStealth = false, bool hasCollision = false, float collisionRadius = 0, float grassRadius = 0, float scale = 1, float addedSize = 0, float lifeTime = 0, int clientID = 0);
+        IMinion CreateMinion
+        (
+            string name,
+            string model,
+            Vector2 position,
+            uint netId = 0,
+            TeamId team = TeamId.TEAM_NEUTRAL,
+            int skinId = 0,
+            bool ignoreCollision = false,
+            bool isTargetable = false,
+            string aiScript = "",
+            int damageBonus = 0,
+            int healthBonus = 0,
+            int initialLevel = 1
+        );
         /// <summary>
         /// Adds an annoucement
         /// </summary>
@@ -135,6 +143,16 @@ namespace GameServerCore.Maps
         /// <param name="length"></param>
         void AddSurrender(float time, float restTime, float length);
         void HandleSurrender(int userId, IChampion who, bool vote);
+        IMonsterCamp CreateJungleCamp(Vector3 position, byte groupNumber, TeamId teamSideOfTheMap, string campTypeIcon, float respawnTimer, bool doPlayVO = false, byte revealEvent = 74, float spawnDuration = 0.0f);
+        void CreateJungleMonster
+        (
+            string name, string model, Vector2 position, Vector3 faceDirection,
+            IMonsterCamp monsterCamp, TeamId team = TeamId.TEAM_NEUTRAL, string spawnAnimation = "", uint netId = 0,
+            bool isTargetable = true, bool ignoresCollision = false, string aiScript = "",
+            int damageBonus = 0, int healthBonus = 0, int initialLevel = 1
+        );
+        void SpawnCamp(IMonsterCamp monsterCamp);
+        void SetMinimapIcon(IAttackableUnit unit, string iconCategory = "", bool changeIcon = false, string borderCategory = "", bool changeBorder = false);
         /// <summary>
         /// Returns how long the match has been going on for.
         /// </summary>

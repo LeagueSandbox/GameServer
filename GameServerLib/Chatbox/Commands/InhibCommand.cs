@@ -1,5 +1,6 @@
 ﻿using GameServerCore;
 using LeagueSandbox.GameServer.GameObjects;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
 
 namespace LeagueSandbox.GameServer.Chatbox.Commands
 {
@@ -19,12 +20,13 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
         public override void Execute(int userId, bool hasReceivedArguments, string arguments = "")
         {
             var sender = _playerManager.GetPeerInfo(userId);
-            var min = new Monster(
+            var min = new Minion(
                 Game,
-                sender.Champion.Position,
+                null,
                 sender.Champion.Position,
                 "Worm",
-                "Worm"
+                "Worm",
+                aiScript: "BasicJungleMonsterAi"
                 );
             Game.ObjectManager.AddObject(min);
         }

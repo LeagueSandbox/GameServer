@@ -39,13 +39,40 @@ namespace LeagueSandbox.GameServer.GameObjects
         /// This particle will spawn and stay on the specified GameObject target.
         /// </summary>
         /// <param name="game">Game instance.</param>
+        /// <param name="team">Team this region should be on.</param>
+        /// <param name="pos">Position to spawn this region at.</param>
+        /// <param name="type">Type of region to spawn. Values unknown. Default recommended.</param>
         /// <param name="collisionUnit">Unit which will use the collision radius of this region.</param>
         /// <param name="visionTarget">Bind target for vision.</param>
+        /// <param name="giveVision">Whether or not this region should have vision.</param>
+        /// <param name="visionRadius">Size of the vision area of this region.</param>
+        /// <param name="revealStealth">Whether or not this region should reveal stealthed units when they within the vision radius.</param>
+        /// <param name="hasCollision">Whether or not this region should have collision.</param>
+        /// <param name="collisionRadius">Size of the collision area of this region.</param>
+        /// <param name="grassRadius">Size of the grass area of this region. Currently non-functional.</param>
         /// <param name="scale">Scale of the Region.</param>
-        /// <param name="netId">NetID that should be forced onto the Region. *NOTE*: Exceptions unhandled, expect crashes if NetID is already owned by a GameObject.</param>
+        /// <param name="addedSize"></param>
         /// <param name="lifetime">Number of seconds the Region should exist.</param>
-        public Region(Game game, TeamId team, Vector2 pos, RegionType type = RegionType.Default, IGameObject collisionUnit = null, IGameObject visionTarget = null, bool giveVision = false, float visionRadius = 0, bool revealStealth = false, bool hasCollision = false, float collisionRadius = 0, float grassRadius = 0, float scale = 1.0f, float addedSize = 0, float lifetime = 0, int clientId = 0)
-               : base(game, pos, collisionRadius, visionRadius, team: team)
+        /// <param name="clientId">ClientID of the player that owns this region.</param>
+        public Region
+        (
+            Game game,
+            TeamId team,
+            Vector2 pos,
+            RegionType type = RegionType.Default,
+            IGameObject collisionUnit = null,
+            IGameObject visionTarget = null,
+            bool giveVision = false,
+            float visionRadius = 0,
+            bool revealStealth = false,
+            bool hasCollision = false,
+            float collisionRadius = 0,
+            float grassRadius = 0,
+            float scale = 1.0f,
+            float addedSize = 0,
+            float lifetime = 0,
+            int clientId = 0
+        ): base(game, pos, collisionRadius, visionRadius, team: team)
         {
             Type = (int)type;
             CollisionUnit = collisionUnit;
@@ -65,6 +92,18 @@ namespace LeagueSandbox.GameServer.GameObjects
             if (!GrantVision)
             {
                 VisionRadius = 0;
+            }
+
+            if (Scale > 0)
+            {
+                CollisionRadius *= Scale;
+                VisionRadius *= Scale;
+            }
+
+            if (AdditionalSize > 0)
+            {
+                CollisionRadius += AdditionalSize;
+                VisionRadius += AdditionalSize;
             }
 
             RevealsStealth = revealStealth;
@@ -93,6 +132,11 @@ namespace LeagueSandbox.GameServer.GameObjects
         /// <param name="diff">Number of milliseconds since this tick occurred.</param>
         public override void Update(float diff)
         {
+            if (Lifetime == -1f)
+            {
+                return;
+            }
+
             _currentTime += diff / 1000.0f;
             if (_currentTime >= Lifetime)
             {

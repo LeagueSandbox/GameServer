@@ -376,6 +376,7 @@ namespace LeagueSandbox.GameServer.API
             string model,
             string name,
             Vector2 position,
+            TeamId team = TeamId.TEAM_NEUTRAL,
             int skinId = 0,
             bool ignoreCollision = false,
             bool targetable = true,
@@ -385,12 +386,80 @@ namespace LeagueSandbox.GameServer.API
             bool aiPaused = true
         )
         {
-            var m = new Minion(_game, owner, position, model, name, 0, owner.Team, skinId, ignoreCollision, targetable, visibilityOwner);
+            var m = new Minion(_game, owner, position, model, name, 0, team, skinId, ignoreCollision, targetable, visibilityOwner);
             m.Stats.IsTargetableToTeam = targetingFlags;
             _game.ObjectManager.AddObject(m);
-            m.SetVisibleByTeam(owner.Team, isVisible);
+            if (owner != null)
+            {
+                m.SetVisibleByTeam(owner.Team, isVisible);
+            }
             m.PauseAi(aiPaused);
             return m;
+        }
+
+        /// <summary>
+        /// Creates a stationary perception bubble at the given location.
+        /// </summary>
+        /// <param name="position">Position to spawn the perception bubble at.</param>
+        /// <param name="radius">Size of the perception bubble.</param>
+        /// <param name="duration">Number of seconds the perception bubble should exist.</param>
+        /// <param name="team">Team the perception bubble should be owned by.</param>
+        /// <param name="revealStealthed">Whether or not the perception bubble should reveal stealthed units while they are in range.</param>
+        /// <param name="revealSpecificUnitOnly">Specific unit to reveal. Perception bubble will not reveal any other units when used. *NOTE* Currently does nothing.</param>
+        /// <param name="collisionArea">Area around the perception bubble where units are not allowed to move into.</param>
+        /// <returns>New Region instance.</returns>
+        public static IRegion AddPosPerceptionBubble
+        (
+            Vector2 position,
+            float radius,
+            float duration = -1f,
+            TeamId team = TeamId.TEAM_NEUTRAL,
+            bool revealStealthed = false,
+            IAttackableUnit revealSpecificUnitOnly = null,
+            float collisionArea = 0f
+        )
+        {
+            var useCollision = false;
+            if (collisionArea > 0)
+            {
+                useCollision = true;
+            }
+
+            // TODO: Implement revealSpecificUnitOnly
+            return new Region(_game, team, position, giveVision: true, visionRadius: radius, revealStealth: revealStealthed, hasCollision: useCollision, collisionRadius: collisionArea, lifetime: duration);
+        }
+
+        /// <summary>
+        /// Creates a perception bubble which is attached to a specific unit.
+        /// </summary>
+        /// <param name="target">Unit to attach the perception bubble to.</param>
+        /// <param name="radius">Size of the perception bubble.</param>
+        /// <param name="duration">Number of seconds the perception bubble should exist.</param>
+        /// <param name="team">Team the perception bubble should be owned by.</param>
+        /// <param name="revealStealthed">Whether or not the perception bubble should reveal stealthed units while they are in range.</param>
+        /// <param name="revealSpecificUnitOnly">Specific unit to reveal. Perception bubble will not reveal any other units when used. *NOTE* Currently does nothing.</param>
+        /// <param name="collisionArea">Area around the perception bubble where units are not allowed to move into.</param>
+        /// 
+        /// <returns>New Region instance.</returns>
+        public static IRegion AddUnitPerceptionBubble
+        (
+            IAttackableUnit target,
+            float radius,
+            float duration = -1f,
+            TeamId team = TeamId.TEAM_NEUTRAL,
+            bool revealStealthed = false,
+            IAttackableUnit revealSpecificUnitOnly = null,
+            float collisionArea = 0f
+        )
+        {
+            var useCollision = false;
+            if (collisionArea > 0)
+            {
+                useCollision = true;
+            }
+
+            // TODO: Implement revealSpecificUnitOnly
+            return new Region(_game, team, target.Position, visionTarget: target, giveVision: true, visionRadius: radius, revealStealth: revealStealthed, hasCollision: useCollision, collisionRadius: collisionArea, lifetime: duration);
         }
 
         /// <summary>
@@ -494,7 +563,7 @@ namespace LeagueSandbox.GameServer.API
             }
             return toreturn;
         }
-        
+
         /// <summary>
         /// Returns a new list of all champions in the game.
         /// </summary>

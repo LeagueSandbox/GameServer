@@ -8,6 +8,7 @@ using GameServerCore.Domain.GameObjects;
 using GameServerCore.Domain.GameObjects.Spell;
 using GameServerCore.Enums;
 using GameServerCore.Scripting.CSharp;
+using GameServerLib.GameObjects.AttackableUnits;
 using LeagueSandbox.GameServer.API;
 using LeagueSandbox.GameServer.Content;
 using LeagueSandbox.GameServer.GameObjects.Spell.Missile;
@@ -234,9 +235,26 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         /// </summary>
         public virtual void AutoAttackHit(IAttackableUnit target)
         {
-            ApiEventManager.OnHitUnit.Publish(this, target, IsNextAutoCrit);
+            var damage = Stats.AttackDamage.Total;
+            if (IsNextAutoCrit)
+            {
+                damage *= Stats.CriticalDamage.Total;
+            }
 
-            // TODO: Verify if we should instead use MissChance.
+            IDamageData damageData = new DamageData
+            {
+                IsAutoAttack = true,
+                Attacker = this,
+                Target = target,
+                Damage = damage,
+                PostMitigationdDamage = target.Stats.GetPostMitigationDamage(damage, DamageType.DAMAGE_TYPE_PHYSICAL, this),
+                DamageSource = DamageSource.DAMAGE_SOURCE_ATTACK,
+                DamageType = DamageType.DAMAGE_TYPE_PHYSICAL,
+            };
+
+            ApiEventManager.OnHitUnit.Publish(this, damageData);
+
+            // TODO: Verify if we should use MissChance instead.
             if (HasBuffType(BuffType.BLIND))
             {
                 target.TakeDamage(this, 0, DamageType.DAMAGE_TYPE_PHYSICAL,
@@ -245,15 +263,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 return;
             }
 
-            var damage = Stats.AttackDamage.Total;
-            if (IsNextAutoCrit)
-            {
-                damage *= Stats.CriticalDamage.Total;
-            }
-
-            target.TakeDamage(this, damage, DamageType.DAMAGE_TYPE_PHYSICAL,
-                DamageSource.DAMAGE_SOURCE_ATTACK,
-                IsNextAutoCrit);
+            target.TakeDamage(damageData, IsNextAutoCrit);
         }
 
         public override bool CanMove()
@@ -644,7 +654,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             // TODO: Verify if we want these explicitly defined instead of taken via iteration of all spells.
             var basicAttackSpells = Spells.Where(s =>
             {
-                if (s.Key - 64 >= 0 && s.Key - 64 < 9)
+                if (s.Key - 64 >= 0 && s.Key - 64 <= 9)
                 {
                     if (CharData.AttackProbabilities[s.Key - 64] > 0.0f)
                     {

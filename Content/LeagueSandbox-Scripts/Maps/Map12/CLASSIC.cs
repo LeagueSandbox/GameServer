@@ -259,23 +259,67 @@ namespace MapScripts.Map12
             _map.AddLevelProp("LevelProp_HA_AP_Poro1", "HA_AP_Poro", new Vector2(2141.1174f, 4335.2715f), -113.360855f, new Vector3(0f, 208f, 0f), new Vector3(-333.3333f, -55.5556f, 0f), Vector3.One);
         }
 
+        public List<IMonsterCamp> HealthPacks = new List<IMonsterCamp>();
         public void OnMatchStart()
         {
             foreach (var nexus in _map.NexusList)
             {
                 ApiEventManager.OnDeath.AddListener(this, nexus, OnNexusDeath, true);
             }
+
+            //On replay packets there's only 1 camp (116) that somehow keeps track of all the 4 Health Packs individually 
+            //I also couldn't get any detailed info about these camps, all i got was camp positions, camp index and spawn/re-spawn times, the rest are assumptions.
+            //For some reason, none of the packets i had any info regarding the creation of the monster (Possibly went to "hardbad" files, since they're specially huge with the ARAM map)
+            var purple_healthPacket1 = _map.CreateJungleCamp(new Vector3(8893.9f, 60.0f, 7889.0f), 116, TeamId.TEAM_PURPLE, "HealthPack", 190.0f * 1000f);
+            _map.CreateJungleMonster("HA_AP_HealthRelic", "HA_AP_HealthRelic", new Vector2(8893.9f, 7889.0f), Vector3.Zero, purple_healthPacket1);
+            HealthPacks.Add(purple_healthPacket1);
+
+            var purple_healthPacket2 = _map.CreateJungleCamp(new Vector3(7582.1f, 60.0f, 6785.5f), 117, TeamId.TEAM_PURPLE, "HealthPack", 190.0f * 1000f);
+            _map.CreateJungleMonster("HA_AP_HealthRelic", "HA_AP_HealthRelic", new Vector2(7582.1f, 6785.5f), Vector3.Zero, purple_healthPacket2);
+            HealthPacks.Add(purple_healthPacket2);
+
+            var blue_healthPacket1 = _map.CreateJungleCamp(new Vector3(5929.7f, 60.0f, 5190.9f), 118, TeamId.TEAM_BLUE, "HealthPack", 190.0f * 1000f);
+            _map.CreateJungleMonster("HA_AP_HealthRelic", "HA_AP_HealthRelic", new Vector2(5929.7f, 5190.9f), Vector3.Zero, blue_healthPacket1);
+            HealthPacks.Add(blue_healthPacket1);
+
+            var blue_healthPacket2 = _map.CreateJungleCamp(new Vector3(4790.2f, 60.0f, 3934.3f), 119, TeamId.TEAM_BLUE, "HealthPack", 190.0f * 1000f);
+            _map.CreateJungleMonster("HA_AP_HealthRelic", "HA_AP_HealthRelic", new Vector2(4790.2f, 3934.3f), Vector3.Zero, blue_healthPacket2);
+            HealthPacks.Add(blue_healthPacket2);
         }
 
         //This function gets executed every server tick
         public void Update(float diff)
         {
+            foreach (var camp in HealthPacks)
+            {
+                if (!camp.IsAlive)
+                {
+                    camp.RespawnTimer -= diff;
+                    if (camp.RespawnTimer <= 0)
+                    {
+                        _map.SpawnCamp(camp);
+                        camp.RespawnTimer = 40.0f * 1000f;
+                    }
+                }
+            }
         }
 
         public void OnNexusDeath(IDeathData deathaData)
         {
             var nexus = deathaData.Unit;
             _map.EndGame(nexus.Team, new Vector3(nexus.Position.X, nexus.GetHeight(), nexus.Position.Y), deathData: deathaData);
+        }
+
+        public void SpawnAllCamps()
+        {
+            foreach (var camp in HealthPacks)
+            {
+                if (!camp.IsAlive)
+                {
+                    _map.SpawnCamp(camp);
+                    camp.RespawnTimer = 40.0f * 1000;
+                }
+            }
         }
 
         public float GetGoldFor(IAttackableUnit u)
