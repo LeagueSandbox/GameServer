@@ -52,6 +52,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
         public IStat Size { get; }
         public IStat SpellVamp { get; }
         public IStat Tenacity { get; }
+        public IStat AcquisitionRange { get; set; }
 
         public float Gold { get; set; }
         public byte Level { get; set; }
@@ -103,6 +104,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
             Size = new Stat(1.0f, 0, 0, 0, 0);
             SpellVamp = new Stat();
             Tenacity = new Stat();
+            AcquisitionRange = new Stat();
         }
 
         public void LoadStats(ICharData charData)
@@ -116,6 +118,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
             MagicResist.BaseValue = charData.SpellBlock;
             HealthRegeneration.BaseValue = charData.BaseStaticHpRegen;
             ManaRegeneration.BaseValue = charData.BaseStaticMpRegen;
+            AcquisitionRange.BaseValue = charData.AcquisitionRange;
             // AttackSpeedFlat = GlobalAttackSpeed / CharAttackDelay
             AttackSpeedFlat = (1.0f / charData.GlobalCharData.AttackDelay) / (1.0f + charData.AttackDelayOffsetPercent[0]);
             HealthPerLevel = charData.HpPerLevel;

@@ -84,7 +84,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         public ICharScript CharScript { get; private set; }
         public bool IsBot { get; set; }
         public IAIScript AIScript { get; protected set; }
-        public int AcquisitionRange { get; set; } = 475;
+        public bool HandlesCallsForHelp { get; protected set; } = false;
         public ObjAiBase(Game game, string model, Stats.Stats stats, int collisionRadius = 40,
             Vector2 position = new Vector2(), int visionRadius = 0, int skinId = 0, uint netId = 0, TeamId team = TeamId.TEAM_NEUTRAL, string aiScript = "") :
             base(game, model, stats, collisionRadius, position, visionRadius, netId, team)
@@ -216,6 +216,13 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             }
 
             AIScript = game.ScriptEngine.CreateObject<IAIScript>($"AIScripts", aiScript) ?? new EmptyAIScript();
+            
+            var ai = AIScript as IAIScriptHearingCallsForHelp;
+            if(ai != null && ai.AIScriptMetaData.HandlesCallsForHelp && ai.unitsAttackingAllies != null)
+            {
+                HandlesCallsForHelp = true;
+            }
+            
             AIScript.OnActivate(this);
         }
 
@@ -929,42 +936,48 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         public override void TakeDamage(IAttackableUnit attacker, float damage, DamageType type, DamageSource source, DamageResultType damageText)
         {
             base.TakeDamage(attacker, damage, type, source, damageText);
-            OnTakeDamage(attacker);
-        }
-        void OnTakeDamage(IAttackableUnit attacker)
-        {
+
             var objects = _game.ObjectManager.GetObjects();
             foreach (var it in objects)
             {
-                if (
-                    it.Value is IObjAiBase u
-                    && u != this
-                    && u.Team == Team
-                    && !u.IsDead
-                    && u.HandlesCallsForHelp
-                    && Vector2.DistanceSquared(u.Position, Position) <= (AcquisitionRange * AcquisitionRange)
-                    && Vector2.DistanceSquared(u.Position, attacker.Position) <= (AcquisitionRange * AcquisitionRange)
-                )
+                if (it.Value is IObjAiBase u)
                 {
-                    u.CallForHelp(attacker, this);
+                    float acquisitionRange = Stats.AcquisitionRange.Total;
+                    float acquisitionRangeSquared = acquisitionRange * acquisitionRange;
+                    if(
+                        u != this
+                        && u.Team == Team
+                        && !u.IsDead
+                        && u.HandlesCallsForHelp
+                        && Vector2.DistanceSquared(u.Position, Position) <= acquisitionRangeSquared
+                        && Vector2.DistanceSquared(u.Position, attacker.Position) <= acquisitionRangeSquared
+                    )
+                    {
+                        u.CallForHelp(attacker, this);
+                    }
                 }
             }
         }
-
-        public bool HandlesCallsForHelp { get; set; } = false;
-        // < NetId, priority >
-        public Dictionary<IAttackableUnit, int> unitsAttackingAllies { get; private set; } = new Dictionary<IAttackableUnit, int>();
+        
         public void CallForHelp(IAttackableUnit attacker, IAttackableUnit victium)
         {
-            int priority = Math.Min(
-                unitsAttackingAllies.GetValueOrDefault(attacker, (int)ClassifyUnit.DEFAULT),
-                (int)ClassifyTarget(attacker, victium)
-            );
-            unitsAttackingAllies[attacker] = priority;
+            if(HandlesCallsForHelp)
+            {
+                var ai = AIScript as IAIScriptHearingCallsForHelp;
+                int priority = Math.Min(
+                    ai.unitsAttackingAllies.GetValueOrDefault(attacker, (int)ClassifyUnit.DEFAULT),
+                    (int)ClassifyTarget(attacker, victium)
+                );
+                ai.unitsAttackingAllies[attacker] = priority;
+            }
         }
 
         public void ClearCallsForHelp(){
-            unitsAttackingAllies.Clear();
+            if(HandlesCallsForHelp)
+            {
+                var ai = AIScript as IAIScriptHearingCallsForHelp;
+                ai.unitsAttackingAllies.Clear();
+            }
         }
 
         /// <summary>
@@ -1088,7 +1101,8 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                         var objects = _game.ObjectManager.GetObjects();
                         var distanceSqrToTarget = 25000f * 25000f;
                         IAttackableUnit nextTarget = null;
-                        var range = Math.Max(Stats.Range.Total, AcquisitionRange);
+                        // Previously `Math.Max(Stats.Range.Total, Stats.AcquisitionRange.Total)` which is incorrect
+                        var range = Stats.AcquisitionRange.Total;
 
                         foreach (var it in objects)
                         {

@@ -10,14 +10,18 @@ using System.Collections.Generic;
 
 namespace AIScripts
 {
-    public class LaneMinionAI : IAIScript
+    public class LaneMinionAI : IAIScriptHearingCallsForHelp
     {
-        public IAIScriptMetaData AIScriptMetaData { get; set; } = new AIScriptMetaData();
+        public IAIScriptMetaData AIScriptMetaData { get; set; } = new AIScriptMetaData
+        {
+            HandlesCallsForHelp = true
+        };
         ILaneMinion LaneMinion;
         int currentWaypointIndex = 0;
         float minionActionTimer = 250f;
         bool targetIsStillValid = false;
         Dictionary<uint, float> temporaryIgnored = new Dictionary<uint, float>();
+        public Dictionary<IAttackableUnit, int> unitsAttackingAllies { get; } = new Dictionary<IAttackableUnit, int>();
         float timeSinceLastAttack = 0f;
         int targetUnitPriority = (int) ClassifyUnit.DEFAULT;
         float localTime = 0f;
@@ -25,7 +29,6 @@ namespace AIScripts
         public void OnActivate(IObjAiBase owner)
         {
             LaneMinion = owner as ILaneMinion;
-            LaneMinion.HandlesCallsForHelp = true;
         }
         
         public void OnUpdate(float delta)
@@ -93,7 +96,7 @@ namespace AIScripts
                 u != null
                 && !u.IsDead
                 && u.Team != LaneMinion.Team
-                && UnitInRange(u, LaneMinion.AcquisitionRange)
+                && UnitInRange(u, LaneMinion.Stats.AcquisitionRange.Total)
                 && TeamHasVision(LaneMinion.Team, u)
                 && u.Status.HasFlag(StatusFlags.Targetable)
                 && !UnitIsProtected(u)
@@ -126,7 +129,8 @@ namespace AIScripts
             IAttackableUnit currentTarget = null;
             IAttackableUnit nextTarget = currentTarget;
             int nextTargetPriority = (int)ClassifyUnit.DEFAULT;
-            float nextTargetDistanceSquared = LaneMinion.AcquisitionRange * LaneMinion.AcquisitionRange;
+            float acquisitionRange = LaneMinion.Stats.AcquisitionRange.Total;
+            float nextTargetDistanceSquared = acquisitionRange * acquisitionRange;
             int nextTargetAttackers = 0;
             if(targetIsStillValid)
             {
@@ -142,22 +146,22 @@ namespace AIScripts
             List<IAttackableUnit> nearestObjects;
             if(handleOnlyCallsForHelp)
             {
-                if(LaneMinion.unitsAttackingAllies.Count == 0)
+                if(unitsAttackingAllies.Count == 0)
                 {
                     return false;
                 }
-                nearestObjects = LaneMinion.unitsAttackingAllies.Keys.ToList();
+                nearestObjects = unitsAttackingAllies.Keys.ToList();
             }
             else
             {
-                nearestObjects = GetUnitsInRange(LaneMinion.Position, LaneMinion.AcquisitionRange, true);
+                nearestObjects = GetUnitsInRange(LaneMinion.Position, acquisitionRange, true);
             }
             foreach (var it in nearestObjects)
             {
                 if (it is IAttackableUnit u && IsValidTarget(u) && !temporaryIgnored.ContainsKey(u.NetId))
                 {
-                    int priority = LaneMinion.unitsAttackingAllies.ContainsKey(u) ?
-                        LaneMinion.unitsAttackingAllies[u]
+                    int priority = unitsAttackingAllies.ContainsKey(u) ?
+                        unitsAttackingAllies[u]
                         : (int)LaneMinion.ClassifyTarget(u)
                     ;
                     float distanceSquared = Vector2.DistanceSquared(LaneMinion.Position, u.Position);
@@ -203,7 +207,7 @@ namespace AIScripts
             float radius = LaneMinion.CollisionRadius;
             Vector2 center = LaneMinion.Position;
 
-            var nearestMinions = GetUnitsInRange(LaneMinion.Position, LaneMinion.AcquisitionRange, true)
+            var nearestMinions = GetUnitsInRange(LaneMinion.Position, LaneMinion.Stats.AcquisitionRange.Total, true)
                                 .OfType<ILaneMinion>()
                                 .OrderBy(minion => Vector2.DistanceSquared(LaneMinion.Position, minion.Position) - minion.CollisionRadius);
 

@@ -57,6 +57,7 @@ namespace LeagueSandbox.GameServer.Content
         public float PathfindingCollisionRadius { get; private set; } = -1.0f;
         public float PerceptionBubbleRadius { get; private set; } = 0.0f;
         public float GameplayCollisionRadius { get; private set; } = 65.0f;
+        public float AcquisitionRange { get; private set; } = 475;
         public PrimaryAbilityResourceType ParType { get; private set; } = PrimaryAbilityResourceType.MANA;
 
         public string[] SpellNames { get; private set; } = new string[4];
@@ -118,6 +119,7 @@ namespace LeagueSandbox.GameServer.Content
             PathfindingCollisionRadius = file.GetFloat("Data", "PathfindingCollisionRadius", PathfindingCollisionRadius);
             PerceptionBubbleRadius = file.GetFloat("Data", "PerceptionBubbleRadius", PerceptionBubbleRadius);
             GameplayCollisionRadius = file.GetFloat("Data", "GameplayCollisionRadius", GameplayCollisionRadius);
+            AcquisitionRange = file.GetFloat("Data", "AcquisitionRange", AcquisitionRange);
             Enum.TryParse<PrimaryAbilityResourceType>(file.GetString("Data", "PARType", ParType.ToString()),
                 out var tempPar);
             ParType = tempPar;

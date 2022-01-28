@@ -26,5 +26,6 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
         public IStatModifier Range { get; } = new StatModifier();
         public IStatModifier MoveSpeed { get; } = new StatModifier();
         public IStatModifier GoldPerSecond { get; } = new StatModifier();
+        public IStatModifier AcquisitionRange { get; } = new StatModifier();
     }
 }

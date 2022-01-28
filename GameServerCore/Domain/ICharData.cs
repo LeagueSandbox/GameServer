@@ -29,6 +29,7 @@ namespace GameServerCore.Domain
         float PathfindingCollisionRadius { get; }
         float PerceptionBubbleRadius { get; }
         float GameplayCollisionRadius { get; }
+        float AcquisitionRange { get; }
         PrimaryAbilityResourceType ParType { get; }
         string[] SpellNames { get; }
         int[] MaxLevels { get; }
