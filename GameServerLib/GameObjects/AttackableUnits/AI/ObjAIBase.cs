@@ -223,6 +223,12 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             if(ai != null && ai.AIScriptMetaData.HandlesCallsForHelp && ai.unitsAttackingAllies != null)
             {
                 HandlesCallsForHelp = true;
+                ApiFunctionManager.LogDebug(
+                    "#{0}({1}) handles calls for help. Stats: {2}. stats: {3}",
+                    NetId, Model,
+                    Stats.AcquisitionRange.Total,
+                    stats.AcquisitionRange.Total
+                );
             }
             
             AIScript.OnActivate(this);
@@ -975,6 +981,19 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         public override void TakeDamage(IAttackableUnit attacker, float damage, DamageType type, DamageSource source, DamageResultType damageText)
         {
             base.TakeDamage(attacker, damage, type, source, damageText);
+            OnTakeDamage(attacker);
+        }
+        public override void TakeDamage(IDamageData damageData, DamageResultType damageText){
+            base.TakeDamage(damageData, damageText);
+            OnTakeDamage(damageData.Attacker);
+        }
+        void OnTakeDamage(IAttackableUnit attacker)
+        {
+            ApiFunctionManager.LogDebug(
+                "#{0}({1}) takes damage from #{2}({3}) and calls for help",
+                NetId, Model,
+                attacker.NetId, attacker.Model
+            );
 
             var objects = _game.ObjectManager.GetObjects();
             foreach (var it in objects)
@@ -1008,6 +1027,14 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                     (int)ClassifyTarget(attacker, victium)
                 );
                 ai.unitsAttackingAllies[attacker] = priority;
+
+                ApiFunctionManager.LogDebug(
+                    "#{0}({1}) received call for help from #{2}({3}) against #{4}({5}) prio = {6}",
+                    NetId, Model,
+                    victium.NetId, victium.Model,
+                    attacker.NetId, attacker.Model,
+                    priority
+                );
             }
         }
 

@@ -99,7 +99,7 @@ namespace AIScripts
                 && UnitInRange(u, LaneMinion.Stats.AcquisitionRange.Total)
                 && TeamHasVision(LaneMinion.Team, u)
                 && u.Status.HasFlag(StatusFlags.Targetable)
-                && !UnitIsProtected(u)
+                && !UnitIsProtectionActive(u)
             );
         }
 
@@ -194,6 +194,13 @@ namespace AIScripts
                 LaneMinion.SetTargetUnit(nextTarget, true);
                 targetUnitPriority = nextTargetPriority;
                 timeSinceLastAttack = 0f;
+    
+                LogDebug("#{0}({1}) FROM TEAM {2} TARGETS #{3}({4}) FROM {5} AT DISTANCE {6} WITH PRIO {7}",
+                    LaneMinion.NetId, LaneMinion.Model, LaneMinion.Team,
+                    nextTarget.NetId, nextTarget.Model, nextTarget.Team,
+                    nextTargetDistanceSquared,
+                    nextTargetPriority
+                );
 
                 return true;
             }
