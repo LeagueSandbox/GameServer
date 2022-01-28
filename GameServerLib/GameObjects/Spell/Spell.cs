@@ -365,24 +365,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
 
             if (_game.Config.GameFeatures.HasFlag(FeatureFlags.EnableManaCosts))
             {
-                // if the spell is targeted
-                if (targetingType == TargetingType.Target)
-                {
-                    var distance = Vector2.DistanceSquared(CastInfo.Owner.Position, unit.Position);
-                    var castRange = GetCurrentCastRange();
-                    // and the targeted unit is in range
-                    if (distance <= castRange * castRange)
-                    {
-                        // reduce the mana
-                        stats.CurrentMana -= SpellData.ManaCost[CastInfo.SpellLevel] * (1 - stats.SpellCostReduction);
-                    }
-                }
-                else // if the spell is not targeted
-                {
-                    // reduce the mana normally, i am assuming that the "resource consumption bug" is only on targeted abilities
-                    stats.CurrentMana -= SpellData.ManaCost[CastInfo.SpellLevel] * (1 - stats.SpellCostReduction);
-                }
-
+                stats.CurrentMana -= SpellData.ManaCost[CastInfo.SpellLevel] * (1 - stats.SpellCostReduction);
             }
 
             if (!CastInfo.IsAutoAttack && !SpellData.IsToggleSpell
