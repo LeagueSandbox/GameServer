@@ -27,11 +27,11 @@ namespace Buffs
         public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
             Unit = unit;
-            
-            SetStatus(unit, StatusFlags.Targetable, false);
-            SetStatus(unit, StatusFlags.Invulnerable, true);
-            SetStatus(unit, StatusFlags.ForceRenderParticles, true);
-            SetStatus(unit, StatusFlags.NoRender, true);
+
+            buff.SetStatusEffect(StatusFlags.Targetable, false);
+            buff.SetStatusEffect(StatusFlags.Invulnerable, true);
+            buff.SetStatusEffect(StatusFlags.ForceRenderParticles, true);
+            buff.SetStatusEffect(StatusFlags.NoRender, true);
 
             buffParticle = AddParticleTarget(Unit, null, "Odin_Shrine_Time", Unit, buff.Duration, reqVision: false);
         }

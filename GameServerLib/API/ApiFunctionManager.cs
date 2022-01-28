@@ -965,9 +965,5 @@ namespace LeagueSandbox.GameServer.API
         {
             return _game.Map.NavigationGrid.GetPath(from, to, distanceThreshold);
         }
-        public static void NotifyUnitMinimapIconUpdate(IAttackableUnit unit, string iconCategory = "", bool changeIcon = false, string borderCategory = "", bool changeBorder = false)
-        {
-            _game.PacketNotifier.NotifyS2C_UnitSetMinimapIcon(unit, iconCategory, changeIcon, borderCategory, changeBorder);
-        }
     }
 }

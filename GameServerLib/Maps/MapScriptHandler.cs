@@ -604,6 +604,11 @@ namespace LeagueSandbox.GameServer.Maps
             }
         }
 
+        public void SetMinimapIcon(IAttackableUnit unit, string iconCategory = "", bool changeIcon = false, string borderCategory = "", bool changeBorder = false)
+        {
+            _game.PacketNotifier.NotifyS2C_UnitSetMinimapIcon(unit, iconCategory, changeIcon, borderCategory, changeBorder);
+        }
+
         public void AddAnnouncement(long time, EventID ID, bool isMapSpecific)
         {
             AnnouncerEvents.Add(new Announce(_game, time, ID, isMapSpecific));

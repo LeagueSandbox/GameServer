@@ -22,7 +22,6 @@ namespace Buffs
 
         public IStatsModifier StatsModifier { get; private set; }
 
-        bool hasNotified = false;
         IBuff thisBuff;
         IParticle blueTeamParticle1;
         IParticle blueTeamParticle2;
@@ -31,15 +30,18 @@ namespace Buffs
         IParticle redTeamParticle2;
         IParticle redTeamParticle3;
         IAttackableUnit Unit;
-        float timer = 250f;
+
         public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
             Unit = unit;
             thisBuff = buff;
-            SetStatus(unit, StatusFlags.CanMove, false);
-            SetStatus(unit, StatusFlags.ForceRenderParticles, true);
-            SetStatus(unit, StatusFlags.Targetable, false);
+
+            buff.SetStatusEffect(StatusFlags.CanMove, false);
+            buff.SetStatusEffect(StatusFlags.ForceRenderParticles, true);
+            buff.SetStatusEffect(StatusFlags.Targetable, false);
+
             ApiEventManager.OnDeath.AddListener(this, unit, OnDeath, true);
+
             if (unit.Team == TeamId.TEAM_BLUE)
             {
                 redTeamParticle1=AddParticleTarget(Unit, null, "Odin_Prism_Green", Unit, buff.Duration, reqVision: false, teamOnly: TeamId.TEAM_PURPLE);
@@ -63,6 +65,7 @@ namespace Buffs
         {
             thisBuff.DeactivateBuff();
         }
+
         public void OnDeactivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
             RemoveParticle(blueTeamParticle1);
@@ -75,18 +78,6 @@ namespace Buffs
 
         public void OnUpdate(float diff)
         {
-            if(!hasNotified && Unit != null)
-            {
-                string iconCategory = "CenterRelicLeft";
-
-                if (Unit.Team == TeamId.TEAM_PURPLE)
-                {
-                    iconCategory = "CenterRelicRight";
-                }
-                //For some Reason this only works here
-                NotifyUnitMinimapIconUpdate(Unit, iconCategory, true);
-                hasNotified = true;
-            }
         }
     }
 }

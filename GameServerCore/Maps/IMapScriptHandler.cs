@@ -152,6 +152,7 @@ namespace GameServerCore.Maps
             int damageBonus = 0, int healthBonus = 0, int initialLevel = 1
         );
         void SpawnCamp(IMonsterCamp monsterCamp);
+        void SetMinimapIcon(IAttackableUnit unit, string iconCategory = "", bool changeIcon = false, string borderCategory = "", bool changeBorder = false);
         /// <summary>
         /// Returns how long the match has been going on for.
         /// </summary>

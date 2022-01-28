@@ -33,10 +33,10 @@ namespace Buffs
             thisBuff = buff;
             Unit = unit;
 
-            SetStatus(unit, StatusFlags.Targetable, false);
-            SetStatus(unit, StatusFlags.Invulnerable, true);
-            SetStatus(unit, StatusFlags.ForceRenderParticles, true);
-            SetStatus(unit, StatusFlags.NoRender, true);
+            buff.SetStatusEffect(StatusFlags.Targetable, false);
+            buff.SetStatusEffect(StatusFlags.Invulnerable, true);
+            buff.SetStatusEffect(StatusFlags.ForceRenderParticles, true);
+            buff.SetStatusEffect(StatusFlags.NoRender, true);
 
             InvisibleMinion = AddMinion(null, "TestCubeRender", "HiddenMinion", unit.Position, ignoreCollision: true);
 

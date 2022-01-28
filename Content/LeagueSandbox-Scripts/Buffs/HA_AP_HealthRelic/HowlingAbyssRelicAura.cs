@@ -32,9 +32,10 @@ namespace Buffs
         {
             Unit = unit;
             thisBuff = buff;
-            SetStatus(unit, StatusFlags.NoRender, true);
-            SetStatus(unit, StatusFlags.Invulnerable, true);
-            SetStatus(unit, StatusFlags.ForceRenderParticles, true);
+
+            buff.SetStatusEffect(StatusFlags.NoRender, true);
+            buff.SetStatusEffect(StatusFlags.Invulnerable, true);
+            buff.SetStatusEffect(StatusFlags.ForceRenderParticles, true);
 
             buffParticle = AddParticleTarget(Unit, null, "ha_ap_healingbuff", Unit, buff.Duration, reqVision: false);
             setToKill = false;

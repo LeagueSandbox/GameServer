@@ -22,7 +22,10 @@ namespace MapScripts.Map8
             StartingGold = 825.0f,
             OverrideSpawnPoints = true
         };
+
         private IMapScriptHandler _map;
+        private bool crystalSpawned;
+
         public virtual IGlobalData GlobalData { get; set; } = new GlobalData();
         public bool HasFirstBloodHappened { get; set; } = false;
         public long NextSpawnTime { get; set; } = 90 * 1000;
@@ -268,6 +271,24 @@ namespace MapScripts.Map8
 
         public void Update(float diff)
         {
+            if (crystalSpawned)
+            {
+                foreach (var crystal in Crystals.Values)
+                {
+                    string iconCategory = "CenterRelicLeft";
+
+                    if (crystal.Team == TeamId.TEAM_PURPLE)
+                    {
+                        iconCategory = "CenterRelicRight";
+                    }
+
+                    //For some Reason this only works here
+                    _map.SetMinimapIcon(crystal, iconCategory, true);
+                }
+
+                crystalSpawned = false;
+            }
+
             foreach (var camp in HealthPacks)
             {
                 if (!camp.IsAlive)
@@ -280,6 +301,7 @@ namespace MapScripts.Map8
                     }
                 }
             }
+
             foreach (var crystalTemplate in CrystalsTemplates)
             {
                 if (!Crystals.ContainsKey(crystalTemplate.Team))
@@ -299,6 +321,8 @@ namespace MapScripts.Map8
 
                         Crystals.Add(crystal.Team, crystal);
                         CrystalTimers[crystalTemplate.Team] = 180.0f * 1000f;
+
+                        crystalSpawned = true;
                     }
                 }
             }
@@ -312,6 +336,7 @@ namespace MapScripts.Map8
                 region.SetToRemove();
             }
         }
+
         public void SpawnAllCamps()
         {
             foreach (var camp in HealthPacks)
