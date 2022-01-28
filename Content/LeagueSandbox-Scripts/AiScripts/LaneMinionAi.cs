@@ -37,25 +37,12 @@ namespace AIScripts
 
                 if(LaneMinion.IsAttacking || LaneMinion.TargetUnit == null)
                 {
-                    //if(LaneMinion.TargetUnit != null && LaneMinion.TargetUnit is IChampion)
-                    //    LogDebug("TimeScinceLastAttack = {0}", timeSinceLastAttack);
                     timeSinceLastAttack = 0f;
                 }
                 else
                 {
                     timeSinceLastAttack += delta;
                 }
-
-                /*
-                foreach(var unit in LaneMinion.unitsAttackingAllies)
-                {
-                    LogDebug(
-                        "#{0}({1}) received call for help against #{2}({3})",
-                        LaneMinion.NetId, LaneMinion.Model,
-                        unit.NetId, unit.Model
-                    );
-                }
-                */
 
                 minionActionTimer += delta;
                 if(
@@ -115,7 +102,6 @@ namespace AIScripts
 
         void Ignore(IAttackableUnit unit, float time = 500)
         {
-            //LogDebug("Temporary ignoring #{0}({1})", LaneMinion.TargetUnit.NetId, LaneMinion.TargetUnit.Model);
             temporaryIgnored[unit.NetId] = localTime + time;
         }
 
@@ -204,14 +190,7 @@ namespace AIScripts
                 LaneMinion.SetTargetUnit(nextTarget, true);
                 targetUnitPriority = nextTargetPriority;
                 timeSinceLastAttack = 0f;
-                /*
-                LogDebug("#{0}({1}) FROM TEAM {2} TARGETS #{3}({4}) FROM {5} AT DISTANCE {6} WITH PRIO {7}",
-                    LaneMinion.NetId, LaneMinion.Model, LaneMinion.Team,
-                    nextTarget.NetId, nextTarget.Model, nextTarget.Team,
-                    nextTargetDistanceSquared,
-                    nextTargetPriority
-                );
-                */
+
                 return true;
             }
             return false;
@@ -253,13 +232,6 @@ namespace AIScripts
             float margin = 25f; // Otherwise, interferes with AttackableUnit which stops a little earlier 
             if (GameServerCore.Extensions.IsVectorWithinRange(currentWaypoint, center, radius + margin))
             {
-                /*
-                LogDebug(
-                    "REACHED WAYPOINT {0} CENTER {1} RADIUS {2} ({3}, {4})",
-                    currentWaypoint, center, radius,
-                    LaneMinion.Position, LaneMinion.CollisionRadius
-                );
-                */
                 return true;
             }
             return false;
@@ -285,7 +257,7 @@ namespace AIScripts
                 }
                     
             }
-            //if(LaneMinion.IsAttacking)
+            
             LaneMinion.CancelAutoAttack(false, true);
             
             //Quote: Find a new valid target in the minion’s acquisition range to attack.
@@ -322,7 +294,7 @@ namespace AIScripts
                     
                     // If the minion returns to lane
                     // Instead of continuing to move along the waypoints
-                    //if(LaneMinion.MoveOrder != OrderType.AttackMove)
+                    //if(LaneMinion.MoveOrder != OrderType.MoveTo)
                     path = GetPath(LaneMinion.Position, currentWaypoint);
 
                     if(path == null)

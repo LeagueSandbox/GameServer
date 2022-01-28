@@ -931,28 +931,13 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             base.TakeDamage(attacker, damage, type, source, damageText);
             OnTakeDamage(attacker);
         }
-        /*
-        public override void TakeDamage(IAttackableUnit attacker, float damage, DamageType type, DamageSource source, bool isCrit)
-        {
-            base.TakeDamage(attacker, damage, type, source, isCrit);
-            OnTakeDamage(attacker);
-        }
-        */
         void OnTakeDamage(IAttackableUnit attacker)
         {
-            /*
-            ApiFunctionManager.LogDebug(
-                "#{0}({1}) takes damage from #{2}({3}) and calls for help",
-                NetId, Model,
-                attacker.NetId, attacker.Model
-            );
-            */
             var objects = _game.ObjectManager.GetObjects();
             foreach (var it in objects)
             {
                 if (
                     it.Value is IObjAiBase u
-                  //&& u != null
                     && u != this
                     && u.Team == Team
                     && !u.IsDead
@@ -976,15 +961,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 (int)ClassifyTarget(attacker, victium)
             );
             unitsAttackingAllies[attacker] = priority;
-            /*
-            ApiFunctionManager.LogDebug(
-                "#{0}({1}) received call for help from #{2}({3}) against #{4}({5}) prio = {6}",
-                NetId, Model,
-                victium.NetId, victium.Model,
-                attacker.NetId, attacker.Model,
-                priority
-            );
-            */
         }
 
         public void ClearCallsForHelp(){
