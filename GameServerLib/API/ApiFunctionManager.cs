@@ -883,10 +883,10 @@ namespace LeagueSandbox.GameServer.API
         /// <returns></returns>
         public static bool UnitIsProtected(IAttackableUnit unit)
         {
-            return _game.ProtectionManager.IsProtected(unit);
+            return _game.ProtectionManager.IsProtectionActive(unit);
         }
         /// <summary>
-        /// Gets a list of waypoints, whihc forms a path to the desired destination
+        /// Gets a list of waypoints, which forms a path to the desired destination
         /// </summary>
         /// <param name="from"></param>
         /// <param name="to"></param>
