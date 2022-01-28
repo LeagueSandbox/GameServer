@@ -2,6 +2,7 @@
 using GameServerCore.Domain.GameObjects.Spell;
 using GameServerCore.Enums;
 using GameServerCore.Scripting.CSharp;
+using LeagueSandbox.GameServer.GameObjects.Stats;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -14,7 +15,8 @@ namespace CharScripts
     {
         public void OnActivate(IObjAiBase owner, ISpell spell = null)
         {
-            AddBuff("CrestoftheAncientGolem", 25000.0f, 1, null, owner, owner, true);
+            AddBuff("GlobalMonsterBuff", 25000.0f, 1, spell, owner, owner, true);
+            AddBuff("CrestoftheAncientGolem", 25000.0f, 1, spell, owner, owner, true);
         }
         public void OnDeactivate(IObjAiBase owner, ISpell spell = null)
         {

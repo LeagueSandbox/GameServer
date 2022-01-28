@@ -24,20 +24,61 @@ namespace Buffs
         public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
             thisBuff  = buff;
-            ApiEventManager.OnDeath.AddListener(this, unit, OnDeath, false);
-            particle = AddParticleTarget(unit, unit, "NeutralMonster_buf_blue_defense_big", unit, buff.Duration);
-            StatsModifier.ManaRegeneration.FlatBonus += 5 + unit.Stats.ManaPoints.Total * 0.05f;
-            StatsModifier.CooldownReduction.FlatBonus += 0.1f;
-            unit.AddStatModifier(StatsModifier);
+
+            if (unit is IChampion champ)
+            {
+                particle = AddParticleTarget(unit, unit, "NeutralMonster_buf_blue_defense", unit, buff.Duration);
+                // TODO: Separate Mana and PAR stat mods (energy is modified differently from Mana, same with other types)
+                StatsModifier.ManaRegeneration.FlatBonus += 5 + unit.Stats.ManaPoints.Total * 0.05f;
+                StatsModifier.CooldownReduction.FlatBonus += 0.1f;
+                unit.AddStatModifier(StatsModifier);
+            }
+            else
+            {
+                ApiEventManager.OnDeath.AddListener(this, unit, OnDeath, false);
+                particle = AddParticleTarget(unit, unit, "NeutralMonster_buf_blue_defense_big", unit, buff.Duration);
+            }
+
+            // TODO: CrestoftheAncientGolemLines?
         }
 
         public void OnDeath(IDeathData deathData)
         {
-            if (deathData.Killer is IChampion)
+            var unit = deathData.Unit as IObjAiBase;
+            var killer = deathData.Killer as IChampion;
+
+            if (unit != null && killer != null && !killer.IsDead)
             {
                 thisBuff.DeactivateBuff();
-                AddBuff("CrestoftheAncientGolem", 120f, 1, null, deathData.Killer, deathData.Unit as IObjAiBase);
-            } 
+
+                // Talent ID 4332 (Runic Affinity)
+                var duration = 150f;
+                if (HasBuff(deathData.Killer, "MonsterBuffs"))
+                {
+                    duration *= 1.2f;
+                }
+
+                AddBuff("CrestoftheAncientGolem", duration, 1, null, killer, unit);
+            }
+            else if (killer == null)
+            {
+                var pet = deathData.Killer as IMinion;
+                if (pet != null && pet.IsPet)
+                {
+                    var petOwner = pet.Owner;
+
+                    if (petOwner != null && petOwner is IChampion petChamp && !petChamp.IsDead)
+                    {
+                        var duration = 150f;
+                        if (HasBuff(deathData.Killer, "MonsterBuffs"))
+                        {
+                            duration *= 1.2f;
+                        }
+
+                        AddBuff("CrestoftheAncientGolem", duration, 1, null, killer, unit);
+                    }
+                }
+            }
         }
 
         public void OnDeactivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
