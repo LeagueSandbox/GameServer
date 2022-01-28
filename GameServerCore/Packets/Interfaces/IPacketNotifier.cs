@@ -529,7 +529,6 @@ namespace GameServerCore.Packets.Interfaces
         /// </summary>
         /// <param name="p">Projectile that has changed target.</param>
         void NotifyS2C_ChangeMissileTarget(ISpellMissile p);
-
         /// <summary>
         /// Sends a packet to the specified user or all users detailing that the hero designated to the given clientInfo has been created.
         /// </summary>
