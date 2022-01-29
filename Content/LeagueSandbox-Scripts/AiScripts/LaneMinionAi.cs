@@ -58,7 +58,7 @@ namespace AIScripts
                     LaneMinion.MovementParameters == null
                     //Quote: Collisions.
                     //       Minions that end up overlapping other minions will reevaluate their behavior immediately.
-                    && !LaneMinion.RecalculateAttackPosition()
+                    //&& !LaneMinion.RecalculateAttackPosition()
                     && (
                         //Quote: Their current attack target dies.
                         //       Minions who witness the death of their foe will check for a new valid target in their acquisition range.
@@ -312,7 +312,7 @@ namespace AIScripts
                     // If the minion returns to lane
                     // Instead of continuing to move along the waypoints
                     //if(LaneMinion.MoveOrder != OrderType.MoveTo)
-                    path = GetPath(LaneMinion.Position, currentWaypoint);
+                    //path = GetPath(LaneMinion.Position, currentWaypoint);
 
                     if(path == null)
                     {
