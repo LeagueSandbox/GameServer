@@ -279,7 +279,7 @@ namespace MapScripts.Map1
             SetupJungleCamps();
         }
 
-        //This function gets executed every server tick
+        private bool forceSpawn = false;
         public void Update(float diff)
         {
             if (_map.GameTime() >= 120 * 1000)
@@ -292,7 +292,7 @@ namespace MapScripts.Map1
                 if (!camp.IsAlive)
                 {
                     camp.RespawnTimer -= diff;
-                    if (camp.RespawnTimer <= 0)
+                    if (camp.RespawnTimer <= 0 || forceSpawn)
                     {
                         _map.SpawnCamp(camp);
                         camp.RespawnTimer = GetRespawnTimer(camp);

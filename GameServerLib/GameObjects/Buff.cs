@@ -55,22 +55,22 @@ namespace LeagueSandbox.GameServer.GameObjects
 
             LoadScript();
 
-            BuffAddType = BuffScript.BuffAddType;
-            if (BuffAddType == (BuffAddType.STACKS_AND_RENEWS | BuffAddType.STACKS_AND_CONTINUE | BuffAddType.STACKS_AND_OVERLAPS) && BuffScript.MaxStacks < 2)
+            BuffAddType = BuffScript.BuffMetaData.BuffAddType;
+            if (BuffAddType == (BuffAddType.STACKS_AND_RENEWS | BuffAddType.STACKS_AND_CONTINUE | BuffAddType.STACKS_AND_OVERLAPS) && BuffScript.BuffMetaData.MaxStacks < 2)
             {
                 throw new ArgumentException("Error: Tried to create Stackable Buff, but MaxStacks was less than 2.");
             }
 
-            BuffType = BuffScript.BuffType;
+            BuffType = BuffScript.BuffMetaData.BuffType;
             Duration = duration;
-            IsHidden = BuffScript.IsHidden;
-            if (BuffScript.MaxStacks > 254 && BuffType != BuffType.COUNTER)
+            IsHidden = BuffScript.BuffMetaData.IsHidden;
+            if (BuffScript.BuffMetaData.MaxStacks > 254 && BuffType != BuffType.COUNTER)
             {
                 MaxStacks = 254;
             }
             else
             {
-                MaxStacks = Math.Min(BuffScript.MaxStacks, int.MaxValue);
+                MaxStacks = Math.Min(BuffScript.BuffMetaData.MaxStacks, int.MaxValue);
             }
             OriginSpell = originSpell;
             if (onto.HasBuff(Name) && BuffAddType == BuffAddType.STACKS_AND_OVERLAPS)

@@ -7,15 +7,16 @@ using GameServerCore.Scripting.CSharp;
 using System;
 using LeagueSandbox.GameServer.API;
 using GameServerCore.Domain;
+using LeagueSandbox.GameServer.Scripting.CSharp;
 
 namespace Buffs
 {
     internal class Meditate : IBuffGameScript
     {
-        public BuffType BuffType => BuffType.HEAL;
-        public BuffAddType BuffAddType => BuffAddType.RENEW_EXISTING;
-        public int MaxStacks => 1;
-        public bool IsHidden => false;
+        public IBuffScriptMetaData BuffMetaData { get; set; } = new BuffScriptMetaData
+        {
+            BuffType = BuffType.HEAL
+        };
 
         public IStatsModifier StatsModifier { get; private set; } = new StatsModifier();
 

@@ -3,15 +3,18 @@ using GameServerCore.Domain.GameObjects.Spell;
 using GameServerCore.Enums;
 using GameServerCore.Scripting.CSharp;
 using LeagueSandbox.GameServer.GameObjects.Stats;
+using LeagueSandbox.GameServer.Scripting.CSharp;
 
 namespace Buffs
 {
     internal class Chilled : IBuffGameScript
     {
-        public BuffType BuffType => BuffType.SLOW;
-        public BuffAddType BuffAddType => BuffAddType.STACKS_AND_OVERLAPS;
-        public int MaxStacks => 100;
-        public bool IsHidden => false;
+        public IBuffScriptMetaData BuffMetaData { get; set; } = new BuffScriptMetaData
+        {
+            BuffType = BuffType.SLOW,
+            BuffAddType = BuffAddType.STACKS_AND_OVERLAPS,
+            MaxStacks = 100
+        };
 
         public IStatsModifier StatsModifier { get; private set; } = new StatsModifier();
 
