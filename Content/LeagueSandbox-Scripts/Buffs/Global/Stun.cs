@@ -27,7 +27,7 @@ namespace Buffs
 
         public void OnDeactivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
-            buff.SetStatusEffect(StatusFlags.Stunned, false);
+            SetStatus(unit, StatusFlags.Stunned, false);
             RemoveParticle(stun);
         }
 

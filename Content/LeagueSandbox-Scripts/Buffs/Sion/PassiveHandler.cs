@@ -25,7 +25,7 @@ namespace Buffs
         {
             var champion = unit as IChampion;
             champion.Respawn();//Implement a custom spawn position function later
-            buff.SetStatusEffect(StatusFlags.Targetable, true);
+            SetStatus(unit, StatusFlags.Targetable, true);
             AddBuff("SionPassive", 60f, 1, ownerSpell, unit, champion);
         }
 

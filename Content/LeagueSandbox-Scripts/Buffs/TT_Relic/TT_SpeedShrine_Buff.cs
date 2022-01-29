@@ -12,7 +12,7 @@ namespace Buffs
     {
         public IBuffScriptMetaData BuffMetaData { get; set; } = new BuffScriptMetaData
         {
-            BuffType = BuffType.HEAL,
+            BuffType = BuffType.HASTE,
             BuffAddType = BuffAddType.REPLACE_EXISTING
         };
 

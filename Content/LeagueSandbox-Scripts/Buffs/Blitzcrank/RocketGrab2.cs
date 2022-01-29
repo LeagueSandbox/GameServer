@@ -27,7 +27,7 @@ namespace Buffs
         // TODO: Use OnMoveEnd event and call this manually.
         public void OnDeactivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
-            buff.SetStatusEffect(StatusFlags.CanAttack | StatusFlags.CanMove | StatusFlags.CanCast, true);
+            SetStatus(unit, StatusFlags.CanAttack | StatusFlags.CanMove | StatusFlags.CanCast, true);
 
             if (buff.SourceUnit is IObjAiBase ai && unit is IChampion ch)
             {
