@@ -4,15 +4,17 @@ using GameServerCore.Domain.GameObjects.Spell;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 using LeagueSandbox.GameServer.GameObjects.Stats;
 using GameServerCore.Scripting.CSharp;
+using LeagueSandbox.GameServer.Scripting.CSharp;
 
 namespace Buffs
 {
     internal class SummonerDot : IBuffGameScript
     {
-        public BuffType BuffType => BuffType.DAMAGE;
-        public BuffAddType BuffAddType => BuffAddType.REPLACE_EXISTING;
-        public int MaxStacks => 1;
-        public bool IsHidden => false;
+        public IBuffScriptMetaData BuffMetaData { get; set; } = new BuffScriptMetaData
+        {
+            BuffType = BuffType.DAMAGE,
+            BuffAddType = BuffAddType.REPLACE_EXISTING
+        };
 
         public IStatsModifier StatsModifier { get; private set; } = new StatsModifier();
 

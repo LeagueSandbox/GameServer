@@ -4,15 +4,16 @@ using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 using LeagueSandbox.GameServer.GameObjects.Stats;
 using GameServerCore.Domain.GameObjects.Spell;
 using GameServerCore.Scripting.CSharp;
+using LeagueSandbox.GameServer.Scripting.CSharp;
 
 namespace Buffs
 {
     internal class RocketGrab2 : IBuffGameScript
     {
-        public BuffType BuffType => BuffType.INTERNAL;
-        public BuffAddType BuffAddType => BuffAddType.REPLACE_EXISTING;
-        public int MaxStacks => 1;
-        public bool IsHidden => false;
+        public IBuffScriptMetaData BuffMetaData { get; set; } = new BuffScriptMetaData
+        {
+            BuffAddType = BuffAddType.REPLACE_EXISTING
+        };
 
         public IStatsModifier StatsModifier { get; private set; } = new StatsModifier();
 
@@ -26,7 +27,7 @@ namespace Buffs
         // TODO: Use OnMoveEnd event and call this manually.
         public void OnDeactivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
-            buff.SetStatusEffect(StatusFlags.CanAttack | StatusFlags.CanMove | StatusFlags.CanCast, true);
+            SetStatus(unit, StatusFlags.CanAttack | StatusFlags.CanMove | StatusFlags.CanCast, true);
 
             if (buff.SourceUnit is IObjAiBase ai && unit is IChampion ch)
             {

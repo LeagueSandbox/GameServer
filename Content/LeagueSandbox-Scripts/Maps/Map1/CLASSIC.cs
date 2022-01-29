@@ -19,6 +19,7 @@ namespace MapScripts.Map1
             MinionPathingOverride = true,
             EnableBuildingProtection = true
         };
+        private bool forceSpawn;
         public IMapScriptHandler _map;
         public virtual IGlobalData GlobalData { get; set; } = new GlobalData();
         public bool HasFirstBloodHappened { get; set; } = false;
@@ -279,7 +280,6 @@ namespace MapScripts.Map1
             SetupJungleCamps();
         }
 
-        //This function gets executed every server tick
         public void Update(float diff)
         {
             if (_map.GameTime() >= 120 * 1000)
@@ -292,12 +292,17 @@ namespace MapScripts.Map1
                 if (!camp.IsAlive)
                 {
                     camp.RespawnTimer -= diff;
-                    if (camp.RespawnTimer <= 0)
+                    if (camp.RespawnTimer <= 0 || forceSpawn)
                     {
                         _map.SpawnCamp(camp);
                         camp.RespawnTimer = GetRespawnTimer(camp);
                     }
                 }
+            }
+
+            if (forceSpawn)
+            {
+                forceSpawn = false;
             }
         }
 
@@ -327,14 +332,7 @@ namespace MapScripts.Map1
 
         public void SpawnAllCamps()
         {
-            foreach (var camp in MonsterCamps)
-            {
-                if (!camp.IsAlive)
-                {
-                    _map.SpawnCamp(camp);
-                    camp.RespawnTimer = GetRespawnTimer(camp);
-                }
-            }
+            forceSpawn = true;
         }
 
         public float GetGoldFor(IAttackableUnit u)

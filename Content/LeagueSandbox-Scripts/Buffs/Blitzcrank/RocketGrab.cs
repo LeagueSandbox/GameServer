@@ -4,15 +4,16 @@ using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 using LeagueSandbox.GameServer.GameObjects.Stats;
 using GameServerCore.Domain.GameObjects.Spell;
 using GameServerCore.Scripting.CSharp;
+using LeagueSandbox.GameServer.Scripting.CSharp;
 
 namespace Buffs
 {
     internal class RocketGrab : IBuffGameScript
     {
-        public BuffType BuffType => BuffType.INTERNAL;
-        public BuffAddType BuffAddType => BuffAddType.REPLACE_EXISTING;
-        public int MaxStacks => 1;
-        public bool IsHidden => false;
+        public IBuffScriptMetaData BuffMetaData { get; set; } = new BuffScriptMetaData
+        {
+            BuffAddType = BuffAddType.REPLACE_EXISTING
+        };
 
         public IStatsModifier StatsModifier { get; private set; } = new StatsModifier();
 

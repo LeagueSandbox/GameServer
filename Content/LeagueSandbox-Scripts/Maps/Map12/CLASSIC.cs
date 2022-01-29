@@ -25,6 +25,7 @@ namespace MapScripts.Map12
             EnableFountainHealing = false,
             EnableBuildingProtection = true
         };
+        private bool forceSpawn = false;
         private IMapScriptHandler _map;
         public virtual IGlobalData GlobalData { get; set; } = new GlobalData();
         public bool HasFirstBloodHappened { get; set; } = false;
@@ -295,12 +296,17 @@ namespace MapScripts.Map12
                 if (!camp.IsAlive)
                 {
                     camp.RespawnTimer -= diff;
-                    if (camp.RespawnTimer <= 0)
+                    if (camp.RespawnTimer <= 0 || forceSpawn)
                     {
                         _map.SpawnCamp(camp);
                         camp.RespawnTimer = 40.0f * 1000f;
                     }
                 }
+            }
+
+            if (forceSpawn)
+            {
+                forceSpawn = false;
             }
         }
 
@@ -312,14 +318,7 @@ namespace MapScripts.Map12
 
         public void SpawnAllCamps()
         {
-            foreach (var camp in HealthPacks)
-            {
-                if (!camp.IsAlive)
-                {
-                    _map.SpawnCamp(camp);
-                    camp.RespawnTimer = 40.0f * 1000;
-                }
-            }
+            forceSpawn = true;
         }
 
         public float GetGoldFor(IAttackableUnit u)

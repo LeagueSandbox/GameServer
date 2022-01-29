@@ -2,15 +2,18 @@ using GameServerCore.Domain.GameObjects;
 using GameServerCore.Domain.GameObjects.Spell;
 using GameServerCore.Enums;
 using GameServerCore.Scripting.CSharp;
+using LeagueSandbox.GameServer.Scripting.CSharp;
 
 namespace Buffs
 {
     internal class Silence : IBuffGameScript
     {
-        public BuffType BuffType => BuffType.SILENCE;
-        public BuffAddType BuffAddType => BuffAddType.REPLACE_EXISTING;
-        public int MaxStacks => 1;
-        public bool IsHidden => true;
+        public IBuffScriptMetaData BuffMetaData { get; set; } = new BuffScriptMetaData
+        {
+            BuffType = BuffType.SILENCE,
+            BuffAddType = BuffAddType.REPLACE_EXISTING,
+            IsHidden = true
+        };
 
         public IStatsModifier StatsModifier { get; private set; }
 

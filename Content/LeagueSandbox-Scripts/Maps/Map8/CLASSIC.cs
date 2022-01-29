@@ -23,6 +23,7 @@ namespace MapScripts.Map8
             OverrideSpawnPoints = true
         };
 
+        private bool forceSpawn;
         private IMapScriptHandler _map;
         private bool crystalSpawned;
 
@@ -294,7 +295,7 @@ namespace MapScripts.Map8
                 if (!camp.IsAlive)
                 {
                     camp.RespawnTimer -= diff;
-                    if (camp.RespawnTimer <= 0)
+                    if (camp.RespawnTimer <= 0 || forceSpawn)
                     {
                         _map.SpawnCamp(camp);
                         camp.RespawnTimer = 30.0f * 1000f;
@@ -308,7 +309,7 @@ namespace MapScripts.Map8
                 {
                     CrystalTimers[crystalTemplate.Team] -= diff;
 
-                    if (CrystalTimers[crystalTemplate.Team] <= 0)
+                    if (CrystalTimers[crystalTemplate.Team] <= 0 || forceSpawn)
                     {
                         var crystal = _map.CreateMinion(crystalTemplate.Name, crystalTemplate.Model, crystalTemplate.Position,
                                 crystalTemplate.NetId, crystalTemplate.Team, crystalTemplate.SkinId,
@@ -326,6 +327,11 @@ namespace MapScripts.Map8
                     }
                 }
             }
+
+            if (forceSpawn)
+            {
+                forceSpawn = false;
+            }
         }
 
         public void OnCrystalDeath(IDeathData deathData)
@@ -339,31 +345,7 @@ namespace MapScripts.Map8
 
         public void SpawnAllCamps()
         {
-            foreach (var camp in HealthPacks)
-            {
-                if (!camp.IsAlive)
-                {
-                    _map.SpawnCamp(camp);
-                    camp.RespawnTimer = 30.0f * 1000f;
-                }
-            }
-            foreach (var crystalTemplate in CrystalsTemplates)
-            {
-                if (!Crystals.ContainsKey(crystalTemplate.Team))
-                {
-                    var crystal = _map.CreateMinion(crystalTemplate.Name, crystalTemplate.Model, crystalTemplate.Position,
-                            crystalTemplate.NetId, crystalTemplate.Team, crystalTemplate.SkinId,
-                            crystalTemplate.IgnoresCollision, crystalTemplate.IsTargetable);
-
-                    CrystalRegions[crystalTemplate.Team].Add(AddUnitPerceptionBubble(crystal, 350.0f, 25000.0f, TeamId.TEAM_BLUE, collisionArea: 38.08f));
-                    CrystalRegions[crystalTemplate.Team].Add(AddUnitPerceptionBubble(crystal, 350.0f, 25000.0f, TeamId.TEAM_PURPLE, collisionArea: 38.08f));
-
-                    ApiEventManager.OnDeath.AddListener(crystal, crystal, OnCrystalDeath, true);
-
-                    Crystals.Add(crystal.Team, crystal);
-                    CrystalTimers[crystalTemplate.Team] = 180.0f * 1000f;
-                }
-            }
+            forceSpawn = true;
         }
 
         public float GetGoldFor(IAttackableUnit u)

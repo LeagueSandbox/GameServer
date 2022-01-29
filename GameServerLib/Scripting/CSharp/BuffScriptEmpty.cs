@@ -10,10 +10,11 @@ namespace LeagueSandbox.GameServer.Scripting.CSharp
 {
     public class BuffScriptEmpty : IBuffGameScript
     {
-        public BuffType BuffType => BuffType.INTERNAL;
-        public BuffAddType BuffAddType => BuffAddType.REPLACE_EXISTING;
-        public int MaxStacks => 0;
-        public bool IsHidden => true;
+        public IBuffScriptMetaData BuffMetaData { get; set; } = new BuffScriptMetaData
+        {
+            BuffAddType = BuffAddType.REPLACE_EXISTING,
+            MaxStacks = 0
+        };
 
         public IStatsModifier StatsModifier { get; private set; } = new StatsModifier();
 

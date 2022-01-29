@@ -6,10 +6,7 @@ namespace GameServerCore.Scripting.CSharp
 {
     public interface IBuffGameScript
     {
-        BuffType BuffType { get; }
-        BuffAddType BuffAddType { get; }
-        bool IsHidden { get; }
-        int MaxStacks { get; }
+        IBuffScriptMetaData BuffMetaData { get; }
         IStatsModifier StatsModifier { get; }
 
         void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell);

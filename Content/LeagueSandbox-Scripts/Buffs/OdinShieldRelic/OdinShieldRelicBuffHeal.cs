@@ -4,15 +4,17 @@ using GameServerCore.Domain.GameObjects.Spell;
 using GameServerCore.Scripting.CSharp;
 using LeagueSandbox.GameServer.GameObjects.Stats;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
+using LeagueSandbox.GameServer.Scripting.CSharp;
 
 namespace Buffs
 {
     internal class OdinShieldRelicBuffHeal : IBuffGameScript
     {
-        public BuffType BuffType => BuffType.HEAL;
-        public BuffAddType BuffAddType => BuffAddType.REPLACE_EXISTING;
-        public int MaxStacks => 1;
-        public bool IsHidden => true;
+        public IBuffScriptMetaData BuffMetaData { get; set; } = new BuffScriptMetaData
+        {
+            BuffType = BuffType.HEAL,
+            IsHidden = true
+        };
 
         public IStatsModifier StatsModifier { get; private set; } = new StatsModifier();
 

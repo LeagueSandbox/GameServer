@@ -7,15 +7,15 @@ using GameServerCore.Scripting.CSharp;
 using LeagueSandbox.GameServer.API;
 using LeagueSandbox.GameServer.GameObjects.Stats;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
+using LeagueSandbox.GameServer.Scripting.CSharp;
 
 namespace Buffs
 {
     internal class GlobalMonsterBuff : IBuffGameScript
     {
-        public BuffType BuffType => BuffType.INTERNAL;
-        public BuffAddType BuffAddType => BuffAddType.RENEW_EXISTING;
-        public int MaxStacks => 1;
-        public bool IsHidden => false;
+        public IBuffScriptMetaData BuffMetaData { get; set; } = new BuffScriptMetaData
+        {
+        };
 
         public IStatsModifier StatsModifier { get; private set; } = new StatsModifier();
 

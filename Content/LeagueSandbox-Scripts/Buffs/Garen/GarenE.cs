@@ -2,18 +2,17 @@
 using GameServerCore.Domain.GameObjects.Spell;
 using GameServerCore.Enums;
 using GameServerCore.Scripting.CSharp;
+using LeagueSandbox.GameServer.Scripting.CSharp;
 
 namespace Buffs
 {
     internal class GarenE : IBuffGameScript
     {
-        public BuffType BuffType => BuffType.COMBAT_ENCHANCER;
-
-        public BuffAddType BuffAddType => BuffAddType.RENEW_EXISTING;
-
-        public bool IsHidden => true;
-
-        public int MaxStacks => 1;
+        public IBuffScriptMetaData BuffMetaData { get; set; } = new BuffScriptMetaData
+        {
+            BuffType = BuffType.COMBAT_ENCHANCER,
+            IsHidden = true
+        };
 
         public IStatsModifier StatsModifier { get; private set; }
 
@@ -29,7 +28,6 @@ namespace Buffs
 
         public void OnUpdate(float diff)
         {
-            
         }
     }
 }
