@@ -45,6 +45,7 @@ namespace GameServerCore.Domain.GameObjects
         IStat Size { get; }
         IStat SpellVamp { get; }
         IStat Tenacity { get; }
+        IStat AcquisitionRange { get; }
         float Gold { get; set; }
         byte Level { get; set; }
         float Experience { get; set; }

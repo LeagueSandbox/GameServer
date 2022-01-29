@@ -86,7 +86,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         public ICharScript CharScript { get; private set; }
         public bool IsBot { get; set; }
         public IAIScript AIScript { get; protected set; }
-
         public ObjAiBase(Game game, string model, Stats.Stats stats, int collisionRadius = 40,
             Vector2 position = new Vector2(), int visionRadius = 0, int skinId = 0, uint netId = 0, TeamId team = TeamId.TEAM_NEUTRAL, string aiScript = "") :
             base(game, model, stats, collisionRadius, position, visionRadius, netId, team)
@@ -332,35 +331,35 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         /// <returns>Classification for the given unit.</returns>
         /// TODO: Verify if we want to rename this to something which relates more to the internal League name "Call for Help".
         /// TODO: Move to AttackableUnit.
-        public ClassifyUnit ClassifyTarget(IAttackableUnit target)
+        public ClassifyUnit ClassifyTarget(IAttackableUnit target, IAttackableUnit victium = null)
         {
-            if (target is IObjAiBase ai && ai.TargetUnit != null && (ai.TargetUnit.Team == Team && ai.TargetUnit.IsInDistress())) // If an ally is in distress, target this unit. (Priority 1~5)
+            if (target is IObjAiBase ai && victium != null) // If an ally is in distress, target this unit. (Priority 1~5)
             {
                 switch (target)
                 {
                     // Champion attacking an allied champion
-                    case IChampion _ when ai.TargetUnit is IChampion:
+                    case IChampion _ when victium is IChampion:
                         return ClassifyUnit.CHAMPION_ATTACKING_CHAMPION;
                     // Champion attacking lane minion
-                    case IChampion _ when ai.TargetUnit is ILaneMinion:
+                    case IChampion _ when victium is ILaneMinion:
                         return ClassifyUnit.CHAMPION_ATTACKING_MINION;
                     // Champion attacking minion
-                    case IChampion _ when ai.TargetUnit is IMinion:
+                    case IChampion _ when victium is IMinion:
                         return ClassifyUnit.CHAMPION_ATTACKING_MINION;
                     // Minion attacking an allied champion.
-                    case IMinion _ when ai.TargetUnit is IChampion:
+                    case IMinion _ when victium is IChampion:
                         return ClassifyUnit.MINION_ATTACKING_CHAMPION;
                     // Minion attacking lane minion
-                    case IMinion _ when ai.TargetUnit is ILaneMinion:
+                    case IMinion _ when victium is ILaneMinion:
                         return ClassifyUnit.MINION_ATTACKING_MINION;
                     // Minion attacking minion
-                    case IMinion _ when ai.TargetUnit is IMinion:
+                    case IMinion _ when victium is IMinion:
                         return ClassifyUnit.MINION_ATTACKING_MINION;
                     // Turret attacking lane minion
-                    case IBaseTurret _ when ai.TargetUnit is ILaneMinion:
+                    case IBaseTurret _ when victium is ILaneMinion:
                         return ClassifyUnit.TURRET_ATTACKING_MINION;
                     // Turret attacking minion
-                    case IBaseTurret _ when ai.TargetUnit is IMinion:
+                    case IBaseTurret _ when victium is IMinion:
                         return ClassifyUnit.TURRET_ATTACKING_MINION;
                 }
             }
@@ -566,13 +565,11 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
             Vector2 targetPos = Vector2.Zero;
 
-            if ((MoveOrder == OrderType.AttackTo)
-                && TargetUnit != null)
+            if (MoveOrder == OrderType.AttackTo
+                && TargetUnit != null
+                && !TargetUnit.IsDead)
             {
-                if (!TargetUnit.IsDead)
-                {
-                    targetPos = TargetUnit.Position;
-                }
+                targetPos = TargetUnit.Position;
             }
 
             if (MoveOrder == OrderType.AttackMove
@@ -967,6 +964,39 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             }
         }
 
+        public override void TakeDamage(IAttackableUnit attacker, float damage, DamageType type, DamageSource source, DamageResultType damageText)
+        {
+            base.TakeDamage(attacker, damage, type, source, damageText);
+            OnTakeDamage(attacker);
+        }
+        public override void TakeDamage(IDamageData damageData, DamageResultType damageText){
+            base.TakeDamage(damageData, damageText);
+            OnTakeDamage(damageData.Attacker);
+        }
+        void OnTakeDamage(IAttackableUnit attacker)
+        {
+            var objects = _game.ObjectManager.GetObjects();
+            foreach (var it in objects)
+            {
+                if (it.Value is IObjAiBase u)
+                {
+                    float acquisitionRange = Stats.AcquisitionRange.Total;
+                    float acquisitionRangeSquared = acquisitionRange * acquisitionRange;
+                    if(
+                        u != this
+                        && !u.IsDead
+                        && u.Team == Team
+                        && u.AIScript.AIScriptMetaData.HandlesCallsForHelp
+                        && Vector2.DistanceSquared(u.Position, Position) <= acquisitionRangeSquared
+                        && Vector2.DistanceSquared(u.Position, attacker.Position) <= acquisitionRangeSquared
+                    )
+                    {
+                        u.AIScript.OnCallForHelp(attacker, this);
+                    }
+                }
+            }
+        }
+
         /// <summary>
         /// Updates this AI's current target and attack actions depending on conditions such as crowd control, death state, vision, distance to target, etc.
         /// Used for both auto and spell attacks.
@@ -1092,7 +1122,8 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                         var objects = _game.ObjectManager.GetObjects();
                         var distanceSqrToTarget = 25000f * 25000f;
                         IAttackableUnit nextTarget = null;
-                        var range = Math.Max(Stats.Range.Total, DETECT_RANGE);
+                        // Previously `Math.Max(Stats.Range.Total, Stats.AcquisitionRange.Total)` which is incorrect
+                        var range = Stats.AcquisitionRange.Total;
 
                         foreach (var it in objects)
                         {

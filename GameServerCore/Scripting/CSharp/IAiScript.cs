@@ -1,4 +1,5 @@
 ﻿using GameServerCore.Domain.GameObjects;
+using System.Collections.Generic;
 
 namespace GameServerCore.Scripting.CSharp
 {
@@ -9,6 +10,9 @@ namespace GameServerCore.Scripting.CSharp
         {
         }
         void OnUpdate(float diff)
+        {
+        }
+        void OnCallForHelp(IAttackableUnit attacker, IAttackableUnit victium)
         {
         }
     }

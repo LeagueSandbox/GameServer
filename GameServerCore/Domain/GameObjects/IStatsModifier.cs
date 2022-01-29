@@ -23,5 +23,6 @@
         IStatModifier Range { get; }
         IStatModifier MoveSpeed { get; }
         IStatModifier GoldPerSecond { get; }
+        IStatModifier AcquisitionRange { get; }
     }
 }

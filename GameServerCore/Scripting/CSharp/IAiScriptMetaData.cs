@@ -4,5 +4,6 @@
     {
         byte BehaviorTree { get; }
         uint MinionRoamState { get; }
+        bool HandlesCallsForHelp { get; }
     }
 }
