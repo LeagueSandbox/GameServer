@@ -6,14 +6,12 @@ using LeagueSandbox.GameServer.Scripting.CSharp;
 using System.Numerics;
 using GameServerCore.Scripting.CSharp;
 using System.Linq;
-using System.Collections.Generic;
 
 namespace AIScripts
 {
     public class TurretAI : IAIScript
     {
         public IAIScriptMetaData AIScriptMetaData { get; set; } = new AIScriptMetaData();
-        public Dictionary<IAttackableUnit, int> unitsAttackingAllies { get; }
         IBaseTurret baseTurret;
 
         public void OnActivate(IObjAiBase owner)

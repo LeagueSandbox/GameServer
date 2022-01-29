@@ -6,14 +6,12 @@ using LeagueSandbox.GameServer.Scripting.CSharp;
 using System.Numerics;
 using GameServerCore.Scripting.CSharp;
 using System.Linq;
-using System.Collections.Generic;
 
 namespace AIScripts
 {
     public class MinonAI : IAIScript
     {
         public IAIScriptMetaData AIScriptMetaData { get; set; } = new AIScriptMetaData();
-        public Dictionary<IAttackableUnit, int> unitsAttackingAllies { get; }
         IMinion minion;
         internal const float DETECT_RANGE = 475.0f;
         public void OnActivate(IObjAiBase owner)

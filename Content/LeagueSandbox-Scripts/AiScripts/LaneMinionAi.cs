@@ -7,12 +7,16 @@ using System.Numerics;
 using GameServerCore.Scripting.CSharp;
 using System.Linq;
 using System.Collections.Generic;
+using System;
 
 namespace AIScripts
 {
     public class LaneMinionAI : IAIScript
     {
-        public IAIScriptMetaData AIScriptMetaData { get; set; } = new AIScriptMetaData();
+        public IAIScriptMetaData AIScriptMetaData { get; set; } = new AIScriptMetaData
+        {
+            HandlesCallsForHelp = true
+        };
         ILaneMinion LaneMinion;
         int currentWaypointIndex = 0;
         float minionActionTimer = 250f;
@@ -79,6 +83,18 @@ namespace AIScripts
                     callsForHelpMayBeCleared = false;
                     unitsAttackingAllies.Clear();
                 }
+            }
+        }
+
+        public void OnCallForHelp(IAttackableUnit attacker, IAttackableUnit victium)
+        {
+            if(unitsAttackingAllies != null)
+            {
+                int priority = Math.Min(
+                    unitsAttackingAllies.GetValueOrDefault(attacker, (int)ClassifyUnit.DEFAULT),
+                    (int)LaneMinion.ClassifyTarget(attacker, victium)
+                );
+                unitsAttackingAllies[attacker] = priority;
             }
         }
 

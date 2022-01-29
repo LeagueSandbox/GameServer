@@ -984,28 +984,16 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                     float acquisitionRangeSquared = acquisitionRange * acquisitionRange;
                     if(
                         u != this
-                        && u.Team == Team
                         && !u.IsDead
-                        && u.AIScript.unitsAttackingAllies != null
+                        && u.Team == Team
+                        && u.AIScript.AIScriptMetaData.HandlesCallsForHelp
                         && Vector2.DistanceSquared(u.Position, Position) <= acquisitionRangeSquared
                         && Vector2.DistanceSquared(u.Position, attacker.Position) <= acquisitionRangeSquared
                     )
                     {
-                        u.CallForHelp(attacker, this);
+                        u.AIScript.OnCallForHelp(attacker, this);
                     }
                 }
-            }
-        }
-        
-        public void CallForHelp(IAttackableUnit attacker, IAttackableUnit victium)
-        {
-            if(AIScript.unitsAttackingAllies != null)
-            {
-                int priority = Math.Min(
-                    AIScript.unitsAttackingAllies.GetValueOrDefault(attacker, (int)ClassifyUnit.DEFAULT),
-                    (int)ClassifyTarget(attacker, victium)
-                );
-                AIScript.unitsAttackingAllies[attacker] = priority;
             }
         }
 

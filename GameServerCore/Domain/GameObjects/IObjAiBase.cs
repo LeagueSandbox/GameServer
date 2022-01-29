@@ -70,11 +70,6 @@ namespace GameServerCore.Domain.GameObjects
         /// Unit this AI will auto attack when it is in auto attack range.
         /// </summary>
         IAttackableUnit TargetUnit { get; set; }
-        /// <summary>
-        /// Function that populates a list of units attacking allies.
-        /// </summary>
-        /// TODO: Move this to a dedicated AIScriptHandler
-        void CallForHelp(IAttackableUnit attacker, IAttackableUnit victium = null);
         
         // TODO: Implement AI Scripting for this (for AI in general).
         bool IsBot { get; }

@@ -5,7 +5,6 @@ using LeagueSandbox.GameServer.API;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using System.Numerics;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
-using System.Collections.Generic;
 
 
 namespace AIScripts
@@ -14,7 +13,6 @@ namespace AIScripts
     {
         //NOTE: This is a EXTREMELY basic A.I just so the jungle monsters aren't just complete dummies
         public IAIScriptMetaData AIScriptMetaData { get; set; } = new AIScriptMetaData();
-        public Dictionary<IAttackableUnit, int> unitsAttackingAllies { get; }
         IMonster monster;
         Vector2 initialPosition;
         Vector3 initialFacingDirection;
