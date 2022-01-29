@@ -427,7 +427,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
                 if (CastInfo.SpellSlot >= 45 && CastInfo.SpellSlot <= 60)
                 {
                     // Extra Spells which UseAttackCastTime just use the base auto attack's cast time.
-                    index = 64;
+                    index = 0;
                 }
 
                 float autoAttackTotalTime = CastInfo.Owner.CharData.GlobalCharData.AttackDelay * (1.0f + CastInfo.Owner.CharData.AttackDelayOffsetPercent[0]);
@@ -634,7 +634,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
                 if (CastInfo.SpellSlot >= 45 && CastInfo.SpellSlot <= 60)
                 {
                     // Extra Spells which UseAttackCastTime just use the base auto attack's cast time.
-                    index = 64;
+                    index = 0;
                 }
 
                 float autoAttackTotalTime = CastInfo.Owner.CharData.GlobalCharData.AttackDelay * (1.0f + CastInfo.Owner.CharData.AttackDelayOffsetPercent[0]);
