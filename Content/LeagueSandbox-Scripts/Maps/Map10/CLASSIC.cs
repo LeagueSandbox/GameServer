@@ -19,6 +19,7 @@ namespace MapScripts.Map10
             EnableBuildingProtection = true,
             StartingGold = 825.0f
         };
+        private bool forceSpawn;
         private IMapScriptHandler _map;
         public virtual IGlobalData GlobalData { get; set; } = new GlobalData();
         public bool HasFirstBloodHappened { get; set; } = false;
@@ -244,12 +245,17 @@ namespace MapScripts.Map10
                 if (!camp.IsAlive)
                 {
                     camp.RespawnTimer -= diff;
-                    if (camp.RespawnTimer <= 0)
+                    if (camp.RespawnTimer <= 0 || forceSpawn)
                     {
                         _map.SpawnCamp(camp);
                         camp.RespawnTimer = GetRespawnTimer(camp);
                     }
                 }
+            }
+
+            if (forceSpawn)
+            {
+                forceSpawn = false;
             }
         }
         public float GetRespawnTimer(IMonsterCamp monsterCamp)
@@ -272,14 +278,7 @@ namespace MapScripts.Map10
 
         public void SpawnAllCamps()
         {
-            foreach (var camp in MonsterCamps)
-            {
-                if (!camp.IsAlive)
-                {
-                    _map.SpawnCamp(camp);
-                    camp.RespawnTimer = GetRespawnTimer(camp);
-                }
-            }
+            forceSpawn = true;
         }
 
         public float GetGoldFor(IAttackableUnit u)
