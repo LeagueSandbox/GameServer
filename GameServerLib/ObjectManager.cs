@@ -93,26 +93,24 @@ namespace LeagueSandbox.GameServer
 
                         foreach (var item in turret.Inventory)
                         {
-                            if (item == null)
+                            if (item != null)
                             {
-                                continue;
+                                _game.PacketNotifier.NotifyBuyItem((int)turret.NetId, turret, item as IItem);
                             }
-
-                            _game.PacketNotifier.NotifyBuyItem((int)turret.NetId, turret, item as IItem);
                         }
 
                         _queuedObjects.Remove(obj.NetId);
-
-                        return;
                     }
-                    else if (obj is ILevelProp || obj is ISpellMissile)
+                    else 
                     {
-                        doVis = false;
+                        if (obj is ILevelProp || obj is ISpellMissile)
+                        {
+                            doVis = false;
+                        }
+                        _game.PacketNotifier.NotifySpawn(obj, 0, doVis, _game.GameTime);
+
+                        _queuedObjects.Remove(obj.NetId);
                     }
-
-                    _game.PacketNotifier.NotifySpawn(obj, 0, doVis, _game.GameTime);
-
-                    _queuedObjects.Remove(obj.NetId);
                 }
 
                 obj.Update(diff);
@@ -123,45 +121,41 @@ namespace LeagueSandbox.GameServer
                 //2. Ezreal R is globally visible, and is server only
                 //3. Every other projectile that is not server only, and is affected by visibility checks (normal projectiles)
 
-                var particle = obj as IParticle;
                 // Only if the particle is affected by vision.
-                if (particle != null && particle.VisionAffected)
+                if (obj is IParticle particle && particle.VisionAffected)
                 {
                     foreach (var team in Teams)
                     {
                         // Only remove or re-send the particle to the specified team.
-                        if (particle.SpecificTeam != TeamId.TEAM_NEUTRAL && particle.SpecificTeam != team)
+                        if (particle.SpecificTeam == TeamId.TEAM_NEUTRAL || particle.SpecificTeam == team)
                         {
-                            continue;
-                        }
-
-                        var visionUnitsTeam = GetVisionUnits(particle.Team);
-                        if (visionUnitsTeam.ContainsKey(particle.NetId))
-                        {
-                            if (TeamHasVisionOn(team, particle))
+                            var visionUnitsTeam = GetVisionUnits(particle.Team);
+                            var teamHasVision = TeamHasVisionOn(team, particle);
+                            if (visionUnitsTeam.ContainsKey(particle.NetId) && teamHasVision)
                             {
                                 particle.SetVisibleByTeam(team, true);
                                 _game.PacketNotifier.NotifyFXEnterTeamVisibility(particle, team);
-                                continue;
                             }
-                        }
-
-                        if (!particle.IsVisibleByTeam(team) && TeamHasVisionOn(team, particle))
-                        {
-                            particle.SetVisibleByTeam(team, true);
-                            _game.PacketNotifier.NotifyFXEnterTeamVisibility(particle, team);
-                        }
-                        else if (particle.IsVisibleByTeam(team) && !TeamHasVisionOn(team, particle))
-                        {
-                            particle.SetVisibleByTeam(team, false);
-                            _game.PacketNotifier.NotifyFXLeaveTeamVisibility(particle, team);
+                            else {
+                                var isVisibleByTeam = particle.IsVisibleByTeam(team);
+                                if (!isVisibleByTeam && teamHasVision)
+                                {
+                                    particle.SetVisibleByTeam(team, true);
+                                    _game.PacketNotifier.NotifyFXEnterTeamVisibility(particle, team);
+                                }
+                                else if (isVisibleByTeam && !teamHasVision)
+                                {
+                                    particle.SetVisibleByTeam(team, false);
+                                    _game.PacketNotifier.NotifyFXLeaveTeamVisibility(particle, team);
+                                }
+                            }
                         }
                     }
                 }
 
                 // Destroy any missiles which are targeting an untargetable unit.
                 // TODO: Verify if this should apply to SpellSector.
-                if (obj is ISpellMissile m)
+                else if (obj is ISpellMissile m)
                 {
                     if (m.TargetUnit != null && !m.TargetUnit.Status.HasFlag(StatusFlags.Targetable))
                     {
@@ -169,85 +163,77 @@ namespace LeagueSandbox.GameServer
                     }
                 }
 
-                if (!(obj is IAttackableUnit))
-                    continue;
-
-                var u = obj as IAttackableUnit;
-                foreach (var team in Teams)
+                else if (obj is IAttackableUnit u)
                 {
-                    if (u.Team == team)
-                        continue;
-
-                    var visionUnitsTeam = GetVisionUnits(u.Team);
-                    if (visionUnitsTeam.ContainsKey(u.NetId))
+                    foreach (var team in Teams)
                     {
-                        if (TeamHasVisionOn(team, u))
+                        if (u.Team == team)
+                            continue;
+
+                        var visionUnitsTeam = GetVisionUnits(u.Team);
+                        var teamHasVision = TeamHasVisionOn(team, u);
+                        if (visionUnitsTeam.ContainsKey(u.NetId) && teamHasVision)
                         {
                             u.SetVisibleByTeam(team, true);
                             // Might not be necessary, but just for good measure.
                             _game.PacketNotifier.NotifyS2C_OnEnterTeamVisibility(u, team);
                             _game.PacketNotifier.NotifyEnterVisibilityClient(u, useTeleportID: true);
                             RemoveVisionUnit(u);
-                            // TODO: send this in one place only
-                            _game.PacketNotifier.NotifyUpdatedStats(u, false);
-                            continue;
+                        }
+                        else {
+                            var isVisibleByTeam = u.IsVisibleByTeam(team);
+                            if (!isVisibleByTeam && teamHasVision && !u.IsDead)
+                            {
+                                u.SetVisibleByTeam(team, true);
+                                _game.PacketNotifier.NotifyS2C_OnEnterTeamVisibility(u, team);
+                                _game.PacketNotifier.NotifyEnterVisibilityClient(u, useTeleportID: true);
+                            }
+                            else if (isVisibleByTeam && (u.IsDead || !teamHasVision) && !(u is IBaseTurret || u is ILevelProp || u is IObjBuilding))
+                            {
+                                u.SetVisibleByTeam(team, false);
+                                _game.PacketNotifier.NotifyLeaveVisibilityClient(u, team);
+                            }
                         }
                     }
 
-                    if (!u.IsVisibleByTeam(team) && TeamHasVisionOn(team, u) && !u.IsDead)
+                    if (u is IObjAiBase ai)
                     {
-                        u.SetVisibleByTeam(team, true);
-                        _game.PacketNotifier.NotifyS2C_OnEnterTeamVisibility(u, team);
-                        _game.PacketNotifier.NotifyEnterVisibilityClient(u, useTeleportID: true);
-                        // TODO: send this in one place only
-                        _game.PacketNotifier.NotifyUpdatedStats(u, false);
-                    }
-                    else if (u.IsVisibleByTeam(team) && (u.IsDead || !TeamHasVisionOn(team, u)) && !(u is IBaseTurret || u is ILevelProp || u is IObjBuilding))
-                    {
-                        u.SetVisibleByTeam(team, false);
-                        _game.PacketNotifier.NotifyLeaveVisibilityClient(u, team);
-                    }
-                }
-
-                var ai = u as IObjAiBase;
-                if (ai != null)
-                {
-                    var tempBuffs = new List<IBuff>(ai.GetBuffs());
-                    for (int i = tempBuffs.Count - 1; i >= 0; i--)
-                    {
-                        if (tempBuffs[i].Elapsed())
+                        var tempBuffs = new List<IBuff>(ai.GetBuffs());
+                        for (int i = tempBuffs.Count - 1; i >= 0; i--)
                         {
-                            ai.RemoveBuff(tempBuffs[i]);
+                            if (tempBuffs[i].Elapsed())
+                            {
+                                ai.RemoveBuff(tempBuffs[i]);
+                            }
+                            else
+                            {
+                                tempBuffs[i].Update(diff);
+                            }
                         }
-                        else
+
+                        // Stop targeting an untargetable unit.
+                        if (ai.TargetUnit != null && !ai.TargetUnit.Status.HasFlag(StatusFlags.Targetable))
                         {
-                            tempBuffs[i].Update(diff);
+                            StopTargeting(ai.TargetUnit);
                         }
                     }
 
-                    // Stop targeting an untargetable unit.
-                    if (ai.TargetUnit != null && !ai.TargetUnit.Status.HasFlag(StatusFlags.Targetable))
+                    _game.PacketNotifier.NotifyUpdatedStats(u, false);
+
+                    if (u.IsModelUpdated)
                     {
-                        StopTargeting(ai.TargetUnit);
+                        _game.PacketNotifier.NotifyS2C_ChangeCharacterData(u);
+                        u.IsModelUpdated = false;
                     }
-                }
 
-                // TODO: send this in one place only
-                _game.PacketNotifier.NotifyUpdatedStats(u, false);
-
-                if (u.IsModelUpdated)
-                {
-                    _game.PacketNotifier.NotifyS2C_ChangeCharacterData(u);
-                    u.IsModelUpdated = false;
-                }
-
-                if (u.IsMovementUpdated())
-                {
-                    // TODO: Verify which one we want to use. WaypointList does not require conversions, however WaypointGroup does (and it has TeleportID functionality).
-                    //_game.PacketNotifier.NotifyWaypointList(u);
-                    // TODO: Verify if we want to use TeleportID.
-                    _game.PacketNotifier.NotifyWaypointGroup(u, false);
-                    u.ClearMovementUpdated();
+                    if (u.IsMovementUpdated())
+                    {
+                        // TODO: Verify which one we want to use. WaypointList does not require conversions, however WaypointGroup does (and it has TeleportID functionality).
+                        //_game.PacketNotifier.NotifyWaypointList(u);
+                        // TODO: Verify if we want to use TeleportID.
+                        _game.PacketNotifier.NotifyWaypointGroup(u, false);
+                        u.ClearMovementUpdated();
+                    }
                 }
             }
         }
@@ -353,12 +339,10 @@ namespace LeagueSandbox.GameServer
                         !_game.Map.NavigationGrid.IsAnythingBetween(kv.Value, o, true))
                     {
                         var unit = kv.Value as IAttackableUnit;
-                        if (unit != null && unit.IsDead)
+                        if (unit == null || !unit.IsDead)
                         {
-                            continue;
+                            return true;
                         }
-
-                        return true;
                     }
                 }
             }

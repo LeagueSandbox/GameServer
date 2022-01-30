@@ -27,6 +27,7 @@ namespace AIScripts
         int targetUnitPriority = (int) ClassifyUnit.DEFAULT;
         float localTime = 0f;
         bool callsForHelpMayBeCleared = false;
+        bool followsWaypoints = true;
         public void OnActivate(IObjAiBase owner)
         {
             LaneMinion = owner as ILaneMinion;
@@ -58,7 +59,7 @@ namespace AIScripts
                     LaneMinion.MovementParameters == null
                     //Quote: Collisions.
                     //       Minions that end up overlapping other minions will reevaluate their behavior immediately.
-                    && !LaneMinion.RecalculateAttackPosition()
+                    //&& !LaneMinion.RecalculateAttackPosition()
                     && (
                         //Quote: Their current attack target dies.
                         //       Minions who witness the death of their foe will check for a new valid target in their acquisition range.
@@ -207,6 +208,7 @@ namespace AIScripts
                 LaneMinion.SetTargetUnit(nextTarget, true);
                 targetUnitPriority = nextTargetPriority;
                 timeSinceLastAttack = 0f;
+                followsWaypoints = false;
 
                 return true;
             }
@@ -299,20 +301,17 @@ namespace AIScripts
                 Vector2 currentWaypoint = LaneMinion.PathingWaypoints[currentWaypointIndex];
                 Vector2 currentDestination = LaneMinion.Waypoints[LaneMinion.Waypoints.Count - 1];
 
-                bool waypointChanged = (
-                    LaneMinion.Waypoints == null
-                    || LaneMinion.Waypoints.Count < 2
-                    || currentDestination != currentWaypoint
-                );
-                
-                if(waypointChanged)
+                if(currentDestination != currentWaypoint)
                 {
                     List<Vector2> path = null;
                     
                     // If the minion returns to lane
                     // Instead of continuing to move along the waypoints
-                    //if(LaneMinion.MoveOrder != OrderType.MoveTo)
-                    path = GetPath(LaneMinion.Position, currentWaypoint);
+                    if(!followsWaypoints)
+                    {
+                        followsWaypoints = true;
+                        path = GetPath(LaneMinion.Position, currentWaypoint);
+                    }
 
                     if(path == null)
                     {
