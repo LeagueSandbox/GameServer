@@ -136,7 +136,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 return _game.Map.PlayerSpawnPoints[Team][teamSize][index];
             }
 
-            if(_game.Map.PlayerSpawnPoints[Team].ContainsKey(1) && _game.Map.PlayerSpawnPoints[Team][1][1] != null)
+            if (_game.Map.PlayerSpawnPoints[Team].ContainsKey(1) && _game.Map.PlayerSpawnPoints[Team][1][1] != null)
             {
                 return _game.Map.PlayerSpawnPoints[Team][1][1];
             }
@@ -204,8 +204,8 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             if (Stats.ParType == PrimaryAbilityResourceType.MANA || Stats.ParType == PrimaryAbilityResourceType.Energy || Stats.ParType == PrimaryAbilityResourceType.Wind)
             {
                 parToRestore = Stats.ManaPoints.Total;
-                Stats.CurrentMana = parToRestore;
             }
+            Stats.CurrentMana = parToRestore;
             _game.PacketNotifier.NotifyHeroReincarnateAlive(this, parToRestore);
             Stats.CurrentHealth = Stats.HealthPoints.Total;
             IsDead = false;
