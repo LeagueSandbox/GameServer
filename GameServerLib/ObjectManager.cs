@@ -130,20 +130,24 @@ namespace LeagueSandbox.GameServer
                         if (particle.SpecificTeam == TeamId.TEAM_NEUTRAL || particle.SpecificTeam == team)
                         {
                             var visionUnitsTeam = GetVisionUnits(particle.Team);
-                            if (visionUnitsTeam.ContainsKey(particle.NetId) && TeamHasVisionOn(team, particle))
+                            var teamHasVision = TeamHasVisionOn(team, particle);
+                            if (visionUnitsTeam.ContainsKey(particle.NetId) && teamHasVision)
                             {
                                 particle.SetVisibleByTeam(team, true);
                                 _game.PacketNotifier.NotifyFXEnterTeamVisibility(particle, team);
                             }
-                            else if (!particle.IsVisibleByTeam(team) && TeamHasVisionOn(team, particle))
-                            {
-                                particle.SetVisibleByTeam(team, true);
-                                _game.PacketNotifier.NotifyFXEnterTeamVisibility(particle, team);
-                            }
-                            else if (particle.IsVisibleByTeam(team) && !TeamHasVisionOn(team, particle))
-                            {
-                                particle.SetVisibleByTeam(team, false);
-                                _game.PacketNotifier.NotifyFXLeaveTeamVisibility(particle, team);
+                            else {
+                                var isVisibleByTeam = particle.IsVisibleByTeam(team);
+                                if (!isVisibleByTeam && teamHasVision)
+                                {
+                                    particle.SetVisibleByTeam(team, true);
+                                    _game.PacketNotifier.NotifyFXEnterTeamVisibility(particle, team);
+                                }
+                                else if (isVisibleByTeam && !teamHasVision)
+                                {
+                                    particle.SetVisibleByTeam(team, false);
+                                    _game.PacketNotifier.NotifyFXLeaveTeamVisibility(particle, team);
+                                }
                             }
                         }
                     }
@@ -167,7 +171,8 @@ namespace LeagueSandbox.GameServer
                             continue;
 
                         var visionUnitsTeam = GetVisionUnits(u.Team);
-                        if (visionUnitsTeam.ContainsKey(u.NetId) && TeamHasVisionOn(team, u))
+                        var teamHasVision = TeamHasVisionOn(team, u);
+                        if (visionUnitsTeam.ContainsKey(u.NetId) && teamHasVision)
                         {
                             u.SetVisibleByTeam(team, true);
                             // Might not be necessary, but just for good measure.
@@ -175,16 +180,19 @@ namespace LeagueSandbox.GameServer
                             _game.PacketNotifier.NotifyEnterVisibilityClient(u, useTeleportID: true);
                             RemoveVisionUnit(u);
                         }
-                        else if (!u.IsVisibleByTeam(team) && TeamHasVisionOn(team, u) && !u.IsDead)
-                        {
-                            u.SetVisibleByTeam(team, true);
-                            _game.PacketNotifier.NotifyS2C_OnEnterTeamVisibility(u, team);
-                            _game.PacketNotifier.NotifyEnterVisibilityClient(u, useTeleportID: true);
-                        }
-                        else if (u.IsVisibleByTeam(team) && (u.IsDead || !TeamHasVisionOn(team, u)) && !(u is IBaseTurret || u is ILevelProp || u is IObjBuilding))
-                        {
-                            u.SetVisibleByTeam(team, false);
-                            _game.PacketNotifier.NotifyLeaveVisibilityClient(u, team);
+                        else {
+                            var isVisibleByTeam = u.IsVisibleByTeam(team);
+                            if (!isVisibleByTeam && teamHasVision && !u.IsDead)
+                            {
+                                u.SetVisibleByTeam(team, true);
+                                _game.PacketNotifier.NotifyS2C_OnEnterTeamVisibility(u, team);
+                                _game.PacketNotifier.NotifyEnterVisibilityClient(u, useTeleportID: true);
+                            }
+                            else if (isVisibleByTeam && (u.IsDead || !teamHasVision) && !(u is IBaseTurret || u is ILevelProp || u is IObjBuilding))
+                            {
+                                u.SetVisibleByTeam(team, false);
+                                _game.PacketNotifier.NotifyLeaveVisibilityClient(u, team);
+                            }
                         }
                     }
 
@@ -331,12 +339,10 @@ namespace LeagueSandbox.GameServer
                         !_game.Map.NavigationGrid.IsAnythingBetween(kv.Value, o, true))
                     {
                         var unit = kv.Value as IAttackableUnit;
-                        if (unit != null && unit.IsDead)
+                        if (unit == null || !unit.IsDead)
                         {
-                            continue;
+                            return true;
                         }
-
-                        return true;
                     }
                 }
             }
