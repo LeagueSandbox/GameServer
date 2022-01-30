@@ -61,9 +61,9 @@ namespace PacketDefinitions420
         /// <summary>
         /// The core networking loop which fires for connections, received packets, and disconnects.
         /// </summary>
-        public void NetLoop()
+        public void NetLoop(int timeout = 0)
         {
-            while (_server.Service(0, out var enetEvent) > 0)
+            while (_server.Service(timeout, out var enetEvent) > 0)
             {
                 switch (enetEvent.Type)
                 {
