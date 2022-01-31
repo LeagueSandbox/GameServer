@@ -14,7 +14,7 @@ namespace MapScripts.Map1
 {
     public class CLASSIC : IMapScript
     {
-        public IMapScriptMetadata MapScriptMetadata { get; set; } = new MapScriptMetadata
+        public virtual IMapScriptMetadata MapScriptMetadata { get; set; } = new MapScriptMetadata
         {
             MinionPathingOverride = true,
             EnableBuildingProtection = true

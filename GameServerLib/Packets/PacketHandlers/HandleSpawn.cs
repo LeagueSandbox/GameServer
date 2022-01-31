@@ -95,8 +95,6 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                 }
             }
 
-            _game.Map.MapScript.OnMatchStart();
-
             // TODO shop map specific?
             // Level props are just models, we need button-object minions to allow the client to interact with it
             if (peerInfo != null)

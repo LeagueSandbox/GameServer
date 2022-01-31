@@ -5,6 +5,7 @@ using GameServerCore.Content;
 using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
+using LeaguePackets.Game.Common;
 
 namespace GameServerCore.Maps
 {
@@ -134,7 +135,8 @@ namespace GameServerCore.Maps
         /// <param name="model"></param>
         /// <param name="skin"></param>
         /// <param name="NetId"></param>
-        void AddLevelProp(string name, string model, Vector2 position, float height, Vector3 direction, Vector3 posOffset, Vector3 scale, int skinId = 0, byte skillLevel = 0, byte rank = 0, byte type = 2, uint netId = 0, byte netNodeId = 64);
+        ILevelProp AddLevelProp(string name, string model, Vector2 position, float height, Vector3 direction, Vector3 posOffset, Vector3 scale, int skinId = 0, byte skillLevel = 0, byte rank = 0, byte type = 2, uint netId = 0, byte netNodeId = 64);
+        void NotifyPropAnimation(ILevelProp prop, string animation, AnimationFlags animationFlag, float duration, bool destroyPropAfterAnimation);
         /// <summary>
         /// Sets up the surrender functionality
         /// </summary>
