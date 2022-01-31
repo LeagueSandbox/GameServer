@@ -83,12 +83,6 @@ namespace GameServerCore.Content
         /// <returns>List of points forming a path in order: from -> to</returns>
         List<Vector2> GetPath(Vector2 from, Vector2 to, float distanceThreshold = 0);
         /// <summary>
-        /// Translates the given float into cell format where each unit is a cell.
-        /// </summary>
-        /// <param name="value">Float to translate.</param>
-        /// <returns>Translated float.</returns>
-        float TranslateToNavGrid(float value);
-        /// <summary>
         /// Translates the given Vector2 into cell format where each unit is a cell.
         /// This is to simplify the calculations required to get cells.
         /// </summary>
