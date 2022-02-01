@@ -962,5 +962,7 @@ namespace GameServerCore.Packets.Interfaces
         /// TODO: Verify if this is the correct implementation.
         /// TODO: Fix LeaguePackets Typos.
         void NotifyWorld_SendCamera_Server_Acknologment(int userId, ViewRequest request);
+
+        void NotifyTeamVisibilityChange(IGameObject obj, TeamId team, bool becameVisible);
     }
 }

@@ -22,7 +22,8 @@ namespace LeagueSandbox.GameServer.GameObjects
         // Function Vars
         protected bool _toRemove;
         protected bool _movementUpdated;
-        private Dictionary<TeamId, bool> _visibleByTeam;
+        private uint _bisibleByTeam = 0;
+        private bool _isSpawned = false;
 
         /// <summary>
         /// Comparison variable for small distance movements.
@@ -81,13 +82,6 @@ namespace LeagueSandbox.GameServer.GameObjects
             SyncId = Environment.TickCount; // TODO: use movement manager to generate this
             CollisionRadius = collisionRadius;
             VisionRadius = visionRadius;
-
-            _visibleByTeam = new Dictionary<TeamId, bool>();
-            var teams = Enum.GetValues(typeof(TeamId)).Cast<TeamId>();
-            foreach (var t in teams)
-            {
-                _visibleByTeam.Add(t, false);
-            }
 
             Team = team;
             _movementUpdated = false;
@@ -225,9 +219,12 @@ namespace LeagueSandbox.GameServer.GameObjects
         /// <param name="team">TeamId.BLUE/PURPLE/NEUTRAL</param>
         public void SetTeam(TeamId team)
         {
-            _visibleByTeam[Team] = false;
+            uint t = (uint)team ^ 108;
+            _bisibleByTeam &= ~t;
             Team = team;
-            _visibleByTeam[Team] = true;
+            _bisibleByTeam |= t;
+
+
             if (_game.IsRunning)
             {
                 _game.PacketNotifier.NotifySetTeam(this as IAttackableUnit);
@@ -240,7 +237,8 @@ namespace LeagueSandbox.GameServer.GameObjects
         /// <param name="team">A team which could have vision of this object.</param>
         public bool IsVisibleByTeam(TeamId team)
         {
-            return team == Team || _visibleByTeam[team];
+            uint t = (uint)team ^ 108;
+            return team == Team || (_bisibleByTeam & t) == t;
         }
 
         /// <summary>
@@ -250,13 +248,40 @@ namespace LeagueSandbox.GameServer.GameObjects
         /// <param name="visible">true/false; networked or not</param>
         public void SetVisibleByTeam(TeamId team, bool visible)
         {
-            _visibleByTeam[team] = visible;
-
+            uint t = (uint)team ^ 108;
+            if(visible)
+                _bisibleByTeam |= t;
+            else
+                _bisibleByTeam &= ~t;
+            /*
             if (this is IAttackableUnit)
             {
                 // TODO: send this in one place only
                 _game.PacketNotifier.NotifyUpdatedStats(this as IAttackableUnit, false);
             }
+            */
+        }
+
+        public void SetVisibleByTeams(uint teams)
+        {
+            _bisibleByTeam = teams;
+            /*
+            if (this is IAttackableUnit)
+            {
+                // TODO: send this in one place only
+                _game.PacketNotifier.NotifyUpdatedStats(this as IAttackableUnit, false);
+            }
+            */
+        }
+
+        public bool IsSpawned()
+        {
+            return _isSpawned;
+        }
+
+        public void SetAsSpawned()
+        {
+            _isSpawned = true;
         }
 
         /// <summary>

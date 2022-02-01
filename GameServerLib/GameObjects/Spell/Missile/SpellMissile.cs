@@ -69,6 +69,8 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Missile
 
         public override void Update(float diff)
         {
+            // Destroy any missiles which are targeting an untargetable unit.
+            // TODO: Verify if this should apply to SpellSector.
             if (!HasTarget())
             {
                 Direction = new Vector3();
@@ -209,7 +211,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Missile
         /// <returns>True/False.</returns>
         public bool HasTarget()
         {
-            return TargetUnit != null;
+            return TargetUnit != null && TargetUnit.Status.HasFlag(StatusFlags.Targetable);
         }
 
         /// <summary>

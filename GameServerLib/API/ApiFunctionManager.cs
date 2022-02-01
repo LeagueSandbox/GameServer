@@ -946,16 +946,6 @@ namespace LeagueSandbox.GameServer.API
             };
         }
         /// <summary>
-        /// Returns whether or not the designed team has vision over an unit or not
-        /// </summary>
-        /// <param name="team"></param>
-        /// <param name="unit"></param>
-        /// <returns></returns>
-        public static bool TeamHasVision(TeamId team, IGameObject unit)
-        {
-            return _game.ObjectManager.TeamHasVisionOn(team, unit);
-        }
-        /// <summary>
         /// Returns wether or not an unit is protected from attacks (Monstly used to check tower protection)
         /// </summary>
         /// <param name="unit"></param>

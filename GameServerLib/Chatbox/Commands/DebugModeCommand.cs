@@ -390,7 +390,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
                 return;
             }
 
-            List<IAttackableUnit> minions = new List<IAttackableUnit>(_game.ObjectManager.GetVisionUnits().Values.ToList().Where(x => x is IMinion));
+            var minions = new List<IMinion>(_game.ObjectManager.GetObjects().Values.OfType<IMinion>());
 
             // Same method as DebugSelf just for every champion
             foreach (var minion in minions)

@@ -616,8 +616,11 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                         }
 
                         var newWaypoints = _game.Map.NavigationGrid.GetPath(Position, targetPos);
-                        if (newWaypoints.Count > 1)
-                        {
+
+                        if (
+                            newWaypoints != null //TODO: happens sometimes near the nexus for some reason, find out why
+                            && newWaypoints.Count > 1
+                        ) {
                             SetWaypoints(newWaypoints);
                         }
                     }
@@ -943,6 +946,29 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         public override void Update(float diff)
         {
             base.Update(diff);
+
+            //BEGIN Moved from ObjectManager.Update
+            // Stop targeting an untargetable unit.
+            if (TargetUnit != null && !TargetUnit.Status.HasFlag(StatusFlags.Targetable))
+            {
+                //StopTargeting(TargetUnit);
+                SetTargetUnit(null, true);
+            }
+
+            var tempBuffs = new List<IBuff>(GetBuffs());
+            for (int i = tempBuffs.Count - 1; i >= 0; i--)
+            {
+                if (tempBuffs[i].Elapsed())
+                {
+                    RemoveBuff(tempBuffs[i]);
+                }
+                else
+                {
+                    tempBuffs[i].Update(diff);
+                }
+            }
+            //END   Moved from ObjectManager.Update
+
             CharScript.OnUpdate(diff);
             if (!_aiPaused)
             {
@@ -1057,7 +1083,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                     idealRange = Stats.Range.Total + TargetUnit.CollisionRadius;
 
                     // TODO: Implement True Sight for turrets instead of using an exception for turret targeting in relation to vision here.
-                    if (TargetUnit.IsDead || (!_game.ObjectManager.TeamHasVisionOn(Team, TargetUnit) && !(this is IBaseTurret) && !(TargetUnit is IBaseTurret) && !(TargetUnit is IObjBuilding) && MovementParameters == null))
+                    if (TargetUnit.IsDead || (!TargetUnit.IsVisibleByTeam(Team) && !(this is IBaseTurret) && !(TargetUnit is IBaseTurret) && !(TargetUnit is IObjBuilding) && MovementParameters == null))
                     {
                         SetTargetUnit(null);
                         IsAttacking = false;

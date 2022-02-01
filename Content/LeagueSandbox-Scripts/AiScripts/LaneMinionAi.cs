@@ -111,7 +111,7 @@ namespace AIScripts
                 && !u.IsDead
                 && u.Team != LaneMinion.Team
                 && UnitInRange(u, LaneMinion.Stats.AcquisitionRange.Total)
-                && TeamHasVision(LaneMinion.Team, u)
+                && u.IsVisibleByTeam(LaneMinion.Team)
                 && u.Status.HasFlag(StatusFlags.Targetable)
                 && !UnitIsProtectionActive(u)
             );

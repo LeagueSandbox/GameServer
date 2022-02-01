@@ -124,6 +124,11 @@ namespace GameServerCore.Domain.GameObjects
         /// <param name="visible">true/false; networked or not</param>
         void SetVisibleByTeam(TeamId team, bool visible);
 
+        void SetVisibleByTeams(uint teams);
+
+        bool IsSpawned();
+        void SetAsSpawned();
+
         /// <summary>
         /// Sets the position of this GameObject to the specified position.
         /// </summary>

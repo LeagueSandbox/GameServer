@@ -240,7 +240,10 @@ namespace LeagueSandbox.GameServer.GameObjects
 
             if (autoSend)
             {
-                _game.PacketNotifier.NotifyFXCreateGroup(this);
+                // Broken because PacketNotifierManager won't be able to determine who is seeing the particle,
+                // because GameObject.IsVisibleByTeam is now updated no more than once per frame.
+                // Therefore, the particle spawns along with the rest of the objects at the end of the frame.
+                //_game.PacketNotifier.NotifyFXCreateGroup(this);
             }
         }
 

@@ -19,12 +19,12 @@ namespace LeagueSandbox.GameServer.Content.Navigation
         /// Index of this cell.
         /// </summary>
         public int ID { get; private set; }
-        /// <summary>
-        /// Whether or not this cell is open for pathing. Usually false when the cell is occupied by actors.
-        /// </summary>
         public float CenterHeight { get; private set; }
         public int SessionId { get; private set; }
         public float ArrivalCost { get; private set; }
+        /// <summary>
+        /// Whether or not this cell is open for pathing. Usually false when the cell is occupied by actors.
+        /// </summary>
         public bool IsOpen { get; private set; }
         public float Heuristic { get; private set; }
         /// <summary>

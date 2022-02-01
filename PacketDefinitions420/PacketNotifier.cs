@@ -3676,5 +3676,35 @@ namespace PacketDefinitions420
             };
             _packetHandlerManager.SendPacket(userId, answer.GetBytes(), Channel.CHL_S2C, PacketFlags.None);
         }
+
+        public void NotifyTeamVisibilityChange(IGameObject obj, TeamId team, bool becameVisible)
+        {
+            if(obj is IParticle particle)
+            {
+                if(becameVisible)
+                {
+                    NotifyFXEnterTeamVisibility(particle, team);
+                }
+                else
+                {
+                    NotifyFXLeaveTeamVisibility(particle, team);
+                }
+            }
+            else if(obj is IAttackableUnit u)
+            {
+                if (becameVisible)
+                {
+                    //TODO: Probably should be used instead
+                    //NotifyS2C_OnEnterTeamVisibility(u, team);
+                    
+                    //TODO: Broadcast only to team
+                    NotifyEnterVisibilityClient(obj, useTeleportID: true);
+                }
+                else
+                {
+                    NotifyLeaveVisibilityClient(obj, team);
+                }
+            }
+        }
     }
 }
