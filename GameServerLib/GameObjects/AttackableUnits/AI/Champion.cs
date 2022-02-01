@@ -64,6 +64,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
             Spells[(int)SpellSlotType.BluePillSlot] = new Spell.Spell(game, this,
                 _game.ItemManager.GetItemType(_game.Map.MapScript.MapScriptMetadata.RecallSpellItemId).SpellName, (int)SpellSlotType.BluePillSlot);
+            Stats.SetSpellEnabled((byte)SpellSlotType.BluePillSlot, true);
 
             Replication = new ReplicationHero(this);
 
