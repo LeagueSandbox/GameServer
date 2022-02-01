@@ -204,8 +204,8 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             if (Stats.ParType == PrimaryAbilityResourceType.MANA || Stats.ParType == PrimaryAbilityResourceType.Energy || Stats.ParType == PrimaryAbilityResourceType.Wind)
             {
                 parToRestore = Stats.ManaPoints.Total;
-                Stats.CurrentMana = parToRestore;
             }
+            Stats.CurrentMana = parToRestore;
             _game.PacketNotifier.NotifyHeroReincarnateAlive(this, parToRestore);
             Stats.CurrentHealth = Stats.HealthPoints.Total;
             IsDead = false;

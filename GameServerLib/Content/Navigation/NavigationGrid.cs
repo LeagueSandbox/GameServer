@@ -267,10 +267,9 @@ namespace LeagueSandbox.GameServer.Content.Navigation
                     return null;
                 }
 
-                NavigationGridCell[] pathArray = path.ToArray();
-                Array.Reverse(pathArray);
-
-                List<NavigationGridCell> pathList = SmoothPath(new List<NavigationGridCell>(pathArray));
+                var pathList = new List<NavigationGridCell>(path);
+                pathList.Reverse();
+                pathList = SmoothPath(pathList);
 
                 // removes the first point
                 pathList.RemoveAt(0);
@@ -316,25 +315,6 @@ namespace LeagueSandbox.GameServer.Content.Navigation
                 }
             }
             return path;
-        }
-
-        /// <summary>
-        /// Translates the given float into cell format where each unit is a cell.
-        /// </summary>
-        /// <param name="value">Float to translate.</param>
-        /// <returns></returns>
-        public float TranslateToNavGrid(float value)
-        {
-            float unit = MathF.Sqrt(2) / 2;
-            float sign = 1.0f;
-            if (value < 0)
-            {
-                sign = -1.0f;
-            }
-
-            // Signed length of translated and scaled unit vector.
-            return sign * MathF.Sqrt(((value * unit * TranslationMaxGridPosition.X) * (value * unit * TranslationMaxGridPosition.X))
-                                    + ((value * unit * TranslationMaxGridPosition.Z) * (value * unit * TranslationMaxGridPosition.Z)));
         }
 
         /// <summary>
@@ -524,18 +504,23 @@ namespace LeagueSandbox.GameServer.Content.Navigation
         private List<NavigationGridCell> GetAllCellsInRange(Vector2 origin, float radius, bool translate = true)
         {
             List<NavigationGridCell> cells = new List<NavigationGridCell>();
-
-            if (!translate)
+            
+            float stepX = radius;
+            float stepY = radius;
+            Vector2 trueOrigin = origin;
+            if(!translate)
             {
-                radius = TranslateToNavGrid(radius);
+                stepX *= this.TranslationMaxGridPosition.X;
+                stepY *= this.TranslationMaxGridPosition.Z;
+                trueOrigin = TranslateFrmNavigationGrid(origin);
             }
 
             // Ordered: bottom left, bottom right, top right.
             int[] cellIndices = new int[3]
             {
-                GetCellIndex(origin.X - radius, origin.Y - radius, translate),
-                GetCellIndex(origin.X + radius, origin.Y - radius, translate),
-                GetCellIndex(origin.X + radius, origin.Y + radius, translate)
+                GetCellIndex(origin.X - stepX, origin.Y - stepY, translate),
+                GetCellIndex(origin.X + stepX, origin.Y - stepY, translate),
+                GetCellIndex(origin.X + stepX, origin.Y + stepY, translate)
             };
 
             int rowIndex = cellIndices[0];
@@ -556,7 +541,7 @@ namespace LeagueSandbox.GameServer.Content.Navigation
 
                 NavigationGridCell cell = Cells[i];
 
-                if (Extensions.DistanceSquaredToRectangle(new Vector2(cell.Locator.X, cell.Locator.Y), 1, 1, TranslateToNavGrid(origin)) <= radius * radius)
+                if (Extensions.DistanceSquaredToRectangle(TranslateFrmNavigationGrid(cell.Locator), 1.0f / this.TranslationMaxGridPosition.X, 1.0f / this.TranslationMaxGridPosition.Z, trueOrigin) <= radius * radius)
                 {
                     cells.Add(cell);
                 }
@@ -601,16 +586,7 @@ namespace LeagueSandbox.GameServer.Content.Navigation
                 return cell != null && !cell.HasFlag(NavigationGridCellFlags.NOT_PASSABLE) && !cell.HasFlag(NavigationGridCellFlags.SEE_THROUGH);
             }
 
-            // If one of the cells within the checkRadius are not passable or see through, the location isn't walkable.
-            // Otherwise it is walkable if none of them are not passable or see through.
-            Vector2 trueCoords = coords;
-            if (!translate)
-            {
-                // GetAllCellsInRange requires the coordinates to be untranslated.
-                trueCoords = TranslateFrmNavigationGrid(coords);
-            }
-
-            List<NavigationGridCell> cells = GetAllCellsInRange(trueCoords, checkRadius, translate);
+            List<NavigationGridCell> cells = GetAllCellsInRange(coords, checkRadius, translate);
 
             if (cells.Count == 0)
             {
@@ -623,7 +599,6 @@ namespace LeagueSandbox.GameServer.Content.Navigation
                 {
                     return false;
                 }
-                continue;
             }
             return true;
         }
