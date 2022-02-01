@@ -47,11 +47,7 @@ namespace GameServerCore.Scripting.CSharp
         /// </summary>
         bool OverrideSpawnPoints { get; set; }
         /// <summary>
-        /// Wether or not the Map's EXP should get overriden by the MapScript
-        /// </summary>
-        bool OverrideEXPCurve { get; set; }
-        /// <summary>
-        /// The level All players start the game
+        /// The level of all players at the start of the game
         /// </summary>
         int InitialLevel { get; set; }
         /// <summary>
