@@ -3463,7 +3463,15 @@ namespace PacketDefinitions420
             // TODO: currently unpause disabled cause it shouldn't handled like this
             _packetHandlerManager.UnpauseGame();
         }
-
+        public void NotifyUpdateLevelPropS2C(UpdateLevelPropData propData)
+        {
+            var packet = new UpdateLevelPropS2C
+            {
+                SenderNetID = 0,
+                UpdateLevelPropData = propData
+            };
+            _packetHandlerManager.BroadcastPacket(packet.GetBytes(), Channel.CHL_S2C);
+        }
         /// <summary>
         /// Sends a packet to all players with vision of the specified unit detailing that the specified unit's stats have been updated.
         /// </summary>
@@ -3669,5 +3677,4 @@ namespace PacketDefinitions420
             _packetHandlerManager.SendPacket(userId, answer.GetBytes(), Channel.CHL_S2C, PacketFlags.None);
         }
     }
-
 }

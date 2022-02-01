@@ -37,7 +37,7 @@ namespace GameServerCore.Scripting.CSharp
         /// <summary>
         /// Time when all players should start generating gold (Default: 90 Seconds)
         /// </summary>
-        long FirstGoldTime { get; set; }
+        float FirstGoldTime { get; set; }
         /// <summary>
         /// Whether or not the fountain should heal the players (Default = true)
         /// </summary>
@@ -46,5 +46,13 @@ namespace GameServerCore.Scripting.CSharp
         /// Wether or not the map's position is to be overriden
         /// </summary>
         bool OverrideSpawnPoints { get; set; }
+        /// <summary>
+        /// The level of all players at the start of the game
+        /// </summary>
+        int InitialLevel { get; set; }
+        /// <summary>
+        /// Maximum level a player can reach
+        /// </summary>
+        int MaxLevel { get; set; }
     }
 }

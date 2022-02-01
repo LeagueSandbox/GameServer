@@ -52,7 +52,12 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                     }
 
                     _game.PacketNotifier.NotifySpawn(player.Item2.Champion, userId, false);
-                    player.Item2.Champion.LevelUp();
+                    
+                    while(player.Item2.Champion.Stats.Level < _game.Map.MapScript.MapScriptMetadata.InitialLevel)
+                    {
+                        player.Item2.Champion.LevelUp(true);
+                    }
+
                     // TODO: send this in one place only
                     _game.PacketNotifier.NotifyS2C_HandleTipUpdatep((int) player.Item2.PlayerId, "Welcome to League Sandbox!",
                         "This is a WIP project.", "", 0, player.Item2.Champion.NetId,

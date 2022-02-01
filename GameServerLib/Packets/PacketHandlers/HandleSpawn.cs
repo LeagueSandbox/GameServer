@@ -58,7 +58,6 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             // TODO: Verify if ^ is still true! Commenting it out does not seem to cause any damage.
             _game.PacketNotifier.NotifyNPC_UpgradeSpellAns(userId, peerInfo.Champion.NetId, 13, 1, peerInfo.Champion.SkillPoints);
 
-            peerInfo.Champion.Stats.SetSpellEnabled(13, true);
             peerInfo.Champion.Stats.SetSummonerSpellEnabled(0, true);
             peerInfo.Champion.Stats.SetSummonerSpellEnabled(1, true);
 
@@ -94,8 +93,6 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                     _logger.Warn("Object of type: " + kv.Value.GetType() + " not handled in HandleSpawn.");
                 }
             }
-
-            _game.Map.MapScript.OnMatchStart();
 
             // TODO shop map specific?
             // Level props are just models, we need button-object minions to allow the client to interact with it

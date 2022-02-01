@@ -11,6 +11,7 @@ using GameServerCore.Packets.Enums;
 using GameServerCore.Packets.PacketDefinitions.Requests;
 using LeaguePackets.Game;
 using LeaguePackets;
+using LeaguePackets.Game.Common;
 
 namespace GameServerCore.Packets.Interfaces
 {
@@ -122,7 +123,7 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="newDisplayRange">New max display range for the spell to set.</param>
         /// <param name="newIconIndex">New index of an icon for the spell to set.</param>
         /// <param name="offsetTargets">New target netids for the spell to set.</param>
-        void NotifyChangeSlotSpellData(int userId, IObjAiBase owner, byte slot, ChangeSlotSpellDataType changeType, bool isSummonerSpell = false, TargetingType targetingType = TargetingType.Invalid, string newName = "", float newRange = 0, float newMaxCastRange = 0, float newDisplayRange = 0, byte newIconIndex = 0x0, List<uint> offsetTargets = null);
+        void NotifyChangeSlotSpellData(int userId, IObjAiBase owner, byte slot, GameServerCore.Enums.ChangeSlotSpellDataType changeType, bool isSummonerSpell = false, TargetingType targetingType = TargetingType.Invalid, string newName = "", float newRange = 0, float newMaxCastRange = 0, float newDisplayRange = 0, byte newIconIndex = 0x0, List<uint> offsetTargets = null);
         /// <summary>
         /// Sends a packet to all players with vision of a specified ObjAiBase explaining that their specified spell's cooldown has been set.
         /// </summary>
@@ -890,6 +891,7 @@ namespace GameServerCore.Packets.Interfaces
         /// </summary>
         /// TODO: Verify if this works and if not, then finish it.
         void NotifyUnpauseGame();
+        void NotifyUpdateLevelPropS2C(UpdateLevelPropData propData);
         /// <summary>
         /// Sends a packet to all players with vision of the specified unit detailing that the specified unit's stats have been updated.
         /// </summary>

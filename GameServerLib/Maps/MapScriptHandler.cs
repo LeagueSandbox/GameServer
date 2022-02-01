@@ -14,6 +14,7 @@ using GameServerCore.Enums;
 using GameServerCore.Maps;
 using GameServerCore.NetInfo;
 using GameServerLib.GameObjects;
+using LeaguePackets.Game.Common;
 using LeagueSandbox.GameServer.Content;
 using LeagueSandbox.GameServer.GameObjects;
 using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
@@ -614,11 +615,25 @@ namespace LeagueSandbox.GameServer.Maps
             AnnouncerEvents.Add(new Announce(_game, time, ID, isMapSpecific));
         }
 
-        public void AddLevelProp(string name, string model, Vector2 position, float height, Vector3 direction, Vector3 posOffset, Vector3 scale, int skinId = 0, byte skillLevel = 0, byte rank = 0, byte type = 2, uint netId = 0, byte netNodeId = 64)
+        public ILevelProp AddLevelProp(string name, string model, Vector2 position, float height, Vector3 direction, Vector3 posOffset, Vector3 scale, int skinId = 0, byte skillLevel = 0, byte rank = 0, byte type = 2, uint netId = 0, byte netNodeId = 64)
         {
-            _game.ObjectManager.AddObject(new LevelProp(_game, netNodeId, name, model, position, height, direction, posOffset, scale, skinId, skillLevel, rank, type, netId));
+            var prop = new LevelProp(_game, netNodeId, name, model, position, height, direction, posOffset, scale, skinId, skillLevel, rank, type, netId);
+            _game.ObjectManager.AddObject(prop);
+            return prop;
         }
-
+        public void NotifyPropAnimation(ILevelProp prop, string animation, AnimationFlags animationFlag, float duration, bool destroyPropAfterAnimation)
+        {
+            var animationData = new UpdateLevelPropDataPlayAnimation
+            {
+                AnimationName = animation,
+                AnimationFlags = (uint)animationFlag,
+                Duration = duration,
+                DestroyPropAfterAnimation = destroyPropAfterAnimation,
+                StartMissionTime = _game.GameTime,
+                NetID = prop.NetId
+            };
+            _game.PacketNotifier.NotifyUpdateLevelPropS2C(animationData);
+        }
         public void AddSurrender(float time, float restTime, float length)
         {
             _surrenders.Add(TeamId.TEAM_BLUE, new SurrenderHandler(_game, TeamId.TEAM_BLUE, time, restTime, length));

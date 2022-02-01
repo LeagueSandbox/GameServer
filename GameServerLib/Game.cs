@@ -390,6 +390,7 @@ namespace LeagueSandbox.GameServer
         public void Start()
         {
             IsRunning = true;
+            Map.MapScript.OnMatchStart();
         }
 
         /// <summary>

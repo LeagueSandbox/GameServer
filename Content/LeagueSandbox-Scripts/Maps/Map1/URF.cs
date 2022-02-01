@@ -3,11 +3,19 @@ using GameServerCore.Domain;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 using GameServerCore.Maps;
 using LeagueSandbox.GameServer.Content;
+using GameServerCore.Scripting.CSharp;
+using LeagueSandbox.GameServer.Scripting.CSharp;
 
 namespace MapScripts.Map1
 {
     public class URF : CLASSIC
     {
+        public override IMapScriptMetadata MapScriptMetadata { get; set; } = new MapScriptMetadata
+        {
+            MinionPathingOverride = true,
+            EnableBuildingProtection = true,
+            MaxLevel = 30
+        };
         public override IGlobalData GlobalData { get; set; } = new GlobalData { PercentCooldownModMinimun = 0.8f};
         public override void Init(IMapScriptHandler map)
         {

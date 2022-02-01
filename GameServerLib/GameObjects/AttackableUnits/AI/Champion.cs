@@ -62,7 +62,8 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             Spells[(int)SpellSlotType.SummonerSpellSlots + 1] = new Spell.Spell(game, this, clientInfo.SummonerSkills[1], (int)SpellSlotType.SummonerSpellSlots + 1);
             Spells[(int)SpellSlotType.SummonerSpellSlots + 1].LevelUp();
 
-            Spells[(int)SpellSlotType.BluePillSlot] = new Spell.Spell(game, this, "Recall", (int)SpellSlotType.BluePillSlot);
+            Spells[(int)SpellSlotType.BluePillSlot] = new Spell.Spell(game, this,
+                _game.ItemManager.GetItemType(_game.Map.MapScript.MapScriptMetadata.RecallSpellItemId).SpellName, (int)SpellSlotType.BluePillSlot);
             Stats.SetSpellEnabled((byte)SpellSlotType.BluePillSlot, true);
 
             Replication = new ReplicationHero(this);
@@ -228,10 +229,13 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             TeleportTo(spawnPos.X, spawnPos.Y);
         }
 
-        public void AddExperience(float experience)
+        public void AddExperience(float experience, bool notify = true)
         {
             Stats.Experience += experience;
-            _game.PacketNotifier.NotifyUnitAddEXP(this, experience);
+            if(Stats.Experience > 0 && notify)
+            {
+                _game.PacketNotifier.NotifyUnitAddEXP(this, experience);
+            }
 
             while (Stats.Experience >= _game.Config.MapData.ExpCurve[Stats.Level - 1] && LevelUp()) ;
         }
@@ -241,9 +245,12 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             var stats = Stats;
             var expMap = _game.Config.MapData.ExpCurve;
 
-            //Ideally we'd use "stats.Level < expMap.Count + 1", but since we still don't have gamemodes implemented yet, i'll be hardcoding the EXP level to cap at lvl 18,
-            //Since the SR Map has 30 levels in total because of URF
-            if (stats.Level < 18 && (stats.Level < 1 || (stats.Experience >= expMap[stats.Level - 1] || force))) //The + and - 1s are there because the XP files don't have level 1
+            if (force && stats.Level > 0)
+            {
+                Stats.Experience = expMap[Stats.Level - 1];
+            }
+
+            if (stats.Level < _game.Map.MapScript.MapScriptMetadata.MaxLevel && (stats.Level < 1 || (stats.Experience >= expMap[stats.Level - 1]))) //The - 1s is there because the XP files don't have level 1
             {
                 Stats.LevelUp();
                 Logger.Debug("Champion " + Model + " leveled up to " + stats.Level);

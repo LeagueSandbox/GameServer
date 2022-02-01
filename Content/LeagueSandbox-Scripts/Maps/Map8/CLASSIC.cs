@@ -5,11 +5,11 @@ using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
 using GameServerCore.Maps;
-using GameServerCore.Scripting.CSharp;
 using LeagueSandbox.GameServer.API;
 using LeagueSandbox.GameServer.Content;
 using LeagueSandbox.GameServer.GameObjects;
 using LeagueSandbox.GameServer.Scripting.CSharp;
+using GameServerCore.Scripting.CSharp;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 
 namespace MapScripts.Map8
@@ -19,8 +19,12 @@ namespace MapScripts.Map8
         public IMapScriptMetadata MapScriptMetadata { get; set; } = new MapScriptMetadata
         {
             MinionSpawnEnabled = false,
-            StartingGold = 825.0f,
-            OverrideSpawnPoints = true
+            StartingGold = 1375.0f,
+            OverrideSpawnPoints = true,
+            RecallSpellItemId = 2005,
+            GoldPerSecond = 5.6f,
+            FirstGoldTime = 90.0f * 1000,
+            InitialLevel = 3
         };
 
         private bool forceSpawn;
@@ -202,6 +206,9 @@ namespace MapScripts.Map8
             }}
         };
 
+        Dictionary<TeamId, ILevelProp> TeamStairs = new Dictionary<TeamId, ILevelProp>();
+        Dictionary<TeamId, ILevelProp> Nexus = new Dictionary<TeamId, ILevelProp>();
+        Dictionary<int, ILevelProp> SwainBeams = new Dictionary<int, ILevelProp>();
         //This function is executed in-between Loading the map structures and applying the structure protections. Is the first thing on this script to be executed
         public void Init(IMapScriptHandler map)
         {
@@ -212,9 +219,9 @@ namespace MapScripts.Map8
             map.AddSurrender(1200000.0f, 300000.0f, 30.0f);
 
             // Announcer events
-            map.AddAnnouncement(30 * 1000, EventID.OnStartGameMessage1, true); // Welcome to "Map"
-            map.AddAnnouncement(NextSpawnTime - 30 * 1000, EventID.OnStartGameMessage2, true); // 30 seconds until minions spawn
-            map.AddAnnouncement(NextSpawnTime, EventID.OnMinionsSpawn, false); // Minions have spawned
+            map.AddAnnouncement(30 * 1000, EventID.OnStartGameMessage3, true); // Welcome to the Crystal Scar!
+            map.AddAnnouncement(50 * 1000, EventID.OnStartGameMessage1, true); // The Battle will begin in 30 seconds!
+            map.AddAnnouncement(80 * 1000, EventID.OnStartGameMessage2, true); // The Battle has begun!
 
             map.AddLevelProp("LevelProp_Odin_Windmill_Gears", "Odin_Windmill_Gears", new Vector2(6946.143f, 11918.931f), -122.93308f, new Vector3(0.0f, 0.0f, 0.0f), new Vector3(11.1111f, 77.7777f, -122.2222f), Vector3.One);
             map.AddLevelProp("LevelProp_Odin_Windmill_Propellers", "Odin_Windmill_Propellers", new Vector2(6922.032f, 11940.535f), -259.16052f, new Vector3(0.0f, 0.0f, 0.0f), new Vector3(-22.2222f, 0.0f, -111.1111f), Vector3.One);
@@ -223,20 +230,19 @@ namespace MapScripts.Map8
             map.AddLevelProp("LevelProp_OdinRockSaw02", "OdinRockSaw", new Vector2(5659.9004f, 1016.47925f), -11.821701f, new Vector3(0.0f, 40.0f, 0.0f), new Vector3(233.3334f, 133.3334f, -77.7778f), Vector3.One);
             map.AddLevelProp("LevelProp_OdinRockSaw01", "OdinRockSaw", new Vector2(2543.822f, 1344.957f), -56.266106f, new Vector3(0.0f, 0.0f, 0.0f), new Vector3(-122.2222f, 111.1112f, -744.4445f), Vector3.One);
             map.AddLevelProp("LevelProp_Odin_Drill", "Odin_Drill", new Vector2(11992.028f, 8547.805f), 343.7337f, new Vector3(0.0f, 244.0f, 0.0f), new Vector3(33.3333f, 311.1111f, 0.0f), Vector3.One);
-            map.AddLevelProp("LevelProp_Odin_SoG_Order", "Odin_SoG_Order", new Vector2(266.77225f, 3903.9998f), 139.9266f, new Vector3(0.0f, 0.0f, 0.0f), new Vector3(-288.8889f, 122.2222f, -188.8889f), Vector3.One);
+            TeamStairs.Add(TeamId.TEAM_BLUE, map.AddLevelProp("LevelProp_Odin_SoG_Order", "Odin_SoG_Order", new Vector2(266.77225f, 3903.9998f), 139.9266f, new Vector3(0.0f, 0.0f, 0.0f), new Vector3(-288.8889f, 122.2222f, -188.8889f), Vector3.One));
             map.AddLevelProp("LevelProp_OdinClaw", "OdinClaw", new Vector2(5187.914f, 2122.2627f), 261.546f, new Vector3(0.0f, 0.0f, 0.0f), new Vector3(422.2223f, 255.5555f, -200.0f), Vector3.One);
-            map.AddLevelProp("LevelProp_SwainBeam1", "SwainBeam", new Vector2(7207.073f, 1995.804f), 461.54602f, new Vector3(0.0f, 0.0f, 0.0f), new Vector3(-422.2222f, 355.5555f, -311.1111f), Vector3.One);
-            map.AddLevelProp("LevelProp_SwainBeam2", "SwainBeam", new Vector2(8142.406f, 2716.4258f), 639.324f, new Vector3(0.0f, 152.0f, 0.0f), new Vector3(-222.2222f, 444.4445f, -88.8889f), Vector3.One);
-            map.AddLevelProp("LevelProp_SwainBeam3", "SwainBeam", new Vector2(9885.076f, 3339.1853f), 350.435f, new Vector3(0.0f, 54.0f, 0.0f), new Vector3(144.4445f, 300.0f, -155.5555f), Vector3.One);
-            map.AddLevelProp("LevelProp_Odin_SoG_Chaos", "Odin_SoG_Chaos", new Vector2(13623.644f, 3884.6233f), 117.7046f, new Vector3(0.0f, 0.0f, 0.0f), new Vector3(288.8889f, 111.1112f, -211.1111f), Vector3.One);
+            SwainBeams.Add(1, map.AddLevelProp("LevelProp_SwainBeam1", "SwainBeam", new Vector2(7207.073f, 1995.804f), 461.54602f, new Vector3(0.0f, 0.0f, 0.0f), new Vector3(-422.2222f, 355.5555f, -311.1111f), Vector3.One));
+            SwainBeams.Add(2, map.AddLevelProp("LevelProp_SwainBeam2", "SwainBeam", new Vector2(8142.406f, 2716.4258f), 639.324f, new Vector3(0.0f, 152.0f, 0.0f), new Vector3(-222.2222f, 444.4445f, -88.8889f), Vector3.One));
+            SwainBeams.Add(3, map.AddLevelProp("LevelProp_SwainBeam3", "SwainBeam", new Vector2(9885.076f, 3339.1853f), 350.435f, new Vector3(0.0f, 54.0f, 0.0f), new Vector3(144.4445f, 300.0f, -155.5555f), Vector3.One));
+            TeamStairs.Add(TeamId.TEAM_PURPLE, map.AddLevelProp("LevelProp_Odin_SoG_Chaos", "Odin_SoG_Chaos", new Vector2(13623.644f, 3884.6233f), 117.7046f, new Vector3(0.0f, 0.0f, 0.0f), new Vector3(288.8889f, 111.1112f, -211.1111f), Vector3.One));
             map.AddLevelProp("LevelProp_OdinCrane", "OdinCrane", new Vector2(10287.527f, 10776.917f), -145.15509f, new Vector3(0.0f, 52.0f, 0.0f), new Vector3(-22.2222f, 66.6667f, 0.0f), Vector3.One);
             map.AddLevelProp("LevelProp_OdinCrane1", "OdinCrane", new Vector2(9418.097f, -189.59952f), 12105.366f, new Vector3(0.0f, 118.0f, 0.0f), new Vector3(0.0f, 44.4445f, 0.0f), Vector3.One);
-            map.AddLevelProp("LevelProp_Odin_SOG_Order_Crystal", "Odin_SOG_Order_Crystal", new Vector2(1618.3121f, 4357.871f), 336.9458f, new Vector3(0.0f, 0.0f, 0.0f), new Vector3(-122.2222f, 277.7778f, -122.2222f), Vector3.One);
-            map.AddLevelProp("LevelProp_Odin_SOG_Chaos_Crystal", "Odin_SOG_Chaos_Crystal", new Vector2(12307.629f, 4535.6484f), 225.8346f, new Vector3(0.0f, 214.0f, 0.0f), new Vector3(144.4445f, 222.2222f, -33.3334f), Vector3.One);
-
+            Nexus.Add(TeamId.TEAM_BLUE, map.AddLevelProp("LevelProp_Odin_SOG_Order_Crystal", "Odin_SOG_Order_Crystal", new Vector2(1618.3121f, 4357.871f), 336.9458f, new Vector3(0.0f, 0.0f, 0.0f), new Vector3(-122.2222f, 277.7778f, -122.2222f), Vector3.One));
+            Nexus.Add(TeamId.TEAM_PURPLE, map.AddLevelProp("LevelProp_Odin_SOG_Chaos_Crystal", "Odin_SOG_Chaos_Crystal", new Vector2(12307.629f, 4535.6484f), 225.8346f, new Vector3(0.0f, 214.0f, 0.0f), new Vector3(144.4445f, 222.2222f, -33.3334f), Vector3.One));
         }
 
-        List<IMinion> infoPoints = new List<IMinion>();
+        List<IMinion> InfoPoints = new List<IMinion>();
         List<IMonsterCamp> SpeedShrines = new List<IMonsterCamp>();
         List<IMonsterCamp> HealthPacks = new List<IMonsterCamp>();
 
@@ -250,8 +256,8 @@ namespace MapScripts.Map8
             for (int i = 0; i < _map.InfoPoints.Count; i++)
             {
                 AddPosPerceptionBubble(new Vector2(_map.InfoPoints[i].CentralPoint.X, _map.InfoPoints[i].CentralPoint.Z), 800.0f, 25000.0f, TeamId.TEAM_BLUE, true, collisionArea: 120.0f);
-                infoPoints.Add(_map.CreateMinion("OdinNeutralGuardian", "OdinNeutralGuardian", new Vector2(_map.InfoPoints[i].CentralPoint.X, _map.InfoPoints[i].CentralPoint.Z), ignoreCollision: true));
-                infoPoints[i].PauseAi(true);
+                InfoPoints.Add(_map.CreateMinion("OdinNeutralGuardian", "OdinNeutralGuardian", new Vector2(_map.InfoPoints[i].CentralPoint.X, _map.InfoPoints[i].CentralPoint.Z), ignoreCollision: true));
+                InfoPoints[i].PauseAi(true);
             }
 
             SetupCamps();
@@ -267,6 +273,25 @@ namespace MapScripts.Map8
                     AddPosPerceptionBubble(new Vector2(camp.Position.X, camp.Position.Z), 250.0f, 1.0f, TeamId.TEAM_PURPLE);
                     _map.SpawnCamp(camp);
                 }
+            }
+
+            AddParticleTarget(Nexus[TeamId.TEAM_BLUE], Nexus[TeamId.TEAM_BLUE], "Odin_Crystal_blue", Nexus[TeamId.TEAM_BLUE], 25000, reqVision: false);
+            AddParticleTarget(Nexus[TeamId.TEAM_PURPLE], Nexus[TeamId.TEAM_PURPLE], "Odin_Crystal_purple", Nexus[TeamId.TEAM_PURPLE], 25000, reqVision: false);
+
+            AddParticle(null, null, "Odin_Forcefield_blue", new Vector2(580f, 4124f), 80.0f, reqVision: false);
+            AddParticle(null, null, "Odin_Forcefield_purple", new Vector2(13310f, 4124f), 80.0f, reqVision: false);
+
+            foreach (var stair in TeamStairs.Values)
+            {
+                _map.NotifyPropAnimation(stair, "Open", (AnimationFlags)1, 0.0f, false);
+            }
+            _map.NotifyPropAnimation(SwainBeams[1], "PeckA", (AnimationFlags)1, 0.0f, false);
+            _map.NotifyPropAnimation(SwainBeams[2], "PeckB", (AnimationFlags)1, 0.0f, false);
+            _map.NotifyPropAnimation(SwainBeams[3], "PeckC", (AnimationFlags)1, 0.0f, false);
+
+            foreach (var champion in GetAllPlayers())
+            {
+                AddBuff("OdinPlayerBuff", 25000, 1, null, champion, null);
             }
         }
 
@@ -326,6 +351,11 @@ namespace MapScripts.Map8
                         crystalSpawned = true;
                     }
                 }
+            }
+
+            if (!NotifiedAllInitialAnimations)
+            {
+                InitialBaseAnimations();
             }
 
             if (forceSpawn)
@@ -479,6 +509,130 @@ namespace MapScripts.Map8
                     m.Stats.MagicResist.BaseValue = -30.0f;
                     m.IsMelee = true;
                     break;
+            }
+        }
+
+        List<string> AnimationsNotified = new List<string>();
+        bool NotifiedAllInitialAnimations = false;
+        public void InitialBaseAnimations()
+        {
+            var gameTime = _map.GameTime();
+            if (gameTime >= 87.0f * 1000 && !AnimationsNotified.Contains("Raised_Idle"))
+            {
+                foreach (var stair in TeamStairs.Values)
+                {
+                    _map.NotifyPropAnimation(stair, "Raised_Idle", (AnimationFlags)1, 4.25f, false);
+                }
+                NotifiedAllInitialAnimations = true;
+            }
+            else if (gameTime >= 81.0f * 1000 && !AnimationsNotified.Contains("Raise"))
+            {
+                foreach (var stair in TeamStairs.Values)
+                {
+                    _map.NotifyPropAnimation(stair, "Raise", (AnimationFlags)2, 6.7f, false);
+                }
+                AnimationsNotified.Add("Raise");
+            }
+            else if (gameTime >= 80.0f * 1000 && !AnimationsNotified.Contains("Particles4"))
+            {
+                //Blue Team Lasers
+                AddParticleTarget(Nexus[TeamId.TEAM_BLUE], TeamStairs[TeamId.TEAM_BLUE], "odin_crystal_beam_green", Nexus[TeamId.TEAM_BLUE], 25000.0f, 1, "Crystal_l_1_aim", reqVision: false, teamOnly: TeamId.TEAM_BLUE);
+                AddParticleTarget(Nexus[TeamId.TEAM_BLUE], TeamStairs[TeamId.TEAM_BLUE], "odin_crystal_beam_green", Nexus[TeamId.TEAM_BLUE], 25000.0f, 1, "Crystal_r_1_aim", reqVision: false, teamOnly: TeamId.TEAM_BLUE);
+                AddParticleTarget(Nexus[TeamId.TEAM_BLUE], TeamStairs[TeamId.TEAM_BLUE], "odin_crystal_beam_red", Nexus[TeamId.TEAM_BLUE], 25000.0f, 1, "Crystal_r_1_aim", reqVision: false, teamOnly: TeamId.TEAM_PURPLE);
+                AddParticleTarget(Nexus[TeamId.TEAM_BLUE], TeamStairs[TeamId.TEAM_BLUE], "odin_crystal_beam_red", Nexus[TeamId.TEAM_BLUE], 25000.0f, 1, "Crystal_r_1_aim", reqVision: false, teamOnly: TeamId.TEAM_PURPLE);
+
+                //Purple Team Lasers
+                AddParticleTarget(Nexus[TeamId.TEAM_PURPLE], TeamStairs[TeamId.TEAM_PURPLE], "odin_crystal_beam_green", Nexus[TeamId.TEAM_PURPLE], 25000.0f, 1, "chaos_Crystal_r_1_aim", reqVision: false, teamOnly: TeamId.TEAM_PURPLE);
+                AddParticleTarget(Nexus[TeamId.TEAM_PURPLE], TeamStairs[TeamId.TEAM_PURPLE], "odin_crystal_beam_green", Nexus[TeamId.TEAM_PURPLE], 25000.0f, 1, "chaos_Crystal_l_1_aim", reqVision: false, teamOnly: TeamId.TEAM_PURPLE);
+                AddParticleTarget(Nexus[TeamId.TEAM_PURPLE], TeamStairs[TeamId.TEAM_PURPLE], "odin_crystal_beam_red", Nexus[TeamId.TEAM_PURPLE], 25000.0f, 1, "chaos_Crystal_r_1_aim", reqVision: false, teamOnly: TeamId.TEAM_BLUE);
+                AddParticleTarget(Nexus[TeamId.TEAM_PURPLE], TeamStairs[TeamId.TEAM_PURPLE], "odin_crystal_beam_red", Nexus[TeamId.TEAM_PURPLE], 25000.0f, 1, "chaos_Crystal_l_1_aim", reqVision: false, teamOnly: TeamId.TEAM_BLUE);
+
+                AnimationsNotified.Add("Particles4");
+            }
+            else if (gameTime >= 61.0f * 1000 && !AnimationsNotified.Contains("Close4"))
+            {
+                foreach (var stair in TeamStairs.Values)
+                {
+                    _map.NotifyPropAnimation(stair, "Close4", (AnimationFlags)2, 20.0f, false);
+                }
+                AnimationsNotified.Add("Close4");
+            }
+            else if (gameTime >= 59.6f * 1000 && !AnimationsNotified.Contains("Particles3"))
+            {
+                //Blue Team Lasers
+                AddParticleTarget(Nexus[TeamId.TEAM_BLUE], TeamStairs[TeamId.TEAM_BLUE], "odin_crystal_beam_green", Nexus[TeamId.TEAM_BLUE], 25000.0f, 1, "Crystal_l_2_aim", reqVision: false, teamOnly: TeamId.TEAM_BLUE);
+                AddParticleTarget(Nexus[TeamId.TEAM_BLUE], TeamStairs[TeamId.TEAM_BLUE], "odin_crystal_beam_green", Nexus[TeamId.TEAM_BLUE], 25000.0f, 1, "Crystal_r_2_aim", reqVision: false, teamOnly: TeamId.TEAM_BLUE);
+                AddParticleTarget(Nexus[TeamId.TEAM_BLUE], TeamStairs[TeamId.TEAM_BLUE], "odin_crystal_beam_red", Nexus[TeamId.TEAM_BLUE], 25000.0f, 1, "Crystal_r_2_aim", reqVision: false, teamOnly: TeamId.TEAM_PURPLE);
+                AddParticleTarget(Nexus[TeamId.TEAM_BLUE], TeamStairs[TeamId.TEAM_BLUE], "odin_crystal_beam_red", Nexus[TeamId.TEAM_BLUE], 25000.0f, 1, "Crystal_r_2_aim", reqVision: false, teamOnly: TeamId.TEAM_PURPLE);
+
+                //Purple Team Lasers
+                AddParticleTarget(Nexus[TeamId.TEAM_PURPLE], TeamStairs[TeamId.TEAM_PURPLE], "odin_crystal_beam_green", Nexus[TeamId.TEAM_PURPLE], 25000.0f, 1, "chaos_Crystal_l_2_aim", reqVision: false, teamOnly: TeamId.TEAM_PURPLE);
+                AddParticleTarget(Nexus[TeamId.TEAM_PURPLE], TeamStairs[TeamId.TEAM_PURPLE], "odin_crystal_beam_green", Nexus[TeamId.TEAM_PURPLE], 25000.0f, 1, "chaos_Crystal_r_2_aim", reqVision: false, teamOnly: TeamId.TEAM_PURPLE);
+                AddParticleTarget(Nexus[TeamId.TEAM_PURPLE], TeamStairs[TeamId.TEAM_PURPLE], "odin_crystal_beam_red", Nexus[TeamId.TEAM_PURPLE], 25000.0f, 1, "chaos_Crystal_r_2_aim", reqVision: false, teamOnly: TeamId.TEAM_BLUE);
+                AddParticleTarget(Nexus[TeamId.TEAM_PURPLE], TeamStairs[TeamId.TEAM_PURPLE], "odin_crystal_beam_red", Nexus[TeamId.TEAM_PURPLE], 25000.0f, 1, "chaos_Crystal_r_2_aim", reqVision: false, teamOnly: TeamId.TEAM_BLUE);
+
+                AnimationsNotified.Add("Particles3");
+            }
+            else if (gameTime >= 41.0f * 1000 && !AnimationsNotified.Contains("Close3"))
+            {
+                foreach (var stair in TeamStairs.Values)
+                {
+                    _map.NotifyPropAnimation(stair, "Close3", (AnimationFlags)2, 20.0f, false);
+                }
+                AnimationsNotified.Add("Close3");
+            }
+            else if (gameTime >= 40.0f * 1000 && !AnimationsNotified.Contains("Particles2"))
+            {
+                //Blue Team Lasers
+                AddParticleTarget(Nexus[TeamId.TEAM_BLUE], TeamStairs[TeamId.TEAM_BLUE], "odin_crystal_beam_green", Nexus[TeamId.TEAM_BLUE], 25000, 1, "Crystal_l_3_aim", reqVision: false, teamOnly: TeamId.TEAM_BLUE);
+                AddParticleTarget(Nexus[TeamId.TEAM_BLUE], TeamStairs[TeamId.TEAM_BLUE], "odin_crystal_beam_green", Nexus[TeamId.TEAM_BLUE], 25000, 1, "Crystal_r_3_aim", reqVision: false, teamOnly: TeamId.TEAM_BLUE);
+                AddParticleTarget(Nexus[TeamId.TEAM_BLUE], TeamStairs[TeamId.TEAM_BLUE], "odin_crystal_beam_red", Nexus[TeamId.TEAM_BLUE], 25000, 1, "Crystal_l_3_aim", reqVision: false, teamOnly: TeamId.TEAM_PURPLE);
+                AddParticleTarget(Nexus[TeamId.TEAM_BLUE], TeamStairs[TeamId.TEAM_BLUE], "odin_crystal_beam_red", Nexus[TeamId.TEAM_BLUE], 25000, 1, "Crystal_r_3_aim", reqVision: false, teamOnly: TeamId.TEAM_PURPLE);
+
+                //Purple Team Lasers
+                AddParticleTarget(Nexus[TeamId.TEAM_PURPLE], TeamStairs[TeamId.TEAM_PURPLE], "odin_crystal_beam_green", Nexus[TeamId.TEAM_PURPLE], 25000.0f, 1, "chaos_Crystal_l_3_aim", reqVision: false, teamOnly: TeamId.TEAM_PURPLE);
+                AddParticleTarget(Nexus[TeamId.TEAM_PURPLE], TeamStairs[TeamId.TEAM_PURPLE], "odin_crystal_beam_green", Nexus[TeamId.TEAM_PURPLE], 25000.0f, 1, "chaos_Crystal_r_3_aim", reqVision: false, teamOnly: TeamId.TEAM_PURPLE);
+                AddParticleTarget(Nexus[TeamId.TEAM_PURPLE], TeamStairs[TeamId.TEAM_PURPLE], "odin_crystal_beam_red", Nexus[TeamId.TEAM_PURPLE], 25000.0f, 1, "chaos_Crystal_l_3_aim", reqVision: false, teamOnly: TeamId.TEAM_BLUE);
+                AddParticleTarget(Nexus[TeamId.TEAM_PURPLE], TeamStairs[TeamId.TEAM_PURPLE], "odin_crystal_beam_red", Nexus[TeamId.TEAM_PURPLE], 25000.0f, 1, "chaos_Crystal_r_3_aim", reqVision: false, teamOnly: TeamId.TEAM_BLUE);
+
+                AnimationsNotified.Add("Particles2");
+            }
+            else if (gameTime >= 21.0f * 1000 && !AnimationsNotified.Contains("Close2"))
+            {
+                foreach (var stair in TeamStairs.Values)
+                {
+                    _map.NotifyPropAnimation(stair, "Close2", (AnimationFlags)2, 20.0f, false);
+                }
+                AnimationsNotified.Add("Close2");
+            }
+            //The timing feels off, but from what i've seen from old footage, it looks like it is just like that
+            else if (gameTime >= 16.0f * 1000 && !AnimationsNotified.Contains("Particles1"))
+            {
+                //Blue Team Lasers
+                AddParticleTarget(Nexus[TeamId.TEAM_BLUE], TeamStairs[TeamId.TEAM_BLUE], "odin_crystal_beam_green", Nexus[TeamId.TEAM_BLUE], 25000.0f, 1, "Crystal_l_4_aim", reqVision: false, teamOnly: TeamId.TEAM_BLUE);
+                AddParticleTarget(Nexus[TeamId.TEAM_BLUE], TeamStairs[TeamId.TEAM_BLUE], "odin_crystal_beam_green", Nexus[TeamId.TEAM_BLUE], 25000.0f, 1, "Crystal_r_4_aim", reqVision: false, teamOnly: TeamId.TEAM_BLUE);
+                AddParticleTarget(Nexus[TeamId.TEAM_BLUE], TeamStairs[TeamId.TEAM_BLUE], "odin_crystal_beam_red", Nexus[TeamId.TEAM_BLUE], 25000.0f, 1, "Crystal_l_4_aim", reqVision: false, teamOnly: TeamId.TEAM_PURPLE);
+                AddParticleTarget(Nexus[TeamId.TEAM_BLUE], TeamStairs[TeamId.TEAM_BLUE], "odin_crystal_beam_red", Nexus[TeamId.TEAM_BLUE], 25000.0f, 1, "Crystal_r_4_aim", reqVision: false, teamOnly: TeamId.TEAM_PURPLE);
+
+                //Purple Team Lasers
+                AddParticleTarget(Nexus[TeamId.TEAM_PURPLE], TeamStairs[TeamId.TEAM_PURPLE], "odin_crystal_beam_green", Nexus[TeamId.TEAM_PURPLE], 25000.0f, 1, "chaos_Crystal_l_4_aim", reqVision: false, teamOnly: TeamId.TEAM_PURPLE);
+                AddParticleTarget(Nexus[TeamId.TEAM_PURPLE], TeamStairs[TeamId.TEAM_PURPLE], "odin_crystal_beam_green", Nexus[TeamId.TEAM_PURPLE], 25000.0f, 1, "chaos_chaos_Crystal_r_4_aim", reqVision: false, teamOnly: TeamId.TEAM_PURPLE);
+                AddParticleTarget(Nexus[TeamId.TEAM_PURPLE], TeamStairs[TeamId.TEAM_PURPLE], "odin_crystal_beam_red", Nexus[TeamId.TEAM_PURPLE], 25000.0f, 1, "chaos_Crystal_l_4_aim", reqVision: false, teamOnly: TeamId.TEAM_BLUE);
+                AddParticleTarget(Nexus[TeamId.TEAM_PURPLE], TeamStairs[TeamId.TEAM_PURPLE], "odin_crystal_beam_red", Nexus[TeamId.TEAM_PURPLE], 25000.0f, 1, "chaos_Crystal_r_4_aim", reqVision: false, teamOnly: TeamId.TEAM_BLUE);
+
+                //Center Crystal Particles
+                AddParticleTarget(Nexus[TeamId.TEAM_BLUE], Nexus[TeamId.TEAM_BLUE], "Odin_crystal_beam_hit_blue", Nexus[TeamId.TEAM_BLUE], 25000.0f, 2, reqVision: false);
+                AddParticleTarget(Nexus[TeamId.TEAM_PURPLE], Nexus[TeamId.TEAM_PURPLE], "Odin_crystal_beam_hit_purple", Nexus[TeamId.TEAM_PURPLE], 25000.0f, 2, reqVision: false);
+
+                AnimationsNotified.Add("Particles1");
+            }
+            else if (gameTime >= 1000.0f && !AnimationsNotified.Contains("Close1"))
+            {
+                foreach (var stair in TeamStairs.Values)
+                {
+                    _map.NotifyPropAnimation(stair, "Close1", (AnimationFlags)2, 17.5f, false);
+                }
+                AnimationsNotified.Add("Close1");
             }
         }
 
