@@ -151,7 +151,7 @@ namespace LeagueSandbox.GameServer
                                 || particle.SpecificTeam == TeamId.TEAM_NEUTRAL
                                 || particle.SpecificTeam == team
                             )
-                            && (kv.Value is not IAttackableUnit unit || !unit.IsDead)
+                            && !(kv.Value is IAttackableUnit unit && unit.IsDead)
                             && Vector2.DistanceSquared(kv.Value.Position, obj.Position)
                                         <= kv.Value.VisionRadius * kv.Value.VisionRadius
                             && !_game.Map.NavigationGrid.IsAnythingBetween(kv.Value, obj, true))
