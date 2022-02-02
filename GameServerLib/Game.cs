@@ -38,13 +38,10 @@ namespace LeagueSandbox.GameServer
     {
         // Crucial Game Vars
         private PacketServer _packetServer;
-        private Stopwatch _lastMapDurationWatch;
         private List<GameScriptTimer> _gameScriptTimers;
 
         // Function Vars
         private readonly ILog _logger;
-        private Timer _pauseTimer;
-        private bool _autoResumeCheck;
         private float _nextSyncTime = 10 * 1000;
         protected const double REFRESH_RATE = 1000.0 / 60.0; // GameLoop called 60 times a second.
 
@@ -170,13 +167,6 @@ namespace LeagueSandbox.GameServer
 
             Map.Init();
 
-            _pauseTimer = new Timer
-            {
-                AutoReset = true,
-                Enabled = false,
-                Interval = 1000
-            };
-            _pauseTimer.Elapsed += (sender, args) => PauseTimeLeft--;
             PauseTimeLeft = 30 * 60; // 30 minutes
 
             // TODO: GameApp should send the Response/Request handlers
@@ -298,37 +288,65 @@ namespace LeagueSandbox.GameServer
         /// </summary>
         public void GameLoop()
         {
-            _lastMapDurationWatch = new Stopwatch();
-            _lastMapDurationWatch.Start();
+            int timeout = (int)REFRESH_RATE;
+            
+            Stopwatch lastMapDurationWatch = new Stopwatch();
+            lastMapDurationWatch.Start();  
+            
+            bool isJustPaused = true;
+            bool autoResumeCheck = false;
+
             while (!SetToExit)
             {
-                _packetServer.NetLoop();
+                _packetServer.NetLoop(timeout);
+
                 if (IsPaused)
                 {
-                    _lastMapDurationWatch.Stop();
-                    _pauseTimer.Enabled = true;
-                    if (PauseTimeLeft <= 0 && !_autoResumeCheck)
+                    if(isJustPaused)
                     {
-                        PacketNotifier.NotifyUnpauseGame();
-                        _autoResumeCheck = true;
+                        lastMapDurationWatch.Stop();
+                        isJustPaused = false;
+                        timeout = 1000;
                     }
-                    continue;
+                    else if(!autoResumeCheck)
+                    {
+                        PauseTimeLeft--;
+                        _logger.Debug(PauseTimeLeft.ToString());
+                        if (PauseTimeLeft <= 0)
+                        {
+                            autoResumeCheck = true;
+                            timeout = (int)REFRESH_RATE;
+                            
+                            //TODO: fix these
+                            //PacketNotifier.NotifyUnpauseGame();
+
+                            // Pure water framing
+                            var players = PlayerManager.GetPlayers();
+                            var unpauser = players[0].Item2.Champion;
+                            foreach(var player in players)
+                            {
+                                PacketNotifier.NotifyResumePacket(unpauser, player.Item2, false);
+                            }
+                            Unpause();
+                        }
+                    }
                 }
 
-                if (_lastMapDurationWatch.Elapsed.TotalMilliseconds + 1.0 > REFRESH_RATE)
+                if (!IsPaused)
                 {
-                    // Sets last tick time (diff).
-                    double sinceLastMapTime = _lastMapDurationWatch.Elapsed.TotalMilliseconds;
-                    _lastMapDurationWatch.Restart();
+                    isJustPaused = true;
+                    autoResumeCheck = false;
+
+                    double sinceLastMapTime = lastMapDurationWatch.Elapsed.TotalMilliseconds;
+                    lastMapDurationWatch.Restart();
                     if (IsRunning)
                     {
                         Update((float)sinceLastMapTime);
-
                     }
+                    sinceLastMapTime = lastMapDurationWatch.Elapsed.TotalMilliseconds;
+                    timeout = (int)Math.Max(0, REFRESH_RATE - sinceLastMapTime);
                 }
-                Thread.Sleep(1);
             }
-
         }
 
         /// <summary>
@@ -422,9 +440,7 @@ namespace LeagueSandbox.GameServer
         /// </summary>
         public void Unpause()
         {
-            _lastMapDurationWatch.Start();
             IsPaused = false;
-            _pauseTimer.Enabled = false;
         }
 
         /// <summary>
