@@ -2,6 +2,7 @@
 using GameServerCore.Enums;
 using GameServerCore.Packets.Handlers;
 using GameServerCore.Packets.PacketDefinitions.Requests;
+using LeaguePackets.Game.Events;
 
 namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 {
@@ -92,7 +93,8 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                         }
                     }
                     peerInfo.IsDisconnected = false;
-                    _game.PacketNotifier.NotifyUnitAnnounceEvent(UnitAnnounces.SUMMONER_RECONNECTED, peerInfo.Champion);
+                    var announcement = new OnReconnect { OtherNetID = peerInfo.Champion.NetId };
+                    _game.PacketNotifier.NotifyS2C_OnEventWorld(announcement, peerInfo.Champion.NetId);
 
                     // Send the initial game time sync packets, then let the map send another
                     var gameTime = _game.GameTime;

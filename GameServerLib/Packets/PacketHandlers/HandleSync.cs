@@ -47,7 +47,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                 }
             }
 
-             _game.PacketNotifier.NotifySynchVersion(userId, _playerManager.GetPlayers(), Config.VERSION_STRING, "CLASSIC",
+             _game.PacketNotifier.NotifySynchVersion(userId, _playerManager.GetPlayers(), Config.VERSION_STRING, _game.Config.GameConfig.GameMode,
                 mapId);
 
             return true;

@@ -1,6 +1,7 @@
 ﻿using GameServerCore.Content;
 using GameServerCore.Domain.GameObjects;
 using LeaguePackets.Game.Common;
+using LeaguePackets.Game.Events;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -67,6 +68,27 @@ namespace PacketDefinitions420
             // For unk reason coordinates are translated to 0,0 as a map center, so we gotta get back the original
             // mapSize contains the real center point coordinates, meaning width/2, height/2
             return new Vector2((vector.X - grid.MiddleOfMap.X) / 2, (vector.Y - grid.MiddleOfMap.Y) / 2);
+        }
+        public static IEventEmptyHistory GetAnnouncementID(GameServerCore.Enums.EventID Event, int mapId = 0)
+        {
+            switch (Event)
+            {
+                case GameServerCore.Enums.EventID.OnStartGameMessage1:
+                    return new OnStartGameMessage1 { MapNumber = mapId };
+                case GameServerCore.Enums.EventID.OnStartGameMessage2:
+                    return new OnStartGameMessage2 { MapNumber = mapId };
+                case GameServerCore.Enums.EventID.OnStartGameMessage3:
+                    return new OnStartGameMessage3 { MapNumber = mapId };
+                case GameServerCore.Enums.EventID.OnStartGameMessage4:
+                    return new OnStartGameMessage4 { MapNumber = mapId };
+                case GameServerCore.Enums.EventID.OnStartGameMessage5:
+                    return new OnStartGameMessage5 { MapNumber = mapId };
+                case GameServerCore.Enums.EventID.OnMinionsSpawn:
+                    return new OnMinionsSpawn();
+                case GameServerCore.Enums.EventID.OnNexusCrystalStart:
+                    return new OnNexusCrystalStart();
+            }
+            return null;
         }
 
         /// <summary>

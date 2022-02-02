@@ -32,10 +32,6 @@ namespace GameServerCore.Maps
         /// </summary>
         IMapScript MapScript { get; }
         /// <summary>
-        /// List of events related to the announcer (ex: first blood)
-        /// </summary>
-        List<IAnnounce> AnnouncerEvents { get; }
-        /// <summary>
         /// List of all nexus in-game
         /// </summary>
         List<INexus> NexusList { get; }
@@ -122,7 +118,7 @@ namespace GameServerCore.Maps
         /// </summary>
         /// <param name="time"></param>
         /// <param name="ID"></param>
-        void AddAnnouncement(long time, EventID ID, bool isMapSpecific);
+        void NotifyMapAnnoucement(GameServerCore.Enums.EventID Event, int mapId = 0);
         /// <summary>
         /// Adds a prop to the map
         /// </summary>

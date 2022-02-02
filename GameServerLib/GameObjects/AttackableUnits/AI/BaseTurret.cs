@@ -5,6 +5,7 @@ using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
 using GameServerCore.Scripting.CSharp;
+using LeaguePackets.Game.Events;
 using LeagueSandbox.GameServer.GameObjects.Stats;
 using LeagueSandbox.GameServer.Items;
 
@@ -86,7 +87,14 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 _game.PacketNotifier.NotifyUnitAddGold(player, this, goldEarn);
             }
 
-            _game.PacketNotifier.NotifyUnitAnnounceEvent(UnitAnnounces.TURRET_DESTROYED, this, data.Killer);
+            var announce = new OnTurretDie
+            {
+                AssistCount = 0,
+                GoldGiven = 0.0f,
+                OtherNetID = data.Killer.NetId
+            };
+            _game.PacketNotifier.NotifyS2C_OnEventWorld(announce, NetId);
+
             base.Die(data);
         }
 

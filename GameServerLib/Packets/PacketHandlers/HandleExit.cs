@@ -2,6 +2,7 @@
 using GameServerCore.Enums;
 using GameServerCore.Packets.Handlers;
 using GameServerCore.Packets.PacketDefinitions.Requests;
+using LeaguePackets.Game.Events;
 
 namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 {
@@ -19,7 +20,8 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
         public override bool HandlePacket(int userId, ExitRequest req)
         {
             var peerinfo = _playerManager.GetPeerInfo(userId);
-            _game.PacketNotifier.NotifyUnitAnnounceEvent(UnitAnnounces.SUMMONER_DISCONNECTED, peerinfo.Champion);
+            var annoucement = new OnQuit { OtherNetID = peerinfo.Champion.NetId };
+            _game.PacketNotifier.NotifyS2C_OnEventWorld(annoucement, peerinfo.Champion.NetId);
             peerinfo.IsDisconnected = true;
 
             return true;

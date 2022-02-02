@@ -6,6 +6,7 @@ using GameServerCore.Packets.Enums;
 using GameServerCore.Packets.Handlers;
 using GameServerCore.Packets.PacketDefinitions;
 using LeaguePackets;
+using LeaguePackets.Game.Events;
 using PacketDefinitions420.PacketDefinitions.S2C;
 using System;
 using System.Collections.Generic;
@@ -313,7 +314,8 @@ namespace PacketDefinitions420
 
             if (peerInfo != null)
             {
-                _game.PacketNotifier.NotifyUnitAnnounceEvent(UnitAnnounces.SUMMONER_DISCONNECTED, peerInfo.Champion);
+                var annoucement = new OnLeave { OtherNetID = peerInfo.Champion.NetId };
+                _game.PacketNotifier.NotifyS2C_OnEventWorld(annoucement, peerInfo.Champion.NetId);
                 peerInfo.IsDisconnected = true;
             }
             
