@@ -246,7 +246,7 @@ namespace MapScripts.Map12
             _map.AddLevelProp("LevelProp_HA_AP_Viking", "HA_AP_Viking", new Vector2(515.8099f, 1919.1678f), -97.770424f, new Vector3(0f, 130f, 0.0f), new Vector3(77.7777f, 111.1112f, 22.2223f), Vector3.One);
             _map.AddLevelProp("LevelProp_HA_AP_BridgeLaneStatue3", "HA_AP_BridgeLaneStatue", new Vector2(7777.0776f, 6377.4634f), 84.44989f, new Vector3(0f, 136f, 0f), new Vector3(-122.2222f, 155.5557f, 133.3334f), Vector3.One);
             _map.AddLevelProp("LevelProp_HA_AP_BridgeLaneStatue6", "HA_AP_BridgeLaneStatue", new Vector2(6489.379f, 7746.419f), 88.206276f, new Vector3(0f, 316f, 0f), new Vector3(144.4445f, 155.5557f, -155.5555f), Vector3.One);
-            Chains.Add(1,_map.AddLevelProp("LevelProp_HA_AP_Chains1", "HA_AP_Chains", new Vector2(3931.2275f, 6102.559f), 87.96773f, new Vector3(0f, 314f, 0.0f), new Vector3(-22.2222f, 222.2222f, -66.6667f), Vector3.One));
+            Chains.Add(1, _map.AddLevelProp("LevelProp_HA_AP_Chains1", "HA_AP_Chains", new Vector2(3931.2275f, 6102.559f), 87.96773f, new Vector3(0f, 314f, 0.0f), new Vector3(-22.2222f, 222.2222f, -66.6667f), Vector3.One));
             Poros.Add(0, _map.AddLevelProp("LevelProp_HA_AP_Poro", "HA_AP_Poro", new Vector2(411.7452f, 515.7069f), 751.8175f, new Vector3(6f, 136f, 8f), new Vector3(-44.4445f, -11.1111f, -77.7778f), Vector3.One));
             _map.AddLevelProp("LevelProp_HA_AP_Hermit_Robot1", "HA_AP_Hermit_Robot", new Vector2(11196.524f, 12129.439f), -208.88162f, new Vector3(0f, 160f, 0.0f), new Vector3(0.0f, 66.6667f, 122.2222f), Vector3.One);
             _map.AddLevelProp("LevelProp_HA_AP_BannerMidBridge", "HA_AP_BannerMidBridge", new Vector2(7088.8677f, 5605.5967f), -757.4999f, new Vector3(0f, 316f, 0.0f), new Vector3(-44.4445f, 111.1112f, 33.3333f), Vector3.One);
@@ -286,7 +286,7 @@ namespace MapScripts.Map12
 
             foreach (var key in Poros.Keys)
             {
-                if(key == 0 || key == 2)
+                if (key == 0 || key == 2)
                 {
                     continue;
                 }

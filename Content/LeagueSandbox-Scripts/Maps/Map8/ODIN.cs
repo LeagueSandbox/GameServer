@@ -349,7 +349,7 @@ namespace MapScripts.Map8
             }
 
             var gameTime = _map.GameTime();
-            
+
             if (!NotifiedAllInitialAnimations)
             {
                 InitialBaseAnimations(gameTime);
@@ -518,7 +518,7 @@ namespace MapScripts.Map8
         List<EventID> AnnouncedEvents = new List<EventID>();
         public void CheckInitialMapAnnouncements(float time)
         {
-            if(time >= 90.0f * 1000)
+            if (time >= 90.0f * 1000)
             {
                 _map.NotifyMapAnnouncement(EventID.OnNexusCrystalStart, 0);
                 AllAnnouncementsAnnounced = true;

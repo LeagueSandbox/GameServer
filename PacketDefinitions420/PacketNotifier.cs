@@ -1025,9 +1025,9 @@ namespace PacketDefinitions420
         public void NotifyInhibitorSpawningSoon(IInhibitor inhibitor)
         {
             //I'm not sure about any of these NetIds, the values i saw on packets seemed random, without any mention to the creation of that entity
-            var dampenerRespawnSoon = new OnDampenerRespawnSoon 
-            { 
-                OtherNetID = inhibitor.NetId 
+            var dampenerRespawnSoon = new OnDampenerRespawnSoon
+            {
+                OtherNetID = inhibitor.NetId
             };
             NotifyS2C_OnEventWorld(dampenerRespawnSoon, inhibitor.NetId);
         }
@@ -2546,14 +2546,15 @@ namespace PacketDefinitions420
         /// <param name="sourceNetID">Not yet know it's use.</param>
         public void NotifyS2C_OnEventWorld(IEvent mapEvent, uint sourceNetId = 0)
         {
-            if(mapEvent == null)
+            if (mapEvent == null)
             {
                 return;
             }
             var packet = new S2C_OnEventWorld
             {
                 SenderNetID = 0,
-                EventWorld = new EventWorld{
+                EventWorld = new EventWorld
+                {
                     Event = mapEvent,
                     Source = sourceNetId
                 }
