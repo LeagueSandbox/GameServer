@@ -130,22 +130,23 @@ namespace LeagueSandbox.GameServer
                 )
             ) {
 
-                bool isAlwaysVisible = lp != null || u is IBaseTurret || u is IObjBuilding;
-
-                uint teamsWithVision = 0;
-                foreach (var team in Teams)
-                {
-                    if(isAlwaysVisible || team == obj.Team)
-                        teamsWithVision |= (uint)team ^ 108;
-                }
                 
+                TeamIdFlags teamsWithVision = 0;
+
+                // If is always visible
+                if(lp != null || u is IBaseTurret || u is IObjBuilding)
                 {
+                    teamsWithVision = TeamIdFlags.TEAMS_ALL;
+                }
+                else
+                {
+                    teamsWithVision.SetTeam(obj.Team, true);
+                    
                     foreach (var kv in _objects)
                     {
                         var team = kv.Value.Team;
-                        uint t = (uint)team ^ 108;
                         if(
-                            (teamsWithVision & t) != t // The team has already got a vision
+                            !teamsWithVision.HasTeam(team) // The team has already got a vision
                             && (
                                 particle == null
                                 || particle.SpecificTeam == TeamId.TEAM_NEUTRAL
@@ -156,7 +157,7 @@ namespace LeagueSandbox.GameServer
                                         <= kv.Value.VisionRadius * kv.Value.VisionRadius
                             && !_game.Map.NavigationGrid.IsAnythingBetween(kv.Value, obj, true))
                         {
-                            teamsWithVision |= t;
+                            teamsWithVision.SetTeam(team, true);
                         }
                     }
                 }
@@ -165,8 +166,7 @@ namespace LeagueSandbox.GameServer
                 {
                     foreach (var team in Teams)
                     {
-                        uint t = (uint)team ^ 108;
-                        bool teamHasVision = (teamsWithVision & t) == t;
+                        bool teamHasVision = teamsWithVision.HasTeam(team);
                         bool isVisibleByTeam = obj.IsVisibleByTeam(team);
                         if (isVisibleByTeam != teamHasVision)
                         {

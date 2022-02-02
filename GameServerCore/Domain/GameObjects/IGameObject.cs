@@ -124,7 +124,7 @@ namespace GameServerCore.Domain.GameObjects
         /// <param name="visible">true/false; networked or not</param>
         void SetVisibleByTeam(TeamId team, bool visible);
 
-        void SetVisibleByTeams(uint teams);
+        void SetVisibleByTeams(TeamIdFlags teams);
 
         bool IsSpawned();
         void SetAsSpawned();

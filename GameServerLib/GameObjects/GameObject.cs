@@ -22,7 +22,7 @@ namespace LeagueSandbox.GameServer.GameObjects
         // Function Vars
         protected bool _toRemove;
         protected bool _movementUpdated;
-        private uint _bisibleByTeam = 0;
+        private TeamIdFlags _visibleByTeam = 0;
         private bool _isSpawned = false;
 
         /// <summary>
@@ -219,11 +219,9 @@ namespace LeagueSandbox.GameServer.GameObjects
         /// <param name="team">TeamId.BLUE/PURPLE/NEUTRAL</param>
         public void SetTeam(TeamId team)
         {
-            uint t = (uint)team ^ 108;
-            _bisibleByTeam &= ~t;
+            _visibleByTeam.SetTeam(Team, false);
             Team = team;
-            _bisibleByTeam |= t;
-
+            _visibleByTeam.SetTeam(Team, true);
 
             if (_game.IsRunning)
             {
@@ -237,8 +235,7 @@ namespace LeagueSandbox.GameServer.GameObjects
         /// <param name="team">A team which could have vision of this object.</param>
         public bool IsVisibleByTeam(TeamId team)
         {
-            uint t = (uint)team ^ 108;
-            return team == Team || (_bisibleByTeam & t) == t;
+            return team == Team || _visibleByTeam.HasTeam(team);
         }
 
         /// <summary>
@@ -248,11 +245,7 @@ namespace LeagueSandbox.GameServer.GameObjects
         /// <param name="visible">true/false; networked or not</param>
         public void SetVisibleByTeam(TeamId team, bool visible)
         {
-            uint t = (uint)team ^ 108;
-            if(visible)
-                _bisibleByTeam |= t;
-            else
-                _bisibleByTeam &= ~t;
+            _visibleByTeam.SetTeam(team, visible);
             /*
             if (this is IAttackableUnit)
             {
@@ -262,9 +255,9 @@ namespace LeagueSandbox.GameServer.GameObjects
             */
         }
 
-        public void SetVisibleByTeams(uint teams)
+        public void SetVisibleByTeams(TeamIdFlags teams)
         {
-            _bisibleByTeam = teams;
+            _visibleByTeam = teams;
             /*
             if (this is IAttackableUnit)
             {
