@@ -248,9 +248,9 @@ namespace MapScripts.Map10
                 }
             }
 
-            if (!AllAnnoucementsAnnouced)
+            if (!AllAnnouncementsAnnounced)
             {
-                CheckInitialMapAnnoucements(_map.GameTime());
+                CheckInitialMapAnnouncements(_map.GameTime());
             }
 
             if (forceSpawn)
@@ -417,34 +417,34 @@ namespace MapScripts.Map10
         }
 
 
-        bool AllAnnoucementsAnnouced = false;
+        bool AllAnnouncementsAnnounced = false;
         List<EventID> AnnouncedEvents = new List<EventID>();
-        public void CheckInitialMapAnnoucements(float time)
+        public void CheckInitialMapAnnouncements(float time)
         {
             if (time >= 180.0f * 1000)
             {
                 //The Altars have unlocked!
-                _map.NotifyMapAnnoucement(EventID.OnStartGameMessage4, _map.Id);
-                AllAnnoucementsAnnouced = true;
+                _map.NotifyMapAnnouncement(EventID.OnStartGameMessage4, _map.Id);
+                AllAnnouncementsAnnounced = true;
             }
             else if (time >= 150.0f * 1000 && !AnnouncedEvents.Contains(EventID.OnStartGameMessage2))
             {
                 // The Altars will unlock in 30 seconds
-                _map.NotifyMapAnnoucement(EventID.OnStartGameMessage2, _map.Id);
+                _map.NotifyMapAnnouncement(EventID.OnStartGameMessage2, _map.Id);
                 AnnouncedEvents.Add(EventID.OnStartGameMessage2);
 
             }
             else if (time >= 75.0f * 1000 && !AnnouncedEvents.Contains(EventID.OnStartGameMessage3))
             {
                 // Minions have Spawned
-                _map.NotifyMapAnnoucement(EventID.OnStartGameMessage3, _map.Id);
-                _map.NotifyMapAnnoucement(EventID.OnNexusCrystalStart, 0);
+                _map.NotifyMapAnnouncement(EventID.OnStartGameMessage3, _map.Id);
+                _map.NotifyMapAnnouncement(EventID.OnNexusCrystalStart, 0);
                 AnnouncedEvents.Add(EventID.OnStartGameMessage3);
             }
             else if (time >= 30.0f * 1000 && !AnnouncedEvents.Contains(EventID.OnStartGameMessage1))
             {
                 // Welcome to the Twisted Tree Line!
-                _map.NotifyMapAnnoucement(EventID.OnStartGameMessage1, _map.Id);
+                _map.NotifyMapAnnouncement(EventID.OnStartGameMessage1, _map.Id);
                 AnnouncedEvents.Add(EventID.OnStartGameMessage1);
             }
         }

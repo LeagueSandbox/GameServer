@@ -355,9 +355,9 @@ namespace MapScripts.Map8
                 InitialBaseAnimations(gameTime);
             }
 
-            if (!AllAnnoucementsAnnouced)
+            if (!AllAnnouncementsAnnounced)
             {
-                CheckInitialMapAnnoucements(gameTime);
+                CheckInitialMapAnnouncements(gameTime);
             }
 
             if (forceSpawn)
@@ -514,32 +514,32 @@ namespace MapScripts.Map8
             }
         }
 
-        bool AllAnnoucementsAnnouced = false;
+        bool AllAnnouncementsAnnounced = false;
         List<EventID> AnnouncedEvents = new List<EventID>();
-        public void CheckInitialMapAnnoucements(float time)
+        public void CheckInitialMapAnnouncements(float time)
         {
             if(time >= 90.0f * 1000)
             {
-                _map.NotifyMapAnnoucement(EventID.OnNexusCrystalStart, 0);
-                AllAnnoucementsAnnouced = true;
+                _map.NotifyMapAnnouncement(EventID.OnNexusCrystalStart, 0);
+                AllAnnouncementsAnnounced = true;
 
             }
             if (time >= 80.0f * 1000 && !AnnouncedEvents.Contains(EventID.OnStartGameMessage2))
             {
                 // The Battle Has Beguns!
-                _map.NotifyMapAnnoucement(EventID.OnStartGameMessage2, _map.Id);
+                _map.NotifyMapAnnouncement(EventID.OnStartGameMessage2, _map.Id);
                 AnnouncedEvents.Add(EventID.OnStartGameMessage2);
             }
             else if (time >= 50.0f * 1000 && !AnnouncedEvents.Contains(EventID.OnStartGameMessage1))
             {
                 // The battle will begin in 30 seconds!
-                _map.NotifyMapAnnoucement(EventID.OnStartGameMessage1, _map.Id);
+                _map.NotifyMapAnnouncement(EventID.OnStartGameMessage1, _map.Id);
                 AnnouncedEvents.Add(EventID.OnStartGameMessage1);
             }
             else if (time >= 30.0f * 1000 && !AnnouncedEvents.Contains(EventID.OnStartGameMessage3))
             {
                 // Welcome to the Crystal Scar!
-                _map.NotifyMapAnnoucement(EventID.OnStartGameMessage3, _map.Id);
+                _map.NotifyMapAnnouncement(EventID.OnStartGameMessage3, _map.Id);
                 AnnouncedEvents.Add(EventID.OnStartGameMessage3);
             }
         }

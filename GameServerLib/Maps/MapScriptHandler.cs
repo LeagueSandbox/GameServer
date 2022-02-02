@@ -630,7 +630,7 @@ namespace LeagueSandbox.GameServer.Maps
             _game.Config.SetGameFeatures(featureFlag, isEnabled);
         }
 
-        public void NotifyMapAnnoucement(GameServerCore.Enums.EventID Event, int mapId = 0)
+        public void NotifyMapAnnouncement(GameServerCore.Enums.EventID Event, int mapId = 0)
         {
             _game.PacketNotifier.NotifyS2C_OnEventWorld(PacketExtensions.GetAnnouncementID(Event, mapId));
         }

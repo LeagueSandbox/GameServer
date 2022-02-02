@@ -114,11 +114,11 @@ namespace GameServerCore.Maps
             int initialLevel = 1
         );
         /// <summary>
-        /// Adds an annoucement
+        /// Announces an event
         /// </summary>
-        /// <param name="time"></param>
-        /// <param name="ID"></param>
-        void NotifyMapAnnoucement(GameServerCore.Enums.EventID Event, int mapId = 0);
+        /// <param name="Event"></param>
+        /// <param name="mapId"></param>
+        void NotifyMapAnnouncement(EventID Event, int mapId = 0);
         /// <summary>
         /// Adds a prop to the map
         /// </summary>

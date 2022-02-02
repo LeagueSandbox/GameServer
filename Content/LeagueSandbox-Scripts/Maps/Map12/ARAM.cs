@@ -322,9 +322,9 @@ namespace MapScripts.Map12
                 }
             }
 
-            if (!AllAnnoucementsAnnouced)
+            if (!AllAnnouncementsAnnounced)
             {
-                CheckMapInitialAnnoucements(_map.GameTime());
+                CheckMapInitialAnnouncements(_map.GameTime());
             }
 
             if (forceSpawn)
@@ -478,21 +478,21 @@ namespace MapScripts.Map12
             }
         }
 
-        bool AllAnnoucementsAnnouced = false;
+        bool AllAnnouncementsAnnounced = false;
         List<EventID> AnnouncedEvents = new List<EventID>();
-        public void CheckMapInitialAnnoucements(float time)
+        public void CheckMapInitialAnnouncements(float time)
         {
             if (time >= 60.0f * 1000)
             {
                 // Minions have spawned
-                _map.NotifyMapAnnoucement(EventID.OnMinionsSpawn, 0);
-                _map.NotifyMapAnnoucement(EventID.OnNexusCrystalStart, 0);
-                AllAnnoucementsAnnouced = true;
+                _map.NotifyMapAnnouncement(EventID.OnMinionsSpawn, 0);
+                _map.NotifyMapAnnouncement(EventID.OnNexusCrystalStart, 0);
+                AllAnnouncementsAnnounced = true;
             }
             else if (time >= 30.0f * 1000 && !AnnouncedEvents.Contains(EventID.OnStartGameMessage1))
             {
                 // Welcome to the Howling Abyss
-                _map.NotifyMapAnnoucement(EventID.OnStartGameMessage1, _map.Id);
+                _map.NotifyMapAnnouncement(EventID.OnStartGameMessage1, _map.Id);
                 AnnouncedEvents.Add(EventID.OnStartGameMessage1);
             }
         }
