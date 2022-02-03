@@ -152,7 +152,7 @@ namespace AIScripts
                 nextTarget = currentTarget;
                 nextTargetPriority = targetUnitPriority;
                 nextTargetDistanceSquared = Vector2.DistanceSquared(LaneMinion.Position, nextTarget.Position);
-                nextTargetAttackers = LaneMinion.IsMelee ? CountUnitsAttackingUnit(nextTarget) : 0; // First Wave Behaviour
+                nextTargetAttackers = 0; //LaneMinion.IsMelee ? CountUnitsAttackingUnit(nextTarget) : 0; // First Wave Behaviour is unfinished
             }
             
             FilterTemporaryIgnoredList();
@@ -179,7 +179,7 @@ namespace AIScripts
                         : (int)LaneMinion.ClassifyTarget(u)
                     ;
                     float distanceSquared = Vector2.DistanceSquared(LaneMinion.Position, u.Position);
-                    int attackers = LaneMinion.IsMelee ? CountUnitsAttackingUnit(u) : 0; // First Wave Behaviour
+                    int attackers = 0; //LaneMinion.IsMelee ? CountUnitsAttackingUnit(u) : 0; // First Wave Behaviour is unfinished
                     if (
                         nextTarget == null
                         || attackers < nextTargetAttackers
