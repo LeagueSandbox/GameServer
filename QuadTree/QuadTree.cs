@@ -92,10 +92,12 @@ namespace System.Activities.Presentation.View
         {
             if (this.bounds.Width == 0 || this.bounds.Height == 0)
             {
+                throw new ArgumentException("BoundsMustBeNonZero");
                 //throw FxTrace.Exception.AsError(new ArgumentException(SR.BoundsMustBeNonZero));
             }
             if (bounds.Width == 0 || bounds.Height == 0)
             {
+                throw new ArgumentException("BoundsMustBeNonZero");
                 //throw FxTrace.Exception.AsError(new ArgumentException(SR.BoundsMustBeNonZero));
             }
             if (this.root == null)
@@ -273,6 +275,7 @@ namespace System.Activities.Presentation.View
                 //Fx.Assert(bounds.Width != 0 && bounds.Height != 0, "Cannot have empty bound");
                 if (bounds.Width == 0 || bounds.Height == 0)
                 {
+                    throw new ArgumentException("BoundsMustBeNonZero");
                     //throw FxTrace.Exception.AsError(new ArgumentException(SR.BoundsMustBeNonZero));
                 }
                 this.bounds = bounds;
@@ -306,6 +309,7 @@ namespace System.Activities.Presentation.View
                 //Fx.Assert(bounds.Width != 0 && bounds.Height != 0, "Cannot have empty bound");
                 if (bounds.Width == 0 || bounds.Height == 0)
                 {
+                    throw new ArgumentException("BoundsMustBeNonZero");
                     //throw FxTrace.Exception.AsError(new ArgumentException(SR.BoundsMustBeNonZero));
                 }
  
