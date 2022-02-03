@@ -54,6 +54,11 @@ namespace GameServerCore.Domain.GameObjects.Spell
         /// </summary>
         bool HasEmptyScript { get; }
 
+        /// <summary>
+        /// pass parameters that the client does not calculate by itself
+        /// </summary>
+        IScriptToolTipData ToolTip { get; }
+
         /// <returns>spell's unique ID</returns>
         int GetId();
 

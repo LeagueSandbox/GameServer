@@ -942,6 +942,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
         public override void Update(float diff)
         {
+            List<IScriptToolTipData> tooltipupdatelist = new List<IScriptToolTipData>();
             base.Update(diff);
             CharScript.OnUpdate(diff);
             if (!_aiPaused)
@@ -951,6 +952,8 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             foreach (var s in Spells.Values)
             {
                 s.Update(diff);
+                if (s.ToolTip.HasUpdates())
+                    tooltipupdatelist.Add(s.ToolTip);
             }
 
             if (CanMove())
@@ -962,6 +965,9 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             {
                 _autoAttackCurrentCooldown -= diff / 1000.0f;
             }
+
+            if (tooltipupdatelist.Count() > 0)
+                _game.PacketNotifier.NotifyS2C_ToolTipChanges(this, tooltipupdatelist);
         }
 
         public override void TakeDamage(IAttackableUnit attacker, float damage, DamageType type, DamageSource source, DamageResultType damageText)

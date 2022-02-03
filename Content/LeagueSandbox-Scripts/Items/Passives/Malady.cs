@@ -12,6 +12,8 @@ namespace ItemSpells
     public class Malady : ISpellScript
     {
         private IObjAiBase _owner;
+        private ISpell _spell;
+        private float Damage = 0f;
         public ISpellScriptMetadata ScriptMetadata { get; private set; } = new SpellScriptMetadata()
         {
             // TODO
@@ -19,18 +21,21 @@ namespace ItemSpells
 
         private void TargetExecute(IDamageData data)
         {
-            float Damage = 15 + (this._owner.Stats.AbilityPower.Total * 0.15f);
             data.Target.TakeDamage(this._owner, Damage, DamageType.DAMAGE_TYPE_MAGICAL, DamageSource.DAMAGE_SOURCE_RAW, false);
         }
 
 
         public void OnUpdate(float diff)
         {
+            Damage = 15 + (this._owner.Stats.AbilityPower.Total * 0.15f);
+            _spell.ToolTip.Values[0].Value = Damage;
+           
         }
 
         public void OnActivate(IObjAiBase owner, ISpell spell)
         {
             _owner = owner;
+            _spell = spell;
             ApiEventManager.OnHitUnit.AddListener(this, owner, TargetExecute, false);
         }
 
@@ -66,7 +71,7 @@ namespace ItemSpells
 
         public void OnSpellPostChannel(ISpell spell)
         {
-
+            
         }
     }
 }

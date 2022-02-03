@@ -68,6 +68,10 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
         /// Whether or not the script for this spell is the default empty script.
         /// </summary>
         public bool HasEmptyScript { get; private set; } = true;
+        /// <summary>
+        /// pass parameters that the client does not calculate by itself
+        /// </summary>
+        public IScriptToolTipData ToolTip { get; protected set; }
 
         public Spell(Game game, IObjAiBase owner, string spellName, byte slot)
         {
@@ -93,7 +97,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
             }
 
             SpellData = game.Config.ContentManager.GetSpellData(spellName);
-
+            ToolTip = new ToolTipData(this);
             //Checks if the spell is in the passive slot, so it doesn't try to load it twice under the "Spells" and "Passives" namespaces
             if (CastInfo.SpellSlot != (int)SpellSlotType.PassiveSpellSlot)
             {

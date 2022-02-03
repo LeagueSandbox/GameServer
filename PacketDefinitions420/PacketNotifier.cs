@@ -28,6 +28,7 @@ using System.Linq;
 using LeaguePackets;
 using LeaguePackets.LoadScreen;
 using LeaguePackets.Game.Events;
+using GameServerCore.Scripting.CSharp;
 
 namespace PacketDefinitions420
 {
@@ -3712,6 +3713,37 @@ namespace PacketDefinitions420
                 SyncID = request.RequestNo
             };
             _packetHandlerManager.SendPacket(userId, answer.GetBytes(), Channel.CHL_S2C, PacketFlags.None);
+        }
+
+        /// <summary>
+        /// send a packet to the players informing the tooltip parameters that the game does not inform automatically.
+        /// </summary>
+        /// <param name="unit">owner of the spells</param>
+        /// <param name="request">the list of changed values</param>
+        /// TODO: understand why the speel index starts at 60
+        public void NotifyS2C_ToolTipChanges(IAttackableUnit unit, List<IScriptToolTipData> ToolTips)
+        {
+            List<TooltipVars> variables = new List<TooltipVars>();
+            foreach(var ToolTip in ToolTips)
+            {
+                var _tool = new TooltipVars()
+                {
+                    OwnerNetID = unit.NetId,
+                    SlotIndex = ToolTip.SpeelIndex
+                };
+                for(var x =0;x<16;x++)
+                {
+                    _tool.HideFromEnemy[x] = ToolTip.Values[x].Hide;
+                    _tool.Values[x] = ToolTip.Values[x].Value;
+                }
+                variables.Add(_tool);
+            }
+            var answer = new S2C_ToolTipVars
+            {
+                SenderNetID = unit.NetId,
+                Tooltips = variables
+            };
+            _packetHandlerManager.BroadcastPacketVision(unit, answer.GetBytes(), Channel.CHL_S2C, PacketFlags.None);
         }
     }
 }
