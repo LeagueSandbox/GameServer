@@ -15,6 +15,7 @@ using GameServerCore.Maps;
 using GameServerCore.NetInfo;
 using GameServerLib.GameObjects;
 using LeaguePackets.Game.Common;
+using LeaguePackets.Game.Events;
 using LeagueSandbox.GameServer.Content;
 using LeagueSandbox.GameServer.GameObjects;
 using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
@@ -24,6 +25,7 @@ using LeagueSandbox.GameServer.Logging;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using log4net;
 using MapScripts;
+using PacketDefinitions420;
 
 namespace LeagueSandbox.GameServer.Maps
 {
@@ -47,10 +49,6 @@ namespace LeagueSandbox.GameServer.Maps
         /// </summary>
         public ICollisionHandler CollisionHandler { get; private set; }
         /// <summary>
-        /// Gamemode name designated by the game config. Determines which MapScript to load.
-        /// </summary>
-        public string GameMode { get; private set; }
-        /// <summary>
         /// Navigation Grid to be instanced by the map. Used for terrain data.
         /// </summary>
         public INavigationGrid NavigationGrid { get; private set; }
@@ -59,11 +57,6 @@ namespace LeagueSandbox.GameServer.Maps
         /// MapProperties specific to a Map Id. Contains information about passive gold gen, lane minion spawns, experience to level, etc.
         /// </summary>
         public IMapScript MapScript { get; private set; }
-        /// <summary>
-        /// List of events related to the announcer (ex: first blood)
-        /// </summary>
-        public List<IAnnounce> AnnouncerEvents { get; private set; }
-
 
         public Dictionary<LaneID, List<Vector2>> BlueMinionPathing;
         public Dictionary<LaneID, List<Vector2>> PurpleMinionPathing;
@@ -91,7 +84,6 @@ namespace LeagueSandbox.GameServer.Maps
             MapData = game.Config.MapData;
             _scriptEngine = game.ScriptEngine;
             _logger = LoggerProvider.GetLogger();
-            GameMode = game.Config.GameConfig.GameMode;
             Id = _game.Config.GameConfig.Map;
 
             try
@@ -104,15 +96,9 @@ namespace LeagueSandbox.GameServer.Maps
                 return;
             }
 
-            AnnouncerEvents = new List<IAnnounce>();
             CollisionHandler = new CollisionHandler(this);
 
-            if (String.IsNullOrEmpty(GameMode))
-            {
-                _logger.Error("No GameMode Specified, Defaulting to CLASSIC...");
-                GameMode = "CLASSIC";
-            }
-            MapScript = _scriptEngine.CreateObject<IMapScript>($"MapScripts.Map{Id}", $"{GameMode}") ?? new EmptyMapScript();
+            MapScript = _scriptEngine.CreateObject<IMapScript>($"MapScripts.Map{Id}", $"{game.Config.GameConfig.GameMode}") ?? new EmptyMapScript();
 
             if (game.Config.MapData.SpawnBarracks != null)
             {
@@ -136,13 +122,6 @@ namespace LeagueSandbox.GameServer.Maps
         public void Update(float diff)
         {
             CollisionHandler.Update();
-            foreach (var announce in AnnouncerEvents)
-            {
-                if (!announce.IsAnnounced && _game.GameTime >= announce.EventTime)
-                {
-                    announce.Execute();
-                }
-            }
 
             if (MapScript.MapScriptMetadata.MinionSpawnEnabled)
             {
@@ -610,11 +589,6 @@ namespace LeagueSandbox.GameServer.Maps
             _game.PacketNotifier.NotifyS2C_UnitSetMinimapIcon(unit, iconCategory, changeIcon, borderCategory, changeBorder);
         }
 
-        public void AddAnnouncement(long time, EventID ID, bool isMapSpecific)
-        {
-            AnnouncerEvents.Add(new Announce(_game, time, ID, isMapSpecific));
-        }
-
         public ILevelProp AddLevelProp(string name, string model, Vector2 position, float height, Vector3 direction, Vector3 posOffset, Vector3 scale, int skinId = 0, byte skillLevel = 0, byte rank = 0, byte type = 2, uint netId = 0, byte netNodeId = 64)
         {
             var prop = new LevelProp(_game, netNodeId, name, model, position, height, direction, posOffset, scale, skinId, skillLevel, rank, type, netId);
@@ -634,6 +608,7 @@ namespace LeagueSandbox.GameServer.Maps
             };
             _game.PacketNotifier.NotifyUpdateLevelPropS2C(animationData);
         }
+
         public void AddSurrender(float time, float restTime, float length)
         {
             _surrenders.Add(TeamId.TEAM_BLUE, new SurrenderHandler(_game, TeamId.TEAM_BLUE, time, restTime, length));
@@ -653,6 +628,11 @@ namespace LeagueSandbox.GameServer.Maps
         public void SetGameFeatures(FeatureFlags featureFlag, bool isEnabled)
         {
             _game.Config.SetGameFeatures(featureFlag, isEnabled);
+        }
+
+        public void NotifyMapAnnouncement(GameServerCore.Enums.EventID Event, int mapId = 0)
+        {
+            _game.PacketNotifier.NotifyS2C_OnEventWorld(PacketExtensions.GetAnnouncementID(Event, mapId));
         }
 
         //Game Time

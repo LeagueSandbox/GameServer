@@ -27,6 +27,7 @@ using Force.Crc32;
 using System.Linq;
 using LeaguePackets;
 using LeaguePackets.LoadScreen;
+using LeaguePackets.Game.Events;
 
 namespace PacketDefinitions420
 {
@@ -557,6 +558,32 @@ namespace PacketDefinitions420
             _packetHandlerManager.BroadcastPacket(inhibState.GetBytes(), Channel.CHL_S2C);
         }
 
+        public void NotifyDeath(IDeathData deathData)
+        {
+            switch (deathData.Unit)
+            {
+                case IChampion ch:
+                    NotifyNPC_Hero_Die(deathData);
+                    break;
+                case IMinion minion:
+                    if(minion.IsPet || minion.IsClone || minion is ILaneMinion)
+                    {
+                        NotifyS2C_NPC_Die_MapView(deathData);
+                    }
+                    else
+                    {
+                        goto default;
+                    }
+                    break;
+                case IObjBuilding building:
+                    NotifyBuilding_Die(deathData);
+                    break;
+                default:
+                    NotifyNPC_Die_Broadcast(deathData);
+                    break;
+            }
+        }
+
         /// <summary>
         /// Sends a packet to the specified user which is intended for debugging.
         /// </summary>
@@ -1023,8 +1050,12 @@ namespace PacketDefinitions420
         /// <param name="inhibitor">Inhibitor that is respawning soon.</param>
         public void NotifyInhibitorSpawningSoon(IInhibitor inhibitor)
         {
-            var packet = new UnitAnnounce(UnitAnnounces.INHIBITOR_ABOUT_TO_SPAWN, inhibitor);
-            _packetHandlerManager.BroadcastPacket(packet, Channel.CHL_S2C);
+            //I'm not sure about any of these NetIds, the values i saw on packets seemed random, without any mention to the creation of that entity
+            var dampenerRespawnSoon = new OnDampenerRespawnSoon
+            {
+                OtherNetID = inhibitor.NetId
+            };
+            NotifyS2C_OnEventWorld(dampenerRespawnSoon, inhibitor.NetId);
         }
 
         /// <summary>
@@ -1035,19 +1066,28 @@ namespace PacketDefinitions420
         /// <param name="assists">Assists of the killer (if applicable).</param>
         public void NotifyInhibitorState(IInhibitor inhibitor, IDeathData deathData = null, List<IChampion> assists = null)
         {
-            UnitAnnounce announce;
             switch (inhibitor.InhibitorState)
             {
                 case InhibitorState.DEAD:
-                    announce = new UnitAnnounce(UnitAnnounces.INHIBITOR_DESTROYED, inhibitor, deathData.Killer, assists);
-                    _packetHandlerManager.BroadcastPacket(announce, Channel.CHL_S2C);
+                    var annoucementDeath = new OnDampenerDie
+                    {
+                        //All mentions i found were 0, investigate further if we'd want to unhardcode this
+                        GoldGiven = 0.0f,
+                        OtherNetID = deathData.Killer.NetId,
+                        AssistCount = 0
+                        //TODO: Inplement assists when an assist system gets put in place
+                    };
+                    NotifyS2C_OnEventWorld(annoucementDeath, inhibitor.NetId);
 
                     NotifyBuilding_Die(deathData);
 
                     break;
                 case InhibitorState.ALIVE:
-                    announce = new UnitAnnounce(UnitAnnounces.INHIBITOR_SPAWNED, inhibitor, null, assists);
-                    _packetHandlerManager.BroadcastPacket(announce, Channel.CHL_S2C);
+                    var annoucementRespawn = new OnDampenerRespawn
+                    {
+                        OtherNetID = inhibitor.NetId
+                    };
+                    NotifyS2C_OnEventWorld(annoucementRespawn, inhibitor.NetId);
                     break;
             }
             NotifyDampenerSwitchStates(inhibitor);
@@ -2530,11 +2570,22 @@ namespace PacketDefinitions420
         /// </summary>
         /// <param name="eventId">Id of the event to happen.</param>
         /// <param name="sourceNetID">Not yet know it's use.</param>
-        public void NotifyS2C_OnEventWorld(int mapId, EventID messageId, bool isMapSpecific)
+        public void NotifyS2C_OnEventWorld(IEvent mapEvent, uint sourceNetId = 0)
         {
-            //Still has to be updated to LeaguePackets
-            var announce = new Announce(messageId, isMapSpecific ? mapId : 0);
-            _packetHandlerManager.BroadcastPacket(announce, Channel.CHL_S2C);
+            if (mapEvent == null)
+            {
+                return;
+            }
+            var packet = new S2C_OnEventWorld
+            {
+                SenderNetID = 0,
+                EventWorld = new EventWorld
+                {
+                    Event = mapEvent,
+                    Source = sourceNetId
+                }
+            };
+            _packetHandlerManager.BroadcastPacket(packet.GetBytes(), Channel.CHL_S2C);
         }
 
         /// <summary>
@@ -3392,20 +3443,6 @@ namespace PacketDefinitions420
                 GoldAmmount = gold
             };
             _packetHandlerManager.SendPacket((int)c.GetPlayerId(), ag.GetBytes(), Channel.CHL_S2C);
-        }
-        /// <summary>
-        /// Sends a packet to all players detailing that the specified event has occurred.
-        /// </summary>
-        /// <param name="messageId">ID of the event that has occurred. *NOTE*: This enum is incomplete and will be renamed to EventID</param>
-        /// <param name="target">Unit that caused the event to occur.</param>
-        /// <param name="killer">Optional killer of the unit that caused the event to occur.</param>
-        /// <param name="assists">Optional number of assists of the killer.</param>
-        /// TODO: Replace this with LeaguePackets, rename UnitAnnounces to EventID, and complete its enum (refer to LeaguePackets.Game.Events.EventID).
-        public void NotifyUnitAnnounceEvent(UnitAnnounces messageId, IAttackableUnit target, IGameObject killer = null,
-            List<IChampion> assists = null)
-        {
-            var announce = new UnitAnnounce(messageId, target, killer, assists);
-            _packetHandlerManager.BroadcastPacket(announce, Channel.CHL_S2C);
         }
 
         /// <summary>

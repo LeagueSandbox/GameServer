@@ -711,6 +711,8 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
 
             if (data.Killer != null && data.Killer is IChampion champion)
                 champion.OnKill(data);
+
+            _game.PacketNotifier.NotifyDeath(data);
         }
 
         /// <summary>

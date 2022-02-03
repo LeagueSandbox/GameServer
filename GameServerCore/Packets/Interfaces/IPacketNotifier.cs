@@ -12,6 +12,7 @@ using GameServerCore.Packets.PacketDefinitions.Requests;
 using LeaguePackets.Game;
 using LeaguePackets;
 using LeaguePackets.Game.Common;
+using LeaguePackets.Game.Events;
 
 namespace GameServerCore.Packets.Interfaces
 {
@@ -139,6 +140,7 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="unit">GameObject to highlght.</param>
         void NotifyCreateUnitHighlight(int userId, IGameObject unit);
         void NotifyDampenerSwitchStates(IInhibitor inhibitor);
+        void NotifyDeath(IDeathData deathData);
         /// <summary>
         /// Sends a packet to the specified user which is intended for debugging.
         /// </summary>
@@ -608,7 +610,7 @@ namespace GameServerCore.Packets.Interfaces
         /// </summary>
         /// <param name="eventId">Id of the event to happen.</param>
         /// <param name="sourceNetID">Not yet know it's use.</param>
-        void NotifyS2C_OnEventWorld(int mapId, EventID messageId, bool isMapSpecific);
+        void NotifyS2C_OnEventWorld(IEvent mapEvent, uint sourceNetId = 0);
         /// <summary>
         /// Sends a packet to all players detailing that the specified object's current animations have been paused/unpaused.
         /// </summary>
@@ -842,15 +844,6 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="speed">Amount of time that should pass before tint is fully applied.</param>
         /// <param name="color">Color of the tint.</param>
         void NotifyTint(TeamId team, bool enable, float speed, Content.Color color);
-        /// <summary>
-        /// Sends a packet to all players detailing that the specified event has occurred.
-        /// </summary>
-        /// <param name="messageId">ID of the event that has occurred. *NOTE*: This enum is incomplete and will be renamed to EventID</param>
-        /// <param name="target">Unit that caused the event to occur.</param>
-        /// <param name="killer">Optional killer of the unit that caused the event to occur.</param>
-        /// <param name="assists">Optional number of assists of the killer.</param>
-        /// TODO: Replace this with LeaguePackets, rename UnitAnnounces to EventID, and complete its enum (refer to LeaguePackets.Game.Events.EventID).
-        void NotifyUnitAnnounceEvent(UnitAnnounces messageId, IAttackableUnit target, IGameObject killer = null, List<IChampion> assists = null);
         /// <summary>
         /// Sends a packet to all players that the specified Champion has gained the specified amount of experience.
         /// </summary>

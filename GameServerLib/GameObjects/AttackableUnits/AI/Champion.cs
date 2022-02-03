@@ -9,6 +9,7 @@ using GameServerCore.Enums;
 using LeagueSandbox.GameServer.GameObjects.Stats;
 using LeagueSandbox.GameServer.Items;
 using LeagueSandbox.GameServer.API;
+using LeaguePackets.Game.Events;
 
 namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 {
@@ -232,7 +233,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         public void AddExperience(float experience, bool notify = true)
         {
             Stats.Experience += experience;
-            if(Stats.Experience > 0 && notify)
+            if (Stats.Experience > 0 && notify)
             {
                 _game.PacketNotifier.NotifyUnitAddEXP(this, experience);
             }
@@ -310,8 +311,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             RespawnTimer = _game.Config.MapData.DeathTimes[Stats.Level] * 1000.0f;
             ChampStats.Deaths += 1;
 
-            _game.PacketNotifier.NotifyUnitAnnounceEvent(UnitAnnounces.DEATH, this, data.Killer);
-
             var cKiller = data.Killer as IChampion;
 
             if (cKiller == null && _championHitFlagTimer > 0)
@@ -347,12 +346,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             if (KillDeathCounter <= 0)
                 KillDeathCounter -= 1;
 
-            if (gold < 0)
-            {
-                _game.PacketNotifier.NotifyNPC_Hero_Die(data);
-                return;
-            }
-
             if (_game.Map.MapScript.MapScriptMetadata.IsKillGoldRewardReductionActive
                 && _game.Map.MapScript.HasFirstBloodHappened)
             {
@@ -360,14 +353,29 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 //CORE_INFO("Still some minutes for full gold reward on champion kills");
             }
 
-            if (!_game.Map.MapScript.HasFirstBloodHappened)
+            if (_game.Map.MapScript.HasFirstBloodHappened)
+            {
+                var onKill = new OnChampionKill { OtherNetID = NetId };
+                _game.PacketNotifier.NotifyS2C_OnEventWorld(onKill, data.Killer.NetId);
+            }
+            else
             {
                 gold += 100;
                 _game.Map.MapScript.HasFirstBloodHappened = true;
+
+                //I think first blood would be announced here, but it's being announced somewhere else that i couldn't find.
             }
 
-            _game.PacketNotifier.NotifyNPC_Hero_Die(data);
+            var worldEvent = new OnChampionDie
+            {
+                GoldGiven = gold,
+                OtherNetID = data.Killer.NetId,
+                AssistCount = 0
+                //Todo: implement assists when an assist system gets implemented
+            };
+            _game.PacketNotifier.NotifyS2C_OnEventWorld(worldEvent, NetId);
 
+            _game.PacketNotifier.NotifyDeath(data);
             cKiller.Stats.Gold = cKiller.Stats.Gold + gold;
             _game.PacketNotifier.NotifyUnitAddGold(cKiller, this, gold);
             //CORE_INFO("After: getGoldFromChamp: %f Killer: %i Victim: %i", gold, cKiller.killDeathCounter,this.killDeathCounter);

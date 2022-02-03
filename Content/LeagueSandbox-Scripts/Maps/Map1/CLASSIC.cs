@@ -254,15 +254,6 @@ namespace MapScripts.Map1
             map.ChangeTowerOnMapList("Turret_T1_C_06_A", TeamId.TEAM_BLUE, LaneID.MIDDLE, LaneID.TOP);
             map.ChangeTowerOnMapList("Turret_T1_C_07_A", TeamId.TEAM_BLUE, LaneID.MIDDLE, LaneID.BOTTOM);
 
-            // Announcer events
-
-            // Welcome to "Map"
-            map.AddAnnouncement(30 * 1000, EventID.OnStartGameMessage1, true);
-            // 30 seconds until minions spawn
-            map.AddAnnouncement(NextSpawnTime - 30 * 1000, EventID.OnStartGameMessage2, true);
-            // Minions have spawned
-            map.AddAnnouncement(NextSpawnTime, EventID.OnMinionsSpawn, false);
-
             //Map props
             _map.AddLevelProp("LevelProp_Yonkey", "Yonkey", new Vector2(12465.0f, 14422.257f), 101.0f, new Vector3(0.0f, 66.0f, 0.0f), new Vector3(-33.3334f, 122.2222f, -133.3333f), Vector3.One);
             _map.AddLevelProp("LevelProp_Yonkey1", "Yonkey", new Vector2(-76.0f, 1769.1589f), 94.0f, new Vector3(0.0f, 30.0f, 0.0f), new Vector3(0.0f, -11.1111f, -22.2222f), Vector3.One);
@@ -282,7 +273,8 @@ namespace MapScripts.Map1
 
         public void Update(float diff)
         {
-            if (_map.GameTime() >= 120 * 1000)
+            var gameTime = _map.GameTime();
+            if (gameTime >= 120 * 1000)
             {
                 MapScriptMetadata.IsKillGoldRewardReductionActive = false;
             }
@@ -298,6 +290,11 @@ namespace MapScripts.Map1
                         camp.RespawnTimer = GetRespawnTimer(camp);
                     }
                 }
+            }
+
+            if (!AllAnnouncementsAnnounced)
+            {
+                CheckInitialMapAnnouncements(gameTime);
             }
 
             if (forceSpawn)
@@ -468,6 +465,32 @@ namespace MapScripts.Map1
                     break;
             }
         }
+
+        bool AllAnnouncementsAnnounced = false;
+        List<EventID> AnnouncedEvents = new List<EventID>();
+        public void CheckInitialMapAnnouncements(float time)
+        {
+            if (time >= 90.0f * 1000)
+            {
+                // Minions have spawned
+                _map.NotifyMapAnnouncement(EventID.OnMinionsSpawn, 0);
+                _map.NotifyMapAnnouncement(EventID.OnNexusCrystalStart, 0);
+                AllAnnouncementsAnnounced = true;
+            }
+            else if (time >= 60.0f * 1000 && !AnnouncedEvents.Contains(EventID.OnStartGameMessage2))
+            {
+                // 30 seconds until minions spawn
+                _map.NotifyMapAnnouncement(EventID.OnStartGameMessage2, _map.Id);
+                AnnouncedEvents.Add(EventID.OnStartGameMessage2);
+            }
+            else if (time >= 30.0f * 1000 && !AnnouncedEvents.Contains(EventID.OnStartGameMessage1))
+            {
+                // Welcome to Summoners Rift
+                _map.NotifyMapAnnouncement(EventID.OnStartGameMessage1, _map.Id);
+                AnnouncedEvents.Add(EventID.OnStartGameMessage1);
+            }
+        }
+
         public void SetupJungleCamps()
         {
             //Blue Side Blue Buff

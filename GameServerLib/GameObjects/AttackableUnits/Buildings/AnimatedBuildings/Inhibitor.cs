@@ -59,6 +59,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.Buildings.Animate
 
             _respawnTimer.Elapsed += (a, b) =>
             {
+                //Todo: Handle inhibitor respawn on MapScript
                 Stats.CurrentHealth = Stats.HealthPoints.Total;
                 SetState(InhibitorState.ALIVE);
                 IsDead = false;

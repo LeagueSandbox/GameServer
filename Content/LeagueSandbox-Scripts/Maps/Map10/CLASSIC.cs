@@ -202,29 +202,24 @@ namespace MapScripts.Map10
             map.ChangeTowerOnMapList("Turret_T1_C_07_A", TeamId.TEAM_BLUE, LaneID.MIDDLE, LaneID.BOTTOM);
             map.ChangeTowerOnMapList("Turret_T1_C_06_A", TeamId.TEAM_BLUE, LaneID.MIDDLE, LaneID.TOP);
 
-            // Announcer events
-            map.AddAnnouncement(30 * 1000, EventID.OnStartGameMessage1, true); // Welcome to "Map"
-            map.AddAnnouncement(NextSpawnTime - 30 * 1000, EventID.OnStartGameMessage2, true); // 30 seconds until minions spawn
-            map.AddAnnouncement(NextSpawnTime, EventID.OnMinionsSpawn, false); // Minions have spawned
-
             //Map props
-            map.AddLevelProp("LevelProp_TT_Brazier1", "TT_Brazier", new Vector2(1360.9241f, 5072.1309f), 291.2142f, new Vector3(11.1111f, 134.0f, 0.0f), new Vector3(0.0f, 288.8889f, -22.2222f), Vector3.One);
-            map.AddLevelProp("LevelProp_TT_Brazier2", "TT_Brazier", new Vector2(423.5712f, 6529.0327f), 385.9983f, new Vector3(-33.3334f, 0.0f, 0.0f), new Vector3(0.0f, 277.7778f, -11.1111f), Vector3.One);
-            map.AddLevelProp("LevelProp_TT_Brazier3", "TT_Brazier", new Vector2(399.4241f, 8021.057f), 692.2211f, new Vector3(-22.2222f, 0.0f, 0.0f), new Vector3(0.0f, 300f, 0.0f), Vector3.One);
-            map.AddLevelProp("LevelProp_TT_Brazier4", "TT_Brazier", new Vector2(1314.294f, 9495.576f), 582.8416f, new Vector3(-33.3334f, 48.0f, 0.0f), new Vector3(0.0f, 277.7778f, 22.2223f), Vector3.One);
-            map.AddLevelProp("LevelProp_TT_Brazier5", "TT_Brazier", new Vector2(14080.0f, 9530.3379f), 305.0638f, new Vector3(11.1111f, 120.0f, 0.0f), new Vector3(0.0f, 277.7778f, 0.0f), Vector3.One);
-            map.AddLevelProp("LevelProp_TT_Brazier6", "TT_Brazier", new Vector2(14990.46f, 8053.91f), 675.8145f, new Vector3(-22.2222f, 0.0f, 0.0f), new Vector3(0.0f, 266.6666f, -11.1111f), Vector3.One);
-            map.AddLevelProp("LevelProp_TT_Brazier7", "TT_Brazier", new Vector2(15016.35f, 6532.84f), 664.7033f, new Vector3(-11.1111f, 0.0f, 0.0f), new Vector3(0.0f, 255.5555f, -11.1111f), Vector3.One);
-            map.AddLevelProp("LevelProp_TT_Brazier8", "TT_Brazier", new Vector2(14102.99f, 5098.367f), 580.504f, new Vector3(0.0f, 36.0f, 0.0f), new Vector3(0.0f, 244.4445f, 11.1111f), Vector3.One);
-            map.AddLevelProp("LevelProp_TT_Chains_Bot_Lane", "TT_Chains_Bot_Lane", new Vector2(3624.281f, 3730.965f), -100.4387f, new Vector3(88.8889f, 0.0f, 0.0f), new Vector3(0.0f, -33.3334f, 66.6667f), Vector3.One);
-            map.AddLevelProp("LevelProp_TT_Chains_Order_Base", "TT_Chains_Order_Base", new Vector2(3778.364f, 7573.525f), -496.0713f, new Vector3(-233.3334f, 0.0f, 0.0f), new Vector3(0.0f, -333.3333f, 277.7778f), Vector3.One);
-            map.AddLevelProp("LevelProp_TT_Chains_Xaos_Base", "TT_Chains_Xaos_Base", new Vector2(11636.06f, 7618.667f), -551.6268f, new Vector3(200.0f, 0.0f, 0.0f), new Vector3(0.0f, -388.8889f, 33.3334f), Vector3.One);
-            map.AddLevelProp("LevelProp_TT_Chains_Order_Periph", "TT_Chains_Order_Periph", new Vector2(759.1779f, 4740.938f), 507.9883f, new Vector3(-155.5555f, 0.0f, 0.0f), new Vector3(0.0f, 44.4445f, 222.2222f), Vector3.One);
-            map.AddLevelProp("LevelProp_TT_Nexus_Gears", "TT_Nexus_Gears", new Vector2(3000.0f, 7289.682f), 19.51249f, Vector3.Zero, new Vector3(0.0f, 144.4445f, 0.0f), Vector3.One);
-            map.AddLevelProp("LevelProp_TT_Nexus_Gears1", "TT_Nexus_Gears", new Vector2(12436.4775f, 7366.5859f), -124.9320f, new Vector3(-44.4445f, 180.0f, 0.0f), new Vector3(0.0f, 122.2222f, -122.2222f), Vector3.One);
-            map.AddLevelProp("LevelProp_TT_Shopkeeper1", "TT_Shopkeeper", new Vector2(14169.09f, 7916.989f), 178.1922f, new Vector3(22.2223f, 150f, 0.0f), new Vector3(33.3333f, 0.0f, -66.6667f), Vector3.One);
-            map.AddLevelProp("LevelProp_TT_Shopkeeper", "TT_Shopkeeper", new Vector2(1340.8141f, 7996.8691f), 126.2980f, new Vector3(208f, -66.6667f, 0.0f), new Vector3(0.0f, 22.2223f, -55.5556f), Vector3.One);
-            map.AddLevelProp("LevelProp_TT_Speedshrine_Gears", "TT_Speedshrine_Gears", new Vector2(7706.3052f, 6720.3926f), -124.9320f, Vector3.Zero, Vector3.Zero, Vector3.One);
+            map.AddLevelProp("LevelProp_TT_Shopkeeper1", "TT_Shopkeeper", new Vector2(14169.09f, 7916.989f), 178.19215f, new Vector3(0.0f, 150f, 0.0f), new Vector3(22.2223f, 33.3333f, -66.6667f), Vector3.One);
+            map.AddLevelProp("LevelProp_TT_Shopkeeper", "TT_Shopkeeper", new Vector2(1241.6655f, 7916.2354f), 184.21965f, new Vector3(0.0f, 208.0f, 0.0f), new Vector3(-66.6667f, 22.2223f, -55.5556f), Vector3.One);
+            map.AddLevelProp("LevelProp_TT_Chains_Bot_Lane", "TT_Chains_Bot_Lane", new Vector2(3624.281f, 3730.965f), -100.43866f, Vector3.Zero, new Vector3(88.8889f, -33.3334f, 66.6667f), Vector3.One);
+            map.AddLevelProp("LevelProp_TT_Nexus_Gears", "TT_Nexus_Gears", new Vector2(3000.0f, 7289.6816f), 19.51249f, Vector3.Zero, new Vector3(0.0f, 144.4445f, 0.0f), Vector3.One);
+            map.AddLevelProp("LevelProp_TT_Brazier1", "TT_Brazier", new Vector2(1372.0352f, 5049.9087f), 580.103f, new Vector3(0.0f, 134.0f, 0.0f), new Vector3(11.1111f, 288.8889f, -22.2222f), Vector3.One);
+            map.AddLevelProp("LevelProp_TT_Brazier2", "TT_Brazier", new Vector2(390.23776f, 6517.922f), 663.7761f, Vector3.Zero, new Vector3(-33.3334f, 277.7778f, -11.1111f), Vector3.One);
+            map.AddLevelProp("LevelProp_TT_Brazier3", "TT_Brazier", new Vector2(399.4241f, 8021.0566f), 692.22107f, Vector3.Zero, new Vector3(-22.2222f, 300f, 0.0f), Vector3.One);
+            map.AddLevelProp("LevelProp_TT_Brazier4", "TT_Brazier", new Vector2(1314.2941f, 9495.576f), 582.84155f, new Vector3(0.0f, 48.0f, 0.0f), new Vector3(-33.3334f, 277.7778f, 22.2223f), Vector3.One);
+            map.AddLevelProp("LevelProp_TT_Speedshrine_Gears", "TT_Speedshrine_Gears", new Vector2(7706.3057f, 6720.3916f), -124.93201f, Vector3.Zero, Vector3.Zero, Vector3.One);
+            map.AddLevelProp("LevelProp_TT_Brazier5", "TT_Brazier", new Vector2(14091.11f, 9530.338f), 582.84155f, new Vector3(0.0f, 120.0f, 0.0f), new Vector3(11.1111f, 277.7778f, 0.0f), Vector3.One);
+            map.AddLevelProp("LevelProp_TT_Brazier6", "TT_Brazier", new Vector2(14990.463f, 8053.91f), 675.81445f, Vector3.Zero, new Vector3(-22.2222f, 266.6666f, -11.1111f), Vector3.One);
+            map.AddLevelProp("LevelProp_TT_Brazier7", "TT_Brazier", new Vector2(15016.35f, 6532.84f), 664.7033f, Vector3.Zero, new Vector3(-11.1111f, 255.5555f, -11.1111f), Vector3.One);
+            map.AddLevelProp("LevelProp_TT_Brazier8", "TT_Brazier", new Vector2(14102.986f, 5098.367f), 580.504f, new Vector3(0.0f, 36.0f, 0.0f), new Vector3(0.0f, 244.4445f, 11.1111f), Vector3.One);
+            map.AddLevelProp("LevelProp_TT_Chains_Order_Base", "TT_Chains_Order_Base", new Vector2(3778.3638f, 7573.525f), -496.0713f, Vector3.Zero, new Vector3(-233.3334f, -333.3333f, 277.7778f), Vector3.One);
+            map.AddLevelProp("LevelProp_TT_Chains_Xaos_Base", "TT_Chains_Xaos_Base", new Vector2(11636.063f, 7618.6665f), -551.62683f, Vector3.Zero, new Vector3(200.0f, -388.8889f, 333.3334f), Vector3.One);
+            map.AddLevelProp("LevelProp_TT_Chains_Order_Periph", "TT_Chains_Order_Periph", new Vector2(759.1779f, 4740.9385f), 507.98825f, Vector3.Zero, new Vector3(-155.5555f, 44.4445f, 222.2222f), Vector3.One);
+            map.AddLevelProp("LevelProp_TT_Nexus_Gears1", "TT_Nexus_Gears", new Vector2(12392.034f, 7244.363f), -2.709816f, new Vector3(0.0f, 180.0f, 0.0f), new Vector3(-44.4445f, 122.2222f, -122.2222f), Vector3.One);
         }
 
         public List<IMonsterCamp> MonsterCamps = new List<IMonsterCamp>();
@@ -253,11 +248,17 @@ namespace MapScripts.Map10
                 }
             }
 
+            if (!AllAnnouncementsAnnounced)
+            {
+                CheckInitialMapAnnouncements(_map.GameTime());
+            }
+
             if (forceSpawn)
             {
                 forceSpawn = false;
             }
         }
+
         public float GetRespawnTimer(IMonsterCamp monsterCamp)
         {
             switch (monsterCamp.CampIndex)
@@ -414,57 +415,91 @@ namespace MapScripts.Map10
                     break;
             }
         }
+
+
+        bool AllAnnouncementsAnnounced = false;
+        List<EventID> AnnouncedEvents = new List<EventID>();
+        public void CheckInitialMapAnnouncements(float time)
+        {
+            if (time >= 180.0f * 1000)
+            {
+                //The Altars have unlocked!
+                _map.NotifyMapAnnouncement(EventID.OnStartGameMessage4, _map.Id);
+                AllAnnouncementsAnnounced = true;
+            }
+            else if (time >= 150.0f * 1000 && !AnnouncedEvents.Contains(EventID.OnStartGameMessage2))
+            {
+                // The Altars will unlock in 30 seconds
+                _map.NotifyMapAnnouncement(EventID.OnStartGameMessage2, _map.Id);
+                AnnouncedEvents.Add(EventID.OnStartGameMessage2);
+
+            }
+            else if (time >= 75.0f * 1000 && !AnnouncedEvents.Contains(EventID.OnStartGameMessage3))
+            {
+                // Minions have Spawned
+                _map.NotifyMapAnnouncement(EventID.OnStartGameMessage3, _map.Id);
+                _map.NotifyMapAnnouncement(EventID.OnNexusCrystalStart, 0);
+                AnnouncedEvents.Add(EventID.OnStartGameMessage3);
+            }
+            else if (time >= 30.0f * 1000 && !AnnouncedEvents.Contains(EventID.OnStartGameMessage1))
+            {
+                // Welcome to the Twisted Tree Line!
+                _map.NotifyMapAnnouncement(EventID.OnStartGameMessage1, _map.Id);
+                AnnouncedEvents.Add(EventID.OnStartGameMessage1);
+            }
+        }
+
         public void SetupJungleCamps()
         {
             //Blue Side Wraiths
-            var blue_Wraiths = _map.CreateJungleCamp(new Vector3(4414.48f, 60.0f, 5774.88f),groupNumber: 1, teamSideOfTheMap: TeamId.TEAM_BLUE, campTypeIcon: "Camp", 100.0f * 1000);
-            _map.CreateJungleMonster("TT_NWraith1.1.1", "TT_NWraith",new Vector2(4414.48f, 5774.88f), new Vector3(4214.47f, -109.177f, 5962.65f),blue_Wraiths, aiScript: "BasicJungleMonsterAi");
-            _map.CreateJungleMonster("TT_NWraith21.1.2", "TT_NWraith2",new Vector2(4247.32f, 5725.39f), new Vector3(4214.47f, -109.177f, 5962.65f),blue_Wraiths, aiScript: "BasicJungleMonsterAi");
-            _map.CreateJungleMonster("TT_NWraith21.1.3", "TT_NWraith2",new Vector2(4452.47f, 5909.56f), new Vector3(4214.47f, -109.177f, 5962.65f),blue_Wraiths, aiScript: "BasicJungleMonsterAi");
+            var blue_Wraiths = _map.CreateJungleCamp(new Vector3(4414.48f, 60.0f, 5774.88f), groupNumber: 1, teamSideOfTheMap: TeamId.TEAM_BLUE, campTypeIcon: "Camp", 100.0f * 1000);
+            _map.CreateJungleMonster("TT_NWraith1.1.1", "TT_NWraith", new Vector2(4414.48f, 5774.88f), new Vector3(4214.47f, -109.177f, 5962.65f), blue_Wraiths, aiScript: "BasicJungleMonsterAi");
+            _map.CreateJungleMonster("TT_NWraith21.1.2", "TT_NWraith2", new Vector2(4247.32f, 5725.39f), new Vector3(4214.47f, -109.177f, 5962.65f), blue_Wraiths, aiScript: "BasicJungleMonsterAi");
+            _map.CreateJungleMonster("TT_NWraith21.1.3", "TT_NWraith2", new Vector2(4452.47f, 5909.56f), new Vector3(4214.47f, -109.177f, 5962.65f), blue_Wraiths, aiScript: "BasicJungleMonsterAi");
             MonsterCamps.Add(blue_Wraiths);
 
             //Blue Side Golems
-            var blue_Golems = _map.CreateJungleCamp(new Vector3(5088.37f, 60.0f, 8065.55f),groupNumber: 2, teamSideOfTheMap: TeamId.TEAM_BLUE, campTypeIcon: "Camp", 100.0f * 1000);
-            _map.CreateJungleMonster("TT_NGolem2.1.1", "TT_NGolem",new Vector2(5088.37f, 8065.55f), new Vector3(4861.72f, -109.332f, 7825.94f), blue_Golems, aiScript: "BasicJungleMonsterAi");
-            _map.CreateJungleMonster("TT_NGolem22.1.2", "TT_NGolem2",new Vector2(5176.61f, 7810.42f), new Vector3(4861.72f, -109.332f, 7825.94f), blue_Golems, aiScript: "BasicJungleMonsterAi");
+            var blue_Golems = _map.CreateJungleCamp(new Vector3(5088.37f, 60.0f, 8065.55f), groupNumber: 2, teamSideOfTheMap: TeamId.TEAM_BLUE, campTypeIcon: "Camp", 100.0f * 1000);
+            _map.CreateJungleMonster("TT_NGolem2.1.1", "TT_NGolem", new Vector2(5088.37f, 8065.55f), new Vector3(4861.72f, -109.332f, 7825.94f), blue_Golems, aiScript: "BasicJungleMonsterAi");
+            _map.CreateJungleMonster("TT_NGolem22.1.2", "TT_NGolem2", new Vector2(5176.61f, 7810.42f), new Vector3(4861.72f, -109.332f, 7825.94f), blue_Golems, aiScript: "BasicJungleMonsterAi");
             MonsterCamps.Add(blue_Golems);
 
             //Blue Side Wolves
-            var blue_Wolves = _map.CreateJungleCamp(new Vector3(6148.92f, 60.0f, 5993.49f),groupNumber: 3, teamSideOfTheMap: TeamId.TEAM_BLUE, campTypeIcon: "Camp", 100.0f * 1000);
-            _map.CreateJungleMonster("TT_NWolf3.1.1", "TT_NWolf",new Vector2(6148.92f, 5993.49f), new Vector3(5979.61f, -109.744f, 6236.2f),blue_Wolves, aiScript: "BasicJungleMonsterAi");
-            _map.CreateJungleMonster("TT_NWolf23.1.2", "TT_NWolf2",new Vector2(6010.29f, 6010.79f), new Vector3(5979.61f, -109.744f, 6236.2f),blue_Wolves, aiScript: "BasicJungleMonsterAi");
-            _map.CreateJungleMonster("TT_NWolf23.1.3", "TT_NWolf2",new Vector2(6202.73f, 6156.5f), new Vector3(5979.61f, -109.744f, 6236.2f),blue_Wolves, aiScript: "BasicJungleMonsterAi");
+            var blue_Wolves = _map.CreateJungleCamp(new Vector3(6148.92f, 60.0f, 5993.49f), groupNumber: 3, teamSideOfTheMap: TeamId.TEAM_BLUE, campTypeIcon: "Camp", 100.0f * 1000);
+            _map.CreateJungleMonster("TT_NWolf3.1.1", "TT_NWolf", new Vector2(6148.92f, 5993.49f), new Vector3(5979.61f, -109.744f, 6236.2f), blue_Wolves, aiScript: "BasicJungleMonsterAi");
+            _map.CreateJungleMonster("TT_NWolf23.1.2", "TT_NWolf2", new Vector2(6010.29f, 6010.79f), new Vector3(5979.61f, -109.744f, 6236.2f), blue_Wolves, aiScript: "BasicJungleMonsterAi");
+            _map.CreateJungleMonster("TT_NWolf23.1.3", "TT_NWolf2", new Vector2(6202.73f, 6156.5f), new Vector3(5979.61f, -109.744f, 6236.2f), blue_Wolves, aiScript: "BasicJungleMonsterAi");
             MonsterCamps.Add(blue_Wolves);
 
             //Red Side Wraiths
-            var red_Wraiths = _map.CreateJungleCamp(new Vector3(11008.2f, 60.0f, 5775.7f),groupNumber: 4, teamSideOfTheMap: TeamId.TEAM_PURPLE, campTypeIcon: "Camp", 100.0f * 1000);
-            _map.CreateJungleMonster("TT_NWraith4.1.1", "TT_NWraith",new Vector2(11008.2f, 5775.7f), new Vector3(11189.8f, -109.202f, 5939.67f),red_Wraiths, aiScript: "BasicJungleMonsterAi");
-            _map.CreateJungleMonster("TT_NWraith24.1.2f", "TT_NWraith2",new Vector2(10953.2f, 5919.11f), new Vector3(11189.8f, -109.202f, 5939.67f),red_Wraiths, aiScript: "BasicJungleMonsterAi");
-            _map.CreateJungleMonster("TT_NWraith24.1.3", "TT_NWraith2",new Vector2(11168.8f, 5695.25f), new Vector3(11189.8f, -109.202f, 5939.67f),red_Wraiths, aiScript: "BasicJungleMonsterAi");
+            var red_Wraiths = _map.CreateJungleCamp(new Vector3(11008.2f, 60.0f, 5775.7f), groupNumber: 4, teamSideOfTheMap: TeamId.TEAM_PURPLE, campTypeIcon: "Camp", 100.0f * 1000);
+            _map.CreateJungleMonster("TT_NWraith4.1.1", "TT_NWraith", new Vector2(11008.2f, 5775.7f), new Vector3(11189.8f, -109.202f, 5939.67f), red_Wraiths, aiScript: "BasicJungleMonsterAi");
+            _map.CreateJungleMonster("TT_NWraith24.1.2f", "TT_NWraith2", new Vector2(10953.2f, 5919.11f), new Vector3(11189.8f, -109.202f, 5939.67f), red_Wraiths, aiScript: "BasicJungleMonsterAi");
+            _map.CreateJungleMonster("TT_NWraith24.1.3", "TT_NWraith2", new Vector2(11168.8f, 5695.25f), new Vector3(11189.8f, -109.202f, 5939.67f), red_Wraiths, aiScript: "BasicJungleMonsterAi");
             MonsterCamps.Add(red_Wraiths);
 
             //Red Side Golems
-            var red_Golems = _map.CreateJungleCamp(new Vector3(10341.3f, 60.0f, 8084.77f),groupNumber: 5, teamSideOfTheMap: TeamId.TEAM_PURPLE, campTypeIcon: "Camp", 100.0f * 1000);
-            _map.CreateJungleMonster("TT_NGolem5.1.1f", "TT_NGolem",new Vector2(10341.3f, 8084.77f), new Vector3(10433.8f, -109.466f, 7930.07f),red_Golems, aiScript: "BasicJungleMonsterAi");
-            _map.CreateJungleMonster("TT_NGolem25.1.2", "TT_NGolem2",new Vector2(10256.8f, 7842.84f), new Vector3(10433.8f, -109.466f, 7930.07f),red_Golems, aiScript: "BasicJungleMonsterAi");
+            var red_Golems = _map.CreateJungleCamp(new Vector3(10341.3f, 60.0f, 8084.77f), groupNumber: 5, teamSideOfTheMap: TeamId.TEAM_PURPLE, campTypeIcon: "Camp", 100.0f * 1000);
+            _map.CreateJungleMonster("TT_NGolem5.1.1f", "TT_NGolem", new Vector2(10341.3f, 8084.77f), new Vector3(10433.8f, -109.466f, 7930.07f), red_Golems, aiScript: "BasicJungleMonsterAi");
+            _map.CreateJungleMonster("TT_NGolem25.1.2", "TT_NGolem2", new Vector2(10256.8f, 7842.84f), new Vector3(10433.8f, -109.466f, 7930.07f), red_Golems, aiScript: "BasicJungleMonsterAi");
             MonsterCamps.Add(red_Golems);
 
             //Red Side Wolves
             var red_Wolves = _map.CreateJungleCamp(new Vector3(9239.0f, 60.0f, 6022.87f), groupNumber: 6, teamSideOfTheMap: TeamId.TEAM_PURPLE, campTypeIcon: "Camp", 100.0f * 1000);
-            _map.CreateJungleMonster("TT_NWolf6.1.1", "TT_NWolf",new Vector2(9239.0f, 6022.87f), new Vector3(9411.97f, -109.837f, 6214.06f),red_Wolves, aiScript: "BasicJungleMonsterAi");
-            _map.CreateJungleMonster("TT_NWolf26.1.2", "TT_NWolf2",new Vector2(9186.8f, 6176.57f), new Vector3(9411.97f, -109.837f, 6214.06f),red_Wolves, aiScript: "BasicJungleMonsterAi");
-            _map.CreateJungleMonster("TT_NWolf26.1.3", "TT_NWolf2",new Vector2(9404.52f, 5996.73f), new Vector3(9411.97f, -109.837f, 6214.06f),red_Wolves, aiScript: "BasicJungleMonsterAi");
+            _map.CreateJungleMonster("TT_NWolf6.1.1", "TT_NWolf", new Vector2(9239.0f, 6022.87f), new Vector3(9411.97f, -109.837f, 6214.06f), red_Wolves, aiScript: "BasicJungleMonsterAi");
+            _map.CreateJungleMonster("TT_NWolf26.1.2", "TT_NWolf2", new Vector2(9186.8f, 6176.57f), new Vector3(9411.97f, -109.837f, 6214.06f), red_Wolves, aiScript: "BasicJungleMonsterAi");
+            _map.CreateJungleMonster("TT_NWolf26.1.3", "TT_NWolf2", new Vector2(9404.52f, 5996.73f), new Vector3(9411.97f, -109.837f, 6214.06f), red_Wolves, aiScript: "BasicJungleMonsterAi");
             MonsterCamps.Add(red_Wolves);
 
             //Center of the Map Health Pack
-            var healthPack = _map.CreateJungleCamp(new Vector3(7711.15f, 60.0f, 6722.67f),groupNumber: 7, teamSideOfTheMap: 0, campTypeIcon: "HealthPack", 10 * 1000);
-            _map.CreateJungleMonster("TT_Relic7.1.1", "TT_Relic",new Vector2(7711.15f, 6722.67f), new Vector3(7711.15f, -112.716f, 6322.67f),healthPack);
+            var healthPack = _map.CreateJungleCamp(new Vector3(7711.15f, 60.0f, 6722.67f), groupNumber: 7, teamSideOfTheMap: 0, campTypeIcon: "HealthPack", 115.0f * 1000);
+            _map.CreateJungleMonster("TT_Relic7.1.1", "TT_Relic", new Vector2(7711.15f, 6722.67f), new Vector3(7711.15f, -112.716f, 6322.67f), healthPack);
             MonsterCamps.Add(healthPack);
 
             //Vilemaw
             //TODO: VIle maw needs it's own Special A.I Script, for now it'll be just a dummy.
-            var spiderBoss = _map.CreateJungleCamp(new Vector3(7711.15f, 60.0f, 10080.0f),groupNumber: 8, teamSideOfTheMap: 0, campTypeIcon: "Epic", 600f * 1000);
-            _map.CreateJungleMonster("TT_Spiderboss8.1.1", "TT_Spiderboss",new Vector2(7711.15f, 10080.0f), new Vector3(7726.41f, -108.603f, 9234.69f),spiderBoss);
+            var spiderBoss = _map.CreateJungleCamp(new Vector3(7711.15f, 60.0f, 10080.0f), groupNumber: 8, teamSideOfTheMap: 0, campTypeIcon: "Epic", 600.0f * 1000);
+            _map.CreateJungleMonster("TT_Spiderboss8.1.1", "TT_Spiderboss", new Vector2(7711.15f, 10080.0f), new Vector3(7726.41f, -108.603f, 9234.69f), spiderBoss);
             MonsterCamps.Add(spiderBoss);
         }
     }
