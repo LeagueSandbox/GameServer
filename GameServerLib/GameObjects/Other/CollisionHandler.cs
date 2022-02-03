@@ -4,7 +4,7 @@ using GameServerCore;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Domain.GameObjects.Spell.Missile;
 using GameServerCore.Maps;
-using UltimateQuadTree;
+using System.Activities.Presentation.View;
 
 namespace LeagueSandbox.GameServer.GameObjects.Other
 {
@@ -16,8 +16,6 @@ namespace LeagueSandbox.GameServer.GameObjects.Other
         private IMapScriptHandler _map;
 
         private readonly List<IGameObject> _objects = new List<IGameObject>();
-        // This is the 'dynamic map', updated every update of the game.
-        private readonly IQuadTreeObjectBounds<IGameObject> _objectBounds = new CollisionObject();
 
         public QuadTree<IGameObject> QuadDynamic { get; private set; }
 
@@ -32,8 +30,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Other
                 _map.NavigationGrid.MinGridPosition.Z,
                 // Subtract one cell's size from the max so we never reach the CellCountX/Y (since Cells is an array).
                 _map.NavigationGrid.MaxGridPosition.X + MathF.Abs(_map.NavigationGrid.MinGridPosition.X),
-                _map.NavigationGrid.MaxGridPosition.Z + MathF.Abs(_map.NavigationGrid.MinGridPosition.Z),
-                _objectBounds
+                _map.NavigationGrid.MaxGridPosition.Z + MathF.Abs(_map.NavigationGrid.MinGridPosition.Z)
             );
 
             //Pathfinder.setMap(map);
@@ -64,6 +61,16 @@ namespace LeagueSandbox.GameServer.GameObjects.Other
             return !(obj.IsToRemove() || obj is ILevelProp || obj is IParticle || obj is IObjBuilding || obj is IBaseTurret);
         }
 
+        Rect GetBounds(IGameObject obj)
+        {
+            return new Rect(
+                obj.Position.X - obj.CollisionRadius,
+                obj.Position.Y - obj.CollisionRadius,
+                obj.CollisionRadius * 2,
+                obj.CollisionRadius * 2
+            );
+        }
+
         /// <summary>
         /// Adds the specified GameObject to the list of GameObjects to check for collisions. *NOTE*: Will fail to fully add the GameObject if it is out of the map's bounds.
         /// </summary>
@@ -78,7 +85,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Other
             }
             if(collides)
             {
-                QuadDynamic.Insert(obj);
+                QuadDynamic.Insert(obj, GetBounds(obj));
             }
         }
 
@@ -99,7 +106,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Other
         public void Update()
         {
             // we iterate over a copy of _objects because the original gets modified
-            var objectsCopy = new List<IGameObject>(_objects);
+            var objectsCopy = QuadDynamic.GetNodesInside(QuadDynamic.Bounds);
             foreach (var obj in objectsCopy)
             {
                 if (IsCollisionAffected(obj))
@@ -109,7 +116,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Other
                         obj.OnCollision(null, true);
                     }
 
-                    var nearest = QuadDynamic.GetNearestObjects(obj);
+                    var nearest = QuadDynamic.GetNodesInside(GetBounds(obj));
                     foreach (var obj2 in nearest)
                     {
                         // TODO: Implement interpolation (or hull tracing) to account for fast moving gameobjects that may go past other gameobjects within one tick, which bypasses collision.
@@ -129,18 +136,12 @@ namespace LeagueSandbox.GameServer.GameObjects.Other
         /// </summary>
         private void UpdateQuadTree()
         {
-            QuadDynamic = new QuadTree<IGameObject>(
-                QuadDynamic.MainRect.Left,
-                QuadDynamic.MainRect.Top,
-                QuadDynamic.MainRect.Width,
-                QuadDynamic.MainRect.Height,
-                _objectBounds
-            );
+            QuadDynamic.Clear();
             foreach(var obj in _objects)
             {
                 if(IsCollisionObject(obj))
                 {
-                    QuadDynamic.Insert(obj);
+                    QuadDynamic.Insert(obj, GetBounds(obj));
                 }
             }
         }

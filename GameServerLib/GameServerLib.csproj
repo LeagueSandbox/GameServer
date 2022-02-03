@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <Platforms>AnyCPU;x86</Platforms>
   </PropertyGroup>
 
@@ -12,13 +12,13 @@
     <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
     <PackageReference Include="OptimizedPriorityQueue" Version="4.2.0" />
     <PackageReference Include="RoyT.AStar" Version="2.1.0" />
-    <PackageReference Include="UltimateQuadTree" Version="1.0.3" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\GameMaths\GameMaths.csproj" />
     <ProjectReference Include="..\GameServerCore\GameServerCore.csproj" />
     <ProjectReference Include="..\PacketDefinitions420\PacketDefinitions420.csproj" />
+    <ProjectReference Include="..\QuadTree\QuadTree.csproj" />
   </ItemGroup>
 
 </Project>

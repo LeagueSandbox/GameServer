@@ -1,4 +1,5 @@
-﻿using GameServerCore.Domain.GameObjects;
+﻿/*
+using GameServerCore.Domain.GameObjects;
 using UltimateQuadTree;
 
 namespace LeagueSandbox.GameServer.GameObjects.Other
@@ -27,3 +28,4 @@ namespace LeagueSandbox.GameServer.GameObjects.Other
     }
 
 }
+*/
