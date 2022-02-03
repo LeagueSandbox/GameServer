@@ -5,7 +5,6 @@ using GameServerCore.Domain.GameObjects;
 using GameServerCore.Domain.GameObjects.Spell.Missile;
 using GameServerCore.Maps;
 using System.Activities.Presentation.View;
-using GameServerCore.Domain.GameObjects.Spell.Missile;
 
 namespace LeagueSandbox.GameServer.GameObjects.Other
 {
@@ -59,16 +58,16 @@ namespace LeagueSandbox.GameServer.GameObjects.Other
         private bool IsCollisionAffected(IGameObject obj)
         {
             // Collision affected GameObjects are non-turret AI units, AttackableUnits, missiles, and pure GameObjects.
-            return !(obj is ILevelProp || obj is IParticle || obj is IObjBuilding || obj is IBaseTurret);
+            return !(obj.IsToRemove() || obj is ILevelProp || obj is IParticle || obj is IObjBuilding || obj is IBaseTurret);
         }
 
         Rect GetBounds(IGameObject obj)
         {
             return new Rect(
-                obj.Position.X - (obj.CollisionRadius + 1),
-                obj.Position.Y - (obj.CollisionRadius + 1),
-                (obj.CollisionRadius + 1) * 2,
-                (obj.CollisionRadius + 1) * 2
+                obj.Position.X - obj.CollisionRadius,
+                obj.Position.Y - obj.CollisionRadius,
+                obj.CollisionRadius * 2,
+                obj.CollisionRadius * 2
             );
         }
 
@@ -140,7 +139,10 @@ namespace LeagueSandbox.GameServer.GameObjects.Other
             QuadDynamic.Clear();
             foreach(var obj in _objects)
             {
-                QuadDynamic.Insert(obj, GetBounds(obj));
+                if(IsCollisionObject(obj))
+                {
+                    QuadDynamic.Insert(obj, GetBounds(obj));
+                }
             }
         }
     }
