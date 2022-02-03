@@ -61,7 +61,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Other
         private bool IsCollisionAffected(IGameObject obj)
         {
             // Collision affected GameObjects are non-turret AI units, AttackableUnits, missiles, and pure GameObjects.
-            return !(obj is ILevelProp || obj is IParticle || obj is IObjBuilding || obj is IBaseTurret);
+            return !(obj.IsToRemove() || obj is ILevelProp || obj is IParticle || obj is IObjBuilding || obj is IBaseTurret);
         }
 
         /// <summary>
