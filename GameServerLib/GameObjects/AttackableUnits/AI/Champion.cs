@@ -346,12 +346,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             if (KillDeathCounter <= 0)
                 KillDeathCounter -= 1;
 
-            if (gold < 0)
-            {
-                _game.PacketNotifier.NotifyNPC_Hero_Die(data);
-                return;
-            }
-
             if (_game.Map.MapScript.MapScriptMetadata.IsKillGoldRewardReductionActive
                 && _game.Map.MapScript.HasFirstBloodHappened)
             {
@@ -381,7 +375,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             };
             _game.PacketNotifier.NotifyS2C_OnEventWorld(worldEvent, NetId);
 
-            _game.PacketNotifier.NotifyNPC_Hero_Die(data);
+            _game.PacketNotifier.NotifyDeath(data);
             cKiller.Stats.Gold = cKiller.Stats.Gold + gold;
             _game.PacketNotifier.NotifyUnitAddGold(cKiller, this, gold);
             //CORE_INFO("After: getGoldFromChamp: %f Killer: %i Victim: %i", gold, cKiller.killDeathCounter,this.killDeathCounter);

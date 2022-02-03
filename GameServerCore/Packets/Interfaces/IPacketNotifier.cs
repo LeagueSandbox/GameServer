@@ -140,6 +140,7 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="unit">GameObject to highlght.</param>
         void NotifyCreateUnitHighlight(int userId, IGameObject unit);
         void NotifyDampenerSwitchStates(IInhibitor inhibitor);
+        void NotifyDeath(IDeathData deathData);
         /// <summary>
         /// Sends a packet to the specified user which is intended for debugging.
         /// </summary>

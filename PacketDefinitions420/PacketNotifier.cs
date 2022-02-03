@@ -558,6 +558,32 @@ namespace PacketDefinitions420
             _packetHandlerManager.BroadcastPacket(inhibState.GetBytes(), Channel.CHL_S2C);
         }
 
+        public void NotifyDeath(IDeathData deathData)
+        {
+            switch (deathData.Unit)
+            {
+                case IChampion ch:
+                    NotifyNPC_Hero_Die(deathData);
+                    break;
+                case IMinion minion:
+                    if(minion.IsPet || minion.IsClone || minion is ILaneMinion)
+                    {
+                        NotifyS2C_NPC_Die_MapView(deathData);
+                    }
+                    else
+                    {
+                        goto default;
+                    }
+                    break;
+                case IObjBuilding building:
+                    NotifyBuilding_Die(deathData);
+                    break;
+                default:
+                    NotifyNPC_Die_Broadcast(deathData);
+                    break;
+            }
+        }
+
         /// <summary>
         /// Sends a packet to the specified user which is intended for debugging.
         /// </summary>
