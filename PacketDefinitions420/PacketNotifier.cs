@@ -3713,5 +3713,33 @@ namespace PacketDefinitions420
             };
             _packetHandlerManager.SendPacket(userId, answer.GetBytes(), Channel.CHL_S2C, PacketFlags.None);
         }
+
+        public void NotifyTeamAboutVisibilityChange(IGameObject obj, TeamId team, bool becameVisible)
+        {
+            if(obj is IParticle particle)
+            {
+                if(becameVisible)
+                {
+                    NotifyFXEnterTeamVisibility(particle, team);
+                }
+                else
+                {
+                    NotifyFXLeaveTeamVisibility(particle, team);
+                }
+            }
+            else if(obj is IAttackableUnit u)
+            {
+                if (becameVisible)
+                {
+                    // Might not be necessary, but just for good measure.
+                    NotifyS2C_OnEnterTeamVisibility(u, team);
+                    NotifyEnterVisibilityClient(obj, useTeleportID: true);
+                }
+                else
+                {
+                    NotifyLeaveVisibilityClient(obj, team);
+                }
+            }
+        }
     }
 }
