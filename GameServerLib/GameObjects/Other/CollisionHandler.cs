@@ -46,7 +46,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Other
         {
             // CollisionObjects can be any AI units, ObjBuildings, pure AttackableUnits, and pure GameObjects.
             // TODO: Implement static navgrid updates for turrets so we don't have to count them as collision objects.
-            return !(/*obj.IsToRemove() ||*/ obj is ILevelProp || obj is IParticle || obj is ISpellMissile);
+            return !(obj.IsToRemove() || obj is ILevelProp || obj is IParticle || obj is ISpellMissile);
         }
 
         /// <summary>
@@ -58,12 +58,12 @@ namespace LeagueSandbox.GameServer.GameObjects.Other
         private bool IsCollisionAffected(IGameObject obj)
         {
             // Collision affected GameObjects are non-turret AI units, AttackableUnits, missiles, and pure GameObjects.
-            return !(/*obj.IsToRemove() ||*/ obj is ILevelProp || obj is IParticle || obj is IObjBuilding || obj is IBaseTurret);
+            return !(obj.IsToRemove() || obj is ILevelProp || obj is IParticle || obj is IObjBuilding || obj is IBaseTurret);
         }
 
-        Rect GetBounds(IGameObject obj)
+        Circle GetBounds(IGameObject obj)
         {
-            return new Rect(obj.Position, obj.CollisionRadius);
+            return new Circle(obj.Position, obj.CollisionRadius);
         }
 
         /// <summary>
@@ -116,7 +116,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Other
                     foreach (var obj2 in nearest)
                     {
                         // TODO: Implement interpolation (or hull tracing) to account for fast moving gameobjects that may go past other gameobjects within one tick, which bypasses collision.
-                        if (obj != obj2 /*&& !obj2.IsToRemove()*/ && obj.IsCollidingWith(obj2))
+                        if (obj != obj2 && !obj2.IsToRemove() && obj.IsCollidingWith(obj2))
                         {
                             obj.OnCollision(obj2);
                         }

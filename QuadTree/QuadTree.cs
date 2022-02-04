@@ -14,18 +14,43 @@ namespace System.Activities.Presentation.View
 {
     public struct Circle
     {
-        public Vector2 position;
+        public Vector2 Position;
         public float Radius;
 
         public bool isEmpty
         {
             //bounds.Width == 0 || bounds.Height == 0
-            get { return Radius > 0; }
+            get { return Radius <= 0; }
         }
 
-        public bool IntersectsWith(Circle rect)
+        public Circle(Vector2 position, float radius)
         {
-            return Vector2.DistanceSquared(position, rect.position) <= (Radius + rect.Radius) * (Radius + rect.Radius);
+            Position = position;
+            Radius = radius;
+        }
+
+        public bool ContainedBy(Rect rect)
+        {
+            return (
+                rect.Left <= (Position.X - Radius) &&
+                rect.Top <= (Position.Y - Radius) &&
+                rect.Left+rect.Width >= (Position.X + Radius) &&
+                rect.Top+rect.Height >= (Position.X + Radius)
+            );
+        }
+
+        // https://stackoverflow.com/questions/401847/circle-rectangle-collision-detection-intersection/1879223#1879223
+        public bool IntersectsWith(Rect rect)
+        {
+            return Vector2.DistanceSquared(Position, new Vector2(
+                Math.Clamp(Position.X, rect.Left, rect.Left+rect.Width),
+                Math.Clamp(Position.Y, rect.Top, rect.Top+rect.Height)
+            )) < (Radius * Radius);
+        }
+
+        public bool IntersectsWith(Circle circle)
+        {
+            return Vector2.DistanceSquared(Position, circle.Position) < (Radius + circle.Radius) * (Radius + circle.Radius);
         }
     }
 
@@ -36,38 +61,12 @@ namespace System.Activities.Presentation.View
         public float Width;
         public float Height;
 
-        public Rect(Vector2 position, float radius)
-        {
-            Top = position.Y - radius + 1f;
-            Left = position.X - radius + 1f;
-            Height = Width = 2 * radius + 4f;
-        }
-
         public Rect(float top, float left, float width, float height)
         {
             Top = top;
             Left = left;
             Width = width;
             Height = height;
-        }
-
-        public bool Contains(Circle rect)
-        {
-            return (Left <= (rect.position.X - rect.Radius) &&
-                    Top <= (rect.position.Y - rect.Radius) &&
-                    Left+Width >= (rect.position.X + rect.Radius) &&
-                    Top+Height >= (rect.position.X + rect.Radius));
-        }
-
-        // https://stackoverflow.com/questions/401847/circle-rectangle-collision-detection-intersection/1879223#1879223
-        public bool IntersectsWith(Circle circle)
-        {
-            float Right = Left + Width;
-            float Bottom = Top + Height;
-            return Vector2.DistanceSquared(circle.position, new Vector2(
-                Math.Clamp(circle.position.X, Left, Right),
-                Math.Clamp(circle.position.Y, Top, Bottom)
-            )) < (circle.Radius * circle.Radius);
         }
     }
     
@@ -141,20 +140,6 @@ namespace System.Activities.Presentation.View
             {
                 yield return n.Node;
             }
-        }
- 
-        /// <summary>
-        /// Get a list of the nodes that intersect the given bounds.
-        /// </summary>
-        /// <param name="bounds">The bounds to test</param>
-        /// <returns>List of zero or mode nodes found inside the given bounds</returns>
-        public bool HasNodesInside(Circle bounds)
-        {
-            if (this.root == null)
-            {
-                return false;                
-            }
-            return this.root.HasIntersectingNodes(bounds);
         }
  
         /// <summary>
@@ -338,7 +323,7 @@ namespace System.Activities.Presentation.View
                     Quadrant child = null;
  
                     // See if any child quadrants completely contain this node.
-                    if (topLeft.Contains(bounds))
+                    if (bounds.ContainedBy(topLeft))
                     {
                         if (toInsert.topLeft == null)
                         {
@@ -346,7 +331,7 @@ namespace System.Activities.Presentation.View
                         }
                         child = toInsert.topLeft;
                     }
-                    else if (topRight.Contains(bounds))
+                    else if (bounds.ContainedBy(topRight))
                     {
                         if (toInsert.topRight == null)
                         {
@@ -354,7 +339,7 @@ namespace System.Activities.Presentation.View
                         }
                         child = toInsert.topRight;
                     }
-                    else if (bottomLeft.Contains(bounds))
+                    else if (bounds.ContainedBy(bottomLeft))
                     {
                         if (toInsert.bottomLeft == null)
                         {
@@ -362,7 +347,7 @@ namespace System.Activities.Presentation.View
                         }
                         child = toInsert.bottomLeft;
                     }
-                    else if (bottomRight.Contains(bounds))
+                    else if (bounds.ContainedBy(bottomRight))
                     {
                         if (toInsert.bottomRight == null)
                         {
@@ -415,22 +400,22 @@ namespace System.Activities.Presentation.View
                 Rect bottomRight = new Rect(this.bounds.Left + w, this.bounds.Top + h, w, h);
  
                 // See if any child quadrants completely contain this node.
-                if (topLeft.IntersectsWith(bounds) && this.topLeft != null)
+                if (bounds.IntersectsWith(topLeft) && this.topLeft != null)
                 {
                     this.topLeft.GetIntersectingNodes(nodes, bounds);
                 }
  
-                if (topRight.IntersectsWith(bounds) && this.topRight != null)
+                if (bounds.IntersectsWith(topRight) && this.topRight != null)
                 {
                     this.topRight.GetIntersectingNodes(nodes, bounds);
                 }
  
-                if (bottomLeft.IntersectsWith(bounds) && this.bottomLeft != null)
+                if (bounds.IntersectsWith(bottomLeft) && this.bottomLeft != null)
                 {
                     this.bottomLeft.GetIntersectingNodes(nodes, bounds);
                 }
  
-                if (bottomRight.IntersectsWith(bounds) && this.bottomRight != null)
+                if (bounds.IntersectsWith(bottomRight) && this.bottomRight != null)
                 {
                     this.bottomRight.GetIntersectingNodes(nodes, bounds);
                 }
@@ -459,76 +444,6 @@ namespace System.Activities.Presentation.View
                         }
                     } while (n != last);
                 }
-            }
- 
-            /// <summary>
-            /// Return true if there are any nodes in this Quadrant that intersect the given bounds.
-            /// </summary>
-            /// <param name="bounds">The bounds to test</param>
-            /// <returns>boolean</returns>
-            internal bool HasIntersectingNodes(Circle bounds)
-            {
-                float w = this.bounds.Width / 2;
-                float h = this.bounds.Height / 2;
- 
-                // assumption that the Rect struct is almost as fast as doing the operations
-                // manually since Rect is a value type.
- 
-                Rect topLeft = new Rect(this.bounds.Left, this.bounds.Top, w, h);
-                Rect topRight = new Rect(this.bounds.Left + w, this.bounds.Top, w, h);
-                Rect bottomLeft = new Rect(this.bounds.Left, this.bounds.Top + h, w, h);
-                Rect bottomRight = new Rect(this.bounds.Left + w, this.bounds.Top + h, w, h);
- 
-                bool found = false;
- 
-                // See if any child quadrants completely contain this node.
-                if (topLeft.IntersectsWith(bounds) && this.topLeft != null)
-                {
-                    found = this.topLeft.HasIntersectingNodes(bounds);
-                }
- 
-                if (!found && topRight.IntersectsWith(bounds) && this.topRight != null)
-                {
-                    found = this.topRight.HasIntersectingNodes(bounds);
-                }
- 
-                if (!found && bottomLeft.IntersectsWith(bounds) && this.bottomLeft != null)
-                {
-                    found = this.bottomLeft.HasIntersectingNodes(bounds);
-                }
- 
-                if (!found && bottomRight.IntersectsWith(bounds) && this.bottomRight != null)
-                {
-                    found = this.bottomRight.HasIntersectingNodes(bounds);
-                }
-                if (!found)
-                {
-                    found = HasIntersectingNodes(this.nodes, bounds);
-                }
-                return found;
-            }
- 
-            /// <summary>
-            /// Walk the given linked list and test each node against the given bounds/
-            /// </summary>
-            /// <param name="last">The last node in the circularly linked list.</param>
-            /// <param name="bounds">Bounds to test</param>
-            /// <returns>Return true if a node in the list intersects the bounds</returns>
-            static bool HasIntersectingNodes(QuadNode last, Circle bounds)
-            {
-                if (last != null)
-                {
-                    QuadNode n = last;
-                    do
-                    {
-                        n = n.Next; // first node.
-                        if (n.Bounds.IntersectsWith(bounds))
-                        {
-                            return true;
-                        }
-                    } while (n != last);
-                }
-                return false;
             }
  
             /// <summary>
