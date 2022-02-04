@@ -193,7 +193,7 @@ namespace LeagueSandbox.GameServer
                         if (isVisibleByTeam != teamHasVision)
                         {
                             obj.SetVisibleByTeam(team, teamHasVision);
-                            _game.PacketNotifier.NotifyTeamAboutVisibilityChange(obj, team, teamHasVision);
+                            _game.PacketNotifier.NotifyVisibilityChange(obj, team, teamHasVision);
                         }
                     }
                 }
