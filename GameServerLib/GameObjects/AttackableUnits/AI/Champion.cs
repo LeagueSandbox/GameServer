@@ -15,14 +15,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 {
     public class Champion : ObjAiBase, IChampion
     {
-        public IShop Shop { get; protected set; }
-        public float RespawnTimer { get; private set; }
-        public float ChampionGoldFromMinions { get; set; }
-        public IRuneCollection RuneList { get; }
-        public IChampionStats ChampStats { get; private set; } = new ChampionStats();
-
-        public byte SkillPoints { get; set; }
-
         private float _championHitFlagTimer;
         /// <summary>
         /// Player number ordered by the config file.
@@ -34,6 +26,15 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         /// </summary>
         private uint _playerTeamSpecialId;
         private uint _playerHitId;
+        private List<IToolTipData> _tipsChanged;
+
+        public IShop Shop { get; protected set; }
+        public float RespawnTimer { get; private set; }
+        public float ChampionGoldFromMinions { get; set; }
+        public IRuneCollection RuneList { get; }
+        public IChampionStats ChampStats { get; private set; } = new ChampionStats();
+
+        public byte SkillPoints { get; set; }
 
         public Champion(Game game,
                         string model,
@@ -68,6 +69,8 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             Stats.SetSpellEnabled((byte)SpellSlotType.BluePillSlot, true);
 
             Replication = new ReplicationHero(this);
+
+            _tipsChanged = new List<IToolTipData>();
 
             if (clientInfo.PlayerId == -1)
             {
@@ -168,6 +171,19 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             return base.LevelUpSpell(slot);
         }
 
+        public void AddToolTipChange(IToolTipData data)
+        {
+            if (!_tipsChanged.Contains(data))
+            {
+                _tipsChanged.Add(data);
+            }
+        }
+
+        public void ClearToolTipsChanged()
+        {
+            _tipsChanged.Clear();
+        }
+
         public override void Update(float diff)
         {
             base.Update(diff);
@@ -194,6 +210,14 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 {
                     _championHitFlagTimer = 0;
                 }
+            }
+
+            // TODO: Find out the best way to bulk send these for all champions (tool tip handler?).
+            // League sends a single packet detailing every champion's tool tip changes.
+            if (_tipsChanged.Count > 0)
+            {
+                _game.PacketNotifier.NotifyS2C_ToolTipVars(_tipsChanged);
+                ClearToolTipsChanged();
             }
         }
 

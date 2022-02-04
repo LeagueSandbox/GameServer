@@ -5,6 +5,7 @@ using GameServerCore.Enums;
 using GameServerCore.Scripting.CSharp;
 using LeagueSandbox.GameServer.API;
 using LeagueSandbox.GameServer.Scripting.CSharp;
+using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 using System.Numerics;
 
 namespace ItemSpells
@@ -28,8 +29,9 @@ namespace ItemSpells
         public void OnUpdate(float diff)
         {
             Damage = 15 + (this._owner.Stats.AbilityPower.Total * 0.15f);
-            _spell.ToolTip.Values[0].Value = Damage;
-           
+
+            // Getting item slots is a bit of a mess right now. Maybe add a function in API to get?
+            SetSpellToolTipVar(_owner, 0, Damage, SpellbookType.SPELLBOOK_CHAMPION, _owner.Inventory.GetItemSlot(_owner.Inventory.GetItem("Malady")), SpellSlotType.InventorySlots);
         }
 
         public void OnActivate(IObjAiBase owner, ISpell spell)

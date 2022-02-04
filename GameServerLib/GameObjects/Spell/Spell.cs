@@ -1,4 +1,5 @@
 ﻿using GameServerCore.Content;
+using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Domain.GameObjects.Spell;
 using GameServerCore.Domain.GameObjects.Spell.Missile;
@@ -8,6 +9,7 @@ using GameServerCore.Scripting.CSharp;
 using LeagueSandbox.GameServer.API;
 using LeagueSandbox.GameServer.GameObjects.Spell.Missile;
 using LeagueSandbox.GameServer.GameObjects.Spell.Sector;
+using LeagueSandbox.GameServer.GameObjects.Stats;
 using LeagueSandbox.GameServer.Packets;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using System.Collections.Generic;
@@ -69,9 +71,9 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
         /// </summary>
         public bool HasEmptyScript { get; private set; } = true;
         /// <summary>
-        /// pass parameters that the client does not calculate by itself
+        /// Used to update player ability tool tip values.
         /// </summary>
-        public IScriptToolTipData ToolTip { get; protected set; }
+        public IToolTipData ToolTipData { get; protected set; }
 
         public Spell(Game game, IObjAiBase owner, string spellName, byte slot)
         {
@@ -97,7 +99,6 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
             }
 
             SpellData = game.Config.ContentManager.GetSpellData(spellName);
-            ToolTip = new ToolTipData(this);
             //Checks if the spell is in the passive slot, so it doesn't try to load it twice under the "Spells" and "Passives" namespaces
             if (CastInfo.SpellSlot != (int)SpellSlotType.PassiveSpellSlot)
             {
@@ -109,6 +110,8 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
             {
                 owner.LoadCharScript(this);
             }
+
+            ToolTipData = new ToolTipData(owner, this);
         }
 
         public void LoadScript()
@@ -1309,6 +1312,16 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
             {
                 var clientInfo = _game.PlayerManager.GetClientInfoByChampion(ch);
                 _game.PacketNotifier.NotifyS2C_UpdateSpellToggle((int)clientInfo.PlayerId, this);
+            }
+        }
+
+        public void SetToolTipVar<T>(int tipIndex, T value) where T : struct
+        {
+            ToolTipData.Update(tipIndex, value);
+
+            if (CastInfo.Owner is IChampion champ)
+            {
+                champ.AddToolTipChange(ToolTipData);
             }
         }
 

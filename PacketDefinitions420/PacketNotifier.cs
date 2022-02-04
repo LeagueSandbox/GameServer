@@ -2803,6 +2803,38 @@ namespace PacketDefinitions420
         }
 
         /// <summary>
+        /// Sends a packet to all players detailing spell tooltip parameters that the game does not inform automatically.
+        /// </summary>
+        /// <param name="data">The list of changed tool tip values.</param>
+        public void NotifyS2C_ToolTipVars(List<IToolTipData> data)
+        {
+            List<TooltipVars> variables = new List<TooltipVars>();
+            foreach (var tip in data)
+            {
+                var vars = new TooltipVars()
+                {
+                    OwnerNetID = tip.NetID,
+                    SlotIndex = tip.Slot
+                };
+
+                for (var x = 0; x < tip.Values.Length; x++)
+                {
+                    vars.HideFromEnemy[x] = tip.Values[x].Hide;
+                    vars.Values[x] = tip.Values[x].Value;
+                }
+
+                variables.Add(vars);
+            }
+
+            var answer = new S2C_ToolTipVars
+            {
+                Tooltips = variables
+            };
+
+            _packetHandlerManager.BroadcastPacket(answer.GetBytes(), Channel.CHL_S2C, PacketFlags.None);
+        }
+
+        /// <summary>
         /// Sends a packet to all players with vision of the specified attacker that it is looking at (targeting) the specified attacked unit with the given AttackType.
         /// </summary>
         /// <param name="attacker">Unit that is attacking.</param>
@@ -3713,37 +3745,6 @@ namespace PacketDefinitions420
                 SyncID = request.RequestNo
             };
             _packetHandlerManager.SendPacket(userId, answer.GetBytes(), Channel.CHL_S2C, PacketFlags.None);
-        }
-
-        /// <summary>
-        /// send a packet to the players informing the tooltip parameters that the game does not inform automatically.
-        /// </summary>
-        /// <param name="unit">owner of the spells</param>
-        /// <param name="request">the list of changed values</param>
-        /// TODO: understand why the speel index starts at 60
-        public void NotifyS2C_ToolTipChanges(IAttackableUnit unit, List<IScriptToolTipData> ToolTips)
-        {
-            List<TooltipVars> variables = new List<TooltipVars>();
-            foreach(var ToolTip in ToolTips)
-            {
-                var _tool = new TooltipVars()
-                {
-                    OwnerNetID = unit.NetId,
-                    SlotIndex = ToolTip.SpeelIndex
-                };
-                for(var x =0;x<16;x++)
-                {
-                    _tool.HideFromEnemy[x] = ToolTip.Values[x].Hide;
-                    _tool.Values[x] = ToolTip.Values[x].Value;
-                }
-                variables.Add(_tool);
-            }
-            var answer = new S2C_ToolTipVars
-            {
-                SenderNetID = unit.NetId,
-                Tooltips = variables
-            };
-            _packetHandlerManager.BroadcastPacketVision(unit, answer.GetBytes(), Channel.CHL_S2C, PacketFlags.None);
         }
     }
 }

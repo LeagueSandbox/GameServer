@@ -1,0 +1,142 @@
+﻿using GameServerCore.Domain;
+using GameServerCore.Domain.GameObjects;
+using GameServerCore.Domain.GameObjects.Spell;
+using System;
+
+namespace LeagueSandbox.GameServer.GameObjects.Stats
+{
+    // TODO: Cleanup
+    public class ToolTipData : IToolTipData
+    {
+        public class ToolTipValue : IToolTipValue
+        {
+            public bool Hide { get; set; } = false;
+            public float Value { get; set; } = 0.0f;
+            public bool IsFloat { get; set; } = false;
+            public bool Changed { get; set; } = false;
+
+            public ToolTipValue() { }
+        }
+
+        protected readonly IAttackableUnit Owner;
+        protected readonly ISpell Spell;
+        protected readonly IBuff Buff;
+
+        public uint NetID => Owner.NetId;
+        public byte Slot { get; private set; }
+        // 16 ToolTip slots per spell.
+        public ToolTipValue[] Values { get; private set; } = new ToolTipValue[16];
+        public bool Changed { get; private set; }
+
+        IToolTipValue[] IToolTipData.Values => Values;
+
+        public ToolTipData(IAttackableUnit owner, ISpell spell, IBuff buff = null)
+        {
+            Populate(Values, new ToolTipValue());
+
+            Owner = owner;
+            Spell = spell;
+            Buff = buff;
+
+            if (spell != null)
+            {
+                // The slots seem to start at 60 for spell tooltips.
+                Slot = (byte)(Spell.CastInfo.SpellSlot + 60);
+            }
+            else if (buff != null)
+            {
+                // Slots start at 0 for buff tooltips.
+                Slot = buff.Slot;
+            }
+            
+            // NOTE Client behavior with higher slots: Slot > 120 => Slot - 120 => 120 > Slot > 59
+            // End result is counted as a spell tooltip as slot is read from 60.
+        }
+
+        private void DoUpdate(float value, int primary, bool isFloat, bool isHidden = false)
+        {
+            if (Values[primary] == null)
+            {
+                Values[primary] = new ToolTipValue
+                {
+                    Hide = isHidden,
+                    Value = value,
+                    IsFloat = isFloat,
+                    Changed = true
+                };
+                Changed = true;
+            }
+            else if (Values[primary].Value != value)
+            {
+                Values[primary].Hide = isHidden;
+                Values[primary].IsFloat = isFloat;
+                Values[primary].Value = value;
+                Values[primary].Changed = true;
+                Changed = true;
+            }
+        }
+
+        protected void UpdateUint(uint value, int primary)
+        {
+            DoUpdate(value, primary, false);
+        }
+
+        protected void UpdateInt(int value, int primary)
+        {
+            DoUpdate(value, primary, false);
+        }
+
+        protected void UpdateBool(bool value, int primary)
+        {
+            // TODO: Verify
+            DoUpdate(value ? 1f : 0f, primary, false);
+        }
+
+        protected void UpdateFloat(float value, int primary)
+        {
+            DoUpdate(value, primary, true);
+        }
+
+        // TODO: Find a use case for this.
+        public void MarkAsUnchanged()
+        {
+            foreach (var x in Values)
+            {
+                if (x != null)
+                {
+                    x.Changed = false;
+                }
+            }
+
+            Changed = false;
+        }
+
+        public void Update<T>(int tipIndex, T value) where T : struct
+        {
+            if (value is bool boolVal)
+            {
+                UpdateBool(boolVal, tipIndex);
+            }
+            else if (value is int intVal)
+            {
+                UpdateInt(intVal, tipIndex);
+            }
+            else if (value is uint uintVal)
+            {
+                UpdateUint(uintVal, tipIndex);
+            }
+            else if (value is float floatVal)
+            {
+                UpdateFloat(floatVal, tipIndex);
+            }
+        }
+
+        public static void Populate<T>(T[] arr, T value)
+        {
+            for (int i = 0; i < arr.Length; i++)
+            {
+                arr[i] = value;
+            }
+        }
+    }
+}

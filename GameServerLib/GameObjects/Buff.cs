@@ -8,6 +8,8 @@ using LeagueSandbox.GameServer.GameObjects.Other;
 using LeagueSandbox.GameServer.API;
 using GameServerCore.Scripting.CSharp;
 using System.Collections.Generic;
+using GameServerCore.Domain;
+using LeagueSandbox.GameServer.GameObjects.Stats;
 
 namespace LeagueSandbox.GameServer.GameObjects
 {
@@ -39,6 +41,10 @@ namespace LeagueSandbox.GameServer.GameObjects
         /// All status effects applied by this buff.
         /// </summary>
         public Dictionary<StatusFlags, bool> StatusEffects { get; private set; }
+        /// <summary>
+        /// Used to update player buff tool tip values.
+        /// </summary>
+        public IToolTipData ToolTipData { get; protected set; }
 
         public Buff(Game game, string buffName, float duration, int stacks, ISpell originSpell, IAttackableUnit onto, IObjAiBase from, bool infiniteDuration = false)
         {
@@ -88,6 +94,8 @@ namespace LeagueSandbox.GameServer.GameObjects
             TimeElapsed = 0;
             TargetUnit = onto;
             StatusEffects = new Dictionary<StatusFlags, bool>();
+
+            ToolTipData = new ToolTipData(TargetUnit, null, this);
         }
 
         public void LoadScript()
@@ -146,6 +154,16 @@ namespace LeagueSandbox.GameServer.GameObjects
 
                     StatusEffects.Add(currentFlag, enabled);
                 }
+            }
+        }
+
+        public void SetToolTipVar<T>(int tipIndex, T value) where T : struct
+        {
+            ToolTipData.Update(tipIndex, value);
+
+            if (TargetUnit is IChampion champ)
+            {
+                champ.AddToolTipChange(ToolTipData);
             }
         }
 

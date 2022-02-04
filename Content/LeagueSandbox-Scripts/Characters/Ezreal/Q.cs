@@ -80,7 +80,7 @@ namespace Spells
 
         public void OnUpdate(float diff)
         {
-            _spell.ToolTip.Values[2].Value = _owner.Stats.AttackDamage.Total * _spell.SpellData.AttackDamageCoefficient;
+            SetSpellToolTipVar(_owner, 2, _owner.Stats.AttackDamage.Total * _spell.SpellData.AttackDamageCoefficient, SpellbookType.SPELLBOOK_CHAMPION, 0, SpellSlotType.SpellSlots);
         }
     }
 

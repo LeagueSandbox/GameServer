@@ -1,7 +1,6 @@
 ﻿using System;
 using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
-using LeagueSandbox.GameServer.GameObjects.AttackableUnits;
 
 namespace LeagueSandbox.GameServer.GameObjects.Stats
 {
@@ -23,7 +22,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
         protected readonly IAttackableUnit Owner;
         protected IStats Stats => Owner.Stats;
 
-        public uint NetId => Owner.NetId;
+        public uint NetID => Owner.NetId;
         public Replicate[,] Values { get; private set; } = new Replicate[6, 32];
         public bool Changed { get; private set; }
 
@@ -74,8 +73,10 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
         {
             foreach (var x in Values)
             {
-                if (x != null) 
+                if (x != null)
+                {
                     x.Changed = false;
+                }
             }
 
             Changed = false;

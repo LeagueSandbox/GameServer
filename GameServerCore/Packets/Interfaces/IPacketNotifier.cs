@@ -702,6 +702,11 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="flags">InputLockFlags to toggle.</param>
         void NotifyS2C_ToggleInputLockFlag(int userId, InputLockFlags flags);
         /// <summary>
+        /// Sends a packet to all players detailing spell tooltip parameters that the game does not inform automatically.
+        /// </summary>
+        /// <param name="data">The list of changed tool tip values.</param>
+        void NotifyS2C_ToolTipVars(List<IToolTipData> data);
+        /// <summary>
         /// Sends a packet to all players with vision of the specified attacker that it it looking at the specified attacked unit with the given AttackType.
         /// </summary>
         /// <param name="attacker">Unit that is attacking.</param>
@@ -956,13 +961,5 @@ namespace GameServerCore.Packets.Interfaces
         /// TODO: Verify if this is the correct implementation.
         /// TODO: Fix LeaguePackets Typos.
         void NotifyWorld_SendCamera_Server_Acknologment(int userId, ViewRequest request);
-
-        /// <summary>
-        /// send a packet to the players informing the tooltip parameters that the game does not inform automatically.
-        /// </summary>
-        /// <param name="unit">owner of the spells</param>
-        /// <param name="request">the list of changed values</param>
-        /// TODO: understand why the speel index starts at 60
-        void NotifyS2C_ToolTipChanges(IAttackableUnit unit,List<IScriptToolTipData> ToolTips);
     }
 }
