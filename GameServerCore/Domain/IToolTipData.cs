@@ -4,7 +4,9 @@
     {
         uint NetID { get; }
         byte Slot { get; }
-        /// <summary> Writing to this array will cause an exception </summary>
+        /// <summary>
+        /// Writing to this array will cause an exception
+        /// </summary>
         IToolTipValue[] Values { get; }
         bool Changed { get; }
         void MarkAsUnchanged();
