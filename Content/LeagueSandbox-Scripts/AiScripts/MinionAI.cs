@@ -48,7 +48,7 @@ namespace AIScripts
                     || u.IsDead
                     || u.Team == minion.Team
                     || Vector2.DistanceSquared(minion.Position, u.Position) > DETECT_RANGE * DETECT_RANGE
-                    || !TeamHasVision(minion.Team, u)
+                    || !u.IsVisibleByTeam(minion.Team)
                     || !u.Status.HasFlag(StatusFlags.Targetable)
                     || UnitIsProtectionActive(u))
                 {

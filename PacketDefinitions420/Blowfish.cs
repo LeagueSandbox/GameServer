@@ -14,13 +14,11 @@
 //MessageBox.Show(plainText);
 
 using System;
-using System.Security.Cryptography;
 
 namespace PacketDefinitions420
 {
     public class BlowFish
     {
-        private RNGCryptoServiceProvider randomSource;
 
         //SBLOCKS
         private uint[] bf_s0;
@@ -46,7 +44,6 @@ namespace PacketDefinitions420
         /// <param name="cipherKey">Cipher key as a byte array</param>
         public BlowFish(byte[] cipherKey)
         {
-            randomSource = new RNGCryptoServiceProvider();
             SetupKey(cipherKey);
         }
 
