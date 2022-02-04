@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Runtime;
+using System.Numerics;
 
 // https://referencesource.microsoft.com/#System.Data/cdf/src/NetFx40/Tools/System.Activities.Presentation/System/Activities/Presentation/View/QuadTree.cs
 //----------------------------------------------------------------
@@ -18,7 +19,15 @@ namespace System.Activities.Presentation.View
         public float Left;
         public float Width;
         public float Height;
-        public bool IsEmpty = false;
+        //public bool IsEmpty = false;
+
+        public Rect(Vector2 position, float radius)
+        {
+            Top = position.Y - radius + 1f;
+            Left = position.X - radius + 1f;
+            Height = Width = 2 * radius + 4f;
+        }
+
         public Rect(float top, float left, float width, float height)
         {
             Top = top;
@@ -29,11 +38,7 @@ namespace System.Activities.Presentation.View
 
         public bool Contains(Rect rect)
         {
-            if (IsEmpty || rect.IsEmpty)
-            {
-                return false;
-            }
- 
+            //if (IsEmpty || rect.IsEmpty) return false;
             return (Left <= rect.Left &&
                     Top <= rect.Top &&
                     Left+Width >= rect.Left+rect.Width &&
@@ -42,11 +47,7 @@ namespace System.Activities.Presentation.View
 
         public bool IntersectsWith(Rect rect)
         {
-            if (IsEmpty || rect.IsEmpty)
-            {
-                return false;
-            }
- 
+            //if (IsEmpty || rect.IsEmpty) return false;
             return (rect.Left <= Left+Width) &&
                    (rect.Left+rect.Width >= Left) &&
                    (rect.Top <= Top+Height) &&
@@ -75,7 +76,7 @@ namespace System.Activities.Presentation.View
         public Rect Bounds
         {
             get { return this.bounds; }
-            set { this.bounds = value; ReIndex(); }
+            set { this.bounds = value; /*ReIndex();*/ }
         }
  
         public QuadTree(float top, float left, float width, float height)
@@ -92,13 +93,11 @@ namespace System.Activities.Presentation.View
         {
             if (this.bounds.Width == 0 || this.bounds.Height == 0)
             {
-                throw new ArgumentException("BoundsMustBeNonZero");
-                //throw FxTrace.Exception.AsError(new ArgumentException(SR.BoundsMustBeNonZero));
+                throw new ArgumentException("Bounds must be non zero");
             }
             if (bounds.Width == 0 || bounds.Height == 0)
             {
-                throw new ArgumentException("BoundsMustBeNonZero");
-                //throw FxTrace.Exception.AsError(new ArgumentException(SR.BoundsMustBeNonZero));
+                throw new ArgumentException("Bounds must be non zero");
             }
             if (this.root == null)
             {
@@ -176,18 +175,6 @@ namespace System.Activities.Presentation.View
                 }
             }
             return false;
-        }
- 
-        /// <summary>
-        /// Rebuild all the Quadrants according to the current QuadTree Bounds.
-        /// </summary>
-        public void ReIndex()
-        {
-            this.root = null;
-            foreach (QuadNode n in GetNodes(this.bounds))
-            {
-                Insert(n.Node, n.Bounds);
-            }
         }
 
         public void Clear()
@@ -272,11 +259,10 @@ namespace System.Activities.Presentation.View
             public Quadrant(Quadrant parent, Rect bounds)
             {
                 this.parent = parent;
-                //Fx.Assert(bounds.Width != 0 && bounds.Height != 0, "Cannot have empty bound");
+                Debug.Assert(bounds.Width != 0 && bounds.Height != 0, "Cannot have empty bound");
                 if (bounds.Width == 0 || bounds.Height == 0)
                 {
-                    throw new ArgumentException("BoundsMustBeNonZero");
-                    //throw FxTrace.Exception.AsError(new ArgumentException(SR.BoundsMustBeNonZero));
+                    throw new ArgumentException("Bounds must be non zero");
                 }
                 this.bounds = bounds;
             }
@@ -306,11 +292,10 @@ namespace System.Activities.Presentation.View
             internal Quadrant Insert(T node, Rect bounds)
             {
  
-                //Fx.Assert(bounds.Width != 0 && bounds.Height != 0, "Cannot have empty bound");
+                Debug.Assert(bounds.Width != 0 && bounds.Height != 0, "Cannot have empty bound");
                 if (bounds.Width == 0 || bounds.Height == 0)
                 {
-                    throw new ArgumentException("BoundsMustBeNonZero");
-                    //throw FxTrace.Exception.AsError(new ArgumentException(SR.BoundsMustBeNonZero));
+                    throw new ArgumentException("Bounds must be non zero");
                 }
  
                 Quadrant toInsert = this;
@@ -403,7 +388,6 @@ namespace System.Activities.Presentation.View
             /// <param name="bounds">The bounds that contains the nodes you want returned</param>
             internal void GetIntersectingNodes(List<QuadNode> nodes, Rect bounds)
             {
-                if (bounds.IsEmpty) return;
                 float w = this.bounds.Width / 2;
                 float h = this.bounds.Height / 2;
  
@@ -469,7 +453,7 @@ namespace System.Activities.Presentation.View
             /// <returns>boolean</returns>
             internal bool HasIntersectingNodes(Rect bounds)
             {
-                if (bounds.IsEmpty) return false;
+                //if (bounds.IsEmpty) return false;
                 float w = this.bounds.Width / 2;
                 float h = this.bounds.Height / 2;
  

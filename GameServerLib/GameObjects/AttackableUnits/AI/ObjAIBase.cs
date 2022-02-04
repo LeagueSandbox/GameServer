@@ -517,12 +517,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             }
 
             var nearestObjects = _game.Map.CollisionHandler.QuadDynamic.GetNodesInside(
-                new Rect(
-                    Position.X + DETECT_RANGE,
-                    Position.Y + DETECT_RANGE,
-                    DETECT_RANGE * 2,
-                    DETECT_RANGE * 2
-                )
+                new Rect(Position, DETECT_RANGE)
             );
 
             foreach (var gameObject in nearestObjects)
