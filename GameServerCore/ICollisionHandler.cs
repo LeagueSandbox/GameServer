@@ -19,6 +19,7 @@ namespace GameServerCore
         /// GameObject to remove from the list of GameObjects to check for collisions.
         /// </summary>
         /// <param name="obj">GameObject to remove.</param>
+        /// <returns>true if item is successfully removed; false otherwise.</returns>
         bool RemoveObject(IGameObject obj);
         /// <summary>
         /// Function called every tick of the game by Map.cs.
