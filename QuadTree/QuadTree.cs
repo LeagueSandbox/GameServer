@@ -12,6 +12,22 @@ using System.Numerics;
 //----------------------------------------------------------------
 namespace System.Activities.Presentation.View
 {
+    public struct Circle
+    {
+        public Vector2 position;
+        public float Radius;
+
+        public bool isEmpty
+        {
+            //bounds.Width == 0 || bounds.Height == 0
+            get { return Radius > 0; }
+        }
+
+        public bool IntersectsWith(Circle rect)
+        {
+            return Vector2.DistanceSquared(position, rect.position) <= (Radius + rect.Radius) * (Radius + rect.Radius);
+        }
+    }
 
     public struct Rect
     {
@@ -19,7 +35,6 @@ namespace System.Activities.Presentation.View
         public float Left;
         public float Width;
         public float Height;
-        //public bool IsEmpty = false;
 
         public Rect(Vector2 position, float radius)
         {
@@ -36,24 +51,24 @@ namespace System.Activities.Presentation.View
             Height = height;
         }
 
-        public bool Contains(Rect rect)
+        public bool Contains(Circle rect)
         {
-            //if (IsEmpty || rect.IsEmpty) return false;
-            return (Left <= rect.Left &&
-                    Top <= rect.Top &&
-                    Left+Width >= rect.Left+rect.Width &&
-                    Top+Height >= rect.Top+rect.Height );
+            return (Left <= (rect.position.X - rect.Radius) &&
+                    Top <= (rect.position.Y - rect.Radius) &&
+                    Left+Width >= (rect.position.X + rect.Radius) &&
+                    Top+Height >= (rect.position.X + rect.Radius));
         }
 
-        public bool IntersectsWith(Rect rect)
+        // https://stackoverflow.com/questions/401847/circle-rectangle-collision-detection-intersection/1879223#1879223
+        public bool IntersectsWith(Circle circle)
         {
-            //if (IsEmpty || rect.IsEmpty) return false;
-            return (rect.Left <= Left+Width) &&
-                   (rect.Left+rect.Width >= Left) &&
-                   (rect.Top <= Top+Height) &&
-                   (rect.Top+rect.Height >= Top);
+            float Right = Left + Width;
+            float Bottom = Top + Height;
+            return Vector2.DistanceSquared(circle.position, new Vector2(
+                Math.Clamp(circle.position.X, Left, Right),
+                Math.Clamp(circle.position.Y, Top, Bottom)
+            )) < (circle.Radius * circle.Radius);
         }
-
     }
     
     /// <summary>
@@ -89,13 +104,13 @@ namespace System.Activities.Presentation.View
         /// </summary>
         /// <param name="node">The node to insert</param>
         /// <param name="bounds">The bounds of this node</param>
-        public void Insert(T node, Rect bounds)
+        public void Insert(T node, Circle bounds)
         {
             if (this.bounds.Width == 0 || this.bounds.Height == 0)
             {
                 throw new ArgumentException("Bounds must be non zero");
             }
-            if (bounds.Width == 0 || bounds.Height == 0)
+            if (bounds.isEmpty)
             {
                 throw new ArgumentException("Bounds must be non zero");
             }
@@ -120,7 +135,7 @@ namespace System.Activities.Presentation.View
         /// </summary>
         /// <param name="bounds">The bounds to test</param>
         /// <returns>List of zero or mode nodes found inside the given bounds</returns>
-        public IEnumerable<T> GetNodesInside(Rect bounds)
+        public IEnumerable<T> GetNodesInside(Circle bounds)
         {
             foreach (QuadNode n in GetNodes(bounds))
             {
@@ -133,7 +148,7 @@ namespace System.Activities.Presentation.View
         /// </summary>
         /// <param name="bounds">The bounds to test</param>
         /// <returns>List of zero or mode nodes found inside the given bounds</returns>
-        public bool HasNodesInside(Rect bounds)
+        public bool HasNodesInside(Circle bounds)
         {
             if (this.root == null)
             {
@@ -147,7 +162,7 @@ namespace System.Activities.Presentation.View
         /// </summary>
         /// <param name="bounds">The bounds to test</param>
         /// <returns>The list of nodes intersecting the given bounds</returns>
-        IEnumerable<QuadNode> GetNodes(Rect bounds)
+        IEnumerable<QuadNode> GetNodes(Circle bounds)
         {
             List<QuadNode> result = new List<QuadNode>();
             if (this.root != null)
@@ -187,7 +202,7 @@ namespace System.Activities.Presentation.View
         /// </summary>
         internal class QuadNode
         {
-            Rect bounds;
+            Circle bounds;
             QuadNode next; // linked in a circular list.
             T node; // the actual visual object being stored here.
  
@@ -196,7 +211,7 @@ namespace System.Activities.Presentation.View
             /// </summary>
             /// <param name="node">The node</param>
             /// <param name="bounds">The bounds of that node</param>
-            public QuadNode(T node, Rect bounds)
+            public QuadNode(T node, Circle bounds)
             {
                 this.node = node;
                 this.bounds = bounds;
@@ -214,7 +229,7 @@ namespace System.Activities.Presentation.View
             /// <summary>
             /// The Rect bounds of the node
             /// </summary>
-            public Rect Bounds
+            public Circle Bounds
             {
                 get { return this.bounds; }
             }
@@ -289,11 +304,11 @@ namespace System.Activities.Presentation.View
             /// <param name="node">The node </param>
             /// <param name="bounds">The bounds of that node</param>
             /// <returns></returns>
-            internal Quadrant Insert(T node, Rect bounds)
+            internal Quadrant Insert(T node, Circle bounds)
             {
  
-                Debug.Assert(bounds.Width != 0 && bounds.Height != 0, "Cannot have empty bound");
-                if (bounds.Width == 0 || bounds.Height == 0)
+                Debug.Assert(!bounds.isEmpty, "Cannot have empty bound");
+                if (bounds.isEmpty)
                 {
                     throw new ArgumentException("Bounds must be non zero");
                 }
@@ -386,7 +401,7 @@ namespace System.Activities.Presentation.View
             /// </summary>
             /// <param name="nodes">List of nodes found in the given bounds</param>
             /// <param name="bounds">The bounds that contains the nodes you want returned</param>
-            internal void GetIntersectingNodes(List<QuadNode> nodes, Rect bounds)
+            internal void GetIntersectingNodes(List<QuadNode> nodes, Circle bounds)
             {
                 float w = this.bounds.Width / 2;
                 float h = this.bounds.Height / 2;
@@ -430,7 +445,7 @@ namespace System.Activities.Presentation.View
             /// <param name="last">The last QuadNode in a circularly linked list</param>
             /// <param name="nodes">The resulting nodes are added to this list</param>
             /// <param name="bounds">The bounds to test against each node</param>
-            static void GetIntersectingNodes(QuadNode last, List<QuadNode> nodes, Rect bounds)
+            static void GetIntersectingNodes(QuadNode last, List<QuadNode> nodes, Circle bounds)
             {
                 if (last != null)
                 {
@@ -451,9 +466,8 @@ namespace System.Activities.Presentation.View
             /// </summary>
             /// <param name="bounds">The bounds to test</param>
             /// <returns>boolean</returns>
-            internal bool HasIntersectingNodes(Rect bounds)
+            internal bool HasIntersectingNodes(Circle bounds)
             {
-                //if (bounds.IsEmpty) return false;
                 float w = this.bounds.Width / 2;
                 float h = this.bounds.Height / 2;
  
@@ -500,7 +514,7 @@ namespace System.Activities.Presentation.View
             /// <param name="last">The last node in the circularly linked list.</param>
             /// <param name="bounds">Bounds to test</param>
             /// <returns>Return true if a node in the list intersects the bounds</returns>
-            static bool HasIntersectingNodes(QuadNode last, Rect bounds)
+            static bool HasIntersectingNodes(QuadNode last, Circle bounds)
             {
                 if (last != null)
                 {
