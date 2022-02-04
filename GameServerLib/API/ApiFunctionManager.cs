@@ -819,6 +819,43 @@ namespace LeagueSandbox.GameServer.API
             }
         }
 
+        public static void SetSpellToolTipVar<T>(IAttackableUnit unit, int tipIndex, T value, SpellbookType book, byte slot, SpellSlotType slotType)
+            where T : struct
+        {
+            if (unit is IChampion champ)
+            {
+                if ((slotType == SpellSlotType.SpellSlots && (slot < 0 || slot > 3))
+                || (slotType == SpellSlotType.InventorySlots && (slot < 0 || slot > 6))
+                || (slotType == SpellSlotType.ExtraSlots && (slot < 0 || slot > 15)))
+                {
+                    return;
+                }
+
+                if (slotType == SpellSlotType.InventorySlots)
+                {
+                    slot += (int)SpellSlotType.InventorySlots;
+                }
+
+                if (slotType == SpellSlotType.TempItemSlot)
+                {
+                    slot = (int)SpellSlotType.TempItemSlot;
+                }
+
+                if (slotType == SpellSlotType.ExtraSlots)
+                {
+                    slot += (int)SpellSlotType.ExtraSlots;
+                }
+
+                champ.GetSpell(slot).SetToolTipVar(tipIndex, value);
+            }
+        }
+
+        public static void SetBuffToolTipVar<T>(IBuff buff, int tipIndex, T value)
+            where T : struct
+        {
+            buff.SetToolTipVar(tipIndex, value);
+        }
+
         public static void SpellCast(IObjAiBase caster, int slot, SpellSlotType slotType, Vector2 pos, Vector2 endPos, bool fireWithoutCasting, Vector2 overrideCastPos, List<ICastTarget> targets = null, bool isForceCastingOrChanneling = false, int overrideForceLevel = -1, bool updateAutoAttackTimer = false, bool useAutoAttackSpell = false)
         {
             if ((slotType == SpellSlotType.SpellSlots && (slot < 0 || slot > 3))

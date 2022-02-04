@@ -25,8 +25,13 @@ namespace Spells
             // TODO
         };
 
+        private IObjAiBase _owner;
+        private ISpell _spell;
+
         public void OnActivate(IObjAiBase owner, ISpell spell)
         {
+            _owner = owner;
+            _spell = spell;
             ApiEventManager.OnSpellHit.AddListener(this, spell, TargetExecute, false);
         }
 
@@ -75,6 +80,7 @@ namespace Spells
 
         public void OnUpdate(float diff)
         {
+            SetSpellToolTipVar(_owner, 0, _owner.Stats.AttackDamage.Total - _owner.Stats.AttackDamage.BaseValue, SpellbookType.SPELLBOOK_CHAMPION, 3, SpellSlotType.SpellSlots);
         }
     }
 }

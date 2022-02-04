@@ -2,7 +2,7 @@
 {
     public interface IReplication
     {
-        uint NetId { get; }
+        uint NetID { get; }
         /// <summary> Writing to this array will cause an exception </summary>
         IReplicate[,] Values { get; }
         bool Changed { get; }

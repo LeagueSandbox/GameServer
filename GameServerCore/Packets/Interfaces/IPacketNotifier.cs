@@ -13,6 +13,7 @@ using LeaguePackets.Game;
 using LeaguePackets;
 using LeaguePackets.Game.Common;
 using LeaguePackets.Game.Events;
+using GameServerCore.Scripting.CSharp;
 
 namespace GameServerCore.Packets.Interfaces
 {
@@ -707,6 +708,11 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="userId">User to send the packet to.</param>
         /// <param name="flags">InputLockFlags to toggle.</param>
         void NotifyS2C_ToggleInputLockFlag(int userId, InputLockFlags flags);
+        /// <summary>
+        /// Sends a packet to all players detailing spell tooltip parameters that the game does not inform automatically.
+        /// </summary>
+        /// <param name="data">The list of changed tool tip values.</param>
+        void NotifyS2C_ToolTipVars(List<IToolTipData> data);
         /// <summary>
         /// Sends a packet to all players with vision of the specified attacker that it it looking at the specified attacked unit with the given AttackType.
         /// </summary>

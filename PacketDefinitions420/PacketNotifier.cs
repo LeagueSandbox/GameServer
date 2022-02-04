@@ -28,6 +28,7 @@ using System.Linq;
 using LeaguePackets;
 using LeaguePackets.LoadScreen;
 using LeaguePackets.Game.Events;
+using GameServerCore.Scripting.CSharp;
 
 namespace PacketDefinitions420
 {
@@ -2824,6 +2825,38 @@ namespace PacketDefinitions420
             };
 
             _packetHandlerManager.SendPacket(userId, inputLockPacket.GetBytes(), Channel.CHL_S2C);
+        }
+
+        /// <summary>
+        /// Sends a packet to all players detailing spell tooltip parameters that the game does not inform automatically.
+        /// </summary>
+        /// <param name="data">The list of changed tool tip values.</param>
+        public void NotifyS2C_ToolTipVars(List<IToolTipData> data)
+        {
+            List<TooltipVars> variables = new List<TooltipVars>();
+            foreach (var tip in data)
+            {
+                var vars = new TooltipVars()
+                {
+                    OwnerNetID = tip.NetID,
+                    SlotIndex = tip.Slot
+                };
+
+                for (var x = 0; x < tip.Values.Length; x++)
+                {
+                    vars.HideFromEnemy[x] = tip.Values[x].Hide;
+                    vars.Values[x] = tip.Values[x].Value;
+                }
+
+                variables.Add(vars);
+            }
+
+            var answer = new S2C_ToolTipVars
+            {
+                Tooltips = variables
+            };
+
+            _packetHandlerManager.BroadcastPacket(answer.GetBytes(), Channel.CHL_S2C, PacketFlags.None);
         }
 
         /// <summary>
