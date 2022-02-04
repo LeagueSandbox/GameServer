@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Numerics;
 using GameServerCore.Domain;
@@ -612,6 +612,13 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="sourceNetID">Not yet know it's use.</param>
         void NotifyS2C_OnEventWorld(IEvent mapEvent, uint sourceNetId = 0);
         /// <summary>
+        /// Sends a packet to either all players with vision of the specified GameObject or a specified user.
+        /// The packet contains details of which team lost visibility of the GameObject and should only be used after it is first initialized into vision (NotifyEnterVisibility).
+        /// </summary>
+        /// <param name="o">GameObject going out of vision.</param>
+        /// <param name="userId">User to send the packet to.</param>
+        void NotifyS2C_OnLeaveTeamVisibility(IGameObject o, TeamId team, int userId = 0);
+        /// <summary>
         /// Sends a packet to all players detailing that the specified object's current animations have been paused/unpaused.
         /// </summary>
         /// <param name="obj">GameObject that is playing the animation.</param>
@@ -899,6 +906,14 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="ai">GameObject of type ObjAiBase that can buy items.</param>
         /// <param name="itemInstance">Item instance housing all information about the item that has been used.</param>
         void NotifyUseItemAns(int userId, IObjAiBase ai, IItem itemInstance);
+        /// <summary>
+        /// Sends a packet to the specified team detailing that an object's visibility has changed.
+        /// General function which will send the needed vision packet for the specific object type.
+        /// </summary>
+        /// <param name="obj">GameObject which had their visibility changed.</param>
+        /// <param name="team">Team which is affected by this visibility change.</param>
+        /// <param name="becameVisible">Whether or not the change was an entry into vision.</param>
+        void NotifyVisibilityChange(IGameObject obj, TeamId team, bool becameVisible);
         /// <summary>
         /// Sends a packet to all players that have vision of the specified unit that it has made a movement.
         /// </summary>

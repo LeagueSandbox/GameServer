@@ -83,8 +83,6 @@ namespace LeagueSandbox.GameServer
 
                 if (_queuedObjects.ContainsKey(obj.NetId))
                 {
-                    bool doVis = true;
-
                     if (obj is ILaneTurret turret)
                     {
                         _game.PacketNotifier.NotifySpawn(turret);
@@ -98,64 +96,24 @@ namespace LeagueSandbox.GameServer
                                 _game.PacketNotifier.NotifyBuyItem((int)turret.NetId, turret, item as IItem);
                             }
                         }
-
-                        _queuedObjects.Remove(obj.NetId);
                     }
                     else 
                     {
-                        if (obj is ILevelProp || obj is ISpellMissile)
-                        {
-                            doVis = false;
-                        }
+                        bool doVis = !(obj is ILevelProp || obj is ISpellMissile);
                         _game.PacketNotifier.NotifySpawn(obj, 0, doVis, _game.GameTime);
-
-                        _queuedObjects.Remove(obj.NetId);
                     }
+
+                    _queuedObjects.Remove(obj.NetId);
+                    continue; // Object just created, no need to update
                 }
 
                 obj.Update(diff);
-
-                //TODO: Implement visibility checks for projectiles here (should be similar to particles below)
-                //Make sure to account for server only projectiles, globally visible (everyone sees it) projectiles, and normal projectiles:
-                //1. Nidalee Q is affected by visibility checks, but is server only 
-                //2. Ezreal R is globally visible, and is server only
-                //3. Every other projectile that is not server only, and is affected by visibility checks (normal projectiles)
-
-                // Only if the particle is affected by vision.
-                if (obj is IParticle particle && particle.VisionAffected)
-                {
-                    foreach (var team in Teams)
-                    {
-                        // Only remove or re-send the particle to the specified team.
-                        if (particle.SpecificTeam == TeamId.TEAM_NEUTRAL || particle.SpecificTeam == team)
-                        {
-                            var visionUnitsTeam = GetVisionUnits(particle.Team);
-                            var teamHasVision = TeamHasVisionOn(team, particle);
-                            if (visionUnitsTeam.ContainsKey(particle.NetId) && teamHasVision)
-                            {
-                                particle.SetVisibleByTeam(team, true);
-                                _game.PacketNotifier.NotifyFXEnterTeamVisibility(particle, team);
-                            }
-                            else {
-                                var isVisibleByTeam = particle.IsVisibleByTeam(team);
-                                if (!isVisibleByTeam && teamHasVision)
-                                {
-                                    particle.SetVisibleByTeam(team, true);
-                                    _game.PacketNotifier.NotifyFXEnterTeamVisibility(particle, team);
-                                }
-                                else if (isVisibleByTeam && !teamHasVision)
-                                {
-                                    particle.SetVisibleByTeam(team, false);
-                                    _game.PacketNotifier.NotifyFXLeaveTeamVisibility(particle, team);
-                                }
-                            }
-                        }
-                    }
-                }
+                
+                UpdateVision(obj);
 
                 // Destroy any missiles which are targeting an untargetable unit.
                 // TODO: Verify if this should apply to SpellSector.
-                else if (obj is ISpellMissile m)
+                if (obj is ISpellMissile m)
                 {
                     if (m.TargetUnit != null && !m.TargetUnit.Status.HasFlag(StatusFlags.Targetable))
                     {
@@ -165,37 +123,6 @@ namespace LeagueSandbox.GameServer
 
                 else if (obj is IAttackableUnit u)
                 {
-                    foreach (var team in Teams)
-                    {
-                        if (u.Team == team)
-                            continue;
-
-                        var visionUnitsTeam = GetVisionUnits(u.Team);
-                        var teamHasVision = TeamHasVisionOn(team, u);
-                        if (visionUnitsTeam.ContainsKey(u.NetId) && teamHasVision)
-                        {
-                            u.SetVisibleByTeam(team, true);
-                            // Might not be necessary, but just for good measure.
-                            _game.PacketNotifier.NotifyS2C_OnEnterTeamVisibility(u, team);
-                            _game.PacketNotifier.NotifyEnterVisibilityClient(u, useTeleportID: true);
-                            RemoveVisionUnit(u);
-                        }
-                        else {
-                            var isVisibleByTeam = u.IsVisibleByTeam(team);
-                            if (!isVisibleByTeam && teamHasVision && !u.IsDead)
-                            {
-                                u.SetVisibleByTeam(team, true);
-                                _game.PacketNotifier.NotifyS2C_OnEnterTeamVisibility(u, team);
-                                _game.PacketNotifier.NotifyEnterVisibilityClient(u, useTeleportID: true);
-                            }
-                            else if (isVisibleByTeam && (u.IsDead || !teamHasVision) && !(u is IBaseTurret || u is ILevelProp || u is IObjBuilding))
-                            {
-                                u.SetVisibleByTeam(team, false);
-                                _game.PacketNotifier.NotifyLeaveVisibilityClient(u, team);
-                            }
-                        }
-                    }
-
                     if (u is IObjAiBase ai)
                     {
                         var tempBuffs = new List<IBuff>(ai.GetBuffs());
@@ -233,6 +160,41 @@ namespace LeagueSandbox.GameServer
                         // TODO: Verify if we want to use TeleportID.
                         _game.PacketNotifier.NotifyWaypointGroup(u, false);
                         u.ClearMovementUpdated();
+                    }
+                }
+            }
+        }
+
+        void UpdateVision(IGameObject obj)
+        {
+            //TODO: Implement visibility checks for projectiles here (should be similar to particles below)
+            //Make sure to account for server only projectiles, globally visible (everyone sees it) projectiles, and normal projectiles:
+            //1. Nidalee Q is affected by visibility checks, but is server only 
+            //2. Ezreal R is globally visible, and is server only
+            //3. Every other projectile that is not server only, and is affected by visibility checks (normal projectiles)
+
+            // Only if the particle is affected by vision.
+            IParticle particle = null;
+            IAttackableUnit u = null;
+            if (
+                ((particle = obj as IParticle) != null && particle.VisionAffected)
+                || ((u = obj as IAttackableUnit) != null)
+            ) {
+                foreach (var team in Teams)
+                {
+                    if (
+                        // Only remove or re-send the particle to the specified team.
+                        (particle != null && (particle.SpecificTeam == TeamId.TEAM_NEUTRAL || particle.SpecificTeam == team))
+                        || (u != null && u.Team != team)
+                    ) {
+                        bool teamHasVision = (u == null || !u.IsDead) && TeamHasVisionOn(team, obj);
+                        bool alwaysVisible = u is IBaseTurret || u is ILevelProp || u is IObjBuilding;
+                        bool isVisibleByTeam = alwaysVisible || obj.IsVisibleByTeam(team);
+                        if (isVisibleByTeam != teamHasVision)
+                        {
+                            obj.SetVisibleByTeam(team, teamHasVision);
+                            _game.PacketNotifier.NotifyVisibilityChange(obj, team, teamHasVision);
+                        }
                     }
                 }
             }

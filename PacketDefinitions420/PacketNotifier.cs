@@ -1,4 +1,4 @@
-﻿using ENet;
+using ENet;
 using GameServerCore;
 using GameServerCore.Content;
 using GameServerCore.Domain;
@@ -2542,7 +2542,7 @@ namespace PacketDefinitions420
 
         /// <summary>
         /// Sends a packet to either all players with vision of the specified GameObject or a specified user.
-        /// The packet contains details of which team gained visibility of the GameObject and is meant for after it is first initialized into vision.
+        /// The packet contains details of which team gained visibility of the GameObject and should only be used after it is first initialized into vision (NotifyEnterVisibility).
         /// </summary>
         /// <param name="o">GameObject coming into vision.</param>
         /// <param name="userId">User to send the packet to.</param>
@@ -2586,6 +2586,31 @@ namespace PacketDefinitions420
                 }
             };
             _packetHandlerManager.BroadcastPacket(packet.GetBytes(), Channel.CHL_S2C);
+        }
+
+        /// <summary>
+        /// Sends a packet to either all players with vision of the specified GameObject or a specified user.
+        /// The packet contains details of which team lost visibility of the GameObject and should only be used after it is first initialized into vision (NotifyEnterVisibility).
+        /// </summary>
+        /// <param name="o">GameObject going out of vision.</param>
+        /// <param name="userId">User to send the packet to.</param>
+        public void NotifyS2C_OnLeaveTeamVisibility(IGameObject o, TeamId team, int userId = 0)
+        {
+            var enterTeamVis = new S2C_OnLeaveTeamVisibility()
+            {
+                SenderNetID = o.NetId,
+                VisibilityTeam = (byte)team
+            };
+
+            if (userId == 0)
+            {
+                // TODO: Verify if we should use BroadcastPacketTeam instead.
+                _packetHandlerManager.BroadcastPacket(enterTeamVis.GetBytes(), Channel.CHL_S2C);
+            }
+            else
+            {
+                _packetHandlerManager.SendPacket(userId, enterTeamVis.GetBytes(), Channel.CHL_S2C);
+            }
         }
 
         /// <summary>
@@ -3545,6 +3570,42 @@ namespace PacketDefinitions420
             };
 
             _packetHandlerManager.SendPacket(userId, useItemPacket.GetBytes(), Channel.CHL_S2C);
+        }
+
+        /// <summary>
+        /// Sends a packet to the specified team detailing that an object's visibility has changed.
+        /// General function which will send the needed vision packet for the specific object type.
+        /// </summary>
+        /// <param name="obj">GameObject which had their visibility changed.</param>
+        /// <param name="team">Team which is affected by this visibility change.</param>
+        /// <param name="becameVisible">Whether or not the change was an entry into vision.</param>
+        public void NotifyVisibilityChange(IGameObject obj, TeamId team, bool becameVisible)
+        {
+            if (obj is IParticle particle)
+            {
+                if (becameVisible)
+                {
+                    NotifyFXEnterTeamVisibility(particle, team);
+                }
+                else
+                {
+                    NotifyFXLeaveTeamVisibility(particle, team);
+                }
+            }
+            else if (obj is IAttackableUnit u)
+            {
+                if (becameVisible)
+                {
+                    // Might not be necessary, but just for good measure.
+                    NotifyS2C_OnEnterTeamVisibility(u, team);
+                    NotifyEnterVisibilityClient(obj, useTeleportID: true);
+                }
+                else
+                {
+                    NotifyS2C_OnLeaveTeamVisibility(u, team);
+                    NotifyLeaveVisibilityClient(obj, team);
+                }
+            }
         }
 
         /// <summary>
