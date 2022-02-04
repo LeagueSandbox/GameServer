@@ -249,7 +249,7 @@ namespace PacketDefinitions420
                     continue;
                 }
 
-                if (_game.ObjectManager.TeamHasVisionOn(team, o))
+                if (o.IsVisibleByTeam(team))
                 {
                     BroadcastPacketTeam(team, data, channelNo, flag);
                 }

@@ -513,7 +513,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             }
 
             // TODO: send this in one place only
-            _game.PacketNotifier.NotifyUpdatedStats(this, false);
+            //_game.PacketNotifier.NotifyUpdatedStats(this, false);
 
             // Get health from lifesteal/spellvamp
             if (regain > 0)
@@ -521,7 +521,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                 attackerStats.CurrentHealth = Math.Min(attackerStats.HealthPoints.Total,
                     attackerStats.CurrentHealth + regain * postMitigationDamage);
                 // TODO: send this in one place only (preferably a central EventHandler class)
-                _game.PacketNotifier.NotifyUpdatedStats(attacker, false);
+                //_game.PacketNotifier.NotifyUpdatedStats(attacker, false);
             }
         }
 
@@ -645,7 +645,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             }
 
             // TODO: send this in one place only
-            _game.PacketNotifier.NotifyUpdatedStats(this, false);
+            //_game.PacketNotifier.NotifyUpdatedStats(this, false);
 
             // Get health from lifesteal/spellvamp
             if (regain > 0)
@@ -653,7 +653,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                 attackerStats.CurrentHealth = Math.Min(attackerStats.HealthPoints.Total,
                     attackerStats.CurrentHealth + regain * postMitigationDamage);
                 // TODO: send this in one place only (preferably a central EventHandler class)
-                _game.PacketNotifier.NotifyUpdatedStats(attacker, false);
+                //_game.PacketNotifier.NotifyUpdatedStats(attacker, false);
             }
         }
 

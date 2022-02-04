@@ -122,10 +122,12 @@ namespace LeagueSandbox.GameServer.GameObjects
 
             _game.ObjectManager.AddObject(this);
 
+            /*
             if (autoSend)
             {
                 _game.PacketNotifier.NotifyFXCreateGroup(this);
             }
+            */
         }
 
         /// <summary>
@@ -182,10 +184,12 @@ namespace LeagueSandbox.GameServer.GameObjects
 
             _game.ObjectManager.AddObject(this);
 
+            /*
             if (autoSend)
             {
                 _game.PacketNotifier.NotifyFXCreateGroup(this);
             }
+            */
         }
 
         /// <summary>
@@ -238,10 +242,12 @@ namespace LeagueSandbox.GameServer.GameObjects
 
             _game.ObjectManager.AddObject(this);
 
+            /*
             if (autoSend)
             {
                 _game.PacketNotifier.NotifyFXCreateGroup(this);
             }
+            */
         }
 
         /// <summary>
