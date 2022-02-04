@@ -245,7 +245,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         public override void OnCollision(IGameObject collider, bool isTerrain = false)
         {
             // We do not want to teleport out of missiles, sectors, owned regions, or buildings. Buildings in particular are already baked into the Navigation Grid.
-            if (collider is ISpellMissile || collider is ISpellSector || collider is IObjBuilding || (collider is IRegion region && (region.CollisionUnit == this || !region.HasCollision)))
+            if (collider is ISpellMissile || collider is ISpellSector || collider is IObjBuilding || (collider is IRegion region && region.CollisionUnit == this))
             {
                 return;
             }

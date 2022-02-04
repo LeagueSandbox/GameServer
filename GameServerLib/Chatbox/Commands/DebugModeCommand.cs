@@ -390,75 +390,76 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
                 return;
             }
 
-            List<IAttackableUnit> minions = new List<IAttackableUnit>(_game.ObjectManager.GetVisionUnits().Values.ToList().Where(x => x is IMinion));
-
-            // Same method as DebugSelf just for every champion
-            foreach (var minion in minions)
+            // Same method as DebugSelf just for every minion
+            foreach (IGameObject obj in _game.ObjectManager.GetObjects().Values)
             {
-                // Arbitrary ratio is required for the DebugCircle particle to look accurate
-                var circlesize = (1f / 100f) * minion.CollisionRadius;
-
-                if (minion.CollisionRadius < 5)
+                if (obj is IMinion minion)
                 {
-                    circlesize = (1f / 100f) * 35;
-                }
+                    // Arbitrary ratio is required for the DebugCircle particle to look accurate
+                    var circlesize = (1f / 100f) * minion.CollisionRadius;
 
-                // Clear circle particles every draw in case the unit changes its position
-                if (_circleParticles.ContainsKey(minion.NetId))
-                {
-                    if (_circleParticles[minion.NetId] != null)
+                    if (minion.CollisionRadius < 5)
                     {
-                        _circleParticles.Remove(minion.NetId);
+                        circlesize = (1f / 100f) * 35;
                     }
-                }
 
-                var circleparticle = new Particle(_game, null, null, minion.Position, "DebugCircle_green.troy", circlesize, "", "", 0, default, false, 0.1f, false, false);
-                _circleParticles.Add(minion.NetId, circleparticle);
-                _game.PacketNotifier.NotifyFXCreateGroup(circleparticle, userId);
-
-                if (minion.Waypoints.Count > 0)
-                {
-                    // Clear arrow particles every draw in case the unit changes its waypoints
-                    if (_arrowParticlesList.ContainsKey(minion.NetId))
+                    // Clear circle particles every draw in case the unit changes its position
+                    if (_circleParticles.ContainsKey(minion.NetId))
                     {
-                        if (_arrowParticlesList[minion.NetId].Count != 0)
+                        if (_circleParticles[minion.NetId] != null)
                         {
-                            lock (_particlesLock)
+                            _circleParticles.Remove(minion.NetId);
+                        }
+                    }
+
+                    var circleparticle = new Particle(_game, null, null, minion.Position, "DebugCircle_green.troy", circlesize, "", "", 0, default, false, 0.1f, false, false);
+                    _circleParticles.Add(minion.NetId, circleparticle);
+                    _game.PacketNotifier.NotifyFXCreateGroup(circleparticle, userId);
+
+                    if (minion.Waypoints.Count > 0)
+                    {
+                        // Clear arrow particles every draw in case the unit changes its waypoints
+                        if (_arrowParticlesList.ContainsKey(minion.NetId))
+                        {
+                            if (_arrowParticlesList[minion.NetId].Count != 0)
                             {
-                                _arrowParticlesList[minion.NetId].Clear();
+                                lock (_particlesLock)
+                                {
+                                    _arrowParticlesList[minion.NetId].Clear();
+                                }
+                                _arrowParticlesList.Remove(minion.NetId);
                             }
-                            _arrowParticlesList.Remove(minion.NetId);
-                        }
-                    }
-
-                    for (int waypoint = minion.CurrentWaypoint.Key; waypoint < minion.Waypoints.Count; waypoint++)
-                    {
-                        var current = minion.Waypoints[waypoint - 1];
-
-                        var wpTarget = minion.Waypoints[waypoint];
-
-                        // Makes the arrow point to the next waypoint
-                        var to = Vector2.Normalize(new Vector2(wpTarget.X, wpTarget.Y) - current);
-                        if (minion.Waypoints.Count - 1 > waypoint)
-                        {
-                            var nextTargetWp = minion.Waypoints[waypoint + 1];
-                            to = Vector2.Normalize(new Vector2(nextTargetWp.X, nextTargetWp.Y) - minion.Waypoints[waypoint]);
-                        }
-                        var direction = new Vector3(to.X, 0, to.Y);
-
-                        if (!_arrowParticlesList.ContainsKey(minion.NetId))
-                        {
-                            _arrowParticlesList.Add(minion.NetId, new List<Particle>());
                         }
 
-                        var arrowparticle = new Particle(_game, null, null, wpTarget, "DebugArrow_green.troy", 0.5f, "", "", 0, direction, false, 0.1f, false, false);
-                        _arrowParticlesList[minion.NetId].Add(arrowparticle);
-
-                        _game.PacketNotifier.NotifyFXCreateGroup(arrowparticle, userId);
-
-                        if (waypoint >= minion.Waypoints.Count)
+                        for (int waypoint = minion.CurrentWaypoint.Key; waypoint < minion.Waypoints.Count; waypoint++)
                         {
-                            _logger.Debug("Waypoints Drawn: " + waypoint);
+                            var current = minion.Waypoints[waypoint - 1];
+
+                            var wpTarget = minion.Waypoints[waypoint];
+
+                            // Makes the arrow point to the next waypoint
+                            var to = Vector2.Normalize(new Vector2(wpTarget.X, wpTarget.Y) - current);
+                            if (minion.Waypoints.Count - 1 > waypoint)
+                            {
+                                var nextTargetWp = minion.Waypoints[waypoint + 1];
+                                to = Vector2.Normalize(new Vector2(nextTargetWp.X, nextTargetWp.Y) - minion.Waypoints[waypoint]);
+                            }
+                            var direction = new Vector3(to.X, 0, to.Y);
+
+                            if (!_arrowParticlesList.ContainsKey(minion.NetId))
+                            {
+                                _arrowParticlesList.Add(minion.NetId, new List<Particle>());
+                            }
+
+                            var arrowparticle = new Particle(_game, null, null, wpTarget, "DebugArrow_green.troy", 0.5f, "", "", 0, direction, false, 0.1f, false, false);
+                            _arrowParticlesList[minion.NetId].Add(arrowparticle);
+
+                            _game.PacketNotifier.NotifyFXCreateGroup(arrowparticle, userId);
+
+                            if (waypoint >= minion.Waypoints.Count)
+                            {
+                                _logger.Debug("Waypoints Drawn: " + waypoint);
+                            }
                         }
                     }
                 }
