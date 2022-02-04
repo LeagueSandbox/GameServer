@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using GameServerCore;
 using GameServerCore.Domain.GameObjects;
+using GameServerCore.Domain.GameObjects.Spell.Missile;
 using GameServerCore.Maps;
 using UltimateQuadTree;
 
@@ -46,9 +47,9 @@ namespace LeagueSandbox.GameServer.GameObjects.Other
         /// <returns>True/False.</returns>
         private bool IsCollisionObject(IGameObject obj)
         {
-            // CollisionObjects can be any AI units, ObjBuildings, pure AttackableUnits, missiles, and pure GameObjects.
+            // CollisionObjects can be any AI units, ObjBuildings, pure AttackableUnits, and pure GameObjects.
             // TODO: Implement static navgrid updates for turrets so we don't have to count them as collision objects.
-            return !(obj.IsToRemove() || obj is ILevelProp || obj is IParticle);
+            return !(obj.IsToRemove() || obj is ILevelProp || obj is IParticle || obj is ISpellMissile);
         }
 
         /// <summary>
@@ -69,12 +70,14 @@ namespace LeagueSandbox.GameServer.GameObjects.Other
         /// <param name="obj">GameObject to add.</param>
         public void AddObject(IGameObject obj)
         {
-            _objects.Add(obj);
-
-            // Add dynamic objects
-            if (IsCollisionObject(obj))
+            bool collides = IsCollisionObject(obj);
+            bool detects = IsCollisionAffected(obj);
+            if(collides || detects)
             {
-                // Returns false when out of bounds and fails.
+                _objects.Add(obj);
+            }
+            if(collides)
+            {
                 QuadDynamic.Insert(obj);
             }
         }
@@ -83,15 +86,11 @@ namespace LeagueSandbox.GameServer.GameObjects.Other
         /// GameObject to remove from the list of GameObjects to check for collisions.
         /// </summary>
         /// <param name="obj">GameObject to remove.</param>
-        public void RemoveObject(IGameObject obj)
+        /// <returns>true if item is successfully removed; false otherwise.</returns>
+        public bool RemoveObject(IGameObject obj)
         {
-            _objects.Remove(obj);
-
-            // Remove dynamic objects
-            if (IsCollisionObject(obj))
-            {
-                QuadDynamic.Remove(obj);
-            }
+            return _objects.Remove(obj);
+            //&& QuadDynamic.Remove(obj); - QuadTree is rebuilt every frame, no need to remove
         }
 
         /// <summary>
@@ -103,28 +102,21 @@ namespace LeagueSandbox.GameServer.GameObjects.Other
             var objectsCopy = new List<IGameObject>(_objects);
             foreach (var obj in objectsCopy)
             {
-                if (!IsCollisionAffected(obj))
+                if (IsCollisionAffected(obj))
                 {
-                    continue;
-                }
-
-                if (!_map.NavigationGrid.IsWalkable(obj.Position.X, obj.Position.Y))
-                {
-                    obj.OnCollision(null, true);
-                }
-
-                var nearest = QuadDynamic.GetNearestObjects(obj);
-                foreach (var obj2 in nearest)
-                {
-                    if (obj == obj2 || !IsCollisionObject(obj2))
+                    if (!_map.NavigationGrid.IsWalkable(obj.Position.X, obj.Position.Y))
                     {
-                        continue;
+                        obj.OnCollision(null, true);
                     }
 
-                    // TODO: Implement interpolation (or hull tracing) to account for fast moving gameobjects that may go past other gameobjects within one tick, which bypasses collision.
-                    if (obj.IsCollidingWith(obj2))
+                    var nearest = QuadDynamic.GetNearestObjects(obj);
+                    foreach (var obj2 in nearest)
                     {
-                        obj.OnCollision(obj2);
+                        // TODO: Implement interpolation (or hull tracing) to account for fast moving gameobjects that may go past other gameobjects within one tick, which bypasses collision.
+                        if (obj != obj2 && !obj2.IsToRemove() && obj.IsCollidingWith(obj2))
+                        {
+                            obj.OnCollision(obj2);
+                        }
                     }
                 }
             }
@@ -144,7 +136,13 @@ namespace LeagueSandbox.GameServer.GameObjects.Other
                 QuadDynamic.MainRect.Height,
                 _objectBounds
             );
-            QuadDynamic.InsertRange(_objects.FindAll(o => IsCollisionObject(o)));
+            foreach(var obj in _objects)
+            {
+                if(IsCollisionObject(obj))
+                {
+                    QuadDynamic.Insert(obj);
+                }
+            }
         }
     }
 }
