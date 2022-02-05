@@ -55,6 +55,10 @@ namespace GameServerCore.Domain.GameObjects
         /// All status effects applied by this buff.
         /// </summary>
         Dictionary<StatusFlags, bool> StatusEffects { get; }
+        /// <summary>
+        /// Used to update player buff tool tip values.
+        /// </summary>
+        IToolTipData ToolTipData { get; }
 
         /// <summary>
         /// Used to load the script for the buff.
@@ -69,5 +73,6 @@ namespace GameServerCore.Domain.GameObjects
         bool IsBuffSame(string buffName);
         void ResetTimeElapsed();
         void SetSlot(byte slot);
+        void SetToolTipVar<T>(int tipIndex, T value) where T : struct;
     }
 }

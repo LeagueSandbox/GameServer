@@ -1,14 +1,13 @@
-using System.Collections.Generic;
-using System.Numerics;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Domain.GameObjects.Spell;
 using GameServerCore.Domain.GameObjects.Spell.Missile;
-using GameServerCore.Enums;
-using LeagueSandbox.GameServer.API;
-using static LeagueSandbox.GameServer.API.ApiFunctionManager;
-using LeagueSandbox.GameServer.Scripting.CSharp;
-using GameServerCore.Scripting.CSharp;
 using GameServerCore.Domain.GameObjects.Spell.Sector;
+using GameServerCore.Enums;
+using GameServerCore.Scripting.CSharp;
+using LeagueSandbox.GameServer.API;
+using LeagueSandbox.GameServer.Scripting.CSharp;
+using System.Numerics;
+using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 
 namespace Spells
 {
@@ -20,8 +19,13 @@ namespace Spells
             IsDamagingSpell = true
         };
 
+        private IObjAiBase _owner;
+        private ISpell _spell;
+
         public void OnActivate(IObjAiBase owner, ISpell spell)
         {
+            _owner = owner;
+            _spell = spell;
         }
 
         public void OnDeactivate(IObjAiBase owner, ISpell spell)
@@ -76,6 +80,7 @@ namespace Spells
 
         public void OnUpdate(float diff)
         {
+            SetSpellToolTipVar(_owner, 2, _owner.Stats.AttackDamage.Total * _spell.SpellData.AttackDamageCoefficient, SpellbookType.SPELLBOOK_CHAMPION, 0, SpellSlotType.SpellSlots);
         }
     }
 

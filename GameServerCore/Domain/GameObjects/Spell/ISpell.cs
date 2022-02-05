@@ -2,7 +2,6 @@
 using GameServerCore.Domain.GameObjects.Spell.Sector;
 using GameServerCore.Enums;
 using GameServerCore.Scripting.CSharp;
-using System.Collections.Generic;
 using System.Numerics;
 
 namespace GameServerCore.Domain.GameObjects.Spell
@@ -53,6 +52,10 @@ namespace GameServerCore.Domain.GameObjects.Spell
         /// Whether or not the script for this spell is the default empty script.
         /// </summary>
         bool HasEmptyScript { get; }
+        /// <summary>
+        /// Used to update player ability tool tip values.
+        /// </summary>
+        IToolTipData ToolTipData { get; }
 
         /// <returns>spell's unique ID</returns>
         int GetId();
@@ -129,6 +132,7 @@ namespace GameServerCore.Domain.GameObjects.Spell
         /// </summary>
         /// <param name="toggle">True/False.</param>
         void SetSpellToggle(bool toggle);
+        void SetToolTipVar<T>(int tipIndex, T value) where T : struct;
 
         /// <summary>
         /// Used to load the script for the spell.

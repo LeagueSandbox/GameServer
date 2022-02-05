@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using GameServerCore.Domain.GameObjects.Spell;
-
-namespace GameServerCore.Domain.GameObjects
+﻿namespace GameServerCore.Domain.GameObjects
 {
     public interface IChampion : IObjAiBase
     {
@@ -20,6 +17,7 @@ namespace GameServerCore.Domain.GameObjects
         void Recall();
         void Respawn();
         bool OnDisconnect();
+        void AddToolTipChange(IToolTipData data);
 
         void OnKill(IDeathData deathData);
     }

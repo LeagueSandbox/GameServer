@@ -32,7 +32,7 @@ namespace PacketDefinitions420.PacketDefinitions.S2C
             }
 
             Write((byte)masterMask);
-            Write(r.NetId);
+            Write(r.NetID);
 
             for (var i = 0; i < 6; i++)
             {

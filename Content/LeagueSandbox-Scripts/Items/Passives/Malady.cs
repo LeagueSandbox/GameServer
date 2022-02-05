@@ -5,6 +5,7 @@ using GameServerCore.Enums;
 using GameServerCore.Scripting.CSharp;
 using LeagueSandbox.GameServer.API;
 using LeagueSandbox.GameServer.Scripting.CSharp;
+using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 using System.Numerics;
 
 namespace ItemSpells
@@ -12,6 +13,8 @@ namespace ItemSpells
     public class Malady : ISpellScript
     {
         private IObjAiBase _owner;
+        private ISpell _spell;
+        private float Damage = 0f;
         public ISpellScriptMetadata ScriptMetadata { get; private set; } = new SpellScriptMetadata()
         {
             // TODO
@@ -19,18 +22,22 @@ namespace ItemSpells
 
         private void TargetExecute(IDamageData data)
         {
-            float Damage = 15 + (this._owner.Stats.AbilityPower.Total * 0.15f);
             data.Target.TakeDamage(this._owner, Damage, DamageType.DAMAGE_TYPE_MAGICAL, DamageSource.DAMAGE_SOURCE_RAW, false);
         }
 
 
         public void OnUpdate(float diff)
         {
+            Damage = 15 + (this._owner.Stats.AbilityPower.Total * 0.15f);
+
+            // Getting item slots is a bit of a mess right now. Maybe add a function in API to get?
+            SetSpellToolTipVar(_owner, 0, Damage, SpellbookType.SPELLBOOK_CHAMPION, _owner.Inventory.GetItemSlot(_owner.Inventory.GetItem("Malady")), SpellSlotType.InventorySlots);
         }
 
         public void OnActivate(IObjAiBase owner, ISpell spell)
         {
             _owner = owner;
+            _spell = spell;
             ApiEventManager.OnHitUnit.AddListener(this, owner, TargetExecute, false);
         }
 
@@ -66,7 +73,7 @@ namespace ItemSpells
 
         public void OnSpellPostChannel(ISpell spell)
         {
-
+            
         }
     }
 }
