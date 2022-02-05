@@ -45,7 +45,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Missile
             SpellDataFlags overrideFlags = 0, // TODO: Find a use for these
             uint netId = 0,
             bool serverOnly = false
-        ) : base(game, new Vector2(castInfo.SpellCastLaunchPosition.X, castInfo.SpellCastLaunchPosition.Z), collisionRadius, 0, netId)
+        ) : base(game, new Vector2(castInfo.SpellCastLaunchPosition.X, castInfo.SpellCastLaunchPosition.Z), collisionRadius, 0, 0, netId)
         {
             _moveSpeed = moveSpeed;
             _timeSinceCreation = 0.0f;

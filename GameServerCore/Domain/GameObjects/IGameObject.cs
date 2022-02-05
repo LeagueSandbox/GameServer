@@ -21,6 +21,10 @@ namespace GameServerCore.Domain.GameObjects
         /// </summary>
         float CollisionRadius { get; }
         /// <summary>
+        /// Radius of the circle which is used for pathfinding around objects and terrain.
+        /// </summary>
+        float PathfindingRadius { get; }
+        /// <summary>
         /// Position of this GameObject from a top-down view.
         /// </summary>
         Vector2 Position { get; }

@@ -2,6 +2,7 @@
 using GameServerCore.Domain.GameObjects.Spell.Sector;
 using GameServerCore.Enums;
 using GameServerCore.Scripting.CSharp;
+using System.Collections.Generic;
 using System.Numerics;
 
 namespace GameServerCore.Domain.GameObjects.Spell
@@ -64,6 +65,12 @@ namespace GameServerCore.Domain.GameObjects.Spell
         /// Called by projectiles when they land / hit, this is where we apply damage/slows etc.
         /// </summary>
         void ApplyEffects(IAttackableUnit u, ISpellMissile p = null, ISpellSector s = null);
+
+        /// <summary>
+        /// Whether or not this spell can be cancelled during cast.
+        /// </summary>
+        /// <returns></returns>
+        bool CastCancelCheck();
 
         /// <summary>
         /// Called when the character casts this spell. Initializes the CastInfo for this spell and begins casting.
@@ -132,6 +139,7 @@ namespace GameServerCore.Domain.GameObjects.Spell
         /// </summary>
         /// <param name="toggle">True/False.</param>
         void SetSpellToggle(bool toggle);
+        void SetTargetUnits(List<ICastTarget> targets);
         void SetToolTipVar<T>(int tipIndex, T value) where T : struct;
 
         /// <summary>

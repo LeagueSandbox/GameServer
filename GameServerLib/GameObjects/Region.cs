@@ -72,7 +72,7 @@ namespace LeagueSandbox.GameServer.GameObjects
             float addedSize = 0,
             float lifetime = 0,
             int clientId = 0
-        ): base(game, pos, collisionRadius, visionRadius, team: team)
+        ): base(game, pos, 0, collisionRadius, visionRadius, team: team)
         {
             Type = (int)type;
             CollisionUnit = collisionUnit;
@@ -96,13 +96,13 @@ namespace LeagueSandbox.GameServer.GameObjects
 
             if (Scale > 0)
             {
-                CollisionRadius *= Scale;
+                PathfindingRadius *= Scale;
                 VisionRadius *= Scale;
             }
 
             if (AdditionalSize > 0)
             {
-                CollisionRadius += AdditionalSize;
+                PathfindingRadius += AdditionalSize;
                 VisionRadius += AdditionalSize;
             }
 
