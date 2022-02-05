@@ -861,13 +861,13 @@ namespace LeagueSandbox.GameServer.Content.Navigation
             if (a is IObjBuilding)
             {
                 double rayDist = Math.Sqrt((CastRay(b.Position, a.Position, !checkVision, checkVision).Value - b.Position).SqrLength());
-                rayDist += a.CollisionRadius;
+                rayDist += a.PathfindingRadius;
                 return (rayDist * rayDist) < (b.Position - a.Position).SqrLength();
             }
             if (b is IObjBuilding)
             {
                 double rayDist = Math.Sqrt((CastRay(a.Position, b.Position, !checkVision, checkVision).Value - a.Position).SqrLength());
-                rayDist += b.CollisionRadius;
+                rayDist += b.PathfindingRadius;
                 return (rayDist * rayDist) < (b.Position - a.Position).SqrLength();
             }
             return !CastRay(a.Position, b.Position, !checkVision, checkVision).Key;

@@ -33,7 +33,7 @@ namespace LeagueSandbox.GameServer.GameObjects
             byte type = 2,
             uint netId = 64
 
-        ) : base(game, position, 0, 0, netId)
+        ) : base(game, position, 0, 0, 0, netId)
         {
             NetNodeID = netNodeId;
             SkinID = skinId;

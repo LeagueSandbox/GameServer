@@ -190,10 +190,10 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
         public void DebugSelf(int userId)
         {
             // Arbitrary ratio is required for the DebugCircle particle to look accurate
-            var circlesize = (1f / 100f) * _userChampion.CollisionRadius;
+            var circlesize = (1f / 100f) * _userChampion.PathfindingRadius;
 
-            _logger.Debug($"Started debugging self. Your Debug Circle Radius: " + "(1 / 100) * " + _userChampion.CollisionRadius + " = " + "(" + (1f / 100f) + ") * " + _userChampion.CollisionRadius + " = " + circlesize);
-            var startdebugmsg = $"Started debugging self. Your Debug Circle Radius: " + "(1 / 100) * " + _userChampion.CollisionRadius + " = " + "(" + (1f / 100f) + ") * " + _userChampion.CollisionRadius + " = " + circlesize;
+            _logger.Debug($"Started debugging self. Your Debug Circle Radius: " + "(1 / 100) * " + _userChampion.PathfindingRadius + " = " + "(" + (1f / 100f) + ") * " + _userChampion.PathfindingRadius + " = " + circlesize);
+            var startdebugmsg = $"Started debugging self. Your Debug Circle Radius: " + "(1 / 100) * " + _userChampion.PathfindingRadius + " = " + "(" + (1f / 100f) + ") * " + _userChampion.PathfindingRadius + " = " + circlesize;
             ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.NORMAL, startdebugmsg);
 
             // Creates a blue flashing highlight around your unit
@@ -208,7 +208,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
             }
 
             // Arbitrary ratio is required for the DebugCircle particle to look accurate
-            var circlesize = (1f / 100f) * _userChampion.CollisionRadius;
+            var circlesize = (1f / 100f) * _userChampion.PathfindingRadius;
 
             // Clear circle particles every draw in case the unit changes its position
             if (_circleParticles.ContainsKey(_userChampion.NetId))
@@ -275,12 +275,12 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
         public void DebugChampions(int userId)
         {
             // Arbitrary ratio is required for the DebugCircle particle to look accurate
-            var circlesize = (1f / 100f) * _userChampion.CollisionRadius;
+            var circlesize = (1f / 100f) * _userChampion.PathfindingRadius;
 
             var champions = Game.ObjectManager.GetAllChampions();
 
-            _logger.Debug($"Started debugging " + champions.Count + " champions. Your Debug Circle Radius: " + "(1 / 100) * " + _userChampion.CollisionRadius + " = " + "(" + (1f / 100f) + ") * " + _userChampion.CollisionRadius + " = " + circlesize);
-            var startdebugmsg = $"Started debugging " + champions.Count + " champions. Your Debug Circle Radius: " + "(1 / 100) * " + _userChampion.CollisionRadius + " = " + "(" + (1f / 100f) + ") * " + _userChampion.CollisionRadius + " = " + circlesize;
+            _logger.Debug($"Started debugging " + champions.Count + " champions. Your Debug Circle Radius: " + "(1 / 100) * " + _userChampion.PathfindingRadius + " = " + "(" + (1f / 100f) + ") * " + _userChampion.PathfindingRadius + " = " + circlesize);
+            var startdebugmsg = $"Started debugging " + champions.Count + " champions. Your Debug Circle Radius: " + "(1 / 100) * " + _userChampion.PathfindingRadius + " = " + "(" + (1f / 100f) + ") * " + _userChampion.PathfindingRadius + " = " + circlesize;
             ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.NORMAL, startdebugmsg);
 
             // Creates a blue flashing highlight around your unit
@@ -300,9 +300,9 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
             foreach (var champion in champions)
             {
                 // Arbitrary ratio is required for the DebugCircle particle to look accurate
-                var circlesize = (1f / 100f) * champion.CollisionRadius;
+                var circlesize = (1f / 100f) * champion.PathfindingRadius;
 
-                if (champion.CollisionRadius < 5)
+                if (champion.PathfindingRadius < 5)
                 {
                     circlesize = (1f / 100f) * 35;
                 }
@@ -373,10 +373,10 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
         public void DebugMinions(int userId)
         {
             // Arbitrary ratio is required for the DebugCircle particle to look accurate
-            var circlesize = (1f / 100f) * _userChampion.CollisionRadius;
+            var circlesize = (1f / 100f) * _userChampion.PathfindingRadius;
 
-            _logger.Debug($"Started debugging minions. Your Debug Circle Radius: " + "(1 / 100) * " + _userChampion.CollisionRadius + " = " + "(" + (1f / 100f) + ") * " + _userChampion.CollisionRadius + " = " + circlesize);
-            var startdebugmsg = $"Started debugging minions. Your Debug Circle Radius: " + "(1 / 100) * " + _userChampion.CollisionRadius + " = " + "(" + (1f / 100f) + ") * " + _userChampion.CollisionRadius + " = " + circlesize;
+            _logger.Debug($"Started debugging minions. Your Debug Circle Radius: " + "(1 / 100) * " + _userChampion.PathfindingRadius + " = " + "(" + (1f / 100f) + ") * " + _userChampion.PathfindingRadius + " = " + circlesize);
+            var startdebugmsg = $"Started debugging minions. Your Debug Circle Radius: " + "(1 / 100) * " + _userChampion.PathfindingRadius + " = " + "(" + (1f / 100f) + ") * " + _userChampion.PathfindingRadius + " = " + circlesize;
             ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.NORMAL, startdebugmsg);
 
             // Creates a blue flashing highlight around your unit
@@ -396,9 +396,9 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
                 if (obj is IMinion minion)
                 {
                     // Arbitrary ratio is required for the DebugCircle particle to look accurate
-                    var circlesize = (1f / 100f) * minion.CollisionRadius;
+                    var circlesize = (1f / 100f) * minion.PathfindingRadius;
 
-                    if (minion.CollisionRadius < 5)
+                    if (minion.PathfindingRadius < 5)
                     {
                         circlesize = (1f / 100f) * 35;
                     }
@@ -689,10 +689,10 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
         public void DebugAll(int userId)
         {
             // Arbitrary ratio is required for the DebugCircle particle to look accurate
-            var circlesize = (1f / 100f) * _userChampion.CollisionRadius;
+            var circlesize = (1f / 100f) * _userChampion.PathfindingRadius;
 
-            _logger.Debug($"Started debugging all. Your Debug Circle Radius: " + "(1 / 100) * " + _userChampion.CollisionRadius + " = " + "(" + (1f / 100f) + ") * " + _userChampion.CollisionRadius + " = " + circlesize);
-            var startdebugmsg = $"Started debugging all. Your Debug Circle Radius: " + "(1 / 100) * " + _userChampion.CollisionRadius + " = " + "(" + (1f / 100f) + ") * " + _userChampion.CollisionRadius + " = " + circlesize;
+            _logger.Debug($"Started debugging all. Your Debug Circle Radius: " + "(1 / 100) * " + _userChampion.PathfindingRadius + " = " + "(" + (1f / 100f) + ") * " + _userChampion.PathfindingRadius + " = " + circlesize);
+            var startdebugmsg = $"Started debugging all. Your Debug Circle Radius: " + "(1 / 100) * " + _userChampion.PathfindingRadius + " = " + "(" + (1f / 100f) + ") * " + _userChampion.PathfindingRadius + " = " + circlesize;
             ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.NORMAL, startdebugmsg);
 
             // Creates a blue flashing highlight around your unit
@@ -711,9 +711,9 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
             foreach (IGameObject obj in tempObjects.Values)
             {
                 // Arbitrary ratio is required for the DebugCircle particle to look accurate
-                var circlesize = (1f / 100f) * obj.CollisionRadius;
+                var circlesize = (1f / 100f) * obj.PathfindingRadius;
 
-                if (obj.CollisionRadius < 5)
+                if (obj.PathfindingRadius < 5)
                 {
                     circlesize = (1f / 100f) * 35;
                 }

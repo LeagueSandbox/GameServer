@@ -41,6 +41,10 @@ namespace LeagueSandbox.GameServer.GameObjects
         /// </summary>
         public float CollisionRadius { get; protected set; }
         /// <summary>
+        /// Radius of the circle which is used for pathfinding around objects and terrain.
+        /// </summary>
+        public float PathfindingRadius { get; protected set; }
+        /// <summary>
         /// Position of this GameObject from a top-down view.
         /// </summary>
         public Vector2 Position { get; protected set; }
@@ -64,7 +68,7 @@ namespace LeagueSandbox.GameServer.GameObjects
         /// <summary>
         /// Instantiation of an object which represents the base class for all objects in League of Legends.
         /// </summary>
-        public GameObject(Game game, Vector2 position, float collisionRadius = 40f, float visionRadius = 0f, uint netId = 0, TeamId team = TeamId.TEAM_NEUTRAL)
+        public GameObject(Game game, Vector2 position, float collisionRadius = 40f, float pathingRadius = 40f, float visionRadius = 0f, uint netId = 0, TeamId team = TeamId.TEAM_NEUTRAL)
         {
             _game = game;
             _networkIdManager = game.NetworkIdManager;
@@ -80,6 +84,7 @@ namespace LeagueSandbox.GameServer.GameObjects
             Direction = new Vector3();
             SyncId = Environment.TickCount; // TODO: use movement manager to generate this
             CollisionRadius = collisionRadius;
+            PathfindingRadius = pathingRadius;
             VisionRadius = visionRadius;
 
             _visibleByTeam = new Dictionary<TeamId, bool>();
@@ -200,7 +205,7 @@ namespace LeagueSandbox.GameServer.GameObjects
         /// <param name="o">An object that could be colliding with this object.</param>
         public virtual bool IsCollidingWith(IGameObject o)
         {
-            return Vector2.DistanceSquared(new Vector2(Position.X, Position.Y), o.Position) < (CollisionRadius + o.CollisionRadius) * (CollisionRadius + o.CollisionRadius);
+            return Vector2.DistanceSquared(new Vector2(Position.X, Position.Y), o.Position) < (PathfindingRadius + o.PathfindingRadius) * (PathfindingRadius + o.PathfindingRadius);
         }
 
         /// <summary>
@@ -214,7 +219,7 @@ namespace LeagueSandbox.GameServer.GameObjects
             {
                 // Escape functionality should be moved to GameObject.OnCollision.
                 // only time we would collide with terrain is if we are inside of it, so we should teleport out of it.
-                Vector2 exit = _game.Map.NavigationGrid.GetClosestTerrainExit(Position, CollisionRadius + 1.0f);
+                Vector2 exit = _game.Map.NavigationGrid.GetClosestTerrainExit(Position, PathfindingRadius + 1.0f);
                 TeleportTo(exit.X, exit.Y);
             }
         }
@@ -268,9 +273,9 @@ namespace LeagueSandbox.GameServer.GameObjects
         {
             var position = new Vector2(x, y);
 
-            if (!_game.Map.NavigationGrid.IsWalkable(x, y, CollisionRadius))
+            if (!_game.Map.NavigationGrid.IsWalkable(x, y, PathfindingRadius))
             {
-                position = _game.Map.NavigationGrid.GetClosestTerrainExit(new Vector2(x, y), CollisionRadius + 1.0f);
+                position = _game.Map.NavigationGrid.GetClosestTerrainExit(new Vector2(x, y), PathfindingRadius + 1.0f);
             }
 
             SetPosition(position);

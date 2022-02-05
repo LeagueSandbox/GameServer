@@ -183,7 +183,7 @@ namespace PacketDefinitions420
                 // For turrets, usually 25000.0 is used
                 TimeToLive = region.Lifetime,
                 // 88.4 for turrets
-                ColisionRadius = region.CollisionRadius,
+                ColisionRadius = region.PathfindingRadius,
                 // 130.0 for turrets
                 GrassRadius = region.GrassRadius,
                 SizeMultiplier = region.Scale,
@@ -293,7 +293,6 @@ namespace PacketDefinitions420
         /// <param name="futureProjNetId">NetId of the auto attack projectile.</param>
         /// <param name="isCrit">Whether or not the auto attack will crit.</param>
         /// <param name="nextAttackFlag">Whether or this basic attack is not the first time this basic attack has been performed on the given target.</param>
-        /// TODO: Verify the differences between normal Basic_Attack and Basic_Attack_Pos.
         public void NotifyBasic_Attack(IObjAiBase attacker, IAttackableUnit target, uint futureProjNetId, bool isCrit, bool nextAttackFlag)
         {
             var targetPos = MovementVector.ToCenteredScaledCoordinates(target.Position, _navGrid);
@@ -305,14 +304,12 @@ namespace PacketDefinitions420
                 ExtraTime = attacker.AutoAttackSpell.CastInfo.ExtraCastTime, // TODO: Verify, maybe related to CastInfo.ExtraCastTime?
                 MissileNextID = futureProjNetId,
                 AttackSlot = attacker.AutoAttackSpell.CastInfo.SpellSlot,
-                // TODO: Verify TargetPosition, taken from LS packet
                 TargetPosition = new Vector3(targetPos.X, _navGrid.GetHeightAtLocation(targetPos.X, targetPos.Y), targetPos.Y)
             };
 
-            if (!attacker.HasMadeInitialAttack)
-            {
-                basicAttackData.ExtraTime = -0.01f; // TODO: Verify, maybe related to CastInfo.ExtraCastTime?
-            }
+            // Based on DesignerCastTime. Always negative. Value range from replays: [-0.14, 0].
+            // TODO: Find out what should go here.
+            basicAttackData.ExtraTime = -attacker.AutoAttackSpell.CurrentDelayTime;
 
             var basicAttackPacket = new Basic_Attack
             {
@@ -329,7 +326,6 @@ namespace PacketDefinitions420
         /// <param name="target">AttackableUnit being attacked.</param>
         /// <param name="futureProjNetId">NetID of the projectile that will be created for the auto attack.</param>
         /// <param name="isCrit">Whether or not the auto attack is a critical.</param>
-        /// TODO: Verify the differences between BasicAttackPos and normal BasicAttack.
         public void NotifyBasic_Attack_Pos(IObjAiBase attacker, IAttackableUnit target, uint futureProjNetId, bool isCrit)
         {
             var targetPos = MovementVector.ToCenteredScaledCoordinates(target.Position, _navGrid);
@@ -343,6 +339,10 @@ namespace PacketDefinitions420
                 AttackSlot = attacker.AutoAttackSpell.CastInfo.SpellSlot,
                 TargetPosition = new Vector3(targetPos.X, target.GetHeight(), targetPos.Y)
             };
+
+            // Based on DesignerCastTime. Always negative. Value range from replays: [-0.14, 0].
+            // TODO: Find out what should go here.
+            basicAttackData.ExtraTime = -attacker.AutoAttackSpell.CurrentDelayTime;
 
             var basicAttackPacket = new Basic_Attack_Pos
             {

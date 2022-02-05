@@ -111,7 +111,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             int visionRadius = 0,
             uint netId = 0,
             TeamId team = TeamId.TEAM_NEUTRAL
-        ) : base(game, position, collisionRadius, visionRadius, netId, team)
+        ) : base(game, position, collisionRadius, collisionRadius, visionRadius, netId, team)
 
         {
             Logger = LoggerProvider.GetLogger();
@@ -173,7 +173,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             // Reevaluate our current path to account for the starting position being changed.
             if (repath && !IsPathEnded())
             {
-                List<Vector2> safePath = _game.Map.NavigationGrid.GetPath(Position, _game.Map.NavigationGrid.GetClosestTerrainExit(Waypoints.Last(), CollisionRadius));
+                List<Vector2> safePath = _game.Map.NavigationGrid.GetPath(Position, _game.Map.NavigationGrid.GetClosestTerrainExit(Waypoints.Last(), PathfindingRadius));
 
                 // TODO: When using this safePath, sometimes we collide with the terrain again, so we use an unsafe path the next collision, however,
                 // sometimes we collide again before we can finish the unsafe path, so we end up looping collisions between safe and unsafe paths, never actually escaping (ex: sharp corners).
@@ -260,7 +260,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                 }
 
                 // only time we would collide with terrain is if we are inside of it, so we should teleport out of it.
-                Vector2 exit = _game.Map.NavigationGrid.GetClosestTerrainExit(Position, CollisionRadius + 1.0f);
+                Vector2 exit = _game.Map.NavigationGrid.GetClosestTerrainExit(Position, PathfindingRadius + 1.0f);
                 TeleportTo(exit.X, exit.Y, true);
             }
             else
@@ -276,7 +276,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
 
                 // We should not teleport here because Pathfinding should handle it.
                 // TODO: Implement a PathfindingHandler, and remove currently implemented manual pathfinding.
-                Vector2 exit = Extensions.GetCircleEscapePoint(Position, CollisionRadius + 1, collider.Position, collider.CollisionRadius);
+                Vector2 exit = Extensions.GetCircleEscapePoint(Position, PathfindingRadius + 1, collider.Position, collider.PathfindingRadius);
                 TeleportTo(exit.X, exit.Y, true);
             }
         }
@@ -919,9 +919,9 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         {
             var position = new Vector2(x, y);
 
-            if (!_game.Map.NavigationGrid.IsWalkable(x, y, CollisionRadius))
+            if (!_game.Map.NavigationGrid.IsWalkable(x, y, PathfindingRadius))
             {
-                position = _game.Map.NavigationGrid.GetClosestTerrainExit(new Vector2(x, y), CollisionRadius + 1.0f);
+                position = _game.Map.NavigationGrid.GetClosestTerrainExit(new Vector2(x, y), PathfindingRadius + 1.0f);
             }
 
             SetPosition(position, repath);
@@ -979,7 +979,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                 KeyValuePair<bool, Vector2> pathBlocked = _game.Map.NavigationGrid.IsAnythingBetween(Position, nextPos);
                 if (pathBlocked.Key)
                 {
-                    nextPos = _game.Map.NavigationGrid.GetClosestTerrainExit(pathBlocked.Value, CollisionRadius + 1.0f);
+                    nextPos = _game.Map.NavigationGrid.GetClosestTerrainExit(pathBlocked.Value, PathfindingRadius + 1.0f);
                 }
             }
 
@@ -1053,8 +1053,10 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         public void SetWaypoints(List<Vector2> newWaypoints, bool networked = true)
         {
             // Waypoints should always have an origin at the current position.
-            // Can't set waypoints if we can't move. Dashes are also excluded as their paths should be set before being applied.
-            if (newWaypoints.Count <= 1 || newWaypoints[0] != Position || !CanMove())
+            // Dashes are excluded as their paths should be set before being applied.
+            // TODO: Find out the specific cases where we shouldn't be able to set our waypoints. Perhaps CC?
+            // Setting waypoints during auto attacks is allowed.
+            if (newWaypoints.Count <= 1 || newWaypoints[0] != Position/* || !CanMove()*/)
             {
                 return;
             }
@@ -1595,7 +1597,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// TODO: Implement Dash class which houses these parameters, then have that as the only parameter to this function (and other Dash-based functions).
         public void DashToLocation(Vector2 endPos, float dashSpeed, string animation = "", float leapGravity = 0.0f, bool keepFacingLastDirection = true)
         {
-            var newCoords = _game.Map.NavigationGrid.GetClosestTerrainExit(endPos, CollisionRadius + 1.0f);
+            var newCoords = _game.Map.NavigationGrid.GetClosestTerrainExit(endPos, PathfindingRadius + 1.0f);
 
             // False because we don't want this to be networked as a normal movement.
             SetWaypoints(new List<Vector2> { Position, newCoords }, false);

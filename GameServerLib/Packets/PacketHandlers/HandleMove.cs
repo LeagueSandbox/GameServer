@@ -27,7 +27,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
         {
             var peerInfo = _playerManager.GetPeerInfo(userId);
             var champion = peerInfo?.Champion;
-            if (peerInfo == null || !champion.CanMove())
+            if (peerInfo == null)
             {
                 return true;
             }
@@ -50,8 +50,8 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                 {
                     Vector2 exit = nav.GetClosestTerrainExit(translatedWaypoints[lastindex]);
 
-                    // prevent player pathing within their collision radius
-                    if (Vector2.DistanceSquared(champion.Position, exit) < (champion.CollisionRadius * champion.CollisionRadius))
+                    // prevent player pathing within their pathing radius
+                    if (Vector2.DistanceSquared(champion.Position, exit) < (champion.PathfindingRadius * champion.PathfindingRadius))
                     {
                         return true;
                     }
@@ -69,7 +69,6 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                 case OrderType.AttackTo:
                     translatedWaypoints[0] = champion.Position;
                     champion.UpdateMoveOrder(OrderType.AttackTo, true);
-                    // TODO: Verify if stopping movement is the correct thing to do.
                     champion.SetWaypoints(translatedWaypoints);
                     break;
                 case OrderType.Stop:

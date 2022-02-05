@@ -87,7 +87,7 @@ namespace LeagueSandbox.GameServer
                     {
                         _game.PacketNotifier.NotifySpawn(turret);
 
-                        new Region(_game, turret.Team, turret.Position, RegionType.Default, turret, turret, true, 800f, true, true, turret.CollisionRadius, lifetime: 25000.0f);
+                        new Region(_game, turret.Team, turret.Position, RegionType.Default, turret, turret, true, 800f, true, true, turret.PathfindingRadius, lifetime: 25000.0f);
 
                         foreach (var item in turret.Inventory)
                         {
