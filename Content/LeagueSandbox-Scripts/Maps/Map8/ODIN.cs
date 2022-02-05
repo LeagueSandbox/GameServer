@@ -250,8 +250,9 @@ namespace MapScripts.Map8
         {
             for (int i = 0; i < _map.InfoPoints.Count; i++)
             {
-                AddPosPerceptionBubble(new Vector2(_map.InfoPoints[i].CentralPoint.X, _map.InfoPoints[i].CentralPoint.Z), 800.0f, 25000.0f, TeamId.TEAM_BLUE, true, collisionArea: 120.0f);
-                InfoPoints.Add(_map.CreateMinion("OdinNeutralGuardian", "OdinNeutralGuardian", new Vector2(_map.InfoPoints[i].CentralPoint.X, _map.InfoPoints[i].CentralPoint.Z), ignoreCollision: true));
+                var point = _map.CreateMinion("OdinNeutralGuardian", "OdinNeutralGuardian", new Vector2(_map.InfoPoints[i].CentralPoint.X, _map.InfoPoints[i].CentralPoint.Z), ignoreCollision: true);
+                InfoPoints.Add(point);
+                AddUnitPerceptionBubble(point, 800.0f, 25000.0f, TeamId.TEAM_BLUE, true, collisionArea: 120.0f, collisionOwner: point);
                 InfoPoints[i].PauseAi(true);
             }
 

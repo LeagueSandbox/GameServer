@@ -81,7 +81,13 @@ namespace LeagueSandbox.GameServer.GameObjects
             if (visionTarget != null)
             {
                 VisionBindNetID = visionTarget.NetId;
+
+                if (Team != visionTarget.Team)
+                {
+                    Team = visionTarget.Team;
+                }
             }
+
             Lifetime = lifetime;
             GrassRadius = grassRadius;
             Scale = scale;

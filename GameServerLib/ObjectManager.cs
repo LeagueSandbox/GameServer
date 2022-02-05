@@ -185,7 +185,6 @@ namespace LeagueSandbox.GameServer
             //2. Ezreal R is globally visible, and is server only
             //3. Every other projectile that is not server only, and is affected by visibility checks (normal projectiles)
 
-            // Only if the particle is affected by vision.
             IParticle particle = null;
             IAttackableUnit u = null;
             if (
@@ -316,8 +315,10 @@ namespace LeagueSandbox.GameServer
             {
                 foreach (var kv in _objects)
                 {
-                    if (kv.Value.Team == team && Vector2.DistanceSquared(kv.Value.Position, o.Position) < kv.Value.VisionRadius * kv.Value.VisionRadius &&
-                        !_game.Map.NavigationGrid.IsAnythingBetween(kv.Value, o, true))
+                    // NEUTRAL Regions give global vision.
+                    if ((kv.Value.Team == team) || (kv.Value is IRegion region && region.Team == TeamId.TEAM_NEUTRAL)
+                        && Vector2.DistanceSquared(kv.Value.Position, o.Position) < kv.Value.VisionRadius * kv.Value.VisionRadius
+                        && !_game.Map.NavigationGrid.IsAnythingBetween(kv.Value, o, true))
                     {
                         var unit = kv.Value as IAttackableUnit;
                         if (unit == null || !unit.IsDead)
