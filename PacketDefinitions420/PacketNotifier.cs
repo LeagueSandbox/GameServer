@@ -965,16 +965,25 @@ namespace PacketDefinitions420
 
             if (userId == 0)
             {
+                // Broadcast only to specific team.
                 if (particle.SpecificTeam != TeamId.TEAM_NEUTRAL)
                 {
                     _packetHandlerManager.BroadcastPacketTeam(particle.SpecificTeam, fxPacket.GetBytes(), Channel.CHL_S2C);
+
                     return;
                 }
-
-                if (particle.VisionAffected)
+                // Broadcast to particle team, and only to opposite team if visible.
+                else if (particle.Team != TeamId.TEAM_NEUTRAL)
                 {
-                    _packetHandlerManager.BroadcastPacketVision(particle, fxPacket.GetBytes(), Channel.CHL_S2C);
+                    _packetHandlerManager.BroadcastPacketTeam(particle.Team, fxPacket.GetBytes(), Channel.CHL_S2C);
+
+                    var oppTeam = particle.Team.GetEnemyTeam();
+                    if (particle.IsVisibleByTeam(oppTeam))
+                    {
+                        _packetHandlerManager.BroadcastPacketTeam(oppTeam, fxPacket.GetBytes(), Channel.CHL_S2C);
+                    }
                 }
+                // Broadcast to all teams.
                 else
                 {
                     _packetHandlerManager.BroadcastPacket(fxPacket.GetBytes(), Channel.CHL_S2C);

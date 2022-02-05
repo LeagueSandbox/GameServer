@@ -41,8 +41,8 @@ namespace Buffs
                 AddBuff("ResistantSkinDragon", 25000f, 1, null, InvisibleMinion, obj, false);
             }
 
-            buffParticle = AddParticleTarget(unit, unit, "TT_Heal_Rune", unit, -1f, reqVision: false);
-            buffParticle2 = AddParticleTarget(unit, unit, "TT_Heal_RuneWell", unit, -1f, reqVision: false);
+            buffParticle = AddParticleTarget(unit, unit, "TT_Heal_Rune", unit, -1f);
+            buffParticle2 = AddParticleTarget(unit, unit, "TT_Heal_RuneWell", unit, -1f);
 
             setToKill = false;
         }

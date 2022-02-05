@@ -189,19 +189,22 @@ namespace LeagueSandbox.GameServer
             IParticle particle = null;
             IAttackableUnit u = null;
             if (
-                ((particle = obj as IParticle) != null && particle.VisionAffected)
+                ((particle = obj as IParticle) != null)
                 || ((u = obj as IAttackableUnit) != null)
             ) {
                 foreach (var team in Teams)
                 {
                     if (
-                        // Only remove or re-send the particle to the specified team.
-                        (particle != null && (particle.SpecificTeam == TeamId.TEAM_NEUTRAL || particle.SpecificTeam == team))
+                        (particle != null)
                         || (u != null && u.Team != team)
                     ) {
-                        bool alwaysVisible = u is IBaseTurret || u is ILevelProp || u is IObjBuilding;
+                        bool alwaysVisible = u is IBaseTurret || u is ILevelProp || u is IObjBuilding
+                            || (particle != null && particle.SpecificTeam == TeamId.TEAM_NEUTRAL && particle.Team == TeamId.TEAM_NEUTRAL);
                         bool teamHasVision = alwaysVisible || (
                             (u == null || !u.IsDead) && TeamHasVisionOn(team, obj)
+                            // Particle team is used if specific team is neutral.
+                            || (particle != null && (particle.SpecificTeam == team
+                            || (particle.SpecificTeam == TeamId.TEAM_NEUTRAL && particle.Team == team)))
                         );
                         if (obj.IsVisibleByTeam(team) != teamHasVision)
                         {
