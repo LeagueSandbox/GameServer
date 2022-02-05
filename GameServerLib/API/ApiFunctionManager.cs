@@ -416,7 +416,8 @@ namespace LeagueSandbox.GameServer.API
             TeamId team = TeamId.TEAM_NEUTRAL,
             bool revealStealthed = false,
             IAttackableUnit revealSpecificUnitOnly = null,
-            float collisionArea = 0f
+            float collisionArea = 0f,
+            IGameObject collisionOwner = null
         )
         {
             var useCollision = false;
@@ -426,7 +427,7 @@ namespace LeagueSandbox.GameServer.API
             }
 
             // TODO: Implement revealSpecificUnitOnly
-            return new Region(_game, team, position, giveVision: true, visionRadius: radius, revealStealth: revealStealthed, hasCollision: useCollision, collisionRadius: collisionArea, lifetime: duration);
+            return new Region(_game, team, position, collisionUnit: collisionOwner, giveVision: true, visionRadius: radius, revealStealth: revealStealthed, hasCollision: useCollision, collisionRadius: collisionArea, lifetime: duration);
         }
 
         /// <summary>
@@ -449,7 +450,8 @@ namespace LeagueSandbox.GameServer.API
             TeamId team = TeamId.TEAM_NEUTRAL,
             bool revealStealthed = false,
             IAttackableUnit revealSpecificUnitOnly = null,
-            float collisionArea = 0f
+            float collisionArea = 0f,
+            IGameObject collisionOwner = null
         )
         {
             var useCollision = false;
@@ -459,7 +461,7 @@ namespace LeagueSandbox.GameServer.API
             }
 
             // TODO: Implement revealSpecificUnitOnly
-            return new Region(_game, team, target.Position, visionTarget: target, giveVision: true, visionRadius: radius, revealStealth: revealStealthed, hasCollision: useCollision, collisionRadius: collisionArea, lifetime: duration);
+            return new Region(_game, team, target.Position, collisionUnit: collisionOwner, visionTarget: target, giveVision: true, visionRadius: radius, revealStealth: revealStealthed, hasCollision: useCollision, collisionRadius: collisionArea, lifetime: duration);
         }
 
         /// <summary>

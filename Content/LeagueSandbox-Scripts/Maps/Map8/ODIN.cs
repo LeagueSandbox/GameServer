@@ -335,8 +335,8 @@ namespace MapScripts.Map8
                                 crystalTemplate.NetId, crystalTemplate.Team, crystalTemplate.SkinId,
                                 crystalTemplate.IgnoresCollision, crystalTemplate.IsTargetable);
 
-                        AddUnitPerceptionBubble(crystal, 350.0f, 25000.0f, TeamId.TEAM_BLUE, collisionArea: 38.08f);
-                        AddUnitPerceptionBubble(crystal, 350.0f, 25000.0f, TeamId.TEAM_PURPLE, collisionArea: 38.08f);
+                        AddUnitPerceptionBubble(crystal, 350.0f, 25000.0f, TeamId.TEAM_BLUE, collisionArea: 38.08f, collisionOwner: crystal);
+                        AddUnitPerceptionBubble(crystal, 350.0f, 25000.0f, TeamId.TEAM_PURPLE, collisionArea: 38.08f, collisionOwner: crystal);
 
                         ApiEventManager.OnDeath.AddListener(crystal, crystal, OnCrystalDeath, true);
 
