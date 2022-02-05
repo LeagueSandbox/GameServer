@@ -316,7 +316,7 @@ namespace LeagueSandbox.GameServer
                 foreach (var kv in _objects)
                 {
                     // NEUTRAL Regions give global vision.
-                    if ((kv.Value.Team == team) || (kv.Value is IRegion region && region.Team == TeamId.TEAM_NEUTRAL)
+                    if (((kv.Value.Team == team) || (kv.Value is IRegion region && region.Team == TeamId.TEAM_NEUTRAL))
                         && Vector2.DistanceSquared(kv.Value.Position, o.Position) < kv.Value.VisionRadius * kv.Value.VisionRadius
                         && !_game.Map.NavigationGrid.IsAnythingBetween(kv.Value, o, true))
                     {
