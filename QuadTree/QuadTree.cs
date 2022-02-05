@@ -130,6 +130,17 @@ namespace System.Activities.Presentation.View
         }
  
         /// <summary>
+        /// Get a list of the nodes within the specified range of a target position.
+        /// </summary>
+        /// <param name="position">Vector2 position to check.</param>
+        /// <param name="range">Distance to check.</param>
+        /// <returns>List of zero or mode nodes found inside the given bounds</returns>
+        public IEnumerable<T> GetNodesInside(Vector2 position, float range)
+        {
+            return GetNodesInside(new Circle(position, range));
+        }
+
+        /// <summary>
         /// Get a list of the nodes that intersect the given bounds.
         /// </summary>
         /// <param name="bounds">The bounds to test</param>
@@ -155,26 +166,6 @@ namespace System.Activities.Presentation.View
                 this.root.GetIntersectingNodes(result, bounds);
             }
             return result;
-        }
- 
-        /// <summary>
-        /// Remove the given node from this QuadTree.
-        /// </summary>
-        /// <param name="node">The node to remove</param>
-        /// <returns>True if the node was found and removed.</returns>
-        public bool Remove(T node)
-        {
-            if (this.table != null)
-            {
-                Quadrant parent = null;
-                if (this.table.TryGetValue(node, out parent))
-                {
-                    parent.RemoveNode(node);
-                    this.table.Remove(node);
-                    return true;
-                }
-            }
-            return false;
         }
 
         public void Clear()
@@ -444,40 +435,6 @@ namespace System.Activities.Presentation.View
                         }
                     } while (n != last);
                 }
-            }
- 
-            /// <summary>
-            /// Remove the given node from this Quadrant.
-            /// </summary>
-            /// <param name="node">The node to remove</param>
-            /// <returns>Returns true if the node was found and removed.</returns>
-            internal bool RemoveNode(T node)
-            {
-                bool rc = false;
-                if (this.nodes != null)
-                {
-                    QuadNode p = this.nodes;
-                    while (p.Next.Node != node && p.Next != this.nodes)
-                    {
-                        p = p.Next;
-                    }
-                    if (p.Next.Node == node)
-                    {
-                        rc = true;
-                        QuadNode n = p.Next;
-                        if (p == n)
-                        {
-                            // list goes to empty
-                            this.nodes = null;
-                        }
-                        else
-                        {
-                            if (this.nodes == n) this.nodes = p;
-                            p.Next = n.Next;
-                        }
-                    }
-                }
-                return rc;
             }
         }
     }
