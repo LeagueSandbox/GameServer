@@ -92,7 +92,7 @@ namespace LeagueSandbox.GameServer.GameObjects
         /// <param name="teamOnly">The only team that should be able to see this particle.</param>
         /// <param name="flags">Flags which determine how the particle behaves. Refer to FXFlags enum.</param>
         public Particle(Game game, IGameObject caster, IGameObject bindObj, IGameObject target, string particleName, float scale = 1.0f, string boneName = "", string targetBoneName = "", uint netId = 0, Vector3 direction = new Vector3(), bool followGroundTilt = false, float lifetime = 0, TeamId teamOnly = TeamId.TEAM_NEUTRAL, IGameObject unitOnly = null, FXFlags flags = FXFlags.GivenDirection)
-               : base(game, target.Position, 0, 0, netId, teamOnly)
+               : base(game, target.Position, 0, 0, 0, netId, teamOnly)
         {
             Caster = caster;
             BindObject = bindObj;
@@ -148,7 +148,7 @@ namespace LeagueSandbox.GameServer.GameObjects
         /// <param name="teamOnly">The only team that should be able to see this particle.</param>
         /// <param name="flags">Flags which determine how the particle behaves. Refer to FXFlags enum.</param>
         public Particle(Game game, IGameObject caster, IGameObject bindObj, Vector2 targetPos, string particleName, float scale = 1.0f, string boneName = "", string targetBoneName = "", uint netId = 0, Vector3 direction = new Vector3(), bool followGroundTilt = false, float lifetime = 0, TeamId teamOnly = TeamId.TEAM_NEUTRAL, IGameObject unitOnly = null, FXFlags flags = FXFlags.GivenDirection)
-               : base(game, targetPos, 0, 0, netId, teamOnly)
+               : base(game, targetPos, 0, 0, 0, netId, teamOnly)
         {
             Caster = caster;
 
@@ -210,7 +210,7 @@ namespace LeagueSandbox.GameServer.GameObjects
         /// <param name="teamOnly">The only team that should be able to see this particle.</param>
         /// <param name="flags">Flags which determine how the particle behaves. Refer to FXFlags enum.</param>
         public Particle(Game game, IGameObject caster, Vector2 startPos, Vector2 endPos, string particleName, float scale = 1.0f, string boneName = "", string targetBoneName = "", uint netId = 0, Vector3 direction = new Vector3(), bool followGroundTilt = false, float lifetime = 0, TeamId teamOnly = TeamId.TEAM_NEUTRAL, IGameObject unitOnly = null, FXFlags flags = FXFlags.GivenDirection)
-               : base(game, startPos, 0, 0, netId, teamOnly)
+               : base(game, startPos, 0, 0, 0, netId, teamOnly)
         {
             Caster = caster;
 
