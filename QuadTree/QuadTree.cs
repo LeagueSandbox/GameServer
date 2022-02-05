@@ -29,6 +29,7 @@ namespace System.Activities.Presentation.View
             Radius = radius;
         }
 
+        // For insertion
         public bool ContainedBy(Rect rect)
         {
             return (
@@ -37,6 +38,15 @@ namespace System.Activities.Presentation.View
                 rect.Left+rect.Width >= (Position.X + Radius) &&
                 rect.Top+rect.Height >= (Position.X + Radius)
             );
+        }
+        // The rest is for query 
+        public bool Contains(Rect rect)
+        {
+            // The distance to the furthest corner is less than the radius 
+            return new Vector2(
+                Math.Max(Math.Abs(Position.X - rect.Left), Math.Abs(Position.X - (rect.Left+rect.Width))),
+                Math.Max(Math.Abs(Position.Y - rect.Top), Math.Abs(Position.Y - (rect.Top+rect.Height)))
+            ).LengthSquared() < (Radius * Radius);
         }
 
         // https://stackoverflow.com/questions/401847/circle-rectangle-collision-detection-intersection/1879223#1879223
@@ -82,16 +92,6 @@ namespace System.Activities.Presentation.View
         Rect bounds; // overall bounds we are indexing.
         Quadrant root;
         IDictionary<T, Quadrant> table;
-
-        /// <summary>
-        /// This determines the overall quad-tree indexing strategy, changing this bounds
-        /// is expensive since it has to re-divide the entire thing - like a re-hash operation.
-        /// </summary>
-        public Rect Bounds
-        {
-            get { return this.bounds; }
-            set { this.bounds = value; /*ReIndex();*/ }
-        }
  
         public QuadTree(float top, float left, float width, float height)
         {
@@ -171,6 +171,7 @@ namespace System.Activities.Presentation.View
         public void Clear()
         {
             this.root = null;
+            table.Clear();
         }
  
         /// <summary>
@@ -178,9 +179,9 @@ namespace System.Activities.Presentation.View
         /// </summary>
         internal class QuadNode
         {
-            Circle bounds;
-            QuadNode next; // linked in a circular list.
-            T node; // the actual visual object being stored here.
+            public Circle Bounds;
+            public QuadNode Next; // linked in a circular list.
+            public T Node; // the actual visual object being stored here.
  
             /// <summary>
             /// Construct new QuadNode to wrap the given node with given bounds
@@ -189,34 +190,8 @@ namespace System.Activities.Presentation.View
             /// <param name="bounds">The bounds of that node</param>
             public QuadNode(T node, Circle bounds)
             {
-                this.node = node;
-                this.bounds = bounds;
-            }
- 
-            /// <summary>
-            /// The node
-            /// </summary>
-            public T Node
-            {
-                get { return this.node; }
-                set { this.node = value; }
-            }
- 
-            /// <summary>
-            /// The Rect bounds of the node
-            /// </summary>
-            public Circle Bounds
-            {
-                get { return this.bounds; }
-            }
- 
-            /// <summary>
-            /// QuadNodes form a linked list in the Quadrant.
-            /// </summary>
-            public QuadNode Next
-            {
-                get { return this.next; }
-                set { this.next = value; }
+                Node = node;
+                Bounds = bounds;
             }
         }
  
@@ -256,22 +231,6 @@ namespace System.Activities.Presentation.View
                     throw new ArgumentException("Bounds must be non zero");
                 }
                 this.bounds = bounds;
-            }
- 
-            /// <summary>
-            /// The parent Quadrant or null if this is the root
-            /// </summary>
-            internal Quadrant Parent
-            {
-                get { return this.parent; }
-            }
- 
-            /// <summary>
-            /// The bounds of this quadrant
-            /// </summary>
-            internal Rect Bounds
-            {
-                get { return this.bounds; }
             }
  
             /// <summary>
@@ -377,41 +336,38 @@ namespace System.Activities.Presentation.View
             /// </summary>
             /// <param name="nodes">List of nodes found in the given bounds</param>
             /// <param name="bounds">The bounds that contains the nodes you want returned</param>
-            internal void GetIntersectingNodes(List<QuadNode> nodes, Circle bounds)
+            internal void GetIntersectingNodes(List<QuadNode> nodes, Circle bounds, bool doNotCheck = false)
             {
+
+                doNotCheck = doNotCheck || bounds.Contains(this.bounds);
+
                 float w = this.bounds.Width / 2;
                 float h = this.bounds.Height / 2;
  
-                // assumption that the Rect struct is almost as fast as doing the operations
-                // manually since Rect is a value type.
- 
-                Rect topLeft = new Rect(this.bounds.Left, this.bounds.Top, w, h);
-                Rect topRight = new Rect(this.bounds.Left + w, this.bounds.Top, w, h);
-                Rect bottomLeft = new Rect(this.bounds.Left, this.bounds.Top + h, w, h);
-                Rect bottomRight = new Rect(this.bounds.Left + w, this.bounds.Top + h, w, h);
+                // assumption that the Rect struct is almost as fast as doing the operations manually since Rect is a value type.
  
                 // See if any child quadrants completely contain this node.
-                if (bounds.IntersectsWith(topLeft) && this.topLeft != null)
+                if ((doNotCheck || bounds.IntersectsWith(new Rect(this.bounds.Left, this.bounds.Top, w, h))) && this.topLeft != null)
                 {
-                    this.topLeft.GetIntersectingNodes(nodes, bounds);
+                    this.topLeft.GetIntersectingNodes(nodes, bounds, doNotCheck);
                 }
  
-                if (bounds.IntersectsWith(topRight) && this.topRight != null)
+                if ((doNotCheck || bounds.IntersectsWith(new Rect(this.bounds.Left + w, this.bounds.Top, w, h))) && this.topRight != null)
                 {
-                    this.topRight.GetIntersectingNodes(nodes, bounds);
+                    this.topRight.GetIntersectingNodes(nodes, bounds, doNotCheck);
                 }
  
-                if (bounds.IntersectsWith(bottomLeft) && this.bottomLeft != null)
+                if ((doNotCheck || bounds.IntersectsWith(new Rect(this.bounds.Left, this.bounds.Top + h, w, h))) && this.bottomLeft != null)
                 {
-                    this.bottomLeft.GetIntersectingNodes(nodes, bounds);
+                    this.bottomLeft.GetIntersectingNodes(nodes, bounds, doNotCheck);
                 }
  
-                if (bounds.IntersectsWith(bottomRight) && this.bottomRight != null)
+                if ((doNotCheck || bounds.IntersectsWith(new Rect(this.bounds.Left + w, this.bounds.Top + h, w, h))) && this.bottomRight != null)
                 {
-                    this.bottomRight.GetIntersectingNodes(nodes, bounds);
+                    this.bottomRight.GetIntersectingNodes(nodes, bounds, doNotCheck);
                 }
  
-                GetIntersectingNodes(this.nodes, nodes, bounds);
+                GetIntersectingNodes(this.nodes, nodes, bounds, doNotCheck);
             }
  
             /// <summary>
@@ -421,7 +377,7 @@ namespace System.Activities.Presentation.View
             /// <param name="last">The last QuadNode in a circularly linked list</param>
             /// <param name="nodes">The resulting nodes are added to this list</param>
             /// <param name="bounds">The bounds to test against each node</param>
-            static void GetIntersectingNodes(QuadNode last, List<QuadNode> nodes, Circle bounds)
+            static void GetIntersectingNodes(QuadNode last, List<QuadNode> nodes, Circle bounds, bool doNotCheck = false)
             {
                 if (last != null)
                 {
@@ -429,7 +385,7 @@ namespace System.Activities.Presentation.View
                     do
                     {
                         n = n.Next; // first node.
-                        if (n.Bounds.IntersectsWith(bounds))
+                        if (doNotCheck || n.Bounds.IntersectsWith(bounds))
                         {
                             nodes.Add(n);
                         }
