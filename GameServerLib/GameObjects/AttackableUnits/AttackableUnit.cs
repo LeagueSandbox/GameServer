@@ -512,16 +512,14 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                     _game.Config.IsDamageTextGlobal, attackerId, targetId);
             }
 
-            // TODO: send this in one place only
-            _game.PacketNotifier.NotifyUpdatedStats(this, false);
-
             // Get health from lifesteal/spellvamp
             if (regain > 0)
             {
-                attackerStats.CurrentHealth = Math.Min(attackerStats.HealthPoints.Total,
-                    attackerStats.CurrentHealth + regain * postMitigationDamage);
-                // TODO: send this in one place only (preferably a central EventHandler class)
-                _game.PacketNotifier.NotifyUpdatedStats(attacker, false);
+                attackerStats.CurrentHealth = Math.Min
+                (
+                    attackerStats.HealthPoints.Total,
+                    attackerStats.CurrentHealth + regain * postMitigationDamage
+                );
             }
         }
 
@@ -644,16 +642,14 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                     _game.Config.IsDamageTextGlobal, attackerId, targetId);
             }
 
-            // TODO: send this in one place only
-            _game.PacketNotifier.NotifyUpdatedStats(this, false);
-
             // Get health from lifesteal/spellvamp
             if (regain > 0)
             {
-                attackerStats.CurrentHealth = Math.Min(attackerStats.HealthPoints.Total,
-                    attackerStats.CurrentHealth + regain * postMitigationDamage);
-                // TODO: send this in one place only (preferably a central EventHandler class)
-                _game.PacketNotifier.NotifyUpdatedStats(attacker, false);
+                attackerStats.CurrentHealth = Math.Min
+                (
+                    attackerStats.HealthPoints.Total,
+                    attackerStats.CurrentHealth + regain * postMitigationDamage
+                );
             }
         }
 
@@ -952,6 +948,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
 
             Direction = new Vector3(dirTemp.X, 0.0f, dirTemp.Y);
 
+            //TODO: Turns in the direction of travel automatically, no need to call.
             FaceDirection(Direction, false);
 
             var moveSpeed = GetMoveSpeed();

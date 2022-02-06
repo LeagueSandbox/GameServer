@@ -256,12 +256,6 @@ namespace LeagueSandbox.GameServer.GameObjects
         public void SetVisibleByTeam(TeamId team, bool visible)
         {
             _visibleByTeam[team] = visible;
-
-            if (this is IAttackableUnit)
-            {
-                // TODO: send this in one place only
-                _game.PacketNotifier.NotifyUpdatedStats(this as IAttackableUnit, false);
-            }
         }
 
         /// <summary>

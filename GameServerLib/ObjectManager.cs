@@ -72,16 +72,28 @@ namespace LeagueSandbox.GameServer
         /// <param name="diff">Number of milliseconds since this tick occurred.</param>
         public void Update(float diff)
         {
-            var temp = GetObjects();
-            foreach (var obj in temp.Values)
+            // For all existing objects
+            foreach (var obj in GetObjects().Values)
             {
                 if (obj.IsToRemove())
                 {
                     RemoveObject(obj);
-                    continue;
                 }
+                else
+                {
+                    obj.Update(diff);
+                }
+            }
 
-                if (_queuedObjects.ContainsKey(obj.NetId))
+            // For all existing objects and those created during the obj.Update phase
+            foreach(var obj in GetObjects().Values)
+            {
+
+                bool shouldBeSpawned = _queuedObjects.ContainsKey(obj.NetId);
+                
+                UpdateVision(obj, publish: !shouldBeSpawned);
+
+                if(shouldBeSpawned) // spawn
                 {
                     if (obj is ILaneTurret turret)
                     {
@@ -102,70 +114,70 @@ namespace LeagueSandbox.GameServer
                         bool doVis = !(obj is ILevelProp || obj is ISpellMissile);
                         _game.PacketNotifier.NotifySpawn(obj, 0, doVis, _game.GameTime);
                     }
-
+                    
                     _queuedObjects.Remove(obj.NetId);
-                    continue; // Object just created, no need to update
                 }
-
-                obj.Update(diff);
-                
-                UpdateVision(obj);
-
-                // Destroy any missiles which are targeting an untargetable unit.
-                // TODO: Verify if this should apply to SpellSector.
-                if (obj is ISpellMissile m)
+                else // post-Update and sync
                 {
-                    if (m.TargetUnit != null && !m.TargetUnit.Status.HasFlag(StatusFlags.Targetable))
+                    // Destroy any missiles which are targeting an untargetable unit.
+                    // TODO: Verify if this should apply to SpellSector.
+                    if (obj is ISpellMissile m)
                     {
-                        m.SetToRemove();
-                    }
-                }
-
-                else if (obj is IAttackableUnit u)
-                {
-                    if (u is IObjAiBase ai)
-                    {
-                        var tempBuffs = new List<IBuff>(ai.GetBuffs());
-                        for (int i = tempBuffs.Count - 1; i >= 0; i--)
+                        if (m.TargetUnit != null && !m.TargetUnit.Status.HasFlag(StatusFlags.Targetable))
                         {
-                            if (tempBuffs[i].Elapsed())
-                            {
-                                ai.RemoveBuff(tempBuffs[i]);
-                            }
-                            else
-                            {
-                                tempBuffs[i].Update(diff);
-                            }
-                        }
-
-                        // Stop targeting an untargetable unit.
-                        if (ai.TargetUnit != null && !ai.TargetUnit.Status.HasFlag(StatusFlags.Targetable))
-                        {
-                            StopTargeting(ai.TargetUnit);
+                            m.SetToRemove();
                         }
                     }
 
-                    _game.PacketNotifier.NotifyUpdatedStats(u, false);
-
-                    if (u.IsModelUpdated)
+                    else if (obj is IAttackableUnit u)
                     {
-                        _game.PacketNotifier.NotifyS2C_ChangeCharacterData(u);
-                        u.IsModelUpdated = false;
-                    }
+                        if (u is IObjAiBase ai)
+                        {
+                            var tempBuffs = new List<IBuff>(ai.GetBuffs());
+                            for (int i = tempBuffs.Count - 1; i >= 0; i--)
+                            {
+                                if (tempBuffs[i].Elapsed())
+                                {
+                                    ai.RemoveBuff(tempBuffs[i]);
+                                }
+                                else
+                                {
+                                    tempBuffs[i].Update(diff);
+                                }
+                            }
 
-                    if (u.IsMovementUpdated())
-                    {
-                        // TODO: Verify which one we want to use. WaypointList does not require conversions, however WaypointGroup does (and it has TeleportID functionality).
-                        //_game.PacketNotifier.NotifyWaypointList(u);
-                        // TODO: Verify if we want to use TeleportID.
-                        _game.PacketNotifier.NotifyWaypointGroup(u, false);
-                        u.ClearMovementUpdated();
+                            // Stop targeting an untargetable unit.
+                            if (ai.TargetUnit != null && !ai.TargetUnit.Status.HasFlag(StatusFlags.Targetable))
+                            {
+                                StopTargeting(ai.TargetUnit);
+                            }
+                        }
+
+                        if(u.Replication.Changed)
+                        {
+                            _game.PacketNotifier.NotifyUpdatedStats(u, true);
+                        }
+
+                        if (u.IsModelUpdated)
+                        {
+                            _game.PacketNotifier.NotifyS2C_ChangeCharacterData(u);
+                            u.IsModelUpdated = false;
+                        }
+
+                        if (u.IsMovementUpdated())
+                        {
+                            // TODO: Verify which one we want to use. WaypointList does not require conversions, however WaypointGroup does (and it has TeleportID functionality).
+                            //_game.PacketNotifier.NotifyWaypointList(u);
+                            // TODO: Verify if we want to use TeleportID.
+                            _game.PacketNotifier.NotifyWaypointGroup(u, false);
+                            u.ClearMovementUpdated();
+                        }
                     }
                 }
             }
         }
 
-        void UpdateVision(IGameObject obj)
+        void UpdateVision(IGameObject obj, bool publish = false)
         {
             //TODO: Implement visibility checks for projectiles here (should be similar to particles below)
             //Make sure to account for server only projectiles, globally visible (everyone sees it) projectiles, and normal projectiles:
@@ -173,27 +185,33 @@ namespace LeagueSandbox.GameServer
             //2. Ezreal R is globally visible, and is server only
             //3. Every other projectile that is not server only, and is affected by visibility checks (normal projectiles)
 
-            // Only if the particle is affected by vision.
             IParticle particle = null;
             IAttackableUnit u = null;
             if (
-                ((particle = obj as IParticle) != null && particle.VisionAffected)
+                ((particle = obj as IParticle) != null)
                 || ((u = obj as IAttackableUnit) != null)
             ) {
                 foreach (var team in Teams)
                 {
                     if (
-                        // Only remove or re-send the particle to the specified team.
-                        (particle != null && (particle.SpecificTeam == TeamId.TEAM_NEUTRAL || particle.SpecificTeam == team))
+                        (particle != null)
                         || (u != null && u.Team != team)
                     ) {
-                        bool teamHasVision = (u == null || !u.IsDead) && TeamHasVisionOn(team, obj);
-                        bool alwaysVisible = u is IBaseTurret || u is ILevelProp || u is IObjBuilding;
-                        bool isVisibleByTeam = alwaysVisible || obj.IsVisibleByTeam(team);
-                        if (isVisibleByTeam != teamHasVision)
+                        bool alwaysVisible = u is IBaseTurret || u is ILevelProp || u is IObjBuilding
+                            || (particle != null && particle.SpecificTeam == TeamId.TEAM_NEUTRAL && particle.Team == TeamId.TEAM_NEUTRAL);
+                        bool teamHasVision = alwaysVisible || (
+                            (u == null || !u.IsDead) && TeamHasVisionOn(team, obj)
+                            // Particle team is used if specific team is neutral.
+                            || (particle != null && (particle.SpecificTeam == team
+                            || (particle.SpecificTeam == TeamId.TEAM_NEUTRAL && particle.Team == team)))
+                        );
+                        if (obj.IsVisibleByTeam(team) != teamHasVision)
                         {
                             obj.SetVisibleByTeam(team, teamHasVision);
-                            _game.PacketNotifier.NotifyVisibilityChange(obj, team, teamHasVision);
+                            if(publish)
+                            {
+                                _game.PacketNotifier.NotifyVisibilityChange(obj, team, teamHasVision);
+                            }
                         }
                     }
                 }
@@ -215,7 +233,7 @@ namespace LeagueSandbox.GameServer
             lock (_objectsLock)
             {
                 _objects.Add(o.NetId, o);
-                if (!(o is IChampion || o is IParticle))
+                if (!(o is IChampion))
                 {
                     _queuedObjects.Add(o.NetId, o);
                 }
@@ -297,8 +315,10 @@ namespace LeagueSandbox.GameServer
             {
                 foreach (var kv in _objects)
                 {
-                    if (kv.Value.Team == team && Vector2.DistanceSquared(kv.Value.Position, o.Position) < kv.Value.VisionRadius * kv.Value.VisionRadius &&
-                        !_game.Map.NavigationGrid.IsAnythingBetween(kv.Value, o, true))
+                    // NEUTRAL Regions give global vision.
+                    if (((kv.Value.Team == team) || (kv.Value is IRegion region && region.Team == TeamId.TEAM_NEUTRAL))
+                        && Vector2.DistanceSquared(kv.Value.Position, o.Position) < kv.Value.VisionRadius * kv.Value.VisionRadius
+                        && !_game.Map.NavigationGrid.IsAnythingBetween(kv.Value, o, true))
                     {
                         var unit = kv.Value as IAttackableUnit;
                         if (unit == null || !unit.IsDead)

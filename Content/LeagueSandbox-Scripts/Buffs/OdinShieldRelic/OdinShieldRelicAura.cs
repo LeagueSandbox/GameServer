@@ -32,7 +32,7 @@ namespace Buffs
             buff.SetStatusEffect(StatusFlags.ForceRenderParticles, true);
             buff.SetStatusEffect(StatusFlags.NoRender, true);
 
-            buffParticle = AddParticleTarget(unit, unit, "odin_heal_rune", unit, -1f, reqVision: false);
+            buffParticle = AddParticleTarget(unit, unit, "odin_heal_rune", unit, -1f);
             setToKill = false;
         }
 

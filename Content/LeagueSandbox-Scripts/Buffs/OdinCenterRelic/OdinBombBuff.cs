@@ -39,21 +39,21 @@ namespace Buffs
 
             if (unit.Team == TeamId.TEAM_BLUE)
             {
-                redTeamParticle1=AddParticleTarget(Unit, null, "Odin_Prism_Green", Unit, buff.Duration, reqVision: false, teamOnly: TeamId.TEAM_PURPLE);
-                redTeamParticle2=AddParticleTarget(Unit, null, "Odin_Prism_Ground_Green", Unit, buff.Duration, reqVision: false, teamOnly: TeamId.TEAM_PURPLE);
-                redTeamParticle3=AddParticleTarget(Unit, null, "odin_relic_buf_green", Unit, buff.Duration, reqVision: false, teamOnly: TeamId.TEAM_PURPLE);
-                blueTeamParticle1=AddParticleTarget(Unit, null, "Odin_Prism_Red", Unit, buff.Duration, reqVision: false, teamOnly: TeamId.TEAM_BLUE);
-                blueTeamParticle2=AddParticleTarget(Unit, null, "Odin_Prism_Ground_Red", Unit, buff.Duration, reqVision: false, teamOnly: TeamId.TEAM_BLUE);
-                blueTeamParticle3=AddParticleTarget(Unit, null, "odin_relic_buf_red", Unit, buff.Duration, reqVision: false, teamOnly: TeamId.TEAM_BLUE);
+                redTeamParticle1=AddParticleTarget(Unit, null, "Odin_Prism_Green", Unit, buff.Duration, teamOnly: TeamId.TEAM_PURPLE);
+                redTeamParticle2=AddParticleTarget(Unit, null, "Odin_Prism_Ground_Green", Unit, buff.Duration, teamOnly: TeamId.TEAM_PURPLE);
+                redTeamParticle3=AddParticleTarget(Unit, null, "odin_relic_buf_green", Unit, buff.Duration, teamOnly: TeamId.TEAM_PURPLE);
+                blueTeamParticle1=AddParticleTarget(Unit, null, "Odin_Prism_Red", Unit, buff.Duration, teamOnly: TeamId.TEAM_BLUE);
+                blueTeamParticle2=AddParticleTarget(Unit, null, "Odin_Prism_Ground_Red", Unit, buff.Duration, teamOnly: TeamId.TEAM_BLUE);
+                blueTeamParticle3=AddParticleTarget(Unit, null, "odin_relic_buf_red", Unit, buff.Duration, teamOnly: TeamId.TEAM_BLUE);
             }
             else
             {
-                blueTeamParticle1=AddParticleTarget(Unit, null, "Odin_Prism_Green", Unit, buff.Duration, reqVision: false, teamOnly: TeamId.TEAM_BLUE);
-                blueTeamParticle2=AddParticleTarget(Unit, null, "Odin_Prism_Ground_Green", Unit, buff.Duration, reqVision: false, teamOnly: TeamId.TEAM_BLUE);
-                blueTeamParticle3=AddParticleTarget(Unit, null, "odin_relic_buf_green", Unit, buff.Duration, reqVision: false, teamOnly: TeamId.TEAM_BLUE);
-                redTeamParticle1=AddParticleTarget(Unit, null, "Odin_Prism_Red", Unit, buff.Duration, reqVision: false, teamOnly: TeamId.TEAM_PURPLE);
-                redTeamParticle2=AddParticleTarget(Unit, null, "Odin_Prism_Ground_Red", Unit, buff.Duration, reqVision: false, teamOnly: TeamId.TEAM_PURPLE);
-                redTeamParticle3=AddParticleTarget(Unit, null, "odin_relic_buf_red", Unit, buff.Duration, reqVision: false, teamOnly: TeamId.TEAM_PURPLE);
+                blueTeamParticle1=AddParticleTarget(Unit, null, "Odin_Prism_Green", Unit, buff.Duration, teamOnly: TeamId.TEAM_BLUE);
+                blueTeamParticle2=AddParticleTarget(Unit, null, "Odin_Prism_Ground_Green", Unit, buff.Duration, teamOnly: TeamId.TEAM_BLUE);
+                blueTeamParticle3=AddParticleTarget(Unit, null, "odin_relic_buf_green", Unit, buff.Duration, teamOnly: TeamId.TEAM_BLUE);
+                redTeamParticle1=AddParticleTarget(Unit, null, "Odin_Prism_Red", Unit, buff.Duration, teamOnly: TeamId.TEAM_PURPLE);
+                redTeamParticle2=AddParticleTarget(Unit, null, "Odin_Prism_Ground_Red", Unit, buff.Duration, teamOnly: TeamId.TEAM_PURPLE);
+                redTeamParticle3=AddParticleTarget(Unit, null, "odin_relic_buf_red", Unit, buff.Duration, teamOnly: TeamId.TEAM_PURPLE);
             }
         }
         public void OnDeath(IDeathData deathData)
