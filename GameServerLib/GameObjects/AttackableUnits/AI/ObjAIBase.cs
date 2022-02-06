@@ -440,7 +440,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             {
                 IsAttacking = false;
                 HasMadeInitialAttack = false;
-                SetTargetUnit(null);
             }
             _game.PacketNotifier.NotifyNPC_InstantStop_Attack(this, false);
         }
@@ -783,8 +782,9 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         /// <param name="name">Internal name of the spell to set.</param>
         /// <param name="slot">Slot of the spell to replace.</param>
         /// <param name="enabled">Whether or not the new spell should be enabled.</param>
+        /// <param name="networkOld">Whether or not to notify clients of this change using an older packet method.</param>
         /// <returns>Newly created spell set.</returns>
-        public ISpell SetSpell(string name, byte slot, bool enabled)
+        public ISpell SetSpell(string name, byte slot, bool enabled, bool networkOld = false)
         {
             if (!Spells.ContainsKey(slot) || Spells[slot].CastInfo.IsAutoAttack)
             {
@@ -801,7 +801,12 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             if (this is IChampion champion)
             {
                 int userId = (int)_game.PlayerManager.GetClientInfoByChampion(champion).PlayerId;
-                _game.PacketNotifier.NotifyS2C_SetSpellData(userId, NetId, name, slot);
+                // TODO: Verify if this is all that is needed.
+                _game.PacketNotifier.NotifyChangeSlotSpellData(userId, champion, slot, ChangeSlotSpellDataType.SpellName, slot == 4 || slot == 5, newName: name);
+                if (networkOld)
+                {
+                    _game.PacketNotifier.NotifyS2C_SetSpellData(userId, NetId, name, slot);
+                }
             }
 
             return newSpell;
@@ -952,7 +957,9 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             {
                 AIScript.OnUpdate(diff);
             }
-            foreach (var s in Spells.Values)
+
+            // bit of a hack
+            foreach (var s in new List<ISpell>(Spells.Values))
             {
                 s.Update(diff);
             }
@@ -1009,6 +1016,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 if (TargetUnit != null)
                 {
                     CancelAutoAttack(true, true);
+                    SetTargetUnit(null, true);
                 }
                 return;
             }
@@ -1017,6 +1025,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 if (IsAttacking && !AutoAttackSpell.SpellData.CantCancelWhileWindingUp)
                 {
                     CancelAutoAttack(!HasAutoAttacked, true);
+                    SetTargetUnit(null, true);
                 }
             }
             else if (TargetUnit.IsDead || !TargetUnit.Status.HasFlag(StatusFlags.Targetable) || !TargetUnit.IsVisibleByTeam(Team))
@@ -1024,6 +1033,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 if (IsAttacking)
                 {
                     CancelAutoAttack(!HasAutoAttacked, true);
+                    SetTargetUnit(null, true);
                 }
                 else
                 {

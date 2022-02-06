@@ -278,10 +278,11 @@ namespace AIScripts
             }
             
             LaneMinion.CancelAutoAttack(false, true);
-            
+            LaneMinion.SetTargetUnit(null, true);
+
             //Quote: Find a new valid target in the minion’s acquisition range to attack.
             //Quote: If multiple valid targets, prioritize based on “how hard is it for me to path there?”
-            if(FoundNewTarget())
+            if (FoundNewTarget())
             {
                 return OrderType.AttackTo;
             }

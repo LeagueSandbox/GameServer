@@ -52,6 +52,12 @@ namespace LeagueSandbox.GameServer.Items
         {
             return _inventory.GetItem(itemSpellName);
         }
+
+        public bool HasItemWithID(int ItemID)
+        {
+            return _inventory.HasItemWithID(ItemID);
+        }
+
         public bool RemoveItem(byte slot, IObjAiBase owner = null, int stacksToRemove = 1)
         {
             var item = _inventory.Items[slot];
