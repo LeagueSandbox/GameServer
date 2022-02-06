@@ -41,6 +41,48 @@ namespace CharScripts
 
             if (!owner.IsPathEnded())
             {
+                var baseDistance = 250f;
+
+                // Boots increase speed. Tier 1 = +75, Tier 2 = +60, (speculative) Tier 3 = +45.
+                // Boots increase dash distance. Tier 1 = +15, Tier 2 = +30, (speculative) Tier 3 = +45
+                // TODO: Decrease speed based on percent movespeed mods (that are negative).
+                var speed = 1025f;
+
+                if (owner.Inventory.HasItemWithID(1001))
+                {
+                    speed += 75;
+                    baseDistance += 15f;
+                }
+                else if (owner.Inventory.HasItemWithID(3006)
+                    || owner.Inventory.HasItemWithID(3009)
+                    || owner.Inventory.HasItemWithID(3020)
+                    || owner.Inventory.HasItemWithID(3047)
+                    || owner.Inventory.HasItemWithID(3111)
+                    || owner.Inventory.HasItemWithID(3117)
+                    || owner.Inventory.HasItemWithID(3158))
+                {
+                    speed += 135;
+                    baseDistance += 30f;
+                }
+                else
+                {
+                    var boots = false;
+                    for (int i = 3250; i < 3285; i++)
+                    {
+                        if (owner.Inventory.HasItemWithID(i))
+                        {
+                            boots = true;
+                            break;
+                        }
+                    }
+
+                    if (boots)
+                    {
+                        speed += 180;
+                        baseDistance += 45f;
+                    }
+                }
+
                 StopAnimation(owner, "", false, true, true);
                 owner.SetSpell("KalistaPassiveDashSpellActual", (int)SpellSlotType.ExtraSlots, true);
                 //SpellCast(owner, 0, SpellSlotType.ExtraSlots, dashPos, dashPos, true, Vector2.Zero);
@@ -73,44 +115,8 @@ namespace CharScripts
                     angleMod /= 9;
                 }
 
-                var distance = 250f - (100 * angleMod);
+                var distance = baseDistance - (100 * angleMod);
                 LogDebug("Dashing. finalDir: " + finalDir + " distance: " + distance);
-
-                // TODO: Boots increase speed. Tier 1 = +75, Tier 2 = +60, (speculative) Tier 3 = +45.
-                // Decrease speed based on percent movespeed mods (that are negative).
-                var speed = 1025f;
-
-                if (owner.Inventory.HasItemWithID(1001))
-                {
-                    speed += 75;
-                }
-                else if (owner.Inventory.HasItemWithID(3006)
-                    || owner.Inventory.HasItemWithID(3009)
-                    || owner.Inventory.HasItemWithID(3020)
-                    || owner.Inventory.HasItemWithID(3047)
-                    || owner.Inventory.HasItemWithID(3111)
-                    || owner.Inventory.HasItemWithID(3117)
-                    || owner.Inventory.HasItemWithID(3158))
-                {
-                    speed += 135;
-                }
-                else
-                {
-                    var boots = false;
-                    for (int i = 3250; i < 3285; i++)
-                    {
-                        if (owner.Inventory.HasItemWithID(i))
-                        {
-                            boots = true;
-                            break;
-                        }
-                    }
-
-                    if (boots)
-                    {
-                        speed += 180;
-                    }
-                }
 
                 FaceDirection(dashPos, owner, true);
 
