@@ -16,7 +16,6 @@ namespace MapScripts.Map1
     {
         public virtual IMapScriptMetadata MapScriptMetadata { get; set; } = new MapScriptMetadata
         {
-            SpawnInterval = 0,
             MinionPathingOverride = true,
             EnableBuildingProtection = true
         };
@@ -24,7 +23,7 @@ namespace MapScripts.Map1
         public IMapScriptHandler _map;
         public virtual IGlobalData GlobalData { get; set; } = new GlobalData();
         public bool HasFirstBloodHappened { get; set; } = false;
-        public long NextSpawnTime { get; set; } = 0 * 1000;
+        public long NextSpawnTime { get; set; } = 90 * 1000;
         public string LaneMinionAI { get; set; } = "LaneMinionAI";
         public string LaneTurretAI { get; set; } = "TurretAI";
 

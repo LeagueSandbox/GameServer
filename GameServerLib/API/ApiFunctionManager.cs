@@ -509,7 +509,7 @@ namespace LeagueSandbox.GameServer.API
         /// <param name="targetPos">Origin of the range to check.</param>
         /// <param name="range">Range to check from the target position.</param>
         /// <returns>List of AttackableUnits.</returns>
-        public static IEnumerable<IAttackableUnit> GetUnitsInRange2(Vector2 targetPos, float range, bool isAlive)
+        public static IEnumerable<IAttackableUnit> EnumerateUnitsInRange(Vector2 targetPos, float range, bool isAlive)
         {
             foreach(var obj in _game.Map.CollisionHandler.QuadDynamic.GetNodesInside(targetPos, range))
             {

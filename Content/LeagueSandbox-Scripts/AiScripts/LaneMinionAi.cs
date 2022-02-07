@@ -168,7 +168,7 @@ namespace AIScripts
             }
             else
             {
-                nearestObjects = GetUnitsInRange2(LaneMinion.Position, acquisitionRange, true);
+                nearestObjects = EnumerateUnitsInRange(LaneMinion.Position, acquisitionRange, true);
             }
             foreach (var it in nearestObjects)
             {
@@ -222,7 +222,7 @@ namespace AIScripts
             float radius = LaneMinion.CollisionRadius;
             Vector2 center = LaneMinion.Position;
 
-            var nearestMinions = GetUnitsInRange2(LaneMinion.Position, LaneMinion.Stats.AcquisitionRange.Total, true)
+            var nearestMinions = EnumerateUnitsInRange(LaneMinion.Position, LaneMinion.Stats.AcquisitionRange.Total, true)
                                 .OfType<ILaneMinion>()
                                 .OrderBy(minion => Vector2.DistanceSquared(LaneMinion.Position, minion.Position) - minion.CollisionRadius);
 
