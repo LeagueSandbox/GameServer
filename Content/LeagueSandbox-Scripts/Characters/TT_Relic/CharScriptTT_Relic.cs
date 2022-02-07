@@ -20,7 +20,7 @@ namespace CharScripts
             SetStatus(owner, StatusFlags.SuppressCallForHelp, true);
             SetStatus(owner, StatusFlags.IgnoreCallForHelp, true);
 
-            AddBuff("OdinSpeedShrineAura", 25000.0f, 1, null, owner, owner, false);
+            AddBuff("TT_RelicAura", 25000.0f, 1, null, owner, owner, false);
         }
         public void OnDeactivate(IObjAiBase owner, ISpell spell = null)
         {

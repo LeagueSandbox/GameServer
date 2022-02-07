@@ -86,6 +86,9 @@ namespace GameServerCore.Maps
         /// Loads the Buildings protection system (Note: This can break a lot of maps if turrets types and lanes arent properly setup)
         /// </summary>
         void LoadBuildingProtection();
+        INexus CreateNexus(string name, string model, Vector2 position, TeamId team, int radius, int sightRange);
+        IInhibitor CreateInhibitor(string name, string model, Vector2 position, TeamId team, LaneID lane, int inhibRadius, int sightRange);
+        ILaneTurret CreateTower(string name, string model, Vector2 position, TeamId team, TurretType turretType, LaneID lane, string AiScript = "", uint netId = 0, IMapObject mapObject = null);
         IInhibitor GetInhibitorById(uint id);
         bool AllInhibitorsDestroyedFromTeam(TeamId team);
         bool IsMinionSpawnEnabled();
@@ -131,7 +134,7 @@ namespace GameServerCore.Maps
         /// <param name="model"></param>
         /// <param name="skin"></param>
         /// <param name="NetId"></param>
-        ILevelProp AddLevelProp(string name, string model, Vector2 position, float height, Vector3 direction, Vector3 posOffset, Vector3 scale, int skinId = 0, byte skillLevel = 0, byte rank = 0, byte type = 2, uint netId = 0, byte netNodeId = 64);
+        ILevelProp AddLevelProp(string name, string model, Vector3 position, Vector3 direction, Vector3 posOffset, Vector3 scale, int skinId = 0, byte skillLevel = 0, byte rank = 0, byte type = 2, uint netId = 0, byte netNodeId = 64);
         void NotifyPropAnimation(ILevelProp prop, string animation, AnimationFlags animationFlag, float duration, bool destroyPropAfterAnimation);
         /// <summary>
         /// Sets up the surrender functionality
@@ -172,5 +175,7 @@ namespace GameServerCore.Maps
         /// <param name="disableUI">Whether or not the UI should get disabled</param>
         /// <param name="deathData">DeathData of what triggered the End of the Game, such as necus death</param>
         void EndGame(TeamId losingTeam, Vector3 finalCameraPosition, float endGameTimer = 5000.0f, bool moveCamera = true, float cameraTimer = 3.0f, bool disableUI = true, IDeathData deathData = null);
+        void NotifyScore();
+        void NotifyCapturePointState(IMinion infoPont, uint otherNetId = 0);
     }
 }

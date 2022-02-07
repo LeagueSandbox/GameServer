@@ -9,15 +9,16 @@ using LeagueSandbox.GameServer.Content;
 using GameServerCore.Scripting.CSharp;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using LeagueSandbox.GameServer.API;
+using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 
-namespace MapScripts.Map1
+namespace MapScripts.Map11
 {
     public class CLASSIC : IMapScript
     {
         public virtual IMapScriptMetadata MapScriptMetadata { get; set; } = new MapScriptMetadata
         {
             MinionPathingOverride = true,
-            EnableBuildingProtection = true
+            EnableBuildingProtection = false
         };
         private bool forceSpawn;
         public IMapScriptHandler _map;
@@ -67,14 +68,14 @@ namespace MapScripts.Map1
         //Nexus and Inhibitor model changes dont seem to take effect in-game, has to be investigated.
         public Dictionary<TeamId, string> NexusModels { get; set; } = new Dictionary<TeamId, string>
         {
-            {TeamId.TEAM_BLUE, "OrderNexus" },
-            {TeamId.TEAM_PURPLE, "ChaosNexus" }
+            {TeamId.TEAM_BLUE, "SRUAP_OrderNexus" },
+            {TeamId.TEAM_PURPLE, "SRUAP_ChaosNexus" }
         };
         //Inhib models
         public Dictionary<TeamId, string> InhibitorModels { get; set; } = new Dictionary<TeamId, string>
         {
-            {TeamId.TEAM_BLUE, "OrderInhibitor" },
-            {TeamId.TEAM_PURPLE, "ChaosInhibitor" }
+            {TeamId.TEAM_BLUE, "SRUAP_OrderInhibitor" },
+            {TeamId.TEAM_PURPLE, "SRUAP_ChaosInhibitor" }
         };
         //Tower Models
         public Dictionary<TeamId, Dictionary<TurretType, string>> TowerModels { get; set; } = new Dictionary<TeamId, Dictionary<TurretType, string>>
@@ -250,25 +251,83 @@ namespace MapScripts.Map1
             MapScriptMetadata.MinionSpawnEnabled = map.IsMinionSpawnEnabled();
             map.AddSurrender(1200000.0f, 300000.0f, 30.0f);
 
-            //Due to riot's questionable map-naming scheme some towers are missplaced into other lanes during outomated setup, so we have to manually fix them.
-            map.ChangeTowerOnMapList("Turret_T1_C_06_A", TeamId.TEAM_BLUE, LaneID.MIDDLE, LaneID.TOP);
-            map.ChangeTowerOnMapList("Turret_T1_C_07_A", TeamId.TEAM_BLUE, LaneID.MIDDLE, LaneID.BOTTOM);
+            //Blue Team Bot lane
+            _map.CreateTower("Turret_T1_R_03_A", "SRUAP_Turret_Order1", new Vector2(10504.246f, 1029.7169f), TeamId.TEAM_BLUE, TurretType.OUTER_TURRET, LaneID.BOTTOM, LaneTurretAI);
+            _map.CreateTower("Turret_T1_R_02_A", "SRUAP_Turret_Order2", new Vector2(6919.156f, 1483.5986f), TeamId.TEAM_BLUE, TurretType.INNER_TURRET, LaneID.BOTTOM, LaneTurretAI);
+            _map.CreateTower("Turret_T1_C_07_A", "SRUAP_Turret_Order3", new Vector2(4281.712f, 1253.5687f), TeamId.TEAM_BLUE, TurretType.INHIBITOR_TURRET, LaneID.BOTTOM, LaneTurretAI);
 
-            //Map props
-            _map.AddLevelProp("LevelProp_Yonkey", "Yonkey", new Vector3(12465.0f, 101.0f, 14422.257f), new Vector3(0.0f, 66.0f, 0.0f), new Vector3(-33.3334f, 122.2222f, -133.3333f), Vector3.One);
-            _map.AddLevelProp("LevelProp_Yonkey1", "Yonkey", new Vector3(-76.0f, 94.0f, 1769.1589f), new Vector3(0.0f, 30.0f, 0.0f), new Vector3(0.0f, -11.1111f, -22.2222f), Vector3.One);
-            _map.AddLevelProp("LevelProp_ShopMale", "ShopMale", new Vector3(13374.17f, 194.9741f, 14245.673f), new Vector3(0.0f, 224f, 0.0f), new Vector3(0.0f, 33.3333f, -44.4445f), Vector3.One);
-            _map.AddLevelProp("LevelProp_ShopMale1", "ShopMale", new Vector3(-99.5613f, 191.4039f, 855.6632f), new Vector3(0.0f, 158.0f, 0.0f), Vector3.Zero, Vector3.One);
+            //Red Team Bot lane
+            _map.CreateTower("Turret_T2_R_03_A", "SRUAP_Turret_Chaos1", new Vector2(13866.243f, 4505.2236f), TeamId.TEAM_PURPLE, TurretType.OUTER_TURRET, LaneID.BOTTOM, LaneTurretAI);
+            _map.CreateTower("Turret_T2_R_02_A", "SRUAP_Turret_Chaos2", new Vector2(13327.417f, 8226.276f), TeamId.TEAM_PURPLE, TurretType.INNER_TURRET, LaneID.BOTTOM, LaneTurretAI);
+            _map.CreateTower("Turret_T2_R_01_A", "SRUAP_Turret_Chaos3", new Vector2(13624.748f, 10572.771f), TeamId.TEAM_PURPLE, TurretType.INHIBITOR_TURRET, LaneID.BOTTOM, LaneTurretAI);
+
+            //Blue Team Mid lane
+            _map.CreateTower("Turret_T1_C_05_A", "SRUAP_Turret_Order1", new Vector2(5846.0967f, 6396.7505f), TeamId.TEAM_BLUE, TurretType.OUTER_TURRET, LaneID.MIDDLE, LaneTurretAI);
+            _map.CreateTower("Turret_T1_C_04_A", "SRUAP_Turret_Order2", new Vector2(5048.0703f, 4812.8936f), TeamId.TEAM_BLUE, TurretType.INNER_TURRET, LaneID.MIDDLE, LaneTurretAI);
+            _map.CreateTower("Turret_T1_C_03_A", "SRUAP_Turret_Order3", new Vector2(3651.9016f, 3696.424f), TeamId.TEAM_BLUE, TurretType.INHIBITOR_TURRET, LaneID.MIDDLE, LaneTurretAI);
+
+            //Blue Team Nexus Towers
+            _map.CreateTower("Turret_T1_C_01_A", "SRUAP_Turret_Order4", new Vector2(1748.2611f, 2270.7068f), TeamId.TEAM_BLUE, TurretType.NEXUS_TURRET, LaneID.MIDDLE, LaneTurretAI);
+            _map.CreateTower("Turret_T1_C_02_A", "SRUAP_Turret_Order4", new Vector2(2177.64f, 1807.6298f), TeamId.TEAM_BLUE, TurretType.NEXUS_TURRET, LaneID.MIDDLE, LaneTurretAI);
+
+            //Red Team Mid lane
+            _map.CreateTower("Turret_T2_C_05_A", "SRUAP_Turret_Chaos1", new Vector2(8955.434f, 8510.48f), TeamId.TEAM_PURPLE, TurretType.OUTER_TURRET, LaneID.MIDDLE, LaneTurretAI);
+            _map.CreateTower("Turret_T2_C_04_A", "SRUAP_Turret_Chaos2", new Vector2(9767.701f, 10113.608f), TeamId.TEAM_PURPLE, TurretType.INNER_TURRET, LaneID.MIDDLE, LaneTurretAI);
+            _map.CreateTower("Turret_T2_C_03_A", "SRUAP_Turret_Chaos3", new Vector2(11134.814f, 11207.938f), TeamId.TEAM_PURPLE, TurretType.INHIBITOR_TURRET, LaneID.MIDDLE, LaneTurretAI);
+
+            //Red Team Nexus Towers
+            _map.CreateTower("Turret_T2_C_01_A", "SRUAP_Turret_Chaos4", new Vector2(13052.915f, 12612.381f), TeamId.TEAM_PURPLE, TurretType.NEXUS_TURRET, LaneID.MIDDLE, LaneTurretAI);
+            _map.CreateTower("Turret_T2_C_02_A", "SRUAP_Turret_Chaos4", new Vector2(12611.182f, 13084.111f), TeamId.TEAM_PURPLE, TurretType.NEXUS_TURRET, LaneID.MIDDLE, LaneTurretAI);
+
+            //Blue Team Fountain Tower
+            _map.CreateTower("Turret_OrderTurretShrine_A", "SRUAP_Turret_Order5", new Vector2(105.92846f, 134.49403f), TeamId.TEAM_BLUE, TurretType.FOUNTAIN_TURRET, LaneID.NONE, LaneTurretAI);
+
+            //Red Team Fountain Tower
+            _map.CreateTower("Turret_ChaosTurretShrine_A", "SRUAP_Turret_Chaos5", new Vector2(14576.36f, 14693.827f), TeamId.TEAM_PURPLE, TurretType.FOUNTAIN_TURRET, LaneID.NONE, LaneTurretAI);
+
+            //Blue Team Top Towers
+            _map.CreateTower("Turret_T1_L_03_A", "SRUAP_Turret_Order1", new Vector2(981.28345f, 10441.454f), TeamId.TEAM_BLUE, TurretType.OUTER_TURRET, LaneID.TOP, LaneTurretAI);
+            _map.CreateTower("Turret_T1_L_02_A", "SRUAP_Turret_Order2", new Vector2(1512.892f, 6699.57f), TeamId.TEAM_BLUE, TurretType.INNER_TURRET, LaneID.TOP, LaneTurretAI);
+            _map.CreateTower("Turret_T1_C_06_A", "SRUAP_Turret_Order3", new Vector2(1169.9619f, 4287.4434f), TeamId.TEAM_BLUE, TurretType.INHIBITOR_TURRET, LaneID.TOP, LaneTurretAI);
+
+            //Red Team Top Towers
+            _map.CreateTower("Turret_T2_L_03_A", "SRUAP_Turret_Chaos1", new Vector2(4318.3037f, 13875.8f), TeamId.TEAM_PURPLE, TurretType.OUTER_TURRET, LaneID.TOP, LaneTurretAI);
+            _map.CreateTower("Turret_T2_L_02_A", "SRUAP_Turret_Chaos2", new Vector2(7943.152f, 13411.799f), TeamId.TEAM_PURPLE, TurretType.INNER_TURRET, LaneID.TOP, LaneTurretAI);
+            _map.CreateTower("Turret_T2_L_01_A", "SRUAP_Turret_Chaos3", new Vector2(10481.091f, 13650.535f), TeamId.TEAM_PURPLE, TurretType.INHIBITOR_TURRET, LaneID.TOP, LaneTurretAI);
+
+            //Blue Team Inhibitors
+            _map.CreateInhibitor("Barracks_T1_L1", "SRUAP_OrderInhibitor", new Vector2(1171.8285f, 3571.784f), TeamId.TEAM_BLUE, LaneID.TOP, 214, 0);
+            _map.CreateInhibitor("Barracks_T1_C1", "SRUAP_OrderInhibitor", new Vector2(3203.0286f, 3208.784f), TeamId.TEAM_BLUE, LaneID.MIDDLE, 214, 0);
+            _map.CreateInhibitor("Barracks_T1_R1", "SRUAP_OrderInhibitor", new Vector2(3452.5286f, 1236.884f), TeamId.TEAM_BLUE, LaneID.BOTTOM, 214, 0);
+
+            //Red Team Inhibitors
+            _map.CreateInhibitor("Barracks_T2_L1", "SRUAP_OrderInhibitor", new Vector2(11261.665f, 13676.563f), TeamId.TEAM_PURPLE, LaneID.TOP, 214, 0);
+            _map.CreateInhibitor("Barracks_T2_C1", "SRUAP_OrderInhibitor", new Vector2(11598.124f, 11667.8125f), TeamId.TEAM_PURPLE, LaneID.MIDDLE, 214, 0);
+            _map.CreateInhibitor("Barracks_T2_R1", "SRUAP_OrderInhibitor", new Vector2(13604.601f, 11316.011f), TeamId.TEAM_PURPLE, LaneID.BOTTOM, 214, 0);
+
+            //Create Nexus
+            _map.CreateNexus("HQ_T1", "SRUAP_OrderNexus", new Vector2(3452.5286f, 1236.884f), TeamId.TEAM_BLUE, 353, 1700);
+            _map.CreateNexus("HQ_T2", "SRUAP_ChaosNexus", new Vector2(13142.73f, 12964.941f), TeamId.TEAM_PURPLE, 353, 1700);
+            SetupMapProps();
         }
-
         List<IMonsterCamp> MonsterCamps = new List<IMonsterCamp>();
         public virtual void OnMatchStart()
         {
-            foreach (var nexus in _map.NexusList)
+            foreach (var team in _map.TurretList.Keys)
+            {
+                foreach (var lane in _map.TurretList[team].Keys)
+                {
+                    foreach (var turret in _map.TurretList[team][lane])
+                    {
+                        AddUnitPerceptionBubble(turret, 800.0F, 25000.0F, team, true, collisionArea: 88.4F);
+                    }
+                }
+            }
+            /*foreach (var nexus in _map.NexusList)
             {
                 ApiEventManager.OnDeath.AddListener(this, nexus, OnNexusDeath, true);
             }
-            SetupJungleCamps();
+            SetupJungleCamps();*/
         }
 
         public void Update(float diff)
@@ -583,6 +642,101 @@ namespace MapScripts.Map1
             var redGreatGromp = _map.CreateJungleCamp(new Vector3(12337.0f, 60.0f, 6263.0f), 14, TeamId.TEAM_BLUE, "LesserCamp", 125.0f * 1000);
             _map.CreateJungleMonster("GreatWraith14.1.1", "GreatWraith", new Vector2(12337.0f, 6263.0f), new Vector3(11826.0f, 52.0f, 4788.0f), redGreatGromp, aiScript: "BasicJungleMonsterAi");
             MonsterCamps.Add(redGreatGromp);
+        }
+
+        public void SetupMapProps()
+        {
+            _map.AddLevelProp("LevelProp_sru_gromp_prop8", "sru_gromp_prop", new Vector3(11793.683f, 43.78664f, 7372.605f), new Vector3(359.2376f, 214.7355f, 2.0863063f), Vector3.Zero, new Vector3(0.6f, 0.6f, 0.6f));
+            _map.AddLevelProp("LevelProp_sru_lizard10", "sru_lizard", new Vector3(10761.941f, 262.4519f, 14473.7705f), new Vector3(263.2656f, 292.26758f, 97.87612f), Vector3.Zero, new Vector3(0.6f, 0.6f, 0.6f));
+            _map.AddLevelProp("LevelProp_sru_gromp_prop9", "sru_gromp_prop", new Vector3(9394.181f, -73.8051f, 6374.51f), new Vector3(0.0f, 94.81607f, 0.0f), Vector3.Zero, new Vector3(0.6f, 0.6f, 0.6f));
+            _map.AddLevelProp("LevelProp_sru_snail9", "sru_snail", new Vector3(4141.109f, 97.97998f, 2237.7083f), new Vector3(97.97998f, 277.3916f, 122.50976f), Vector3.Zero, Vector3.One);
+            _map.AddLevelProp("LevelProp_sru_gromp_prop10", "sru_gromp_prop", new Vector3(11801.394f, 106.38264f, 6318.2627f), new Vector3(184.12091f, 346.23956f, 176.89716f), Vector3.Zero, new Vector3(0.6f, 0.6f, 0.6f));
+            _map.AddLevelProp("LevelProp_SRU_AntlerMouse1", "SRU_AntlerMouse", new Vector3(2213.7734f, 166.20999f, 6963.584f), new Vector3(318.9382f, 71.1862f, 332.12845f), Vector3.Zero, Vector3.One);
+            _map.AddLevelProp("LevelProp_sru_snail7", "sru_snail", new Vector3(4701.505f, 97.24113f, 770.36914f), new Vector3(182.573f, 353.8483f, 179.90083f), Vector3.Zero, Vector3.One);
+            _map.AddLevelProp("LevelProp_sru_bird1", "sru_bird", new Vector3(1507.258f, 413.54163f, -308.48724f), new Vector3(1.433609f, 46.41291f, 6.451541f), Vector3.Zero, Vector3.One);
+            _map.AddLevelProp("LevelProp_sru_lizard8", "sru_lizard", new Vector3(4882.003f, 209.62727f, 12030.8f), new Vector3(7.925711f, 48.344486f, 24.486755f), Vector3.Zero, new Vector3(0.6f, 0.6f, 0.6f));
+            _map.AddLevelProp("LevelProp_sru_lizard4", "sru_lizard", new Vector3(8395.145f, 157.3293f, 10579.154f), new Vector3(353.29337f, 29.386461f, 351.035f), Vector3.Zero, new Vector3(0.7f, 0.7f, 0.7f));
+            _map.AddLevelProp("LevelProp_sru_lizard4", "sru_lizard", new Vector3(5958.451f, 140.5533f, 4784.142f), new Vector3(182.24371f, 281.64584f, 178.48666f), Vector3.Zero, Vector3.One);
+            _map.AddLevelProp("LevelProp_sru_snail4", "sru_snail", new Vector3(5958.451f, 140.5533f, 4784.142f), new Vector3(182.24371f, 281.64584f, 178.48666f), Vector3.Zero, Vector3.One);
+            _map.AddLevelProp("LevelProp_sru_bird", "sru_bird", new Vector3(12418.923f, 141.62668f, 4051.2566f), new Vector3(0.0f, 160.07144f, 0.0f), Vector3.Zero, Vector3.One);
+            _map.AddLevelProp("LevelProp_SRU_AntlerMouse6", "SRU_AntlerMouse", new Vector3(2054.2656f, 50.50199f, 5703.9956f), new Vector3(348.2142f, 168.60873f, 3.6270986f), Vector3.Zero, Vector3.One);
+            _map.AddLevelProp("LevelProp_sru_snail6", "sru_snail", new Vector3(10269.665f, 74.85492f, 3351.2368f), new Vector3(337.66736f, 253.62976f, 18.625101f), Vector3.Zero, Vector3.One);
+            _map.AddLevelProp("LevelProp_sru_bird2", "sru_bird", new Vector3(147.65501f, 453.44928f, 8168.2144f), new Vector3(351.08133f, 76.557236f, 352.80908f), Vector3.Zero, Vector3.One);
+            _map.AddLevelProp("LevelProp_SRU_AntlerMouse11", "SRU_AntlerMouse", new Vector3(4220.001f, 43.72308f, 4499.094f), new Vector3(0.0f, 321.78326f, 0.0f), Vector3.Zero, Vector3.One);
+            _map.AddLevelProp("LevelProp_sru_bird5", "sru_bird", new Vector3(8080.158f, 468.22894f, 198.32753f), new Vector3(22.96237f, 52.549847f, 16.686834f), Vector3.Zero, Vector3.One);
+            _map.AddLevelProp("LevelProp_SRU_AntlerMouse9", "SRU_AntlerMouse", new Vector3(1984.2909f, 94.60245f, 4133.518f), new Vector3(0.0f, 201.94792f, 0.0f), Vector3.Zero, Vector3.One);
+            _map.AddLevelProp("LevelProp_sru_lizard3", "sru_lizard", new Vector3(6678.113f, 224.0654f, 11199.31f), new Vector3(194.6758f, 330.27f, 171.87654f), Vector3.Zero, new Vector3(0.8f, 0.8f, 0.8f));
+            _map.AddLevelProp("LevelProp_sru_gromp_prop3", "sru_gromp_prop", new Vector3(10567.477f, 50.95081f, 9201.183f), new Vector3(184.27243f, 5.5906034f, 180.63428f), Vector3.Zero, new Vector3(0.6f, 0.6f, 0.6f));
+            _map.AddLevelProp("LevelProp_sru_gromp_prop11", "sru_gromp_prop", new Vector3(14301.705f, 92.15693f, 11051.719f), new Vector3(180.44046f, 3.1205552f, 180.01422f), Vector3.Zero, new Vector3(0.5f, 0.5f, 0.5f));
+            _map.AddLevelProp("LevelProp_SRU_AntlerMouse3", "SRU_AntlerMouse", new Vector3(3803.9463f, 45.4187f, 6503.979f), new Vector3(0.0f, 189.4242f, 0.0f), Vector3.Zero, Vector3.One);
+            _map.AddLevelProp("LevelProp_SRU_AntlerMouse10", "SRU_AntlerMouse", new Vector3(1888.7023f, 95.097916f, 4102.505f), new Vector3(180.32701f, 61.95893f, 178.32957f), Vector3.Zero, Vector3.One);
+            _map.AddLevelProp("LevelProp_SRU_AntlerMouse4", "SRU_AntlerMouse", new Vector3(4882.856f, 46.181805f, 6505.0806f), new Vector3(0.0f, 217.368f, 0.0f), Vector3.Zero, Vector3.One);
+            _map.AddLevelProp("LevelProp_sru_gromp_prop7", "sru_gromp_prop", new Vector3(12898.956f, 43.924046f, 5151.044f), new Vector3(0.0f, 248.71564f, 0.0f), Vector3.Zero, new Vector3(0.6f, 0.6f, 0.6f));
+            _map.AddLevelProp("LevelProp_sru_lizard7", "sru_lizard", new Vector3(7299.199f, 180.29959f, 9521.847f), new Vector3(285.42697f, 282.00763f, 84.01626f), Vector3.Zero, new Vector3(0.6f, 0.6f, 0.6f));
+            _map.AddLevelProp("LevelProp_sru_lizard1", "sru_lizard", new Vector3(7079.7715f, 232.64514f, 12051.464f), new Vector3(345.256f, 66.61549f, 344.7693f), Vector3.Zero, new Vector3(0.8f, 0.8f, 0.8f));
+            _map.AddLevelProp("LevelProp_sru_storekeepersouth", "sru_storekeepersouth", new Vector3(40.03181f, 162.70973f, 1112.4025f), new Vector3(0.0f, 225.0f, 0.0f), Vector3.Zero, Vector3.One);
+            _map.AddLevelProp("LevelProp_sru_snail", "sru_snail", new Vector3(5559.5044f, 101.42875f, 3932.0105f), new Vector3(197.56027f, 80.55253f, 199.11702f), Vector3.Zero, Vector3.One);
+            _map.AddLevelProp("LevelProp_sru_bird4", "sru_bird", new Vector3(14391.077f, 375.6806f, 3836.7505f), new Vector3(191.88112f, 308.0943f, 169.53096f), Vector3.Zero, Vector3.One);
+            _map.AddLevelProp("LevelProp_sru_gromp_prop6", "sru_gromp_prop", new Vector3(11746.374f, 43.98136f, 9005.245f), new Vector3(183.43646f, 21.18202f, 179.99998f), Vector3.Zero, new Vector3(0.6f, 0.6f, 0.6f));
+            _map.AddLevelProp("LevelProp_SRU_AntlerMouse8", "SRU_AntlerMouse", new Vector3(2998.508f, 100.93008f, 8743.376f), new Vector3(357.41953f, 30.51813f, 351.08383f), Vector3.Zero, Vector3.One);
+            _map.AddLevelProp("LevelProp_SRU_storeKeeperNorth", "SRU_storeKeeperNorth", new Vector3(13727.213f, 144.67021f, 14592.507f), new Vector3(0.0f, 122.48973f, 0.0f), Vector3.Zero, new Vector3(1.6f, 1.6f, 1.6f));
+            _map.AddLevelProp("LevelProp_sru_gromp_prop12", "sru_gromp_prop", new Vector3(12425.777f, 94.93915f, 10906.083f), new Vector3(344.1678f, 208.66914f, 3.5537615f), Vector3.Zero, new Vector3(0.4f, 0.4f, 0.4f));
+            _map.AddLevelProp("LevelProp_sru_gromp_prop13", "sru_gromp_prop", new Vector3(14100.433f, 46.98303f, 6161.5103f), new Vector3(179.88374f, 51.788395f, 179.28593f), Vector3.Zero, new Vector3(0.6f, 0.6f, 0.6f));
+            _map.AddLevelProp("LevelProp_SRU_AntlerMouse", "SRU_AntlerMouse", new Vector3(5194.1357f, 123.46863f, 7012.206f), new Vector3(0.0f, 241.27545f, 0.0f), Vector3.Zero, Vector3.One);
+            _map.AddLevelProp("LevelProp_SRU_AntlerMouse5", "SRU_AntlerMouse", new Vector3(2909.064f, 47.40145f, 7627.799f), new Vector3(180.71075f, 52.327003f, 177.96869f), Vector3.Zero, Vector3.One);
+            _map.AddLevelProp("LevelProp_SRU_AntlerMouse2", "SRU_AntlerMouse", new Vector3(2894.0796f, 44.892128f, 5653.9956f), new Vector3(0.0f, 243.45912f, 0.0f), Vector3.Zero, Vector3.One);
+            _map.AddLevelProp("LevelProp_sru_snail1", "sru_snail", new Vector3(6533.019f, 199.94122f, 2319.8464f), new Vector3(4.0410137f, 339.42316f, 8.526711f), Vector3.Zero, Vector3.One);
+            _map.AddLevelProp("LevelProp_sru_gromp_prop5", "sru_gromp_prop", new Vector3(9452.197f, 214.45143f, 7685.849f), new Vector3(358.09802f, 206.08171f, 2.83302f), Vector3.Zero, new Vector3(0.6f, 0.6f, 0.6f));
+            _map.AddLevelProp("LevelProp_sru_lizard", "sru_lizard", new Vector3(8090.797f, 186.20859f, 11305.528f), new Vector3(338.78f, 292.12982f, 6.7589006f), Vector3.Zero, new Vector3(0.8f, 0.8f, 0.8f));
+            _map.AddLevelProp("LevelProp_sru_snail8", "sru_snail", new Vector3(392.39172f, 122.83496f, 1311.946f), new Vector3(176.78513f, 88.51321f, 167.40407f), Vector3.Zero, Vector3.One);
+            _map.AddLevelProp("LevelProp_sru_lizard2", "sru_lizard", new Vector3(9426.1875f, 134.33505f, 10994.098f), new Vector3(84.66563f, 62.788128f, 88.71596f), Vector3.Zero, new Vector3(0.8f, 0.8f, 0.8f));
+            _map.AddLevelProp("LevelProp_sru_lizard11", "sru_lizard", new Vector3(9966.531f, 255.32796f, 12602.972f), new Vector3(0.0f, 0.0f, 339.353f), Vector3.Zero, new Vector3(0.6f, 0.6f, 0.6f));
+            _map.AddLevelProp("LevelProp_sru_lizard6", "sru_lizard", new Vector3(9018.509f, 106.86509f, 12353.6455f), new Vector3(359.69028f, 206.40565f, 1.0154392f), Vector3.Zero, new Vector3(0.6f, 0.6f, 0.6f));
+            _map.AddLevelProp("LevelProp_SRU_AntlerMouse7", "SRU_AntlerMouse", new Vector3(2347.906f, 182.99486f, 10639.1f), new Vector3(186.76556f, 65.05644f, 184.66058f), Vector3.Zero, Vector3.One);
+            _map.AddLevelProp("LevelProp_sru_dragon_prop1", "sru_dragon_prop", new Vector3(-4157.4097f, -5639.8696f, 2518.217f), new Vector3(0.0f, 1.3109952f, 0.0f), Vector3.Zero, Vector3.One);
+            _map.AddLevelProp("LevelProp_sru_snail5", "sru_snail", new Vector3(6417.55f, 46.290264f, 3235.403f), new Vector3(181.94318f, 59.605614f, 179.99998f), Vector3.Zero, Vector3.One);
+            _map.AddLevelProp("LevelProp_sru_snail3", "sru_snail", new Vector3(9426.731f, 206.12328f, 2943.642f), new Vector3(319.2318f, 266.3502f, 12.209237f), Vector3.Zero, Vector3.One);
+            _map.AddLevelProp("LevelProp_sru_lizard9", "sru_lizard", new Vector3(10844.376f, 168.55817f, 12488.779f), new Vector3(345.75848f, 9.904963f, 27.804182f), Vector3.Zero, new Vector3(0.5f, 0.5f, 0.5f));
+            _map.AddLevelProp("LevelProp_sru_gromp_prop", "sru_gromp_prop", new Vector3(9942.157f, 45.9148f, 8358.395f), new Vector3(180.79727f, 351.22357f, 180.09285f), Vector3.Zero, new Vector3(0.6f, 0.6f, 0.6f));
+            _map.AddLevelProp("LevelProp_sru_dragon_prop", "sru_dragon_prop", new Vector3(-7058.438f, -10384.663f, 25191.99f), new Vector3(0.0f, 87.209694f, 0.0f), Vector3.Zero, Vector3.One);
+            _map.AddLevelProp("LevelProp_sru_lizard12", "sru_lizard", new Vector3(7564.231f, 367.14328f, 14262.364f), new Vector3(281.51004f, 281.76147f, 78.18267f), Vector3.Zero, new Vector3(0.6f, 0.6f, 0.6f));
+            _map.AddLevelProp("LevelProp_sru_lizard8", "sru_lizard", new Vector3(4882.003f, 209.62727f, 12030.8f), new Vector3(7.925711f, 48.344486f, 24.486755f), Vector3.Zero, new Vector3(0.6f, 0.6f, 0.6f));
+            _map.AddLevelProp("LevelProp_sru_lizard4", "sru_lizard", new Vector3(8395.145f, 157.3293f, 10579.154f), new Vector3(353.29337f, 29.386461f, 351.035f), Vector3.Zero, new Vector3(0.7f, 0.7f, 0.7f));
+            _map.AddLevelProp("LevelProp_sru_snail4", "sru_snail", new Vector3(5958.451f, 140.5533f, 4784.142f), new Vector3(182.24371f, 281.64584f, 178.48666f), Vector3.Zero, Vector3.One);
+            _map.AddLevelProp("LevelProp_sru_bird", "sru_bird", new Vector3(12418.923f, 141.62668f, 4051.2566f), new Vector3(0.0f, 160.07144f, 0.0f), Vector3.Zero, Vector3.One);
+            _map.AddLevelProp("LevelProp_SRU_AntlerMouse6", "SRU_AntlerMouse", new Vector3(2054.2656f, 50.50199f, 5703.9956f), new Vector3(348.2142f, 168.60873f, 3.6270986f), Vector3.Zero, Vector3.One);
+            _map.AddLevelProp("LevelProp_sru_snail6", "sru_snail", new Vector3(10269.665f, 74.85492f, 3351.2368f), new Vector3(337.66736f, 253.62976f, 18.625101f), Vector3.Zero, Vector3.One);
+            _map.AddLevelProp("LevelProp_sru_bird2", "sru_bird", new Vector3(147.65501f, 453.44928f, 8168.2144f), new Vector3(351.08133f, 76.557236f, 352.80908f), Vector3.Zero, Vector3.One);
+            _map.AddLevelProp("LevelProp_SRU_AntlerMouse11", "SRU_AntlerMouse", new Vector3(4220.001f, 43.72308f, 4499.094f), new Vector3(0.0f, 321.78326f, 0.0f), Vector3.Zero, Vector3.One);
+            _map.AddLevelProp("LevelProp_sru_bird5", "sru_bird", new Vector3(8080.158f, 468.22894f, 198.32753f), new Vector3(22.96237f, 52.549847f, 16.686834f), Vector3.Zero, Vector3.One);
+            _map.AddLevelProp("LevelProp_SRU_AntlerMouse9", "SRU_AntlerMouse", new Vector3(1984.2909f, 94.60245f, 4133.518f), new Vector3(0.0f, 201.94792f, 0.0f), Vector3.Zero, Vector3.One);
+            _map.AddLevelProp("LevelProp_sru_lizard3", "sru_lizard", new Vector3(6678.113f, 224.0654f, 11199.31f), new Vector3(194.6758f, 330.27f, 171.87654f), Vector3.Zero, new Vector3(0.8f, 0.8f, 0.8f));
+            _map.AddLevelProp("LevelProp_sru_gromp_prop3", "sru_gromp_prop", new Vector3(10567.477f, 50.95081f, 9201.183f), new Vector3(184.27243f, 5.5906034f, 180.63428f), Vector3.Zero, new Vector3(0.6f, 0.6f, 0.6f));
+            _map.AddLevelProp("LevelProp_sru_gromp_prop11", "sru_gromp_prop", new Vector3(14301.705f, 92.15693f, 11051.719f), new Vector3(180.44046f, 3.1205552f, 180.01422f), Vector3.Zero, new Vector3(0.5f, 0.5f, 0.5f));
+            _map.AddLevelProp("LevelProp_SRU_AntlerMouse3", "SRU_AntlerMouse", new Vector3(3803.9463f, 45.4187f, 6503.979f), new Vector3(0.0f, 189.4242f, 0.0f), Vector3.Zero, Vector3.One);
+            _map.AddLevelProp("LevelProp_SRU_AntlerMouse10", "SRU_AntlerMouse", new Vector3(1888.7023f, 95.097916f, 4102.505f), new Vector3(180.32701f, 61.95893f, 178.32957f), Vector3.Zero, Vector3.One);
+            _map.AddLevelProp("LevelProp_SRU_AntlerMouse4", "SRU_AntlerMouse", new Vector3(4882.856f, 46.181805f, 6505.0806f), new Vector3(0.0f, 217.368f, 0.0f), Vector3.Zero, Vector3.One);
+            _map.AddLevelProp("LevelProp_SRU_storeKeeperNorth", "SRU_storeKeeperNorth", new Vector3(13727.213f, 144.67021f, 14592.507f), new Vector3(0.0f, 122.48973f, 0.0f), Vector3.Zero, new Vector3(1.6f, 1.6f, 1.6f));
+            _map.AddLevelProp("LevelProp_sru_gromp_prop12", "sru_gromp_prop", new Vector3(12425.777f, 94.93915f, 10906.083f), new Vector3(344.1678f, 208.66914f, 3.5537615f), Vector3.Zero, new Vector3(0.4f, 0.4f, 0.4f));
+            _map.AddLevelProp("LevelProp_sru_gromp_prop13", "sru_gromp_prop", new Vector3(14100.433f, 46.98303f, 6161.5103f), new Vector3(179.88374f, 51.788395f, 179.28593f), Vector3.Zero, new Vector3(0.6f, 0.6f, 0.6f));
+            _map.AddLevelProp("LevelProp_SRU_AntlerMouse", "SRU_AntlerMouse", new Vector3(5194.1357f, 123.46863f, 7012.206f), new Vector3(0.0f, 241.27545f, 0.0f), Vector3.Zero, Vector3.One);
+            _map.AddLevelProp("LevelProp_SRU_AntlerMouse5", "SRU_AntlerMouse", new Vector3(2909.064f, 47.40145f, 7627.799f), new Vector3(180.71075f, 52.327003f, 177.96869f), Vector3.Zero, Vector3.One);
+            _map.AddLevelProp("LevelProp_SRU_AntlerMouse2", "SRU_AntlerMouse", new Vector3(2894.0796f, 44.892128f, 5653.9956f), new Vector3(0.0f, 243.45912f, 0.0f), Vector3.Zero, Vector3.One);
+            _map.AddLevelProp("LevelProp_sru_snail1", "sru_snail", new Vector3(6533.019f, 199.94122f, 2319.8464f), new Vector3(4.0410137f, 339.42316f, 8.526711f), Vector3.Zero, Vector3.One);
+            _map.AddLevelProp("LevelProp_sru_gromp_prop5", "sru_gromp_prop", new Vector3(9452.197f, 214.45143f, 7685.849f), new Vector3(358.09802f, 206.08171f, 2.83302f), Vector3.Zero, new Vector3(0.6f, 0.6f, 0.6f));
+            _map.AddLevelProp("LevelProp_sru_lizard", "sru_lizard", new Vector3(8090.797f, 186.20859f, 11305.528f), new Vector3(338.78f, 292.12982f, 6.7589006f), Vector3.Zero, new Vector3(0.8f, 0.8f, 0.8f));
+            _map.AddLevelProp("LevelProp_sru_snail8", "sru_snail", new Vector3(392.39172f, 122.83496f, 1311.946f), new Vector3(176.78513f, 88.51321f, 167.40407f), Vector3.Zero, Vector3.One);
+            _map.AddLevelProp("LevelProp_sru_lizard2", "sru_lizard", new Vector3(9426.1875f, 134.33505f, 10994.098f), new Vector3(84.66563f, 62.788128f, 88.71596f), Vector3.Zero, new Vector3(0.8f, 0.8f, 0.8f));
+            _map.AddLevelProp("LevelProp_sru_lizard11", "sru_lizard", new Vector3(9966.531f, 255.32796f, 12602.972f), new Vector3(0.0f, 0.0f, 339.353f), Vector3.Zero, new Vector3(0.6f, 0.6f, 0.6f));
+            _map.AddLevelProp("LevelProp_sru_lizard6", "sru_lizard", new Vector3(9018.509f, 106.86509f, 12353.6455f), new Vector3(359.69028f, 206.40565f, 1.0154392f), Vector3.Zero, new Vector3(0.6f, 0.6f, 0.6f));
+            _map.AddLevelProp("LevelProp_SRU_AntlerMouse7", "SRU_AntlerMouse", new Vector3(2347.906f, 182.99486f, 10639.1f), new Vector3(186.76556f, 65.05644f, 184.66058f), Vector3.Zero, Vector3.One);
+            _map.AddLevelProp("LevelProp_sru_dragon_prop1", "sru_dragon_prop", new Vector3(-4157.4097f, -5639.8696f, 2518.21f), new Vector3(0.0f, 1.3109952f, 0.0f), Vector3.Zero, Vector3.One);
+            _map.AddLevelProp("LevelProp_sru_snail5", "sru_snail", new Vector3(6417.55f, 46.290264f, 3235.403f), new Vector3(181.94318f, 59.605614f, 179.99998f), Vector3.Zero, Vector3.One);
+            _map.AddLevelProp("LevelProp_sru_snail3", "sru_snail", new Vector3(9426.731f, 206.12328f, 2943.642f), new Vector3(319.2318f, 266.3502f, 12.209237f), Vector3.Zero, Vector3.One);
+            _map.AddLevelProp("LevelProp_sru_lizard9", "sru_lizard", new Vector3(10844.376f, 168.55817f, 12488.779f), new Vector3(345.75848f, 9.904963f, 27.804182f), Vector3.Zero, new Vector3(0.5f, 0.5f, 0.5f));
+            _map.AddLevelProp("LevelProp_sru_gromp_prop", "sru_gromp_prop", new Vector3(9942.157f, 45.9148f, 8358.395f), new Vector3(180.79727f, 351.22357f, 180.09285f), Vector3.Zero, new Vector3(0.6f, 0.6f, 0.6f));
+            _map.AddLevelProp("LevelProp_sru_dragon_prop", "sru_dragon_prop", new Vector3(-7058.43f, -10384.663f, 25191.99f), new Vector3(0.0f, 87.209694f, 0.0f), Vector3.Zero, Vector3.One);
+            _map.AddLevelProp("LevelProp_sru_lizard12", "sru_lizard", new Vector3(7564.231f, 367.14328f, 14262.364f), new Vector3(281.51004f, 281.76147f, 78.18267f), Vector3.Zero, new Vector3(0.6f, 0.6f, 0.6f));
         }
     }
 }

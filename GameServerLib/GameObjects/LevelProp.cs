@@ -22,8 +22,7 @@ namespace LeagueSandbox.GameServer.GameObjects
             byte netNodeId,
             string name,
             string model,
-            Vector2 position,
-            float height,
+            Vector3 position,
             Vector3 direction,
             Vector3 posOffset,
             Vector3 scale,
@@ -33,11 +32,12 @@ namespace LeagueSandbox.GameServer.GameObjects
             byte type = 2,
             uint netId = 64
 
-        ) : base(game, position, 0, 0, 0, netId)
+
+        ) : base(game, new Vector2(position.X, position.Z),0, 0, 0, netId)
         {
             NetNodeID = netNodeId;
             SkinID = skinId;
-            Height = height;
+            Height = position.Y;
             Direction = direction;
             PositionOffset = posOffset;
             Scale = scale;

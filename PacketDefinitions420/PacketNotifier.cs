@@ -567,7 +567,7 @@ namespace PacketDefinitions420
                     NotifyNPC_Hero_Die(deathData);
                     break;
                 case IMinion minion:
-                    if(minion.IsPet || minion.IsClone || minion is ILaneMinion)
+                    if (minion.IsPet || minion.IsClone || minion is ILaneMinion)
                     {
                         NotifyS2C_NPC_Die_MapView(deathData);
                     }
@@ -833,7 +833,7 @@ namespace PacketDefinitions420
                 LerpTime = turnTime
             };
 
-            _packetHandlerManager.BroadcastPacketVision(obj, facePacket.GetBytes(), Channel.CHL_S2C);
+            _packetHandlerManager.BroadcastPacket(facePacket.GetBytes(), Channel.CHL_S2C);
         }
 
         /// <summary>
@@ -1516,6 +1516,25 @@ namespace PacketDefinitions420
 
             // Homing projectiles are visible regardless of vision.
             _packetHandlerManager.BroadcastPacket(replication.GetBytes(), Channel.CHL_S2C);
+        }
+        public void NotifyOnEvent(IEvent mapEvent, uint senderNetId)
+        {
+            var packet = new OnEvent
+            {
+                Event = mapEvent,
+                SenderNetID = senderNetId
+            };
+            _packetHandlerManager.BroadcastPacket(packet.GetBytes(), Channel.CHL_S2C);
+        }
+        public void NotifyS2C_HandleGameScore(TeamId team, int score)
+        {
+            var packet = new S2C_HandleGameScore
+            {
+                Score = score,
+                TeamID = (uint)team,
+                SenderNetID = 0
+            };
+            _packetHandlerManager.BroadcastPacket(packet.GetBytes(), Channel.CHL_S2C);
         }
 
         /// <summary>
@@ -3133,6 +3152,9 @@ namespace PacketDefinitions420
                 case IMinion minion:
                     visionPackets.Add(NotifyMinionSpawned(minion, false));
                     break;
+                case ILaneTurret laneTurret:
+                    //test(laneTurret);
+                    break;
                 case IAzirTurret azirTurret:
                     NotifyEnterVisibilityClient(azirTurret, userId, ignoreVision: true);
                     break;
@@ -3161,7 +3183,17 @@ namespace PacketDefinitions420
                 NotifyEnterVisibilityClient(o, userId, packets: visionPackets);
             }
         }
+        public void test(ILaneTurret turret)
+        {
+            var packet = new OnEnterLocalVisibilityClient
+            {
+                MaxHealth = turret.Stats.HealthPoints.Total,
+                Health = turret.Stats.CurrentHealth,
+                SenderNetID = turret.NetId
+            };
+            _packetHandlerManager.BroadcastPacket(packet.GetBytes(), Channel.CHL_S2C);
 
+        }
         /// <summary>
         /// Sends a packet to the specified player detailing that the spawning (of champions & buildings) that occurs at the start of the game has ended.
         /// </summary>
@@ -3320,10 +3352,10 @@ namespace PacketDefinitions420
                 // TODO: Create a new TipConfig class and use it here (basically, unhardcode this).
                 TipConfig = new TipConfig
                 {
-                    TipID = 34,
-                    ColorID = 1,
-                    DurationID = 1,
-                    Flags = 15
+                    TipID = 0,
+                    ColorID = 0,
+                    DurationID = 0,
+                    Flags = 3
                 },
                 // Turret Range Indicators and others (taken from Map11 replay)
                 GameFeatures = 662166610

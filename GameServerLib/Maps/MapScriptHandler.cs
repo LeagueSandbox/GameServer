@@ -215,20 +215,20 @@ namespace LeagueSandbox.GameServer.Maps
                 if (objectType == GameObjectTypes.ObjAnimated_HQ || (teamId != TeamId.TEAM_NEUTRAL && mapObject.Name == MapScript.NexusModels[teamId]))
                 {
                     //Nexus model changes dont seem to take effect in-game
-                    NexusList.Add(new Nexus(_game, MapScript.NexusModels[teamId], teamId, nexusRadius, position, sightRange, Crc32Algorithm.Compute(Encoding.UTF8.GetBytes(mapObject.Name)) | 0xFF000000));
+                    CreateNexus(mapObject.Name, MapScript.NexusModels[teamId], position, teamId, nexusRadius, sightRange);
                 }
                 // Inhibitors
                 else if (objectType == GameObjectTypes.ObjAnimated_BarracksDampener)
                 {
+                    CreateInhibitor(mapObject.Name, MapScript.InhibitorModels[teamId], position, teamId, lane, inhibRadius, sightRange);
                     //Inhibitor model changes dont seem to take effect in-game
-                    InhibitorList[teamId][lane].Add(new Inhibitor(_game, MapScript.InhibitorModels[teamId], lane, teamId, inhibRadius, position, sightRange, Crc32Algorithm.Compute(Encoding.UTF8.GetBytes(mapObject.Name)) | 0xFF000000));
                 }
                 // Turrets
                 else if (objectType == GameObjectTypes.ObjAIBase_Turret)
                 {
                     if (mapObject.Name.Contains("Shrine"))
                     {
-                        TurretList[teamId][lane].Add(new LaneTurret(_game, mapObject.Name + "_A", MapScript.TowerModels[teamId][TurretType.FOUNTAIN_TURRET], position, teamId, TurretType.FOUNTAIN_TURRET, GetTurretItems(TurretType.FOUNTAIN_TURRET), 0, LaneID.NONE, mapObject, MapScript.LaneTurretAI));
+                        CreateTower(mapObject.Name + "_A", MapScript.TowerModels[teamId][TurretType.FOUNTAIN_TURRET], position, teamId, TurretType.FOUNTAIN_TURRET, LaneID.NONE, MapScript.LaneTurretAI, 0, mapObject);
                         continue;
                     }
 
@@ -242,7 +242,7 @@ namespace LeagueSandbox.GameServer.Maps
                         continue;
                     }
 
-                    TurretList[teamId][lane].Add(new LaneTurret(_game, mapObject.Name + "_A", MapScript.TowerModels[teamId][turretType], position, teamId, turretType, GetTurretItems(turretType), 0, lane, mapObject, MapScript.LaneTurretAI));
+                    CreateTower(mapObject.Name + "_A", MapScript.TowerModels[teamId][turretType], position, teamId, turretType, lane, MapScript.LaneTurretAI, 0, mapObject);
                 }
                 else if (objectType == GameObjectTypes.InfoPoint)
                 {
@@ -333,6 +333,38 @@ namespace LeagueSandbox.GameServer.Maps
                     _game.ObjectManager.AddObject(turret);
                 }
             }
+        }
+
+        public INexus CreateNexus(string name, string model, Vector2 position, TeamId team, int radius, int sightRange)
+        {
+            if (String.IsNullOrEmpty(model))
+            {
+                model = MapScript.NexusModels[team];
+            }
+            var nexus = new Nexus(_game, model, team, radius, position, sightRange, Crc32Algorithm.Compute(Encoding.UTF8.GetBytes(name)) | 0xFF000000);
+            NexusList.Add(nexus);
+            return nexus;
+        }
+        public IInhibitor CreateInhibitor(string name, string model, Vector2 position, TeamId team, LaneID lane, int inhibRadius, int sightRange)
+        {
+            if (String.IsNullOrEmpty(model))
+            {
+                model = MapScript.InhibitorModels[team];
+            }
+            var inhibitor = new Inhibitor(_game, model, lane, team, inhibRadius, position, sightRange, Crc32Algorithm.Compute(Encoding.UTF8.GetBytes(name)) | 0xFF000000);
+            InhibitorList[team][lane].Add(inhibitor);
+            return inhibitor;
+        }
+        public ILaneTurret CreateTower(string name, string model, Vector2 position, TeamId team, TurretType turretType, LaneID lane, string AiScript = "", uint netId = 0, IMapObject mapObject = null)
+        {
+            if (String.IsNullOrEmpty(model))
+            {
+                model = MapScript.TowerModels[team][turretType];
+            }
+            var turret = new LaneTurret(_game, name, model, position, team, turretType, GetTurretItems(turretType), netId, lane, mapObject, AiScript);
+            TurretList[team][lane].Add(turret);
+            return turret;
+
         }
 
         //Load Building Protections
@@ -491,6 +523,7 @@ namespace LeagueSandbox.GameServer.Maps
         {
             var m = new Minion(_game, null, position, model, name, netId, team, skinId, ignoreCollision, isTargetable, null, aiScript, damageBonus, healthBonus, initialLevel);
             _game.ObjectManager.AddObject(m);
+            _game.PacketNotifier.NotifySpawn(m);
             return m;
         }
 
@@ -589,9 +622,9 @@ namespace LeagueSandbox.GameServer.Maps
             _game.PacketNotifier.NotifyS2C_UnitSetMinimapIcon(unit, iconCategory, changeIcon, borderCategory, changeBorder);
         }
 
-        public ILevelProp AddLevelProp(string name, string model, Vector2 position, float height, Vector3 direction, Vector3 posOffset, Vector3 scale, int skinId = 0, byte skillLevel = 0, byte rank = 0, byte type = 2, uint netId = 0, byte netNodeId = 64)
+        public ILevelProp AddLevelProp(string name, string model, Vector3 position, Vector3 direction, Vector3 posOffset, Vector3 scale, int skinId = 0, byte skillLevel = 0, byte rank = 0, byte type = 2, uint netId = 0, byte netNodeId = 64)
         {
-            var prop = new LevelProp(_game, netNodeId, name, model, position, height, direction, posOffset, scale, skinId, skillLevel, rank, type, netId);
+            var prop = new LevelProp(_game, netNodeId, name, model, position, direction, posOffset, scale, skinId, skillLevel, rank, type, netId);
             _game.ObjectManager.AddObject(prop);
             return prop;
         }
@@ -633,6 +666,44 @@ namespace LeagueSandbox.GameServer.Maps
         public void NotifyMapAnnouncement(GameServerCore.Enums.EventID Event, int mapId = 0)
         {
             _game.PacketNotifier.NotifyS2C_OnEventWorld(PacketExtensions.GetAnnouncementID(Event, mapId));
+        }
+
+        public void NotifyCapturePointState(IMinion infoPont, uint otherNetId = 0)
+        {
+            IEvent Event; 
+
+            if (infoPont.Name.Contains("_A"))
+            {
+                Event = new OnCapturePointNeutralized_A { OtherNetID = otherNetId };
+            }
+            else if (infoPont.Name.Contains("_B"))
+            {
+                Event = new OnCapturePointNeutralized_B { OtherNetID = otherNetId };
+
+            }
+            else if (infoPont.Name.Contains("_C"))
+            {
+                Event = new OnCapturePointNeutralized_C { OtherNetID = otherNetId };
+
+            }
+            else if (infoPont.Name.Contains("_D"))
+            {
+                Event = new OnCapturePointNeutralized_D { OtherNetID = otherNetId };
+
+            }
+            else
+            {
+                Event = new OnCapturePointNeutralized_E { OtherNetID = otherNetId };
+
+            }
+
+            _game.PacketNotifier.NotifyOnEvent(Event, infoPont.NetId);
+        }
+
+        public void NotifyScore()
+        {
+            _game.PacketNotifier.NotifyS2C_HandleGameScore(TeamId.TEAM_BLUE, 500);
+            _game.PacketNotifier.NotifyS2C_HandleGameScore(TeamId.TEAM_PURPLE, 500);
         }
 
         //Game Time

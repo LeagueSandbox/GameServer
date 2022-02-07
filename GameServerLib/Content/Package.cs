@@ -150,7 +150,14 @@ namespace LeagueSandbox.GameServer.Content
             {
                 for (int i = 1; i <= 2; i++)
                 {
-                    toReturnMapData.MapObjects.Add($"__Spawn_T{i}", AddMapObject($"__Spawn_T{i}", contentType, mapName, mapId));
+                    try
+                    {
+                        toReturnMapData.MapObjects.Add($"__Spawn_T{i}", AddMapObject($"__Spawn_T{i}", contentType, mapName, mapId));
+                    }
+                    catch
+                    {
+                        continue;
+                    }
                 }
             }
 
