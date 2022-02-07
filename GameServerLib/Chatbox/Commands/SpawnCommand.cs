@@ -2,6 +2,7 @@
 using GameServerCore.Enums;
 using GameServerCore.NetInfo;
 using LeagueSandbox.GameServer.Content;
+using LeagueSandbox.GameServer.GameObjects;
 using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
 using System;
 using System.Collections.Generic;
@@ -14,7 +15,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
         private readonly IPlayerManager _playerManager;
 
         public override string Command => "spawn";
-        public override string Syntax => $"{Command} champblue champpurple [champion] minionsblue minionspurple";
+        public override string Syntax => $"{Command} champblue [champion], champpurple [champion], minionsblue, minionspurple, regionblue [size, time], regionpurple [size, time]";
 
         public SpawnCommand(ChatCommandManager chatCommandManager, Game game)
             : base(chatCommandManager, game)
@@ -25,7 +26,6 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
         public override void Execute(int userId, bool hasReceivedArguments, string arguments = "")
         {
             var split = arguments.ToLower().Split(' ');
-            string championModel = "";
 
             if (split.Length < 2)
             {
@@ -46,6 +46,8 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
             }
             else if (split[1].StartsWith("champ"))
             {
+                string championModel = "";
+
                 split[1] = split[1].Replace("champ", "team_").ToUpper();
                 if (!Enum.TryParse(split[1], out TeamId team) || team == TeamId.TEAM_NEUTRAL)
                 {
@@ -75,6 +77,37 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
                 }
 
                 SpawnChampForTeam(team, userId, "Katarina");
+            }
+            else if (split[1].StartsWith("region"))
+            {
+                float size = 250.0f;
+                float time = -1f;
+
+                split[1] = split[1].Replace("region", "team_").ToUpper();
+                if (!Enum.TryParse(split[1], out TeamId team) || team == TeamId.TEAM_NEUTRAL)
+                {
+                    ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.SYNTAXERROR);
+                    ShowSyntax();
+                    return;
+                }
+
+                if (split.Length > 2)
+                {
+                    size = float.Parse(arguments.Split(' ')[2]);
+
+                    if (split.Length > 3)
+                    {
+                        time = float.Parse(arguments.Split(' ')[2]);
+                    }
+                }
+                else if (split.Length > 4)
+                {
+                    ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.SYNTAXERROR);
+                    ShowSyntax();
+                    return;
+                }
+
+                SpawnRegionForTeam(team, userId, size, time);
             }
         }
 
@@ -148,6 +181,12 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
             Game.PacketNotifier.NotifyEnterVisibilityClient(c, 0, true, false, true);
 
             ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.INFO, "Spawned Bot" + clientInfoTemp.Name + " as " + c.Model + " with NetID: " + c.NetId + ".");
+        }
+
+        public void SpawnRegionForTeam(TeamId team, int userId, float radius = 250.0f, float lifetime = -1.0f)
+        {
+            var championPos = _playerManager.GetPeerInfo(userId).Champion.Position;
+            API.ApiFunctionManager.AddPosPerceptionBubble(new Vector2(championPos.X, championPos.Y), radius, lifetime, team, true);
         }
     }
 }

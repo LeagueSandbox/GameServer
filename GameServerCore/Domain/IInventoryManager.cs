@@ -9,6 +9,7 @@ namespace GameServerCore.Domain
     {
         IItem GetItem(byte slot);
         IItem GetItem(string ItemSpellName);
+        bool HasItemWithID(int ItemID);
         byte GetItemSlot(IItem item);
         bool RemoveItem(byte slot, IObjAiBase owner = null, int stacksToRemove = 1);
         bool RemoveItem(IItem item, IObjAiBase owner = null, int stacksToRemove = 1);

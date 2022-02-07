@@ -37,6 +37,10 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         /// Supposed to be the NetID for the visual counterpart of this turret. Used only for packets.
         /// </summary>
         public uint ParentNetId { get; private set; }
+        /// <summary>
+        /// Region assigned to this turret for vision and collision.
+        /// </summary>
+        public IRegion BubbleRegion { get; private set; }
 
         public BaseTurret(
             Game game,
@@ -105,6 +109,9 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         {
             base.OnAdded();
             _game.ObjectManager.AddTurret(this);
+
+            // TODO: Handle this via map script for LaneTurret and via CharScript for AzirTurret.
+            BubbleRegion = new Region(_game, Team, Position, RegionType.Default, this, this, true, 800f, true, true, PathfindingRadius, lifetime: 25000.0f);
         }
 
         public override void OnCollision(IGameObject collider, bool isTerrain = false)

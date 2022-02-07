@@ -148,8 +148,9 @@ namespace GameServerCore.Domain.GameObjects
         /// <param name="name">Internal name of the spell to set.</param>
         /// <param name="slot">Slot of the spell to replace.</param>
         /// <param name="enabled">Whether or not the new spell should be enabled.</param>
+        /// <param name="networkOld">Whether or not to notify clients of this change using an older packet method.</param>
         /// <returns>Newly created spell set.</returns>
-        ISpell SetSpell(string name, byte slot, bool enabled);
+        ISpell SetSpell(string name, byte slot, bool enabled, bool networkOld = false);
         /// <summary>
         /// Sets the spell that this unit will cast when it gets in range of the spell's target.
         /// Overrides auto attack spell casting.

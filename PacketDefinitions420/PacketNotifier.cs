@@ -788,7 +788,7 @@ namespace PacketDefinitions420
                 BuffCount = buffCountList,
                 LookAtPosition = new Vector3(1, 0, 0),
                 // TODO: Verify
-                UnknownIsHero = isChampion,
+                IsHero = isChampion,
                 MovementData = md
             };
 
