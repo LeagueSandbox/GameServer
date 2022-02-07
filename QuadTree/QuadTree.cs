@@ -91,7 +91,6 @@ namespace System.Activities.Presentation.View
     {
         Rect bounds; // overall bounds we are indexing.
         Quadrant root;
-        IDictionary<T, Quadrant> table;
  
         public QuadTree(float top, float left, float width, float height)
         {
@@ -119,14 +118,6 @@ namespace System.Activities.Presentation.View
             }
  
             Quadrant parent = this.root.Insert(node, bounds);
- 
-            if (this.table == null)
-            {
-                this.table = new Dictionary<T, Quadrant>();
-            }
-            this.table[node] = parent;
- 
- 
         }
  
         /// <summary>
@@ -171,7 +162,6 @@ namespace System.Activities.Presentation.View
         public void Clear()
         {
             this.root = null;
-            table.Clear();
         }
  
         /// <summary>
