@@ -504,7 +504,7 @@ namespace LeagueSandbox.GameServer.API
         }
 
         /// <summary>
-        /// Acquires all alive or dead AttackableUnits within the specified range of a target position.
+        /// Acquires all dead or alive AttackableUnits within the specified range of a target position.
         /// </summary>
         /// <param name="targetPos">Origin of the range to check.</param>
         /// <param name="range">Range to check from the target position.</param>

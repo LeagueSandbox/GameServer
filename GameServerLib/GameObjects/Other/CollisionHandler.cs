@@ -26,11 +26,10 @@ namespace LeagueSandbox.GameServer.GameObjects.Other
             // Initializes a dynamic map using NavigationGrid properties and a CollisionObject which takes into account an object's CollisionRadius (+1 for insurance).
             // It will contain all GameObjects that should be able to collide with eachother, refer to IsCollisionObject.
             QuadDynamic = new QuadTree<IGameObject>(
-                _map.NavigationGrid.MinGridPosition.X,
-                _map.NavigationGrid.MinGridPosition.Z,
-                // Subtract one cell's size from the max so we never reach the CellCountX/Y (since Cells is an array).
-                _map.NavigationGrid.MaxGridPosition.X + MathF.Abs(_map.NavigationGrid.MinGridPosition.X),
-                _map.NavigationGrid.MaxGridPosition.Z + MathF.Abs(_map.NavigationGrid.MinGridPosition.Z)
+                _map.NavigationGrid.MinGridPosition.X, // MIN
+                _map.NavigationGrid.MaxGridPosition.Z, // yep, MAX
+                _map.NavigationGrid.MaxGridPosition.X -_map.NavigationGrid.MinGridPosition.X,
+                _map.NavigationGrid.MaxGridPosition.Z - _map.NavigationGrid.MinGridPosition.Z
             );
 
             //Pathfinder.setMap(map);
@@ -46,7 +45,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Other
         {
             // CollisionObjects can be any AI units, ObjBuildings, pure AttackableUnits, and pure GameObjects.
             // TODO: Implement static navgrid updates for turrets so we don't have to count them as collision objects.
-            return !(obj.IsToRemove() || obj is ILevelProp || obj is IParticle || obj is ISpellMissile);
+            return !(obj.IsToRemove() || obj is ILevelProp || obj is IParticle || obj is ISpellMissile || obj is IRegion) && obj.CollisionRadius > 0;
         }
 
         /// <summary>
@@ -111,7 +110,6 @@ namespace LeagueSandbox.GameServer.GameObjects.Other
                         obj.OnCollision(null, true);
                     }
 
-                    int i = 0;
                     var nearest = QuadDynamic.GetNodesInside(GetBounds(obj));
                     foreach (var obj2 in nearest)
                     {
@@ -120,7 +118,6 @@ namespace LeagueSandbox.GameServer.GameObjects.Other
                         {
                             obj.OnCollision(obj2);
                         }
-                        i++;
                     }
                 }
             }
