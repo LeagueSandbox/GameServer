@@ -228,7 +228,7 @@ namespace LeagueSandbox.GameServer.GameObjects
         /// Sets the object's team.
         /// </summary>
         /// <param name="team">TeamId.BLUE/PURPLE/NEUTRAL</param>
-        public void SetTeam(TeamId team)
+        public virtual void SetTeam(TeamId team)
         {
             _visibleByTeam[Team] = false;
             Team = team;

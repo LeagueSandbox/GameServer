@@ -132,7 +132,20 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         public override void OnAdded()
         {
             base.OnAdded();
-            _game.ObjectManager.AddVisionUnit(this);
+            _game.ObjectManager.AddVisionProvider(this, Team);
+        }
+
+        public override void OnRemoved()
+        {
+            base.OnRemoved();
+            _game.ObjectManager.RemoveVisionProvider(this, Team);
+        }
+
+        public override void SetTeam(TeamId team)
+        {
+            _game.ObjectManager.RemoveVisionProvider(this, Team);
+            base.SetTeam(team);
+            _game.ObjectManager.AddVisionProvider(this, Team);
         }
 
         /// <summary>
@@ -229,12 +242,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             }
 
             UpdateStatus();
-        }
-
-        public override void OnRemoved()
-        {
-            base.OnRemoved();
-            _game.ObjectManager.RemoveVisionUnit(this);
         }
 
         /// <summary>
