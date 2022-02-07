@@ -46,14 +46,14 @@ namespace GameServerCore
         /// </summary>
         /// <param name="obj">GameObject to add.</param>
         /// <param name="team">The team that GameObject can provide vision to.</param>
-        public void AddVisionProvider(IGameObject obj, TeamId team);
+        void AddVisionProvider(IGameObject obj, TeamId team);
 
         /// <summary>
         /// Removes a GameObject from the list of Vision Providers in ObjectManager.
         /// </summary>
         /// <param name="obj">GameObject to remove.</param>
         /// <param name="team">The team that GameObject provided vision to.</param>
-        public void RemoveVisionProvider(IGameObject obj, TeamId team);
+        void RemoveVisionProvider(IGameObject obj, TeamId team);
 
         bool TeamHasVisionOn(TeamId team, IGameObject o);
 

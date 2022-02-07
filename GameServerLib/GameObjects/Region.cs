@@ -144,7 +144,8 @@ namespace LeagueSandbox.GameServer.GameObjects
 
         void RegisterVision()
         {
-            if(Team == TeamId.TEAM_NEUTRAL)
+            // NEUTRAL Regions give global vision.
+            if (Team == TeamId.TEAM_NEUTRAL)
             {
                 _game.ObjectManager.AddVisionProvider(this, TeamId.TEAM_BLUE);
                 _game.ObjectManager.AddVisionProvider(this, TeamId.TEAM_PURPLE);
@@ -157,7 +158,7 @@ namespace LeagueSandbox.GameServer.GameObjects
 
         void UnregisterVision()
         {
-            if(Team == TeamId.TEAM_NEUTRAL)
+            if (Team == TeamId.TEAM_NEUTRAL)
             {
                 _game.ObjectManager.RemoveVisionProvider(this, TeamId.TEAM_BLUE);
                 _game.ObjectManager.RemoveVisionProvider(this, TeamId.TEAM_PURPLE);
