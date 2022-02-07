@@ -130,6 +130,73 @@ namespace LeagueSandbox.GameServer.API
             return _game.ObjectManager.Teams;
         }
 
+        public static int ConvertAPISlot(SpellSlotType slotType, int slot)
+        {
+            if ((slotType == SpellSlotType.SpellSlots && (slot < 0 || slot > 3))
+                || (slotType == SpellSlotType.InventorySlots && (slot < 0 || slot > 6))
+                || (slotType == SpellSlotType.ExtraSlots && (slot < 0 || slot > 15)))
+            {
+                return -1;
+            }
+
+            if (slotType == SpellSlotType.SummonerSpellSlots)
+            {
+                slot += (int)SpellSlotType.SummonerSpellSlots;
+            }
+            else if (slotType == SpellSlotType.InventorySlots)
+            {
+                slot += (int)SpellSlotType.InventorySlots;
+            }
+            else if (slotType == SpellSlotType.TempItemSlot)
+            {
+                slot = (int)SpellSlotType.TempItemSlot;
+            }
+            else if (slotType == SpellSlotType.ExtraSlots)
+            {
+                slot += (int)SpellSlotType.ExtraSlots;
+            }
+
+            return slot;
+        }
+
+        public static int ConvertAPISlot(SpellbookType spellbookType, SpellSlotType slotType, int slot)
+        {
+            if (spellbookType == SpellbookType.SPELLBOOK_UNKNOWN
+                || spellbookType == SpellbookType.SPELLBOOK_SUMMONER && (slotType != SpellSlotType.SummonerSpellSlots)
+                || (spellbookType == SpellbookType.SPELLBOOK_CHAMPION
+                    && ((slotType == SpellSlotType.SpellSlots && (slot < 0 || slot > 3))
+                        || (slotType == SpellSlotType.InventorySlots && (slot < 0 || slot > 6))
+                        || (slotType == SpellSlotType.ExtraSlots && (slot < 0 || slot > 15)))))
+            {
+                return -1;
+            }
+
+            if (spellbookType == SpellbookType.SPELLBOOK_CHAMPION)
+            {
+                if (slotType == SpellSlotType.InventorySlots)
+                {
+                    slot += (int)SpellSlotType.InventorySlots;
+                }
+                else if (slotType == SpellSlotType.TempItemSlot)
+                {
+                    slot = (int)SpellSlotType.TempItemSlot;
+                }
+                else if (slotType == SpellSlotType.ExtraSlots)
+                {
+                    slot += (int)SpellSlotType.ExtraSlots;
+                }
+            }
+            else if (spellbookType == SpellbookType.SPELLBOOK_SUMMONER)
+            {
+                if (slotType == SpellSlotType.SummonerSpellSlots)
+                {
+                    slot += (int)SpellSlotType.SummonerSpellSlots;
+                }
+            }
+
+            return slot;
+        }
+
         /// <summary>
         /// Teleports an AI unit to the specified coordinates.
         /// Instant.
@@ -707,26 +774,11 @@ namespace LeagueSandbox.GameServer.API
 
         public static void SealSpellSlot(IObjAiBase target, SpellSlotType slotType, int slot, SpellbookType spellbookType, bool seal)
         {
-            if (spellbookType == SpellbookType.SPELLBOOK_UNKNOWN
-                || spellbookType == SpellbookType.SPELLBOOK_SUMMONER && (slotType != SpellSlotType.SummonerSpellSlots)
-                || (spellbookType == SpellbookType.SPELLBOOK_CHAMPION
-                    && ((slotType == SpellSlotType.SpellSlots && (slot < 0 || slot > 3))
-                        || (slotType == SpellSlotType.InventorySlots && (slot < 0 || slot > 6))
-                        || (slotType == SpellSlotType.ExtraSlots && (slot < 0 || slot > 15)))))
+            slot = ConvertAPISlot(spellbookType, slotType, slot);
+
+            if (slot == -1)
             {
                 return;
-            }
-
-            if (spellbookType == SpellbookType.SPELLBOOK_CHAMPION)
-            {
-                if (slotType == SpellSlotType.InventorySlots)
-                {
-                    slot += (int)SpellSlotType.InventorySlots;
-                }
-                if (slotType == SpellSlotType.ExtraSlots)
-                {
-                    slot += (int)SpellSlotType.ExtraSlots;
-                }
             }
 
             if (spellbookType == SpellbookType.SPELLBOOK_SUMMONER)
@@ -782,29 +834,14 @@ namespace LeagueSandbox.GameServer.API
 
         public static void SetTargetingType(IObjAiBase target, SpellSlotType slotType, int slot, TargetingType newType)
         {
-            if ((slotType == SpellSlotType.SpellSlots && (slot < 0 || slot > 3))
-                || (slotType == SpellSlotType.InventorySlots && (slot < 0 || slot > 6))
-                || (slotType == SpellSlotType.ExtraSlots && (slot < 0 || slot > 15)))
+            slot = ConvertAPISlot(slotType, slot);
+
+            if (slot == -1)
             {
                 return;
             }
 
-            if (slotType == SpellSlotType.InventorySlots)
-            {
-                slot += (int)SpellSlotType.InventorySlots;
-            }
-
-            if (slotType == SpellSlotType.TempItemSlot)
-            {
-                slot = (int)SpellSlotType.TempItemSlot;
-            }
-
-            if (slotType == SpellSlotType.ExtraSlots)
-            {
-                slot += (int)SpellSlotType.ExtraSlots;
-            }
-
-            ISpell spell = target.GetSpell((byte)slot);
+            var spell = target.GetSpell((byte)slot);
 
             spell.SpellData.SetTargetingType(newType);
 
@@ -826,27 +863,7 @@ namespace LeagueSandbox.GameServer.API
         {
             if (unit is IChampion champ)
             {
-                if ((slotType == SpellSlotType.SpellSlots && (slot < 0 || slot > 3))
-                || (slotType == SpellSlotType.InventorySlots && (slot < 0 || slot > 6))
-                || (slotType == SpellSlotType.ExtraSlots && (slot < 0 || slot > 15)))
-                {
-                    return;
-                }
-
-                if (slotType == SpellSlotType.InventorySlots)
-                {
-                    slot += (int)SpellSlotType.InventorySlots;
-                }
-
-                if (slotType == SpellSlotType.TempItemSlot)
-                {
-                    slot = (int)SpellSlotType.TempItemSlot;
-                }
-
-                if (slotType == SpellSlotType.ExtraSlots)
-                {
-                    slot += (int)SpellSlotType.ExtraSlots;
-                }
+                slot = (byte)ConvertAPISlot(book, slotType, slot);
 
                 champ.GetSpell(slot).SetToolTipVar(tipIndex, value);
             }
@@ -860,27 +877,7 @@ namespace LeagueSandbox.GameServer.API
 
         public static void SpellCast(IObjAiBase caster, int slot, SpellSlotType slotType, Vector2 pos, Vector2 endPos, bool fireWithoutCasting, Vector2 overrideCastPos, List<ICastTarget> targets = null, bool isForceCastingOrChanneling = false, int overrideForceLevel = -1, bool updateAutoAttackTimer = false, bool useAutoAttackSpell = false)
         {
-            if ((slotType == SpellSlotType.SpellSlots && (slot < 0 || slot > 3))
-                || (slotType == SpellSlotType.InventorySlots && (slot < 0 || slot > 6))
-                || (slotType == SpellSlotType.ExtraSlots && (slot < 0 || slot > 15)))
-            {
-                return;
-            }
-
-            if (slotType == SpellSlotType.InventorySlots)
-            {
-                slot += (int)SpellSlotType.InventorySlots;
-            }
-
-            if (slotType == SpellSlotType.TempItemSlot)
-            {
-                slot = (int)SpellSlotType.TempItemSlot;
-            }
-
-            if (slotType == SpellSlotType.ExtraSlots)
-            {
-                slot += (int)SpellSlotType.ExtraSlots;
-            }
+            slot = ConvertAPISlot(slotType, slot);
 
             ISpell spell = caster.GetSpell((byte)slot);
 

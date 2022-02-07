@@ -99,8 +99,6 @@ namespace LeagueSandbox.GameServer
                     {
                         _game.PacketNotifier.NotifySpawn(turret);
 
-                        new Region(_game, turret.Team, turret.Position, RegionType.Default, turret, turret, true, 800f, true, true, turret.PathfindingRadius, lifetime: 25000.0f);
-
                         foreach (var item in turret.Inventory)
                         {
                             if (item != null)
@@ -316,12 +314,16 @@ namespace LeagueSandbox.GameServer
                 foreach (var kv in _objects)
                 {
                     // NEUTRAL Regions give global vision.
-                    if (((kv.Value.Team == team) || (kv.Value is IRegion region && region.Team == TeamId.TEAM_NEUTRAL))
+                    if (((kv.Value.Team == team) || (kv.Value is IRegion && kv.Value.Team == TeamId.TEAM_NEUTRAL))
                         && Vector2.DistanceSquared(kv.Value.Position, o.Position) < kv.Value.VisionRadius * kv.Value.VisionRadius
                         && !_game.Map.NavigationGrid.IsAnythingBetween(kv.Value, o, true))
                     {
                         var unit = kv.Value as IAttackableUnit;
                         if (unit == null || !unit.IsDead)
+                        {
+                            return true;
+                        }
+                        else if (kv.Value is IRegion region)
                         {
                             return true;
                         }

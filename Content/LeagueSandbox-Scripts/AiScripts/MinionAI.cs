@@ -91,6 +91,7 @@ namespace AIScripts
             // If target is dead or out of range
             {
                 minion.CancelAutoAttack(false, true);
+                minion.SetTargetUnit(null, true);
             }
         }
     }

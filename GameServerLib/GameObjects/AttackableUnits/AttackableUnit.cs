@@ -1633,7 +1633,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// </summary>
         /// <param name="state">State to set. True = dashing, false = not dashing.</param>
         /// TODO: Implement ForcedMovement methods and enumerators to handle different kinds of dashes.
-        public virtual void SetDashingState(bool state)
+        public virtual void SetDashingState(bool state, MoveStopReason reason = MoveStopReason.Finished)
         {
             if (MovementParameters != null && state == false)
             {
@@ -1641,13 +1641,24 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
 
                 var animPairs = new Dictionary<string, string> { { "RUN", "" } };
                 SetAnimStates(animPairs);
+
+                ApiEventManager.OnMoveEnd.Publish(this);
+
+                if (reason == MoveStopReason.Finished)
+                {
+                    ApiEventManager.OnMoveSuccess.Publish(this);
+                }
+                else if (reason != MoveStopReason.Finished)
+                {
+                    ApiEventManager.OnMoveFailure.Publish(this);
+                }
             }
 
             // TODO: Implement this as a parameter.
-            Stats.SetActionState(ActionState.CAN_ATTACK, !state);
-            Stats.SetActionState(ActionState.CAN_NOT_ATTACK, state);
-            Stats.SetActionState(ActionState.CAN_MOVE, !state);
-            Stats.SetActionState(ActionState.CAN_NOT_MOVE, state);
+            SetStatus(StatusFlags.CanAttack, !state);
+            // TODO: Verify if changing cast status is correct.
+            SetStatus(StatusFlags.CanCast, !state);
+            SetStatus(StatusFlags.CanMove, !state);
         }
 
         /// <summary>
