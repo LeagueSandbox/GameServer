@@ -364,7 +364,7 @@ namespace MapScripts.Map12
                 CheckMapInitialAnnouncements(gameTime);
             }
 
-            if (gameTime >= timeCheck && timesApplied < 10)
+            if (gameTime >= timeCheck && timesApplied < 8)
             {
                 UpdateTowerStats();
             }
@@ -385,7 +385,7 @@ namespace MapScripts.Map12
                 {
                     foreach (var turret in _map.TurretList[team][lane])
                     {
-                        if (turret.Type == TurretType.NEXUS_TURRET || turret.Type == TurretType.FOUNTAIN_TURRET)
+                        if (turret.Type == TurretType.FOUNTAIN_TURRET)
                         {
                             continue;
                         }
