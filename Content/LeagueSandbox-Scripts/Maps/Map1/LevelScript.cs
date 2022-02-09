@@ -311,7 +311,7 @@ namespace MapScripts.Map1
             OuterTurretStatsModifier.MagicResist.FlatBonus = 1;
             OuterTurretStatsModifier.AttackDamage.FlatBonus = 4;
 
-            NeutralMinionSpawn.InitializeJungle(_map);
+            NeutralMinionSpawn.InitializeCamps(_map);
         }
 
         public void Update(float diff)

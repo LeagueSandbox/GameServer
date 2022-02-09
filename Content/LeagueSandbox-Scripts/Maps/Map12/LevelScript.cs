@@ -195,9 +195,9 @@ namespace MapScripts.Map12
             }}
         };
 
-        Dictionary<int, ILevelProp> Poros = new Dictionary<int, ILevelProp>();
-        Dictionary<int, ILevelProp> LongChains = new Dictionary<int, ILevelProp>();
-        Dictionary<int, ILevelProp> Chains = new Dictionary<int, ILevelProp>();
+        public Dictionary<int, ILevelProp> Poros = new Dictionary<int, ILevelProp>();
+        public Dictionary<int, ILevelProp> LongChains = new Dictionary<int, ILevelProp>();
+        public Dictionary<int, ILevelProp> Chains = new Dictionary<int, ILevelProp>();
         public void Init(IMapScriptHandler map)
         {
             _map = map;
