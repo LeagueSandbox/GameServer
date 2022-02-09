@@ -18,9 +18,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
     /// </summary>
     public class BaseTurret : ObjAiBase, IBaseTurret
     {
-        protected float _globalGold = 250.0f;
-        protected float _globalExp = 0.0f;
-
         /// <summary>
         /// Current lane this turret belongs to.
         /// </summary>
@@ -53,7 +50,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             IMapObject mapObject = null,
             int skinId = 0,
             string aiScript = ""
-        ) : base(game, model, new Stats.Stats(), 88, position, 1200, skinId, netId, team, aiScript)
+        ) : base(game, model, new Stats.Stats(), position: position, visionRadius: 800, skinId: skinId, netId: netId, team: team, aiScript: aiScript)
         {
             ParentNetId = Crc32Algorithm.Compute(Encoding.UTF8.GetBytes(name)) | 0xFF000000;
             Name = name;
@@ -72,25 +69,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         /// <param name="killer">Unit that killed this unit.</param>
         public override void Die(IDeathData data)
         {
-            foreach (var player in _game.ObjectManager.GetAllChampionsFromTeam(data.Killer.Team))
-            {
-                var goldEarn = _globalGold;
-
-                // Champions in Range within TURRET_RANGE * 1.5f will gain 150% more (obviously)
-                if (Vector2.DistanceSquared(player.Position, Position) <= (Stats.Range.Total * 1.5f) * (Stats.Range.Total * 1.5f) && !player.IsDead)
-                {
-                    goldEarn = _globalGold * 2.5f;
-                    if (_globalExp > 0)
-                    {
-                        player.Stats.Experience += _globalExp;
-                    }
-                }
-
-
-                player.Stats.Gold += goldEarn;
-                _game.PacketNotifier.NotifyUnitAddGold(player, this, goldEarn);
-            }
-
             var announce = new OnTurretDie
             {
                 AssistCount = 0,
@@ -135,15 +113,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         public void SetLaneID(LaneID newId)
         {
             Lane = newId;
-        }
-
-        /// <summary>
-        /// Called by ObjectManager every tick.
-        /// </summary>
-        /// <param name="diff">Amount of milliseconds passed since this tick started.</param>
-        public override void Update(float diff)
-        {
-            base.Update(diff);
         }
     }
 }
