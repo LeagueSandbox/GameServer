@@ -8,6 +8,7 @@ using GameServerCore.Maps;
 using GameServerCore.Scripting.CSharp;
 using LeagueSandbox.GameServer.API;
 using LeagueSandbox.GameServer.Content;
+using LeagueSandbox.GameServer.GameObjects.Stats;
 using LeagueSandbox.GameServer.Logging;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using log4net;
@@ -78,16 +79,16 @@ namespace MapScripts.Map12
             {TeamId.TEAM_BLUE, new Dictionary<TurretType, string>
             {
                 {TurretType.FOUNTAIN_TURRET, "HA_AP_OrderShrineTurret" },
-                {TurretType.NEXUS_TURRET, "HA_AP_OrderTurret" },
+                {TurretType.NEXUS_TURRET, "HA_AP_OrderTurret3" },
                 {TurretType.INHIBITOR_TURRET, "HA_AP_OrderTurret2" },
-                {TurretType.INNER_TURRET, "HA_AP_OrderTurret3" },
+                {TurretType.INNER_TURRET, "HA_AP_OrderTurret" },
             } },
             {TeamId.TEAM_PURPLE, new Dictionary<TurretType, string>
             {
                 {TurretType.FOUNTAIN_TURRET, "HA_AP_ChaosTurretShrine" },
-                {TurretType.NEXUS_TURRET, "HA_AP_ChaosTurret" },
+                {TurretType.NEXUS_TURRET, "HA_AP_ChaosTurret3" },
                 {TurretType.INHIBITOR_TURRET, "HA_AP_ChaosTurret2" },
-                {TurretType.INNER_TURRET, "HA_AP_ChaosTurret3" },
+                {TurretType.INNER_TURRET, "HA_AP_ChaosTurret" },
             } }
         };
 
@@ -258,12 +259,48 @@ namespace MapScripts.Map12
         }
 
         public List<IMonsterCamp> HealthPacks = new List<IMonsterCamp>();
+        IStatsModifier TurretStatsModifier = new StatsModifier();
+        Dictionary<TeamId, List<IChampion>> Players = new Dictionary<TeamId, List<IChampion>>();
         public void OnMatchStart()
         {
             foreach (var nexus in _map.NexusList)
             {
                 ApiEventManager.OnDeath.AddListener(this, nexus, OnNexusDeath, true);
             }
+
+            Players.Add(TeamId.TEAM_BLUE, ApiFunctionManager.GetAllPlayersFromTeam(TeamId.TEAM_BLUE));
+            Players.Add(TeamId.TEAM_PURPLE, ApiFunctionManager.GetAllPlayersFromTeam(TeamId.TEAM_PURPLE));
+
+            IStatsModifier TurretHealthModifier = new StatsModifier();
+            foreach (var team in _map.TurretList.Keys)
+            {
+                TeamId enemyTeam = TeamId.TEAM_BLUE;
+
+                if (team == TeamId.TEAM_BLUE)
+                {
+                    enemyTeam = TeamId.TEAM_PURPLE;
+                }
+
+                TurretHealthModifier.HealthPoints.BaseBonus = 250.0f * Players[enemyTeam].Count;
+
+                foreach (var lane in _map.TurretList[team].Keys)
+                {
+                    foreach (var turret in _map.TurretList[team][lane])
+                    {
+                        if (turret.Type == TurretType.FOUNTAIN_TURRET)
+                        {
+                            continue;
+                        }
+
+                        turret.AddStatModifier(TurretHealthModifier);
+                        turret.Stats.CurrentHealth += turret.Stats.HealthPoints.Total;
+                    }
+                }
+            }
+
+            TurretStatsModifier.Armor.FlatBonus = 1;
+            TurretStatsModifier.MagicResist.FlatBonus = 1;
+            TurretStatsModifier.AttackDamage.FlatBonus = 6;
 
             var purple_healthPacket1 = _map.CreateJungleCamp(new Vector3(7582.1f, 60.0f, 6785.5f), 1, TeamId.TEAM_NEUTRAL, "HealthPack", 190.0f * 1000f);
             _map.CreateJungleMonster("HA_AP_HealthRelic1.1.1", "HA_AP_HealthRelic", new Vector2(7582.1f, 6785.5f), new Vector3(7582.1f, -193.8f, 6785.5f), purple_healthPacket1);
@@ -322,15 +359,45 @@ namespace MapScripts.Map12
                 }
             }
 
+            var gameTime = _map.GameTime();
             if (!AllAnnouncementsAnnounced)
             {
-                CheckMapInitialAnnouncements(_map.GameTime());
+                CheckMapInitialAnnouncements(gameTime);
+            }
+
+            if (gameTime >= timeCheck && timesApplied < 8)
+            {
+                UpdateTowerStats();
             }
 
             if (forceSpawn)
             {
                 forceSpawn = false;
             }
+        }
+
+        float timeCheck = 0.0f * 1000;
+        byte timesApplied = 0;
+        public void UpdateTowerStats()
+        {
+            foreach (var team in _map.TurretList.Keys)
+            {
+                foreach (var lane in _map.TurretList[team].Keys)
+                {
+                    foreach (var turret in _map.TurretList[team][lane])
+                    {
+                        if (turret.Type == TurretType.FOUNTAIN_TURRET)
+                        {
+                            continue;
+                        }
+
+                        turret.AddStatModifier(TurretStatsModifier);
+                    }
+                }
+            }
+
+            timesApplied++;
+            timeCheck += 60.0f * 1000;
         }
 
         public void OnNexusDeath(IDeathData deathaData)

@@ -78,6 +78,15 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             }
         }
 
+        public void AddGold(IAttackableUnit source, float gold, bool notify = true)
+        {
+            Stats.Gold += gold;
+            if (notify)
+            {
+                _game.PacketNotifier.NotifyUnitAddGold(this, source, gold);
+            }
+        }
+
         private string GetPlayerIndex()
         {
             return $"player{_playerId}";
@@ -256,13 +265,17 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
         public void AddExperience(float experience, bool notify = true)
         {
-            Stats.Experience += experience;
-            if (Stats.Experience > 0 && notify)
+            if (experience > 0)
             {
-                _game.PacketNotifier.NotifyUnitAddEXP(this, experience);
-            }
+                Stats.Experience += experience;
 
-            while (Stats.Experience >= _game.Config.MapData.ExpCurve[Stats.Level - 1] && LevelUp()) ;
+                if (notify)
+                {
+                    _game.PacketNotifier.NotifyUnitAddEXP(this, experience);
+                }
+
+                while (Stats.Experience >= _game.Config.MapData.ExpCurve[Stats.Level - 1] && LevelUp()) ;
+            }
         }
 
         public bool LevelUp(bool force = false)

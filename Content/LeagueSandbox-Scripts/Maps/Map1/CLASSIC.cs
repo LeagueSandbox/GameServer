@@ -9,6 +9,7 @@ using LeagueSandbox.GameServer.Content;
 using GameServerCore.Scripting.CSharp;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using LeagueSandbox.GameServer.API;
+using LeagueSandbox.GameServer.GameObjects.Stats;
 
 namespace MapScripts.Map1
 {
@@ -262,12 +263,60 @@ namespace MapScripts.Map1
         }
 
         List<IMonsterCamp> MonsterCamps = new List<IMonsterCamp>();
+        IStatsModifier TurretStatsModifier = new StatsModifier();
+        IStatsModifier OuterTurretStatsModifier = new StatsModifier();
+        Dictionary<TeamId, List<IChampion>> Players = new Dictionary<TeamId, List<IChampion>>();
         public virtual void OnMatchStart()
         {
             foreach (var nexus in _map.NexusList)
             {
                 ApiEventManager.OnDeath.AddListener(this, nexus, OnNexusDeath, true);
             }
+
+            Players.Add(TeamId.TEAM_BLUE, ApiFunctionManager.GetAllPlayersFromTeam(TeamId.TEAM_BLUE));
+            Players.Add(TeamId.TEAM_PURPLE, ApiFunctionManager.GetAllPlayersFromTeam(TeamId.TEAM_PURPLE));
+
+            IStatsModifier TurretHealthModifier = new StatsModifier();
+            foreach (var team in _map.TurretList.Keys)
+            {
+                TeamId enemyTeam = TeamId.TEAM_BLUE;
+
+                if (team == TeamId.TEAM_BLUE)
+                {
+                    enemyTeam = TeamId.TEAM_PURPLE;
+                }
+
+                foreach (var lane in _map.TurretList[team].Keys)
+                {
+                    foreach (var turret in _map.TurretList[team][lane])
+                    {
+                        if (turret.Type == TurretType.FOUNTAIN_TURRET)
+                        {
+                            continue;
+                        }
+                        else if (turret.Type != TurretType.NEXUS_TURRET)
+                        {
+                            TurretHealthModifier.HealthPoints.BaseBonus = 250.0f * Players[enemyTeam].Count;
+                        }
+                        else
+                        {
+                            TurretHealthModifier.HealthPoints.BaseBonus = 125.0f * Players[enemyTeam].Count;
+                        }
+
+                        turret.AddStatModifier(TurretHealthModifier);
+                        turret.Stats.CurrentHealth += turret.Stats.HealthPoints.Total;
+                    }
+                }
+            }
+
+            TurretStatsModifier.Armor.FlatBonus = 1;
+            TurretStatsModifier.MagicResist.FlatBonus = 1;
+            TurretStatsModifier.AttackDamage.FlatBonus = 4;
+
+            //Outer turrets dont get armor
+            OuterTurretStatsModifier.MagicResist.FlatBonus = 1;
+            OuterTurretStatsModifier.AttackDamage.FlatBonus = 4;
+
             SetupJungleCamps();
         }
 
@@ -297,10 +346,63 @@ namespace MapScripts.Map1
                 CheckInitialMapAnnouncements(gameTime);
             }
 
+            if (gameTime >= timeCheck && timesApplied < 30)
+            {
+                UpdateTowerStats();
+            }
+            if(gameTime >= outerTurretTimeCheck && outerTurretTimesApplied < 7)
+            {
+                UpdateOuterTurretStats();
+            }
+
             if (forceSpawn)
             {
                 forceSpawn = false;
             }
+        }
+
+        float timeCheck = 480.0f * 1000;
+        byte timesApplied = 0;
+        public void UpdateTowerStats()
+        {
+            foreach (var team in _map.TurretList.Keys)
+            {
+                foreach (var lane in _map.TurretList[team].Keys)
+                {
+                    foreach (var turret in _map.TurretList[team][lane])
+                    {
+                        if (turret.Type == TurretType.OUTER_TURRET || turret.Type == TurretType.FOUNTAIN_TURRET || (turret.Type == TurretType.INNER_TURRET && timesApplied >= 20))
+                        {
+                            continue;
+                        }
+
+                        turret.AddStatModifier(TurretStatsModifier);
+                    } 
+                }
+            }
+
+            timesApplied++;
+            timeCheck += 60.0f * 1000;
+        }
+
+        float outerTurretTimeCheck = 30.0f * 1000;
+        byte outerTurretTimesApplied = 0;
+        public void UpdateOuterTurretStats()
+        {
+            foreach (var team in _map.TurretList.Keys)
+            {
+                foreach (var lane in _map.TurretList[team].Keys)
+                {
+                    var turret = _map.TurretList[team][lane].Find(x => x.Type == TurretType.OUTER_TURRET);
+
+                    if(turret != null)
+                    {
+                        turret.AddStatModifier(OuterTurretStatsModifier);
+                    }
+                }
+            }
+            outerTurretTimesApplied++;
+            outerTurretTimeCheck += 60.0f * 1000;
         }
 
         public float GetRespawnTimer(IMonsterCamp monsterCamp)

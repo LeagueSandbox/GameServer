@@ -8,6 +8,7 @@ using GameServerCore.Maps;
 using GameServerCore.Scripting.CSharp;
 using LeagueSandbox.GameServer.API;
 using LeagueSandbox.GameServer.Content;
+using LeagueSandbox.GameServer.GameObjects.Stats;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 
 namespace MapScripts.Map10
@@ -223,12 +224,49 @@ namespace MapScripts.Map10
         }
 
         public List<IMonsterCamp> MonsterCamps = new List<IMonsterCamp>();
+        IStatsModifier TurretStatsModifier = new StatsModifier();
+        Dictionary<TeamId, List<IChampion>> Players = new Dictionary<TeamId, List<IChampion>>();
         public void OnMatchStart()
         {
             foreach (var nexus in _map.NexusList)
             {
                 ApiEventManager.OnDeath.AddListener(this, nexus, OnNexusDeath, true);
             }
+
+            Players.Add(TeamId.TEAM_BLUE, ApiFunctionManager.GetAllPlayersFromTeam(TeamId.TEAM_BLUE));
+            Players.Add(TeamId.TEAM_PURPLE, ApiFunctionManager.GetAllPlayersFromTeam(TeamId.TEAM_PURPLE));
+
+            IStatsModifier TurretHealthModifier = new StatsModifier();
+            foreach (var team in _map.TurretList.Keys)
+            {
+                TeamId enemyTeam = TeamId.TEAM_BLUE;
+
+                if (team == TeamId.TEAM_BLUE)
+                {
+                    enemyTeam = TeamId.TEAM_PURPLE;
+                }
+
+                TurretHealthModifier.HealthPoints.BaseBonus = 250.0f * Players[enemyTeam].Count;
+
+                foreach (var lane in _map.TurretList[team].Keys)
+                {
+                    foreach (var turret in _map.TurretList[team][lane])
+                    {
+                        if (turret.Type == TurretType.FOUNTAIN_TURRET)
+                        {
+                            continue;
+                        }
+
+                        turret.AddStatModifier(TurretHealthModifier);
+                        turret.Stats.CurrentHealth += turret.Stats.HealthPoints.Total;
+                    }
+                }
+            }
+
+            TurretStatsModifier.Armor.FlatBonus = 1;
+            TurretStatsModifier.MagicResist.FlatBonus = 1;
+            TurretStatsModifier.AttackDamage.FlatBonus = 4;
+
             SetupJungleCamps();
         }
 
@@ -248,15 +286,45 @@ namespace MapScripts.Map10
                 }
             }
 
+            float gameTime = _map.GameTime();
             if (!AllAnnouncementsAnnounced)
             {
-                CheckInitialMapAnnouncements(_map.GameTime());
+                CheckInitialMapAnnouncements(gameTime);
+            }
+
+            if (gameTime >= timeCheck && timesApplied < 30)
+            {
+                UpdateTowerStats();
             }
 
             if (forceSpawn)
             {
                 forceSpawn = false;
             }
+        }
+
+        float timeCheck = 480.0f * 1000;
+        byte timesApplied = 0;
+        public void UpdateTowerStats()
+        {
+            foreach (var team in _map.TurretList.Keys)
+            {
+                foreach (var lane in _map.TurretList[team].Keys)
+                {
+                    foreach (var turret in _map.TurretList[team][lane])
+                    {
+                        if (turret.Type == TurretType.FOUNTAIN_TURRET || ((turret.Type != TurretType.NEXUS_TURRET) && timesApplied >= 20))
+                        {
+                            continue;
+                        }
+
+                        turret.AddStatModifier(TurretStatsModifier);
+                    }
+                }
+            }
+
+            timesApplied++;
+            timeCheck += 60.0f * 1000;
         }
 
         public float GetRespawnTimer(IMonsterCamp monsterCamp)

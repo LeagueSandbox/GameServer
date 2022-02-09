@@ -10,6 +10,7 @@
         byte SkillPoints { get; set; }
 
         // basic
+        void AddGold(IAttackableUnit source, float gold, bool notify = true);
         void UpdateSkin(int skinNo);
         uint GetPlayerId();
         void AddExperience(float experience, bool notify = true);

@@ -616,7 +616,7 @@ namespace LeagueSandbox.GameServer.API
         {
             return _game.ObjectManager.GetChampionsInRange(targetPos, range, isAlive);
         }
-        
+
         /// <summary>
         /// Counts the number of units attacking a specified GameObject of type AttackableUnit.
         /// </summary>
@@ -641,6 +641,12 @@ namespace LeagueSandbox.GameServer.API
                 toreturn.Add(player.Item2.Champion);
             }
             return toreturn;
+        }
+
+        //Consider changing this to take bots into account too
+        public static List<IChampion> GetAllPlayersFromTeam(TeamId team)
+        {
+            return _game.ObjectManager.GetAllChampionsFromTeam(team);
         }
 
         /// <summary>
