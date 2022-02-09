@@ -18,58 +18,10 @@ namespace MapScripts.Map1
 
         public static List<IMonsterCamp> MonsterCamps = new List<IMonsterCamp>();
 
-        public static void InitializeJungle(IMapScriptHandler map)
+        public static void InitializeCamps(IMapScriptHandler map)
         {
             _map = map;
 
-        }
-
-        public static void OnUpdate(float diff)
-        {
-            foreach (var camp in MonsterCamps)
-            {
-                if (!camp.IsAlive)
-                {
-                    camp.RespawnTimer -= diff;
-                    if (camp.RespawnTimer <= 0 || forceSpawn)
-                    {
-                        _map.SpawnCamp(camp);
-                        camp.RespawnTimer = GetRespawnTimer(camp);
-                    }
-                }
-            }
-
-            if (forceSpawn)
-            {
-                forceSpawn = false;
-            }
-        }
-
-        public static void ForceCampSpawn()
-        {
-            forceSpawn = true;
-        }
-
-        public static float GetRespawnTimer(IMonsterCamp monsterCamp)
-        {
-            switch (monsterCamp.CampIndex)
-            {
-                case 1:
-                case 4:
-                case 7:
-                case 10:
-                    return 300.0f * 1000;
-                case 12:
-                    return 420.0f * 1000;
-                case 6:
-                    return 360.0f * 1000f;
-                default:
-                    return 50.0f * 1000;
-            }
-        }
-
-        public static void SetupCamps()
-        {
             //Blue Side Blue Buff
             var blue_blueBuff = _map.CreateJungleCamp(new Vector3(3632.7002f, 60.0f, 7600.373f), 1, TeamId.TEAM_BLUE, "Camp", 115.0f * 1000);
             _map.CreateJungleMonster("AncientGolem1.1.1", "AncientGolem", new Vector2(3632.7002f, 7600.373f), new Vector3(3013.98f, 55.0703f, 7969.72f), blue_blueBuff, aiScript: "BasicJungleMonsterAi");
@@ -83,7 +35,6 @@ namespace MapScripts.Map1
             _map.CreateJungleMonster("Wolf2.1.2", "Wolf", new Vector2(3523.6782f, 6223.3457f), new Vector3(3294.0f, 46.0f, 6165.0f), blueWolves, aiScript: "BasicJungleMonsterAi");
             _map.CreateJungleMonster("Wolf2.1.3", "Wolf", new Vector2(3323.6782f, 6373.3457f), new Vector3(3294.0f, 46.0f, 6165.0f), blueWolves, aiScript: "BasicJungleMonsterAi");
             MonsterCamps.Add(blueWolves);
-
 
             //Blue Side Wraiths
             var blueWraiths = _map.CreateJungleCamp(new Vector3(6300.05f, 60.0f, 5300.06f), 3, TeamId.TEAM_BLUE, "LesserCamp", 125.0f * 1000);
@@ -160,6 +111,50 @@ namespace MapScripts.Map1
             var redGreatGromp = _map.CreateJungleCamp(new Vector3(12337.0f, 60.0f, 6263.0f), 14, TeamId.TEAM_BLUE, "LesserCamp", 125.0f * 1000);
             _map.CreateJungleMonster("GreatWraith14.1.1", "GreatWraith", new Vector2(12337.0f, 6263.0f), new Vector3(11826.0f, 52.0f, 4788.0f), redGreatGromp, aiScript: "BasicJungleMonsterAi");
             MonsterCamps.Add(redGreatGromp);
+        }
+
+        public static void OnUpdate(float diff)
+        {
+            foreach (var camp in MonsterCamps)
+            {
+                if (!camp.IsAlive)
+                {
+                    camp.RespawnTimer -= diff;
+                    if (camp.RespawnTimer <= 0 || forceSpawn)
+                    {
+                        _map.SpawnCamp(camp);
+                        camp.RespawnTimer = GetRespawnTimer(camp);
+                    }
+                }
+            }
+
+            if (forceSpawn)
+            {
+                forceSpawn = false;
+            }
+        }
+
+        public static void ForceCampSpawn()
+        {
+            forceSpawn = true;
+        }
+
+        public static float GetRespawnTimer(IMonsterCamp monsterCamp)
+        {
+            switch (monsterCamp.CampIndex)
+            {
+                case 1:
+                case 4:
+                case 7:
+                case 10:
+                    return 300.0f * 1000;
+                case 12:
+                    return 420.0f * 1000;
+                case 6:
+                    return 360.0f * 1000f;
+                default:
+                    return 50.0f * 1000;
+            }
         }
     }
 }

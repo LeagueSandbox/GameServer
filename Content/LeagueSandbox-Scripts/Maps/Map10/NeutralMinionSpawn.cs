@@ -18,53 +18,10 @@ namespace MapScripts.Map10
 
         public static List<IMonsterCamp> MonsterCamps = new List<IMonsterCamp>();
 
-        public static void InitializeJungle(IMapScriptHandler map)
+        public static void InitializeCamps(IMapScriptHandler map)
         {
             _map = map;
 
-        }
-
-        public static void OnUpdate(float diff)
-        {
-            foreach (var camp in MonsterCamps)
-            {
-                if (!camp.IsAlive)
-                {
-                    camp.RespawnTimer -= diff;
-                    if (camp.RespawnTimer <= 0 || forceSpawn)
-                    {
-                        _map.SpawnCamp(camp);
-                        camp.RespawnTimer = GetRespawnTimer(camp);
-                    }
-                }
-            }
-
-            if (forceSpawn)
-            {
-                forceSpawn = false;
-            }
-        }
-
-        public static void ForceCampSpawn()
-        {
-            forceSpawn = true;
-        }
-
-        public static float GetRespawnTimer(IMonsterCamp monsterCamp)
-        {
-            switch (monsterCamp.CampIndex)
-            {
-                case 7:
-                    return 90.0f * 1000;
-                case 8:
-                    return 300.0f * 1000;
-                default:
-                    return 50.0f * 1000;
-            }
-        }
-
-        public static void SetupCamps()
-        {
             //Blue Side Wraiths
             var blue_Wraiths = _map.CreateJungleCamp(new Vector3(4414.48f, 60.0f, 5774.88f), groupNumber: 1, teamSideOfTheMap: TeamId.TEAM_BLUE, campTypeIcon: "Camp", 100.0f * 1000);
             _map.CreateJungleMonster("TT_NWraith1.1.1", "TT_NWraith", new Vector2(4414.48f, 5774.88f), new Vector3(4214.47f, -109.177f, 5962.65f), blue_Wraiths, aiScript: "BasicJungleMonsterAi");
@@ -115,6 +72,45 @@ namespace MapScripts.Map10
             var spiderBoss = _map.CreateJungleCamp(new Vector3(7711.15f, 60.0f, 10080.0f), groupNumber: 8, teamSideOfTheMap: 0, campTypeIcon: "Epic", 600.0f * 1000);
             _map.CreateJungleMonster("TT_Spiderboss8.1.1", "TT_Spiderboss", new Vector2(7711.15f, 10080.0f), new Vector3(7726.41f, -108.603f, 9234.69f), spiderBoss);
             MonsterCamps.Add(spiderBoss);
+        }
+
+        public static void OnUpdate(float diff)
+        {
+            foreach (var camp in MonsterCamps)
+            {
+                if (!camp.IsAlive)
+                {
+                    camp.RespawnTimer -= diff;
+                    if (camp.RespawnTimer <= 0 || forceSpawn)
+                    {
+                        _map.SpawnCamp(camp);
+                        camp.RespawnTimer = GetRespawnTimer(camp);
+                    }
+                }
+            }
+
+            if (forceSpawn)
+            {
+                forceSpawn = false;
+            }
+        }
+
+        public static void ForceCampSpawn()
+        {
+            forceSpawn = true;
+        }
+
+        public static float GetRespawnTimer(IMonsterCamp monsterCamp)
+        {
+            switch (monsterCamp.CampIndex)
+            {
+                case 7:
+                    return 90.0f * 1000;
+                case 8:
+                    return 300.0f * 1000;
+                default:
+                    return 50.0f * 1000;
+            }
         }
     }
 }
