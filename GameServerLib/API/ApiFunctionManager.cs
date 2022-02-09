@@ -1028,10 +1028,5 @@ namespace LeagueSandbox.GameServer.API
         {
             return _game.Map.NavigationGrid.GetPath(from, to, distanceThreshold);
         }
-
-        public static float GetGameTime()
-        {
-            return _game.GameTime;
-        }
     }
 }
