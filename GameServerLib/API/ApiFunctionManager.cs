@@ -646,15 +646,7 @@ namespace LeagueSandbox.GameServer.API
         //Consider changing this to take bots into account too
         public static List<IChampion> GetAllPlayersFromTeam(TeamId team)
         {
-            var toreturn = new List<IChampion>();
-            foreach (var player in _game.PlayerManager.GetPlayers(true))
-            {
-                if(player.Item2.Team == team)
-                {
-                    toreturn.Add(player.Item2.Champion);
-                }
-            }
-            return toreturn;
+            return _game.ObjectManager.GetAllChampionsFromTeam(team);
         }
 
         /// <summary>
