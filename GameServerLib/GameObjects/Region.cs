@@ -119,9 +119,53 @@ namespace LeagueSandbox.GameServer.GameObjects
 
         public override void OnAdded()
         {
+            RegisterVision();
             if (HasCollision)
             {
                 _game.Map.CollisionHandler.AddObject(this);
+            }
+        }
+
+        public override void OnRemoved()
+        {
+            UnregisterVision();
+            if(HasCollision)
+            {
+                _game.Map.CollisionHandler.RemoveObject(this);
+            }
+        }
+
+        public override void SetTeam(TeamId team)
+        {
+            UnregisterVision();
+            base.SetTeam(team);
+            RegisterVision();
+        }
+
+        void RegisterVision()
+        {
+            // NEUTRAL Regions give global vision.
+            if (Team == TeamId.TEAM_NEUTRAL)
+            {
+                _game.ObjectManager.AddVisionProvider(this, TeamId.TEAM_BLUE);
+                _game.ObjectManager.AddVisionProvider(this, TeamId.TEAM_PURPLE);
+            }
+            else
+            {
+                _game.ObjectManager.AddVisionProvider(this, Team);
+            }
+        }
+
+        void UnregisterVision()
+        {
+            if (Team == TeamId.TEAM_NEUTRAL)
+            {
+                _game.ObjectManager.RemoveVisionProvider(this, TeamId.TEAM_BLUE);
+                _game.ObjectManager.RemoveVisionProvider(this, TeamId.TEAM_PURPLE);
+            }
+            else
+            {
+                _game.ObjectManager.RemoveVisionProvider(this, Team);
             }
         }
 

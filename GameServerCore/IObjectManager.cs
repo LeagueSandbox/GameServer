@@ -42,44 +42,20 @@ namespace GameServerCore
         void RemoveObject(IGameObject o);
 
         /// <summary>
-        /// Adds a GameObject of type AttackableUnit to the list of Vision Units in ObjectManager. *NOTE*: Naming conventions of VisionUnits will change to AttackableUnits.
+        /// Adds a GameObject to the list of Vision Providers in ObjectManager.
         /// </summary>
-        /// <param name="unit">AttackableUnit to add.</param>
-        void AddVisionUnit(IAttackableUnit unit);
+        /// <param name="obj">GameObject to add.</param>
+        /// <param name="team">The team that GameObject can provide vision to.</param>
+        void AddVisionProvider(IGameObject obj, TeamId team);
 
         /// <summary>
-        /// Gets a new Dictionary containing all GameObjects of type AttackableUnit contained in the list of Vision Units in ObjectManager.
+        /// Removes a GameObject from the list of Vision Providers in ObjectManager.
         /// </summary>
-        /// <returns>Dictionary of (NetID, AttackableUnit) pairs.</returns>
-        Dictionary<uint, IAttackableUnit> GetVisionUnits();
+        /// <param name="obj">GameObject to remove.</param>
+        /// <param name="team">The team that GameObject provided vision to.</param>
+        void RemoveVisionProvider(IGameObject obj, TeamId team);
 
-        /// <summary>
-        /// Gets a new Dictionary containing all GameObjects of type AttackableUnit of the specified team contained in the list of Vision Units in ObjectManager.
-        /// </summary>
-        /// <param name="team">TeamId.BLUE/PURPLE/NEUTRAL</param>
-        /// <returns>Dictionary of NetID,AttackableUnit pairs that belong to the specified team.</returns>
-        Dictionary<uint, IAttackableUnit> GetVisionUnits(TeamId team);
-
-        /// <summary>
-        /// Whether or not a specified GameObject is being networked to the specified team.
-        /// </summary>
-        /// <param name="team">TeamId.BLUE/PURPLE/NEUTRAL</param>
-        /// <param name="o">GameObject to check.</param>
-        /// <returns>true/false; networked or not.</returns>
         bool TeamHasVisionOn(TeamId team, IGameObject o);
-
-        /// <summary>
-        /// Removes a GameObject of type AttackableUnit from the list of Vision Units in ObjectManager. *NOTE*: Naming conventions of VisionUnits will change to AttackableUnits.
-        /// </summary>
-        /// <param name="unit">AttackableUnit to remove.</param>
-        void RemoveVisionUnit(IAttackableUnit unit);
-
-        /// <summary>
-        /// Removes a GameObject of type AttackableUnit from the list of Vision Units in ObjectManager via the AttackableUnit's NetID and team.
-        /// </summary>
-        /// <param name="team">Team of the AttackableUnit.</param>
-        /// <param name="netId">NetID of the AttackableUnit.</param>
-        void RemoveVisionUnit(TeamId team, uint netId);
 
         /// <summary>
         /// Gets a list of all GameObjects of type AttackableUnit that are within a certain distance from a specified position.

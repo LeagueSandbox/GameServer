@@ -30,7 +30,16 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
 
             if (split.Length > 3 && uint.TryParse(split[1], out targetNetID) && float.TryParse(split[2], out x) && float.TryParse(split[3], out y))
             {
-                Game.ObjectManager.GetObjectById(targetNetID).TeleportTo(x, y);
+                var obj = Game.ObjectManager.GetObjectById(targetNetID);
+                if (obj != null)
+                {
+                    obj.TeleportTo(x, y);
+                }
+                else
+                {
+                    ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.SYNTAXERROR, "An object with the netID: " + targetNetID + " was not found.");
+                    ShowSyntax();
+                }
             }
             else if (float.TryParse(split[1], out x) && float.TryParse(split[2], out y))
             {

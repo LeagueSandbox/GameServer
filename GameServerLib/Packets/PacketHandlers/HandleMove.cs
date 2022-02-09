@@ -27,7 +27,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
         {
             var peerInfo = _playerManager.GetPeerInfo(userId);
             var champion = peerInfo?.Champion;
-            if (peerInfo == null)
+            if (peerInfo == null || champion.MovementParameters != null)
             {
                 return true;
             }
