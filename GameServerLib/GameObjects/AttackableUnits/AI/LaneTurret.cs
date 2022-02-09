@@ -53,15 +53,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             float globalGold = CharData.GlobalGoldGivenOnDeath;
             float globalEXP = CharData.GlobalExpGivenOnDeath;
 
-            List<IChampion> EnemyPlayers = new List<IChampion>();
-            foreach (var ch in _game.PlayerManager.GetPlayers())
-            {
-                if (ch.Item2.Team != Team)
-                {
-                    EnemyPlayers.Add(ch.Item2.Champion);
-                }
-            }
-
             //TODO: change this to assists
             var championsInRange = _game.ObjectManager.GetChampionsInRange(Position, Stats.Range.Total * 1.5f, true);
 
@@ -79,21 +70,31 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                     champion.AddGold(this, globalGold);
                 }
 
-                foreach (var champion in EnemyPlayers)
+                foreach (var player in _game.PlayerManager.GetPlayers())
                 {
-                    if (!championsInRange.Contains(champion))
+                    var champion = player.Item2.Champion;
+                    if (player.Item2.Team != Team)
                     {
-                        champion.AddGold(champion, globalGold);
+                        if (!championsInRange.Contains(champion))
+                        {
+                            champion.AddGold(champion, globalGold);
+                        }
+                        champion.AddExperience(globalEXP);
                     }
-                    champion.AddExperience(globalEXP);
                 }
             }
             else
             {
-                foreach (var champion in EnemyPlayers)
+                foreach (var player in _game.PlayerManager.GetPlayers().FindAll(x => x.Item2.Team != Team))
                 {
-                    champion.AddGold(champion, globalGold);
-                    champion.AddExperience(globalEXP);
+                    var champion = player.Item2.Champion;
+                    if (player.Item2.Team != Team)
+                    {
+                        {
+                            champion.AddGold(champion, globalGold);
+                            champion.AddExperience(globalEXP);
+                        }
+                    }
                 }
             }
             base.Die(data);

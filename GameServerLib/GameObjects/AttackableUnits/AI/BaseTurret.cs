@@ -52,7 +52,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             string aiScript = ""
         ) : base(game, model, new Stats.Stats(), position: position, visionRadius: 800, skinId: skinId, netId: netId, team: team, aiScript: aiScript)
         {
-            CollisionRadius = CharData.GameplayCollisionRadius;
             ParentNetId = Crc32Algorithm.Compute(Encoding.UTF8.GetBytes(name)) | 0xFF000000;
             Name = name;
             Lane = lane;
