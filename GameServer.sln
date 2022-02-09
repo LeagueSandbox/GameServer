@@ -43,6 +43,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameServerConsoleTests", "G
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LeaguePackets", "LeaguePackets\LeaguePackets\LeaguePackets.csproj", "{6B86971B-1812-406E-ABD1-3B4B78565642}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuadTree", "QuadTree\QuadTree.csproj", "{72202436-F1B5-4326-8AB0-2DF9E70D481C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -131,6 +133,14 @@ Global
 		{6B86971B-1812-406E-ABD1-3B4B78565642}.Release|Any CPU.Build.0 = Release|Any CPU
 		{6B86971B-1812-406E-ABD1-3B4B78565642}.Release|x86.ActiveCfg = Release|Any CPU
 		{6B86971B-1812-406E-ABD1-3B4B78565642}.Release|x86.Build.0 = Release|Any CPU
+		{72202436-F1B5-4326-8AB0-2DF9E70D481C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{72202436-F1B5-4326-8AB0-2DF9E70D481C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{72202436-F1B5-4326-8AB0-2DF9E70D481C}.Debug|x86.ActiveCfg = Debug|x86
+		{72202436-F1B5-4326-8AB0-2DF9E70D481C}.Debug|x86.Build.0 = Debug|x86
+		{72202436-F1B5-4326-8AB0-2DF9E70D481C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{72202436-F1B5-4326-8AB0-2DF9E70D481C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{72202436-F1B5-4326-8AB0-2DF9E70D481C}.Release|x86.ActiveCfg = Release|x86
+		{72202436-F1B5-4326-8AB0-2DF9E70D481C}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
