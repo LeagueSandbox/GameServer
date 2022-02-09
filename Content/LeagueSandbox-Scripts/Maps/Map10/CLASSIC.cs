@@ -225,17 +225,49 @@ namespace MapScripts.Map10
 
         public List<IMonsterCamp> MonsterCamps = new List<IMonsterCamp>();
         IStatsModifier TurretStatsModifier = new StatsModifier();
+        Dictionary<TeamId, List<IChampion>> Players = new Dictionary<TeamId, List<IChampion>>();
         public void OnMatchStart()
         {
             foreach (var nexus in _map.NexusList)
             {
                 ApiEventManager.OnDeath.AddListener(this, nexus, OnNexusDeath, true);
             }
-            SetupJungleCamps();
+
+            Players.Add(TeamId.TEAM_BLUE, ApiFunctionManager.GetAllPlayersFromTeam(TeamId.TEAM_BLUE));
+            Players.Add(TeamId.TEAM_PURPLE, ApiFunctionManager.GetAllPlayersFromTeam(TeamId.TEAM_PURPLE));
+
+            IStatsModifier TurretHealthModifier = new StatsModifier();
+            foreach (var team in _map.TurretList.Keys)
+            {
+                TeamId enemyTeam = TeamId.TEAM_BLUE;
+
+                if (team == TeamId.TEAM_BLUE)
+                {
+                    enemyTeam = TeamId.TEAM_PURPLE;
+                }
+
+                TurretHealthModifier.HealthPoints.BaseBonus = 250.0f * Players[enemyTeam].Count;
+
+                foreach (var lane in _map.TurretList[team].Keys)
+                {
+                    foreach (var turret in _map.TurretList[team][lane])
+                    {
+                        if (turret.Type == TurretType.FOUNTAIN_TURRET)
+                        {
+                            continue;
+                        }
+
+                        turret.AddStatModifier(TurretHealthModifier);
+                        turret.Stats.CurrentHealth += turret.Stats.HealthPoints.Total;
+                    }
+                }
+            }
 
             TurretStatsModifier.Armor.FlatBonus = 1;
             TurretStatsModifier.MagicResist.FlatBonus = 1;
             TurretStatsModifier.AttackDamage.FlatBonus = 4;
+
+            SetupJungleCamps();
         }
 
         //This function gets executed every server tick

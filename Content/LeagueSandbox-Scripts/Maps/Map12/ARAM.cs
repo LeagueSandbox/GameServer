@@ -259,8 +259,8 @@ namespace MapScripts.Map12
         }
 
         public List<IMonsterCamp> HealthPacks = new List<IMonsterCamp>();
-        Dictionary<TeamId, List<IChampion>> Players = new Dictionary<TeamId, List<IChampion>>();
         IStatsModifier TurretStatsModifier = new StatsModifier();
+        Dictionary<TeamId, List<IChampion>> Players = new Dictionary<TeamId, List<IChampion>>();
         public void OnMatchStart()
         {
             foreach (var nexus in _map.NexusList)
@@ -271,6 +271,7 @@ namespace MapScripts.Map12
             Players.Add(TeamId.TEAM_BLUE, ApiFunctionManager.GetAllPlayersFromTeam(TeamId.TEAM_BLUE));
             Players.Add(TeamId.TEAM_PURPLE, ApiFunctionManager.GetAllPlayersFromTeam(TeamId.TEAM_PURPLE));
 
+            IStatsModifier TurretHealthModifier = new StatsModifier();
             foreach (var team in _map.TurretList.Keys)
             {
                 TeamId enemyTeam = TeamId.TEAM_BLUE;
@@ -279,6 +280,8 @@ namespace MapScripts.Map12
                 {
                     enemyTeam = TeamId.TEAM_PURPLE;
                 }
+
+                TurretHealthModifier.HealthPoints.BaseBonus = 250.0f * Players[enemyTeam].Count;
 
                 foreach (var lane in _map.TurretList[team].Keys)
                 {
@@ -289,10 +292,8 @@ namespace MapScripts.Map12
                             continue;
                         }
 
-                        var healthToAdd = 250.0f * Players[enemyTeam].Count;
-
-                        turret.Stats.HealthPoints.BaseValue += healthToAdd;
-                        turret.Stats.CurrentHealth += healthToAdd;
+                        turret.AddStatModifier(TurretHealthModifier);
+                        turret.Stats.CurrentHealth += turret.Stats.HealthPoints.Total;
                     }
                 }
             }

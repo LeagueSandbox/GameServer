@@ -263,9 +263,9 @@ namespace MapScripts.Map1
         }
 
         List<IMonsterCamp> MonsterCamps = new List<IMonsterCamp>();
-        Dictionary<TeamId, List<IChampion>> Players = new Dictionary<TeamId, List<IChampion>>();
         IStatsModifier TurretStatsModifier = new StatsModifier();
         IStatsModifier OuterTurretStatsModifier = new StatsModifier();
+        Dictionary<TeamId, List<IChampion>> Players = new Dictionary<TeamId, List<IChampion>>();
         public virtual void OnMatchStart()
         {
             foreach (var nexus in _map.NexusList)
@@ -276,6 +276,7 @@ namespace MapScripts.Map1
             Players.Add(TeamId.TEAM_BLUE, ApiFunctionManager.GetAllPlayersFromTeam(TeamId.TEAM_BLUE));
             Players.Add(TeamId.TEAM_PURPLE, ApiFunctionManager.GetAllPlayersFromTeam(TeamId.TEAM_PURPLE));
 
+            IStatsModifier TurretHealthModifier = new StatsModifier();
             foreach (var team in _map.TurretList.Keys)
             {
                 TeamId enemyTeam = TeamId.TEAM_BLUE;
@@ -293,15 +294,17 @@ namespace MapScripts.Map1
                         {
                             continue;
                         }
-
-                        var healthToAdd = 250.0f * Players[enemyTeam].Count;
-                        if (turret.Type == TurretType.NEXUS_TURRET)
+                        else if (turret.Type != TurretType.NEXUS_TURRET)
                         {
-                            healthToAdd /= 2;
+                            TurretHealthModifier.HealthPoints.BaseBonus = 250.0f * Players[enemyTeam].Count;
+                        }
+                        else
+                        {
+                            TurretHealthModifier.HealthPoints.BaseBonus = 125.0f * Players[enemyTeam].Count;
                         }
 
-                        turret.Stats.HealthPoints.BaseValue += healthToAdd;
-                        turret.Stats.CurrentHealth += healthToAdd;
+                        turret.AddStatModifier(TurretHealthModifier);
+                        turret.Stats.CurrentHealth += turret.Stats.HealthPoints.Total;
                     }
                 }
             }
