@@ -15,6 +15,7 @@ using LeagueSandbox.GameServer.GameObjects.Spell;
 using LeagueSandbox.GameServer.GameObjects.Spell.Missile;
 using LeagueSandbox.GameServer.Items;
 using LeagueSandbox.GameServer.Scripting.CSharp;
+using System.Activities.Presentation.View;
 
 namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 {
@@ -514,7 +515,9 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 return false;
             }
 
-            var nearestObjects = _game.Map.CollisionHandler.QuadDynamic.GetNearestObjects(this);
+            var nearestObjects = _game.Map.CollisionHandler.QuadDynamic.GetNodesInside(
+                new Circle(Position, DETECT_RANGE)
+            );
 
             foreach (var gameObject in nearestObjects)
             {

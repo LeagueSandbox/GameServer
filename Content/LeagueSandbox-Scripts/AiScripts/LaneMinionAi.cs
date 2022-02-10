@@ -157,18 +157,18 @@ namespace AIScripts
             
             FilterTemporaryIgnoredList();
 
-            List<IAttackableUnit> nearestObjects;
+            IEnumerable<IAttackableUnit> nearestObjects;
             if(handleOnlyCallsForHelp)
             {
                 if(unitsAttackingAllies.Count == 0)
                 {
                     return false;
                 }
-                nearestObjects = unitsAttackingAllies.Keys.ToList();
+                nearestObjects = unitsAttackingAllies.Keys;
             }
             else
             {
-                nearestObjects = GetUnitsInRange(LaneMinion.Position, acquisitionRange, true);
+                nearestObjects = EnumerateUnitsInRange(LaneMinion.Position, acquisitionRange, true);
             }
             foreach (var it in nearestObjects)
             {
@@ -222,7 +222,7 @@ namespace AIScripts
             float radius = LaneMinion.CollisionRadius;
             Vector2 center = LaneMinion.Position;
 
-            var nearestMinions = GetUnitsInRange(LaneMinion.Position, LaneMinion.Stats.AcquisitionRange.Total, true)
+            var nearestMinions = EnumerateUnitsInRange(LaneMinion.Position, LaneMinion.Stats.AcquisitionRange.Total, true)
                                 .OfType<ILaneMinion>()
                                 .OrderBy(minion => Vector2.DistanceSquared(LaneMinion.Position, minion.Position) - minion.CollisionRadius);
 

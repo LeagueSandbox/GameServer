@@ -571,6 +571,23 @@ namespace LeagueSandbox.GameServer.API
         }
 
         /// <summary>
+        /// Acquires all dead or alive AttackableUnits within the specified range of a target position.
+        /// </summary>
+        /// <param name="targetPos">Origin of the range to check.</param>
+        /// <param name="range">Range to check from the target position.</param>
+        /// <returns>List of AttackableUnits.</returns>
+        public static IEnumerable<IAttackableUnit> EnumerateUnitsInRange(Vector2 targetPos, float range, bool isAlive)
+        {
+            foreach(var obj in _game.Map.CollisionHandler.QuadDynamic.GetNodesInside(targetPos, range))
+            {
+                if(obj is IAttackableUnit u && (!isAlive || !u.IsDead))
+                {
+                    yield return u;
+                }
+            }
+        }
+
+        /// <summary>
         /// Acquires the closest alive or dead AttackableUnit within the specified range of a target position.
         /// </summary>
         /// <param name="targetPos">Origin of the range to check.</param>
