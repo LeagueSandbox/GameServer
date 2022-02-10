@@ -87,6 +87,11 @@ namespace LeagueSandbox.GameServer
             // For all existing objects and those created during the obj.Update phase
             foreach(var obj in GetObjects().Values)
             {
+                // If flagged during obj.Update
+                if(obj.IsToRemove())
+                {
+                    continue;
+                }
 
                 bool shouldBeSpawned = _queuedObjects.ContainsKey(obj.NetId);
                 
@@ -150,27 +155,24 @@ namespace LeagueSandbox.GameServer
                             }
                         }
 
-                        if(!u.IsDead)
+                        if(u.Replication.Changed)
                         {
-                            if(u.Replication.Changed)
-                            {
-                                _game.PacketNotifier.NotifyUpdatedStats(u, true);
-                            }
+                            _game.PacketNotifier.NotifyUpdatedStats(u, true);
+                        }
 
-                            if (u.IsModelUpdated)
-                            {
-                                _game.PacketNotifier.NotifyS2C_ChangeCharacterData(u);
-                                u.IsModelUpdated = false;
-                            }
+                        if (u.IsModelUpdated)
+                        {
+                            _game.PacketNotifier.NotifyS2C_ChangeCharacterData(u);
+                            u.IsModelUpdated = false;
+                        }
 
-                            if (u.IsMovementUpdated())
-                            {
-                                // TODO: Verify which one we want to use. WaypointList does not require conversions, however WaypointGroup does (and it has TeleportID functionality).
-                                //_game.PacketNotifier.NotifyWaypointList(u);
-                                // TODO: Verify if we want to use TeleportID.
-                                _game.PacketNotifier.NotifyWaypointGroup(u, false);
-                                u.ClearMovementUpdated();
-                            }
+                        if (u.IsMovementUpdated())
+                        {
+                            // TODO: Verify which one we want to use. WaypointList does not require conversions, however WaypointGroup does (and it has TeleportID functionality).
+                            //_game.PacketNotifier.NotifyWaypointList(u);
+                            // TODO: Verify if we want to use TeleportID.
+                            _game.PacketNotifier.NotifyWaypointGroup(u, false);
+                            u.ClearMovementUpdated();
                         }
                     }
                 }
