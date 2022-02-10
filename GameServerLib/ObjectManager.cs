@@ -150,24 +150,27 @@ namespace LeagueSandbox.GameServer
                             }
                         }
 
-                        if(u.Replication.Changed)
+                        if(!u.IsDead)
                         {
-                            _game.PacketNotifier.NotifyUpdatedStats(u, true);
-                        }
+                            if(u.Replication.Changed)
+                            {
+                                _game.PacketNotifier.NotifyUpdatedStats(u, true);
+                            }
 
-                        if (u.IsModelUpdated)
-                        {
-                            _game.PacketNotifier.NotifyS2C_ChangeCharacterData(u);
-                            u.IsModelUpdated = false;
-                        }
+                            if (u.IsModelUpdated)
+                            {
+                                _game.PacketNotifier.NotifyS2C_ChangeCharacterData(u);
+                                u.IsModelUpdated = false;
+                            }
 
-                        if (u.IsMovementUpdated())
-                        {
-                            // TODO: Verify which one we want to use. WaypointList does not require conversions, however WaypointGroup does (and it has TeleportID functionality).
-                            //_game.PacketNotifier.NotifyWaypointList(u);
-                            // TODO: Verify if we want to use TeleportID.
-                            _game.PacketNotifier.NotifyWaypointGroup(u, false);
-                            u.ClearMovementUpdated();
+                            if (u.IsMovementUpdated())
+                            {
+                                // TODO: Verify which one we want to use. WaypointList does not require conversions, however WaypointGroup does (and it has TeleportID functionality).
+                                //_game.PacketNotifier.NotifyWaypointList(u);
+                                // TODO: Verify if we want to use TeleportID.
+                                _game.PacketNotifier.NotifyWaypointGroup(u, false);
+                                u.ClearMovementUpdated();
+                            }
                         }
                     }
                 }
@@ -196,12 +199,21 @@ namespace LeagueSandbox.GameServer
                     ) {
                         bool alwaysVisible = u is IBaseTurret || u is ILevelProp || u is IObjBuilding
                             || (particle != null && particle.SpecificTeam == TeamId.TEAM_NEUTRAL && particle.Team == TeamId.TEAM_NEUTRAL);
-                        bool teamHasVision = alwaysVisible || (
-                            (u == null || !u.IsDead) && TeamHasVisionOn(team, obj)
-                            // Particle team is used if specific team is neutral.
-                            || (particle != null && (particle.SpecificTeam == team
-                            || (particle.SpecificTeam == TeamId.TEAM_NEUTRAL && particle.Team == team)))
-                        );
+                        bool teamHasVision = alwaysVisible
+                            || (
+                                // Particle team is used if specific team is neutral.
+                                (
+                                    particle != null
+                                    && (
+                                        particle.SpecificTeam == team
+                                        || (
+                                            particle.SpecificTeam == TeamId.TEAM_NEUTRAL
+                                            && particle.Team == team
+                                        )
+                                    )
+                                )
+                                || /*(u == null || !u.IsDead) && */ TeamHasVisionOn(team, obj)
+                            );
                         if (obj.IsVisibleByTeam(team) != teamHasVision)
                         {
                             obj.SetVisibleByTeam(team, teamHasVision);
