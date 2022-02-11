@@ -371,15 +371,15 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             var gold = mapScriptMetaData.ChampionBaseGoldValue;
             if (KillSpree > 1)
             {
-                gold = Math.Min(gold * (float)Math.Pow(1.16667f, KillSpree - 1), mapScriptMetaData.ChampionMaxGoldValue);
+                gold = Math.Min(gold * (float)Math.Pow(7f / 6f, KillSpree - 1), mapScriptMetaData.ChampionMaxGoldValue);
             }
-            else if(KillSpree == 0 & DeathSpree >= 1)
+            else if (KillSpree == 0 & DeathSpree >= 1)
             {
-                gold *= 0.916666f;
+                gold *= (11f / 12f);
 
                 if (DeathSpree > 1)
                 {
-                    gold = Math.Max(gold * (float)Math.Pow(0.8f, DeathSpree/2), mapScriptMetaData.ChampionMinGoldValue);
+                    gold = Math.Max(gold * (float)Math.Pow(0.8f, DeathSpree / 2), mapScriptMetaData.ChampionMinGoldValue);
                 }
                 DeathSpree++;
             }
@@ -396,7 +396,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             }
 
             var EXP = (mapData.ExpCurve[Stats.Level - 1]) * mapData.BaseExpMultiple;
-            if(cKiller.Stats.Level != Stats.Level)
+            if (cKiller.Stats.Level != Stats.Level)
             {
                 var levelDifference = Math.Abs(cKiller.Stats.Level - Stats.Level);
                 float EXPDiff = EXP * Math.Min(mapData.LevelDifferenceExpMultiple * levelDifference, mapData.MinimumExpMultiple);
