@@ -41,11 +41,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// </summary>
         public bool IsModelUpdated { get; set; }
         /// <summary>
-        /// The "score" of this Unit which increases as kills are gained and decreases as deaths are inflicted.
-        /// Used in determining kill gold rewards.
-        /// </summary>
-        public int KillDeathCounter { get; set; }
-        /// <summary>
         /// Number of minions this Unit has killed. Unused besides in replication which is used for packets, refer to NotifyUpdateStats in PacketNotifier.
         /// </summary>
         /// TODO: Verify if we want to move this to ObjAIBase since AttackableUnits cannot attack or kill anything.
@@ -698,17 +693,19 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             SetToRemove();
 
             ApiEventManager.OnDeath.Publish(data);
-            var exp = _game.Map.MapScript.GetExperienceFor(this);
-            var champs = _game.ObjectManager.GetChampionsInRange(Position, EXP_RANGE, true);
-            //Cull allied champions
-            champs.RemoveAll(l => l.Team == Team);
-
-            if (champs.Count > 0)
+            if(data.Unit is IObjAiBase obj)
             {
-                var expPerChamp = exp / champs.Count;
-                foreach (var c in champs)
+                var champs = _game.ObjectManager.GetChampionsInRange(Position, EXP_RANGE, true);
+                //Cull allied champions
+                champs.RemoveAll(l => l.Team == Team);
+
+                if (champs.Count > 0)
                 {
-                    c.AddExperience(expPerChamp);
+                    var expPerChamp = obj.CharData.ExpGivenOnDeath / champs.Count;
+                    foreach (var c in champs)
+                    {
+                        c.AddExperience(expPerChamp);
+                    }
                 }
             }
 

@@ -181,6 +181,13 @@ namespace LeagueSandbox.GameServer.Content
                 }
             }
 
+            if (expFile.Values.ContainsKey("ExpGrantedOnDeath"))
+            {
+                toReturnMapData.BaseExpMultiple = expFile.GetFloat("ExpGrantedOnDeath", "BaseExpMultiple", 0);
+                toReturnMapData.LevelDifferenceExpMultiple = expFile.GetFloat("ExpGrantedOnDeath", "LevelDifferenceExpMultiple", 0);
+                toReturnMapData.MinimumExpMultiple = expFile.GetFloat("ExpGrantedOnDeath", "MinimumExpMultiple", 0);
+            }
+
             if (deathTimefile.Values.ContainsKey("TimeDeadPerLevel"))
             {
                 for (int i = 1; i < deathTimefile.Values["TimeDeadPerLevel"].Count; i++)

@@ -191,6 +191,9 @@ public class MapData : IMapData
     /// Experience required to level, ordered from 2 and up.
     /// </summary>
     public List<float> ExpCurve { get; private set; }
+    public float BaseExpMultiple { get; set; }
+    public float LevelDifferenceExpMultiple { get; set; }
+    public float MinimumExpMultiple { get; set; }
     /// <summary>
     /// Amount of time death should last depending on level.
     /// </summary>

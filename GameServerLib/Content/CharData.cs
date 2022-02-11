@@ -47,9 +47,11 @@ namespace LeagueSandbox.GameServer.Content
         public float BaseStaticHpRegen { get; private set; } = 0.30000001f;
         public float BaseStaticMpRegen { get; private set; } = 0.30000001f;
         public float DamagePerLevel { get; private set; } = 10.0f;
+        public float ExpGivenOnDeath { get; private set; } = 0.0f;
         public float GameplayCollisionRadius { get; private set; } = 65.0f;
         public float GlobalExpGivenOnDeath { get; private set; } = 0.0f;
         public float GlobalGoldGivenOnDeath { get; private set; } = 0.0f;
+        public float GoldGivenOnDeath { get; private set; } = 0.0f;
         public float HpPerLevel { get; private set; } = 10.0f;
         public float HpRegenPerLevel { get; private set; }
         public bool IsMelee { get; private set; } //Yes or no
@@ -112,9 +114,11 @@ namespace LeagueSandbox.GameServer.Content
             BaseStaticHpRegen = file.GetFloat("Data", "BaseStaticHPRegen", BaseStaticHpRegen);
             BaseStaticMpRegen = file.GetFloat("Data", "BaseStaticMPRegen", BaseStaticMpRegen);
             DamagePerLevel = file.GetFloat("Data", "DamagePerLevel", DamagePerLevel);
+            ExpGivenOnDeath = file.GetFloat("Data", "ExpGivenOnDeath", ExpGivenOnDeath);
             GameplayCollisionRadius = file.GetFloat("Data", "GameplayCollisionRadius", GameplayCollisionRadius);
             GlobalExpGivenOnDeath = file.GetFloat("Data", "GlobalExpGivenOnDeath", GlobalExpGivenOnDeath);
             GlobalGoldGivenOnDeath = file.GetFloat("Data", "GlobalGoldGivenOnDeath", GlobalGoldGivenOnDeath);
+            GoldGivenOnDeath = file.GetFloat("Data", "GoldGivenOnDeath", GoldGivenOnDeath);
             HpRegenPerLevel = file.GetFloat("Data", "HPRegenPerLevel", HpRegenPerLevel);
             HpPerLevel = file.GetFloat("Data", "HPPerLevel", HpPerLevel);
             IsMelee = file.GetString("Data", "IsMelee", IsMelee ? "true" : "false").Equals("true");

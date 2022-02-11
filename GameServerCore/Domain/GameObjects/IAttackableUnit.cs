@@ -19,11 +19,6 @@ namespace GameServerCore.Domain.GameObjects
         /// </summary>
         bool IsModelUpdated { get; set; }
         /// <summary>
-        /// The "score" of this Unit which increases as kills are gained and decreases as deaths are inflicted.
-        /// Used in determining kill gold rewards.
-        /// </summary>
-        int KillDeathCounter { get; set; }
-        /// <summary>
         /// Number of minions this Unit has killed. Unused besides in replication which is used for packets, refer to NotifyUpdateStats in PacketNotifier.
         /// </summary>
         /// TODO: Verify if we want to move this to ObjAIBase since AttackableUnits cannot attack or kill anything.

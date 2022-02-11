@@ -40,6 +40,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
         public IStat CriticalChance { get; }
         public IStat CriticalDamage { get; }
         public IStat GoldPerSecond { get; }
+        public IStat GoldGivenOnDeath { get; }
         public IStat HealthPoints { get; }
         public IStat HealthRegeneration { get; }
         public IStat LifeSteal { get; }
@@ -92,6 +93,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
             CriticalChance = new Stat();
             CriticalDamage = new Stat(2, 0, 0, 0, 0);
             GoldPerSecond = new Stat();
+            GoldGivenOnDeath = new Stat();
             HealthPoints = new Stat();
             HealthRegeneration = new Stat();
             LifeSteal = new Stat();
@@ -109,27 +111,28 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
 
         public void LoadStats(ICharData charData)
         {
-            HealthPoints.BaseValue = charData.BaseHp;
-            ManaPoints.BaseValue = charData.BaseMp;
-            AttackDamage.BaseValue = charData.BaseDamage;
-            Range.BaseValue = charData.AttackRange;
-            MoveSpeed.BaseValue = charData.MoveSpeed;
-            Armor.BaseValue = charData.Armor;
-            MagicResist.BaseValue = charData.SpellBlock;
-            HealthRegeneration.BaseValue = charData.BaseStaticHpRegen;
-            ManaRegeneration.BaseValue = charData.BaseStaticMpRegen;
             AcquisitionRange.BaseValue = charData.AcquisitionRange;
+            AdPerLevel = charData.DamagePerLevel;
+            Armor.BaseValue = charData.Armor;
+            ArmorPerLevel = charData.ArmorPerLevel;
+            AttackDamage.BaseValue = charData.BaseDamage;
             // AttackSpeedFlat = GlobalAttackSpeed / CharAttackDelay
             AttackSpeedFlat = (1.0f / charData.GlobalCharData.AttackDelay) / (1.0f + charData.AttackDelayOffsetPercent[0]);
-            HealthPerLevel = charData.HpPerLevel;
-            ManaPerLevel = charData.MpPerLevel;
-            AdPerLevel = charData.DamagePerLevel;
-            ArmorPerLevel = charData.ArmorPerLevel;
-            MagicResistPerLevel = charData.SpellBlockPerLevel;
-            HealthRegenerationPerLevel = charData.HpRegenPerLevel;
-            ManaRegenerationPerLevel = charData.MpRegenPerLevel;
+            GoldGivenOnDeath.BaseValue = charData.GoldGivenOnDeath;
             GrowthAttackSpeed = charData.AttackSpeedPerLevel;
+            HealthPerLevel = charData.HpPerLevel;
+            HealthPoints.BaseValue = charData.BaseHp;
+            HealthRegeneration.BaseValue = charData.BaseStaticHpRegen;
+            HealthRegenerationPerLevel = charData.HpRegenPerLevel;
+            MagicResist.BaseValue = charData.SpellBlock;
+            MagicResistPerLevel = charData.SpellBlockPerLevel;
+            ManaPerLevel = charData.MpPerLevel;
+            ManaPoints.BaseValue = charData.BaseMp;
+            ManaRegeneration.BaseValue = charData.BaseStaticMpRegen;
+            ManaRegenerationPerLevel = charData.MpRegenPerLevel;
+            MoveSpeed.BaseValue = charData.MoveSpeed;
             ParType = charData.ParType;
+            Range.BaseValue = charData.AttackRange;
         }
 
         public void AddModifier(IStatsModifier modifier)

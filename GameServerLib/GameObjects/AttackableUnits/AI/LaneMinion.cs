@@ -38,8 +38,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             var spawnSpecifics = _game.Map.GetMinionSpawnPosition(BarracksName);
             SetPosition(spawnSpecifics.Item2.X, spawnSpecifics.Item2.Y);
 
-            _game.Map.MapScript.SetMinionStats(this); // Let the map decide how strong this minion has to be.
-
             StopMovement();
 
             MoveOrder = OrderType.Hold;

@@ -27,9 +27,6 @@ namespace GameServerCore.Domain
         TurretType GetTurretType(int trueIndex, LaneID lane, TeamId teamId);
         void Init(IMapScriptHandler map);
         void OnMatchStart();
-        void SetMinionStats(ILaneMinion m);
-        float GetGoldFor(IAttackableUnit u);
-        float GetExperienceFor(IAttackableUnit u);
         void SpawnAllCamps();
     }
 }
