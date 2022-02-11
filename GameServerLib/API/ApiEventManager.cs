@@ -355,7 +355,6 @@ namespace LeagueSandbox.GameServer.API
     public class EventOnDeath
     {
         private readonly List<Tuple<object, IAttackableUnit, Action<IDeathData>, bool>> _listeners = new List<Tuple<object, IAttackableUnit, Action<IDeathData>, bool>>();
-
         public void AddListener(object owner, IAttackableUnit target, Action<IDeathData> callback, bool singleInstance)
         {
             var listenerTuple = new Tuple<object, IAttackableUnit, Action<IDeathData>, bool>(owner, target, callback, singleInstance);
@@ -365,6 +364,7 @@ namespace LeagueSandbox.GameServer.API
         {
             _listeners.RemoveAll((listener) => listener.Item1 == owner);
         }
+
         public void Publish(IDeathData deathData)
         {
             var count = _listeners.Count;
@@ -377,10 +377,11 @@ namespace LeagueSandbox.GameServer.API
             {
                 if (_listeners[i].Item2 == deathData.Unit)
                 {
-                    _listeners[i].Item3(deathData);
-                    if (_listeners[i].Item4)
+                    var listener = _listeners[i];
+                    listener.Item3(deathData);
+                    if (listener.Item4)
                     {
-                        _listeners.RemoveAt(i);
+                        _listeners.Remove(listener);
                     }
                 }
             }

@@ -21,9 +21,11 @@ namespace GameServerCore.Domain
         float BaseStaticHpRegen { get; }
         float BaseStaticMpRegen { get; }
         float DamagePerLevel { get; }
+        float ExpGivenOnDeath { get; }
         float GameplayCollisionRadius { get; }
         float GlobalExpGivenOnDeath { get; }
         float GlobalGoldGivenOnDeath { get; }
+        float GoldGivenOnDeath { get; }
         float HpPerLevel { get; }
         float HpRegenPerLevel { get; }
         bool IsMelee { get; } //Yes or no

@@ -35,7 +35,7 @@ namespace Buffs
                 particle = AddParticleTarget(unit, unit, "NeutralMonster_buf_red_offense_big", unit, buff.Duration);
             }
 
-            ApiEventManager.OnDeath.AddListener(this, unit, OnDeath, true);
+            ApiEventManager.OnDeath.AddListener(this, unit, OnDeath, false);
             ApiEventManager.OnPreDealDamage.AddListener(this, unit, OnPreDealDamage, false);
         }
 

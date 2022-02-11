@@ -10,6 +10,7 @@ using LeagueSandbox.GameServer.GameObjects.Stats;
 using LeagueSandbox.GameServer.Items;
 using LeagueSandbox.GameServer.API;
 using LeaguePackets.Game.Events;
+using System;
 
 namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 {
@@ -27,10 +28,11 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         private uint _playerTeamSpecialId;
         private uint _playerHitId;
         private List<IToolTipData> _tipsChanged;
-
         public IShop Shop { get; protected set; }
         public float RespawnTimer { get; private set; }
-        public float ChampionGoldFromMinions { get; set; }
+        public int DeathSpree { get; set; } = 0;
+        public int KillSpree { get; set; } = 0;
+        public float GoldFromMinions { get; set; }
         public IRuneCollection RuneList { get; }
         public IChampionStats ChampStats { get; private set; } = new ChampionStats();
 
@@ -318,31 +320,33 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                     ChampStats.NeutralMinionsKilled += 1;
                 }
 
-                var gold = _game.Map.MapScript.GetGoldFor(deathData.Unit);
+                var gold = deathData.Unit.Stats.GoldGivenOnDeath.Total;
                 if (gold <= 0)
                 {
                     return;
                 }
 
-                Stats.Gold += gold;
-                _game.PacketNotifier.NotifyUnitAddGold(this, deathData.Unit, gold);
+                AddGold(deathData.Unit, gold);
 
-                if (KillDeathCounter < 0)
+                if (DeathSpree > 0)
                 {
-                    ChampionGoldFromMinions += gold;
-                    Logger.Debug($"Adding gold form minions to reduce death spree: {ChampionGoldFromMinions}");
+                    GoldFromMinions += gold;
                 }
 
-                if (ChampionGoldFromMinions >= 50 && KillDeathCounter < 0)
+                if (GoldFromMinions >= 1000)
                 {
-                    ChampionGoldFromMinions = 0;
-                    KillDeathCounter += 1;
+                    GoldFromMinions -= 1000;
+                    DeathSpree -= 1;
                 }
             }
         }
 
         public override void Die(IDeathData data)
         {
+            var mapScript = _game.Map.MapScript;
+            var mapScriptMetaData = mapScript.MapScriptMetadata;
+            var mapData = _game.Config.MapData;
+
             ApiEventManager.OnDeath.Publish(data);
 
             RespawnTimer = _game.Config.MapData.DeathTimes[Stats.Level] * 1000.0f;
@@ -352,7 +356,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
             if (cKiller == null && _championHitFlagTimer > 0)
             {
-                cKiller = _game.ObjectManager.GetObjectById(_playerHitId) as IChampion;
+                cKiller = _game.ObjectManager.GetObjectById(_playerHitId) as Champion;
                 Logger.Debug("Killed by turret, minion or monster, but still  give gold to the enemy.");
             }
 
@@ -364,44 +368,48 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
             ApiEventManager.OnKill.Publish(data);
 
-            cKiller.ChampionGoldFromMinions = 0;
-            cKiller.ChampStats.Kills += 1;
-            // TODO: add assists
-
-            var gold = _game.Map.MapScript.GetGoldFor(this);
-            Logger.Debug($"Before: getGoldFromChamp: {gold} Killer: {cKiller.KillDeathCounter} Victim {KillDeathCounter}");
-
-            if (cKiller.KillDeathCounter < 0)
-                cKiller.KillDeathCounter = 0;
-
-            if (cKiller.KillDeathCounter >= 0)
-                cKiller.KillDeathCounter += 1;
-
-            if (KillDeathCounter > 0)
-                KillDeathCounter = 0;
-
-            if (KillDeathCounter <= 0)
-                KillDeathCounter -= 1;
-
-            if (_game.Map.MapScript.MapScriptMetadata.IsKillGoldRewardReductionActive
-                && _game.Map.MapScript.HasFirstBloodHappened)
+            // TODO: Find out if we can unhardcode some of the fractions used here.
+            var gold = mapScriptMetaData.ChampionBaseGoldValue;
+            if (KillSpree > 1)
             {
-                gold -= gold * 0.25f;
-                //CORE_INFO("Still some minutes for full gold reward on champion kills");
+                gold = Math.Min(gold * (float)Math.Pow(7f / 6f, KillSpree - 1), mapScriptMetaData.ChampionMaxGoldValue);
+            }
+            else if (KillSpree == 0 & DeathSpree >= 1)
+            {
+                gold *= (11f / 12f);
+
+                if (DeathSpree > 1)
+                {
+                    gold = Math.Max(gold * (float)Math.Pow(0.8f, DeathSpree / 2), mapScriptMetaData.ChampionMinGoldValue);
+                }
+                DeathSpree++;
             }
 
-            if (_game.Map.MapScript.HasFirstBloodHappened)
+            if (mapScript.HasFirstBloodHappened)
             {
                 var onKill = new OnChampionKill { OtherNetID = NetId };
                 _game.PacketNotifier.NotifyS2C_OnEventWorld(onKill, data.Killer.NetId);
             }
             else
             {
-                gold += 100;
-                _game.Map.MapScript.HasFirstBloodHappened = true;
-
-                //I think first blood would be announced here, but it's being announced somewhere else that i couldn't find.
+                gold += mapScript.MapScriptMetadata.FirstBloodExtraGold;
+                mapScript.HasFirstBloodHappened = true;
             }
+
+            var EXP = (mapData.ExpCurve[Stats.Level - 1]) * mapData.BaseExpMultiple;
+            if (cKiller.Stats.Level != Stats.Level)
+            {
+                var levelDifference = Math.Abs(cKiller.Stats.Level - Stats.Level);
+                float EXPDiff = EXP * Math.Min(mapData.LevelDifferenceExpMultiple * levelDifference, mapData.MinimumExpMultiple);
+                if (cKiller.Stats.Level > Stats.Level)
+                {
+                    EXPDiff = -EXPDiff;
+                }
+                EXP += EXPDiff;
+            }
+
+            cKiller.AddGold(this, gold);
+            cKiller.AddExperience(EXP);
 
             var worldEvent = new OnChampionDie
             {
@@ -410,11 +418,18 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 AssistCount = 0
                 //Todo: implement assists when an assist system gets implemented
             };
+
+            cKiller.GoldFromMinions = 0;
+            cKiller.ChampStats.Kills++;
+            cKiller.KillSpree++;
+            cKiller.DeathSpree = 0;
+
+            KillSpree = 0;
+            DeathSpree++;
+
             _game.PacketNotifier.NotifyS2C_OnEventWorld(worldEvent, NetId);
 
             _game.PacketNotifier.NotifyDeath(data);
-            cKiller.Stats.Gold = cKiller.Stats.Gold + gold;
-            _game.PacketNotifier.NotifyUnitAddGold(cKiller, this, gold);
             //CORE_INFO("After: getGoldFromChamp: %f Killer: %i Victim: %i", gold, cKiller.killDeathCounter,this.killDeathCounter);
 
             _game.ObjectManager.StopTargeting(this);

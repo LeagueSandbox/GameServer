@@ -4,7 +4,9 @@
     {
         IShop Shop { get; }
         float RespawnTimer { get; }
-        float ChampionGoldFromMinions { get; set; }
+        int DeathSpree { get; set; }
+        int KillSpree { get; set;  }
+        float GoldFromMinions { get; set; }
         IRuneCollection RuneList { get; }
         IChampionStats ChampStats { get; }
         byte SkillPoints { get; set; }

@@ -258,6 +258,16 @@ namespace MapScripts.Map1
         }
 
         IStatsModifier TurretStatsModifier = new StatsModifier();
+
+        //These minion modifiers will remain unused for the moment, untill i pull the spawning systems to MapScripts
+        Dictionary<MinionSpawnType, IStatsModifier> MinionModifiers = new Dictionary<MinionSpawnType, IStatsModifier>
+        {
+            { MinionSpawnType.MINION_TYPE_MELEE, new StatsModifier() },
+            { MinionSpawnType.MINION_TYPE_CASTER, new StatsModifier() },
+            { MinionSpawnType.MINION_TYPE_CANNON, new StatsModifier() },
+            { MinionSpawnType.MINION_TYPE_SUPER, new StatsModifier() },
+        };
+
         IStatsModifier OuterTurretStatsModifier = new StatsModifier();
         Dictionary<TeamId, List<IChampion>> Players = new Dictionary<TeamId, List<IChampion>>();
         public virtual void OnMatchStart()
@@ -311,16 +321,34 @@ namespace MapScripts.Map1
             OuterTurretStatsModifier.MagicResist.FlatBonus = 1;
             OuterTurretStatsModifier.AttackDamage.FlatBonus = 4;
 
+            MinionModifiers[MinionSpawnType.MINION_TYPE_MELEE].GoldGivenOnDeath.FlatBonus = 0.5f;
+            MinionModifiers[MinionSpawnType.MINION_TYPE_MELEE].HealthPoints.FlatBonus = 20.0f;
+            MinionModifiers[MinionSpawnType.MINION_TYPE_MELEE].AttackDamage.FlatBonus = 1.0f;
+            MinionModifiers[MinionSpawnType.MINION_TYPE_MELEE].Armor.FlatBonus = 3.0f;
+            MinionModifiers[MinionSpawnType.MINION_TYPE_MELEE].MagicResist.FlatBonus = 1.25f;
+
+            MinionModifiers[MinionSpawnType.MINION_TYPE_CASTER].GoldGivenOnDeath.FlatBonus = 0.2f;
+            MinionModifiers[MinionSpawnType.MINION_TYPE_CASTER].HealthPoints.FlatBonus = 7.5f;
+            MinionModifiers[MinionSpawnType.MINION_TYPE_CASTER].AttackDamage.FlatBonus = 1.0f;
+            MinionModifiers[MinionSpawnType.MINION_TYPE_CASTER].Armor.FlatBonus = 0.625f;
+            MinionModifiers[MinionSpawnType.MINION_TYPE_CASTER].MagicResist.FlatBonus = 1.0f;
+
+            MinionModifiers[MinionSpawnType.MINION_TYPE_CANNON].GoldGivenOnDeath.FlatBonus = 1f;
+            MinionModifiers[MinionSpawnType.MINION_TYPE_CANNON].HealthPoints.FlatBonus = 27.0f;
+            MinionModifiers[MinionSpawnType.MINION_TYPE_CANNON].AttackDamage.FlatBonus = 3.0f;
+            MinionModifiers[MinionSpawnType.MINION_TYPE_CANNON].Armor.FlatBonus = 3.0f;
+            MinionModifiers[MinionSpawnType.MINION_TYPE_CANNON].MagicResist.FlatBonus = 3.0f;
+
+            MinionModifiers[MinionSpawnType.MINION_TYPE_SUPER].GoldGivenOnDeath.FlatBonus = 1.0f;
+            MinionModifiers[MinionSpawnType.MINION_TYPE_SUPER].HealthPoints.FlatBonus = 200.0f;
+            MinionModifiers[MinionSpawnType.MINION_TYPE_SUPER].AttackDamage.FlatBonus = 10.0f;
+
             NeutralMinionSpawn.InitializeCamps(_map);
         }
 
         public void Update(float diff)
         {
             var gameTime = _map.GameTime();
-            if (gameTime >= 120 * 1000)
-            {
-                MapScriptMetadata.IsKillGoldRewardReductionActive = false;
-            }
 
             NeutralMinionSpawn.OnUpdate(diff);
 
@@ -333,7 +361,7 @@ namespace MapScripts.Map1
             {
                 UpdateTowerStats();
             }
-            if(gameTime >= outerTurretTimeCheck && outerTurretTimesApplied < 7)
+            if (gameTime >= outerTurretTimeCheck && outerTurretTimesApplied < 7)
             {
                 UpdateOuterTurretStats();
             }
@@ -355,7 +383,7 @@ namespace MapScripts.Map1
                         }
 
                         turret.AddStatModifier(TurretStatsModifier);
-                    } 
+                    }
                 }
             }
 
@@ -373,7 +401,7 @@ namespace MapScripts.Map1
                 {
                     var turret = _map.TurretList[team][lane].Find(x => x.Type == TurretType.OUTER_TURRET);
 
-                    if(turret != null)
+                    if (turret != null)
                     {
                         turret.AddStatModifier(OuterTurretStatsModifier);
                     }
@@ -392,140 +420,6 @@ namespace MapScripts.Map1
         public void SpawnAllCamps()
         {
             NeutralMinionSpawn.ForceCampSpawn();
-        }
-
-        public float GetGoldFor(IAttackableUnit u)
-        {
-            if (!(u is ILaneMinion m))
-            {
-                if (!(u is IChampion c))
-                {
-                    return 0.0f;
-                }
-
-                var gold = 300.0f; //normal gold for a kill
-                if (c.KillDeathCounter < 5 && c.KillDeathCounter >= 0)
-                {
-                    if (c.KillDeathCounter == 0)
-                    {
-                        return gold;
-                    }
-
-                    for (var i = c.KillDeathCounter; i > 1; --i)
-                    {
-                        gold += gold * 0.165f;
-                    }
-
-                    return gold;
-                }
-
-                if (c.KillDeathCounter >= 5)
-                {
-                    return 500.0f;
-                }
-
-                if (c.KillDeathCounter >= 0)
-                    return 0.0f;
-
-                var firstDeathGold = gold - gold * 0.085f;
-
-                if (c.KillDeathCounter == -1)
-                {
-                    return firstDeathGold;
-                }
-
-                for (var i = c.KillDeathCounter; i < -1; ++i)
-                {
-                    firstDeathGold -= firstDeathGold * 0.2f;
-                }
-
-                if (firstDeathGold < 50)
-                {
-                    firstDeathGold = 50;
-                }
-
-                return firstDeathGold;
-            }
-
-            var dic = new Dictionary<MinionSpawnType, float>
-            {
-                { MinionSpawnType.MINION_TYPE_MELEE, 19.8f + 0.2f * (int)(_map.GameTime() / (90 * 1000)) },
-                { MinionSpawnType.MINION_TYPE_CASTER, 16.8f + 0.2f * (int)(_map.GameTime() / (90 * 1000)) },
-                { MinionSpawnType.MINION_TYPE_CANNON, 40.0f + 0.5f * (int)(_map.GameTime() / (90 * 1000)) },
-                { MinionSpawnType.MINION_TYPE_SUPER, 40.0f + 1.0f * (int)(_map.GameTime() / (180 * 1000)) }
-            };
-
-            if (!dic.ContainsKey(m.MinionSpawnType))
-            {
-                return 0.0f;
-            }
-
-            return dic[m.MinionSpawnType];
-        }
-
-        public float GetExperienceFor(IAttackableUnit u)
-        {
-            if (!(u is ILaneMinion m))
-            {
-                return 0.0f;
-            }
-
-            var dic = new Dictionary<MinionSpawnType, float>
-            {
-                { MinionSpawnType.MINION_TYPE_MELEE, 64.0f },
-                { MinionSpawnType.MINION_TYPE_CASTER, 32.0f },
-                { MinionSpawnType.MINION_TYPE_CANNON, 92.0f },
-                { MinionSpawnType.MINION_TYPE_SUPER, 97.0f }
-            };
-
-            if (!dic.ContainsKey(m.MinionSpawnType))
-            {
-                return 0.0f;
-            }
-
-            return dic[m.MinionSpawnType];
-        }
-
-        public void SetMinionStats(ILaneMinion m)
-        {
-            // Same for all minions
-            m.Stats.MoveSpeed.BaseValue = 325.0f;
-
-            switch (m.MinionSpawnType)
-            {
-                case MinionSpawnType.MINION_TYPE_MELEE:
-                    m.Stats.CurrentHealth = 475.0f + 20.0f * (int)(_map.GameTime() / (180 * 1000));
-                    m.Stats.HealthPoints.BaseValue = 475.0f + 20.0f * (int)(_map.GameTime() / (180 * 1000));
-                    m.Stats.AttackDamage.BaseValue = 12.0f + 1.0f * (int)(_map.GameTime() / (180 * 1000));
-                    m.Stats.Range.BaseValue = 180.0f;
-                    m.Stats.AttackSpeedFlat = 1.250f;
-                    m.IsMelee = true;
-                    break;
-                case MinionSpawnType.MINION_TYPE_CASTER:
-                    m.Stats.CurrentHealth = 279.0f + 7.5f * (int)(_map.GameTime() / (90 * 1000));
-                    m.Stats.HealthPoints.BaseValue = 279.0f + 7.5f * (int)(_map.GameTime() / (90 * 1000));
-                    m.Stats.AttackDamage.BaseValue = 23.0f + 1.0f * (int)(_map.GameTime() / (90 * 1000));
-                    m.Stats.Range.BaseValue = 600.0f;
-                    m.Stats.AttackSpeedFlat = 0.670f;
-                    break;
-                case MinionSpawnType.MINION_TYPE_CANNON:
-                    m.Stats.CurrentHealth = 700.0f + 27.0f * (int)(_map.GameTime() / (180 * 1000));
-                    m.Stats.HealthPoints.BaseValue = 700.0f + 27.0f * (int)(_map.GameTime() / (180 * 1000));
-                    m.Stats.AttackDamage.BaseValue = 40.0f + 3.0f * (int)(_map.GameTime() / (180 * 1000));
-                    m.Stats.Range.BaseValue = 450.0f;
-                    m.Stats.AttackSpeedFlat = 1.0f;
-                    break;
-                case MinionSpawnType.MINION_TYPE_SUPER:
-                    m.Stats.CurrentHealth = 1500.0f + 200.0f * (int)(_map.GameTime() / (180 * 1000));
-                    m.Stats.HealthPoints.BaseValue = 1500.0f + 200.0f * (int)(_map.GameTime() / (180 * 1000));
-                    m.Stats.AttackDamage.BaseValue = 190.0f + 10.0f * (int)(_map.GameTime() / (180 * 1000));
-                    m.Stats.Range.BaseValue = 170.0f;
-                    m.Stats.AttackSpeedFlat = 0.694f;
-                    m.Stats.Armor.BaseValue = 30.0f;
-                    m.Stats.MagicResist.BaseValue = -30.0f;
-                    m.IsMelee = true;
-                    break;
-            }
         }
 
         bool AllAnnouncementsAnnounced = false;
