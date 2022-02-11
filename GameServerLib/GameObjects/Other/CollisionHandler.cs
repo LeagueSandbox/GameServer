@@ -114,7 +114,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Other
                     foreach (var obj2 in nearest)
                     {
                         // TODO: Implement interpolation (or hull tracing) to account for fast moving gameobjects that may go past other gameobjects within one tick, which bypasses collision.
-                        if (obj != obj2 && !obj2.IsToRemove() && obj.IsCollidingWith(obj2))
+                        if (obj != obj2 && !obj2.IsToRemove() && obj.IsCollidingWith(obj2, false))
                         {
                             obj.OnCollision(obj2);
                         }

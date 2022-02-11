@@ -103,18 +103,14 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             _charScriptEngine = game.ScriptEngine;
 
             // TODO: Centralize this instead of letting it lay in the initialization.
-            if (CharData.GameplayCollisionRadius > 0)
-            {
-                CollisionRadius = CharData.GameplayCollisionRadius;
-            }
-            else if (collisionRadius > 0)
+            if (collisionRadius > 0)
             {
                 CollisionRadius = collisionRadius;
             }
-            else if (CharData.PathfindingCollisionRadius > 0)
+            else if (CharData.GameplayCollisionRadius > 0)
             {
-                CollisionRadius = CharData.PathfindingCollisionRadius;
-            }
+                CollisionRadius = CharData.GameplayCollisionRadius;
+            } 
             else
             {
                 CollisionRadius = 40;
