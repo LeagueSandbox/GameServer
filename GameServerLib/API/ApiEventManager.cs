@@ -377,11 +377,11 @@ namespace LeagueSandbox.GameServer.API
             {
                 if (_listeners[i].Item2 == deathData.Unit)
                 {
-                    var Event = _listeners[i];
-                    Event.Item3(deathData);
-                    if (Event.Item4)
+                    var listener = _listeners[i];
+                    listener.Item3(deathData);
+                    if (listener.Item4)
                     {
-                        _listeners.Remove(Event);
+                        _listeners.Remove(listener);
                     }
                 }
             }
