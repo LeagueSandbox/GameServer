@@ -368,6 +368,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
             ApiEventManager.OnKill.Publish(data);
 
+            // TODO: Find out if we can unhardcode some of the fractions used here.
             var gold = mapScriptMetaData.ChampionBaseGoldValue;
             if (KillSpree > 1)
             {
