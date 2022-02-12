@@ -205,7 +205,7 @@ namespace LeagueSandbox.GameServer.GameObjects
         /// <param name="o">An object that could be colliding with this object.</param>
         public virtual bool IsCollidingWith(IGameObject o)
         {
-            return Vector2.DistanceSquared(new Vector2(Position.X, Position.Y), o.Position) < (PathfindingRadius + o.PathfindingRadius) * (PathfindingRadius + o.PathfindingRadius);
+            return Vector2.DistanceSquared(new Vector2(Position.X, Position.Y), o.Position) < (CollisionRadius + o.CollisionRadius) * (CollisionRadius + o.CollisionRadius);
         }
 
         /// <summary>
