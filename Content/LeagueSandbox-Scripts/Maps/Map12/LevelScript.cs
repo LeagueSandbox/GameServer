@@ -26,6 +26,7 @@ namespace MapScripts.Map12
             EnableBuildingProtection = true,
             InitialLevel = 3
         };
+
         private IMapScriptHandler _map;
         public virtual IGlobalData GlobalData { get; set; } = new GlobalData();
         public bool HasFirstBloodHappened { get; set; } = false;

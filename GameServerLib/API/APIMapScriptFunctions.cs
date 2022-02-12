@@ -27,6 +27,7 @@ namespace GameServerLib.API
         private static Game _game;
         private static ILog _logger;
         private static MapScriptHandler _map;
+
         /// <summary>
         /// Sets the Game instance of ApiFunctionManager to the given instance.
         /// Also assigns the debug logger.
@@ -133,6 +134,16 @@ namespace GameServerLib.API
             }
         }
 
+        /// <summary>
+        /// Creates and returns a nexus
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="model"></param>
+        /// <param name="position"></param>
+        /// <param name="team"></param>
+        /// <param name="nexusRadius"></param>
+        /// <param name="sightRange"></param>
+        /// <returns></returns>
         public static INexus CreateNexus(string name, string model, Vector2 position, TeamId team, int nexusRadius, int sightRange)
         {
             return new Nexus(_game, model, team, nexusRadius, position, sightRange, Crc32Algorithm.Compute(Encoding.UTF8.GetBytes(name)) | 0xFF000000);
@@ -157,6 +168,11 @@ namespace GameServerLib.API
             return new LaneTurret(_game, name, model, position, team, turretType, turretItems, netId, lane, mapObject, aiScript);
         }
 
+        /// <summary>
+        /// Gets the turret item list from MapScripts
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
         public static int[] GetTurretItems(TurretType type)
         {
             if (!_map.MapScript.TurretItems.ContainsKey(type))
@@ -182,16 +198,18 @@ namespace GameServerLib.API
             _map.TurretList[team][desiredLaneID].Add(tower);
         }
 
-        public static void SpawnTurret(ILaneTurret turret, bool hasProtection, bool protectionDependsOfAll = false, IAttackableUnit[] protectedBy = null)
-        {
-            if (hasProtection && protectedBy != null)
-            {
-                _game.ProtectionManager.AddProtection(turret, protectionDependsOfAll, protectedBy);
-            }
-            _game.ObjectManager.AddObject(turret);
-        }
 
-        //Inhibitor stuff
+        /// <summary>
+        /// Creates and returns an inhibitor
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="model"></param>
+        /// <param name="position"></param>
+        /// <param name="team"></param>
+        /// <param name="lane"></param>
+        /// <param name="inhibRadius"></param>
+        /// <param name="sightRange"></param>
+        /// <returns></returns>
         public static IInhibitor CreateInhibitor(string name, string model, Vector2 position, TeamId team, LaneID lane, int inhibRadius, int sightRange)
         {
             return new Inhibitor(_game, model, lane, team, inhibRadius, position, sightRange, Crc32Algorithm.Compute(Encoding.UTF8.GetBytes(name)) | 0xFF000000);
@@ -214,6 +232,11 @@ namespace GameServerLib.API
             return null;
         }
 
+        /// <summary>
+        /// Checks is all inhibitors of a specific team are dead
+        /// </summary>
+        /// <param name="team"></param>
+        /// <returns></returns>
         public static bool AllInhibitorsDestroyedFromTeam(TeamId team)
         {
             foreach (LaneID lane in _map.InhibitorList[team].Keys)
@@ -229,7 +252,11 @@ namespace GameServerLib.API
             return true;
         }
 
-        //Minion Stuff
+        /// <summary>
+        /// Get minion spawninig position
+        /// </summary>
+        /// <param name="spawnPosition"></param>
+        /// <returns></returns>
         public static Tuple<TeamId, Vector2> GetMinionSpawnPosition(string spawnPosition)
         {
             var coords = _map.SpawnBarracks[spawnPosition].CentralPoint;
@@ -261,6 +288,22 @@ namespace GameServerLib.API
             _game.ObjectManager.AddObject(m);
         }
 
+        /// <summary>
+        /// Creates and returns a minion
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="model"></param>
+        /// <param name="position"></param>
+        /// <param name="netId"></param>
+        /// <param name="team"></param>
+        /// <param name="skinId"></param>
+        /// <param name="ignoreCollision"></param>
+        /// <param name="isTargetable"></param>
+        /// <param name="aiScript"></param>
+        /// <param name="damageBonus"></param>
+        /// <param name="healthBonus"></param>
+        /// <param name="initialLevel"></param>
+        /// <returns></returns>
         public static IMinion CreateMinion(
             string name, string model, Vector2 position, uint netId = 0,
             TeamId team = TeamId.TEAM_NEUTRAL, int skinId = 0, bool ignoreCollision = false,
@@ -272,17 +315,49 @@ namespace GameServerLib.API
             return m;
         }
 
+        /// <summary>
+        /// Checks if minion spawn is enabled
+        /// </summary>
+        /// <returns></returns>
         public static bool IsMinionSpawnEnabled()
         {
             return _game.Config.GameFeatures.HasFlag(FeatureFlags.EnableLaneMinions);
         }
 
-        //Jungle/Camps
+        /// <summary>
+        /// Creates and returns a jungle camp
+        /// </summary>
+        /// <param name="position"></param>
+        /// <param name="groupNumber"></param>
+        /// <param name="teamSideOfTheMap"></param>
+        /// <param name="campTypeIcon"></param>
+        /// <param name="respawnTimer"></param>
+        /// <param name="doPlayVO"></param>
+        /// <param name="revealEvent"></param>
+        /// <param name="spawnDuration"></param>
+        /// <returns></returns>
         public static IMonsterCamp CreateJungleCamp(Vector3 position, byte groupNumber, TeamId teamSideOfTheMap, string campTypeIcon, float respawnTimer, bool doPlayVO = false, byte revealEvent = 74, float spawnDuration = 0.0f)
         {
             return new MonsterCamp(_game, position, groupNumber, teamSideOfTheMap, campTypeIcon, respawnTimer, doPlayVO, revealEvent, spawnDuration);
         }
 
+        /// <summary>
+        /// Creates and returns a jungle monster
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="model"></param>
+        /// <param name="position"></param>
+        /// <param name="faceDirection"></param>
+        /// <param name="monsterCamp"></param>
+        /// <param name="team"></param>
+        /// <param name="spawnAnimation"></param>
+        /// <param name="netId"></param>
+        /// <param name="isTargetable"></param>
+        /// <param name="ignoresCollision"></param>
+        /// <param name="aiScript"></param>
+        /// <param name="damageBonus"></param>
+        /// <param name="healthBonus"></param>
+        /// <param name="initialLevel"></param>
         public static void CreateJungleMonster
         (
             string name, string model, Vector2 position, Vector3 faceDirection,
@@ -301,6 +376,10 @@ namespace GameServerLib.API
             }
         }
 
+        /// <summary>
+        /// Spawn a camp
+        /// </summary>
+        /// <param name="monsterCamp"></param>
         public static void SpawnCamp(IMonsterCamp monsterCamp)
         {
             if (_map.MonsterTemplates.ContainsKey(monsterCamp.CampIndex))
@@ -319,6 +398,14 @@ namespace GameServerLib.API
             }
         }
 
+        /// <summary>
+        /// Set an unit's icon on minimap
+        /// </summary>
+        /// <param name="unit"></param>
+        /// <param name="iconCategory"></param>
+        /// <param name="changeIcon"></param>
+        /// <param name="borderCategory"></param>
+        /// <param name="changeBorder"></param>
         public static void SetMinimapIcon(IAttackableUnit unit, string iconCategory = "", bool changeIcon = false, string borderCategory = "", bool changeBorder = false)
         {
             _game.PacketNotifier.NotifyS2C_UnitSetMinimapIcon(unit, iconCategory, changeIcon, borderCategory, changeBorder);
@@ -348,6 +435,14 @@ namespace GameServerLib.API
             return prop;
         }
 
+        /// <summary>
+        /// Notifies prop animations (Such as the stairs at the beginning on Dominion)
+        /// </summary>
+        /// <param name="prop"></param>
+        /// <param name="animation"></param>
+        /// <param name="animationFlag"></param>
+        /// <param name="duration"></param>
+        /// <param name="destroyPropAfterAnimation"></param>
         public static void NotifyPropAnimation(ILevelProp prop, string animation, AnimationFlags animationFlag, float duration, bool destroyPropAfterAnimation)
         {
             var animationData = new UpdateLevelPropDataPlayAnimation
@@ -380,6 +475,11 @@ namespace GameServerLib.API
                 _map.Surrenders[who.Team].HandleSurrender(userId, who, vote);
         }
 
+        /// <summary>
+        /// Adds a fountain
+        /// </summary>
+        /// <param name="team"></param>
+        /// <param name="position"></param>
         public static void AddFountain(TeamId team, Vector2 position)
         {
             _map.FountainList.Add(team, new Fountain(_game, team, position, 1000));

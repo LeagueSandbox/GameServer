@@ -18,7 +18,7 @@ namespace MapScripts
         {
             MinionPathingOverride = true,
         };
-        private IMapScriptHandler _map;
+
         public virtual IGlobalData GlobalData { get; set; } = new GlobalData();
         public bool HasFirstBloodHappened { get; set; } = false;
         public long NextSpawnTime { get; set; } = 90 * 1000;
