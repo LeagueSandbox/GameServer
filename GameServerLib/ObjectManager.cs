@@ -87,6 +87,11 @@ namespace LeagueSandbox.GameServer
             // For all existing objects and those created during the obj.Update phase
             foreach(var obj in GetObjects().Values)
             {
+                // If flagged during obj.Update
+                if(obj.IsToRemove())
+                {
+                    continue;
+                }
 
                 bool shouldBeSpawned = _queuedObjects.ContainsKey(obj.NetId);
                 
@@ -196,12 +201,21 @@ namespace LeagueSandbox.GameServer
                     ) {
                         bool alwaysVisible = u is IBaseTurret || u is ILevelProp || u is IObjBuilding
                             || (particle != null && particle.SpecificTeam == TeamId.TEAM_NEUTRAL && particle.Team == TeamId.TEAM_NEUTRAL);
-                        bool teamHasVision = alwaysVisible || (
-                            (u == null || !u.IsDead) && TeamHasVisionOn(team, obj)
-                            // Particle team is used if specific team is neutral.
-                            || (particle != null && (particle.SpecificTeam == team
-                            || (particle.SpecificTeam == TeamId.TEAM_NEUTRAL && particle.Team == team)))
-                        );
+                        bool teamHasVision = alwaysVisible
+                            || (
+                                // Particle team is used if specific team is neutral.
+                                (
+                                    particle != null
+                                    && (
+                                        particle.SpecificTeam == team
+                                        || (
+                                            particle.SpecificTeam == TeamId.TEAM_NEUTRAL
+                                            && particle.Team == team
+                                        )
+                                    )
+                                )
+                                || /*(u == null || !u.IsDead) && */ TeamHasVisionOn(team, obj)
+                            );
                         if (obj.IsVisibleByTeam(team) != teamHasVision)
                         {
                             obj.SetVisibleByTeam(team, teamHasVision);
