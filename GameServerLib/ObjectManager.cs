@@ -155,11 +155,9 @@ namespace LeagueSandbox.GameServer
                             }
                         }
 
-                        if(u.Replication.Changed)
-                        {
-                            _game.PacketNotifier.NotifyUpdatedStats(u, true);
-                        }
-
+                        //TODO: sync partially and only when u.Replication.Changed
+                        _game.PacketNotifier.NotifyUpdatedStats(u, false);
+                        
                         if (u.IsModelUpdated)
                         {
                             _game.PacketNotifier.NotifyS2C_ChangeCharacterData(u);
