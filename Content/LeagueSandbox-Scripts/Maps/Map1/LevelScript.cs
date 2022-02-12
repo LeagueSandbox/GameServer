@@ -10,7 +10,7 @@ using GameServerCore.Scripting.CSharp;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using LeagueSandbox.GameServer.API;
 using LeagueSandbox.GameServer.GameObjects.Stats;
-using static GameServerLib.API.APIMapScriptFunctions;
+using static GameServerLib.API.APIMapFunctionManager;
 
 namespace MapScripts.Map1
 {

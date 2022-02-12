@@ -17,7 +17,7 @@ using LeagueSandbox.GameServer.Logging;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using log4net;
 using MapScripts;
-using static GameServerLib.API.APIMapScriptFunctions;
+using static GameServerLib.API.APIMapFunctionManager;
 
 namespace LeagueSandbox.GameServer.Maps
 {

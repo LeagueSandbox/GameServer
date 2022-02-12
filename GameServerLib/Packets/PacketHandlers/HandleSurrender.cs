@@ -1,7 +1,7 @@
 ﻿using GameServerCore;
 using GameServerCore.Packets.Handlers;
 using GameServerCore.Packets.PacketDefinitions.Requests;
-using static GameServerLib.API.APIMapScriptFunctions;
+using static GameServerLib.API.APIMapFunctionManager;
 
 namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 {

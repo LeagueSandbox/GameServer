@@ -3,7 +3,7 @@ using System.Numerics;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
 using LeagueSandbox.GameServer.GameObjects.Stats;
-using static GameServerLib.API.APIMapScriptFunctions;
+using static GameServerLib.API.APIMapFunctionManager;
 
 namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 {

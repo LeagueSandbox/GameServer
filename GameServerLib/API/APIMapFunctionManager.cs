@@ -21,7 +21,7 @@ using System.Text;
 
 namespace GameServerLib.API
 {
-    public static class APIMapScriptFunctions
+    public static class APIMapFunctionManager
     {
         // Required variables.
         private static Game _game;

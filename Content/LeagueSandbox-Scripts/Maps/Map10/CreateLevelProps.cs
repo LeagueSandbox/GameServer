@@ -1,5 +1,5 @@
 ﻿using System.Numerics;
-using static GameServerLib.API.APIMapScriptFunctions;
+using static GameServerLib.API.APIMapFunctionManager;
 
 namespace MapScripts.Map10
 {

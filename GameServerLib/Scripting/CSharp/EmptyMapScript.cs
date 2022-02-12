@@ -8,7 +8,7 @@ using GameServerCore.Maps;
 using GameServerCore.Scripting.CSharp;
 using LeagueSandbox.GameServer.Content;
 using LeagueSandbox.GameServer.Scripting.CSharp;
-using static GameServerLib.API.APIMapScriptFunctions;
+using static GameServerLib.API.APIMapFunctionManager;
 
 namespace MapScripts
 {
@@ -105,8 +105,6 @@ namespace MapScripts
         //This function is executed in-between Loading the map structures and applying the structure protections. Is the first thing on this script to be executed
         public void Init(IMapScriptHandler map)
         {
-            _map = map;
-
             MapScriptMetadata.MinionSpawnEnabled = IsMinionSpawnEnabled();
             AddSurrender(1200000.0f, 300000.0f, 30.0f);
         }
