@@ -41,11 +41,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// </summary>
         public bool IsModelUpdated { get; set; }
         /// <summary>
-        /// The "score" of this Unit which increases as kills are gained and decreases as deaths are inflicted.
-        /// Used in determining kill gold rewards.
-        /// </summary>
-        public int KillDeathCounter { get; set; }
-        /// <summary>
         /// Number of minions this Unit has killed. Unused besides in replication which is used for packets, refer to NotifyUpdateStats in PacketNotifier.
         /// </summary>
         /// TODO: Verify if we want to move this to ObjAIBase since AttackableUnits cannot attack or kill anything.
@@ -132,7 +127,20 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         public override void OnAdded()
         {
             base.OnAdded();
-            _game.ObjectManager.AddVisionUnit(this);
+            _game.ObjectManager.AddVisionProvider(this, Team);
+        }
+
+        public override void OnRemoved()
+        {
+            base.OnRemoved();
+            _game.ObjectManager.RemoveVisionProvider(this, Team);
+        }
+
+        public override void SetTeam(TeamId team)
+        {
+            _game.ObjectManager.RemoveVisionProvider(this, Team);
+            base.SetTeam(team);
+            _game.ObjectManager.AddVisionProvider(this, Team);
         }
 
         /// <summary>
@@ -229,12 +237,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             }
 
             UpdateStatus();
-        }
-
-        public override void OnRemoved()
-        {
-            base.OnRemoved();
-            _game.ObjectManager.RemoveVisionUnit(this);
         }
 
         /// <summary>
@@ -512,16 +514,14 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                     _game.Config.IsDamageTextGlobal, attackerId, targetId);
             }
 
-            // TODO: send this in one place only
-            _game.PacketNotifier.NotifyUpdatedStats(this, false);
-
             // Get health from lifesteal/spellvamp
             if (regain > 0)
             {
-                attackerStats.CurrentHealth = Math.Min(attackerStats.HealthPoints.Total,
-                    attackerStats.CurrentHealth + regain * postMitigationDamage);
-                // TODO: send this in one place only (preferably a central EventHandler class)
-                _game.PacketNotifier.NotifyUpdatedStats(attacker, false);
+                attackerStats.CurrentHealth = Math.Min
+                (
+                    attackerStats.HealthPoints.Total,
+                    attackerStats.CurrentHealth + regain * postMitigationDamage
+                );
             }
         }
 
@@ -644,16 +644,14 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                     _game.Config.IsDamageTextGlobal, attackerId, targetId);
             }
 
-            // TODO: send this in one place only
-            _game.PacketNotifier.NotifyUpdatedStats(this, false);
-
             // Get health from lifesteal/spellvamp
             if (regain > 0)
             {
-                attackerStats.CurrentHealth = Math.Min(attackerStats.HealthPoints.Total,
-                    attackerStats.CurrentHealth + regain * postMitigationDamage);
-                // TODO: send this in one place only (preferably a central EventHandler class)
-                _game.PacketNotifier.NotifyUpdatedStats(attacker, false);
+                attackerStats.CurrentHealth = Math.Min
+                (
+                    attackerStats.HealthPoints.Total,
+                    attackerStats.CurrentHealth + regain * postMitigationDamage
+                );
             }
         }
 
@@ -695,17 +693,19 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             SetToRemove();
 
             ApiEventManager.OnDeath.Publish(data);
-            var exp = _game.Map.MapScript.GetExperienceFor(this);
-            var champs = _game.ObjectManager.GetChampionsInRange(Position, EXP_RANGE, true);
-            //Cull allied champions
-            champs.RemoveAll(l => l.Team == Team);
-
-            if (champs.Count > 0)
+            if(data.Unit is IObjAiBase obj)
             {
-                var expPerChamp = exp / champs.Count;
-                foreach (var c in champs)
+                var champs = _game.ObjectManager.GetChampionsInRange(Position, EXP_RANGE, true);
+                //Cull allied champions
+                champs.RemoveAll(l => l.Team == Team);
+
+                if (champs.Count > 0)
                 {
-                    c.AddExperience(expPerChamp);
+                    var expPerChamp = obj.CharData.ExpGivenOnDeath / champs.Count;
+                    foreach (var c in champs)
+                    {
+                        c.AddExperience(expPerChamp);
+                    }
                 }
             }
 
@@ -952,6 +952,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
 
             Direction = new Vector3(dirTemp.X, 0.0f, dirTemp.Y);
 
+            //TODO: Turns in the direction of travel automatically, no need to call.
             FaceDirection(Direction, false);
 
             var moveSpeed = GetMoveSpeed();
@@ -1636,7 +1637,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// </summary>
         /// <param name="state">State to set. True = dashing, false = not dashing.</param>
         /// TODO: Implement ForcedMovement methods and enumerators to handle different kinds of dashes.
-        public virtual void SetDashingState(bool state)
+        public virtual void SetDashingState(bool state, MoveStopReason reason = MoveStopReason.Finished)
         {
             if (MovementParameters != null && state == false)
             {
@@ -1644,13 +1645,24 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
 
                 var animPairs = new Dictionary<string, string> { { "RUN", "" } };
                 SetAnimStates(animPairs);
+
+                ApiEventManager.OnMoveEnd.Publish(this);
+
+                if (reason == MoveStopReason.Finished)
+                {
+                    ApiEventManager.OnMoveSuccess.Publish(this);
+                }
+                else if (reason != MoveStopReason.Finished)
+                {
+                    ApiEventManager.OnMoveFailure.Publish(this);
+                }
             }
 
             // TODO: Implement this as a parameter.
-            Stats.SetActionState(ActionState.CAN_ATTACK, !state);
-            Stats.SetActionState(ActionState.CAN_NOT_ATTACK, state);
-            Stats.SetActionState(ActionState.CAN_MOVE, !state);
-            Stats.SetActionState(ActionState.CAN_NOT_MOVE, state);
+            SetStatus(StatusFlags.CanAttack, !state);
+            // TODO: Verify if changing cast status is correct.
+            SetStatus(StatusFlags.CanCast, !state);
+            SetStatus(StatusFlags.CanMove, !state);
         }
 
         /// <summary>

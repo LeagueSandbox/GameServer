@@ -49,15 +49,14 @@ namespace GameServerCore.Domain.GameObjects
         /// </summary>
         float Lifetime { get; }
         /// <summary>
-        /// Whether or not the particle should be affected by vision,
-        /// false = always visible,
-        /// true = visibility can be obstructed
-        /// </summary>
-        bool VisionAffected { get; }
-        /// <summary>
         /// The only team that should be able to see this particle.
         /// </summary>
         TeamId SpecificTeam { get; }
+        /// <summary>
+        /// The only unit that should be able to see this particle.
+        /// Only effective if this is a player controlled unit.
+        /// </summary>
+        IGameObject SpecificUnit { get; }
         /// <summary>
         /// Whether or not the particle should be titled along the ground towards its end position.
         /// Effectively uses the ground height for the end position.

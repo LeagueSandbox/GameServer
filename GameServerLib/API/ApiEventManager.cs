@@ -92,6 +92,9 @@ namespace LeagueSandbox.GameServer.API
             OnLaunchMissile.RemoveListener(owner);
             OnLevelUp.RemoveListener(owner);
             OnLevelUpSpell.RemoveListener(owner);
+            OnMoveEnd.RemoveListener(owner);
+            OnMoveFailure.RemoveListener(owner);
+            OnMoveSuccess.RemoveListener(owner);
             OnPreAttack.RemoveListener(owner);
             OnPreDealDamage.RemoveListener(owner);
             OnPreTakeDamage.RemoveListener(owner);
@@ -121,6 +124,9 @@ namespace LeagueSandbox.GameServer.API
         public static EventOnLaunchMissile OnLaunchMissile = new EventOnLaunchMissile();
         public static EventOnLevelUp OnLevelUp = new EventOnLevelUp();
         public static EventOnLevelUpSpell OnLevelUpSpell = new EventOnLevelUpSpell();
+        public static EventOnMoveEnd OnMoveEnd = new EventOnMoveEnd();
+        public static EventOnMoveFailure OnMoveFailure = new EventOnMoveFailure();
+        public static EventOnMoveSuccess OnMoveSuccess = new EventOnMoveSuccess();
         public static EventOnPreAttack OnPreAttack = new EventOnPreAttack();
         public static EventOnPreDealDamage OnPreDealDamage = new EventOnPreDealDamage();
         public static EventOnPreTakeDamage OnPreTakeDamage = new EventOnPreTakeDamage();
@@ -349,7 +355,6 @@ namespace LeagueSandbox.GameServer.API
     public class EventOnDeath
     {
         private readonly List<Tuple<object, IAttackableUnit, Action<IDeathData>, bool>> _listeners = new List<Tuple<object, IAttackableUnit, Action<IDeathData>, bool>>();
-
         public void AddListener(object owner, IAttackableUnit target, Action<IDeathData> callback, bool singleInstance)
         {
             var listenerTuple = new Tuple<object, IAttackableUnit, Action<IDeathData>, bool>(owner, target, callback, singleInstance);
@@ -359,6 +364,7 @@ namespace LeagueSandbox.GameServer.API
         {
             _listeners.RemoveAll((listener) => listener.Item1 == owner);
         }
+
         public void Publish(IDeathData deathData)
         {
             var count = _listeners.Count;
@@ -371,10 +377,11 @@ namespace LeagueSandbox.GameServer.API
             {
                 if (_listeners[i].Item2 == deathData.Unit)
                 {
-                    _listeners[i].Item3(deathData);
-                    if (_listeners[i].Item4)
+                    var listener = _listeners[i];
+                    listener.Item3(deathData);
+                    if (listener.Item4)
                     {
-                        _listeners.RemoveAt(i);
+                        _listeners.Remove(listener);
                     }
                 }
             }
@@ -634,6 +641,133 @@ namespace LeagueSandbox.GameServer.API
             }
         }
     }
+
+    public class EventOnMoveEnd
+    {
+        private readonly List<Tuple<object, IAttackableUnit, Action<IAttackableUnit>, bool>> _listeners = new List<Tuple<object, IAttackableUnit, Action<IAttackableUnit>, bool>>();
+        public void AddListener(object owner, IAttackableUnit unit, Action<IAttackableUnit> callback, bool singleInstance)
+        {
+            var listenerTuple = new Tuple<object, IAttackableUnit, Action<IAttackableUnit>, bool>(owner, unit, callback, singleInstance);
+            _listeners.Add(listenerTuple);
+        }
+
+        public void RemoveListener(object owner, IAttackableUnit unit)
+        {
+            _listeners.RemoveAll(listener => listener.Item1 == owner && listener.Item2 == unit);
+        }
+
+        public void RemoveListener(object owner)
+        {
+            _listeners.RemoveAll(listener => listener.Item1 == owner);
+        }
+
+        public void Publish(IAttackableUnit unit)
+        {
+            var count = _listeners.Count;
+
+            if (count == 0)
+            {
+                return;
+            }
+
+            for (int i = count - 1; i >= 0; i--)
+            {
+                if (_listeners[i].Item2 == unit)
+                {
+                    _listeners[i].Item3(unit);
+                    if (_listeners[i].Item4 == true)
+                    {
+                        _listeners.RemoveAt(i);
+                    }
+                }
+            }
+        }
+    }
+
+    public class EventOnMoveFailure
+    {
+        private readonly List<Tuple<object, IAttackableUnit, Action<IAttackableUnit>, bool>> _listeners = new List<Tuple<object, IAttackableUnit, Action<IAttackableUnit>, bool>>();
+        public void AddListener(object owner, IAttackableUnit unit, Action<IAttackableUnit> callback, bool singleInstance)
+        {
+            var listenerTuple = new Tuple<object, IAttackableUnit, Action<IAttackableUnit>, bool>(owner, unit, callback, singleInstance);
+            _listeners.Add(listenerTuple);
+        }
+
+        public void RemoveListener(object owner, IAttackableUnit unit)
+        {
+            _listeners.RemoveAll(listener => listener.Item1 == owner && listener.Item2 == unit);
+        }
+
+        public void RemoveListener(object owner)
+        {
+            _listeners.RemoveAll(listener => listener.Item1 == owner);
+        }
+
+        public void Publish(IAttackableUnit unit)
+        {
+            var count = _listeners.Count;
+
+            if (count == 0)
+            {
+                return;
+            }
+
+            for (int i = count - 1; i >= 0; i--)
+            {
+                if (_listeners[i].Item2 == unit)
+                {
+                    _listeners[i].Item3(unit);
+                    if (_listeners[i].Item4 == true)
+                    {
+                        _listeners.RemoveAt(i);
+                    }
+                }
+            }
+        }
+    }
+
+    public class EventOnMoveSuccess
+    {
+        private readonly List<Tuple<object, IAttackableUnit, Action<IAttackableUnit>, bool>> _listeners = new List<Tuple<object, IAttackableUnit, Action<IAttackableUnit>, bool>>();
+        public void AddListener(object owner, IAttackableUnit unit, Action<IAttackableUnit> callback, bool singleInstance)
+        {
+            var listenerTuple = new Tuple<object, IAttackableUnit, Action<IAttackableUnit>, bool>(owner, unit, callback, singleInstance);
+            _listeners.Add(listenerTuple);
+        }
+
+        public void RemoveListener(object owner, IAttackableUnit unit)
+        {
+            _listeners.RemoveAll(listener => listener.Item1 == owner && listener.Item2 == unit);
+        }
+
+        public void RemoveListener(object owner)
+        {
+            _listeners.RemoveAll(listener => listener.Item1 == owner);
+        }
+
+        public void Publish(IAttackableUnit unit)
+        {
+            var count = _listeners.Count;
+
+            if (count == 0)
+            {
+                return;
+            }
+
+            for (int i = count - 1; i >= 0; i--)
+            {
+                if (_listeners[i].Item2 == unit)
+                {
+                    _listeners[i].Item3(unit);
+                    if (_listeners[i].Item4 == true)
+                    {
+                        _listeners.RemoveAt(i);
+                    }
+                }
+            }
+        }
+    }
+
     public class EventOnPreAttack
     {
         private readonly List<Tuple<object, IObjAiBase, Action<ISpell>, bool>> _listeners = new List<Tuple<object, IObjAiBase, Action<ISpell>, bool>>();

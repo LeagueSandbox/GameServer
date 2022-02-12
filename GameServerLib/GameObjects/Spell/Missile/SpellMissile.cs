@@ -69,16 +69,17 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Missile
 
         public override void Update(float diff)
         {
-            if (!HasTarget())
+            if (HasTarget())
             {
-                Direction = new Vector3();
-
+                _timeSinceCreation += diff;
+                Move(diff);
+            }
+            else
+            {
+                //Direction = new Vector3();
                 SetToRemove();
                 return;
             }
-            _timeSinceCreation += diff;
-
-            Move(diff);
         }
 
         public override void OnCollision(IGameObject collider, bool isTerrain = false)

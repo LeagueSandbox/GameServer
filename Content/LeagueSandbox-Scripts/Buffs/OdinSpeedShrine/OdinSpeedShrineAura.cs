@@ -29,7 +29,7 @@ namespace Buffs
             buff.SetStatusEffect(StatusFlags.ForceRenderParticles, true);
             buff.SetStatusEffect(StatusFlags.NoRender, true);
 
-            buffParticle = AddParticleTarget(Unit, null, "Odin_Shrine_Time", Unit, buff.Duration, reqVision: false);
+            buffParticle = AddParticleTarget(Unit, null, "Odin_Shrine_Time", Unit, buff.Duration);
         }
 
         public void OnDeactivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)

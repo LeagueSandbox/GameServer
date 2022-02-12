@@ -19,11 +19,6 @@ namespace GameServerCore.Domain.GameObjects
         /// </summary>
         bool IsModelUpdated { get; set; }
         /// <summary>
-        /// The "score" of this Unit which increases as kills are gained and decreases as deaths are inflicted.
-        /// Used in determining kill gold rewards.
-        /// </summary>
-        int KillDeathCounter { get; set; }
-        /// <summary>
         /// Number of minions this Unit has killed. Unused besides in replication which is used for packets, refer to NotifyUpdateStats in PacketNotifier.
         /// </summary>
         /// TODO: Verify if we want to move this to ObjAIBase since AttackableUnits cannot attack or kill anything.
@@ -279,7 +274,7 @@ namespace GameServerCore.Domain.GameObjects
         /// </summary>
         /// <param name="state">State to set. True = dashing, false = not dashing.</param>
         /// TODO: Implement ForcedMovement methods and enumerators to handle different kinds of dashes.
-        void SetDashingState(bool state);
+        void SetDashingState(bool state, MoveStopReason reason = MoveStopReason.Finished);
         /// <summary>
         /// Sets this unit's animation states to the given set of states.
         /// Given state pairs are expected to follow a specific structure:

@@ -130,6 +130,73 @@ namespace LeagueSandbox.GameServer.API
             return _game.ObjectManager.Teams;
         }
 
+        public static int ConvertAPISlot(SpellSlotType slotType, int slot)
+        {
+            if ((slotType == SpellSlotType.SpellSlots && (slot < 0 || slot > 3))
+                || (slotType == SpellSlotType.InventorySlots && (slot < 0 || slot > 6))
+                || (slotType == SpellSlotType.ExtraSlots && (slot < 0 || slot > 15)))
+            {
+                return -1;
+            }
+
+            if (slotType == SpellSlotType.SummonerSpellSlots)
+            {
+                slot += (int)SpellSlotType.SummonerSpellSlots;
+            }
+            else if (slotType == SpellSlotType.InventorySlots)
+            {
+                slot += (int)SpellSlotType.InventorySlots;
+            }
+            else if (slotType == SpellSlotType.TempItemSlot)
+            {
+                slot = (int)SpellSlotType.TempItemSlot;
+            }
+            else if (slotType == SpellSlotType.ExtraSlots)
+            {
+                slot += (int)SpellSlotType.ExtraSlots;
+            }
+
+            return slot;
+        }
+
+        public static int ConvertAPISlot(SpellbookType spellbookType, SpellSlotType slotType, int slot)
+        {
+            if (spellbookType == SpellbookType.SPELLBOOK_UNKNOWN
+                || spellbookType == SpellbookType.SPELLBOOK_SUMMONER && (slotType != SpellSlotType.SummonerSpellSlots)
+                || (spellbookType == SpellbookType.SPELLBOOK_CHAMPION
+                    && ((slotType == SpellSlotType.SpellSlots && (slot < 0 || slot > 3))
+                        || (slotType == SpellSlotType.InventorySlots && (slot < 0 || slot > 6))
+                        || (slotType == SpellSlotType.ExtraSlots && (slot < 0 || slot > 15)))))
+            {
+                return -1;
+            }
+
+            if (spellbookType == SpellbookType.SPELLBOOK_CHAMPION)
+            {
+                if (slotType == SpellSlotType.InventorySlots)
+                {
+                    slot += (int)SpellSlotType.InventorySlots;
+                }
+                else if (slotType == SpellSlotType.TempItemSlot)
+                {
+                    slot = (int)SpellSlotType.TempItemSlot;
+                }
+                else if (slotType == SpellSlotType.ExtraSlots)
+                {
+                    slot += (int)SpellSlotType.ExtraSlots;
+                }
+            }
+            else if (spellbookType == SpellbookType.SPELLBOOK_SUMMONER)
+            {
+                if (slotType == SpellSlotType.SummonerSpellSlots)
+                {
+                    slot += (int)SpellSlotType.SummonerSpellSlots;
+                }
+            }
+
+            return slot;
+        }
+
         /// <summary>
         /// Teleports an AI unit to the specified coordinates.
         /// Instant.
@@ -290,9 +357,9 @@ namespace LeagueSandbox.GameServer.API
         /// <param name="teamOnly">The only team which should be able to see the particle.</param>
         /// <param name="flags">Flags which determine how the particle behaves. Refer to FXFlags enum.</param>
         /// <returns>New particle instance.</returns>
-        public static IParticle AddParticlePos(IGameObject caster, string particle, Vector2 start, Vector2 end, float lifetime = 1.0f, float size = 1.0f, string bone = "", string targetBone = "", Vector3 direction = new Vector3(), bool followGroundTilt = false, bool reqVision = true, TeamId teamOnly = TeamId.TEAM_NEUTRAL, FXFlags flags = FXFlags.BindDirection)
+        public static IParticle AddParticlePos(IGameObject caster, string particle, Vector2 start, Vector2 end, float lifetime = 1.0f, float size = 1.0f, string bone = "", string targetBone = "", Vector3 direction = new Vector3(), bool followGroundTilt = false, TeamId teamOnly = TeamId.TEAM_NEUTRAL, IGameObject unitOnly = null, FXFlags flags = FXFlags.BindDirection)
         {
-            var p = new Particle(_game, caster, start, end, particle, size, bone, targetBone, 0, direction, followGroundTilt, lifetime, reqVision, true, teamOnly, flags);
+            var p = new Particle(_game, caster, start, end, particle, size, bone, targetBone, 0, direction, followGroundTilt, lifetime, teamOnly, unitOnly, flags);
             return p;
         }
 
@@ -313,9 +380,9 @@ namespace LeagueSandbox.GameServer.API
         /// <param name="teamOnly">The only team which should be able to see the particle.</param>
         /// <param name="flags">Flags which determine how the particle behaves. Refer to FXFlags enum.</param>
         /// <returns>New particle instance.</returns>
-        public static IParticle AddParticle(IGameObject caster, IGameObject bindObj, string particle, Vector2 position, float lifetime = 1.0f, float size = 1.0f, string bone = "", string targetBone = "", Vector3 direction = new Vector3(), bool followGroundTilt = false, bool reqVision = true, TeamId teamOnly = TeamId.TEAM_NEUTRAL, FXFlags flags = FXFlags.BindDirection)
+        public static IParticle AddParticle(IGameObject caster, IGameObject bindObj, string particle, Vector2 position, float lifetime = 1.0f, float size = 1.0f, string bone = "", string targetBone = "", Vector3 direction = new Vector3(), bool followGroundTilt = false, TeamId teamOnly = TeamId.TEAM_NEUTRAL, IGameObject unitOnly = null, FXFlags flags = FXFlags.BindDirection)
         {
-            var p = new Particle(_game, caster, bindObj, position, particle, size, bone, targetBone, 0, direction, followGroundTilt, lifetime, reqVision, true, teamOnly, flags);
+            var p = new Particle(_game, caster, bindObj, position, particle, size, bone, targetBone, 0, direction, followGroundTilt, lifetime, teamOnly, unitOnly, flags);
             return p;
         }
 
@@ -337,9 +404,9 @@ namespace LeagueSandbox.GameServer.API
         /// <param name="teamOnly">The only team which should be able to see the particle.</param>
         /// <param name="flags">Flags which determine how the particle behaves. Refer to FXFlags enum.</param>
         /// <returns>New particle instance.</returns>
-        public static IParticle AddParticleTarget(IGameObject caster, IGameObject bindObj, string particle, IGameObject target, float lifetime = 1.0f, float size = 1.0f, string bone = "", string targetBone = "", Vector3 direction = new Vector3(), bool followGroundTilt = false, bool reqVision = true, TeamId teamOnly = TeamId.TEAM_NEUTRAL, FXFlags flags = FXFlags.BindDirection)
+        public static IParticle AddParticleTarget(IGameObject caster, IGameObject bindObj, string particle, IGameObject target, float lifetime = 1.0f, float size = 1.0f, string bone = "", string targetBone = "", Vector3 direction = new Vector3(), bool followGroundTilt = false, TeamId teamOnly = TeamId.TEAM_NEUTRAL, IGameObject unitOnly = null, FXFlags flags = FXFlags.BindDirection)
         {
-            var p = new Particle(_game, caster, bindObj, target, particle, size, bone, targetBone, 0, direction, followGroundTilt, lifetime, reqVision, true, teamOnly, flags);
+            var p = new Particle(_game, caster, bindObj, target, particle, size, bone, targetBone, 0, direction, followGroundTilt, lifetime, teamOnly, unitOnly, flags);
             return p;
         }
 
@@ -504,6 +571,23 @@ namespace LeagueSandbox.GameServer.API
         }
 
         /// <summary>
+        /// Acquires all dead or alive AttackableUnits within the specified range of a target position.
+        /// </summary>
+        /// <param name="targetPos">Origin of the range to check.</param>
+        /// <param name="range">Range to check from the target position.</param>
+        /// <returns>List of AttackableUnits.</returns>
+        public static IEnumerable<IAttackableUnit> EnumerateUnitsInRange(Vector2 targetPos, float range, bool isAlive)
+        {
+            foreach(var obj in _game.Map.CollisionHandler.QuadDynamic.GetNodesInside(targetPos, range))
+            {
+                if(obj is IAttackableUnit u && (!isAlive || !u.IsDead))
+                {
+                    yield return u;
+                }
+            }
+        }
+
+        /// <summary>
         /// Acquires the closest alive or dead AttackableUnit within the specified range of a target position.
         /// </summary>
         /// <param name="targetPos">Origin of the range to check.</param>
@@ -549,7 +633,7 @@ namespace LeagueSandbox.GameServer.API
         {
             return _game.ObjectManager.GetChampionsInRange(targetPos, range, isAlive);
         }
-        
+
         /// <summary>
         /// Counts the number of units attacking a specified GameObject of type AttackableUnit.
         /// </summary>
@@ -574,6 +658,12 @@ namespace LeagueSandbox.GameServer.API
                 toreturn.Add(player.Item2.Champion);
             }
             return toreturn;
+        }
+
+        //Consider changing this to take bots into account too
+        public static List<IChampion> GetAllPlayersFromTeam(TeamId team)
+        {
+            return _game.ObjectManager.GetAllChampionsFromTeam(team);
         }
 
         /// <summary>
@@ -707,26 +797,11 @@ namespace LeagueSandbox.GameServer.API
 
         public static void SealSpellSlot(IObjAiBase target, SpellSlotType slotType, int slot, SpellbookType spellbookType, bool seal)
         {
-            if (spellbookType == SpellbookType.SPELLBOOK_UNKNOWN
-                || spellbookType == SpellbookType.SPELLBOOK_SUMMONER && (slotType != SpellSlotType.SummonerSpellSlots)
-                || (spellbookType == SpellbookType.SPELLBOOK_CHAMPION
-                    && ((slotType == SpellSlotType.SpellSlots && (slot < 0 || slot > 3))
-                        || (slotType == SpellSlotType.InventorySlots && (slot < 0 || slot > 6))
-                        || (slotType == SpellSlotType.ExtraSlots && (slot < 0 || slot > 15)))))
+            slot = ConvertAPISlot(spellbookType, slotType, slot);
+
+            if (slot == -1)
             {
                 return;
-            }
-
-            if (spellbookType == SpellbookType.SPELLBOOK_CHAMPION)
-            {
-                if (slotType == SpellSlotType.InventorySlots)
-                {
-                    slot += (int)SpellSlotType.InventorySlots;
-                }
-                if (slotType == SpellSlotType.ExtraSlots)
-                {
-                    slot += (int)SpellSlotType.ExtraSlots;
-                }
             }
 
             if (spellbookType == SpellbookType.SPELLBOOK_SUMMONER)
@@ -782,29 +857,14 @@ namespace LeagueSandbox.GameServer.API
 
         public static void SetTargetingType(IObjAiBase target, SpellSlotType slotType, int slot, TargetingType newType)
         {
-            if ((slotType == SpellSlotType.SpellSlots && (slot < 0 || slot > 3))
-                || (slotType == SpellSlotType.InventorySlots && (slot < 0 || slot > 6))
-                || (slotType == SpellSlotType.ExtraSlots && (slot < 0 || slot > 15)))
+            slot = ConvertAPISlot(slotType, slot);
+
+            if (slot == -1)
             {
                 return;
             }
 
-            if (slotType == SpellSlotType.InventorySlots)
-            {
-                slot += (int)SpellSlotType.InventorySlots;
-            }
-
-            if (slotType == SpellSlotType.TempItemSlot)
-            {
-                slot = (int)SpellSlotType.TempItemSlot;
-            }
-
-            if (slotType == SpellSlotType.ExtraSlots)
-            {
-                slot += (int)SpellSlotType.ExtraSlots;
-            }
-
-            ISpell spell = target.GetSpell((byte)slot);
+            var spell = target.GetSpell((byte)slot);
 
             spell.SpellData.SetTargetingType(newType);
 
@@ -826,27 +886,7 @@ namespace LeagueSandbox.GameServer.API
         {
             if (unit is IChampion champ)
             {
-                if ((slotType == SpellSlotType.SpellSlots && (slot < 0 || slot > 3))
-                || (slotType == SpellSlotType.InventorySlots && (slot < 0 || slot > 6))
-                || (slotType == SpellSlotType.ExtraSlots && (slot < 0 || slot > 15)))
-                {
-                    return;
-                }
-
-                if (slotType == SpellSlotType.InventorySlots)
-                {
-                    slot += (int)SpellSlotType.InventorySlots;
-                }
-
-                if (slotType == SpellSlotType.TempItemSlot)
-                {
-                    slot = (int)SpellSlotType.TempItemSlot;
-                }
-
-                if (slotType == SpellSlotType.ExtraSlots)
-                {
-                    slot += (int)SpellSlotType.ExtraSlots;
-                }
+                slot = (byte)ConvertAPISlot(book, slotType, slot);
 
                 champ.GetSpell(slot).SetToolTipVar(tipIndex, value);
             }
@@ -860,27 +900,7 @@ namespace LeagueSandbox.GameServer.API
 
         public static void SpellCast(IObjAiBase caster, int slot, SpellSlotType slotType, Vector2 pos, Vector2 endPos, bool fireWithoutCasting, Vector2 overrideCastPos, List<ICastTarget> targets = null, bool isForceCastingOrChanneling = false, int overrideForceLevel = -1, bool updateAutoAttackTimer = false, bool useAutoAttackSpell = false)
         {
-            if ((slotType == SpellSlotType.SpellSlots && (slot < 0 || slot > 3))
-                || (slotType == SpellSlotType.InventorySlots && (slot < 0 || slot > 6))
-                || (slotType == SpellSlotType.ExtraSlots && (slot < 0 || slot > 15)))
-            {
-                return;
-            }
-
-            if (slotType == SpellSlotType.InventorySlots)
-            {
-                slot += (int)SpellSlotType.InventorySlots;
-            }
-
-            if (slotType == SpellSlotType.TempItemSlot)
-            {
-                slot = (int)SpellSlotType.TempItemSlot;
-            }
-
-            if (slotType == SpellSlotType.ExtraSlots)
-            {
-                slot += (int)SpellSlotType.ExtraSlots;
-            }
+            slot = ConvertAPISlot(slotType, slot);
 
             ISpell spell = caster.GetSpell((byte)slot);
 

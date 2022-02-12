@@ -205,7 +205,7 @@ namespace LeagueSandbox.GameServer.GameObjects
         /// <param name="o">An object that could be colliding with this object.</param>
         public virtual bool IsCollidingWith(IGameObject o)
         {
-            return Vector2.DistanceSquared(new Vector2(Position.X, Position.Y), o.Position) < (PathfindingRadius + o.PathfindingRadius) * (PathfindingRadius + o.PathfindingRadius);
+            return Vector2.DistanceSquared(new Vector2(Position.X, Position.Y), o.Position) < (CollisionRadius + o.CollisionRadius) * (CollisionRadius + o.CollisionRadius);
         }
 
         /// <summary>
@@ -228,7 +228,7 @@ namespace LeagueSandbox.GameServer.GameObjects
         /// Sets the object's team.
         /// </summary>
         /// <param name="team">TeamId.BLUE/PURPLE/NEUTRAL</param>
-        public void SetTeam(TeamId team)
+        public virtual void SetTeam(TeamId team)
         {
             _visibleByTeam[Team] = false;
             Team = team;
@@ -256,12 +256,6 @@ namespace LeagueSandbox.GameServer.GameObjects
         public void SetVisibleByTeam(TeamId team, bool visible)
         {
             _visibleByTeam[team] = visible;
-
-            if (this is IAttackableUnit)
-            {
-                // TODO: send this in one place only
-                _game.PacketNotifier.NotifyUpdatedStats(this as IAttackableUnit, false);
-            }
         }
 
         /// <summary>
