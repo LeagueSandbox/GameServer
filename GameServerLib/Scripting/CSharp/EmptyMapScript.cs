@@ -8,6 +8,7 @@ using GameServerCore.Maps;
 using GameServerCore.Scripting.CSharp;
 using LeagueSandbox.GameServer.Content;
 using LeagueSandbox.GameServer.Scripting.CSharp;
+using static GameServerLib.API.APIMapScriptFunctions;
 
 namespace MapScripts
 {
@@ -106,8 +107,8 @@ namespace MapScripts
         {
             _map = map;
 
-            MapScriptMetadata.MinionSpawnEnabled = map.IsMinionSpawnEnabled();
-            map.AddSurrender(1200000.0f, 300000.0f, 30.0f);
+            MapScriptMetadata.MinionSpawnEnabled = IsMinionSpawnEnabled();
+            AddSurrender(1200000.0f, 300000.0f, 30.0f);
         }
         public void OnMatchStart()
         {
