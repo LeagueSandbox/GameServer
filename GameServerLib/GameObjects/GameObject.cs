@@ -203,10 +203,9 @@ namespace LeagueSandbox.GameServer.GameObjects
         /// Whether or not the specified object is colliding with this object.
         /// </summary>
         /// <param name="o">An object that could be colliding with this object.</param>
-        /// <param name="checkDistance">Should the distance be checked among other things</param>
-        public virtual bool IsCollidingWith(IGameObject o, bool checkDistance = true)
+        public virtual bool IsCollidingWith(IGameObject o)
         {
-            return !checkDistance || Vector2.DistanceSquared(new Vector2(Position.X, Position.Y), o.Position) < (CollisionRadius + o.CollisionRadius) * (CollisionRadius + o.CollisionRadius);
+            return Vector2.DistanceSquared(new Vector2(Position.X, Position.Y), o.Position) < (CollisionRadius + o.CollisionRadius) * (CollisionRadius + o.CollisionRadius);
         }
 
         /// <summary>

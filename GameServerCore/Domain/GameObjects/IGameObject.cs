@@ -97,8 +97,7 @@ namespace GameServerCore.Domain.GameObjects
         /// Whether or not the specified object is colliding with this object.
         /// </summary>
         /// <param name="o">An object that could be colliding with this object.</param>
-        /// <param name="checkDistance">Should the distance be checked among other things</param>
-        bool IsCollidingWith(IGameObject o, bool checkDistance = true);
+        bool IsCollidingWith(IGameObject o);
 
         /// <summary>
         /// Called by ObjectManager when the object is ontop of another object or when the object is inside terrain.

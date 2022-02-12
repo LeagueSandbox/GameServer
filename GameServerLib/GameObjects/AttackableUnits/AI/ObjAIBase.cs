@@ -110,7 +110,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             else if (CharData.GameplayCollisionRadius > 0)
             {
                 CollisionRadius = CharData.GameplayCollisionRadius;
-            } 
+            }
             else
             {
                 CollisionRadius = 40;
