@@ -155,8 +155,10 @@ namespace LeagueSandbox.GameServer
                             }
                         }
 
-                        //TODO: sync partially and only when u.Replication.Changed
-                        _game.PacketNotifier.NotifyUpdatedStats(u, false);
+                        if(u.Replication.Changed)
+                        {
+                            _game.PacketNotifier.NotifyUpdatedStats(u, true);
+                        }
                         
                         if (u.IsModelUpdated)
                         {
@@ -220,6 +222,7 @@ namespace LeagueSandbox.GameServer
                             if(publish)
                             {
                                 _game.PacketNotifier.NotifyVisibilityChange(obj, team, teamHasVision);
+                                _game.PacketNotifier.NotifyUpdatedStats(u, false);
                             }
                         }
                     }
