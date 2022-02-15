@@ -376,28 +376,7 @@ namespace GameServerLib.API
             }
         }
 
-        /// <summary>
-        /// Spawn a camp
-        /// </summary>
-        /// <param name="monsterCamp"></param>
-        public static void SpawnCamp(IMonsterCamp monsterCamp)
-        {
-            if (_map.MonsterTemplates.ContainsKey(monsterCamp.CampIndex))
-            {
-                foreach (var template in _map.MonsterTemplates[monsterCamp.CampIndex])
-                {
-                    monsterCamp.AddMonster(new Monster(_game, template.Name, template.Model, template.Position, template.FaceDirection, template.Camp, template.Team, template.NetId,
-                        template.SpawnAnimation, template.IsTargetable, template.IgnoresCollision, template.AiScript, template.DamageBonus, template.HealthBonus, template.InitialLevel));
-                }
-                monsterCamp.IsAlive = true;
-                monsterCamp.NotifyCampActivation();
-            }
             else
-            {
-                _logger.Warn($"No Monster Camp with ID: {monsterCamp.CampIndex} found");
-            }
-        }
-
         /// <summary>
         /// Set an unit's icon on minimap
         /// </summary>
@@ -592,6 +571,28 @@ namespace GameServerLib.API
                 _cannonMinionCount++;
             }
             return true;
+        }
+
+        /// <summary>
+        /// Spawn a camp
+        /// </summary>
+        /// <param name="monsterCamp"></param>
+        public static void SpawnCamp(IMonsterCamp monsterCamp)
+        {
+            if (_map.MonsterTemplates.ContainsKey(monsterCamp.CampIndex))
+            {
+                foreach (var template in _map.MonsterTemplates[monsterCamp.CampIndex])
+                {
+                    monsterCamp.AddMonster(new Monster(_game, template.Name, template.Model, template.Position, template.FaceDirection, template.Camp, template.Team, template.NetId,
+                        template.SpawnAnimation, template.IsTargetable, template.IgnoresCollision, template.AiScript, template.DamageBonus, template.HealthBonus, template.InitialLevel));
+                }
+                monsterCamp.IsAlive = true;
+                monsterCamp.NotifyCampActivation();
+            }
+            else
+            {
+                _logger.Warn($"No Monster Camp with ID: {monsterCamp.CampIndex} found");
+            }
         }
     }
 
