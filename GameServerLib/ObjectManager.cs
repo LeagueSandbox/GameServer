@@ -116,7 +116,13 @@ namespace LeagueSandbox.GameServer
                         bool doVis = !(obj is ILevelProp || obj is ISpellMissile);
                         _game.PacketNotifier.NotifySpawn(obj, 0, doVis, _game.GameTime);
                     }
-                    
+
+                    if(obj is IAttackableUnit u)
+                    {
+                        // Stats are not updated when object is created
+                        //TODO: Send along with NotifyEnterVisibilityClient packets?
+                        _game.PacketNotifier.NotifyUpdatedStats(u, false);
+                    }
                     _queuedObjects.Remove(obj.NetId);
                 }
                 else // post-Update and sync
@@ -222,7 +228,10 @@ namespace LeagueSandbox.GameServer
                             if(publish)
                             {
                                 _game.PacketNotifier.NotifyVisibilityChange(obj, team, teamHasVision);
-                                _game.PacketNotifier.NotifyUpdatedStats(u, false);
+                                if(u != null && teamHasVision)
+                                {
+                                    _game.PacketNotifier.NotifyUpdatedStats(u, false);
+                                }
                             }
                         }
                     }
