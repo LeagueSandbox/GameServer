@@ -330,11 +330,10 @@ namespace MapScripts.Map11
             }
 
             NeutralMinionSpawn.InitializeCamps(_map);
-            /*foreach (var nexus in _map.NexusList)
+            foreach (var nexus in _map.NexusList)
             {
                 ApiEventManager.OnDeath.AddListener(this, nexus, OnNexusDeath, true);
             }
-            SetupJungleCamps();*/
         }
 
         public void Update(float diff)

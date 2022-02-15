@@ -30,14 +30,14 @@ namespace MapScripts.Map11
             MonsterCamps.Add(blue_blueBuff);
 
             //Blue side Wolfs
-            var blueWolves = _map.CreateJungleCamp(new Vector3(3780.6284f, 60.0f, 6443.984f), 2, TeamId.TEAM_BLUE, "LesserCamp", 125.0f * 1000, spawnDuration: 0.66f);
+            var blueWolves = _map.CreateJungleCamp(new Vector3(3780.6284f, 60.0f, 6443.984f), 2, TeamId.TEAM_BLUE, "LesserCamp", 115.0f * 1000, spawnDuration: 0.66f);
             _map.CreateJungleMonster("SRU_Murkwolf2.1.1", "SRU_Murkwolf", new Vector2(3780.6284f, 6443.984f), new Vector3(3700.6284f, 46.0f, 6385.984f), blueWolves, spawnAnimation: "Spawn", aiScript: "BasicJungleMonsterAi");
             _map.CreateJungleMonster("SRU_MurkwolfMini2.1.2", "SRU_MurkwolfMini", new Vector2(3980.6284f, 6443.984f), new Vector3(3758.9185f, 55.6167f, 6225.844f), blueWolves, spawnAnimation: "spawn_mini1", aiScript: "BasicJungleMonsterAi");
             _map.CreateJungleMonster("SRU_MurkwolfMini2.1.3", "SRU_MurkwolfMini", new Vector2(3730.6284f, 6593.984f), new Vector3(3540.3684f, 55.6125f, 6472.314f), blueWolves, spawnAnimation: "spawn_mini2", aiScript: "BasicJungleMonsterAi");
             MonsterCamps.Add(blueWolves);
 
             //Blue Side Wraiths
-            var blueWraiths = _map.CreateJungleCamp(new Vector3(6706.678f, 60.0f, 5521.044f), 3, TeamId.TEAM_BLUE, "LesserCamp", 125.0f * 1000, spawnDuration: 1.0f);
+            var blueWraiths = _map.CreateJungleCamp(new Vector3(6706.678f, 60.0f, 5521.044f), 3, TeamId.TEAM_BLUE, "LesserCamp", 115.0f * 1000, spawnDuration: 1.0f);
             _map.CreateJungleMonster("SRU_Razorbeak3.1.1", "SRU_Razorbeak", new Vector2(6706.678f, 5521.044f), new Vector3(6958.6284f, 48.0f, 5460.984f), blueWraiths, spawnAnimation: "Spawn", aiScript: "BasicJungleMonsterAi");
             _map.CreateJungleMonster("SRU_RazorbeakMini3.1.2", "SRU_RazorbeakMini", new Vector2(6929.6284f, 5647.934f), new Vector3(6949.2583f, 56.8276f, 5549.064f), blueWraiths, spawnAnimation: "Spawn4", aiScript: "BasicJungleMonsterAi");
             _map.CreateJungleMonster("SRU_RazorbeakMini3.1.3", "SRU_RazorbeakMini", new Vector2(7060.4585f, 5499.274f), new Vector3(6958.6284f, 48.0f, 5460.984f), blueWraiths, spawnAnimation: "Spawn2", aiScript: "BasicJungleMonsterAi");
@@ -46,13 +46,13 @@ namespace MapScripts.Map11
 
             //Blue Side RedBuff
             var blue_RedBuff = _map.CreateJungleCamp(new Vector3(7862.2437f, 60.0f, 4111.1865f), 4, TeamId.TEAM_BLUE, "Camp", 115.0f * 1000, spawnDuration: 1.66f);
-            _map.CreateJungleMonster("SRU_Red4.1.1", "SRU_Red", new Vector2(7862.2437f, 4111.1865f), new Vector3(7622.3887f, 54.426f, 3947.194f), blue_RedBuff, spawnAnimation: "spawn", aiScript: "BasicJungleMonsterAi");
+            _map.CreateJungleMonster("SRU_Red4.1.1", "SRU_Red", new Vector2(7862.2437f, 4111.1865f), new Vector3(7622.3887f, 54.426f, 3947.194f), blue_RedBuff, spawnAnimation: "spawn", aiScript: "BasicJungleMonsterAi";
             _map.CreateJungleMonster("SRU_RedMini4.1.2", "SRU_RedMini", new Vector2(7574.1284f, 4161.374f), new Vector3(7636.5684f, 57.4629f, 3896.934f), blue_RedBuff, spawnAnimation: "spawn", aiScript: "BasicJungleMonsterAi");
             _map.CreateJungleMonster("SRU_RedMini4.1.3", "SRU_RedMini", new Vector2(7918.5083f, 3880.834f), new Vector3(7636.5684f, 57.4629f, 3896.934f), blue_RedBuff, spawnAnimation: "spawn", aiScript: "BasicJungleMonsterAi");
             MonsterCamps.Add(blue_RedBuff);
 
             //Blue Side Golems
-            var blueGolems = _map.CreateJungleCamp(new Vector3(8323.471f, 60.0f, 2754.9475f), 5, TeamId.TEAM_BLUE, "LesserCamp", 125.0f * 1000, spawnDuration: 0.86f);
+            var blueGolems = _map.CreateJungleCamp(new Vector3(8323.471f, 60.0f, 2754.9475f), 5, TeamId.TEAM_BLUE, "LesserCamp", 115.0f * 1000, spawnDuration: 0.86f);
             _map.CreateJungleMonster("SRU_KrugMini5.1.1", "SRU_KrugMini", new Vector2(8323.471f, 2754.9475f), new Vector3(8319.629f, 45.0f, 2641.9841f), blueGolems, spawnAnimation: "spawn", aiScript: "BasicJungleMonsterAi");
             _map.CreateJungleMonster("SRU_Krug5.1.2", "SRU_Krug", new Vector2(8532.471f, 2737.9475f), new Vector3(8569.629f, 45.0f, 2633.9841f), blueGolems, spawnAnimation: "spawn", aiScript: "BasicJungleMonsterAi");
             MonsterCamps.Add(blueGolems);
@@ -70,14 +70,14 @@ namespace MapScripts.Map11
             MonsterCamps.Add(red_BlueBuff);
 
             //Red side Wolfs
-            var redWolves = _map.CreateJungleCamp(new Vector3(11008.152f, 60.0f, 8387.408f), 8, TeamId.TEAM_PURPLE, "LesserCamp", 125.0f * 1000, spawnDuration: 0.66f);
+            var redWolves = _map.CreateJungleCamp(new Vector3(11008.152f, 60.0f, 8387.408f), 8, TeamId.TEAM_PURPLE, "LesserCamp", 115.0f * 1000, spawnDuration: 0.66f);
             _map.CreateJungleMonster("SRU_Murkwolf8.1.1", "SRU_Murkwolf", new Vector2(11008.152f, 8387.408f), new Vector3(11127.629f, 53.0f, 8502.984f), redWolves, spawnAnimation: "Spawn", aiScript: "BasicJungleMonsterAi");
             _map.CreateJungleMonster("SRU_MurkwolfMini8.1.2", "SRU_MurkwolfMini", new Vector2(11058.152f, 8217.408f), new Vector3(11285.828f, 60.8542f, 8381.714f), redWolves, spawnAnimation: "spawn_mini2", aiScript: "BasicJungleMonsterAi");
             _map.CreateJungleMonster("SRU_MurkwolfMini8.1.3", "SRU_MurkwolfMini", new Vector2(10808.152f, 8387.408f), new Vector3(11024.729f, 64.4202f, 8585.544f), redWolves, spawnAnimation: "spawn_mini1", aiScript: "BasicJungleMonsterAi");
             MonsterCamps.Add(redWolves);
 
             //Red Side Wraiths
-            var redWraiths = _map.CreateJungleCamp(new Vector3(7986.9966f, 60.0f, 9471.389f), 9, TeamId.TEAM_PURPLE, "LesserCamp", 125.0f * 1000, spawnDuration: 0.67f);
+            var redWraiths = _map.CreateJungleCamp(new Vector3(7986.9966f, 60.0f, 9471.389f), 9, TeamId.TEAM_PURPLE, "LesserCamp", 115.0f * 1000, spawnDuration: 0.67f);
             _map.CreateJungleMonster("SRU_Razorbeak9.1.1", "SRU_Razorbeak", new Vector2(7986.9966f, 9471.389f), new Vector3(7901.6284f, 46.0f, 9479.984f), redWraiths, spawnAnimation: "North_Spawn", aiScript: "BasicJungleMonsterAi");
             _map.CreateJungleMonster("SRU_RazorbeakMini9.1.2", "SRU_RazorbeakMini", new Vector2(7886.9966f, 9312.39f), new Vector3(7901.6284f, 46.0f, 9479.984f), redWraiths, spawnAnimation: "North_Spawn4", aiScript: "BasicJungleMonsterAi");
             _map.CreateJungleMonster("SRU_RazorbeakMini9.1.3", "SRU_RazorbeakMini", new Vector2(7756.9966f, 9451.389f), new Vector3(7795.698f, 52.3425f, 9491.014f), redWraiths, spawnAnimation: "North_Spawn2", aiScript: "BasicJungleMonsterAi");
@@ -104,22 +104,22 @@ namespace MapScripts.Map11
             MonsterCamps.Add(baron);
 
             //Blue Side Gromp
-            var blueGreatGromp = _map.CreateJungleCamp(new Vector3(2090.6284f, 60.0f, 8427.984f), 13, 0, "LesserCamp", 125.0f * 1000, spawnDuration: 3.2f);
+            var blueGreatGromp = _map.CreateJungleCamp(new Vector3(2090.6284f, 60.0f, 8427.984f), 13, 0, "LesserCamp", 115.0f * 1000, spawnDuration: 3.2f);
             _map.CreateJungleMonster("SRU_Gromp13.1.1", "SRU_Gromp", new Vector2(2090.6284f, 8427.984f), new Vector3(2338.0186f, 51.7773f, 8448.134f), blueGreatGromp, spawnAnimation: "spawn", aiScript: "BasicJungleMonsterAi");
             MonsterCamps.Add(blueGreatGromp);
 
             //Red Side Gromp
-            var redGreatGromp = _map.CreateJungleCamp(new Vector3(12703.629f, 60.0f, 6443.984f), 14, 0, "LesserCamp", 125.0f * 1000, spawnDuration: 3.2f);
+            var redGreatGromp = _map.CreateJungleCamp(new Vector3(12703.629f, 60.0f, 6443.984f), 14, 0, "LesserCamp", 115.0f * 1000, spawnDuration: 3.2f);
             _map.CreateJungleMonster("SRU_Gromp14.1.1", "SRU_Gromp", new Vector2(12703.629f, 6443.984f), new Vector3(12323.828f, 55.5656f, 6272.774f), redGreatGromp, spawnAnimation: "spawn", aiScript: "BasicJungleMonsterAi");
             MonsterCamps.Add(redGreatGromp);
 
             //Dragon pit Scuttle Crab
-            var dragScuttle = _map.CreateJungleCamp(new Vector3(10500.0f, 60.0f, 5170.0f), 15, 0, "LesserCamp", 125.0f * 1000, spawnDuration: 2.2f);
+            var dragScuttle = _map.CreateJungleCamp(new Vector3(10500.0f, 60.0f, 5170.0f), 15, 0, "LesserCamp", 150.0f * 1000, spawnDuration: 2.2f);
             _map.CreateJungleMonster("Sru_Crab15.1.1", "Sru_Crab", new Vector2(10500.0f, 5170.0f), new Vector3(9830.0f, 0.0f, 5780.0f), dragScuttle, spawnAnimation: "crab_hide", aiScript: "BasicJungleMonsterAi");
             MonsterCamps.Add(dragScuttle);
 
             //Baron pit Scuttle Crab
-            var baronScuttle = _map.CreateJungleCamp(new Vector3(4400.0f, 60.0f, 9600.0f), 16, 0, "LesserCamp", 125.0f * 1000, spawnDuration: 2.2f);
+            var baronScuttle = _map.CreateJungleCamp(new Vector3(4400.0f, 60.0f, 9600.0f), 16, 0, "LesserCamp", 150.0f * 1000, spawnDuration: 2.2f);
             _map.CreateJungleMonster("Sru_Crab16.1.1", "Sru_Crab", new Vector2(4400.0f, 9600.0f), new Vector3(5240.0f, 0.0f, 8950.0f), baronScuttle, spawnAnimation: "crab_hide", aiScript: "BasicJungleMonsterAi");
             MonsterCamps.Add(baronScuttle);
         }
@@ -174,8 +174,11 @@ namespace MapScripts.Map11
                     return 420.0f * 1000;
                 case 6:
                     return 360.0f * 1000f;
+                case 15:
+                case 16:
+                    return 180.0f * 1000f;
                 default:
-                    return 50.0f * 1000;
+                    return 100.0f * 1000;
             }
         }
     }
