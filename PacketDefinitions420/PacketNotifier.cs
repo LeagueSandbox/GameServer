@@ -1005,9 +1005,15 @@ namespace PacketDefinitions420
             var fxVisPacket = new S2C_FX_OnEnterTeamVisibility
             {
                 SenderNetID = particle.NetId,
-                NetID = particle.NetId,
-                VisibilityTeam = (byte)team
+                NetID = particle.NetId
             };
+
+            fxVisPacket.VisibilityTeam = 0;
+            if (team == TeamId.TEAM_PURPLE || team == TeamId.TEAM_NEUTRAL)
+            {
+                fxVisPacket.VisibilityTeam = 1;
+            }
+
             _packetHandlerManager.BroadcastPacketTeam(team, fxVisPacket.GetBytes(), Channel.CHL_S2C);
         }
 
@@ -1036,9 +1042,15 @@ namespace PacketDefinitions420
             var fxVisPacket = new S2C_FX_OnLeaveTeamVisibility
             {
                 SenderNetID = particle.NetId,
-                NetID = particle.NetId,
-                VisibilityTeam = (byte)team
+                NetID = particle.NetId
             };
+
+            fxVisPacket.VisibilityTeam = 0;
+            if (team == TeamId.TEAM_PURPLE || team == TeamId.TEAM_NEUTRAL)
+            {
+                fxVisPacket.VisibilityTeam = 1;
+            }
+
             _packetHandlerManager.BroadcastPacketTeam(team, fxVisPacket.GetBytes(), Channel.CHL_S2C);
         }
 
@@ -2345,7 +2357,7 @@ namespace PacketDefinitions420
                 CampIndex = monsterCamp.CampIndex,
                 MinimapIcon = monsterCamp.MinimapIcon,
                 RevealAudioVOComponentEvent = monsterCamp.RevealEvent,
-                SideTeamID = (byte)monsterCamp.SideTeamId,
+                SideTeamID = monsterCamp.SideTeamId,
                 Expire = monsterCamp.Expire,
                 TimerType = monsterCamp.TimerType
             };
@@ -2365,7 +2377,7 @@ namespace PacketDefinitions420
                 InitialLevel = monster.InitialLevel,
                 NetID = monster.NetId,
                 GroupPosition = monster.Camp.Position,
-                BuffSideTeamID = (byte)monster.Camp.SideTeamId,
+                BuffSideTeamID = monster.Camp.SideTeamId,
                 Position = new Vector3(monster.Position.X, monster.GetHeight(), monster.Position.Y),
                 SpawnAnimationName = monster.SpawnAnimation,
                 AIscript = "",
@@ -2376,7 +2388,7 @@ namespace PacketDefinitions420
                 GroupNumber = monster.Camp.CampIndex,
                 MinionRoamState = monster.AIScript.AIScriptMetaData.MinionRoamState,
                 SpawnDuration = monster.Camp.SpawnDuration,
-                TeamID = (byte)monster.Team,
+                TeamID = (uint)monster.Team,
                 NetNodeID = (byte)NetNodeID.Spawned
             };
             _packetHandlerManager.BroadcastPacket(packet.GetBytes(), Channel.CHL_S2C);
@@ -2579,9 +2591,14 @@ namespace PacketDefinitions420
         {
             var enterTeamVis = new S2C_OnEnterTeamVisibility()
             {
-                SenderNetID = o.NetId,
-                VisibilityTeam = (byte)team
+                SenderNetID = o.NetId
             };
+
+            enterTeamVis.VisibilityTeam = 0;
+            if (team == TeamId.TEAM_PURPLE || team == TeamId.TEAM_NEUTRAL)
+            {
+                enterTeamVis.VisibilityTeam = 1;
+            }
 
             if (userId == 0)
             {
@@ -2625,20 +2642,25 @@ namespace PacketDefinitions420
         /// <param name="userId">User to send the packet to.</param>
         public void NotifyS2C_OnLeaveTeamVisibility(IGameObject o, TeamId team, int userId = 0)
         {
-            var enterTeamVis = new S2C_OnLeaveTeamVisibility()
+            var leaveTeamVis = new S2C_OnLeaveTeamVisibility()
             {
-                SenderNetID = o.NetId,
-                VisibilityTeam = (byte)team
+                SenderNetID = o.NetId
             };
+
+            leaveTeamVis.VisibilityTeam = 0;
+            if (team == TeamId.TEAM_PURPLE || team == TeamId.TEAM_NEUTRAL)
+            {
+                leaveTeamVis.VisibilityTeam = 1;
+            }
 
             if (userId == 0)
             {
                 // TODO: Verify if we should use BroadcastPacketTeam instead.
-                _packetHandlerManager.BroadcastPacket(enterTeamVis.GetBytes(), Channel.CHL_S2C);
+                _packetHandlerManager.BroadcastPacket(leaveTeamVis.GetBytes(), Channel.CHL_S2C);
             }
             else
             {
-                _packetHandlerManager.SendPacket(userId, enterTeamVis.GetBytes(), Channel.CHL_S2C);
+                _packetHandlerManager.SendPacket(userId, leaveTeamVis.GetBytes(), Channel.CHL_S2C);
             }
         }
 

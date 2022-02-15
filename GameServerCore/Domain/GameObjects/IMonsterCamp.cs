@@ -9,7 +9,7 @@ namespace GameServerCore.Domain
     {
         byte CampIndex { get; set; }
         Vector3 Position { get; set; }
-        TeamId SideTeamId { get; set; }
+        byte SideTeamId { get; set; }
         string MinimapIcon { get; set; }
         byte RevealEvent { get; set; }
         float Expire { get; set; }
