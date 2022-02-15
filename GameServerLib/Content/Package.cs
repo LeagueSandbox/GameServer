@@ -148,9 +148,16 @@ namespace LeagueSandbox.GameServer.Content
             //Map1's Room file doesn't contain the Fountains, so we have to get that manually
             if (!toReturnMapData.MapObjects.ContainsKey("__Spawn_T1"))
             {
-                for (int i = 1; i <= 2; i++)
+                //This is to avoid crashes when loading maps that don't have fountain files at all (Map11)
+                try
                 {
-                    toReturnMapData.MapObjects.Add($"__Spawn_T{i}", AddMapObject($"__Spawn_T{i}", contentType, mapName, mapId));
+                    for (int i = 1; i <= 2; i++)
+                    {
+                        toReturnMapData.MapObjects.Add($"__Spawn_T{i}", AddMapObject($"__Spawn_T{i}", contentType, mapName, mapId));
+                    }
+                }
+                catch
+                {
                 }
             }
 

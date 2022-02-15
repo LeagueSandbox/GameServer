@@ -252,7 +252,7 @@ namespace LeagueSandbox.GameServer.Maps
                 }
                 else if (objectType == GameObjectTypes.ObjBuilding_Shop)
                 {
-                    ShopList.Add(teamId, new GameObject(_game, position, netId: Crc32Algorithm.Compute(Encoding.UTF8.GetBytes(mapObject.Name)) | 0xFF000000, team: teamId));
+                    ShopList.Add(teamId, CreateShop(mapObject.Name, position, teamId));
                 }
             }
 

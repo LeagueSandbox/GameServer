@@ -134,6 +134,11 @@ namespace GameServerLib.API
             }
         }
 
+        public static IGameObject CreateShop(string name, Vector2 position, TeamId team)
+        {
+            return new GameObject(_game, position, team: team, netId: Crc32Algorithm.Compute(Encoding.UTF8.GetBytes(name)) | 0xFF000000);
+        }
+
         /// <summary>
         /// Creates and returns a nexus
         /// </summary>
@@ -458,9 +463,9 @@ namespace GameServerLib.API
         /// </summary>
         /// <param name="team"></param>
         /// <param name="position"></param>
-        public static void AddFountain(TeamId team, Vector2 position)
+        public static void AddFountain(TeamId team, Vector2 position, float radius = 1000.0f)
         {
-            _map.FountainList.Add(team, new Fountain(_game, team, position, 1000));
+            _map.FountainList.Add(team, new Fountain(_game, team, position, radius));
         }
 
         /// <summary>
