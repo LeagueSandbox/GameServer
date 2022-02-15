@@ -376,7 +376,6 @@ namespace GameServerLib.API
             }
         }
 
-            else
         /// <summary>
         /// Set an unit's icon on minimap
         /// </summary>
