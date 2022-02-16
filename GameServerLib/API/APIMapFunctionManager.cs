@@ -371,13 +371,16 @@ namespace GameServerLib.API
             int damageBonus = 0, int healthBonus = 0, int initialLevel = 1
         )
         {
-            if (_map.MonsterTemplates.ContainsKey(monsterCamp.CampIndex))
+            if (_map.Monsters.ContainsKey(monsterCamp.CampIndex))
             {
-                _map.MonsterTemplates[monsterCamp.CampIndex].Add(new MonsterTemplate(name, model, position, faceDirection, monsterCamp, team, spawnAnimation, netId, isTargetable, ignoresCollision, aiScript, damageBonus, healthBonus, initialLevel));
+                _map.Monsters[monsterCamp.CampIndex].Add(new Monster(_game, name, model, position, faceDirection, monsterCamp, team, netId, spawnAnimation, isTargetable, ignoresCollision, aiScript, damageBonus, healthBonus, initialLevel));
             }
             else
             {
-                _map.MonsterTemplates.Add(monsterCamp.CampIndex, new List<MonsterTemplate> { new MonsterTemplate(name, model, position, faceDirection, monsterCamp, team, spawnAnimation, netId, isTargetable, ignoresCollision, aiScript, damageBonus, healthBonus, initialLevel) });
+                _map.Monsters.Add(monsterCamp.CampIndex, new List<IMonster> 
+                { 
+                    new Monster(_game, name, model, position, faceDirection, monsterCamp, team, netId, spawnAnimation, isTargetable, ignoresCollision, aiScript, damageBonus, healthBonus, initialLevel)
+                });
             }
         }
 
@@ -583,71 +586,10 @@ namespace GameServerLib.API
         /// <param name="monsterCamp"></param>
         public static void SpawnCamp(IMonsterCamp monsterCamp)
         {
-            if (_map.MonsterTemplates.ContainsKey(monsterCamp.CampIndex))
+            foreach(var monster in _map.Monsters[monsterCamp.CampIndex])
             {
-                foreach (var template in _map.MonsterTemplates[monsterCamp.CampIndex])
-                {
-                    monsterCamp.AddMonster(new Monster(_game, template.Name, template.Model, template.Position, template.FaceDirection, template.Camp, template.Team, template.NetId,
-                        template.SpawnAnimation, template.IsTargetable, template.IgnoresCollision, template.AiScript, template.DamageBonus, template.HealthBonus, template.InitialLevel));
-                }
-                monsterCamp.IsAlive = true;
-                monsterCamp.NotifyCampActivation();
+                monsterCamp.AddMonster(monster);
             }
-            else
-            {
-                _logger.Warn($"No Monster Camp with ID: {monsterCamp.CampIndex} found");
-            }
-        }
-    }
-
-    public class MonsterTemplate
-    {
-        public string Name { get; set; }
-        public string Model { get; set; }
-        public Vector2 Position { get; set; }
-        public Vector3 FaceDirection { get; set; }
-        public IMonsterCamp Camp { get; set; }
-        public TeamId Team { get; set; }
-        public string SpawnAnimation { get; set; }
-        public uint NetId { get; set; }
-        public bool IsTargetable { get; set; }
-        public bool IgnoresCollision { get; set; }
-        public string AiScript { get; set; }
-        public int DamageBonus { get; set; }
-        public int HealthBonus { get; set; }
-        public int InitialLevel { get; set; }
-
-        public MonsterTemplate(
-            string name,
-            string model,
-            Vector2 position,
-            Vector3 faceDirection,
-            IMonsterCamp monsterCamp,
-            TeamId team = TeamId.TEAM_NEUTRAL,
-            string spawnAnimation = "",
-            uint netId = 0,
-            bool isTargetable = true,
-            bool ignoresCollision = false,
-            string aiScript = "",
-            int damageBonus = 0,
-            int healthBonus = 0,
-            int initialLevel = 1
-        )
-        {
-            Name = name;
-            Model = model;
-            FaceDirection = faceDirection;
-            Camp = monsterCamp;
-            Team = team;
-            SpawnAnimation = spawnAnimation;
-            Position = position;
-            NetId = netId;
-            IsTargetable = isTargetable;
-            IgnoresCollision = ignoresCollision;
-            AiScript = aiScript;
-            DamageBonus = damageBonus;
-            HealthBonus = healthBonus;
-            InitialLevel = initialLevel;
         }
     }
 }

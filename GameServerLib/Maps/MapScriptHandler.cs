@@ -60,7 +60,7 @@ namespace LeagueSandbox.GameServer.Maps
         public Dictionary<TeamId, Dictionary<LaneID, List<IInhibitor>>> InhibitorList { get; set; }
         public Dictionary<TeamId, IFountain> FountainList { get; set; } = new Dictionary<TeamId, IFountain>();
         public Dictionary<TeamId, IGameObject> ShopList { get; set; } = new Dictionary<TeamId, IGameObject>();
-        public Dictionary<int, List<MonsterTemplate>> MonsterTemplates = new Dictionary<int, List<MonsterTemplate>>();
+        public Dictionary<int, List<IMonster>> Monsters = new Dictionary<int, List<IMonster>>();
         public Dictionary<TeamId, Dictionary<int, Dictionary<int, Vector2>>> PlayerSpawnPoints { get; set; } = new Dictionary<TeamId, Dictionary<int, Dictionary<int, Vector2>>>();
 
         public readonly Dictionary<TeamId, SurrenderHandler> Surrenders = new Dictionary<TeamId, SurrenderHandler>();
