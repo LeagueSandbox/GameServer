@@ -40,7 +40,7 @@ namespace LeagueSandbox.GameServer.GameObjects
                 null, aiScript, damageBonus, healthBonus, initialLevel
             )
         {
-            _additionTimer = Camp.SpawnDuration;
+            _additionTimer = monsterCamp.SpawnDuration;
             _hasBeenAdded = false;
             SetStatus(StatusFlags.Targetable, false);
             SetStatus(StatusFlags.Invulnerable, true);
