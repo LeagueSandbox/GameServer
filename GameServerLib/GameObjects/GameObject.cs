@@ -23,6 +23,7 @@ namespace LeagueSandbox.GameServer.GameObjects
         protected bool _toRemove;
         protected bool _movementUpdated;
         private Dictionary<TeamId, bool> _visibleByTeam;
+        private Dictionary<TeamId, bool> _spawnedForTeam;
 
         /// <summary>
         /// Comparison variable for small distance movements.
@@ -88,10 +89,12 @@ namespace LeagueSandbox.GameServer.GameObjects
             VisionRadius = visionRadius;
 
             _visibleByTeam = new Dictionary<TeamId, bool>();
+            _spawnedForTeam = new Dictionary<TeamId, bool>();
             var teams = Enum.GetValues(typeof(TeamId)).Cast<TeamId>();
             foreach (var t in teams)
             {
                 _visibleByTeam.Add(t, false);
+                _spawnedForTeam.Add(t, false);
             }
 
             Team = team;
@@ -230,9 +233,9 @@ namespace LeagueSandbox.GameServer.GameObjects
         /// <param name="team">TeamId.BLUE/PURPLE/NEUTRAL</param>
         public virtual void SetTeam(TeamId team)
         {
-            _visibleByTeam[Team] = false;
+            //_visibleByTeam[Team] = false;
             Team = team;
-            _visibleByTeam[Team] = true;
+            //_visibleByTeam[Team] = true;
             if (_game.IsRunning)
             {
                 _game.PacketNotifier.NotifySetTeam(this as IAttackableUnit);
@@ -245,7 +248,7 @@ namespace LeagueSandbox.GameServer.GameObjects
         /// <param name="team">A team which could have vision of this object.</param>
         public bool IsVisibleByTeam(TeamId team)
         {
-            return team == Team || _visibleByTeam[team];
+            return /*team == Team ||*/ _visibleByTeam[team];
         }
 
         /// <summary>
@@ -256,6 +259,36 @@ namespace LeagueSandbox.GameServer.GameObjects
         public void SetVisibleByTeam(TeamId team, bool visible)
         {
             _visibleByTeam[team] = visible;
+        }
+
+        public bool IsSpawnedForTeam(TeamId team)
+        {
+            return _spawnedForTeam[team];
+        }
+
+        public bool IsSpawned()
+        {
+            foreach(bool spawned in _spawnedForTeam.Values)
+            {
+                if(!spawned)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        public void SetSpawnedForTeam(TeamId team, bool spawned = true)
+        {
+            _spawnedForTeam[team] = spawned;
+        }
+
+        public void SetSpawned(bool spawned = true)
+        {
+            foreach(TeamId team in _spawnedForTeam.Keys)
+            {
+                _spawnedForTeam[team] = spawned;
+            };
         }
 
         /// <summary>
@@ -275,8 +308,8 @@ namespace LeagueSandbox.GameServer.GameObjects
             SetPosition(position);
 
             // TODO: Verify which one we want to use. WaypointList does not require conversions, however WaypointGroup does (and it has TeleportID functionality).
-            //_game.PacketNotifier.NotifyWaypointList(this, new List<Vector2> { Position });
-            _game.PacketNotifier.NotifyEnterVisibilityClient(this, useTeleportID: true);
+            _game.PacketNotifier.NotifyWaypointList(this, new List<Vector2> { Position });
+            //_game.PacketNotifier.NotifyEnterVisibilityClient(this, useTeleportID: true);
         }
 
         /// <summary>

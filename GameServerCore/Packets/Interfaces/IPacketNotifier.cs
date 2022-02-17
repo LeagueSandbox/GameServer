@@ -291,10 +291,8 @@ namespace GameServerCore.Packets.Interfaces
         /// <summary>
         /// Optionally sends a packet to all players who have vision of the specified Minion detailing that it has spawned.
         /// </summary>
-        /// <returns>A new and fully setup SpawnMinionS2C packet.</returns>
         /// <param name="minion">Minion that is spawning.</param>
-        /// <param name="send">Whether or not to send the created packet.</param>
-        SpawnMinionS2C NotifyMinionSpawned(IMinion minion, bool send = true);
+        void NotifyMinionSpawned(IMinion minion);
         /// <summary>
         /// Sends a packet to either all players with vision (given the projectile is networked to the client) of the projectile, or all players. The packet contains all details regarding the specified projectile's creation.
         /// </summary>

@@ -31,8 +31,8 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 
         public override bool HandlePacket(int userId, SpawnRequest req)
         {
-            _game.PacketNotifier.NotifyS2C_StartSpawn(userId);
             _logger.Debug("Spawning map");
+            _game.PacketNotifier.NotifyS2C_StartSpawn(userId);
 
             var peerInfo = _playerManager.GetPeerInfo(userId);
             var bluePill = _itemManager.GetItemType(_game.Map.MapScript.MapScriptMetadata.RecallSpellItemId);
@@ -97,7 +97,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             // Level props are just models, we need button-object minions to allow the client to interact with it
             if (peerInfo != null)
             {
-                _game.PacketNotifier.NotifySpawn(_game.Map.ShopList[peerInfo.Team]);
+                _game.PacketNotifier.NotifySpawn(_game.Map.ShopList[peerInfo.Team], userId, false);
             }
 
             _game.PacketNotifier.NotifySpawnEnd(userId);
