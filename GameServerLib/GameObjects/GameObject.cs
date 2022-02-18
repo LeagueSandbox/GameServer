@@ -23,7 +23,21 @@ namespace LeagueSandbox.GameServer.GameObjects
         protected bool _toRemove;
         protected bool _movementUpdated;
         private Dictionary<TeamId, bool> _visibleByTeam;
-        private Dictionary<TeamId, bool> _spawnedForTeam;
+        private HashSet<int> _spawnedForPlayers = new HashSet<int>();
+        private Dictionary<int, bool> _visibleForPlayers = new Dictionary<int, bool>();
+        public IEnumerable<int> VisibleForPlayers
+        {
+            get
+            {
+                foreach(var kv in _visibleForPlayers)
+                {
+                    if(kv.Value)
+                    {
+                        yield return kv.Key;
+                    }
+                }
+            }
+        }
 
         /// <summary>
         /// Comparison variable for small distance movements.
@@ -89,12 +103,10 @@ namespace LeagueSandbox.GameServer.GameObjects
             VisionRadius = visionRadius;
 
             _visibleByTeam = new Dictionary<TeamId, bool>();
-            _spawnedForTeam = new Dictionary<TeamId, bool>();
             var teams = Enum.GetValues(typeof(TeamId)).Cast<TeamId>();
             foreach (var t in teams)
             {
                 _visibleByTeam.Add(t, false);
-                _spawnedForTeam.Add(t, false);
             }
 
             Team = team;
@@ -261,34 +273,25 @@ namespace LeagueSandbox.GameServer.GameObjects
             _visibleByTeam[team] = visible;
         }
 
-        public bool IsSpawnedForTeam(TeamId team)
+        public bool IsVisibleForPlayer(int userId)
         {
-            return _spawnedForTeam[team];
+            return _visibleForPlayers.GetValueOrDefault(userId, false);
         }
 
-        public bool IsSpawned()
+        public bool SetVisibleForPlayer(int userId, bool visible = true)
         {
-            foreach(bool spawned in _spawnedForTeam.Values)
-            {
-                if(!spawned)
-                {
-                    return false;
-                }
-            }
-            return true;
+            return _visibleForPlayers[userId] = visible;
         }
 
-        public void SetSpawnedForTeam(TeamId team, bool spawned = true)
+
+        public bool IsSpawnedForPlayer(int userId)
         {
-            _spawnedForTeam[team] = spawned;
+            return _spawnedForPlayers.Contains(userId);
         }
 
-        public void SetSpawned(bool spawned = true)
+        public void SetSpawnedForPlayer(int userId)
         {
-            foreach(TeamId team in _spawnedForTeam.Keys)
-            {
-                _spawnedForTeam[team] = spawned;
-            };
+            _spawnedForPlayers.Add(userId);
         }
 
         /// <summary>

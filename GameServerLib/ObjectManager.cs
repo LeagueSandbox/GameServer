@@ -25,8 +25,9 @@ namespace LeagueSandbox.GameServer
 
         // Dictionaries of GameObjects.
         private Dictionary<uint, IGameObject> _objects;
+        private List<IGameObject> _objectsToAdd = new List<IGameObject>();
+        private List<IGameObject> _objectsToRemove = new List<IGameObject>();
         // For the initial spawning (networking) of newly added objects.
-        private Dictionary<uint, IGameObject> _queuedObjects;
         private Dictionary<uint, IChampion> _champions;
         private Dictionary<uint, IBaseTurret> _turrets;
         private Dictionary<uint, IInhibitor> _inhibitors;
@@ -54,7 +55,6 @@ namespace LeagueSandbox.GameServer
 
             _game = game;
             _objects = new Dictionary<uint, IGameObject>();
-            _queuedObjects = new Dictionary<uint, IGameObject>();
             _turrets = new Dictionary<uint, IBaseTurret>();
             _inhibitors = new Dictionary<uint, IInhibitor>();
             _champions = new Dictionary<uint, IChampion>();
@@ -65,6 +65,11 @@ namespace LeagueSandbox.GameServer
             }
         }
 
+        bool IsAffectedByVision(IGameObject obj)
+        {
+            return obj is IParticle || obj is IAttackableUnit || obj is ISpellMissile;
+        }
+
         /// <summary>
         /// Function called every tick of the game.
         /// </summary>
@@ -72,146 +77,176 @@ namespace LeagueSandbox.GameServer
         public void Update(float diff)
         {
             // For all existing objects
-            foreach (var obj in GetObjects().Values)
+            foreach (var obj in _objects.Values)
+            {
+                obj.Update(diff);
+            }
+
+            //BEGIN HACK
+            foreach (var obj in _objects.Values)
             {
                 if (obj.IsToRemove())
                 {
                     RemoveObject(obj);
                 }
-                else
-                {
-                    obj.Update(diff);
-                }
+            }
+            //END HACK
+            
+            foreach (var obj in _objectsToRemove)
+            {
+                _objects.Remove(obj.NetId);
+            }
+            _objectsToRemove.Clear();
+
+            foreach (var obj in _objects.Values)
+            {
+                LateUpdate(obj, diff);
             }
 
-            // For all existing objects and those created during the obj.Update phase
-            foreach(var obj in GetObjects().Values)
+            foreach (var obj in _objectsToAdd)
             {
-                // If flagged during obj.Update
-                if(obj.IsToRemove())
+                _objects.Add(obj.NetId, obj);
+            }
+            _objectsToAdd.Clear();
+
+            var players = _game.PlayerManager.GetPlayers(includeBots: false);
+            
+            foreach (IGameObject _obj in _objects.Values)
+            {
+                PacketDefinitions420.PacketNotifier packetNotifier = _game.PacketNotifier as PacketDefinitions420.PacketNotifier;
+                GameObject obj = _obj as GameObject;
+
+                bool isAffectedByVision = IsAffectedByVision(obj);
+                if (isAffectedByVision)
                 {
-                    continue;
+                    foreach (var team in Teams)
+                    {
+                        obj.SetVisibleByTeam(team, TeamHasVisionOn(team, obj));
+                    }
                 }
 
-                UpdateVisionAndSpawnIfNeeded(obj);
-
-                // Destroy any missiles which are targeting an untargetable unit.
-                // TODO: Verify if this should apply to SpellSector.
-                if (obj is ISpellMissile m)
+                foreach (var player in players)
                 {
-                    if (m.TargetUnit != null && !m.TargetUnit.Status.HasFlag(StatusFlags.Targetable))
+                    int pid = (int)player.Item2.PlayerId;
+                    TeamId team = player.Item2.Team;
+                    IChampion champion = player.Item2.Champion;
+                    bool nearSighted = champion.Status.HasFlag(StatusFlags.NearSighted);
+
+                    bool shouldBeVisibleForPlayer = !isAffectedByVision
+                        || (
+                            nearSighted ?
+                            UnitHasVisionOn(champion, obj) :
+                            obj.IsVisibleByTeam(champion.Team)
+                        );
+                    
+                    if(obj.IsSpawnedForPlayer(pid))
                     {
-                        m.SetToRemove();
+                        if(obj.IsVisibleForPlayer(pid) != shouldBeVisibleForPlayer)
+                        {
+                            packetNotifier.NotifyVisibilityChange(obj, team, pid, shouldBeVisibleForPlayer);
+                            obj.SetVisibleForPlayer(pid, shouldBeVisibleForPlayer);
+                        }
+                        else if(shouldBeVisibleForPlayer)
+                        {
+                            Sync(obj, pid);
+                        }
+                    }
+                    else
+                    {
+                        if(shouldBeVisibleForPlayer || !(
+                            //bool spawnShouldBeHidden = 
+                            obj is IParticle || obj is ISpellMissile || (obj is IMinion && !(obj is ILaneMinion))
+                        ))
+                        {
+                            packetNotifier.NotifySpawn(obj, team, pid, _game.GameTime, shouldBeVisibleForPlayer);
+                            obj.SetVisibleForPlayer(pid, shouldBeVisibleForPlayer);
+                            obj.SetSpawnedForPlayer(pid);
+
+                            // TODO: Centralize this, should only be done once at start of game.
+                            if (obj is ILaneTurret turret)
+                            {
+                                foreach (var item in turret.Inventory)
+                                {
+                                    if (item != null)
+                                    {
+                                        _game.PacketNotifier.NotifyBuyItem(pid, turret, item as IItem);
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
 
-                else if (obj is IAttackableUnit u)
+                if (obj is IAttackableUnit u)
                 {
-                    if (u is IObjAiBase ai)
-                    {
-                        var tempBuffs = new List<IBuff>(ai.GetBuffs());
-                        for (int i = tempBuffs.Count - 1; i >= 0; i--)
-                        {
-                            if (tempBuffs[i].Elapsed())
-                            {
-                                ai.RemoveBuff(tempBuffs[i]);
-                            }
-                            else
-                            {
-                                tempBuffs[i].Update(diff);
-                            }
-                        }
-
-                        // Stop targeting an untargetable unit.
-                        if (ai.TargetUnit != null && !ai.TargetUnit.Status.HasFlag(StatusFlags.Targetable))
-                        {
-                            StopTargeting(ai.TargetUnit);
-                        }
-                    }
-
-                    if(u.Replication.Changed)
-                    {
-                        _game.PacketNotifier.NotifyUpdatedStats(u, true);
-                    }
-
-                    if (u.IsModelUpdated)
-                    {
-                        _game.PacketNotifier.NotifyS2C_ChangeCharacterData(u);
-                        u.IsModelUpdated = false;
-                    }
-
-                    if (u.IsMovementUpdated())
-                    {
-                        // TODO: Verify which one we want to use. WaypointList does not require conversions, however WaypointGroup does (and it has TeleportID functionality).
-                        //_game.PacketNotifier.NotifyWaypointList(u);
-                        // TODO: Verify if we want to use TeleportID.
-                        _game.PacketNotifier.NotifyWaypointGroup(u, false);
-                        u.ClearMovementUpdated();
-                    }
+                    u.Replication.MarkAsUnchanged();
+                    u.IsModelUpdated = false;
+                    u.ClearMovementUpdated();
                 }
             }
         }
 
-        void UpdateVisionAndSpawnIfNeeded(IGameObject _obj)
+        void Sync(IGameObject obj, int userId = 0)
         {
-            GameObject obj = _obj as GameObject;
             PacketDefinitions420.PacketNotifier packetNotifier = _game.PacketNotifier as PacketDefinitions420.PacketNotifier;
 
-            //TODO: Implement visibility checks for projectiles here (should be similar to particles below)
-            //Make sure to account for server only projectiles, globally visible (everyone sees it) projectiles, and normal projectiles:
-            //1. Nidalee Q is affected by visibility checks, but is server only 
-            //2. Ezreal R is globally visible, and is server only
-            //3. Every other projectile that is not server only, and is affected by visibility checks (normal projectiles)
-
-            IParticle particle = null;
-            IAttackableUnit u = null;
-            if (
-                // If the object is subject to sight
-                ((particle = obj as IParticle) != null)
-                || ((u = obj as IAttackableUnit) != null)
-                || obj is ISpellMissile
-            ) {
-                foreach (var team in Teams)
+            if (obj is IAttackableUnit u)
+            {
+                if(u.Replication.Changed)
                 {
-                    bool teamHasVision = TeamHasVisionOn(team, obj);
-                    bool isSpawnedForTeam = obj.IsSpawnedForTeam(team);
-                    // Object should only spawn when entering visibility
-                    bool spawnShouldBeHidden = obj is IParticle || obj is ISpellMissile
-                                            || (obj is IMinion && !(obj is ILaneMinion) && !(obj is IMonster));
+                    packetNotifier.NotifyUpdatedStats(u, userId, true);
+                }
 
-                    if(isSpawnedForTeam)
-                    {
-                        if(obj.IsVisibleByTeam(team) != teamHasVision)
-                        {
-                            packetNotifier.NotifyVisibilityChange(obj, team, teamHasVision);
-                        }
-                    }
-                    else if(teamHasVision || !spawnShouldBeHidden)
-                    {
-                        packetNotifier.NotifySpawn(obj, team, _game.GameTime, teamHasVision);
-                        obj.SetSpawnedForTeam(team);
-                    }
-                    
-                    obj.SetVisibleByTeam(team, teamHasVision);
+                if (u.IsModelUpdated)
+                {
+                    packetNotifier.NotifyS2C_ChangeCharacterData(u, userId);
+                }
+
+                if (u.IsMovementUpdated())
+                {
+                    // TODO: Verify which one we want to use. WaypointList does not require conversions, however WaypointGroup does (and it has TeleportID functionality).
+                    //_game.PacketNotifier.NotifyWaypointList(u);
+                    // TODO: Verify if we want to use TeleportID.
+                    packetNotifier.NotifyWaypointGroup(u, userId, true);
                 }
             }
-            else if(!obj.IsSpawned())
+        }
+
+        void LateUpdate(IGameObject obj, float diff)
+        {
+            // Destroy any missiles which are targeting an untargetable unit.
+            // TODO: Verify if this should apply to SpellSector.
+            if (obj is ISpellMissile m)
             {
-                packetNotifier.NotifySpawn(obj, _game.GameTime, false);
-               
-                // Do this is in a more clean way.
-                if (obj is ILaneTurret turret)
+                if (m.TargetUnit != null && !m.TargetUnit.Status.HasFlag(StatusFlags.Targetable))
                 {
-                    foreach (var item in turret.Inventory)
+                    m.SetToRemove();
+                }
+            }
+
+            else if (obj is IAttackableUnit u)
+            {
+                if (u is IObjAiBase ai)
+                {
+                    var tempBuffs = new List<IBuff>(ai.GetBuffs());
+                    for (int i = tempBuffs.Count - 1; i >= 0; i--)
                     {
-                        if (item != null)
+                        if (tempBuffs[i].Elapsed())
                         {
-                            _game.PacketNotifier.NotifyBuyItem((int)turret.NetId, turret, item as IItem);
+                            ai.RemoveBuff(tempBuffs[i]);
+                        }
+                        else
+                        {
+                            tempBuffs[i].Update(diff);
                         }
                     }
-                }
 
-                obj.SetSpawned();
+                    // Stop targeting an untargetable unit.
+                    if (ai.TargetUnit != null && !ai.TargetUnit.Status.HasFlag(StatusFlags.Targetable))
+                    {
+                        StopTargeting(ai.TargetUnit);
+                    }
+                }
             }
         }
 
@@ -221,19 +256,12 @@ namespace LeagueSandbox.GameServer
         /// <param name="o">GameObject to add.</param>
         public void AddObject(IGameObject o)
         {
-            if (o == null)
+            if (o != null)
             {
-                return;
+                _objectsToRemove.Remove(o);
+                _objectsToAdd.Add(o);
+                o.OnAdded();
             }
-
-            // If it crashes here the problem is most likely somewhere else
-            _objects.Add(o.NetId, o);
-            if (!(o is IChampion))
-            {
-                _queuedObjects.Add(o.NetId, o);
-            }
-
-            o.OnAdded();
         }
 
         /// <summary>
@@ -242,13 +270,12 @@ namespace LeagueSandbox.GameServer
         /// <param name="o">GameObject to remove.</param>
         public void RemoveObject(IGameObject o)
         {
-            _objects.Remove(o.NetId);
-            if (_queuedObjects.ContainsKey(o.NetId))
+            if (o != null)
             {
-                _queuedObjects.Remove(o.NetId);
+                _objectsToAdd.Remove(o);
+                _objectsToRemove.Add(o);
+                o.OnRemoved();
             }
-
-            o.OnRemoved();
         }
 
         /// <summary>
@@ -316,8 +343,7 @@ namespace LeagueSandbox.GameServer
             foreach (var kv in _visionProviders[team])
             {
                 if (
-                    Vector2.DistanceSquared(kv.Position, o.Position) < kv.VisionRadius * kv.VisionRadius
-                    && !_game.Map.NavigationGrid.IsAnythingBetween(kv, o, true)
+                    UnitHasVisionOn(kv, o)
                 )
                 {
                     if (!(kv is IAttackableUnit unit && unit.IsDead))
@@ -328,6 +354,12 @@ namespace LeagueSandbox.GameServer
             }
 
             return false;
+        }
+
+        bool UnitHasVisionOn(IGameObject o, IGameObject t)
+        {
+            return Vector2.DistanceSquared(o.Position, t.Position) < o.VisionRadius * o.VisionRadius
+                && !_game.Map.NavigationGrid.IsAnythingBetween(o, t, true);
         }
 
         /// <summary>

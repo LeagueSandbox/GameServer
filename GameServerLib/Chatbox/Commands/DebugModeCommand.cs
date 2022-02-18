@@ -221,7 +221,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
 
             var circleparticle = new Particle(_game, null, null, _userChampion.Position, "DebugCircle_green.troy", circlesize, "", "", 0, default, false, 0.1f);
             _circleParticles.Add(_userChampion.NetId, circleparticle);
-            _game.PacketNotifier.NotifyFXCreateGroup(circleparticle, userId);
+            //_game.PacketNotifier.NotifyFXCreateGroup(circleparticle, userId);
 
             if (_userChampion.Waypoints.Count > 0)
             {
@@ -261,7 +261,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
                     var arrowparticle = new Particle(_game, null, null, wpTarget, "DebugArrow_green.troy", 0.5f, "", "", 0, direction, false, 0.1f);
                     _arrowParticlesList[_userChampion.NetId].Add(arrowparticle);
 
-                    _game.PacketNotifier.NotifyFXCreateGroup(arrowparticle, userId);
+                    //_game.PacketNotifier.NotifyFXCreateGroup(arrowparticle, userId);
 
                     if (waypoint >= _userChampion.Waypoints.Count)
                     {
@@ -318,7 +318,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
 
                 var circleparticle = new Particle(_game, null, null, champion.Position, "DebugCircle_green.troy", circlesize, "", "", 0, default, false, 0.1f);
                 _circleParticles.Add(champion.NetId, circleparticle);
-                _game.PacketNotifier.NotifyFXCreateGroup(circleparticle, userId);
+                //_game.PacketNotifier.NotifyFXCreateGroup(circleparticle, userId);
 
                 if (champion.Waypoints.Count > 0)
                 {
@@ -358,7 +358,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
                         var arrowparticle = new Particle(_game, null, null, wpTarget, "DebugArrow_green.troy", 0.5f, "", "", 0, direction, false, 0.1f);
                         _arrowParticlesList[champion.NetId].Add(arrowparticle);
 
-                        _game.PacketNotifier.NotifyFXCreateGroup(arrowparticle, userId);
+                        //_game.PacketNotifier.NotifyFXCreateGroup(arrowparticle, userId);
 
                         if (waypoint >= champion.Waypoints.Count)
                         {
@@ -414,7 +414,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
 
                 var circleparticle = new Particle(_game, null, null, minion.Position, "DebugCircle_green.troy", circlesize, "", "", 0, default, false, 0.1f);
                 _circleParticles.Add(minion.NetId, circleparticle);
-                _game.PacketNotifier.NotifyFXCreateGroup(circleparticle, userId);
+                //_game.PacketNotifier.NotifyFXCreateGroup(circleparticle, userId);
 
                     if (minion.Waypoints.Count > 0)
                     {
@@ -454,7 +454,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
                         var arrowparticle = new Particle(_game, null, null, wpTarget, "DebugArrow_green.troy", 0.5f, "", "", 0, direction, false, 0.1f);
                         _arrowParticlesList[minion.NetId].Add(arrowparticle);
 
-                            _game.PacketNotifier.NotifyFXCreateGroup(arrowparticle, userId);
+                            //_game.PacketNotifier.NotifyFXCreateGroup(arrowparticle, userId);
 
                             if (waypoint >= minion.Waypoints.Count)
                             {
@@ -512,7 +512,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
 
                     var circleparticle = new Particle(_game, null, null, missile.Position, "DebugCircle_green.troy", circlesize, "", "", 0, default, false, 0.1f);
                     _circleParticles.Add(missile.NetId, circleparticle);
-                    _game.PacketNotifier.NotifyFXCreateGroup(circleparticle, userId);
+                    //_game.PacketNotifier.NotifyFXCreateGroup(circleparticle, userId);
 
                     if (missile.CastInfo.Targets[0] != null || (missile.CastInfo.TargetPosition != Vector3.Zero && missile.CastInfo.TargetPositionEnd != Vector3.Zero))
                     {
@@ -547,7 +547,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
                             var arrowparticle = new Particle(_game, null, null, wpTarget, "DebugArrow_green.troy", 0.5f, "", "", 0, direction, false, 0.1f);
                             _arrowParticlesList[missile.NetId].Add(arrowparticle);
 
-                            _game.PacketNotifier.NotifyFXCreateGroup(arrowparticle, userId);
+                            //_game.PacketNotifier.NotifyFXCreateGroup(arrowparticle, userId);
                         }
                         else if (missile is ISpellCircleMissile skillshot)
                         {
@@ -566,27 +566,27 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
 
                             var arrowParticleStart = new Particle(_game, null, null, current, "DebugArrow_green.troy", 0.5f, "", "", 0, missile.Direction, false, 0.1f);
                             _arrowParticlesList[missile.NetId].Add(arrowParticleStart);
-                            _game.PacketNotifier.NotifyFXCreateGroup(arrowParticleStart, userId);
+                            //_game.PacketNotifier.NotifyFXCreateGroup(arrowParticleStart, userId);
 
                             var arrowParticleEnd = new Particle(_game, null, null, wpTarget, "DebugArrow_green.troy", 0.5f, "", "", 0, missile.Direction, false, 0.1f);
                             _arrowParticlesList[missile.NetId].Add(arrowParticleEnd);
-                            _game.PacketNotifier.NotifyFXCreateGroup(arrowParticleEnd, userId);
+                            //_game.PacketNotifier.NotifyFXCreateGroup(arrowParticleEnd, userId);
 
                             var arrowParticleEnd2Temp = new Particle(_game, null, null, new Vector2(wpTarget.X + dirTangent.X, wpTarget.Y + dirTangent.Y), "Global_Indicator_Line_Beam.troy", 0.0f, "", "", 0, missile.Direction, false, 0.1f);
                             _arrowParticlesList[missile.NetId].Add(arrowParticleEnd2Temp);
-                            _game.PacketNotifier.NotifyFXCreateGroup(arrowParticleEnd2Temp, userId);
+                            //_game.PacketNotifier.NotifyFXCreateGroup(arrowParticleEnd2Temp, userId);
 
                             var arrowParticleStart2 = new Particle(_game, null, arrowParticleEnd2Temp, new Vector2(current.X + dirTangent.X, current.Y + dirTangent.Y), "Global_Indicator_Line_Beam.troy", 1.0f, "", "", 0, missile.Direction, false, 0.1f);
                             _arrowParticlesList[missile.NetId].Add(arrowParticleStart2);
-                            _game.PacketNotifier.NotifyFXCreateGroup(arrowParticleStart2, userId);
+                            //_game.PacketNotifier.NotifyFXCreateGroup(arrowParticleStart2, userId);
 
                             var arrowParticleEnd3Temp = new Particle(_game, null, null, new Vector2(wpTarget.X + dirTangent2.X, wpTarget.Y + dirTangent2.Y), "Global_Indicator_Line_Beam.troy", 0.0f, "", "", 0, missile.Direction, false, 0.1f);
                             _arrowParticlesList[missile.NetId].Add(arrowParticleEnd3Temp);
-                            _game.PacketNotifier.NotifyFXCreateGroup(arrowParticleEnd3Temp, userId);
+                            //_game.PacketNotifier.NotifyFXCreateGroup(arrowParticleEnd3Temp, userId);
 
                             var arrowParticleStart3 = new Particle(_game, null, arrowParticleEnd3Temp, new Vector2(current.X + dirTangent2.X, current.Y + dirTangent2.Y), "Global_Indicator_Line_Beam.troy", 1.0f, "", "", 0, missile.Direction, false, 0.1f);
                             _arrowParticlesList[missile.NetId].Add(arrowParticleStart3);
-                            _game.PacketNotifier.NotifyFXCreateGroup(arrowParticleStart3, userId);
+                            //_game.PacketNotifier.NotifyFXCreateGroup(arrowParticleStart3, userId);
                         }
                     }
                 }
@@ -670,14 +670,14 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
 
                             var circleparticle = new Particle(_game, null, null, polygon.Position, "DebugCircle_green.troy", circlesize, "", "", 0, default, false, 0.1f);
                             _circleParticles.Add(polygon.NetId, circleparticle);
-                            _game.PacketNotifier.NotifyFXCreateGroup(circleparticle, userId);
+                            //_game.PacketNotifier.NotifyFXCreateGroup(circleparticle, userId);
 
                             foreach (Vector2 vert in polygon.GetPolygonVertices())
                             {
                                 var truePos = bindObj.Position + Extensions.Rotate(vert, -Extensions.UnitVectorToAngle(new Vector2(bindObj.Direction.X, bindObj.Direction.Z)) + 90f);
                                 var arrowParticleVert = new Particle(_game, null, null, truePos, "DebugArrow_green.troy", 0.5f, "", "", 0, bindObj.Direction, false, 0.1f);
                                 _arrowParticlesList[polygon.NetId].Add(arrowParticleVert);
-                                _game.PacketNotifier.NotifyFXCreateGroup(arrowParticleVert, userId);
+                                //_game.PacketNotifier.NotifyFXCreateGroup(arrowParticleVert, userId);
                             }
                         }
                     }
@@ -729,7 +729,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
 
                 var circleparticle = new Particle(_game, null, null, obj.Position, "DebugCircle_green.troy", circlesize, "", "", 0, default, false, 0.1f);
                 _circleParticles.Add(obj.NetId, circleparticle);
-                _game.PacketNotifier.NotifyFXCreateGroup(circleparticle, userId);
+                //_game.PacketNotifier.NotifyFXCreateGroup(circleparticle, userId);
 
                 // TODO: Add check for AttackableUnit and draw waypoints.
             }

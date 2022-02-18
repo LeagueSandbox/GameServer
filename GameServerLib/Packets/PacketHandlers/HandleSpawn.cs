@@ -87,6 +87,10 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                 {
                     _game.PacketNotifier.NotifySpawnLevelPropS2C(levelProp, userId);
                 }
+                else if (kv.Value is IRegion region)
+                {
+                    _game.PacketNotifier.NotifyAddRegion(region);
+                }
                 else
                 {
                     _logger.Warn("Object of type: " + kv.Value.GetType() + " not handled in HandleSpawn.");

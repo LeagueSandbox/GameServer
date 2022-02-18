@@ -62,6 +62,11 @@ namespace GameServerCore.Packets.Interfaces
         /// TODO: Implement a Region class so we can easily grab these parameters instead of listing them all in the function.
         void NotifyAddRegion(uint unitNetId, uint bubbleNetId, TeamId team, Vector2 position, float time, float radius = 0, int regionType = 0, ClientInfo clientInfo = null, IGameObject obj = null, float collisionRadius = 0, float grassRadius = 0, float sizemult = 1.0f, float addsize = 0, bool grantVis = true, bool stealthVis = false);
         /// <summary>
+        /// Sends a packet to the specified team that a part of the map has changed. Known to be used in League for initializing turret vision and collision.
+        /// </summary>
+        /// <param name="region">Region to add.</param>
+        void NotifyAddRegion(IRegion region);
+        /// <summary>
         /// Sends a packet to all players with vision of the specified attacker detailing that they have targeted the specified target.
         /// </summary>
         /// <param name="attacker">AI that is targeting an AttackableUnit.</param>

@@ -242,19 +242,10 @@ namespace PacketDefinitions420
         public bool BroadcastPacketVision(IGameObject o, byte[] data, Channel channelNo,
             PacketFlags flag = PacketFlags.Reliable)
         {
-            foreach (var team in _teamsEnumerator)
+            foreach (int pid in o.VisibleForPlayers)
             {
-                if (team == TeamId.TEAM_NEUTRAL)
-                {
-                    continue;
-                }
-
-                if (o.IsVisibleByTeam(team))
-                {
-                    BroadcastPacketTeam(team, data, channelNo, flag);
-                }
+                SendPacket(pid, data, channelNo, flag);
             }
-
             return true;
         }
 

@@ -1073,6 +1073,11 @@ namespace PacketDefinitions420
         /// <param name="team">TeamId to send the packet to; BLUE/PURPLE/NEUTRAL.</param>
         public void NotifyFXLeaveTeamVisibility(IParticle particle, TeamId team)
         {
+            NotifyFXLeaveTeamVisibility(particle, team, 0);
+        }
+
+        public void NotifyFXLeaveTeamVisibility(IParticle particle, TeamId team, int userId = 0)
+        {
             var fxVisPacket = new S2C_FX_OnLeaveTeamVisibility
             {
                 SenderNetID = particle.NetId,
@@ -1085,7 +1090,14 @@ namespace PacketDefinitions420
                 fxVisPacket.VisibilityTeam = 1;
             }
 
-            _packetHandlerManager.BroadcastPacketTeam(team, fxVisPacket.GetBytes(), Channel.CHL_S2C);
+            if (userId == 0)
+            {
+                _packetHandlerManager.BroadcastPacketTeam(team, fxVisPacket.GetBytes(), Channel.CHL_S2C);
+            }
+            else
+            {
+                _packetHandlerManager.SendPacket(userId, fxVisPacket.GetBytes(), Channel.CHL_S2C);
+            }
         }
 
         /// <summary>
@@ -1257,12 +1269,13 @@ namespace PacketDefinitions420
             if (userId != 0)
             {
                 _packetHandlerManager.SendPacket(userId, leaveVis.GetBytes(), Channel.CHL_S2C);
-                NotifyLeaveLocalVisibilityClient(userId, o.NetId);
-                return;
+            }
+            else
+            {
+                _packetHandlerManager.BroadcastPacketTeam(team, leaveVis.GetBytes(), Channel.CHL_S2C);
             }
 
-            _packetHandlerManager.BroadcastPacketTeam(team, leaveVis.GetBytes(), Channel.CHL_S2C);
-            NotifyLeaveLocalVisibilityClient(o, team);
+            NotifyLeaveLocalVisibilityClient(o, team, userId);
         }
 
         /// <summary>
@@ -1464,6 +1477,11 @@ namespace PacketDefinitions420
         /// <param name="replaceCharacterPackage">Unknown.</param>
         public void NotifyS2C_ChangeCharacterData(IAttackableUnit obj, uint skinID = 0, bool modelOnly = true, bool overrideSpells = false, bool replaceCharacterPackage = false)
         {
+            NotifyS2C_ChangeCharacterData(obj, 0, skinID, modelOnly, overrideSpells, replaceCharacterPackage);
+        }
+
+        public void NotifyS2C_ChangeCharacterData(IAttackableUnit obj, int userId = 0, uint skinID = 0, bool modelOnly = true, bool overrideSpells = false, bool replaceCharacterPackage = false)
+        {
             var newCharData = new S2C_ChangeCharacterData
             {
                 SenderNetID = obj.NetId,
@@ -1478,7 +1496,15 @@ namespace PacketDefinitions420
                     // Changes over time, or perhaps as new objects are added, does not have large values like NetID.
                 }
             };
-            _packetHandlerManager.BroadcastPacketVision(obj, newCharData.GetBytes(), Channel.CHL_S2C);
+
+            if(userId == 0)
+            {
+                _packetHandlerManager.BroadcastPacketVision(obj, newCharData.GetBytes(), Channel.CHL_S2C);
+            }
+            else
+            {
+                _packetHandlerManager.SendPacket(userId, newCharData.GetBytes(), Channel.CHL_S2C);
+            }
         }
 
         /// <summary>
@@ -3234,16 +3260,23 @@ namespace PacketDefinitions420
             }
         }
 
-        public void NotifySpawn(IGameObject obj, TeamId team, float gameTime, bool doVision = true)
+        public void NotifySpawn(IGameObject obj, TeamId team, int userId = 0, float gameTime = 0, bool doVision = true)
         {
             var spawnPacket = ConstructSpawnPacket(obj, gameTime);
             if(doVision)
             {
-                NotifyEnterTeamVision(obj, team, spawnPacket);
+                NotifyEnterTeamVision(obj, team, userId, spawnPacket);
             }
-            else 
+            else
             {
-                _packetHandlerManager.BroadcastPacketTeam(team, spawnPacket.GetBytes(), Channel.CHL_S2C);
+                if(userId == 0)
+                {
+                    _packetHandlerManager.BroadcastPacketTeam(team, spawnPacket.GetBytes(), Channel.CHL_S2C);
+                }
+                else
+                {
+                    _packetHandlerManager.SendPacket(userId, spawnPacket.GetBytes(), Channel.CHL_S2C);
+                }
             }
         }
 
@@ -3252,9 +3285,9 @@ namespace PacketDefinitions420
             var spawnPacket = ConstructSpawnPacket(obj, gameTime);
             if(doVision)
             {
-                NotifyEnterTeamVision(obj, TeamId.TEAM_BLUE, spawnPacket);
-                NotifyEnterTeamVision(obj, TeamId.TEAM_PURPLE, spawnPacket);
-                NotifyEnterTeamVision(obj, TeamId.TEAM_NEUTRAL, spawnPacket);
+                NotifyEnterTeamVision(obj, TeamId.TEAM_BLUE, 0, spawnPacket);
+                NotifyEnterTeamVision(obj, TeamId.TEAM_PURPLE, 0, spawnPacket);
+                NotifyEnterTeamVision(obj, TeamId.TEAM_NEUTRAL, 0, spawnPacket);
             }
             else
             {
@@ -3711,14 +3744,22 @@ namespace PacketDefinitions420
         /// TODO: Replace with LeaguePackets and preferably move all uses of this function to a central EventHandler class (if one is fully implemented).
         public void NotifyUpdatedStats(IAttackableUnit u, bool partial = true)
         {
+            NotifyUpdatedStats(u, 0, partial);
+        }
+
+        public void NotifyUpdatedStats(IAttackableUnit u, int userId = 0, bool partial = true)
+        {
             if (u.Replication != null)
             {
                 var us = new UpdateStats(u.Replication, partial);
                 var channel = Channel.CHL_LOW_PRIORITY;
-                _packetHandlerManager.BroadcastPacketVision(u, us, channel, PacketFlags.Unsequenced);
-                if (partial)
+                if(userId == 0)
                 {
-                    u.Replication.MarkAsUnchanged();
+                    _packetHandlerManager.BroadcastPacketVision(u, us, channel, PacketFlags.Unsequenced);
+                }
+                else
+                {
+                    _packetHandlerManager.SendPacket(userId, us, channel, PacketFlags.Unsequenced);
                 }
             }
         }
@@ -3748,22 +3789,26 @@ namespace PacketDefinitions420
         /// <param name="obj">GameObject which had their visibility changed.</param>
         /// <param name="team">Team which is affected by this visibility change.</param>
         /// <param name="becameVisible">Whether or not the change was an entry into vision.</param>
-        public void NotifyVisibilityChange(IGameObject obj, TeamId team, bool becameVisible)
+        public void NotifyVisibilityChange(IGameObject obj, TeamId team, bool becameVisible = true)
+        {
+            NotifyVisibilityChange(obj, team, becameVisible: becameVisible);
+        }
+        public void NotifyVisibilityChange(IGameObject obj, TeamId team, int userId = 0, bool becameVisible = true)
         {
             if (becameVisible)
             {
-                NotifyEnterTeamVision(obj, team);
+                NotifyEnterTeamVision(obj, team, userId);
             }
             else
             {
-                NotifyLeaveTeamVision(obj, team);
+                NotifyLeaveTeamVision(obj, team, userId);
             }
         }
 
         /// <summary>
         /// Sends a notification that the object has entered the team's scope and fully synchronizes its state.
         /// </summary>
-        void NotifyEnterTeamVision(IGameObject obj, TeamId team, GamePacket spawnPacket = null)
+        void NotifyEnterTeamVision(IGameObject obj, TeamId team, int userId = 0, GamePacket spawnPacket = null)
         {
             if(obj is IAttackableUnit u)
             {
@@ -3776,50 +3821,61 @@ namespace PacketDefinitions420
                             new List<GamePacket>(1){ spawnPacket } :
                             null
                     );
-                _packetHandlerManager.BroadcastPacketTeam(team, visibilityPacket.GetBytes(), Channel.CHL_S2C);
-
                 var healthbarPacket = ConstructEnterLocalVisibilityClientPacket(obj);
-                _packetHandlerManager.BroadcastPacketTeam(team, healthbarPacket.GetBytes(), Channel.CHL_S2C);
-
                 //TODO: try to include it to packets too?
                 var us = new UpdateStats(u.Replication, false);
-                _packetHandlerManager.BroadcastPacketTeam(team, us.GetBytes(), Channel.CHL_S2C);
-            }
-            else //if(obj is IRegion || obj is ISpellMissile || obj is ILevelProp || obj is IParticle)
-            {
-                if(spawnPacket != null)
+
+                if(userId == 0)
                 {
-                    _packetHandlerManager.BroadcastPacketTeam(team, spawnPacket.GetBytes(), Channel.CHL_S2C);
+                    _packetHandlerManager.BroadcastPacketTeam(team, visibilityPacket.GetBytes(), Channel.CHL_S2C);
+                    _packetHandlerManager.BroadcastPacketTeam(team, healthbarPacket.GetBytes(), Channel.CHL_S2C);
+                    _packetHandlerManager.BroadcastPacketTeam(team, us.GetBytes(), Channel.CHL_S2C);
                 }
                 else
                 {
-                    // Generic visibility packet
-                    GamePacket enterVisPacket = ConstructOnEnterTeamVisibilityPacket(obj, team);
+                    _packetHandlerManager.SendPacket(userId, visibilityPacket.GetBytes(), Channel.CHL_S2C);
+                    _packetHandlerManager.SendPacket(userId, healthbarPacket.GetBytes(), Channel.CHL_S2C);
+                    _packetHandlerManager.SendPacket(userId, us.GetBytes(), Channel.CHL_S2C);
+                }
+            }
+            else //if(obj is IRegion || obj is ISpellMissile || obj is ILevelProp || obj is IParticle)
+            {
+                var packet = spawnPacket;
 
-                    if (obj is IParticle p)
-                    {
-                        enterVisPacket = ConstructFXEnterTeamVisibilityPacket(p, team);
-                    }
+                if (spawnPacket == null && obj is IParticle p)
+                {
+                    packet = ConstructFXEnterTeamVisibilityPacket(p, team);
+                }
+                else
+                {
+                    packet = ConstructOnEnterTeamVisibilityPacket(obj, team);
+                }
 
-                    _packetHandlerManager.BroadcastPacketTeam(team, enterVisPacket.GetBytes(), Channel.CHL_S2C);
+                if(userId == 0)
+                {
+                    _packetHandlerManager.BroadcastPacketTeam(team, packet.GetBytes(), Channel.CHL_S2C);
+                }
+                else
+                {
+                    _packetHandlerManager.SendPacket(userId, packet.GetBytes(), Channel.CHL_S2C);
                 }
             }
         }
 
         //TODO: rework too?
-        void NotifyLeaveTeamVision(IGameObject obj, TeamId team)
+        void NotifyLeaveTeamVision(IGameObject obj, TeamId team, int userId = 0)
         {
+            if(obj is IParticle p)
+            {
+                NotifyFXLeaveTeamVisibility(p, team, userId);
+            }
             if(obj is IAttackableUnit)
             {
-                NotifyLeaveVisibilityClient(obj, team);
-            }
-            else if(obj is IParticle p)
-            {
-                NotifyFXLeaveTeamVisibility(p, team);
+                NotifyLeaveVisibilityClient(obj, team, userId);
             }
             else
             {
-                NotifyS2C_OnLeaveTeamVisibility(obj, team);
+                NotifyS2C_OnLeaveTeamVisibility(obj, team, userId);
             }
         }
 
@@ -3829,6 +3885,11 @@ namespace PacketDefinitions420
         /// <param name="u">AttackableUnit that is moving.</param>
         /// <param name="useTeleportID">Whether or not to teleport the unit to its current position in its path.</param>
         public void NotifyWaypointGroup(IAttackableUnit u, bool useTeleportID = true)
+        {
+            NotifyWaypointGroup(u, 0, useTeleportID);
+        }
+
+        public void NotifyWaypointGroup(IAttackableUnit u, int userId = 0, bool useTeleportID = true)
         {
             // TODO: Verify if casts correctly
             var move = (MovementDataNormal)PacketExtensions.CreateMovementData(u, _navGrid, MovementDataType.Normal, useTeleportID: useTeleportID);
@@ -3841,7 +3902,14 @@ namespace PacketDefinitions420
                 Movements = new List<MovementDataNormal>() { move }
             };
 
-            _packetHandlerManager.BroadcastPacketVision(u, packet.GetBytes(), Channel.CHL_LOW_PRIORITY);
+            if(userId == 0)
+            {
+                _packetHandlerManager.BroadcastPacketVision(u, packet.GetBytes(), Channel.CHL_LOW_PRIORITY);
+            }
+            else
+            {
+                _packetHandlerManager.SendPacket(userId, packet.GetBytes(), Channel.CHL_LOW_PRIORITY);
+            }
         }
 
         /// <summary>
