@@ -578,9 +578,9 @@ namespace LeagueSandbox.GameServer.API
         /// <returns>List of AttackableUnits.</returns>
         public static IEnumerable<IAttackableUnit> EnumerateUnitsInRange(Vector2 targetPos, float range, bool isAlive)
         {
-            foreach(var obj in _game.Map.CollisionHandler.QuadDynamic.GetNodesInside(targetPos, range))
+            foreach (var obj in _game.Map.CollisionHandler.QuadDynamic.GetNodesInside(targetPos, range))
             {
-                if(obj is IAttackableUnit u && (!isAlive || !u.IsDead))
+                if (obj is IAttackableUnit u && (!isAlive || !u.IsDead))
                 {
                     yield return u;
                 }
@@ -814,15 +814,25 @@ namespace LeagueSandbox.GameServer.API
         }
 
         /// <summary>
-        /// Sets the specified unit's animation states to the given set of states.
-        /// Given state pairs are expected to follow a specific structure:
+        /// Overrides the given animation with the other given animation.
         /// First string is the animation to override, second string is the animation to play in place of the first.
         /// </summary>
         /// <param name="unit">Unit to set animation states on.</param>
-        /// <param name="animPairs">Dictionary of animations to set.</param>
-        public static void SetAnimStates(IAttackableUnit unit, Dictionary<string, string> animPairs)
+        /// <param name="overrideAnim">Animation to use instead.</param>
+        /// <param name="toOverrideAnim">Animation to override.</param>
+        public static void OverrideAnimation(IAttackableUnit unit, string overrideAnim, string toOverrideAnim)
         {
-            unit.SetAnimStates(animPairs);
+            unit.SetAnimStates(new Dictionary<string, string> { { toOverrideAnim, overrideAnim } });
+        }
+
+        /// <summary>
+        /// Clears the given overridden animation, making it play its original animation.
+        /// </summary>
+        /// <param name="unit">Unit to set animation states on.</param>
+        /// <param name="overriddenAnim">Animation which has been overridden.</param>
+        public static void ClearOverrideAnimation(IAttackableUnit unit, string overriddenAnim)
+        {
+            unit.SetAnimStates(new Dictionary<string, string> { { overriddenAnim, "" } });
         }
 
         /// <summary>

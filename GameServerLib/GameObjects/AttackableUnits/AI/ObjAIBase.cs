@@ -282,8 +282,8 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             return !IsDead
                 // TODO: Verify if priority is still maintained with the MovementParameters checks.
                 && ((Status.HasFlag(StatusFlags.CanMove) && Status.HasFlag(StatusFlags.CanMoveEver)) || MovementParameters != null)
-                && (MoveOrder != OrderType.CastSpell || _castingSpell == null || MovementParameters != null)
-                && (ChannelSpell == null || (ChannelSpell != null && (ChannelSpell.SpellData.CanMoveWhileChanneling || !ChannelSpell.SpellData.CantCancelWhileChanneling)))
+                && ((MoveOrder != OrderType.CastSpell && _castingSpell == null) || MovementParameters != null)
+                && (ChannelSpell == null || (ChannelSpell != null && ChannelSpell.SpellData.CanMoveWhileChanneling))
                 && (!IsAttacking || !AutoAttackSpell.SpellData.CantCancelWhileWindingUp)
                 && (!(Status.HasFlag(StatusFlags.Netted)
                 || Status.HasFlag(StatusFlags.Rooted)
@@ -291,6 +291,14 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 || Status.HasFlag(StatusFlags.Stunned)
                 || Status.HasFlag(StatusFlags.Suppressed))
                 || MovementParameters != null);
+        }
+
+        public override bool CanChangeWaypoints()
+        {
+            return !IsDead
+                && (MovementParameters == null || (MovementParameters != null && MovementParameters.FollowNetID != 0))
+                && _castingSpell == null
+                && (ChannelSpell == null || (ChannelSpell != null && !ChannelSpell.SpellData.CantCancelWhileChanneling));
         }
 
         /// <summary>
@@ -322,13 +330,16 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             return Status.HasFlag(StatusFlags.CanCast)
                 && !Status.HasFlag(StatusFlags.Charmed)
                 && !Status.HasFlag(StatusFlags.Feared)
-                // TODO: Verify
+                // TODO: Verify what pacified is
                 && !Status.HasFlag(StatusFlags.Pacified)
                 && !Status.HasFlag(StatusFlags.Silenced)
                 && !Status.HasFlag(StatusFlags.Sleep)
                 && !Status.HasFlag(StatusFlags.Stunned)
                 && !Status.HasFlag(StatusFlags.Suppressed)
-                && !Status.HasFlag(StatusFlags.Taunted);
+                && !Status.HasFlag(StatusFlags.Taunted)
+                && _castingSpell == null
+                && (ChannelSpell == null || !ChannelSpell.SpellData.CantCancelWhileChanneling)
+                && (!IsAttacking || (IsAttacking && !AutoAttackSpell.SpellData.CantCancelWhileWindingUp));
         }
 
         public bool CanLevelUpSpell(ISpell s)
@@ -601,12 +612,13 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             }
 
             // If the target is already in range, stay where we are.
-            if (MoveOrder == OrderType.AttackMove && targetPos != Vector2.Zero)
+            if (MoveOrder == OrderType.AttackMove
+                && targetPos != Vector2.Zero
+                && MovementParameters == null
+                && Vector2.DistanceSquared(Position, targetPos) <= idealRange * idealRange
+                && _autoAttackCurrentCooldown <= 0)
             {
-                if (MovementParameters == null && Vector2.DistanceSquared(Position, targetPos) <= idealRange * idealRange)
-                {
-                    UpdateMoveOrder(OrderType.Stop, true);
-                }
+                UpdateMoveOrder(OrderType.Stop, true);
             }
             // No TargetUnit
             else if (targetPos == Vector2.Zero)
@@ -976,7 +988,8 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             base.TakeDamage(attacker, damage, type, source, damageText);
             OnTakeDamage(attacker);
         }
-        public override void TakeDamage(IDamageData damageData, DamageResultType damageText){
+        public override void TakeDamage(IDamageData damageData, DamageResultType damageText)
+        {
             base.TakeDamage(damageData, damageText);
             OnTakeDamage(damageData.Attacker);
         }
@@ -989,7 +1002,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 {
                     float acquisitionRange = Stats.AcquisitionRange.Total;
                     float acquisitionRangeSquared = acquisitionRange * acquisitionRange;
-                    if(
+                    if (
                         u != this
                         && !u.IsDead
                         && u.Team == Team
@@ -1024,7 +1037,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 if (IsAttacking && !AutoAttackSpell.SpellData.CantCancelWhileWindingUp)
                 {
                     CancelAutoAttack(!HasAutoAttacked, true);
-                    SetTargetUnit(null, true);
                 }
             }
             else if (TargetUnit.IsDead || !TargetUnit.Status.HasFlag(StatusFlags.Targetable) || !TargetUnit.IsVisibleByTeam(Team))
@@ -1032,25 +1044,22 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 if (IsAttacking)
                 {
                     CancelAutoAttack(!HasAutoAttacked, true);
-                    SetTargetUnit(null, true);
                 }
-                else
-                {
-                    SetTargetUnit(null, true);
-                }
+
+                SetTargetUnit(null, true);
                 return;
             }
-            else if (IsAttacking && Vector2.Distance(TargetUnit.Position, Position) > (Stats.Range.Total + TargetUnit.CollisionRadius))
+            else if (IsAttacking)
             {
-                if (AutoAttackSpell.State != SpellState.STATE_CASTING || !AutoAttackSpell.SpellData.CantCancelWhileWindingUp)
+                if (Vector2.Distance(TargetUnit.Position, Position) > (Stats.Range.Total + TargetUnit.CollisionRadius)
+                        && AutoAttackSpell.State == SpellState.STATE_CASTING && !AutoAttackSpell.SpellData.CantCancelWhileWindingUp)
+                {
+                    CancelAutoAttack(!HasAutoAttacked, true);
+                }
+
+                if (AutoAttackSpell.State == SpellState.STATE_READY)
                 {
                     IsAttacking = false;
-                    HasMadeInitialAttack = false;
-
-                    if (AutoAttackSpell.State == SpellState.STATE_CASTING)
-                    {
-                        _game.PacketNotifier.NotifyNPC_InstantStop_Attack(this, false);
-                    }
                 }
                 return;
             }
@@ -1147,6 +1156,11 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                     // TODO: Make a function which uses this method and use it for every case of target acquisition (ex minions, turrets, attackmove).
                     if (MoveOrder == OrderType.AttackMove)
                     {
+                        if (_autoAttackCurrentCooldown > 0)
+                        {
+                            return;
+                        }
+
                         var objects = _game.ObjectManager.GetObjects();
                         var distanceSqrToTarget = 25000f * 25000f;
                         IAttackableUnit nextTarget = null;

@@ -48,7 +48,7 @@ namespace Buffs
         {
             if (willRemove)
             {
-                owner.StopChanneling(ChannelingStopCondition.Cancel, ChannelingStopSource.LostTarget);
+                StopChanneling(owner, ChannelingStopCondition.Cancel, ChannelingStopSource.LostTarget);
 
                 RemoveBuff(sourceBuff);
             }
