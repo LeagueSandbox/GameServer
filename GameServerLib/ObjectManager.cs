@@ -10,6 +10,7 @@ using GameServerCore.Enums;
 using LeagueSandbox.GameServer.GameObjects;
 using LeagueSandbox.GameServer.GameObjects.Other;
 using LeagueSandbox.GameServer.Logging;
+using GameServerCore.NetInfo;
 
 namespace LeagueSandbox.GameServer
 {
@@ -32,6 +33,8 @@ namespace LeagueSandbox.GameServer
         private Dictionary<uint, IBaseTurret> _turrets;
         private Dictionary<uint, IInhibitor> _inhibitors;
         private Dictionary<TeamId, List<IGameObject>> _visionProviders;
+
+        private bool _currentlyInUpdate = false;
 
         // Locks for each dictionary. Depricated since #1302.
         //private object _objectsLock = new object();
@@ -76,6 +79,8 @@ namespace LeagueSandbox.GameServer
         /// <param name="diff">Number of milliseconds since this tick occurred.</param>
         public void Update(float diff)
         {
+            _currentlyInUpdate = true;
+
             // For all existing objects
             foreach (var obj in _objects.Values)
             {
@@ -113,11 +118,9 @@ namespace LeagueSandbox.GameServer
             
             foreach (IGameObject _obj in _objects.Values)
             {
-                PacketDefinitions420.PacketNotifier packetNotifier = _game.PacketNotifier as PacketDefinitions420.PacketNotifier;
                 GameObject obj = _obj as GameObject;
 
-                bool isAffectedByVision = IsAffectedByVision(obj);
-                if (isAffectedByVision)
+                if (IsAffectedByVision(obj))
                 {
                     foreach (var team in Teams)
                     {
@@ -125,56 +128,9 @@ namespace LeagueSandbox.GameServer
                     }
                 }
 
-                foreach (var player in players)
+                foreach (var kv in players)
                 {
-                    int pid = (int)player.Item2.PlayerId;
-                    TeamId team = player.Item2.Team;
-                    IChampion champion = player.Item2.Champion;
-                    bool nearSighted = champion.Status.HasFlag(StatusFlags.NearSighted);
-
-                    bool shouldBeVisibleForPlayer = !isAffectedByVision
-                        || (
-                            nearSighted ?
-                            UnitHasVisionOn(champion, obj) :
-                            obj.IsVisibleByTeam(champion.Team)
-                        );
-                    
-                    if(obj.IsSpawnedForPlayer(pid))
-                    {
-                        if(obj.IsVisibleForPlayer(pid) != shouldBeVisibleForPlayer)
-                        {
-                            packetNotifier.NotifyVisibilityChange(obj, team, pid, shouldBeVisibleForPlayer);
-                            obj.SetVisibleForPlayer(pid, shouldBeVisibleForPlayer);
-                        }
-                        else if(shouldBeVisibleForPlayer)
-                        {
-                            Sync(obj, pid);
-                        }
-                    }
-                    else
-                    {
-                        if(shouldBeVisibleForPlayer || !(
-                            //bool spawnShouldBeHidden = 
-                            obj is IParticle || obj is ISpellMissile || (obj is IMinion && !(obj is ILaneMinion))
-                        ))
-                        {
-                            packetNotifier.NotifySpawn(obj, team, pid, _game.GameTime, shouldBeVisibleForPlayer);
-                            obj.SetVisibleForPlayer(pid, shouldBeVisibleForPlayer);
-                            obj.SetSpawnedForPlayer(pid);
-
-                            // TODO: Centralize this, should only be done once at start of game.
-                            if (obj is ILaneTurret turret)
-                            {
-                                foreach (var item in turret.Inventory)
-                                {
-                                    if (item != null)
-                                    {
-                                        _game.PacketNotifier.NotifyBuyItem(pid, turret, item as IItem);
-                                    }
-                                }
-                            }
-                        }
-                    }
+                    UpdateVisibilityAndSpawnIfNeeded(obj, kv.Item2);
                 }
 
                 if (obj is IAttackableUnit u)
@@ -182,6 +138,59 @@ namespace LeagueSandbox.GameServer
                     u.Replication.MarkAsUnchanged();
                     u.IsModelUpdated = false;
                     u.ClearMovementUpdated();
+                }
+            }
+
+            _currentlyInUpdate = false;
+        }
+
+        public void UpdateVisibilityAndSpawnIfNeeded(GameObject obj, ClientInfo clientInfo, bool forceSpawn = false)
+        {
+            PacketDefinitions420.PacketNotifier packetNotifier = _game.PacketNotifier as PacketDefinitions420.PacketNotifier;
+            
+            int pid = (int)clientInfo.PlayerId;
+            TeamId team = clientInfo.Team;
+            IChampion champion = clientInfo.Champion;
+            
+            bool nearSighted = champion.Status.HasFlag(StatusFlags.NearSighted);
+            bool isAffectedByVision = IsAffectedByVision(obj);
+            bool shouldBeVisibleForPlayer = !isAffectedByVision || (
+                nearSighted ?
+                    UnitHasVisionOn(champion, obj) :
+                    obj.IsVisibleByTeam(champion.Team)
+            );
+            
+            if (!forceSpawn && obj.IsSpawnedForPlayer(pid))
+            {
+                if (isAffectedByVision && (obj.IsVisibleForPlayer(pid) != shouldBeVisibleForPlayer))
+                {
+                    packetNotifier.NotifyVisibilityChange(obj, team, pid, shouldBeVisibleForPlayer);
+                    obj.SetVisibleForPlayer(pid, shouldBeVisibleForPlayer);
+                }
+                else if(shouldBeVisibleForPlayer)
+                {
+                    Sync(obj, pid);
+                }
+            }
+            else if (shouldBeVisibleForPlayer || !(
+                //bool spawnShouldBeHidden = 
+                obj is IParticle || obj is ISpellMissile || (obj is IMinion && !(obj is ILaneMinion))
+            ))
+            {
+                packetNotifier.NotifySpawn(obj, team, pid, _game.GameTime, shouldBeVisibleForPlayer);
+                obj.SetVisibleForPlayer(pid, shouldBeVisibleForPlayer);
+                obj.SetSpawnedForPlayer(pid);
+
+                // TODO: Centralize this, should only be done once at start of game.
+                if (obj is ILaneTurret turret)
+                {
+                    foreach (var item in turret.Inventory)
+                    {
+                        if (item != null)
+                        {
+                            _game.PacketNotifier.NotifyBuyItem(pid, turret, item as IItem);
+                        }
+                    }
                 }
             }
         }
@@ -259,7 +268,16 @@ namespace LeagueSandbox.GameServer
             if (o != null)
             {
                 _objectsToRemove.Remove(o);
-                _objectsToAdd.Add(o);
+
+                if(_currentlyInUpdate)
+                {
+                    //Console.WriteLine($"delayed add {o}");
+                    _objectsToAdd.Add(o);
+                }
+                else
+                {
+                    _objects.Add(o.NetId, o);
+                }
                 o.OnAdded();
             }
         }
@@ -273,7 +291,16 @@ namespace LeagueSandbox.GameServer
             if (o != null)
             {
                 _objectsToAdd.Remove(o);
-                _objectsToRemove.Add(o);
+
+                if(_currentlyInUpdate)
+                {
+                    //Console.WriteLine($"delayed remove {o}");
+                    _objectsToRemove.Add(o);
+                }
+                else
+                {
+                    _objects.Remove(o.NetId);
+                }
                 o.OnRemoved();
             }
         }
@@ -316,30 +343,6 @@ namespace LeagueSandbox.GameServer
                 return false;
             }
 
-            if (
-                o.Team == team
-                
-                || o is IBaseTurret || o is ILevelProp || o is IObjBuilding
-                
-                // Particle team is used if specific team is neutral.
-                || (
-                    o is IParticle particle
-                    && (
-                        particle.SpecificTeam == team
-                        || (
-                            particle.SpecificTeam == TeamId.TEAM_NEUTRAL
-                            && (
-                                particle.Team == TeamId.TEAM_NEUTRAL
-                                || particle.Team == team
-                            )
-                        )
-                    )
-                )
-            )
-            {
-                return true;
-            }
-
             foreach (var kv in _visionProviders[team])
             {
                 if (
@@ -356,10 +359,47 @@ namespace LeagueSandbox.GameServer
             return false;
         }
 
-        bool UnitHasVisionOn(IGameObject o, IGameObject t)
+        bool UnitHasVisionOn(IGameObject observer, IGameObject tested)
         {
-            return Vector2.DistanceSquared(o.Position, t.Position) < o.VisionRadius * o.VisionRadius
-                && !_game.Map.NavigationGrid.IsAnythingBetween(o, t, true);
+            if(tested is IBaseTurret || tested is IObjBuilding)
+            {
+                //return true;
+            }
+
+            if(tested is IParticle particle)
+            {
+                // Default behaviour
+                if(particle.SpecificTeam == TeamId.TEAM_NEUTRAL)
+                {
+                    if(
+                        // Globally visible to all teams
+                        particle.Team == TeamId.TEAM_NEUTRAL
+                        // Globally visible to team of creator
+                        || tested.Team == observer.Team
+                    ){
+                        return true;
+                    }
+                    // Can become visible for other teams
+                }
+                // Only visible to specific team
+                else if(particle.SpecificTeam != observer.Team)
+                {
+                    return false;
+                }
+            }
+            else if(tested.Team == observer.Team)
+            {
+                return true;
+            }
+
+            if(
+                Vector2.DistanceSquared(observer.Position, tested.Position) < observer.VisionRadius * observer.VisionRadius
+                && !_game.Map.NavigationGrid.IsAnythingBetween(observer, tested, true)
+            ){
+                return true;
+            }
+
+            return false;
         }
 
         /// <summary>

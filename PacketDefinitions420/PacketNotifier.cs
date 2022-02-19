@@ -271,7 +271,10 @@ namespace PacketDefinitions420
         {
             var avatar = new AvatarInfo_Server();
             avatar.SenderNetID = client.Champion.NetId;
-            var skills = new uint[] { HashFunctions.HashString(client.SummonerSkills[0]), HashFunctions.HashString(client.SummonerSkills[1]) };
+            var skills = new uint[] {
+                HashFunctions.HashString(client.SummonerSkills[0]),
+                HashFunctions.HashString(client.SummonerSkills[1])
+            };
 
             avatar.SummonerIDs[0] = skills[0];
             avatar.SummonerIDs[1] = skills[1];
@@ -1105,11 +1108,22 @@ namespace PacketDefinitions420
         /// </summary>
         public void NotifyGameStart()
         {
+            NotifyGameStart(0);
+        }
+        public void NotifyGameStart(int userId = 0)
+        {
             var start = new S2C_StartGame
             {
                 EnablePause = true
             };
-            _packetHandlerManager.BroadcastPacket(start.GetBytes(), Channel.CHL_S2C);
+            if(userId == 0)
+            {
+                _packetHandlerManager.BroadcastPacket(start.GetBytes(), Channel.CHL_S2C);
+            }
+            else
+            {
+                _packetHandlerManager.SendPacket(userId, start.GetBytes(), Channel.CHL_S2C);
+            }
         }
 
         /// <summary>
@@ -2915,7 +2929,7 @@ namespace PacketDefinitions420
         /// Sends a packet to the specified player detailing that the game has started the spawning GameObjects that occurs at the start of the game.
         /// </summary>
         /// <param name="userId">User to send the packet to.</param>
-        public void NotifyS2C_StartSpawn(int userId)
+        public void NotifyS2C_StartSpawn(int userId = 0)
         {
             var start = new S2C_StartSpawn
             {
@@ -2923,7 +2937,14 @@ namespace PacketDefinitions420
                 BotCountOrder = 0,
                 BotCountChaos = 0
             };
-            _packetHandlerManager.SendPacket(userId, start.GetBytes(), Channel.CHL_S2C);
+            if(userId == 0)
+            {
+                _packetHandlerManager.BroadcastPacket(start.GetBytes(), Channel.CHL_S2C);
+            }
+            else
+            {
+                _packetHandlerManager.SendPacket(userId, start.GetBytes(), Channel.CHL_S2C);
+            }
         }
 
         /// <summary>
@@ -3256,26 +3277,32 @@ namespace PacketDefinitions420
             {
                 //doVision = false;
                 var spawnPacket = ConstructSpawnPacket(obj, gameTime);
-                _packetHandlerManager.SendPacket(userId, spawnPacket.GetBytes(), Channel.CHL_S2C);
+                if(spawnPacket != null)
+                {
+                    _packetHandlerManager.SendPacket(userId, spawnPacket.GetBytes(), Channel.CHL_S2C);
+                }
             }
         }
 
         public void NotifySpawn(IGameObject obj, TeamId team, int userId = 0, float gameTime = 0, bool doVision = true)
         {
             var spawnPacket = ConstructSpawnPacket(obj, gameTime);
-            if(doVision)
+            if(spawnPacket != null)
             {
-                NotifyEnterTeamVision(obj, team, userId, spawnPacket);
-            }
-            else
-            {
-                if(userId == 0)
+                if(doVision)
                 {
-                    _packetHandlerManager.BroadcastPacketTeam(team, spawnPacket.GetBytes(), Channel.CHL_S2C);
+                    NotifyEnterTeamVision(obj, team, userId, spawnPacket);
                 }
                 else
                 {
-                    _packetHandlerManager.SendPacket(userId, spawnPacket.GetBytes(), Channel.CHL_S2C);
+                    if(userId == 0)
+                    {
+                        _packetHandlerManager.BroadcastPacketTeam(team, spawnPacket.GetBytes(), Channel.CHL_S2C);
+                    }
+                    else
+                    {
+                        _packetHandlerManager.SendPacket(userId, spawnPacket.GetBytes(), Channel.CHL_S2C);
+                    }
                 }
             }
         }
@@ -3283,15 +3310,18 @@ namespace PacketDefinitions420
         public void NotifySpawn(IGameObject obj, float gameTime, bool doVision = true)
         {
             var spawnPacket = ConstructSpawnPacket(obj, gameTime);
-            if(doVision)
+            if(spawnPacket != null)
             {
-                NotifyEnterTeamVision(obj, TeamId.TEAM_BLUE, 0, spawnPacket);
-                NotifyEnterTeamVision(obj, TeamId.TEAM_PURPLE, 0, spawnPacket);
-                NotifyEnterTeamVision(obj, TeamId.TEAM_NEUTRAL, 0, spawnPacket);
-            }
-            else
-            {
-                _packetHandlerManager.BroadcastPacket(spawnPacket.GetBytes(), Channel.CHL_S2C);
+                if(doVision)
+                {
+                    NotifyEnterTeamVision(obj, TeamId.TEAM_BLUE, 0, spawnPacket);
+                    NotifyEnterTeamVision(obj, TeamId.TEAM_PURPLE, 0, spawnPacket);
+                    NotifyEnterTeamVision(obj, TeamId.TEAM_NEUTRAL, 0, spawnPacket);
+                }
+                else
+                {
+                    _packetHandlerManager.BroadcastPacket(spawnPacket.GetBytes(), Channel.CHL_S2C);
+                }
             }
         }
 
@@ -3305,12 +3335,13 @@ namespace PacketDefinitions420
                     return ConstructSpawnLevelPropPacket(prop);
                 case IRegion region:
                     return ConstructAddRegionPacket(region);
-                
-                // Champions and Turrets should already be spawned at the beginning of the game
+
                 case ILaneTurret turret:
-                    break; //ConstructCreateTurretPacket(turret);
+                    return ConstructCreateTurretPacket(turret);
+
+                // Champions spawn a little differently 
                 case IChampion champion:
-                    break;
+                    return null;
 
                 case IMonster monster:
                     return ConstructCreateNeutralPacket(monster, gameTime);

@@ -160,6 +160,8 @@ namespace PacketDefinitions420
 
         public bool SendPacket(int playerId, byte[] source, Channel channelNo, PacketFlags flag = PacketFlags.Reliable)
         {
+            //Console.WriteLine($"SendPacket({playerId}) {new System.Diagnostics.StackTrace().ToString()}");
+
             // Sometimes we try to send packets to a user that doesn't exist (like in broadcast when not all players are connected).
             // TODO: fix casting
             if (_peers.ContainsKey(playerId))
@@ -184,6 +186,8 @@ namespace PacketDefinitions420
 
         public bool BroadcastPacket(byte[] data, Channel channelNo, PacketFlags flag = PacketFlags.Reliable)
         {
+            //Console.WriteLine($"BroadcastPacket() {new System.Diagnostics.StackTrace().ToString()}");
+
             if (data.Length >= 8)
             {
                 // send packet to all peers and save failed ones

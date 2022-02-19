@@ -98,16 +98,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         {
             base.OnAdded();
             _game.ObjectManager.AddChampion(this);
-            _game.PacketNotifier.NotifySpawn(this);
-
-            if (Spells.ContainsKey((int)SpellSlotType.PassiveSpellSlot))
-            {
-                CharScript.OnActivate(this, (Spells[(int)SpellSlotType.PassiveSpellSlot]));
-            }
-            else
-            {
-                CharScript.OnActivate(this);
-            }
         }
 
         public override void OnRemoved()
@@ -236,7 +226,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             // League sends a single packet detailing every champion's tool tip changes.
             if (_tipsChanged.Count > 0)
             {
-                _game.PacketNotifier.NotifyS2C_ToolTipVars(_tipsChanged);
+                //_game.PacketNotifier.NotifyS2C_ToolTipVars(_tipsChanged);
                 ClearToolTipsChanged();
             }
         }
@@ -309,7 +299,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 }
                 ApiEventManager.OnLevelUp.Publish(this);
                 _game.PacketNotifier.NotifyNPC_LevelUp(this);
-                _game.PacketNotifier.NotifyUpdatedStats(this, false);
+                //_game.PacketNotifier.NotifyUpdatedStats(this, false);
 
                 return true;
             }
