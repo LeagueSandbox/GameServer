@@ -48,7 +48,7 @@ namespace Spells
             spell.CreateSpellSector(new SectorParameters
             {
                 BindObject = owner,
-                Length = 550f,
+                Length = 1100f,
                 Width = spell.SpellData.LineWidth,
                 PolygonVertices = new Vector2[]
                 {

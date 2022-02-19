@@ -4,6 +4,7 @@ using GameServerCore.Domain.GameObjects.Spell;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 using GameServerCore.Scripting.CSharp;
 using LeagueSandbox.GameServer.Scripting.CSharp;
+using LeagueSandbox.GameServer.GameObjects.Stats;
 
 namespace Buffs
 {
@@ -16,7 +17,7 @@ namespace Buffs
             MaxStacks = 100
         };
 
-        public IStatsModifier StatsModifier { get; private set; }
+        public IStatsModifier StatsModifier { get; private set; } = new StatsModifier();
 
         IParticle slow;
         IAttackableUnit owner;

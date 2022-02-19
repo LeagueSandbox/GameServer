@@ -13,6 +13,8 @@ namespace Spells
     {
         public ISpellScriptMetadata ScriptMetadata { get; private set; } = new SpellScriptMetadata()
         {
+            CastingBreaksStealth = false,
+            TriggersSpellCasts = false,
             NotSingleTargetSpell = true
             // TODO
         };
@@ -28,27 +30,21 @@ namespace Spells
         public void OnSpellPreCast(IObjAiBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
         {
             var current = new Vector2(owner.Position.X, owner.Position.Y);
-            var to = start - current;
-            Vector2 trueCoords;
+            var dist = Vector2.Distance(current, start);
 
-            if (to.Length() > 425)
+            FaceDirection(start, owner, true);
+
+            if (dist > spell.SpellData.CastRangeDisplayOverride)
             {
-                to = Vector2.Normalize(to);
-                var range = to * 425;
-                trueCoords = current + range;
-            }
-            else
-            {
-                trueCoords = start;
+                start = GetPointFromUnit(owner, spell.SpellData.CastRangeDisplayOverride);
             }
 
-            owner.FaceDirection(new Vector3(to.X, 0.0f, to.Y));
-            owner.StopChanneling(ChannelingStopCondition.Cancel, ChannelingStopSource.Move);
+            StopChanneling(owner, ChannelingStopCondition.Cancel, ChannelingStopSource.Move);
 
             AddParticle(owner, null, "global_ss_flash", owner.Position);
             AddParticleTarget(owner, owner, "global_ss_flash_02", owner);
 
-            TeleportTo(owner, trueCoords.X, trueCoords.Y);
+            TeleportTo(owner, start.X, start.Y);
         }
 
         public void OnSpellCast(ISpell spell)

@@ -27,74 +27,82 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
         {
             var peerInfo = _playerManager.GetPeerInfo(userId);
             var champion = peerInfo?.Champion;
-            if (peerInfo == null || champion.MovementParameters != null)
+            if (peerInfo == null)
             {
                 return true;
             }
 
-            // Last waypoint position
-            var pos = req.Position;
-            var translatedWaypoints = req.Waypoints.ConvertAll(TranslateFromCenteredCoordinates);
-
-            var lastindex = 0;
-            if (!(translatedWaypoints.Count - 1 < 0))
+            if (champion.MovementParameters == null)
             {
-                lastindex = translatedWaypoints.Count - 1;
-            }
+                // Last waypoint position
+                var pos = req.Position;
+                var translatedWaypoints = req.Waypoints.ConvertAll(TranslateFromCenteredCoordinates);
 
-            var nav = _game.Map.NavigationGrid;
-
-            foreach (Vector2 wp in translatedWaypoints)
-            {
-                if (!_game.Map.NavigationGrid.IsWalkable(wp))
+                var lastindex = 0;
+                if (!(translatedWaypoints.Count - 1 < 0))
                 {
-                    Vector2 exit = nav.GetClosestTerrainExit(translatedWaypoints[lastindex]);
-
-                    // prevent player pathing within their pathing radius
-                    if (Vector2.DistanceSquared(champion.Position, exit) < (champion.PathfindingRadius * champion.PathfindingRadius))
-                    {
-                        return true;
-                    }
-
-                    if (_game.Map.NavigationGrid.IsWalkable(champion.Position))
-                    {
-                        translatedWaypoints = nav.GetPath(champion.Position, exit);
-                    }
-                    break;
+                    lastindex = translatedWaypoints.Count - 1;
                 }
-            }
 
-            switch (req.Type)
-            {
-                case OrderType.AttackTo:
-                    translatedWaypoints[0] = champion.Position;
-                    champion.UpdateMoveOrder(OrderType.AttackTo, true);
-                    champion.SetWaypoints(translatedWaypoints);
-                    break;
-                case OrderType.Stop:
-                    champion.UpdateMoveOrder(OrderType.Stop, true);
-                    break;
-                case OrderType.Taunt:
-                    champion.UpdateMoveOrder(OrderType.Taunt);
-                    return true;
-                case OrderType.AttackMove:
-                    translatedWaypoints[0] = champion.Position;
-                    champion.UpdateMoveOrder(OrderType.AttackMove, true);
-                    champion.SetWaypoints(translatedWaypoints);
-                    break;
-                case OrderType.MoveTo:
-                    translatedWaypoints[0] = champion.Position;
-                    champion.UpdateMoveOrder(OrderType.MoveTo, true);
-                    champion.SetWaypoints(translatedWaypoints);
-                    break;
+                var nav = _game.Map.NavigationGrid;
+
+                foreach (Vector2 wp in translatedWaypoints)
+                {
+                    if (!_game.Map.NavigationGrid.IsWalkable(wp))
+                    {
+                        Vector2 exit = nav.GetClosestTerrainExit(translatedWaypoints[lastindex]);
+
+                        // prevent player pathing within their pathing radius
+                        if (Vector2.DistanceSquared(champion.Position, exit) < (champion.PathfindingRadius * champion.PathfindingRadius))
+                        {
+                            return true;
+                        }
+
+                        if (_game.Map.NavigationGrid.IsWalkable(champion.Position))
+                        {
+                            translatedWaypoints = nav.GetPath(champion.Position, exit);
+                        }
+                        break;
+                    }
+                }
+
+                switch (req.Type)
+                {
+                    case OrderType.AttackTo:
+                        translatedWaypoints[0] = champion.Position;
+                        champion.UpdateMoveOrder(OrderType.AttackTo, true);
+                        champion.SetWaypoints(translatedWaypoints);
+                        break;
+                    case OrderType.Stop:
+                        champion.UpdateMoveOrder(OrderType.Stop, true);
+                        break;
+                    case OrderType.Taunt:
+                        champion.UpdateMoveOrder(OrderType.Taunt);
+                        return true;
+                    case OrderType.AttackMove:
+                        translatedWaypoints[0] = champion.Position;
+                        champion.UpdateMoveOrder(OrderType.AttackMove, true);
+                        champion.SetWaypoints(translatedWaypoints);
+                        break;
+                    case OrderType.MoveTo:
+                        translatedWaypoints[0] = champion.Position;
+                        champion.UpdateMoveOrder(OrderType.MoveTo, true);
+                        champion.SetWaypoints(translatedWaypoints);
+                        break;
+                }
+
+                if (translatedWaypoints == null)
+                {
+                    return false;
+                }
             }
 
             var u = _game.ObjectManager.GetObjectById(req.TargetNetId) as IAttackableUnit;
             champion.SetTargetUnit(u);
 
-            if (translatedWaypoints == null)
+            if (champion.SpellToCast != null)
             {
-                return false;
+                champion.SetSpellToCast(null, Vector2.Zero);
             }
 
             return true;

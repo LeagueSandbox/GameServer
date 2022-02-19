@@ -81,7 +81,7 @@ namespace LeagueSandbox.GameServer.GameObjects
                 NetId = _networkIdManager.GetNewNetId(); // base class assigns a netId
             }
             Position = position;
-            Direction = new Vector3();
+            Direction = Vector3.Zero;
             SyncId = Environment.TickCount; // TODO: use movement manager to generate this
             CollisionRadius = collisionRadius;
             PathfindingRadius = pathingRadius;
