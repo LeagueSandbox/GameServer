@@ -5,12 +5,11 @@ using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
 using GameServerCore.Maps;
-using LeagueSandbox.GameServer.API;
 using LeagueSandbox.GameServer.Content;
-using LeagueSandbox.GameServer.GameObjects;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using GameServerCore.Scripting.CSharp;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
+using static GameServerLib.API.APIMapFunctionManager;
 
 namespace MapScripts.Map8
 {
@@ -28,7 +27,6 @@ namespace MapScripts.Map8
         };
 
         private IMapScriptHandler _map;
-
         public virtual IGlobalData GlobalData { get; set; } = new GlobalData();
         public bool HasFirstBloodHappened { get; set; } = false;
         public long NextSpawnTime { get; set; } = 90 * 1000;
@@ -214,9 +212,9 @@ namespace MapScripts.Map8
 
             //TODO: Implement Dynamic Minion spawn mechanics for Map8
             //SpawnEnabled = map.IsMinionSpawnEnabled();
-            map.AddSurrender(1200000.0f, 300000.0f, 30.0f);
+            AddSurrender(1200000.0f, 300000.0f, 30.0f);
 
-            CreateLevelProps.CreateProps(map, this);
+            CreateLevelProps.CreateProps(this);
         }
 
         public void OnMatchStart()
@@ -230,25 +228,25 @@ namespace MapScripts.Map8
 
             foreach (var stair in TeamStairs.Values)
             {
-                _map.NotifyPropAnimation(stair, "Open", (AnimationFlags)1, 0.0f, false);
+                NotifyPropAnimation(stair, "Open", (AnimationFlags)1, 0.0f, false);
             }
-            _map.NotifyPropAnimation(SwainBeams[1], "PeckA", (AnimationFlags)1, 0.0f, false);
-            _map.NotifyPropAnimation(SwainBeams[2], "PeckB", (AnimationFlags)1, 0.0f, false);
-            _map.NotifyPropAnimation(SwainBeams[3], "PeckC", (AnimationFlags)1, 0.0f, false);
+            NotifyPropAnimation(SwainBeams[1], "PeckA", (AnimationFlags)1, 0.0f, false);
+            NotifyPropAnimation(SwainBeams[2], "PeckB", (AnimationFlags)1, 0.0f, false);
+            NotifyPropAnimation(SwainBeams[3], "PeckC", (AnimationFlags)1, 0.0f, false);
 
             foreach (var champion in GetAllPlayers())
             {
                 AddBuff("OdinPlayerBuff", 25000, 1, null, champion, null);
             }
 
-            NeutralMinionSpawn.InitializeJungle(_map);
+            NeutralMinionSpawn.InitializeNeutrals(_map);
         }
 
         public void Update(float diff)
         {
             NeutralMinionSpawn.OnUpdate(diff);
 
-            var gameTime = _map.GameTime();
+            var gameTime = GameTime();
 
             if (!NotifiedAllInitialAnimations)
             {
@@ -272,26 +270,26 @@ namespace MapScripts.Map8
         {
             if (time >= 90.0f * 1000)
             {
-                _map.NotifyMapAnnouncement(EventID.OnNexusCrystalStart, 0);
+                NotifyMapAnnouncement(EventID.OnNexusCrystalStart, 0);
                 AllAnnouncementsAnnounced = true;
 
             }
             if (time >= 80.0f * 1000 && !AnnouncedEvents.Contains(EventID.OnStartGameMessage2))
             {
                 // The Battle Has Beguns!
-                _map.NotifyMapAnnouncement(EventID.OnStartGameMessage2, _map.Id);
+                NotifyMapAnnouncement(EventID.OnStartGameMessage2, _map.Id);
                 AnnouncedEvents.Add(EventID.OnStartGameMessage2);
             }
             else if (time >= 50.0f * 1000 && !AnnouncedEvents.Contains(EventID.OnStartGameMessage1))
             {
                 // The battle will begin in 30 seconds!
-                _map.NotifyMapAnnouncement(EventID.OnStartGameMessage1, _map.Id);
+                NotifyMapAnnouncement(EventID.OnStartGameMessage1, _map.Id);
                 AnnouncedEvents.Add(EventID.OnStartGameMessage1);
             }
             else if (time >= 30.0f * 1000 && !AnnouncedEvents.Contains(EventID.OnStartGameMessage3))
             {
                 // Welcome to the Crystal Scar!
-                _map.NotifyMapAnnouncement(EventID.OnStartGameMessage3, _map.Id);
+                NotifyMapAnnouncement(EventID.OnStartGameMessage3, _map.Id);
                 AnnouncedEvents.Add(EventID.OnStartGameMessage3);
             }
         }
@@ -304,7 +302,7 @@ namespace MapScripts.Map8
             {
                 foreach (var stair in TeamStairs.Values)
                 {
-                    _map.NotifyPropAnimation(stair, "Raised_Idle", (AnimationFlags)1, 4.25f, false);
+                    NotifyPropAnimation(stair, "Raised_Idle", (AnimationFlags)1, 4.25f, false);
                 }
                 NotifiedAllInitialAnimations = true;
             }
@@ -312,7 +310,7 @@ namespace MapScripts.Map8
             {
                 foreach (var stair in TeamStairs.Values)
                 {
-                    _map.NotifyPropAnimation(stair, "Raise", (AnimationFlags)2, 6.7f, false);
+                    NotifyPropAnimation(stair, "Raise", (AnimationFlags)2, 6.7f, false);
                 }
                 AnimationsNotified.Add("Raise");
             }
@@ -336,7 +334,7 @@ namespace MapScripts.Map8
             {
                 foreach (var stair in TeamStairs.Values)
                 {
-                    _map.NotifyPropAnimation(stair, "Close4", (AnimationFlags)2, 20.0f, false);
+                    NotifyPropAnimation(stair, "Close4", (AnimationFlags)2, 20.0f, false);
                 }
                 AnimationsNotified.Add("Close4");
             }
@@ -360,7 +358,7 @@ namespace MapScripts.Map8
             {
                 foreach (var stair in TeamStairs.Values)
                 {
-                    _map.NotifyPropAnimation(stair, "Close3", (AnimationFlags)2, 20.0f, false);
+                    NotifyPropAnimation(stair, "Close3", (AnimationFlags)2, 20.0f, false);
                 }
                 AnimationsNotified.Add("Close3");
             }
@@ -384,7 +382,7 @@ namespace MapScripts.Map8
             {
                 foreach (var stair in TeamStairs.Values)
                 {
-                    _map.NotifyPropAnimation(stair, "Close2", (AnimationFlags)2, 20.0f, false);
+                    NotifyPropAnimation(stair, "Close2", (AnimationFlags)2, 20.0f, false);
                 }
                 AnimationsNotified.Add("Close2");
             }
@@ -413,7 +411,7 @@ namespace MapScripts.Map8
             {
                 foreach (var stair in TeamStairs.Values)
                 {
-                    _map.NotifyPropAnimation(stair, "Close1", (AnimationFlags)2, 17.5f, false);
+                    NotifyPropAnimation(stair, "Close1", (AnimationFlags)2, 17.5f, false);
                 }
                 AnimationsNotified.Add("Close1");
             }

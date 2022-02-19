@@ -4,10 +4,8 @@ using GameServerCore.Enums;
 using LeagueSandbox.GameServer;
 using LeagueSandbox.GameServer.API;
 using LeagueSandbox.GameServer.GameObjects;
-using System;
 using System.Collections.Generic;
 using System.Numerics;
-using System.Text;
 
 namespace GameServerLib.GameObjects
 {
@@ -22,11 +20,8 @@ namespace GameServerLib.GameObjects
         public int TimerType { get; set; }
         public float SpawnDuration { get; set; }
         public float DoPlayVO { get; set; }
-        //Considering renaming this to just "IsAlive"
         public bool IsAlive { get; set; } = false;
         public float RespawnTimer { get; set; }
-
-        //Double-Check if we want these lists to be public
         public List<IMonster> Monsters { get; set; } = new List<IMonster>();
 
         private Game _game;
@@ -43,30 +38,42 @@ namespace GameServerLib.GameObjects
 
             game.PacketNotifier.NotifyS2C_CreateMinionCamp(this);
         }
+
         public void AddMonster(IMonster monster)
         {
-            _game.ObjectManager.AddObject(monster);
-
-            Monsters.Add(monster);
-            ApiEventManager.OnDeath.AddListener(monster, monster, OnMonsterDeath, true);
+            NotifyCampActivation();
+            var aiscript = monster.AIScript.ToString().Remove(0, 10);
+            var campMonster = new Monster
+                    (
+                    _game, monster.Name, monster.Model, monster.Position,
+                    monster.Direction, this, monster.Team, 0,
+                    monster.SpawnAnimation, monster.IsTargetable, monster.IgnoresCollision, aiscript,
+                    monster.DamageBonus, monster.HealthBonus, monster.InitialLevel
+                    );
+            Monsters.Add(campMonster);
+            ApiEventManager.OnDeath.AddListener(campMonster, campMonster, OnMonsterDeath, true);
+            _game.ObjectManager.AddObject(campMonster);
         }
+
         public void OnMonsterDeath(IDeathData deathData)
         {
             IMonster monster = deathData.Unit as IMonster;
             Monsters.Remove(monster);
             if (Monsters.Count == 0)
             {
-                IsAlive = false;
                 NotifyCampDeactivation(deathData);
             }
         }
 
         public void NotifyCampActivation()
         {
+            IsAlive = true;
             _game.PacketNotifier.NotifyS2C_ActivateMinionCamp(this);
         }
+
         public void NotifyCampDeactivation(IDeathData deathData = null)
         {
+            IsAlive = false;
             _game.PacketNotifier.NotifyS2C_Neutral_Camp_Empty(this, deathData);
         }
     }

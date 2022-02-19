@@ -1,7 +1,7 @@
 ﻿using GameServerCore;
 using GameServerCore.Packets.Handlers;
 using GameServerCore.Packets.PacketDefinitions.Requests;
-using System;
+using static GameServerLib.API.APIMapFunctionManager;
 
 namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 {
@@ -19,7 +19,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
         public override bool HandlePacket(int userId, SurrenderRequest req)
         {
             var c = _pm.GetPeerInfo(userId).Champion;
-            _game.Map.HandleSurrender(userId, c, req.VotedYes);
+            HandleSurrender(userId, c, req.VotedYes);
             return true;
         }
     }

@@ -10,6 +10,7 @@ using GameServerCore.Scripting.CSharp;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using LeagueSandbox.GameServer.API;
 using LeagueSandbox.GameServer.GameObjects.Stats;
+using static GameServerLib.API.APIMapFunctionManager;
 
 namespace MapScripts.Map1
 {
@@ -20,6 +21,7 @@ namespace MapScripts.Map1
             MinionPathingOverride = true,
             EnableBuildingProtection = true
         };
+
         public IMapScriptHandler _map;
         public virtual IGlobalData GlobalData { get; set; } = new GlobalData();
         public bool HasFirstBloodHappened { get; set; } = false;
@@ -247,14 +249,14 @@ namespace MapScripts.Map1
         public virtual void Init(IMapScriptHandler map)
         {
             _map = map;
-            MapScriptMetadata.MinionSpawnEnabled = map.IsMinionSpawnEnabled();
-            map.AddSurrender(1200000.0f, 300000.0f, 30.0f);
+            MapScriptMetadata.MinionSpawnEnabled = IsMinionSpawnEnabled();
+            AddSurrender(1200000.0f, 300000.0f, 30.0f);
 
             //Due to riot's questionable map-naming scheme some towers are missplaced into other lanes during outomated setup, so we have to manually fix them.
-            map.ChangeTowerOnMapList("Turret_T1_C_06_A", TeamId.TEAM_BLUE, LaneID.MIDDLE, LaneID.TOP);
-            map.ChangeTowerOnMapList("Turret_T1_C_07_A", TeamId.TEAM_BLUE, LaneID.MIDDLE, LaneID.BOTTOM);
+            ChangeTowerOnMapList("Turret_T1_C_06_A", TeamId.TEAM_BLUE, LaneID.MIDDLE, LaneID.TOP);
+            ChangeTowerOnMapList("Turret_T1_C_07_A", TeamId.TEAM_BLUE, LaneID.MIDDLE, LaneID.BOTTOM);
 
-            CreateLevelProps.CreateProps(map);
+            CreateLevelProps.CreateProps();
         }
 
         IStatsModifier TurretStatsModifier = new StatsModifier();
@@ -343,12 +345,12 @@ namespace MapScripts.Map1
             MinionModifiers[MinionSpawnType.MINION_TYPE_SUPER].HealthPoints.FlatBonus = 200.0f;
             MinionModifiers[MinionSpawnType.MINION_TYPE_SUPER].AttackDamage.FlatBonus = 10.0f;
 
-            NeutralMinionSpawn.InitializeCamps(_map);
+            NeutralMinionSpawn.InitializeCamps();
         }
 
         public void Update(float diff)
         {
-            var gameTime = _map.GameTime();
+            var gameTime = GameTime();
 
             NeutralMinionSpawn.OnUpdate(diff);
 
@@ -414,7 +416,7 @@ namespace MapScripts.Map1
         public void OnNexusDeath(IDeathData deathaData)
         {
             var nexus = deathaData.Unit;
-            _map.EndGame(nexus.Team, new Vector3(nexus.Position.X, nexus.GetHeight(), nexus.Position.Y), deathData: deathaData);
+            EndGame(nexus.Team, new Vector3(nexus.Position.X, nexus.GetHeight(), nexus.Position.Y), deathData: deathaData);
         }
 
         public void SpawnAllCamps()
@@ -429,20 +431,20 @@ namespace MapScripts.Map1
             if (time >= 90.0f * 1000)
             {
                 // Minions have spawned
-                _map.NotifyMapAnnouncement(EventID.OnMinionsSpawn, 0);
-                _map.NotifyMapAnnouncement(EventID.OnNexusCrystalStart, 0);
+                NotifyMapAnnouncement(EventID.OnMinionsSpawn, 0);
+                NotifyMapAnnouncement(EventID.OnNexusCrystalStart, 0);
                 AllAnnouncementsAnnounced = true;
             }
             else if (time >= 60.0f * 1000 && !AnnouncedEvents.Contains(EventID.OnStartGameMessage2))
             {
                 // 30 seconds until minions spawn
-                _map.NotifyMapAnnouncement(EventID.OnStartGameMessage2, _map.Id);
+                NotifyMapAnnouncement(EventID.OnStartGameMessage2, _map.Id);
                 AnnouncedEvents.Add(EventID.OnStartGameMessage2);
             }
             else if (time >= 30.0f * 1000 && !AnnouncedEvents.Contains(EventID.OnStartGameMessage1))
             {
                 // Welcome to Summoners Rift
-                _map.NotifyMapAnnouncement(EventID.OnStartGameMessage1, _map.Id);
+                NotifyMapAnnouncement(EventID.OnStartGameMessage1, _map.Id);
                 AnnouncedEvents.Add(EventID.OnStartGameMessage1);
             }
         }

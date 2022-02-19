@@ -9,9 +9,9 @@ using GameServerCore.Scripting.CSharp;
 using LeagueSandbox.GameServer.API;
 using LeagueSandbox.GameServer.Content;
 using LeagueSandbox.GameServer.GameObjects.Stats;
-using LeagueSandbox.GameServer.Logging;
 using LeagueSandbox.GameServer.Scripting.CSharp;
-using log4net;
+using static GameServerLib.API.APIMapFunctionManager;
+
 
 namespace MapScripts.Map12
 {
@@ -26,6 +26,7 @@ namespace MapScripts.Map12
             EnableBuildingProtection = true,
             InitialLevel = 3
         };
+
         private IMapScriptHandler _map;
         public virtual IGlobalData GlobalData { get; set; } = new GlobalData();
         public bool HasFirstBloodHappened { get; set; } = false;
@@ -202,7 +203,7 @@ namespace MapScripts.Map12
         {
             _map = map;
 
-            MapScriptMetadata.MinionSpawnEnabled = map.IsMinionSpawnEnabled();
+            MapScriptMetadata.MinionSpawnEnabled = IsMinionSpawnEnabled();
 
             foreach (var key in map.SpawnBarracks.Keys)
             {
@@ -212,15 +213,15 @@ namespace MapScripts.Map12
                 }
             }
 
-            map.AddSurrender(1200000.0f, 300000.0f, 30.0f);
+            AddSurrender(1200000.0f, 300000.0f, 30.0f);
 
             //Due to riot's questionable map-naming scheme some towers are missplaced into other lanes during outomated setup, so we have to manually fix them.
-            map.ChangeTowerOnMapList("Turret_T2_L_04_A", TeamId.TEAM_PURPLE, LaneID.TOP, LaneID.MIDDLE);
-            map.ChangeTowerOnMapList("Turret_T2_L_01_A", TeamId.TEAM_PURPLE, LaneID.TOP, LaneID.MIDDLE);
-            map.ChangeTowerOnMapList("Turret_T2_L_02_A", TeamId.TEAM_PURPLE, LaneID.TOP, LaneID.MIDDLE);
-            map.ChangeTowerOnMapList("Turret_T2_L_03_A", TeamId.TEAM_PURPLE, LaneID.TOP, LaneID.MIDDLE);
+            ChangeTowerOnMapList("Turret_T2_L_04_A", TeamId.TEAM_PURPLE, LaneID.TOP, LaneID.MIDDLE);
+            ChangeTowerOnMapList("Turret_T2_L_01_A", TeamId.TEAM_PURPLE, LaneID.TOP, LaneID.MIDDLE);
+            ChangeTowerOnMapList("Turret_T2_L_02_A", TeamId.TEAM_PURPLE, LaneID.TOP, LaneID.MIDDLE);
+            ChangeTowerOnMapList("Turret_T2_L_03_A", TeamId.TEAM_PURPLE, LaneID.TOP, LaneID.MIDDLE);
 
-            CreateLevelProps.CreateProps(_map, this);
+            CreateLevelProps.CreateProps(this);
         }
 
         IStatsModifier TurretStatsModifier = new StatsModifier();
@@ -266,8 +267,8 @@ namespace MapScripts.Map12
             TurretStatsModifier.MagicResist.FlatBonus = 1;
             TurretStatsModifier.AttackDamage.FlatBonus = 6;
 
-            _map.NotifyPropAnimation(Poros[0], "idle1_beam", (AnimationFlags)1, 0.0f, false);
-            _map.NotifyPropAnimation(Poros[2], "idle1_beam", (AnimationFlags)1, 0.0f, false);
+            NotifyPropAnimation(Poros[0], "idle1_beam", (AnimationFlags)1, 0.0f, false);
+            NotifyPropAnimation(Poros[2], "idle1_beam", (AnimationFlags)1, 0.0f, false);
 
             foreach (var key in Poros.Keys)
             {
@@ -275,22 +276,22 @@ namespace MapScripts.Map12
                 {
                     continue;
                 }
-                _map.NotifyPropAnimation(Poros[key], "idle1_prop", (AnimationFlags)1, 0.0f, false);
+                NotifyPropAnimation(Poros[key], "idle1_prop", (AnimationFlags)1, 0.0f, false);
             }
 
-            _map.NotifyPropAnimation(Poros[0], "disappear", (AnimationFlags)2, 0.0f, false);
-            _map.NotifyPropAnimation(Poros[1], "disappear", (AnimationFlags)2, 0.0f, false);
+            NotifyPropAnimation(Poros[0], "disappear", (AnimationFlags)2, 0.0f, false);
+            NotifyPropAnimation(Poros[1], "disappear", (AnimationFlags)2, 0.0f, false);
 
-            _map.NotifyPropAnimation(LongChains[0], "W_Wind_Strong", (AnimationFlags)1, 0.0f, false);
-            _map.NotifyPropAnimation(LongChains[3], "N_Wind_Strong", (AnimationFlags)1, 0.0f, false);
-            _map.NotifyPropAnimation(LongChains[2], "S_Wind_Strong", (AnimationFlags)1, 0.0f, false);
-            _map.NotifyPropAnimation(LongChains[2], "E_Wind_Strong", (AnimationFlags)1, 0.0f, false);
+            NotifyPropAnimation(LongChains[0], "W_Wind_Strong", (AnimationFlags)1, 0.0f, false);
+            NotifyPropAnimation(LongChains[3], "N_Wind_Strong", (AnimationFlags)1, 0.0f, false);
+            NotifyPropAnimation(LongChains[2], "S_Wind_Strong", (AnimationFlags)1, 0.0f, false);
+            NotifyPropAnimation(LongChains[2], "E_Wind_Strong", (AnimationFlags)1, 0.0f, false);
 
 
-            _map.NotifyPropAnimation(Chains[4], "wind_low", (AnimationFlags)1, 0.0f, false);
-            _map.NotifyPropAnimation(Chains[2], "wind_low", (AnimationFlags)1, 0.0f, false);
+            NotifyPropAnimation(Chains[4], "wind_low", (AnimationFlags)1, 0.0f, false);
+            NotifyPropAnimation(Chains[2], "wind_low", (AnimationFlags)1, 0.0f, false);
 
-            NeutralMinionSpawn.InitializeJungle(_map);
+            NeutralMinionSpawn.InitializeJungle();
         }
 
         //This function gets executed every server tick
@@ -298,7 +299,7 @@ namespace MapScripts.Map12
         {
             NeutralMinionSpawn.OnUpdate(diff);
 
-            var gameTime = _map.GameTime();
+            var gameTime = GameTime();
             if (!AllAnnouncementsAnnounced)
             {
                 CheckMapInitialAnnouncements(gameTime);
@@ -337,7 +338,7 @@ namespace MapScripts.Map12
         public void OnNexusDeath(IDeathData deathaData)
         {
             var nexus = deathaData.Unit;
-            _map.EndGame(nexus.Team, new Vector3(nexus.Position.X, nexus.GetHeight(), nexus.Position.Y), deathData: deathaData);
+            EndGame(nexus.Team, new Vector3(nexus.Position.X, nexus.GetHeight(), nexus.Position.Y), deathData: deathaData);
         }
 
         public void SpawnAllCamps()
@@ -352,14 +353,14 @@ namespace MapScripts.Map12
             if (time >= 60.0f * 1000)
             {
                 // Minions have spawned
-                _map.NotifyMapAnnouncement(EventID.OnMinionsSpawn, 0);
-                _map.NotifyMapAnnouncement(EventID.OnNexusCrystalStart, 0);
+                NotifyMapAnnouncement(EventID.OnMinionsSpawn, 0);
+                NotifyMapAnnouncement(EventID.OnNexusCrystalStart, 0);
                 AllAnnouncementsAnnounced = true;
             }
             else if (time >= 30.0f * 1000 && !AnnouncedEvents.Contains(EventID.OnStartGameMessage1))
             {
                 // Welcome to the Howling Abyss
-                _map.NotifyMapAnnouncement(EventID.OnStartGameMessage1, _map.Id);
+                NotifyMapAnnouncement(EventID.OnStartGameMessage1, _map.Id);
                 AnnouncedEvents.Add(EventID.OnStartGameMessage1);
             }
         }

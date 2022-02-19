@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
-using System.Reflection;
 using System.Text;
 using Force.Crc32;
 using GameServerCore;
@@ -12,20 +9,15 @@ using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
 using GameServerCore.Maps;
-using GameServerCore.NetInfo;
-using GameServerLib.GameObjects;
-using LeaguePackets.Game.Common;
-using LeaguePackets.Game.Events;
+using GameServerLib.API;
 using LeagueSandbox.GameServer.Content;
 using LeagueSandbox.GameServer.GameObjects;
-using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
-using LeagueSandbox.GameServer.GameObjects.AttackableUnits.Buildings.AnimatedBuildings;
 using LeagueSandbox.GameServer.GameObjects.Other;
 using LeagueSandbox.GameServer.Logging;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using log4net;
 using MapScripts;
-using PacketDefinitions420;
+using static GameServerLib.API.APIMapFunctionManager;
 
 namespace LeagueSandbox.GameServer.Maps
 {
@@ -58,6 +50,7 @@ namespace LeagueSandbox.GameServer.Maps
         /// </summary>
         public IMapScript MapScript { get; private set; }
 
+        //Investigate if we'd want All building to be handled directly in the MapScripts
         public Dictionary<LaneID, List<Vector2>> BlueMinionPathing;
         public Dictionary<LaneID, List<Vector2>> PurpleMinionPathing;
         public Dictionary<string, IMapObject> SpawnBarracks { get; set; }
@@ -67,12 +60,10 @@ namespace LeagueSandbox.GameServer.Maps
         public Dictionary<TeamId, Dictionary<LaneID, List<IInhibitor>>> InhibitorList { get; set; }
         public Dictionary<TeamId, IFountain> FountainList { get; set; } = new Dictionary<TeamId, IFountain>();
         public Dictionary<TeamId, IGameObject> ShopList { get; set; } = new Dictionary<TeamId, IGameObject>();
-        public Dictionary<int, List<MonsterTemplate>> MonsterTemplates = new Dictionary<int, List<MonsterTemplate>>();
+        public Dictionary<int, List<IMonster>> Monsters = new Dictionary<int, List<IMonster>>();
         public Dictionary<TeamId, Dictionary<int, Dictionary<int, Vector2>>> PlayerSpawnPoints { get; set; } = new Dictionary<TeamId, Dictionary<int, Dictionary<int, Vector2>>>();
 
-        private int _minionNumber;
-        private int _cannonMinionCount;
-        private readonly Dictionary<TeamId, SurrenderHandler> _surrenders = new Dictionary<TeamId, SurrenderHandler>();
+        public readonly Dictionary<TeamId, SurrenderHandler> Surrenders = new Dictionary<TeamId, SurrenderHandler>();
 
         /// <summary>
         /// Instantiates map related game settings such as collision handler, navigation grid, announcer events, and map properties.
@@ -113,6 +104,8 @@ namespace LeagueSandbox.GameServer.Maps
             {
                 PlayerSpawnPoints = _game.Config.GetMapSpawns();
             }
+
+            SetMap(game, this);
         }
 
         /// <summary>
@@ -122,7 +115,9 @@ namespace LeagueSandbox.GameServer.Maps
         public void Update(float diff)
         {
             CollisionHandler.Update();
+            MapScript.Update(diff);
 
+            //TODO:Port everything bellow to MapScripts.
             if (MapScript.MapScriptMetadata.MinionSpawnEnabled)
             {
                 if (_minionNumber > 0)
@@ -147,7 +142,7 @@ namespace LeagueSandbox.GameServer.Maps
                     _minionNumber++;
                 }
             }
-            foreach (var surrender in _surrenders.Values)
+            foreach (var surrender in Surrenders.Values)
             {
                 surrender.Update(diff);
             }
@@ -159,8 +154,6 @@ namespace LeagueSandbox.GameServer.Maps
                     fountain.Update(diff);
                 }
             }
-
-            MapScript.Update(diff);
         }
 
         /// <summary>
@@ -168,7 +161,7 @@ namespace LeagueSandbox.GameServer.Maps
         /// </summary>
         public void Init()
         {
-            LoadBuildings();
+            LoadMapInfo();
             MapScript.Init(this);
             if (MapScript.MapScriptMetadata.EnableBuildingProtection)
             {
@@ -177,7 +170,7 @@ namespace LeagueSandbox.GameServer.Maps
             SpawnBuildings();
         }
 
-        public void LoadBuildings()
+        public void LoadMapInfo()
         {
             TurretList = new Dictionary<TeamId, Dictionary<LaneID, List<ILaneTurret>>>{
                 { TeamId.TEAM_BLUE, new Dictionary<LaneID, List<ILaneTurret>>{ { LaneID.NONE, new List<ILaneTurret>() },{ LaneID.TOP, new List<ILaneTurret>()}, {LaneID.MIDDLE, new List<ILaneTurret>()}, {LaneID.BOTTOM, new List<ILaneTurret>()} } },
@@ -192,7 +185,7 @@ namespace LeagueSandbox.GameServer.Maps
             BlueMinionPathing = new Dictionary<LaneID, List<Vector2>> { { LaneID.NONE, new List<Vector2>() }, { LaneID.TOP, new List<Vector2>() }, { LaneID.MIDDLE, new List<Vector2>() }, { LaneID.BOTTOM, new List<Vector2>() } };
             PurpleMinionPathing = new Dictionary<LaneID, List<Vector2>> { { LaneID.NONE, new List<Vector2>() }, { LaneID.TOP, new List<Vector2>() }, { LaneID.MIDDLE, new List<Vector2>() }, { LaneID.BOTTOM, new List<Vector2>() } };
 
-            // Below is where we create the buildings.
+            //Investigate if we can unhardcode these variables
             var inhibRadius = 214;
             var nexusRadius = 353;
             var sightRange = 1700;
@@ -215,20 +208,21 @@ namespace LeagueSandbox.GameServer.Maps
                 if (objectType == GameObjectTypes.ObjAnimated_HQ || (teamId != TeamId.TEAM_NEUTRAL && mapObject.Name == MapScript.NexusModels[teamId]))
                 {
                     //Nexus model changes dont seem to take effect in-game
-                    NexusList.Add(new Nexus(_game, MapScript.NexusModels[teamId], teamId, nexusRadius, position, sightRange, Crc32Algorithm.Compute(Encoding.UTF8.GetBytes(mapObject.Name)) | 0xFF000000));
+                    NexusList.Add(CreateNexus(mapObject.Name, MapScript.NexusModels[teamId], position, teamId, nexusRadius, sightRange));
                 }
                 // Inhibitors
                 else if (objectType == GameObjectTypes.ObjAnimated_BarracksDampener)
                 {
                     //Inhibitor model changes dont seem to take effect in-game
-                    InhibitorList[teamId][lane].Add(new Inhibitor(_game, MapScript.InhibitorModels[teamId], lane, teamId, inhibRadius, position, sightRange, Crc32Algorithm.Compute(Encoding.UTF8.GetBytes(mapObject.Name)) | 0xFF000000));
+                    InhibitorList[teamId][lane].Add(CreateInhibitor(mapObject.Name, MapScript.InhibitorModels[teamId], position, teamId, lane, inhibRadius, sightRange));
                 }
                 // Turrets
                 else if (objectType == GameObjectTypes.ObjAIBase_Turret)
                 {
                     if (mapObject.Name.Contains("Shrine"))
                     {
-                        TurretList[teamId][lane].Add(new LaneTurret(_game, mapObject.Name + "_A", MapScript.TowerModels[teamId][TurretType.FOUNTAIN_TURRET], position, teamId, TurretType.FOUNTAIN_TURRET, GetTurretItems(TurretType.FOUNTAIN_TURRET), 0, LaneID.NONE, mapObject, MapScript.LaneTurretAI));
+
+                        TurretList[teamId][lane].Add(CreateTurret(mapObject.Name + "_A", MapScript.TowerModels[teamId][TurretType.FOUNTAIN_TURRET], position, teamId, TurretType.FOUNTAIN_TURRET, GetTurretItems(TurretType.FOUNTAIN_TURRET), LaneID.NONE, MapScript.LaneTurretAI, mapObject));
                         continue;
                     }
 
@@ -242,7 +236,7 @@ namespace LeagueSandbox.GameServer.Maps
                         continue;
                     }
 
-                    TurretList[teamId][lane].Add(new LaneTurret(_game, mapObject.Name + "_A", MapScript.TowerModels[teamId][turretType], position, teamId, turretType, GetTurretItems(turretType), 0, lane, mapObject, MapScript.LaneTurretAI));
+                    TurretList[teamId][lane].Add(CreateTurret(mapObject.Name + "_A", MapScript.TowerModels[teamId][turretType], position, teamId, turretType, GetTurretItems(turretType), lane, MapScript.LaneTurretAI, mapObject));
                 }
                 else if (objectType == GameObjectTypes.InfoPoint)
                 {
@@ -258,7 +252,7 @@ namespace LeagueSandbox.GameServer.Maps
                 }
                 else if (objectType == GameObjectTypes.ObjBuilding_Shop)
                 {
-                    ShopList.Add(teamId, new GameObject(_game, position, netId: Crc32Algorithm.Compute(Encoding.UTF8.GetBytes(mapObject.Name)) | 0xFF000000, team: teamId));
+                    ShopList.Add(teamId, CreateShop(mapObject.Name, position, teamId));
                 }
             }
 
@@ -301,419 +295,5 @@ namespace LeagueSandbox.GameServer.Maps
                 }
             }
         }
-
-        //Spawn Buildings
-        public void SpawnBuildings()
-        {
-            //Spawn Nexus
-            foreach (var nexus in NexusList)
-            {
-                _game.ObjectManager.AddObject(nexus);
-            }
-            foreach (var team in InhibitorList.Keys)
-            {
-                foreach (var lane in InhibitorList[team].Keys)
-                {
-                    //Spawn Inhibitors
-                    foreach (var inhibitor in InhibitorList[team][lane])
-                    {
-                        _game.ObjectManager.AddObject(inhibitor);
-                    }
-                    //Spawn Turrets
-                    foreach (var turret in TurretList[team][lane])
-                    {
-                        // Adds Turrets
-                        _game.ObjectManager.AddObject(turret);
-                    }
-                }
-                //Spawn FountainTurrets
-                foreach (var turret in TurretList[team][LaneID.NONE])
-                {
-                    // Adds FountainTurret
-                    _game.ObjectManager.AddObject(turret);
-                }
-            }
-        }
-
-        //Load Building Protections
-        public void LoadBuildingProtection()
-        {
-            //I can't help but feel there's a better way to do this
-            Dictionary<TeamId, List<IInhibitor>> TeamInhibitors = new Dictionary<TeamId, List<IInhibitor>> { { TeamId.TEAM_BLUE, new List<IInhibitor>() }, { TeamId.TEAM_PURPLE, new List<IInhibitor>() } };
-            foreach (var teams in InhibitorList.Keys)
-            {
-                foreach (var lane in InhibitorList[teams].Keys)
-                {
-                    foreach (var inhibs in InhibitorList[teams][lane])
-                    {
-                        TeamInhibitors[teams].Add(inhibs);
-                    }
-                }
-            }
-
-            foreach (var nexus in NexusList)
-            {
-                // Adds Protection to Nexus
-                _game.ProtectionManager.AddProtection(nexus, TurretList[nexus.Team][LaneID.MIDDLE].FindAll(turret => turret.Type == TurretType.NEXUS_TURRET).ToArray(), TeamInhibitors[nexus.Team].ToArray());
-            }
-
-            foreach (var InhibTeam in TeamInhibitors.Keys)
-            {
-                foreach (var inhibitor in TeamInhibitors[InhibTeam])
-                {
-                    var inhibitorTurret = TurretList[inhibitor.Team][inhibitor.Lane].First(turret => turret.Type == TurretType.INHIBITOR_TURRET);
-
-                    // Adds Protection to Inhibitors
-                    if (inhibitorTurret != null)
-                    {
-                        // Depends on the first available inhibitor turret.
-                        _game.ProtectionManager.AddProtection(inhibitor, false, inhibitorTurret);
-                    }
-
-                    // Adds Protection to Turrets
-                    foreach (var turret in TurretList[inhibitor.Team][inhibitor.Lane])
-                    {
-                        if (turret.Type == TurretType.NEXUS_TURRET)
-                        {
-                            _game.ProtectionManager.AddProtection(turret, false, TeamInhibitors[inhibitor.Team].ToArray());
-                        }
-                        else if (turret.Type == TurretType.INHIBITOR_TURRET)
-                        {
-                            _game.ProtectionManager.AddProtection(turret, false, TurretList[inhibitor.Team][inhibitor.Lane].First(dependTurret => dependTurret.Type == TurretType.INNER_TURRET));
-                        }
-                        else if (turret.Type == TurretType.INNER_TURRET)
-                        {
-                            //Checks if there are outer turrets
-                            if (TurretList[inhibitor.Team][inhibitor.Lane].Any(outerTurret => outerTurret.Type == TurretType.OUTER_TURRET))
-                            {
-                                _game.ProtectionManager.AddProtection(turret, false, TurretList[inhibitor.Team][inhibitor.Lane].First(dependTurret => dependTurret.Type == TurretType.OUTER_TURRET));
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        //Bellow is stuff to comunicate info between this script and the map script
-
-        //Tower stuff
-        public int[] GetTurretItems(TurretType type)
-        {
-            if (!MapScript.TurretItems.ContainsKey(type))
-            {
-                return null;
-            }
-
-            return MapScript.TurretItems[type];
-        }
-
-        public void ChangeTowerOnMapList(string towerName, TeamId team, LaneID currentLaneId, LaneID desiredLaneID)
-        {
-            var tower = TurretList[team][currentLaneId].Find(x => x.Name == towerName);
-            tower.SetLaneID(desiredLaneID);
-            TurretList[team][currentLaneId].Remove(tower);
-            TurretList[team][desiredLaneID].Add(tower);
-        }
-
-        //The way the turret spawning is handled above is based on the inhibitor lanes, so for example, if there's no mid inhibitor, no midlane towers would be spawned. So this is so we can spawn them manually
-        public void SpawnTurret(ILaneTurret turret, bool hasProtection, bool protectionDependsOfAll = false, IAttackableUnit[] protectedBy = null)
-        {
-            if (hasProtection && protectedBy != null)
-            {
-                _game.ProtectionManager.AddProtection(turret, protectionDependsOfAll, protectedBy);
-            }
-            _game.ObjectManager.AddObject(turret);
-        }
-
-        //Inhibitor stuff
-        public IInhibitor GetInhibitorById(uint id)
-        {
-            foreach (TeamId team in InhibitorList.Keys)
-            {
-                foreach (LaneID lane in InhibitorList[team].Keys)
-                {
-                    foreach (var inhibitor in InhibitorList[team][lane])
-                    {
-                        if (inhibitor.NetId == id)
-                        {
-                            return inhibitor;
-                        }
-                    }
-                }
-            }
-            return null;
-        }
-
-        public bool AllInhibitorsDestroyedFromTeam(TeamId team)
-        {
-            foreach (LaneID lane in InhibitorList[team].Keys)
-            {
-                foreach (var inhibitor in InhibitorList[team][lane])
-                {
-                    if (inhibitor.Team == team && inhibitor.InhibitorState == InhibitorState.ALIVE)
-                    {
-                        return false;
-                    }
-                }
-            }
-            return true;
-        }
-
-        //Minion Stuff
-        public Tuple<TeamId, Vector2> GetMinionSpawnPosition(string spawnPosition)
-        {
-            var coords = SpawnBarracks[spawnPosition].CentralPoint;
-
-            var teamID = TeamId.TEAM_BLUE;
-            if (spawnPosition.Contains("Chaos"))
-            {
-                teamID = TeamId.TEAM_PURPLE;
-            }
-            return new Tuple<TeamId, Vector2>(teamID, new Vector2(coords.X, coords.Z));
-        }
-
-        public void CreateLaneMinion(List<MinionSpawnType> list, int minionNo, string barracksName, List<Vector2> waypoints)
-        {
-            if (list.Count <= minionNo)
-            {
-                return;
-            }
-
-            var team = GetMinionSpawnPosition(barracksName).Item1;
-            var m = new LaneMinion(_game, list[minionNo], barracksName, waypoints, MapScript.MinionModels[team][list[minionNo]], 0, team, MapScript.LaneMinionAI);
-            _game.ObjectManager.AddObject(m);
-        }
-        public IMinion CreateMinion(
-            string name, string model, Vector2 position, uint netId = 0,
-            TeamId team = TeamId.TEAM_NEUTRAL, int skinId = 0, bool ignoreCollision = false,
-            bool isTargetable = false, string aiScript = "", int damageBonus = 0,
-            int healthBonus = 0, int initialLevel = 1)
-        {
-            var m = new Minion(_game, null, position, model, name, netId, team, skinId, ignoreCollision, isTargetable, null, aiScript, damageBonus, healthBonus, initialLevel);
-            _game.ObjectManager.AddObject(m);
-            return m;
-        }
-
-        public bool IsMinionSpawnEnabled()
-        {
-            return _game.Config.GameFeatures.HasFlag(FeatureFlags.EnableLaneMinions);
-        }
-
-        public bool SetUpLaneMinion()
-        {
-            int cannonMinionCap = 2;
-            foreach (var barrack in SpawnBarracks)
-            {
-                List<Vector2> waypoint = new List<Vector2>();
-                TeamId opposed_team = barrack.Value.GetOpposingTeamID();
-                TeamId barrackTeam = barrack.Value.GetTeamID();
-                LaneID lane = barrack.Value.GetSpawnBarrackLaneID();
-                IInhibitor inhibitor = InhibitorList[opposed_team][lane][0];
-                bool isInhibitorDead = inhibitor.InhibitorState == InhibitorState.DEAD && !inhibitor.RespawnAnnounced;
-                bool areAllInhibitorsDead = AllInhibitorsDestroyedFromTeam(opposed_team) && !inhibitor.RespawnAnnounced;
-                Tuple<int, List<MinionSpawnType>> spawnWave = MapScript.MinionWaveToSpawn(_game.GameTime, _cannonMinionCount, isInhibitorDead, areAllInhibitorsDead);
-                cannonMinionCap = spawnWave.Item1;
-
-                if (barrackTeam == TeamId.TEAM_BLUE)
-                {
-                    waypoint = BlueMinionPathing[lane];
-                }
-                else if (barrackTeam == TeamId.TEAM_PURPLE)
-                {
-                    waypoint = PurpleMinionPathing[lane];
-                }
-
-                CreateLaneMinion(spawnWave.Item2, _minionNumber, barrack.Value.Name, waypoint);
-            }
-
-            if (_minionNumber < 8)
-            {
-                return false;
-            }
-
-            if (_cannonMinionCount >= cannonMinionCap)
-            {
-                _cannonMinionCount = 0;
-            }
-            else
-            {
-                _cannonMinionCount++;
-            }
-            return true;
-        }
-
-        //Jungle/Camps
-        public IMonsterCamp CreateJungleCamp(Vector3 position, byte groupNumber, TeamId teamSideOfTheMap, string campTypeIcon, float respawnTimer, bool doPlayVO = false, byte revealEvent = 74, float spawnDuration = 0.0f)
-        {
-            return new MonsterCamp(_game, position, groupNumber, teamSideOfTheMap, campTypeIcon, respawnTimer, doPlayVO, revealEvent, spawnDuration);
-        }
-
-        public void CreateJungleMonster
-        (
-            string name, string model, Vector2 position, Vector3 faceDirection,
-            IMonsterCamp monsterCamp, TeamId team = TeamId.TEAM_NEUTRAL, string spawnAnimation = "", uint netId = 0,
-            bool isTargetable = true, bool ignoresCollision = false, string aiScript = "",
-            int damageBonus = 0, int healthBonus = 0, int initialLevel = 1
-        )
-        {
-            if (MonsterTemplates.ContainsKey(monsterCamp.CampIndex))
-            {
-                MonsterTemplates[monsterCamp.CampIndex].Add(new MonsterTemplate(name, model, position, faceDirection, monsterCamp, team, spawnAnimation, netId, isTargetable, ignoresCollision, aiScript, damageBonus, healthBonus, initialLevel));
-            }
-            else
-            {
-                MonsterTemplates.Add(monsterCamp.CampIndex, new List<MonsterTemplate> { new MonsterTemplate(name, model, position, faceDirection, monsterCamp, team, spawnAnimation, netId, isTargetable, ignoresCollision, aiScript, damageBonus, healthBonus, initialLevel) });
-            }
-        }
-
-        public void SpawnCamp(IMonsterCamp monsterCamp)
-        {
-            if (MonsterTemplates.ContainsKey(monsterCamp.CampIndex))
-            {
-                foreach (var template in MonsterTemplates[monsterCamp.CampIndex])
-                {
-                    monsterCamp.AddMonster(new Monster(_game, template.Name, template.Model, template.Position, template.FaceDirection, template.Camp, template.Team, template.NetId,
-                        template.SpawnAnimation, template.IsTargetable, template.IgnoresCollision, template.AiScript, template.DamageBonus, template.HealthBonus, template.InitialLevel));
-                }
-                monsterCamp.IsAlive = true;
-                monsterCamp.NotifyCampActivation();
-            }
-            else
-            {
-                _logger.Warn($"No Monster Camp with ID: {monsterCamp.CampIndex} found");
-            }
-        }
-
-        public void SetMinimapIcon(IAttackableUnit unit, string iconCategory = "", bool changeIcon = false, string borderCategory = "", bool changeBorder = false)
-        {
-            _game.PacketNotifier.NotifyS2C_UnitSetMinimapIcon(unit, iconCategory, changeIcon, borderCategory, changeBorder);
-        }
-
-        public ILevelProp AddLevelProp(string name, string model, Vector2 position, float height, Vector3 direction, Vector3 posOffset, Vector3 scale, int skinId = 0, byte skillLevel = 0, byte rank = 0, byte type = 2, uint netId = 0, byte netNodeId = 64)
-        {
-            var prop = new LevelProp(_game, netNodeId, name, model, position, height, direction, posOffset, scale, skinId, skillLevel, rank, type, netId);
-            _game.ObjectManager.AddObject(prop);
-            return prop;
-        }
-        public void NotifyPropAnimation(ILevelProp prop, string animation, AnimationFlags animationFlag, float duration, bool destroyPropAfterAnimation)
-        {
-            var animationData = new UpdateLevelPropDataPlayAnimation
-            {
-                AnimationName = animation,
-                AnimationFlags = (uint)animationFlag,
-                Duration = duration,
-                DestroyPropAfterAnimation = destroyPropAfterAnimation,
-                StartMissionTime = _game.GameTime,
-                NetID = prop.NetId
-            };
-            _game.PacketNotifier.NotifyUpdateLevelPropS2C(animationData);
-        }
-
-        public void AddSurrender(float time, float restTime, float length)
-        {
-            _surrenders.Add(TeamId.TEAM_BLUE, new SurrenderHandler(_game, TeamId.TEAM_BLUE, time, restTime, length));
-            _surrenders.Add(TeamId.TEAM_PURPLE, new SurrenderHandler(_game, TeamId.TEAM_PURPLE, time, restTime, length));
-        }
-
-        public void HandleSurrender(int userId, IChampion who, bool vote)
-        {
-            if (_surrenders.ContainsKey(who.Team))
-                _surrenders[who.Team].HandleSurrender(userId, who, vote);
-        }
-        public void AddFountain(TeamId team, Vector2 position)
-        {
-            FountainList.Add(team, new Fountain(_game, team, position, 1000));
-        }
-
-        public void SetGameFeatures(FeatureFlags featureFlag, bool isEnabled)
-        {
-            _game.Config.SetGameFeatures(featureFlag, isEnabled);
-        }
-
-        public void NotifyMapAnnouncement(GameServerCore.Enums.EventID Event, int mapId = 0)
-        {
-            _game.PacketNotifier.NotifyS2C_OnEventWorld(PacketExtensions.GetAnnouncementID(Event, mapId));
-        }
-
-        //Game Time
-        public float GameTime()
-        {
-            return _game.GameTime;
-        }
-
-        public void EndGame(TeamId losingTeam, Vector3 finalCameraPosition, float endGameTimer = 5000.0f, bool moveCamera = true, float cameraTimer = 3.0f, bool disableUI = true, IDeathData deathData = null)
-        {
-            //TODO: check if mapScripts should handle this directly
-            var players = _game.PlayerManager.GetPlayers();
-            _game.Stop();
-            if (deathData != null)
-            {
-                _game.PacketNotifier.NotifyBuilding_Die(deathData);
-            }
-            _game.PacketNotifier.NotifyS2C_EndGame(losingTeam, endGameTimer);
-            foreach (var player in players)
-            {
-                if (disableUI)
-                {
-                    _game.PacketNotifier.NotifyS2C_DisableHUDForEndOfGame(player);
-                }
-                if (moveCamera)
-                {
-                    _game.PacketNotifier.NotifyS2C_MoveCameraToPoint(player, Vector3.Zero, finalCameraPosition, cameraTimer);
-                }
-            }
-            _game.SetGameToExit();
-        }
-    }
-}
-
-public class MonsterTemplate
-{
-    public string Name { get; set; }
-    public string Model { get; set; }
-    public Vector2 Position { get; set; }
-    public Vector3 FaceDirection { get; set; }
-    public IMonsterCamp Camp { get; set; }
-    public TeamId Team { get; set; }
-    public string SpawnAnimation { get; set; }
-    public uint NetId { get; set; }
-    public bool IsTargetable { get; set; }
-    public bool IgnoresCollision { get; set; }
-    public string AiScript { get; set; }
-    public int DamageBonus { get; set; }
-    public int HealthBonus { get; set; }
-    public int InitialLevel { get; set; }
-
-    public MonsterTemplate(
-        string name,
-        string model,
-        Vector2 position,
-        Vector3 faceDirection,
-        IMonsterCamp monsterCamp,
-        TeamId team = TeamId.TEAM_NEUTRAL,
-        string spawnAnimation = "",
-        uint netId = 0,
-        bool isTargetable = true,
-        bool ignoresCollision = false,
-        string aiScript = "",
-        int damageBonus = 0,
-        int healthBonus = 0,
-        int initialLevel = 1
-    )
-    {
-        Name = name;
-        Model = model;
-        FaceDirection = faceDirection;
-        Camp = monsterCamp;
-        Team = team;
-        SpawnAnimation = spawnAnimation;
-        Position = position;
-        NetId = netId;
-        IsTargetable = isTargetable;
-        IgnoresCollision = ignoresCollision;
-        AiScript = aiScript;
-        DamageBonus = damageBonus;
-        HealthBonus = healthBonus;
-        InitialLevel = initialLevel;
     }
 }
