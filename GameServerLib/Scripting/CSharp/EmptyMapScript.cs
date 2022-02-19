@@ -8,6 +8,7 @@ using GameServerCore.Maps;
 using GameServerCore.Scripting.CSharp;
 using LeagueSandbox.GameServer.Content;
 using LeagueSandbox.GameServer.Scripting.CSharp;
+using static GameServerLib.API.APIMapFunctionManager;
 
 namespace MapScripts
 {
@@ -17,7 +18,7 @@ namespace MapScripts
         {
             MinionPathingOverride = true,
         };
-        private IMapScriptHandler _map;
+
         public virtual IGlobalData GlobalData { get; set; } = new GlobalData();
         public bool HasFirstBloodHappened { get; set; } = false;
         public long NextSpawnTime { get; set; } = 90 * 1000;
@@ -104,10 +105,8 @@ namespace MapScripts
         //This function is executed in-between Loading the map structures and applying the structure protections. Is the first thing on this script to be executed
         public void Init(IMapScriptHandler map)
         {
-            _map = map;
-
-            MapScriptMetadata.MinionSpawnEnabled = map.IsMinionSpawnEnabled();
-            map.AddSurrender(1200000.0f, 300000.0f, 30.0f);
+            MapScriptMetadata.MinionSpawnEnabled = IsMinionSpawnEnabled();
+            AddSurrender(1200000.0f, 300000.0f, 30.0f);
         }
         public void OnMatchStart()
         {

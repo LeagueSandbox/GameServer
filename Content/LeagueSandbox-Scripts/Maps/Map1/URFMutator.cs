@@ -1,10 +1,10 @@
-﻿using System;
-using GameServerCore.Domain;
+﻿using GameServerCore.Domain;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 using GameServerCore.Maps;
 using LeagueSandbox.GameServer.Content;
 using GameServerCore.Scripting.CSharp;
 using LeagueSandbox.GameServer.Scripting.CSharp;
+using static GameServerLib.API.APIMapFunctionManager;
 
 namespace MapScripts.Map1
 {
@@ -20,7 +20,7 @@ namespace MapScripts.Map1
         public override void Init(IMapScriptHandler map)
         {
             base.Init(map);
-            map.SetGameFeatures(GameServerCore.Enums.FeatureFlags.EnableManaCosts, false);
+            SetGameFeatures(GameServerCore.Enums.FeatureFlags.EnableManaCosts, false);
         }
 
         public override void OnMatchStart()

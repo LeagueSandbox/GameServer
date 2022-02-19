@@ -10,6 +10,7 @@ using LeagueSandbox.GameServer.API;
 using LeagueSandbox.GameServer.Content;
 using LeagueSandbox.GameServer.GameObjects.Stats;
 using LeagueSandbox.GameServer.Scripting.CSharp;
+using static GameServerLib.API.APIMapFunctionManager;
 
 namespace MapScripts.Map10
 {
@@ -20,6 +21,7 @@ namespace MapScripts.Map10
             EnableBuildingProtection = true,
             StartingGold = 825.0f
         };
+
         private IMapScriptHandler _map;
         public virtual IGlobalData GlobalData { get; set; } = new GlobalData();
         public bool HasFirstBloodHappened { get; set; } = false;
@@ -195,14 +197,14 @@ namespace MapScripts.Map10
         {
             _map = map;
 
-            MapScriptMetadata.MinionSpawnEnabled = map.IsMinionSpawnEnabled();
-            map.AddSurrender(1200000.0f, 300000.0f, 30.0f);
+            MapScriptMetadata.MinionSpawnEnabled = IsMinionSpawnEnabled();
+            AddSurrender(1200000.0f, 300000.0f, 30.0f);
 
             //Due to riot's questionable map-naming scheme some towers are missplaced into other lanes during outomated setup, so we have to manually fix them.
-            map.ChangeTowerOnMapList("Turret_T1_C_07_A", TeamId.TEAM_BLUE, LaneID.MIDDLE, LaneID.BOTTOM);
-            map.ChangeTowerOnMapList("Turret_T1_C_06_A", TeamId.TEAM_BLUE, LaneID.MIDDLE, LaneID.TOP);
+            ChangeTowerOnMapList("Turret_T1_C_07_A", TeamId.TEAM_BLUE, LaneID.MIDDLE, LaneID.BOTTOM);
+            ChangeTowerOnMapList("Turret_T1_C_06_A", TeamId.TEAM_BLUE, LaneID.MIDDLE, LaneID.TOP);
 
-            CreateLevelProps.CreateProps(map);
+            CreateLevelProps.CreateProps();
         }
 
         IStatsModifier TurretStatsModifier = new StatsModifier();
@@ -248,7 +250,7 @@ namespace MapScripts.Map10
             TurretStatsModifier.MagicResist.FlatBonus = 1;
             TurretStatsModifier.AttackDamage.FlatBonus = 4;
 
-            NeutralMinionSpawn.InitializeCamps(_map);
+            NeutralMinionSpawn.InitializeCamps();
         }
 
         //This function gets executed every server tick
@@ -256,7 +258,7 @@ namespace MapScripts.Map10
         {
             NeutralMinionSpawn.OnUpdate(diff);
 
-            float gameTime = _map.GameTime();
+            float gameTime = GameTime();
             if (!AllAnnouncementsAnnounced)
             {
                 CheckInitialMapAnnouncements(gameTime);
@@ -296,7 +298,7 @@ namespace MapScripts.Map10
         public void OnNexusDeath(IDeathData deathaData)
         {
             var nexus = deathaData.Unit;
-            _map.EndGame(nexus.Team, new Vector3(nexus.Position.X, nexus.GetHeight(), nexus.Position.Y), deathData: deathaData);
+            EndGame(nexus.Team, new Vector3(nexus.Position.X, nexus.GetHeight(), nexus.Position.Y), deathData: deathaData);
         }
 
         public void SpawnAllCamps()
@@ -311,27 +313,27 @@ namespace MapScripts.Map10
             if (time >= 180.0f * 1000)
             {
                 //The Altars have unlocked!
-                _map.NotifyMapAnnouncement(EventID.OnStartGameMessage4, _map.Id);
+                NotifyMapAnnouncement(EventID.OnStartGameMessage4, _map.Id);
                 AllAnnouncementsAnnounced = true;
             }
             else if (time >= 150.0f * 1000 && !AnnouncedEvents.Contains(EventID.OnStartGameMessage2))
             {
                 // The Altars will unlock in 30 seconds
-                _map.NotifyMapAnnouncement(EventID.OnStartGameMessage2, _map.Id);
+                NotifyMapAnnouncement(EventID.OnStartGameMessage2, _map.Id);
                 AnnouncedEvents.Add(EventID.OnStartGameMessage2);
 
             }
             else if (time >= 75.0f * 1000 && !AnnouncedEvents.Contains(EventID.OnStartGameMessage3))
             {
                 // Minions have Spawned
-                _map.NotifyMapAnnouncement(EventID.OnStartGameMessage3, _map.Id);
-                _map.NotifyMapAnnouncement(EventID.OnNexusCrystalStart, 0);
+                NotifyMapAnnouncement(EventID.OnStartGameMessage3, _map.Id);
+                NotifyMapAnnouncement(EventID.OnNexusCrystalStart, 0);
                 AnnouncedEvents.Add(EventID.OnStartGameMessage3);
             }
             else if (time >= 30.0f * 1000 && !AnnouncedEvents.Contains(EventID.OnStartGameMessage1))
             {
                 // Welcome to the Twisted Tree Line!
-                _map.NotifyMapAnnouncement(EventID.OnStartGameMessage1, _map.Id);
+                NotifyMapAnnouncement(EventID.OnStartGameMessage1, _map.Id);
                 AnnouncedEvents.Add(EventID.OnStartGameMessage1);
             }
         }
