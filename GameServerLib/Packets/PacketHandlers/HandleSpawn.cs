@@ -9,6 +9,7 @@ using LeagueSandbox.GameServer.GameObjects;
 using LeagueSandbox.GameServer.Items;
 using LeagueSandbox.GameServer.Logging;
 using log4net;
+using System;
 
 namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 {
@@ -73,7 +74,8 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             foreach (var kv in players)
             {
                 var peerInfo = kv.Item2;
-                var champ = peerInfo.Champion as GameObject;
+                var champ = peerInfo.Champion;
+                var champObj = champ as GameObject;
 
                 _game.PacketNotifier.NotifyS2C_CreateHero(peerInfo, userId);
                 _game.PacketNotifier.NotifyAvatarInfo(peerInfo, userId);
@@ -82,11 +84,41 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                 var itemInstance = peerInfo.Champion.Inventory.GetItem(7);
                 _game.PacketNotifier.NotifyBuyItem(userId, peerInfo.Champion, itemInstance);
                 
-                champ.SetSpawnedForPlayer(userId);
+                champObj.SetSpawnedForPlayer(userId);
 
-                if(_game.IsRunning && champ.IsVisibleForPlayer(userId))
+                if(_game.IsRunning)
                 {
-                    packetNotifier.NotifyVisibilityChange(champ, userInfo.Team, userId, true);
+                    bool ownChamp = peerInfo.PlayerId == userId;
+                    if(ownChamp || champObj.IsVisibleForPlayer(userId))
+                    {
+                        Console.WriteLine($"NotifyEnterTeamVision({champ}, {userInfo.Team}, {userId})");
+                        packetNotifier.NotifyEnterTeamVision(champ, userInfo.Team, userId);
+                    }
+                    if(ownChamp)
+                    {
+                        // Set available skill points
+                        Console.WriteLine($"NotifyNPC_LevelUp({champ.NetId}, {userId})");
+                        packetNotifier.NotifyNPC_LevelUp(champ, userId);
+                        // Set spell levels
+                        foreach(var spell in champ.Spells)
+                        {
+                            var castInfo = spell.Value.CastInfo;
+                            if(castInfo.SpellLevel > 0)
+                            {
+                                //Console.WriteLine($"NotifyNPC_UpgradeSpellAns({userId}, {champ.NetId}, {castInfo.SpellSlot}, {castInfo.SpellLevel}, {champ.SkillPoints})");
+                                //packetNotifier.NotifyNPC_UpgradeSpellAns(userId, champ.NetId, castInfo.SpellSlot, castInfo.SpellLevel, champ.SkillPoints);
+                                Console.WriteLine($"NotifyS2C_SetSpellLevel({userId}, {champ.NetId}, {castInfo.SpellSlot}, {castInfo.SpellLevel})");
+                                packetNotifier.NotifyS2C_SetSpellLevel(userId, champ.NetId, castInfo.SpellSlot, castInfo.SpellLevel);
+                                
+                                float currentCD = spell.Value.CurrentCooldown;
+                                float totalCD = spell.Value.GetCooldown();
+                                if(currentCD > 0)
+                                {
+                                    packetNotifier.NotifyCHAR_SetCooldown(champ, castInfo.SpellSlot, currentCD, totalCD, userId);
+                                }
+                            }
+                        }
+                    }
                 }
             }
 
@@ -100,7 +132,9 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                     {
                         if(obj.IsSpawnedForPlayer(userId))
                         {
-                            packetNotifier.NotifySpawn(obj, userId, obj.IsVisibleForPlayer(userId), _game.GameTime);
+                            bool isVisibleForPlayer = obj.IsVisibleForPlayer(userId);
+                            Console.WriteLine($"NotifySpawn({obj}, {userInfo.Team}, {userId}, {_game.GameTime}, {isVisibleForPlayer})");
+                            packetNotifier.NotifySpawn(obj, userInfo.Team, userId, _game.GameTime, isVisibleForPlayer);
                         }
                     }
                     else

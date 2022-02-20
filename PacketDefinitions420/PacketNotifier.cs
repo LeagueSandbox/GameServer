@@ -525,6 +525,11 @@ namespace PacketDefinitions420
         /// <param name="totalCd">Maximum amount of time the spell's cooldown can be.</param>
         public void NotifyCHAR_SetCooldown(IObjAiBase u, byte slotId, float currentCd, float totalCd)
         {
+            NotifyCHAR_SetCooldown(u, slotId, currentCd, totalCd, 0);
+        }
+
+        public void NotifyCHAR_SetCooldown(IObjAiBase u, byte slotId, float currentCd, float totalCd, int userId = 0)
+        {
             var cdPacket = new CHAR_SetCooldown
             {
                 SenderNetID = u.NetId,
@@ -538,7 +543,14 @@ namespace PacketDefinitions420
             {
                 cdPacket.IsSummonerSpell = true; // TODO: Verify functionality
             }
-            _packetHandlerManager.BroadcastPacketVision(u, cdPacket.GetBytes(), Channel.CHL_S2C);
+            if(userId == 0)
+            {
+                _packetHandlerManager.BroadcastPacketVision(u, cdPacket.GetBytes(), Channel.CHL_S2C);
+            }
+            else
+            {
+                _packetHandlerManager.SendPacket(userId, cdPacket.GetBytes(), Channel.CHL_S2C);
+            }
         }
 
         /// <summary>
@@ -2045,6 +2057,10 @@ namespace PacketDefinitions420
         /// <param name="c">Champion which leveled up.</param>
         public void NotifyNPC_LevelUp(IChampion c)
         {
+            NotifyNPC_LevelUp(c, 0);
+        }
+        public void NotifyNPC_LevelUp(IChampion c, int userId = 0)
+        {
             var levelUp = new NPC_LevelUp()
             {
                 SenderNetID = c.NetId,
@@ -2052,8 +2068,14 @@ namespace PacketDefinitions420
                 // TODO: Typo :(
                 AveliablePoints = c.SkillPoints
             };
-
-            _packetHandlerManager.BroadcastPacketVision(c, levelUp.GetBytes(), Channel.CHL_S2C);
+            if(userId == 0)
+            {
+                _packetHandlerManager.BroadcastPacketVision(c, levelUp.GetBytes(), Channel.CHL_S2C);
+            }
+            else
+            {
+                _packetHandlerManager.SendPacket(userId, levelUp.GetBytes(), Channel.CHL_S2C);
+            }
         }
 
         /// <summary>
@@ -3839,12 +3861,14 @@ namespace PacketDefinitions420
         /// <summary>
         /// Sends a notification that the object has entered the team's scope and fully synchronizes its state.
         /// </summary>
-        void NotifyEnterTeamVision(IGameObject obj, TeamId team, int userId = 0, GamePacket spawnPacket = null)
+        public void NotifyEnterTeamVision(IGameObject obj, TeamId team, int userId = 0, GamePacket spawnPacket = null)
         {
             if(obj is IAttackableUnit u)
             {
-                var visibilityPacket = (spawnPacket is OnEnterVisibilityClient) ? spawnPacket :
-                    ConstructEnterVisibilityClientPacket(
+                var visibilityPacket = spawnPacket as OnEnterVisibilityClient;
+                if(visibilityPacket == null)
+                {
+                    visibilityPacket = ConstructEnterVisibilityClientPacket(
                         obj,
                         isChampion: obj is IChampion,
                         useTeleportID: true,
@@ -3852,6 +3876,7 @@ namespace PacketDefinitions420
                             new List<GamePacket>(1){ spawnPacket } :
                             null
                     );
+                }
                 var healthbarPacket = ConstructEnterLocalVisibilityClientPacket(obj);
                 //TODO: try to include it to packets too?
                 var us = new UpdateStats(u.Replication, false);
@@ -3894,7 +3919,7 @@ namespace PacketDefinitions420
         }
 
         //TODO: rework too?
-        void NotifyLeaveTeamVision(IGameObject obj, TeamId team, int userId = 0)
+        public void NotifyLeaveTeamVision(IGameObject obj, TeamId team, int userId = 0)
         {
             if(obj is IParticle p)
             {

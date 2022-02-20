@@ -90,6 +90,7 @@ namespace PacketDefinitions420
 
             if (_game.IsPaused && !packetsHandledWhilePaused.Contains(packetId))
             {
+                Console.WriteLine($"1 PACKET {packetId} REJECTED");
                 return null;
             }
 
@@ -114,10 +115,20 @@ namespace PacketDefinitions420
                 GamePacketID.C2S_Exit,
                 GamePacketID.World_SendGameNumber,
                 GamePacketID.SendSelectedObjID,
-                GamePacketID.C2S_CharSelected
+                GamePacketID.C2S_CharSelected,
+
+                GamePacketID.SynchVersionC2S,
+                GamePacketID.C2S_Ping_Load_Info,
+
+                GamePacketID.C2S_UpdateGameOptions,
+                GamePacketID.OnReplication_Acc,
+                GamePacketID.C2S_StatsUpdateReq,
+                GamePacketID.World_SendCamera_Server,
+                GamePacketID.C2S_OnTipEvent
             };
             if (_game.IsPaused && !packetsHandledWhilePaused.Contains(packetId))
             {
+                Console.WriteLine($"2 PACKET {packetId} REJECTED");
                 return null;
             }
             var key = new Tuple<GamePacketID, Channel>(packetId, channelId);

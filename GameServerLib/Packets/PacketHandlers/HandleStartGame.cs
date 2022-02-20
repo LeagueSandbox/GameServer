@@ -25,6 +25,12 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 
             if(_game.IsRunning)
             {
+                if (_game.IsPaused)
+                {
+                    packetNotifier.NotifyPausePacket(peerInfo, (int)_game.PauseTimeLeft, true);
+                }
+                packetNotifier.NotifyGameStart(userId);
+
                 if(peerInfo.IsDisconnected)
                 {
                     peerInfo.IsDisconnected = false;
@@ -32,9 +38,9 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                     var announcement = new OnReconnect { OtherNetID = peerInfo.Champion.NetId };
                     _game.PacketNotifier.NotifyS2C_OnEventWorld(announcement, peerInfo.Champion.NetId);
                 }
-
-                packetNotifier.NotifyGameStart(userId);
+                
                 SyncTime(userId);
+                
                 return true;
             }
             else
