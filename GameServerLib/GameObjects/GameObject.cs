@@ -25,6 +25,9 @@ namespace LeagueSandbox.GameServer.GameObjects
         private Dictionary<TeamId, bool> _visibleByTeam;
         private HashSet<int> _spawnedForPlayers = new HashSet<int>();
         private Dictionary<int, bool> _visibleForPlayers = new Dictionary<int, bool>();
+        /// <summary>
+        /// Allows to iterate all players who see the object 
+        /// </summary>
         public IEnumerable<int> VisibleForPlayers
         {
             get
@@ -255,7 +258,7 @@ namespace LeagueSandbox.GameServer.GameObjects
         }
 
         /// <summary>
-        /// Whether or not the object is networked to a specified team.
+        /// Whether or not the object is within the vision of the specified team.
         /// </summary>
         /// <param name="team">A team which could have vision of this object.</param>
         public bool IsVisibleByTeam(TeamId team)
@@ -264,31 +267,50 @@ namespace LeagueSandbox.GameServer.GameObjects
         }
 
         /// <summary>
-        /// Sets the object to be networked or not to a specified team.
+        /// Sets the object as visible to a specified team.
+        /// Should be called in the ObjectManager. By itself, it only affects the return value of IsVisibleByTeam.
         /// </summary>
         /// <param name="team">A team which could have vision of this object.</param>
-        /// <param name="visible">true/false; networked or not</param>
-        public void SetVisibleByTeam(TeamId team, bool visible)
+        /// <param name="visible">New value.</param>
+        public void SetVisibleByTeam(TeamId team, bool visible = true)
         {
             _visibleByTeam[team] = visible;
         }
 
+        /// <summary>
+        /// Whether or not the object is visible for the specified player.
+        /// <summary>
+        /// <param name="userId">The player in relation to which the value is obtained</param>
         public bool IsVisibleForPlayer(int userId)
         {
             return _visibleForPlayers.GetValueOrDefault(userId, false);
         }
 
-        public bool SetVisibleForPlayer(int userId, bool visible = true)
+        /// <summary>
+        /// Sets the object as visible and or not to a specified player.
+        /// Should be called in the ObjectManager. By itself, it only affects the return value of IsVisibleForPlayer.
+        /// <summary>
+        /// <param name="userId">The player for which the value is set.</param>
+        /// <param name="visible">New value.</param>
+        public void SetVisibleForPlayer(int userId, bool visible = true)
         {
-            return _visibleForPlayers[userId] = visible;
+            _visibleForPlayers[userId] = visible;
         }
 
-
+        /// <summary>
+        /// Whether or not the object is spawned on the player's client side.
+        /// <summary>
+        /// <param name="userId">The player in relation to which the value is obtained</param>
         public bool IsSpawnedForPlayer(int userId)
         {
             return _spawnedForPlayers.Contains(userId);
         }
 
+        /// <summary>
+        /// Sets the object as spawned on the player's client side.
+        /// Should be called in the ObjectManager. By itself, it only affects the return value of IsSpawnedForPlayer.
+        /// <summary>
+        /// <param name="userId">The player for which the value is set.</param>
         public void SetSpawnedForPlayer(int userId)
         {
             _spawnedForPlayers.Add(userId);

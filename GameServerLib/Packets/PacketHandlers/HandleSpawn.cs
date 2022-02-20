@@ -33,8 +33,6 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
         private bool _firstSpawn = true;
         public override bool HandlePacket(int userId, SpawnRequest req)
         {
-            var packetNotifier = _game.PacketNotifier as PacketDefinitions420.PacketNotifier;
-
             var players = _playerManager.GetPlayers(true);
 
             if(_firstSpawn)
@@ -75,7 +73,6 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             {
                 var peerInfo = kv.Item2;
                 var champ = peerInfo.Champion;
-                var champObj = champ as GameObject;
 
                 _game.PacketNotifier.NotifyS2C_CreateHero(peerInfo, userId);
                 _game.PacketNotifier.NotifyAvatarInfo(peerInfo, userId);
@@ -84,37 +81,33 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                 var itemInstance = peerInfo.Champion.Inventory.GetItem(7);
                 _game.PacketNotifier.NotifyBuyItem(userId, peerInfo.Champion, itemInstance);
                 
-                champObj.SetSpawnedForPlayer(userId);
+                champ.SetSpawnedForPlayer(userId);
 
                 if(_game.IsRunning)
                 {
                     bool ownChamp = peerInfo.PlayerId == userId;
-                    if(ownChamp || champObj.IsVisibleForPlayer(userId))
+                    if(ownChamp || champ.IsVisibleForPlayer(userId))
                     {
-                        Console.WriteLine($"NotifyEnterTeamVision({champ}, {userInfo.Team}, {userId})");
-                        packetNotifier.NotifyEnterTeamVision(champ, userInfo.Team, userId);
+                        _game.PacketNotifier.NotifyVisibilityChange(champ, userInfo.Team, true, userId);
                     }
                     if(ownChamp)
                     {
                         // Set available skill points
-                        Console.WriteLine($"NotifyNPC_LevelUp({champ.NetId}, {userId})");
-                        packetNotifier.NotifyNPC_LevelUp(champ, userId);
+                        _game.PacketNotifier.NotifyNPC_LevelUp(champ, userId);
                         // Set spell levels
                         foreach(var spell in champ.Spells)
                         {
                             var castInfo = spell.Value.CastInfo;
                             if(castInfo.SpellLevel > 0)
                             {
-                                //Console.WriteLine($"NotifyNPC_UpgradeSpellAns({userId}, {champ.NetId}, {castInfo.SpellSlot}, {castInfo.SpellLevel}, {champ.SkillPoints})");
-                                //packetNotifier.NotifyNPC_UpgradeSpellAns(userId, champ.NetId, castInfo.SpellSlot, castInfo.SpellLevel, champ.SkillPoints);
-                                Console.WriteLine($"NotifyS2C_SetSpellLevel({userId}, {champ.NetId}, {castInfo.SpellSlot}, {castInfo.SpellLevel})");
-                                packetNotifier.NotifyS2C_SetSpellLevel(userId, champ.NetId, castInfo.SpellSlot, castInfo.SpellLevel);
+                                // NotifyNPC_UpgradeSpellAns has no effect here 
+                                _game.PacketNotifier.NotifyS2C_SetSpellLevel(userId, champ.NetId, castInfo.SpellSlot, castInfo.SpellLevel);
                                 
                                 float currentCD = spell.Value.CurrentCooldown;
                                 float totalCD = spell.Value.GetCooldown();
                                 if(currentCD > 0)
                                 {
-                                    packetNotifier.NotifyCHAR_SetCooldown(champ, castInfo.SpellSlot, currentCD, totalCD, userId);
+                                    _game.PacketNotifier.NotifyCHAR_SetCooldown(champ, castInfo.SpellSlot, currentCD, totalCD, userId);
                                 }
                             }
                         }
@@ -123,9 +116,8 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             }
 
             var objects = _game.ObjectManager.GetObjects();
-            foreach (var _obj in objects.Values)
+            foreach (var obj in objects.Values)
             {
-                var obj = _obj as GameObject;
                 if(!(obj is IChampion))
                 {
                     if(_game.IsRunning)
@@ -133,8 +125,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                         if(obj.IsSpawnedForPlayer(userId))
                         {
                             bool isVisibleForPlayer = obj.IsVisibleForPlayer(userId);
-                            Console.WriteLine($"NotifySpawn({obj}, {userInfo.Team}, {userId}, {_game.GameTime}, {isVisibleForPlayer})");
-                            packetNotifier.NotifySpawn(obj, userInfo.Team, userId, _game.GameTime, isVisibleForPlayer);
+                            _game.PacketNotifier.NotifySpawn(obj, userInfo.Team, userId, _game.GameTime, isVisibleForPlayer);
                         }
                     }
                     else
@@ -147,7 +138,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 
             //TODO: shop map specific?
             // Level props are just models, we need button-object minions to allow the client to interact with it
-            _game.PacketNotifier.NotifySpawn(_game.Map.ShopList[userInfo.Team], userId, false);
+            _game.PacketNotifier.NotifySpawn(_game.Map.ShopList[userInfo.Team], userInfo.Team, userId, _game.GameTime, false);
 
             _game.PacketNotifier.NotifySpawnEnd(userId);
             return true;

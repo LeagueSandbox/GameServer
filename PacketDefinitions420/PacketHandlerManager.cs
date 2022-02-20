@@ -90,7 +90,6 @@ namespace PacketDefinitions420
 
             if (_game.IsPaused && !packetsHandledWhilePaused.Contains(packetId))
             {
-                Console.WriteLine($"1 PACKET {packetId} REJECTED");
                 return null;
             }
 
@@ -117,9 +116,12 @@ namespace PacketDefinitions420
                 GamePacketID.SendSelectedObjID,
                 GamePacketID.C2S_CharSelected,
 
+                // The next two are required to reconnect 
                 GamePacketID.SynchVersionC2S,
                 GamePacketID.C2S_Ping_Load_Info,
 
+                // The next 5 are not really needed when reconnecting,
+                // but they don't do much harm either
                 GamePacketID.C2S_UpdateGameOptions,
                 GamePacketID.OnReplication_Acc,
                 GamePacketID.C2S_StatsUpdateReq,
@@ -128,7 +130,6 @@ namespace PacketDefinitions420
             };
             if (_game.IsPaused && !packetsHandledWhilePaused.Contains(packetId))
             {
-                Console.WriteLine($"2 PACKET {packetId} REJECTED");
                 return null;
             }
             var key = new Tuple<GamePacketID, Channel>(packetId, channelId);
@@ -171,8 +172,6 @@ namespace PacketDefinitions420
 
         public bool SendPacket(int playerId, byte[] source, Channel channelNo, PacketFlags flag = PacketFlags.Reliable)
         {
-            //Console.WriteLine($"SendPacket({playerId}) {new System.Diagnostics.StackTrace().ToString()}");
-
             // Sometimes we try to send packets to a user that doesn't exist (like in broadcast when not all players are connected).
             // TODO: fix casting
             if (_peers.ContainsKey(playerId))
@@ -197,8 +196,6 @@ namespace PacketDefinitions420
 
         public bool BroadcastPacket(byte[] data, Channel channelNo, PacketFlags flag = PacketFlags.Reliable)
         {
-            //Console.WriteLine($"BroadcastPacket() {new System.Diagnostics.StackTrace().ToString()}");
-
             if (data.Length >= 8)
             {
                 // send packet to all peers and save failed ones

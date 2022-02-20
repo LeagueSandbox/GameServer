@@ -116,10 +116,8 @@ namespace LeagueSandbox.GameServer
 
             var players = _game.PlayerManager.GetPlayers(includeBots: false);
             
-            foreach (IGameObject _obj in _objects.Values)
+            foreach (IGameObject obj in _objects.Values)
             {
-                GameObject obj = _obj as GameObject;
-
                 if (IsAffectedByVision(obj))
                 {
                     foreach (var team in Teams)
@@ -144,10 +142,8 @@ namespace LeagueSandbox.GameServer
             _currentlyInUpdate = false;
         }
 
-        public void UpdateVisibilityAndSpawnIfNeeded(GameObject obj, ClientInfo clientInfo, bool forceSpawn = false)
+        public void UpdateVisibilityAndSpawnIfNeeded(IGameObject obj, ClientInfo clientInfo, bool forceSpawn = false)
         {
-            PacketDefinitions420.PacketNotifier packetNotifier = _game.PacketNotifier as PacketDefinitions420.PacketNotifier;
-            
             int pid = (int)clientInfo.PlayerId;
             TeamId team = clientInfo.Team;
             IChampion champion = clientInfo.Champion;
@@ -164,7 +160,7 @@ namespace LeagueSandbox.GameServer
             {
                 if (isAffectedByVision && (obj.IsVisibleForPlayer(pid) != shouldBeVisibleForPlayer))
                 {
-                    packetNotifier.NotifyVisibilityChange(obj, team, pid, shouldBeVisibleForPlayer);
+                    _game.PacketNotifier.NotifyVisibilityChange(obj, team, shouldBeVisibleForPlayer, pid);
                     obj.SetVisibleForPlayer(pid, shouldBeVisibleForPlayer);
                 }
                 else if(shouldBeVisibleForPlayer)
@@ -177,7 +173,7 @@ namespace LeagueSandbox.GameServer
                 obj is IParticle || obj is ISpellMissile || (obj is IMinion && !(obj is ILaneMinion))
             ))
             {
-                packetNotifier.NotifySpawn(obj, team, pid, _game.GameTime, shouldBeVisibleForPlayer);
+                _game.PacketNotifier.NotifySpawn(obj, team, pid, _game.GameTime, shouldBeVisibleForPlayer);
                 obj.SetVisibleForPlayer(pid, shouldBeVisibleForPlayer);
                 obj.SetSpawnedForPlayer(pid);
 
@@ -197,18 +193,16 @@ namespace LeagueSandbox.GameServer
 
         void Sync(IGameObject obj, int userId = 0)
         {
-            PacketDefinitions420.PacketNotifier packetNotifier = _game.PacketNotifier as PacketDefinitions420.PacketNotifier;
-
             if (obj is IAttackableUnit u)
             {
                 if(u.Replication.Changed)
                 {
-                    packetNotifier.NotifyUpdatedStats(u, userId, true);
+                    _game.PacketNotifier.NotifyUpdatedStats(u, userId, true);
                 }
 
                 if (u.IsModelUpdated)
                 {
-                    packetNotifier.NotifyS2C_ChangeCharacterData(u, userId);
+                    _game.PacketNotifier.NotifyS2C_ChangeCharacterData(u, userId);
                 }
 
                 if (u.IsMovementUpdated())
@@ -216,7 +210,7 @@ namespace LeagueSandbox.GameServer
                     // TODO: Verify which one we want to use. WaypointList does not require conversions, however WaypointGroup does (and it has TeleportID functionality).
                     //_game.PacketNotifier.NotifyWaypointList(u);
                     // TODO: Verify if we want to use TeleportID.
-                    packetNotifier.NotifyWaypointGroup(u, userId, true);
+                    _game.PacketNotifier.NotifyWaypointGroup(u, userId, true);
                 }
             }
         }
@@ -271,7 +265,6 @@ namespace LeagueSandbox.GameServer
 
                 if(_currentlyInUpdate)
                 {
-                    //Console.WriteLine($"delayed add {o}");
                     _objectsToAdd.Add(o);
                 }
                 else
@@ -294,7 +287,6 @@ namespace LeagueSandbox.GameServer
 
                 if(_currentlyInUpdate)
                 {
-                    //Console.WriteLine($"delayed remove {o}");
                     _objectsToRemove.Add(o);
                 }
                 else

@@ -19,17 +19,15 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 
         public override bool HandlePacket(int userId, StartGameRequest req)
         {
-            var packetNotifier = _game.PacketNotifier as PacketDefinitions420.PacketNotifier;
-
             var peerInfo = _playerManager.GetPeerInfo(userId);
 
             if(_game.IsRunning)
             {
                 if (_game.IsPaused)
                 {
-                    packetNotifier.NotifyPausePacket(peerInfo, (int)_game.PauseTimeLeft, true);
+                    _game.PacketNotifier.NotifyPausePacket(peerInfo, (int)_game.PauseTimeLeft, true);
                 }
-                packetNotifier.NotifyGameStart(userId);
+                _game.PacketNotifier.NotifyGameStart(userId);
 
                 if(peerInfo.IsDisconnected)
                 {
@@ -40,7 +38,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                 }
                 
                 SyncTime(userId);
-                
+
                 return true;
             }
             else
