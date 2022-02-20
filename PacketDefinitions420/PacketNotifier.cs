@@ -3804,7 +3804,7 @@ namespace PacketDefinitions420
         /// <summary>
         /// Sends a notification that the object has entered the team's scope and fully synchronizes its state.
         /// </summary>
-        public void NotifyEnterTeamVision(IGameObject obj, TeamId team, int userId = 0, GamePacket spawnPacket = null)
+        void NotifyEnterTeamVision(IGameObject obj, TeamId team, int userId = 0, GamePacket spawnPacket = null)
         {
             if(obj is IAttackableUnit u)
             {
@@ -3843,16 +3843,17 @@ namespace PacketDefinitions420
             else //if(obj is IRegion || obj is ISpellMissile || obj is ILevelProp || obj is IParticle)
             {
                 var packet = spawnPacket;
-
-                if (spawnPacket == null && obj is IParticle p)
+                if (packet == null)
                 {
-                    packet = ConstructFXEnterTeamVisibilityPacket(p, team);
-                }
-                else
-                {
-                    packet = ConstructOnEnterTeamVisibilityPacket(obj, team);
-                }
-
+                    if(obj is IParticle p)
+                    {
+                        packet = ConstructFXEnterTeamVisibilityPacket(p, team);
+                    }
+                    else
+                    {
+                        packet = ConstructOnEnterTeamVisibilityPacket(obj, team); // Generic visibility packet
+                    }
+                };
                 if(userId == 0)
                 {
                     _packetHandlerManager.BroadcastPacketTeam(team, packet.GetBytes(), Channel.CHL_S2C);
@@ -3864,8 +3865,7 @@ namespace PacketDefinitions420
             }
         }
 
-        //TODO: rework too?
-        public void NotifyLeaveTeamVision(IGameObject obj, TeamId team, int userId = 0)
+        void NotifyLeaveTeamVision(IGameObject obj, TeamId team, int userId = 0)
         {
             if(obj is IParticle p)
             {
