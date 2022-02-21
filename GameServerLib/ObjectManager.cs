@@ -115,6 +115,18 @@ namespace LeagueSandbox.GameServer
                     {
                         bool doVis = !(obj is ILevelProp || obj is ISpellMissile);
                         _game.PacketNotifier.NotifySpawn(obj, 0, doVis, _game.GameTime);
+
+                        if (obj is IObjAiBase objAiBase)
+                        {
+                            if (objAiBase.Spells.ContainsKey((int)SpellSlotType.PassiveSpellSlot))
+                            {
+                                objAiBase.CharScript.OnActivate(objAiBase, (objAiBase.Spells[(int)SpellSlotType.PassiveSpellSlot]));
+                            }
+                            else
+                            {
+                                objAiBase.CharScript.OnActivate(objAiBase);
+                            }
+                        }
                     }
                     
                     _queuedObjects.Remove(obj.NetId);

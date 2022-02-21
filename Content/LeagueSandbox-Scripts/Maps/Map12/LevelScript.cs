@@ -11,7 +11,7 @@ using LeagueSandbox.GameServer.Content;
 using LeagueSandbox.GameServer.GameObjects.Stats;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using static GameServerLib.API.APIMapFunctionManager;
-
+using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 
 namespace MapScripts.Map12
 {
@@ -233,8 +233,13 @@ namespace MapScripts.Map12
                 ApiEventManager.OnDeath.AddListener(this, nexus, OnNexusDeath, true);
             }
 
-            Players.Add(TeamId.TEAM_BLUE, ApiFunctionManager.GetAllPlayersFromTeam(TeamId.TEAM_BLUE));
-            Players.Add(TeamId.TEAM_PURPLE, ApiFunctionManager.GetAllPlayersFromTeam(TeamId.TEAM_PURPLE));
+            foreach (var champion in GetAllPlayers())
+            {
+                AddBuff("HowlingAbyssAura", 25000, 1, null, champion, null);
+            }
+
+            Players.Add(TeamId.TEAM_BLUE, GetAllPlayersFromTeam(TeamId.TEAM_BLUE));
+            Players.Add(TeamId.TEAM_PURPLE, GetAllPlayersFromTeam(TeamId.TEAM_PURPLE));
 
             IStatsModifier TurretHealthModifier = new StatsModifier();
             foreach (var team in _map.TurretList.Keys)

@@ -656,6 +656,12 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="animationPairs">Dictionary of animations to set.</param>
         void NotifyS2C_SetAnimStates(IAttackableUnit u, Dictionary<string, string> animationPairs);
         /// <summary>
+        /// Sets if your screen will be grey or not when dead (used in the end of a game)
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="enabled"></param>
+        void NotifyS2C_SetGreyscaleEnabledWhenDead(bool enabled, IAttackableUnit sender = null);
+        /// <summary>
         /// Sends a packet to the specified user detailing that the spell in the given slot has had its spelldata changed to the spelldata of the given spell name.
         /// </summary>
         /// <param name="userId">User to send the packet to.</param>

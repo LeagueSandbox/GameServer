@@ -2382,7 +2382,7 @@ namespace PacketDefinitions420
                 SpawnAnimationName = monster.SpawnAnimation,
                 AIscript = "",
                 //Seems to be the time it is supposed to spawn, not the time when it spawned, check this later
-                SpawnTime = time,
+                SpawnTime = time / 1000,
                 BehaviorTree = monster.AIScript.AIScriptMetaData.BehaviorTree,
                 RevealEvent = monster.Camp.RevealEvent,
                 GroupNumber = monster.Camp.CampIndex,
@@ -2391,6 +2391,7 @@ namespace PacketDefinitions420
                 TeamID = (uint)monster.Team,
                 NetNodeID = (byte)NetNodeID.Spawned
             };
+
             _packetHandlerManager.BroadcastPacket(packet.GetBytes(), Channel.CHL_S2C);
         }
         /// <summary>
@@ -2773,6 +2774,21 @@ namespace PacketDefinitions420
             };
 
             _packetHandlerManager.BroadcastPacket(setAnimPacket.GetBytes(), Channel.CHL_S2C);
+        }
+
+        public void NotifyS2C_SetGreyscaleEnabledWhenDead(bool enabled, IAttackableUnit sender = null)
+        {
+            var packet = new S2C_SetGreyscaleEnabledWhenDead
+            {
+                Enabled = enabled,
+            };
+
+            if(sender != null)
+            {
+                packet.SenderNetID = sender.NetId;
+            }
+            _packetHandlerManager.BroadcastPacket(packet.GetBytes(), Channel.CHL_S2C);
+
         }
 
         public void NotifyS2C_SetInputLockFlag(int userId, InputLockFlags flags, bool enabled)
