@@ -1538,25 +1538,6 @@ namespace PacketDefinitions420
             // Homing projectiles are visible regardless of vision.
             _packetHandlerManager.BroadcastPacket(replication.GetBytes(), Channel.CHL_S2C);
         }
-        public void NotifyOnEvent(IEvent mapEvent, uint senderNetId)
-        {
-            var packet = new OnEvent
-            {
-                Event = mapEvent,
-                SenderNetID = senderNetId
-            };
-            _packetHandlerManager.BroadcastPacket(packet.GetBytes(), Channel.CHL_S2C);
-        }
-        public void NotifyS2C_HandleGameScore(TeamId team, int score)
-        {
-            var packet = new S2C_HandleGameScore
-            {
-                Score = score,
-                TeamID = (uint)team,
-                SenderNetID = 0
-            };
-            _packetHandlerManager.BroadcastPacket(packet.GetBytes(), Channel.CHL_S2C);
-        }
 
         /// <summary>
         /// Sends a packet to all players who have vision of the specified buff's target detailing that the buff has been added to the target.
@@ -3199,9 +3180,6 @@ namespace PacketDefinitions420
                 case IMinion minion:
                     visionPackets.Add(NotifyMinionSpawned(minion, false));
                     break;
-                case ILaneTurret laneTurret:
-                    //test(laneTurret);
-                    break;
                 case IAzirTurret azirTurret:
                     NotifyEnterVisibilityClient(azirTurret, userId, ignoreVision: true);
                     break;
@@ -3230,17 +3208,7 @@ namespace PacketDefinitions420
                 NotifyEnterVisibilityClient(o, userId, packets: visionPackets);
             }
         }
-        public void test(ILaneTurret turret)
-        {
-            var packet = new OnEnterLocalVisibilityClient
-            {
-                MaxHealth = turret.Stats.HealthPoints.Total,
-                Health = turret.Stats.CurrentHealth,
-                SenderNetID = turret.NetId
-            };
-            _packetHandlerManager.BroadcastPacket(packet.GetBytes(), Channel.CHL_S2C);
 
-        }
         /// <summary>
         /// Sends a packet to the specified player detailing that the spawning (of champions & buildings) that occurs at the start of the game has ended.
         /// </summary>

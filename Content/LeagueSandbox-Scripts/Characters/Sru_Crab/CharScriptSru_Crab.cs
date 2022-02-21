@@ -20,18 +20,17 @@ namespace CharScripts
         public void OnActivate(IObjAiBase owner, ISpell spell = null)
         {
             ScuttleCrab = owner as IMinion;
+            OverrideAnimation(owner, "IDLE1", "CRAB_SPAWN");
             if (ScuttleCrab.Name != "FakeCrab")
             {
                 ApiEventManager.OnDeath.AddListener(this, owner, OnDeath, true);
-                SetAnimStates(owner, new Dictionary<string, string> { { "IDLE1", "CRAB_SPAWN" } });
             }
             else
             {
                 isScuttleWard = true;
-                SetAnimStates(ScuttleCrab, new Dictionary<string, string> { { "IDLE1", "CRAB_SPAWN" } });
-               PlayAnimation(ScuttleCrab, "crab_burrow", 0.0f, 0.0f, 1.0f, (AnimationFlags)168);
-                SetAnimStates(ScuttleCrab, new Dictionary<string, string> { { "IDLE1", "CRAB_SPAWN" }, { "RUN", "WARD_RUN (UNCOMPRESSED)" } });
-                SetAnimStates(ScuttleCrab, new Dictionary<string, string> { { "IDLE1", "ward_run (Uncompressed)" }, { "RUN", "WARD_RUN (UNCOMPRESSED)" } });
+                PlayAnimation(ScuttleCrab, "crab_burrow", 0.0f, 0.0f, 1.0f, (AnimationFlags)168);
+                OverrideAnimation(owner, "RUN", "WARD_RUN (UNCOMPRESSED)");
+                OverrideAnimation(owner, "IDLE1", "ward_run (Uncompressed)");
             }
         }
 
