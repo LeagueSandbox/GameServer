@@ -123,7 +123,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
             string nameSpace = "Spells";
             if (CastInfo.SpellSlot >= (byte)SpellSlotType.InventorySlots && CastInfo.SpellSlot < (byte)SpellSlotType.BluePillSlot)
             {
-               nameSpace = "ItemSpells";
+                nameSpace = "ItemSpells";
             }
             Script = _scriptEngine.CreateObject<ISpellScript>(nameSpace, SpellName) ?? new SpellScriptEmpty();
 
@@ -212,7 +212,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
                 || CastInfo.Owner.GetCastSpell() != null
                 || CastInfo.Owner.ChannelSpell != null))
                 {
-                    CastInfo.Owner.CancelAutoAttack(true);
+                    CastInfo.Owner.CancelAutoAttack(!CastInfo.Owner.HasAutoAttacked, true);
                     return true;
                 }
             }
@@ -236,7 +236,8 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
 
         public bool Cast(Vector2 start, Vector2 end, IAttackableUnit unit = null)
         {
-            if (unit == null && SpellData.TargetingType == TargetingType.Target)
+            if ((unit == null && SpellData.TargetingType == TargetingType.Target)
+                || (CastInfo.Owner.MovementParameters != null && !SpellData.CanCastWhileDisabled))
             {
                 return false;
             }
@@ -374,7 +375,12 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
                 CastInfo.Owner.AutoAttackSpell.CastCancelCheck();
             }
 
-            CastInfo.Owner.SetTargetUnit(unit, true);
+            // Prevents overriding current auto attack target
+            if (unit != null)
+            {
+                CastInfo.Owner.SetTargetUnit(unit, true);
+            }
+
             CastInfo.Owner.UpdateMoveOrder(OrderType.TempCastSpell, true);
 
             Script.OnSpellPreCast(CastInfo.Owner, this, unit, start, end);
@@ -389,15 +395,12 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
                         && !SpellData.Flags.HasFlag(SpellDataFlags.InstantCast)
                         && SpellData.CantCancelWhileWindingUp))
             {
-                if (Script.ScriptMetadata.TriggersSpellCasts || SpellData.ChannelDuration[CastInfo.SpellLevel] > 0 || Script.ScriptMetadata.ChannelDuration > 0)
+                if (!SpellData.Flags.HasFlag(SpellDataFlags.InstantCast))
                 {
-                    if (!SpellData.Flags.HasFlag(SpellDataFlags.InstantCast))
-                    {
-                        CastInfo.Owner.StopMovement();
+                    CastInfo.Owner.StopMovement();
 
-                        // TODO: Verify if we should move this outside of this TriggersSpellCasts if statement.
-                        CastInfo.Owner.UpdateMoveOrder(OrderType.CastSpell, true);
-                    }
+                    // TODO: Verify if we should move this outside of this TriggersSpellCasts if statement.
+                    CastInfo.Owner.UpdateMoveOrder(OrderType.CastSpell, true);
 
                     if (Script.ScriptMetadata.AutoFaceDirection)
                     {
@@ -744,16 +747,23 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
         {
             State = SpellState.STATE_CHANNELING;
             CurrentChannelDuration = SpellData.ChannelDuration[CastInfo.SpellLevel];
+
             if (Script.ScriptMetadata.ChannelDuration > 0)
             {
                 CurrentChannelDuration = Script.ScriptMetadata.ChannelDuration;
-                ApiEventManager.OnSpellChannel.Publish(this);
             }
 
             if (CurrentChannelDuration > 0)
             {
                 CastInfo.Owner.SetChannelSpell(this);
             }
+
+            if (!SpellData.CanMoveWhileChanneling)
+            {
+                CastInfo.Owner.StopMovement();
+            }
+
+            ApiEventManager.OnSpellChannel.Publish(this);
         }
 
         public void ChannelCancelCheck()
@@ -906,11 +916,6 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
                 }
             }
 
-            if (Script.ScriptMetadata.TriggersSpellCasts)
-            {
-                ApiEventManager.OnSpellPostCast.Publish(this);
-            }
-
             if (Script.ScriptMetadata.MissileParameters != null)
             {
                 CreateSpellMissile();
@@ -921,7 +926,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
                 CreateSpellSector();
             }
 
-            if (CastInfo.Owner.SpellToCast != null)
+            if (CastInfo.Owner.SpellToCast != null && CastInfo.Owner.SpellToCast == this)
             {
                 CastInfo.Owner.SetSpellToCast(null, Vector2.Zero);
             }
@@ -947,6 +952,11 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
             {
                 // TODO: Verify
                 CastInfo.Owner.UpdateMoveOrder(OrderType.Hold, true);
+            }
+
+            if (Script.ScriptMetadata.TriggersSpellCasts)
+            {
+                ApiEventManager.OnSpellPostCast.Publish(this);
             }
         }
 
