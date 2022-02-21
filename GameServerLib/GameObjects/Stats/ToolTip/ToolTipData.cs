@@ -32,7 +32,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
 
         public ToolTipData(IAttackableUnit owner, ISpell spell, IBuff buff = null)
         {
-            Populate(Values, new ToolTipValue());
+            Populate(Values);
 
             Owner = owner;
             Spell = spell;
@@ -48,7 +48,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
                 // Slots start at 0 for buff tooltips.
                 Slot = buff.Slot;
             }
-            
+
             // NOTE Client behavior with higher slots: Slot > 120 => Slot - 120 => 120 > Slot > 59
             // End result is counted as a spell tooltip as slot is read from 60.
         }
@@ -131,11 +131,11 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
             }
         }
 
-        public static void Populate<T>(T[] arr, T value)
+        public static void Populate(ToolTipValue[] arr)
         {
             for (int i = 0; i < arr.Length; i++)
             {
-                arr[i] = value;
+                arr[i] = new ToolTipValue();
             }
         }
     }

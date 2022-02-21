@@ -4,6 +4,7 @@ using GameServerCore.Domain.GameObjects.Spell;
 using GameServerCore.Scripting.CSharp;
 using LeagueSandbox.GameServer.GameObjects.Stats;
 using LeagueSandbox.GameServer.Scripting.CSharp;
+using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 
 namespace Buffs
 {
@@ -20,7 +21,7 @@ namespace Buffs
         public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell = null)
         {
             //TODO: Set up NotifyS2C_HandleTipUpdate in order to update the stats in the buff's tooltip
-            if(unit is IChampion champion)
+            if (unit is IChampion champion)
             {
                 StatsModifier.CooldownReduction.FlatBonus += 0.8f;
                 StatsModifier.Tenacity.FlatBonus += 0.25f;
@@ -29,10 +30,17 @@ namespace Buffs
                 if (!champion.IsMelee)
                 {
                     StatsModifier.CriticalDamage.FlatBonus += 0.25f;
-                    //TODO: Add +100% attack speed multiplier here               
+                    //TODO: Add +100% attack speed multiplier here
                 }
 
                 unit.AddStatModifier(StatsModifier);
+
+                // Mana/Energy cost reduction, CDR, Tenacity, Movespeed, Dinosaur Resist 
+                SetBuffToolTipVar(buff, 0, 100);
+                SetBuffToolTipVar(buff, 1, StatsModifier.CooldownReduction.FlatBonus * 100);
+                SetBuffToolTipVar(buff, 2, StatsModifier.Tenacity.FlatBonus * 100);
+                SetBuffToolTipVar(buff, 3, StatsModifier.MoveSpeed.FlatBonus);
+                SetBuffToolTipVar(buff, 4, 35);
             }
         }
 
@@ -46,4 +54,3 @@ namespace Buffs
         }
     }
 }
-
