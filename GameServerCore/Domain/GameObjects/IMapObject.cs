@@ -10,6 +10,7 @@ namespace GameServerCore.Domain
         string Name { get; }
         Vector3 CentralPoint { get; }
         int ParentMapId { get; }
+        static IMapObject Empty { get; }
         GameObjectTypes GetGameObjectType();
         TeamId GetTeamID();
         TeamId GetOpposingTeamID();
