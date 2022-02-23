@@ -99,6 +99,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             base.OnAdded();
             _game.ObjectManager.AddChampion(this);
             _game.PacketNotifier.NotifySpawn(this);
+            CharScript.OnActivate(this, Spells[(short)SpellSlotType.PassiveSpellSlot] ?? null);
         }
 
         public override void OnRemoved()
