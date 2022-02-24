@@ -26,7 +26,8 @@ namespace LeagueSandbox.GameServer.GameObjects
         private HashSet<int> _spawnedForPlayers = new HashSet<int>();
         private Dictionary<int, bool> _visibleForPlayers = new Dictionary<int, bool>();
         /// <summary>
-        /// Allows to iterate all players who see the object 
+        /// A set of players with vision of this GameObject.
+        /// Can be iterated through.
         /// </summary>
         public IEnumerable<int> VisibleForPlayers
         {
@@ -248,9 +249,7 @@ namespace LeagueSandbox.GameServer.GameObjects
         /// <param name="team">TeamId.BLUE/PURPLE/NEUTRAL</param>
         public virtual void SetTeam(TeamId team)
         {
-            //_visibleByTeam[Team] = false;
             Team = team;
-            //_visibleByTeam[Team] = true;
             if (_game.IsRunning)
             {
                 _game.PacketNotifier.NotifySetTeam(this as IAttackableUnit);
@@ -258,12 +257,12 @@ namespace LeagueSandbox.GameServer.GameObjects
         }
 
         /// <summary>
-        /// Whether or not the object is within the vision of the specified team.
+        /// Whether or not the object is within vision of the specified team.
         /// </summary>
         /// <param name="team">A team which could have vision of this object.</param>
         public bool IsVisibleByTeam(TeamId team)
         {
-            return /*team == Team ||*/ _visibleByTeam[team];
+            return _visibleByTeam[team];
         }
 
         /// <summary>

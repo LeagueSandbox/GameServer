@@ -128,7 +128,7 @@ namespace LeagueSandbox.GameServer
 
                 foreach (var kv in players)
                 {
-                    UpdateVisibilityAndSpawnIfNeeded(obj, kv.Item2);
+                    UpdateVisionAndSpawn(obj, kv.Item2);
                 }
 
                 if (obj is IAttackableUnit u)
@@ -142,7 +142,7 @@ namespace LeagueSandbox.GameServer
             _currentlyInUpdate = false;
         }
 
-        public void UpdateVisibilityAndSpawnIfNeeded(IGameObject obj, ClientInfo clientInfo, bool forceSpawn = false)
+        public void UpdateVisionAndSpawn(IGameObject obj, ClientInfo clientInfo, bool forceSpawn = false)
         {
             int pid = (int)clientInfo.PlayerId;
             TeamId team = clientInfo.Team;
