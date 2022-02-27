@@ -165,13 +165,17 @@ namespace LeagueSandbox.GameServer.Content.Navigation
 
                 this.HintGrid = new NavigationHintGrid(br);
 
-                this.MapWidth = this.MaxGridPosition.X + this.MinGridPosition.X;
-                this.MapHeight = this.MaxGridPosition.Z + this.MinGridPosition.Z;
-                this.MiddleOfMap = new Vector2(this.MapWidth / 2, this.MapHeight / 2);
+                this.MapWidth = this.MaxGridPosition.X - this.MinGridPosition.X;
+                this.MapHeight = this.MaxGridPosition.Z - this.MinGridPosition.Z;
+                this.MiddleOfMap = new Vector2(
+                    (this.MaxGridPosition.X + this.MinGridPosition.X) / 2,
+                    (this.MaxGridPosition.Z + this.MinGridPosition.Z) / 2
+                );
+
                 this.TranslationMaxGridPosition = new Vector3
                 {
-                    X = this.CellCountX / (this.MaxGridPosition.X - this.MinGridPosition.X),
-                    Z = this.CellCountY / (this.MaxGridPosition.Z - this.MinGridPosition.Z)
+                    X = this.CellCountX / this.MapWidth,
+                    Z = this.CellCountY / this.MapHeight
                 };
             }
         }
@@ -623,14 +627,12 @@ namespace LeagueSandbox.GameServer.Content.Navigation
         /// <returns>True/False.</returns>
         public bool IsVisible(Vector2 coords, bool translate = true)
         {
-            Vector2 vector = new Vector2 { X = coords.X, Y = coords.Y };
-
             if (translate)
             {
-                vector = TranslateToNavGrid(new Vector2 { X = coords.X, Y = coords.Y });
+                coords = TranslateToNavGrid(coords);
             }
 
-            NavigationGridCell cell = GetCell((short)vector.X, (short)vector.Y);
+            NavigationGridCell cell = GetCell((short)coords.X, (short)coords.Y);
 
             //TODO: implement bush logic here
             return cell != null && (!cell.HasFlag(NavigationGridCellFlags.NOT_PASSABLE) || cell.HasFlag(NavigationGridCellFlags.HAS_GLOBAL_VISION));
@@ -653,7 +655,8 @@ namespace LeagueSandbox.GameServer.Content.Navigation
 
             NavigationGridCell cell = GetCell((short)vector.X, (short)vector.Y);
 
-            return cell.HasFlag(flag);
+            //TODO: fix NullReferenceException?
+            return cell != null && cell.HasFlag(flag);
         }
 
         /// <summary>

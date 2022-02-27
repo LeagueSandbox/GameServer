@@ -31,6 +31,7 @@ namespace LeagueSandbox.GameServer
         private Dictionary<uint, IBaseTurret> _turrets;
         private Dictionary<uint, IInhibitor> _inhibitors;
         private Dictionary<TeamId, List<IGameObject>> _visionProviders;
+        private Dictionary<TeamId, float[,]> _teamVision;
 
         // Locks for each dictionary. Depricated since #1302.
         //private object _objectsLock = new object();
@@ -59,9 +60,93 @@ namespace LeagueSandbox.GameServer
             _inhibitors = new Dictionary<uint, IInhibitor>();
             _champions = new Dictionary<uint, IChampion>();
             _visionProviders = new Dictionary<TeamId, List<IGameObject>>();
+            _teamVision = new Dictionary<TeamId, float[,]>();
             foreach (var team in Teams)
             {
                 _visionProviders.Add(team, new List<IGameObject>());
+                //TODO: fix NullReferenceException
+                //_teamVision.Add(team, new float[_game.Map.NavigationGrid.CellCountX, _game.Map.NavigationGrid.CellCountY]);
+            }
+        }
+
+        // These multipliers are used when transforming to other octants
+        Vector2[] x = {
+            new Vector2(1, 0), new Vector2(0, 1), new Vector2(0, -1), new Vector2(-1, 0), 
+            new Vector2(-1, 0), new Vector2(0, -1), new Vector2(0, 1), new Vector2(1, 0)
+        };
+        Vector2[] y = {
+            new Vector2(0, 1), new Vector2(1, 0), new Vector2(1, 0), new Vector2(0, 1), 
+            new Vector2(0, -1), new Vector2(-1, 0), new Vector2(-1, 0), new Vector2(0, -1)
+        };
+
+        // https://alemil.com/field-of-view-in-tile-based-games
+        // http://www.roguebasin.com/index.php/Improved_Shadowcasting_in_Java
+        void CalculateFoV(IGameObject obj, float [,] currentMap)
+        {
+            var g = _game.Map.NavigationGrid;
+
+            var tilePosition = g.TranslateToNavGrid(obj.Position);
+            currentMap[(short) tilePosition.X, (short) tilePosition.Y] = 1500f;
+            uint radius = (uint) Math.Round(obj.VisionRadius * g.TranslationMaxGridPosition.X);
+            // Add visible and seen flags to glyphs in the area, for every octant around the player
+            for(uint i = 0; i < 8; i++) {
+                CastLight(tilePosition, radius, 1, 1.0f, 0.0f, x[i], y[i], currentMap);
+            }
+        }
+
+        void CastLight(Vector2 center, uint radius, uint row, float startSlope, float endSlope, Vector2 x, Vector2 y, float [,] currentMap)
+        {
+            var g = _game.Map.NavigationGrid as LeagueSandbox.GameServer.Content.Navigation.NavigationGrid;
+
+            // If start of the slope is lower than the end slope, scan of the octant is completed.
+            if (startSlope < endSlope) return;
+            // Start slope value at the beginning of the row scan is 1.0 and as cells are being processed 
+            // it drops to the value of endSlope (0.0)
+            float nextStartSlope = startSlope;
+            // Radius squared
+            uint radius2 = radius * radius;
+            // We want to process as many rows as our range of vision allows. Keep in mind that every octant
+            // will have it's row calculated from different cell toward another cell. Row here is another 
+            // set of checks, each time started further from the starting position up until range is hit
+            for (uint distance = row; distance <= radius; distance++) {
+                bool blocked = false;
+                for (int deltaX = -((int) distance), deltaY = -((int)distance); deltaX <= 0; deltaX++) {
+                    float lSlope = (deltaX - 0.5f) / (deltaY + 0.5f);
+                    float rSlope = (deltaX + 0.5f) / (deltaY - 0.5f);
+                    if (startSlope < rSlope) continue;
+                    if (endSlope > lSlope) break;
+                    Vector2 currentPosition = new Vector2(deltaX * x.X + deltaY * x.Y, deltaX * y.X + deltaY * y.Y);
+                    //if ((currentPosition.X < 0 && Math.Abs(currentPosition.X) > center.X) || (currentPosition.Y < 0 && Math.Abs(currentPosition.Y) > center.Y)) {
+                    //    continue;
+                    //}
+                    Vector2 mapPosition = new Vector2(center.X + currentPosition.X, center.Y + currentPosition.Y);
+                    if(!(mapPosition.X >= 0 && mapPosition.Y >= 0 && mapPosition.X < g.CellCountX && mapPosition.Y < g.CellCountY)){
+                        continue;
+                    }
+                    int currentDistance = deltaX * deltaX + deltaY * deltaY;
+                    // If distance from the starting position is lower than squared radius, we mark the spot as visible
+                    if (currentDistance < radius2) {
+                        currentMap[(short) mapPosition.X, (short) mapPosition.Y] = 1500f;
+                    }
+
+                    bool isBlockingLight = !g.IsVisible(mapPosition, false);
+                    // Previously processed cell blocked the light
+                    if (blocked) { // Previous cell was a blocking one
+                        if (isBlockingLight) {
+                            nextStartSlope = rSlope;
+                            continue;
+                        }
+                        blocked = false;
+                        startSlope = nextStartSlope;
+                    }
+                    else if (isBlockingLight) {
+                        blocked = true;
+                        nextStartSlope = rSlope;
+                        CastLight(center, radius, distance + 1, startSlope, lSlope, x, y, currentMap);
+                    }
+                }
+                // If light is completely blocked, don't try to go this path
+                if (blocked) break;
             }
         }
 
@@ -74,25 +159,55 @@ namespace LeagueSandbox.GameServer
             // For all existing objects
             foreach (var obj in GetObjects().Values)
             {
+                obj.Update(diff);
+            }
+
+            foreach(var obj in GetObjects().Values)
+            {
                 if (obj.IsToRemove())
                 {
                     RemoveObject(obj);
                 }
-                else
+            }
+
+            foreach(var team in Teams)
+            {
+                var g = _game.Map.NavigationGrid;
+
+                if(team == TeamId.TEAM_NEUTRAL)
                 {
-                    obj.Update(diff);
+                    //TODO: continue;
+                }
+
+                var currentTeamVision = _teamVision.GetValueOrDefault(team);
+                //TODO: Move to constructor
+                if(currentTeamVision == null)
+                {
+                    
+                    currentTeamVision = new float[g.CellCountX, g.CellCountY];
+                    _teamVision.Add(team, currentTeamVision);
+                }
+                
+                for(short x = 0; x < g.CellCountX; x++)
+                {
+                    for(short y = 0; y < g.CellCountY; y++)
+                    {
+                        currentTeamVision[x, y] = Math.Max(0, currentTeamVision[x, y] - diff);
+                    }
+                }
+                
+                foreach(var obj in _visionProviders[team])
+                {
+                    if(obj.VisionRadius > 0 && !(obj is IAttackableUnit unit && unit.IsDead))
+                    {
+                        CalculateFoV(obj, currentTeamVision);
+                    }
                 }
             }
 
             // For all existing objects and those created during the obj.Update phase
             foreach(var obj in GetObjects().Values)
             {
-                // If flagged during obj.Update
-                if(obj.IsToRemove())
-                {
-                    continue;
-                }
-
                 bool shouldBeSpawned = _queuedObjects.ContainsKey(obj.NetId);
                 
                 UpdateVision(obj, publish: !shouldBeSpawned);
@@ -306,26 +421,10 @@ namespace LeagueSandbox.GameServer
                 return true;
             }
 
-            foreach (var kv in _visionProviders[team])
-            {
-                if (
-                    Vector2.DistanceSquared(kv.Position, o.Position) < kv.VisionRadius * kv.VisionRadius
-                    && !_game.Map.NavigationGrid.IsAnythingBetween(kv, o, true)
-                )
-                {
-                    if (kv != null)
-                    {
-                        if (kv is IAttackableUnit unit && unit.IsDead)
-                        {
-                            return false;
-                        }
-
-                        return true;
-                    }
-                }
-            }
-
-            return false;
+            var pos = _game.Map.NavigationGrid.TranslateToNavGrid(o.Position);
+            short x = (short) Math.Ceiling(pos.X);
+            short y = (short) Math.Ceiling(pos.Y);
+            return _teamVision[team][x, y] > 0;
         }
 
         /// <summary>
