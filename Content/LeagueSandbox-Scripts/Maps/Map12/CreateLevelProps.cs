@@ -1,6 +1,5 @@
-﻿using GameServerCore.Maps;
-using System.Numerics;
-using static GameServerLib.API.APIMapFunctionManager;
+﻿using System.Numerics;
+using static LeagueSandbox.GameServer.API.ApiMapFunctionManager;
 
 namespace MapScripts.Map12
 {

@@ -2,11 +2,9 @@
 using GameServerCore.Domain.GameObjects.Spell;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using System.Numerics;
-using LeagueSandbox.GameServer.API;
 using GameServerCore.Scripting.CSharp;
 using GameServerCore.Enums;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
-using static GameServerLib.API.APIMapFunctionManager;
 
 namespace Spells
 {

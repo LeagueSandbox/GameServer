@@ -6,7 +6,7 @@ using LeagueSandbox.GameServer.API;
 using System.Collections.Generic;
 using System.Numerics;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
-using static GameServerLib.API.APIMapFunctionManager;
+using static LeagueSandbox.GameServer.API.ApiMapFunctionManager;
 
 namespace MapScripts.Map8
 {

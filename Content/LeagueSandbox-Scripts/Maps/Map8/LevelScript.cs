@@ -9,7 +9,7 @@ using LeagueSandbox.GameServer.Content;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using GameServerCore.Scripting.CSharp;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
-using static GameServerLib.API.APIMapFunctionManager;
+using static LeagueSandbox.GameServer.API.ApiMapFunctionManager;
 
 namespace MapScripts.Map8
 {
@@ -63,15 +63,7 @@ namespace MapScripts.Map8
             }},
 
         };
-
-        //Tower type enumeration might vary slightly from map to map, so we set that up here
-        public TurretType GetTurretType(int trueIndex, LaneID lane, TeamId teamId)
-        {
-            return TurretType.NEXUS_TURRET;
-        }
-
         //Nexus models
-        //Nexus and Inhibitor model changes dont seem to take effect in-game, has to be investigated.
         public Dictionary<TeamId, string> NexusModels { get; set; } = new Dictionary<TeamId, string>
         {
             {TeamId.TEAM_BLUE, "OrderNexus" },
@@ -96,6 +88,22 @@ namespace MapScripts.Map8
             } }
         };
 
+        //Minion models for this map
+        public Dictionary<TeamId, Dictionary<MinionSpawnType, string>> MinionModels { get; set; } = new Dictionary<TeamId, Dictionary<MinionSpawnType, string>>
+        {
+            {TeamId.TEAM_BLUE, new Dictionary<MinionSpawnType, string>{
+                {MinionSpawnType.MINION_TYPE_MELEE, "Blue_Minion_Basic"},
+                {MinionSpawnType.MINION_TYPE_CASTER, "Blue_Minion_Wizard"},
+                {MinionSpawnType.MINION_TYPE_CANNON, "Blue_Minion_MechCannon"},
+                {MinionSpawnType.MINION_TYPE_SUPER, "Blue_Minion_MechMelee"}
+            }},
+            {TeamId.TEAM_PURPLE, new Dictionary<MinionSpawnType, string>{
+                {MinionSpawnType.MINION_TYPE_MELEE, "Red_Minion_Basic"},
+                {MinionSpawnType.MINION_TYPE_CASTER, "Red_Minion_Wizard"},
+                {MinionSpawnType.MINION_TYPE_CANNON, "Red_Minion_MechCannon"},
+                {MinionSpawnType.MINION_TYPE_SUPER, "Red_Minion_MechMelee"}
+            }}
+        };
         //Turret Items
         public Dictionary<TurretType, int[]> TurretItems { get; set; } = new Dictionary<TurretType, int[]>
         {
@@ -146,61 +154,7 @@ namespace MapScripts.Map8
             MinionSpawnType.MINION_TYPE_CASTER,
             MinionSpawnType.MINION_TYPE_CASTER,
             MinionSpawnType.MINION_TYPE_CASTER }
-        }
-        };
-
-        //Here you setup the conditions of which wave will be spawned
-        public Tuple<int, List<MinionSpawnType>> MinionWaveToSpawn(float gameTime, int cannonMinionCount, bool isInhibitorDead, bool areAllInhibitorsDead)
-        {
-            var cannonMinionTimestamps = new List<Tuple<long, int>>
-            {
-                new Tuple<long, int>(0, 2),
-                new Tuple<long, int>(20 * 60 * 1000, 1),
-                new Tuple<long, int>(35 * 60 * 1000, 0)
-            };
-            var cannonMinionCap = 2;
-
-            foreach (var timestamp in cannonMinionTimestamps)
-            {
-                if (gameTime >= timestamp.Item1)
-                {
-                    cannonMinionCap = timestamp.Item2;
-                }
-            }
-            var list = "RegularMinionWave";
-            if (cannonMinionCount >= cannonMinionCap)
-            {
-                list = "CannonMinionWave";
-            }
-
-            if (isInhibitorDead)
-            {
-                list = "SuperMinionWave";
-            }
-
-            if (areAllInhibitorsDead)
-            {
-                list = "DoubleSuperMinionWave";
-            }
-            return new Tuple<int, List<MinionSpawnType>>(cannonMinionCap, MinionWaveTypes[list]);
-        }
-
-        //Minion models for this map
-        public Dictionary<TeamId, Dictionary<MinionSpawnType, string>> MinionModels { get; set; } = new Dictionary<TeamId, Dictionary<MinionSpawnType, string>>
-        {
-            {TeamId.TEAM_BLUE, new Dictionary<MinionSpawnType, string>{
-                {MinionSpawnType.MINION_TYPE_MELEE, "Blue_Minion_Basic"},
-                {MinionSpawnType.MINION_TYPE_CASTER, "Blue_Minion_Wizard"},
-                {MinionSpawnType.MINION_TYPE_CANNON, "Blue_Minion_MechCannon"},
-                {MinionSpawnType.MINION_TYPE_SUPER, "Blue_Minion_MechMelee"}
-            }},
-            {TeamId.TEAM_PURPLE, new Dictionary<MinionSpawnType, string>{
-                {MinionSpawnType.MINION_TYPE_MELEE, "Red_Minion_Basic"},
-                {MinionSpawnType.MINION_TYPE_CASTER, "Red_Minion_Wizard"},
-                {MinionSpawnType.MINION_TYPE_CANNON, "Red_Minion_MechCannon"},
-                {MinionSpawnType.MINION_TYPE_SUPER, "Red_Minion_MechMelee"}
-            }}
-        };
+        }};
 
         public Dictionary<TeamId, ILevelProp> TeamStairs = new Dictionary<TeamId, ILevelProp>();
         public Dictionary<TeamId, ILevelProp> Nexus = new Dictionary<TeamId, ILevelProp>();
@@ -415,6 +369,48 @@ namespace MapScripts.Map8
                 }
                 AnimationsNotified.Add("Close1");
             }
+        }
+
+        //Tower type enumeration might vary slightly from map to map, so we set that up here
+        public TurretType GetTurretType(int trueIndex, LaneID lane, TeamId teamId)
+        {
+            return TurretType.NEXUS_TURRET;
+        }
+
+        //Here you setup the conditions of which wave will be spawned
+        public Tuple<int, List<MinionSpawnType>> MinionWaveToSpawn(float gameTime, int cannonMinionCount, bool isInhibitorDead, bool areAllInhibitorsDead)
+        {
+            var cannonMinionTimestamps = new List<Tuple<long, int>>
+            {
+                new Tuple<long, int>(0, 2),
+                new Tuple<long, int>(20 * 60 * 1000, 1),
+                new Tuple<long, int>(35 * 60 * 1000, 0)
+            };
+            var cannonMinionCap = 2;
+
+            foreach (var timestamp in cannonMinionTimestamps)
+            {
+                if (gameTime >= timestamp.Item1)
+                {
+                    cannonMinionCap = timestamp.Item2;
+                }
+            }
+            var list = "RegularMinionWave";
+            if (cannonMinionCount >= cannonMinionCap)
+            {
+                list = "CannonMinionWave";
+            }
+
+            if (isInhibitorDead)
+            {
+                list = "SuperMinionWave";
+            }
+
+            if (areAllInhibitorsDead)
+            {
+                list = "DoubleSuperMinionWave";
+            }
+            return new Tuple<int, List<MinionSpawnType>>(cannonMinionCap, MinionWaveTypes[list]);
         }
     }
 }

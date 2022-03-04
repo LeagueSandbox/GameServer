@@ -1152,12 +1152,12 @@ namespace PacketDefinitions420
                 SenderNetID = m.NetId,
                 ObjectID = m.NetId,
                 ObjectNodeID = 0x40, // TODO: check this
-                BarracksNetID = 0xFF000000 | Crc32Algorithm.Compute(Encoding.UTF8.GetBytes(m.BarracksName)), // TODO: Verify
+                BarracksNetID = 0xFF000000 | Crc32Algorithm.Compute(Encoding.UTF8.GetBytes(m.BarracksName)),
                 WaveCount = 1, // TODO: Unhardcode
                 MinionType = (byte)m.MinionSpawnType,
-                DamageBonus = 10, // TODO: Unhardcode
-                HealthBonus = 7, // TODO: Unhardcode
-                MinionLevel = 1 // TODO: Unhardcode
+                DamageBonus = (short)m.DamageBonus,
+                HealthBonus = (short)m.HealthBonus,
+                MinionLevel = m.Stats.Level
             };
 
             _packetHandlerManager.BroadcastPacket(p.GetBytes(), Channel.CHL_S2C);

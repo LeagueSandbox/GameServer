@@ -1,6 +1,6 @@
 ﻿using GameServerCore.Enums;
 using System.Numerics;
-using static GameServerLib.API.APIMapFunctionManager;
+using static LeagueSandbox.GameServer.API.ApiMapFunctionManager;
 
 namespace MapScripts.Map8
 {

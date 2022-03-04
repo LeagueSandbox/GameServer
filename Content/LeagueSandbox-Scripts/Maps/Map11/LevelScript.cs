@@ -10,7 +10,7 @@ using GameServerCore.Scripting.CSharp;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using LeagueSandbox.GameServer.API;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
-using static GameServerLib.API.APIMapFunctionManager;
+using static LeagueSandbox.GameServer.API.ApiMapFunctionManager;
 using LeagueSandbox.GameServer.GameObjects.Stats;
 
 namespace MapScripts.Map11
@@ -20,7 +20,7 @@ namespace MapScripts.Map11
         public virtual IMapScriptMetadata MapScriptMetadata { get; set; } = new MapScriptMetadata
         {
             MinionPathingOverride = true,
-            EnableBuildingProtection = false
+            EnableBuildingProtection = true
         };
         public IMapScriptHandler _map;
         public virtual IGlobalData GlobalData { get; set; } = new GlobalData();
@@ -28,49 +28,25 @@ namespace MapScripts.Map11
         public long NextSpawnTime { get; set; } = 90 * 1000;
         public string LaneMinionAI { get; set; } = "LaneMinionAI";
         public string LaneTurretAI { get; set; } = "TurretAI";
-
         public Dictionary<TeamId, Dictionary<int, Dictionary<int, Vector2>>> PlayerSpawnPoints { get; }
-
-        //Tower type enumeration might vary slightly from map to map, so we set that up here
-        public TurretType GetTurretType(int trueIndex, LaneID lane, TeamId teamId)
-        {
-            TurretType returnType = TurretType.FOUNTAIN_TURRET;
-
-            if (lane == LaneID.MIDDLE)
-            {
-                if (trueIndex < 3)
-                {
-                    returnType = TurretType.NEXUS_TURRET;
-                    return returnType;
-                }
-
-                trueIndex -= 2;
-            }
-
-            switch (trueIndex)
-            {
-                case 1:
-                case 4:
-                case 5:
-                    returnType = TurretType.INHIBITOR_TURRET;
-                    break;
-                case 2:
-                    returnType = TurretType.INNER_TURRET;
-                    break;
-                case 3:
-                    returnType = TurretType.OUTER_TURRET;
-                    break;
-            }
-
-            return returnType;
-        }
-
-        //Nexus models
-        //Nexus and Inhibitor model changes dont seem to take effect in-game, has to be investigated.
         public Dictionary<TeamId, string> NexusModels { get; set; }
-
         public Dictionary<TeamId, string> InhibitorModels { get; set; }
         public Dictionary<TeamId, Dictionary<TurretType, string>> TowerModels { get; set; }
+        public Dictionary<TeamId, Dictionary<MinionSpawnType, string>> MinionModels { get; set; } = new Dictionary<TeamId, Dictionary<MinionSpawnType, string>>
+        {
+            {TeamId.TEAM_BLUE, new Dictionary<MinionSpawnType, string>{
+                {MinionSpawnType.MINION_TYPE_MELEE, "SRU_OrderMinionMelee"},
+                {MinionSpawnType.MINION_TYPE_CASTER, "SRU_OrderMinionRanged"},
+                {MinionSpawnType.MINION_TYPE_CANNON, "SRU_OrderMinionSiege"},
+                {MinionSpawnType.MINION_TYPE_SUPER, "SRU_OrderMinionSuper"}
+            }},
+            {TeamId.TEAM_PURPLE, new Dictionary<MinionSpawnType, string>{
+                {MinionSpawnType.MINION_TYPE_MELEE, "SRU_ChaosMinionMelee"},
+                {MinionSpawnType.MINION_TYPE_CASTER, "SRU_ChaosMinionRanged"},
+                {MinionSpawnType.MINION_TYPE_CANNON, "SRU_ChaosMinionSiege"},
+                {MinionSpawnType.MINION_TYPE_SUPER, "SRU_ChaosMinionSuper"}
+            }}
+        };
 
         public Dictionary<TurretType, int[]> TurretItems { get; set; } = new Dictionary<TurretType, int[]>
         {
@@ -80,48 +56,64 @@ namespace MapScripts.Map11
             { TurretType.NEXUS_TURRET, new[] { 1501, 1502, 1503, 3178 } }
         };
 
-        //List of every path minions will take, separated by team and lane
+        //List of every path minions will take, separated by lane (These values are for team blue, team red will just reverse this table
         public Dictionary<LaneID, List<Vector2>> MinionPaths { get; set; } = new Dictionary<LaneID, List<Vector2>>
         {
-                //Pathing coordinates for Top lane
-                {LaneID.TOP, new List<Vector2> {
-                    new Vector2(917.0f, 1725.0f),
-                    new Vector2(1170.0f, 4041.0f),
-                    new Vector2(861.0f, 6459.0f),
-                    new Vector2(880.0f, 10180.0f),
-                    new Vector2(1268.0f, 11675.0f),
-                    new Vector2(2806.0f, 13075.0f),
-                    new Vector2(3907.0f, 13243.0f),
-                    new Vector2(7550.0f, 13407.0f),
-                    new Vector2(10244.0f, 13238.0f),
-                    new Vector2(10947.0f, 13135.0f),
-                    new Vector2(12511.0f, 12776.0f) }
-                },
+            //Pathing coordinates for Top lane
+            {LaneID.TOP, new List<Vector2> {
+                new Vector2(1341f, 2274f),
+                new Vector2(1544f, 3567f),
+                new Vector2(1410f, 4262f),
+                new Vector2(1232f, 6666f),
+                new Vector2(1295f, 10400f),
+                new Vector2(1371f, 11375f),
+                new Vector2(2206f, 12601f),
+                new Vector2(3239f, 13402f),
+                new Vector2(4300f, 13575f),
+                new Vector2(7960f, 13656f),
+                new Vector2(10490f, 13900f),
+                new Vector2(11258f, 14000f),
+                new Vector2(12707f, 13542f)
+            }},
 
-                //Pathing coordinates for Mid lane
-                {LaneID.MIDDLE, new List<Vector2> {
-                    new Vector2(1418.0f, 1686.0f),
-                    new Vector2(2997.0f, 2781.0f),
-                    new Vector2(4472.0f, 4727.0f),
-                    new Vector2(8375.0f, 8366.0f),
-                    new Vector2(10948.0f, 10821.0f),
-                    new Vector2(12511.0f, 12776.0f) }
-                },
+            //Pathing coordinates for Mid lane
+            {LaneID.MIDDLE, new List<Vector2> {
+                new Vector2(2126f, 2172f),
+                new Vector2(2850f, 2926f),
+                new Vector2(3318.8f, 2859f),
+                new Vector2(3914f, 3535f),
+                new Vector2(4839f, 5004f),
+                new Vector2(7450f, 7450f),
+                new Vector2(10012f, 9926f),
+                new Vector2(11385f, 10950f),
+                new Vector2(11864f, 11420f),
+                new Vector2(11902f, 11960f),
+                new Vector2(12723f, 12773f)
+            }},
 
-                //Pathing coordinates for Bot lane
-                {LaneID.BOTTOM, new List<Vector2> {
-                    new Vector2(1487.0f, 1302.0f),
-                    new Vector2(3789.0f, 1346.0f),
-                    new Vector2(6430.0f, 1005.0f),
-                    new Vector2(10995.0f, 1234.0f),
-                    new Vector2(12841.0f, 3051.0f),
-                    new Vector2(13148.0f, 4202.0f),
-                    new Vector2(13249.0f, 7884.0f),
-                    new Vector2(12886.0f, 10356.0f),
-                    new Vector2(12511.0f, 12776.0f) }
-                }
+            //Pathing coordinates for Bot lane
+            {LaneID.BOTTOM, new List<Vector2> {
+                new Vector2(2271f, 1352f),
+                new Vector2(2943f, 1251f),
+                new Vector2(3453f, 1569f),
+                new Vector2(4302f, 1542f),
+                new Vector2(4764f, 1219f),
+                new Vector2(6890f, 1200f),
+                new Vector2(10508f, 1311f),
+                new Vector2(11262f, 1424f),
+                new Vector2(11919f, 1815f),
+                new Vector2(12575f, 2450f),
+                new Vector2(13157f, 3060f),
+                new Vector2(13536f, 3831f),
+                new Vector2(13571f, 4500f),
+                new Vector2(13653f, 8236f),
+                new Vector2(13626f, 10040f),
+                new Vector2(13336f, 10542f),
+                new Vector2(13300f, 11314f),
+                new Vector2(13606f, 11720f),
+                new Vector2(13606f, 12525f)
+            }}
         };
-
 
         //List of every wave type
         public Dictionary<string, List<MinionSpawnType>> MinionWaveTypes = new Dictionary<string, List<MinionSpawnType>>
@@ -161,61 +153,9 @@ namespace MapScripts.Map11
             MinionSpawnType.MINION_TYPE_CASTER,
             MinionSpawnType.MINION_TYPE_CASTER,
             MinionSpawnType.MINION_TYPE_CASTER }
-        }
-        };
+        }};
 
-        //Here you setup the conditions of which wave will be spawned
-        public Tuple<int, List<MinionSpawnType>> MinionWaveToSpawn(float gameTime, int cannonMinionCount, bool isInhibitorDead, bool areAllInhibitorsDead)
-        {
-            var cannonMinionTimestamps = new List<Tuple<long, int>>
-            {
-                new Tuple<long, int>(0, 2),
-                new Tuple<long, int>(20 * 60 * 1000, 1),
-                new Tuple<long, int>(35 * 60 * 1000, 0)
-            };
-            var cannonMinionCap = 2;
 
-            foreach (var timestamp in cannonMinionTimestamps)
-            {
-                if (gameTime >= timestamp.Item1)
-                {
-                    cannonMinionCap = timestamp.Item2;
-                }
-            }
-            var list = "RegularMinionWave";
-            if (cannonMinionCount >= cannonMinionCap)
-            {
-                list = "CannonMinionWave";
-            }
-
-            if (isInhibitorDead)
-            {
-                list = "SuperMinionWave";
-            }
-
-            if (areAllInhibitorsDead)
-            {
-                list = "DoubleSuperMinionWave";
-            }
-            return new Tuple<int, List<MinionSpawnType>>(cannonMinionCap, MinionWaveTypes[list]);
-        }
-
-        //Minion models for this map
-        public Dictionary<TeamId, Dictionary<MinionSpawnType, string>> MinionModels { get; set; } = new Dictionary<TeamId, Dictionary<MinionSpawnType, string>>
-        {
-            {TeamId.TEAM_BLUE, new Dictionary<MinionSpawnType, string>{
-                {MinionSpawnType.MINION_TYPE_MELEE, "SRU_OrderMinionMelee"},
-                {MinionSpawnType.MINION_TYPE_CASTER, "SRU_OrderMinionRanged"},
-                {MinionSpawnType.MINION_TYPE_CANNON, "SRU_OrderMinionSiege"},
-                {MinionSpawnType.MINION_TYPE_SUPER, "SRU_OrderMinionSuper"}
-            }},
-            {TeamId.TEAM_PURPLE, new Dictionary<MinionSpawnType, string>{
-                {MinionSpawnType.MINION_TYPE_MELEE, "SRU_ChaosMinionMelee"},
-                {MinionSpawnType.MINION_TYPE_CASTER, "SRU_ChaosMinionRanged"},
-                {MinionSpawnType.MINION_TYPE_CANNON, "SRU_ChaosMinionSiege"},
-                {MinionSpawnType.MINION_TYPE_SUPER, "SRU_ChaosMinionSuper"}
-            }}
-        };
 
         //This function is executed in-between Loading the map structures and applying the structure protections. Is the first thing on this script to be executed
         public virtual void Init(IMapScriptHandler map)
@@ -274,13 +214,20 @@ namespace MapScripts.Map11
             CreateInhibitor("Barracks_T1_R1", "SRUAP_OrderInhibitor", new Vector2(3452.5286f, 1236.884f), TeamId.TEAM_BLUE, LaneID.BOTTOM, 214, 0);
 
             //Red Team Inhibitors
-            CreateInhibitor("Barracks_T2_L1", "SRUAP_OrderInhibitor", new Vector2(11261.665f, 13676.563f), TeamId.TEAM_PURPLE, LaneID.TOP, 214, 0);
-            CreateInhibitor("Barracks_T2_C1", "SRUAP_OrderInhibitor", new Vector2(11598.124f, 11667.8125f), TeamId.TEAM_PURPLE, LaneID.MIDDLE, 214, 0);
-            CreateInhibitor("Barracks_T2_R1", "SRUAP_OrderInhibitor", new Vector2(13604.601f, 11316.011f), TeamId.TEAM_PURPLE, LaneID.BOTTOM, 214, 0);
+            CreateInhibitor("Barracks_T2_L1", "SRUAP_ChaosInhibitor", new Vector2(11261.665f, 13676.563f), TeamId.TEAM_PURPLE, LaneID.TOP, 214, 0);
+            CreateInhibitor("Barracks_T2_C1", "SRUAP_ChaosInhibitor", new Vector2(11598.124f, 11667.8125f), TeamId.TEAM_PURPLE, LaneID.MIDDLE, 214, 0);
+            CreateInhibitor("Barracks_T2_R1", "SRUAP_ChaosInhibitor", new Vector2(13604.601f, 11316.011f), TeamId.TEAM_PURPLE, LaneID.BOTTOM, 214, 0);
 
             //Create Nexus
             CreateNexus("HQ_T1", "SRUAP_OrderNexus", new Vector2(1551.3535f, 1659.627f), TeamId.TEAM_BLUE, 353, 1700);
             CreateNexus("HQ_T2", "SRUAP_ChaosNexus", new Vector2(13142.73f, 12964.941f), TeamId.TEAM_PURPLE, 353, 1700);
+
+            CreateLaneMinionSpawnPos("__P_Chaos_Spawn_Barracks__R01", new Vector3(13719.46f, 119.2171f, 12845.7f));
+            CreateLaneMinionSpawnPos("__P_Chaos_Spawn_Barracks__C01", new Vector3(12776.26f, 110.7853f, 12784.75f));
+            CreateLaneMinionSpawnPos("__P_Chaos_Spawn_Barracks__L01", new Vector3(12800.61f, 128.4584f, 13745.36f));
+            CreateLaneMinionSpawnPos("__P_Order_Spawn_Barracks__R01", new Vector3(2034.091f, 128.7497f, 1171.083f));
+            CreateLaneMinionSpawnPos("__P_Order_Spawn_Barracks__C01", new Vector3(2008.126f, 119.2706f, 2079.599f));
+            CreateLaneMinionSpawnPos("__P_Order_Spawn_Barracks__L01", new Vector3(1109.416f, 124.5788f, 2091.567f));
 
             CreateFountain(TeamId.TEAM_BLUE, new Vector2(394.76892f, 461.57095f));
             CreateFountain(TeamId.TEAM_PURPLE, new Vector2(14340.419f, 14391.075f));
@@ -299,8 +246,8 @@ namespace MapScripts.Map11
             InitialInhibTowerStatModifier.HealthPoints.FlatBonus = 190.0f;
             InitialNexusTowerStatModifier.HealthPoints.FlatBonus = 150.0f;
 
-            InitialInhibTowerStatModifier.Armor.BaseBonus= 33.0f;
-            InitialInhibTowerStatModifier.AttackDamage.BaseBonus= -20.0f;
+            InitialInhibTowerStatModifier.Armor.BaseBonus = 33.0f;
+            InitialInhibTowerStatModifier.AttackDamage.BaseBonus = -20.0f;
             TowerStatModifier.AttackDamage.FlatBonus = 4.0f;
 
             foreach (var team in _map.TurretList.Keys)
@@ -310,6 +257,7 @@ namespace MapScripts.Map11
                     foreach (var turret in _map.TurretList[team][lane])
                     {
                         AddUnitPerceptionBubble(turret, 800.0F, 25000.0F, team, true, collisionArea: 88.4F);
+                        //Will use an AcquisitionRange modifier for now, since Regions dont work yet.
 
                         switch (turret.Type)
                         {
@@ -406,6 +354,7 @@ namespace MapScripts.Map11
 
             if (nexus.Team == TeamId.TEAM_PURPLE)
             {
+                //This particle effect doesn't seem to work
                 particle = "SRU_Chaos_Nexus_Explosion";
             }
 
@@ -441,6 +390,48 @@ namespace MapScripts.Map11
                 NotifyMapAnnouncement(EventID.OnStartGameMessage1, _map.Id);
                 AnnouncedEvents.Add(EventID.OnStartGameMessage1);
             }
+        }
+
+        //Tower type enumeration might vary slightly from map to map, so we set that up here
+        public TurretType GetTurretType(int trueIndex, LaneID lane, TeamId teamId)
+        {
+            return 0;
+        }
+
+        //Here you setup the conditions of which wave will be spawned
+        public Tuple<int, List<MinionSpawnType>> MinionWaveToSpawn(float gameTime, int cannonMinionCount, bool isInhibitorDead, bool areAllInhibitorsDead)
+        {
+            var cannonMinionTimestamps = new List<Tuple<long, int>>
+            {
+                new Tuple<long, int>(0, 2),
+                new Tuple<long, int>(20 * 60 * 1000, 1),
+                new Tuple<long, int>(35 * 60 * 1000, 0)
+            };
+            var cannonMinionCap = 2;
+
+            foreach (var timestamp in cannonMinionTimestamps)
+            {
+                if (gameTime >= timestamp.Item1)
+                {
+                    cannonMinionCap = timestamp.Item2;
+                }
+            }
+            var list = "RegularMinionWave";
+            if (cannonMinionCount >= cannonMinionCap)
+            {
+                list = "CannonMinionWave";
+            }
+
+            if (isInhibitorDead)
+            {
+                list = "SuperMinionWave";
+            }
+
+            if (areAllInhibitorsDead)
+            {
+                list = "DoubleSuperMinionWave";
+            }
+            return new Tuple<int, List<MinionSpawnType>>(cannonMinionCap, MinionWaveTypes[list]);
         }
     }
 }

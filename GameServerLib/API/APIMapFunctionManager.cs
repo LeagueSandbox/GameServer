@@ -2,10 +2,8 @@
 using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
-using GameServerCore.Maps;
 using GameServerLib.GameObjects;
 using LeaguePackets.Game.Common;
-using LeagueSandbox.GameServer;
 using LeagueSandbox.GameServer.GameObjects;
 using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
 using LeagueSandbox.GameServer.GameObjects.AttackableUnits.Buildings.AnimatedBuildings;
@@ -18,10 +16,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using System.Text;
+using static MapData;
 
-namespace GameServerLib.API
+namespace LeagueSandbox.GameServer.API
 {
-    public static class APIMapFunctionManager
+    public static class ApiMapFunctionManager
     {
         // Required variables.
         private static Game _game;
@@ -159,6 +158,31 @@ namespace GameServerLib.API
         }
 
         /// <summary>
+        /// Creates and returns an inhibitor
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="model"></param>
+        /// <param name="position"></param>
+        /// <param name="team"></param>
+        /// <param name="lane"></param>
+        /// <param name="inhibRadius"></param>
+        /// <param name="sightRange"></param>
+        /// <returns></returns>
+        public static IInhibitor CreateInhibitor(string name, string model, Vector2 position, TeamId team, LaneID lane, int inhibRadius, int sightRange)
+        {
+            IInhibitor inhibitor = new Inhibitor(_game, model, lane, team, inhibRadius, position, sightRange, Crc32Algorithm.Compute(Encoding.UTF8.GetBytes(name)) | 0xFF000000);
+            _map.InhibitorList[team][lane].Add(inhibitor);
+            return inhibitor;
+        }
+
+        public static IMapObject CreateLaneMinionSpawnPos(string name, Vector3 position)
+        {
+            IMapObject spawnBarrack = new MapObject(name, position, _map.Id);
+            _map.SpawnBarracks.Add(name, spawnBarrack);
+            return spawnBarrack;
+        }
+
+        /// <summary>
         /// Creates a tower
         /// </summary>
         /// <param name="name"></param>
@@ -209,24 +233,6 @@ namespace GameServerLib.API
             _map.TurretList[team][desiredLaneID].Add(tower);
         }
 
-
-        /// <summary>
-        /// Creates and returns an inhibitor
-        /// </summary>
-        /// <param name="name"></param>
-        /// <param name="model"></param>
-        /// <param name="position"></param>
-        /// <param name="team"></param>
-        /// <param name="lane"></param>
-        /// <param name="inhibRadius"></param>
-        /// <param name="sightRange"></param>
-        /// <returns></returns>
-        public static IInhibitor CreateInhibitor(string name, string model, Vector2 position, TeamId team, LaneID lane, int inhibRadius, int sightRange)
-        {
-            IInhibitor inhibitor = new Inhibitor(_game, model, lane, team, inhibRadius, position, sightRange, Crc32Algorithm.Compute(Encoding.UTF8.GetBytes(name)) | 0xFF000000);
-            _map.InhibitorList[team][lane].Add(inhibitor);
-            return inhibitor;
-        }
         public static IInhibitor GetInhibitorById(uint id)
         {
             foreach (TeamId team in _map.InhibitorList.Keys)

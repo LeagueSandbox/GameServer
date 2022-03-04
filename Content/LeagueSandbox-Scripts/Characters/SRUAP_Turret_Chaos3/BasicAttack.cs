@@ -15,8 +15,10 @@ namespace Spells
             // TODO
         };
 
+        IObjAiBase Owner;
         public void OnActivate(IObjAiBase owner, ISpell spell)
         {
+            Owner = owner;
         }
 
         public void OnDeactivate(IObjAiBase owner, ISpell spell)
@@ -67,6 +69,7 @@ namespace Spells
 
         public void OnUpdate(float diff)
         {
+            LogInfo(Owner.VisionRadius.ToString());
         }
     }
 }

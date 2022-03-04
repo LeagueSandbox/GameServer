@@ -633,7 +633,10 @@ namespace LeagueSandbox.GameServer.Content.Navigation
             NavigationGridCell cell = GetCell((short)vector.X, (short)vector.Y);
 
             //TODO: implement bush logic here
-            return cell != null && (!cell.HasFlag(NavigationGridCellFlags.NOT_PASSABLE) || cell.HasFlag(NavigationGridCellFlags.HAS_GLOBAL_VISION));
+            return cell != null 
+                && (!cell.HasFlag(NavigationGridCellFlags.NOT_PASSABLE) 
+                || cell.HasFlag(NavigationGridCellFlags.SEE_THROUGH)
+                || cell.HasFlag(NavigationGridCellFlags.HAS_GLOBAL_VISION));
         }
 
         /// <summary>
