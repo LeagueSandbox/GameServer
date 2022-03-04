@@ -242,6 +242,7 @@ namespace MapScripts.Map10
 
                         turret.AddStatModifier(TurretHealthModifier);
                         turret.Stats.CurrentHealth += turret.Stats.HealthPoints.Total;
+                        AddTurretItems(turret, GetTurretItems(turret.Type));
                     }
                 }
             }

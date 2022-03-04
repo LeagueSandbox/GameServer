@@ -17,7 +17,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             Vector2 position,
             TeamId team = TeamId.TEAM_BLUE,
             TurretType type = TurretType.OUTER_TURRET,
-            int[] items = null,
             uint netId = 0,
             LaneID lane = LaneID.NONE,
             IMapObject mapObject = null,
@@ -25,19 +24,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         ) : base(game, name, model, position, team, netId, lane, mapObject, aiScript: aiScript)
         {
             Type = type;
-
-            if (items != null)
-            {
-                foreach (var item in items)
-                {
-                    var itemTemplate = _itemManager.SafeGetItemType(item);
-                    if (itemTemplate == null)
-                    {
-                        continue;
-                    }
-                    Inventory.AddItem(itemTemplate, this);
-                }
-            }
 
             if (type == TurretType.FOUNTAIN_TURRET)
             {

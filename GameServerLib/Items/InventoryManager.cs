@@ -150,6 +150,7 @@ namespace LeagueSandbox.GameServer.Items
         {
             return _inventory.Items.GetEnumerator();
         }
+
         public void OnUpdate(float diff)
         {
             foreach (var item in _inventory.ItemScripts)

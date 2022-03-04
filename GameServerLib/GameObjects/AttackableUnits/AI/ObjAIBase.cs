@@ -974,6 +974,11 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 s.Update(diff);
             }
 
+            if(Inventory != null)
+            {
+                Inventory.OnUpdate(diff);
+            }
+
             UpdateTarget();
 
             if (_autoAttackCurrentCooldown > 0)

@@ -734,7 +734,7 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="maxAttackSpeedOverride">Value to override the maximum attack speed cap.</param>
         /// <param name="overrideMin">Whether or not to override the minimum attack speed cap.</param>
         /// <param name="minAttackSpeedOverride">Value to override the minimum attack speed cap.</param>
-        void NotifyS2C_UpdateAttackSpeedCapOverrides(bool overrideMax, float maxAttackSpeedOverride, bool overrideMin, float minAttackSpeedOverride);
+        void NotifyS2C_UpdateAttackSpeedCapOverrides(bool overrideMax, float maxAttackSpeedOverride, bool overrideMin, float minAttackSpeedOverride, IAttackableUnit unit = null);
         /// <summary>
         /// Sends a packet to all players with vision of the given bounce missile that it has updated (unit/position).
         /// </summary>

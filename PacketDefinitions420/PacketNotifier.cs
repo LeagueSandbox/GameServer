@@ -2764,7 +2764,7 @@ namespace PacketDefinitions420
                 Enabled = enabled,
             };
 
-            if(sender != null)
+            if (sender != null)
             {
                 packet.SenderNetID = sender.NetId;
             }
@@ -2932,7 +2932,7 @@ namespace PacketDefinitions420
         /// <param name="maxAttackSpeedOverride">Value to override the maximum attack speed cap.</param>
         /// <param name="overrideMin">Whether or not to override the minimum attack speed cap.</param>
         /// <param name="minAttackSpeedOverride">Value to override the minimum attack speed cap.</param>
-        public void NotifyS2C_UpdateAttackSpeedCapOverrides(bool overrideMax, float maxAttackSpeedOverride, bool overrideMin, float minAttackSpeedOverride)
+        public void NotifyS2C_UpdateAttackSpeedCapOverrides(bool overrideMax, float maxAttackSpeedOverride, bool overrideMin, float minAttackSpeedOverride, IAttackableUnit unit = null)
         {
             var overridePacket = new S2C_UpdateAttackSpeedCapOverrides
             {
@@ -2941,7 +2941,10 @@ namespace PacketDefinitions420
                 MaxAttackSpeedOverride = maxAttackSpeedOverride,
                 MinAttackSpeedOverride = minAttackSpeedOverride
             };
-
+            if(unit != null)
+            {
+                overridePacket.SenderNetID = unit.NetId;
+            }
             _packetHandlerManager.BroadcastPacket(overridePacket.GetBytes(), Channel.CHL_S2C);
         }
 

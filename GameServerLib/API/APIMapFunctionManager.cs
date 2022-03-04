@@ -172,9 +172,9 @@ namespace GameServerLib.API
         /// <param name="mapObject"></param>
         /// <param name="netId"></param>
         /// <returns></returns>
-        public static ILaneTurret CreateTurret(string name, string model, Vector2 position, TeamId team, TurretType turretType, int[] turretItems, LaneID lane, string aiScript, IMapObject mapObject = null, uint netId = 0)
+        public static ILaneTurret CreateTurret(string name, string model, Vector2 position, TeamId team, TurretType turretType, LaneID lane, string aiScript, IMapObject mapObject = null, uint netId = 0)
         {
-            ILaneTurret turret = new LaneTurret(_game, name, model, position, team, turretType, turretItems, netId, lane, mapObject, aiScript);
+            ILaneTurret turret = new LaneTurret(_game, name, model, position, team, turretType, netId, lane, mapObject, aiScript);
             _map.TurretList[team][lane].Add(turret);
             return turret;
         }
@@ -188,7 +188,7 @@ namespace GameServerLib.API
         {
             if (!_map.MapScript.TurretItems.ContainsKey(type))
             {
-                return null;
+                return new int[] {};
             }
 
             return _map.MapScript.TurretItems[type];
@@ -546,6 +546,19 @@ namespace GameServerLib.API
                 }
             }
             _game.SetGameToExit();
+        }
+
+        public static void AddTurretItems(IBaseTurret turret, int[] items)
+        {
+            foreach(var item in items)
+            {
+                turret.Inventory.AddItem(_game.ItemManager.SafeGetItemType(item), turret);
+            }
+        }
+
+        public static void NotifySpawn(IGameObject obj)
+        {
+            _game.PacketNotifier.NotifySpawn(obj);
         }
 
         //Everything from here on is supposed to get ported over to MapScripts in the future

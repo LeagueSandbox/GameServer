@@ -222,7 +222,7 @@ namespace LeagueSandbox.GameServer.Maps
                     if (mapObject.Name.Contains("Shrine"))
                     {
 
-                        CreateTurret(mapObject.Name + "_A", MapScript.TowerModels[teamId][TurretType.FOUNTAIN_TURRET], position, teamId, TurretType.FOUNTAIN_TURRET, GetTurretItems(TurretType.FOUNTAIN_TURRET), LaneID.NONE, MapScript.LaneTurretAI, mapObject);
+                        CreateTurret(mapObject.Name + "_A", MapScript.TowerModels[teamId][TurretType.FOUNTAIN_TURRET], position, teamId, TurretType.FOUNTAIN_TURRET, LaneID.NONE, MapScript.LaneTurretAI, mapObject);
                         continue;
                     }
 
@@ -236,7 +236,7 @@ namespace LeagueSandbox.GameServer.Maps
                         continue;
                     }
 
-                    CreateTurret(mapObject.Name + "_A", MapScript.TowerModels[teamId][turretType], position, teamId, turretType, GetTurretItems(turretType), lane, MapScript.LaneTurretAI, mapObject);
+                    CreateTurret(mapObject.Name + "_A", MapScript.TowerModels[teamId][turretType], position, teamId, turretType, lane, MapScript.LaneTurretAI, mapObject);
                 }
                 else if (objectType == GameObjectTypes.InfoPoint)
                 {
