@@ -26,7 +26,6 @@ namespace GameServerLib.GameObjects
         public List<IMonster> Monsters { get; set; } = new List<IMonster>();
 
         private Game _game;
-        private float _spawnInvulnerabilityTimer;
         public MonsterCamp(Game game, Vector3 position, byte groupNumber, TeamId teamSideOfTheMap, string campTypeIcon, float respawnTimer, bool doPlayVO = true, byte revealEvent = 74, float spawnDuration = 0.0f)
         {
             _game = game;
@@ -43,7 +42,6 @@ namespace GameServerLib.GameObjects
             }
 
             SpawnDuration = spawnDuration;
-            _spawnInvulnerabilityTimer = spawnDuration;
 
             game.PacketNotifier.NotifyS2C_CreateMinionCamp(this);
         }

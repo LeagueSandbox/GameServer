@@ -196,7 +196,7 @@ namespace LeagueSandbox.GameServer.API
         /// <param name="mapObject"></param>
         /// <param name="netId"></param>
         /// <returns></returns>
-        public static ILaneTurret CreateTurret(string name, string model, Vector2 position, TeamId team, TurretType turretType, LaneID lane, string aiScript, IMapObject mapObject = null, uint netId = 0)
+        public static ILaneTurret CreateLaneTurret(string name, string model, Vector2 position, TeamId team, TurretType turretType, LaneID lane, string aiScript, IMapObject mapObject = null, uint netId = 0)
         {
             ILaneTurret turret = new LaneTurret(_game, name, model, position, team, turretType, netId, lane, mapObject, aiScript);
             _map.TurretList[team][lane].Add(turret);
