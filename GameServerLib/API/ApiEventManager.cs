@@ -176,10 +176,12 @@ namespace LeagueSandbox.GameServer.API
             {
                 if (_listeners[i].Item2 == target)
                 {
-                    _listeners[i].Item3(target, attacker);
-                    if (_listeners[i].Item4 == true)
+                    var listener = _listeners[i];
+                    listener.Item3(target, attacker);
+
+                    if (listener.Item4)
                     {
-                        _listeners.RemoveAt(i);
+                        _listeners.Remove(listener);
                     }
                 }
             }
@@ -215,10 +217,12 @@ namespace LeagueSandbox.GameServer.API
             {
                 if (_listeners[i].Item2 == owner)
                 {
-                    _listeners[i].Item3(owner, target);
-                    if (_listeners[i].Item4 == true)
+                    var listener = _listeners[i];
+                    listener.Item3(owner, target);
+
+                    if (listener.Item4)
                     {
-                        _listeners.RemoveAt(i);
+                        _listeners.Remove(listener);
                     }
                 }
             }
@@ -254,10 +258,12 @@ namespace LeagueSandbox.GameServer.API
             {
                 if (_listeners[i].Item2 == owner)
                 {
-                    _listeners[i].Item3(owner);
-                    if (_listeners[i].Item4 == true)
+                    var listener = _listeners[i];
+                    listener.Item3(owner);
+
+                    if (listener.Item4)
                     {
-                        _listeners.RemoveAt(i);
+                        _listeners.Remove(listener);
                     }
                 }
             }
@@ -293,10 +299,12 @@ namespace LeagueSandbox.GameServer.API
             {
                 if (_listeners[i].Item2.Key == casterSpellPair.Key && _listeners[i].Item2.Value == casterSpellPair.Value)
                 {
-                    _listeners[i].Item3(casterSpellPair.Value, sector);
-                    if (_listeners[i].Item4 == true)
+                    var listener = _listeners[i];
+                    listener.Item3(casterSpellPair.Value, sector);
+
+                    if (listener.Item4)
                     {
-                        _listeners.RemoveAt(i);
+                        _listeners.Remove(listener);
                     }
                 }
             }
@@ -342,10 +350,12 @@ namespace LeagueSandbox.GameServer.API
             {
                 if (_listeners[i].Item2 == damageData.Attacker)
                 {
-                    _listeners[i].Item3(damageData);
-                    if (_listeners[i].Item4 == true)
+                    var listener = _listeners[i];
+                    listener.Item3(damageData);
+
+                    if (listener.Item4)
                     {
-                        _listeners.RemoveAt(i);
+                        _listeners.Remove(listener);
                     }
                 }
             }
@@ -418,10 +428,11 @@ namespace LeagueSandbox.GameServer.API
             {
                 if (_listeners[i].Item2 == unit)
                 {
-                    _listeners[i].Item3(data);
-                    if (_listeners[i].Item4 == true)
+                    var listener = _listeners[i];
+                    listener.Item3(data);
+                    if (_listeners[i].Item4)
                     {
-                        _listeners.RemoveAt(i);
+                        _listeners.Remove(listener);
                     }
                 }
             }
@@ -452,10 +463,12 @@ namespace LeagueSandbox.GameServer.API
             {
                 if (_listeners[i].Item2 == deathData.Killer)
                 {
-                    _listeners[i].Item3(deathData);
-                    if (_listeners[i].Item4)
+                    var listener = _listeners[i];
+                    listener.Item3(deathData);
+
+                    if (listener.Item4)
                     {
-                        _listeners.RemoveAt(i);
+                        _listeners.Remove(listener);
                     }
                 }
             }
@@ -486,10 +499,12 @@ namespace LeagueSandbox.GameServer.API
             {
                 if (_listeners[i].Item2 == deathData.Killer)
                 {
-                    _listeners[i].Item3(deathData);
-                    if (_listeners[i].Item4)
+                    var listener = _listeners[i];
+                    listener.Item3(deathData);
+
+                    if (listener.Item4)
                     {
-                        _listeners.RemoveAt(i);
+                        _listeners.Remove(listener);
                     }
                 }
             }
@@ -524,10 +539,12 @@ namespace LeagueSandbox.GameServer.API
             {
                 if (_listeners[i].Item2 == unit)
                 {
-                    _listeners[i].Item3(spell);
-                    if (_listeners[i].Item4 == true)
+                    var listener = _listeners[i];
+                    listener.Item3(spell);
+
+                    if (listener.Item4)
                     {
-                        _listeners.RemoveAt(i);
+                        _listeners.Remove(listener);
                     }
                 }
             }
@@ -563,10 +580,12 @@ namespace LeagueSandbox.GameServer.API
             {
                 if (_listeners[i].Item2.Key == casterSpellPair.Key && _listeners[i].Item2.Value == casterSpellPair.Value)
                 {
-                    _listeners[i].Item3(casterSpellPair.Value, missile);
-                    if (_listeners[i].Item4 == true)
+                    var listener = _listeners[i];
+                    listener.Item3(casterSpellPair.Value, missile);
+                    
+                    if (listener.Item4)
                     {
-                        _listeners.RemoveAt(i);
+                        _listeners.Remove(listener);
                     }
                 }
             }
@@ -598,10 +617,12 @@ namespace LeagueSandbox.GameServer.API
             {
                 if (_listeners[i].Item2 == owner)
                 {
-                    _listeners[i].Item3(owner);
-                    if (_listeners[i].Item4)
+                    var listener = _listeners[i];
+                    listener.Item3(owner);
+
+                    if (listener.Item4)
                     {
-                        _listeners.RemoveAt(i);
+                        _listeners.Remove(listener);
                     }
                 }
             }
@@ -632,10 +653,12 @@ namespace LeagueSandbox.GameServer.API
             {
                 if (_listeners[i].Item2 == spell)
                 {
-                    _listeners[i].Item3(spell);
-                    if (_listeners[i].Item4)
+                    var listener = _listeners[i];
+                    listener.Item3(spell);
+                    
+                    if (listener.Item4)
                     {
-                        _listeners.RemoveAt(i);
+                        _listeners.Remove(listener);
                     }
                 }
             }
@@ -674,10 +697,12 @@ namespace LeagueSandbox.GameServer.API
             {
                 if (_listeners[i].Item2 == unit)
                 {
-                    _listeners[i].Item3(unit);
-                    if (_listeners[i].Item4 == true)
+                    var listener = _listeners[i];
+                    listener.Item3(unit);
+
+                    if (listener.Item4)
                     {
-                        _listeners.RemoveAt(i);
+                        _listeners.Remove(listener);
                     }
                 }
             }
@@ -716,10 +741,12 @@ namespace LeagueSandbox.GameServer.API
             {
                 if (_listeners[i].Item2 == unit)
                 {
-                    _listeners[i].Item3(unit);
-                    if (_listeners[i].Item4 == true)
+                    var listener = _listeners[i];
+                    listener.Item3(unit);
+
+                    if (listener.Item4)
                     {
-                        _listeners.RemoveAt(i);
+                        _listeners.Remove(listener);
                     }
                 }
             }
@@ -758,10 +785,12 @@ namespace LeagueSandbox.GameServer.API
             {
                 if (_listeners[i].Item2 == unit)
                 {
-                    _listeners[i].Item3(unit);
-                    if (_listeners[i].Item4 == true)
+                    var listener = _listeners[i];
+                    listener.Item3(unit);
+                    
+                    if (listener.Item4)
                     {
-                        _listeners.RemoveAt(i);
+                        _listeners.Remove(listener);
                     }
                 }
             }
@@ -797,10 +826,12 @@ namespace LeagueSandbox.GameServer.API
             {
                 if (_listeners[i].Item2 == unit)
                 {
-                    _listeners[i].Item3(spell);
-                    if (_listeners[i].Item4 == true)
+                    var listener = _listeners[i];
+                    listener.Item3(spell);
+
+                    if (listener.Item4)
                     {
-                        _listeners.RemoveAt(i);
+                        _listeners.Remove(listener);
                     }
                 }
             }
@@ -836,10 +867,11 @@ namespace LeagueSandbox.GameServer.API
             {
                 if (_listeners[i].Item2 == damageData.Attacker)
                 {
-                    _listeners[i].Item3(damageData);
-                    if (_listeners[i].Item4 == true)
+                    var listener = _listeners[i];
+                    listener.Item3(damageData);
+                    if (listener.Item4)
                     {
-                        _listeners.RemoveAt(i);
+                        _listeners.Remove(listener);
                     }
                 }
             }
@@ -875,10 +907,12 @@ namespace LeagueSandbox.GameServer.API
             {
                 if (_listeners[i].Item2 == damageData.Target)
                 {
-                    _listeners[i].Item3(damageData);
-                    if (_listeners[i].Item4 == true)
+                    var listener = _listeners[i];
+                    listener.Item3(damageData);
+
+                    if (listener.Item4)
                     {
-                        _listeners.RemoveAt(i);
+                        _listeners.Remove(listener);
                     }
                 }
             }
@@ -910,10 +944,12 @@ namespace LeagueSandbox.GameServer.API
             {
                 if (_listeners[i].Item2 == unit)
                 {
-                    _listeners[i].Item3(unit);
-                    if (_listeners[i].Item4)
+                    var listener = _listeners[i];
+                    listener.Item3(unit);
+
+                    if (listener.Item4)
                     {
-                        _listeners.RemoveAt(i);
+                        _listeners.Remove(listener);
                     }
                 }
             }
@@ -1054,10 +1090,12 @@ namespace LeagueSandbox.GameServer.API
             {
                 if (_listeners[i].Item2 == spell)
                 {
-                    _listeners[i].Item3(spell, target, p, s);
-                    if (_listeners[i].Item4 == true)
+                    var listener = _listeners[i];
+                    listener.Item3(spell, target, p, s);
+
+                    if (listener.Item4 == true)
                     {
-                        _listeners.RemoveAt(i);
+                        _listeners.Remove(listener);
                     }
                 }
             }
