@@ -69,7 +69,6 @@ namespace Spells
 
         public void OnUpdate(float diff)
         {
-            LogInfo(Owner.VisionRadius.ToString());
         }
     }
 }
