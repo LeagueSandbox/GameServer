@@ -18,5 +18,6 @@ namespace GameServerCore.Domain
         void SwapItems(byte slot1, byte slot2);
         List<IItem> GetAvailableItems(IEnumerable<IItemData> items);
         IEnumerator GetEnumerator();
+        void OnUpdate(float diff);
     }
 }

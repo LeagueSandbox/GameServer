@@ -28,6 +28,7 @@ using GameServerCore.Packets.PacketDefinitions.Requests;
 using LeagueSandbox.GameServer.GameObjects;
 using LeagueSandbox.GameServer.GameObjects.Spell;
 using LeagueSandbox.GameServer.Packets.PacketHandlers;
+using GameServerCore.Domain.GameObjects;
 
 namespace LeagueSandbox.GameServer
 {
@@ -272,11 +273,21 @@ namespace LeagueSandbox.GameServer
 
             if (scriptLoadingResults)
             {
-                foreach (var champion in ObjectManager.GetAllChampions())
+                foreach (var unit in ObjectManager.GetObjects().Values)
                 {
-                    champion.LoadCharScript(champion.Spells[(int)SpellSlotType.PassiveSpellSlot]);
-                    champion.GetBuffs().ForEach(buff => buff.LoadScript());
-                    champion.Spells.Values.ToList().ForEach(spell => spell.LoadScript());
+                    if(unit is IObjAiBase obj)
+                    {
+                        if (obj.Spells.ContainsKey((int)SpellSlotType.PassiveSpellSlot))
+                        {
+                            obj.LoadCharScript(obj.Spells[(int)SpellSlotType.PassiveSpellSlot]);
+                        }
+                        else
+                        {
+                            obj.LoadCharScript();
+                        }
+                        obj.GetBuffs().ForEach(buff => buff.LoadScript());
+                        obj.Spells.Values.ToList().ForEach(spell => spell.LoadScript());
+                    }
                 }
             }
 

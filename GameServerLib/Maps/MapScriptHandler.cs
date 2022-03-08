@@ -1,23 +1,19 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
-using System.Text;
-using Force.Crc32;
 using GameServerCore;
 using GameServerCore.Content;
 using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
 using GameServerCore.Maps;
-using GameServerLib.API;
 using LeagueSandbox.GameServer.Content;
-using LeagueSandbox.GameServer.GameObjects;
 using LeagueSandbox.GameServer.GameObjects.Other;
 using LeagueSandbox.GameServer.Logging;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using log4net;
 using MapScripts;
-using static GameServerLib.API.APIMapFunctionManager;
+using static LeagueSandbox.GameServer.API.ApiMapFunctionManager;
 
 namespace LeagueSandbox.GameServer.Maps
 {
@@ -205,16 +201,16 @@ namespace LeagueSandbox.GameServer.Maps
                 string teamName = mapObject.GetTeamName();
 
                 // Nexus
-                if (objectType == GameObjectTypes.ObjAnimated_HQ || (teamId != TeamId.TEAM_NEUTRAL && mapObject.Name == MapScript.NexusModels[teamId]))
+                if (objectType == GameObjectTypes.ObjAnimated_HQ && teamId != TeamId.TEAM_NEUTRAL)
                 {
                     //Nexus model changes dont seem to take effect in-game
-                    NexusList.Add(CreateNexus(mapObject.Name, MapScript.NexusModels[teamId], position, teamId, nexusRadius, sightRange));
+                    CreateNexus(mapObject.Name, MapScript.NexusModels[teamId], position, teamId, nexusRadius, sightRange);
                 }
                 // Inhibitors
                 else if (objectType == GameObjectTypes.ObjAnimated_BarracksDampener)
                 {
                     //Inhibitor model changes dont seem to take effect in-game
-                    InhibitorList[teamId][lane].Add(CreateInhibitor(mapObject.Name, MapScript.InhibitorModels[teamId], position, teamId, lane, inhibRadius, sightRange));
+                    CreateInhibitor(mapObject.Name, MapScript.InhibitorModels[teamId], position, teamId, lane, inhibRadius, sightRange);
                 }
                 // Turrets
                 else if (objectType == GameObjectTypes.ObjAIBase_Turret)
@@ -222,7 +218,7 @@ namespace LeagueSandbox.GameServer.Maps
                     if (mapObject.Name.Contains("Shrine"))
                     {
 
-                        TurretList[teamId][lane].Add(CreateTurret(mapObject.Name + "_A", MapScript.TowerModels[teamId][TurretType.FOUNTAIN_TURRET], position, teamId, TurretType.FOUNTAIN_TURRET, GetTurretItems(TurretType.FOUNTAIN_TURRET), LaneID.NONE, MapScript.LaneTurretAI, mapObject));
+                        CreateLaneTurret(mapObject.Name + "_A", MapScript.TowerModels[teamId][TurretType.FOUNTAIN_TURRET], position, teamId, TurretType.FOUNTAIN_TURRET, LaneID.NONE, MapScript.LaneTurretAI, mapObject);
                         continue;
                     }
 
@@ -236,7 +232,7 @@ namespace LeagueSandbox.GameServer.Maps
                         continue;
                     }
 
-                    TurretList[teamId][lane].Add(CreateTurret(mapObject.Name + "_A", MapScript.TowerModels[teamId][turretType], position, teamId, turretType, GetTurretItems(turretType), lane, MapScript.LaneTurretAI, mapObject));
+                    CreateLaneTurret(mapObject.Name + "_A", MapScript.TowerModels[teamId][turretType], position, teamId, turretType, lane, MapScript.LaneTurretAI, mapObject);
                 }
                 else if (objectType == GameObjectTypes.InfoPoint)
                 {
@@ -244,7 +240,7 @@ namespace LeagueSandbox.GameServer.Maps
                 }
                 else if (objectType == GameObjectTypes.ObjBuilding_SpawnPoint)
                 {
-                    AddFountain(teamId, position);
+                    CreateFountain(teamId, position);
                 }
                 else if (objectType == GameObjectTypes.ObjBuilding_NavPoint)
                 {
@@ -252,7 +248,7 @@ namespace LeagueSandbox.GameServer.Maps
                 }
                 else if (objectType == GameObjectTypes.ObjBuilding_Shop)
                 {
-                    ShopList.Add(teamId, CreateShop(mapObject.Name, position, teamId));
+                    CreateShop(mapObject.Name, position, teamId);
                 }
             }
 

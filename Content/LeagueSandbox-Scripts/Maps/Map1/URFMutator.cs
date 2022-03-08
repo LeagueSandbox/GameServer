@@ -4,7 +4,7 @@ using GameServerCore.Maps;
 using LeagueSandbox.GameServer.Content;
 using GameServerCore.Scripting.CSharp;
 using LeagueSandbox.GameServer.Scripting.CSharp;
-using static GameServerLib.API.APIMapFunctionManager;
+using static LeagueSandbox.GameServer.API.ApiMapFunctionManager;
 
 namespace MapScripts.Map1
 {

@@ -237,7 +237,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         public void LoadCharScript(ISpell spell = null)
         {
             CharScript = _charScriptEngine.CreateObject<ICharScript>("CharScripts", $"CharScript{Model}") ?? new CharScriptEmpty();
-            CharScript.OnActivate(this, spell);
         }
 
         /// <summary>
@@ -973,6 +972,11 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             foreach (var s in new List<ISpell>(Spells.Values))
             {
                 s.Update(diff);
+            }
+
+            if(Inventory != null)
+            {
+                Inventory.OnUpdate(diff);
             }
 
             UpdateTarget();

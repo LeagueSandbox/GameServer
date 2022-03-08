@@ -10,7 +10,7 @@ using LeagueSandbox.GameServer.API;
 using LeagueSandbox.GameServer.Content;
 using LeagueSandbox.GameServer.GameObjects.Stats;
 using LeagueSandbox.GameServer.Scripting.CSharp;
-using static GameServerLib.API.APIMapFunctionManager;
+using static LeagueSandbox.GameServer.API.ApiMapFunctionManager;
 
 namespace MapScripts.Map10
 {
@@ -28,32 +28,7 @@ namespace MapScripts.Map10
         public long NextSpawnTime { get; set; } = 45 * 1000;
         public string LaneMinionAI { get; set; } = "LaneMinionAI";
         public string LaneTurretAI { get; set; } = "TurretAI";
-
         public Dictionary<TeamId, Dictionary<int, Dictionary<int, Vector2>>> PlayerSpawnPoints { get; }
-
-        //Tower type enumeration might vary slightly from map to map, so we set that up here
-        public TurretType GetTurretType(int trueIndex, LaneID lane, TeamId teamId)
-        {
-            TurretType returnType = TurretType.NEXUS_TURRET;
-            switch (trueIndex)
-            {
-                case 1:
-                case 6:
-                case 7:
-                    returnType = TurretType.INHIBITOR_TURRET;
-                    break;
-                case 2:
-                    returnType = TurretType.INNER_TURRET;
-                    break;
-            }
-
-            if (trueIndex == 1 && lane == LaneID.MIDDLE)
-            {
-                returnType = TurretType.NEXUS_TURRET;
-            }
-
-            return returnType;
-        }
 
         //Nexus models
         public Dictionary<TeamId, string> NexusModels { get; set; } = new Dictionary<TeamId, string>
@@ -61,12 +36,14 @@ namespace MapScripts.Map10
             {TeamId.TEAM_BLUE, "OrderNexus" },
             {TeamId.TEAM_PURPLE, "ChaosNexus" }
         };
+
         //Inhib models
         public Dictionary<TeamId, string> InhibitorModels { get; set; } = new Dictionary<TeamId, string>
         {
             {TeamId.TEAM_BLUE, "TT_OrderInhibitor" },
             {TeamId.TEAM_PURPLE, "TT_ChaosInhibitor" }
         };
+
         //Tower Models
         public Dictionary<TeamId, Dictionary<TurretType, string>> TowerModels { get; set; } = new Dictionary<TeamId, Dictionary<TurretType, string>>
         {
@@ -86,6 +63,26 @@ namespace MapScripts.Map10
             } }
         };
 
+        //Minion models for this map
+        public Dictionary<TeamId, Dictionary<MinionSpawnType, string>> MinionModels { get; set; } = new Dictionary<TeamId, Dictionary<MinionSpawnType, string>>
+        {
+            {TeamId.TEAM_BLUE, new Dictionary<MinionSpawnType, string>{
+                {MinionSpawnType.MINION_TYPE_MELEE, "Blue_Minion_Basic"},
+                {MinionSpawnType.MINION_TYPE_CASTER, "Blue_Minion_Wizard"},
+                {MinionSpawnType.MINION_TYPE_CANNON, "Blue_Minion_MechCannon"},
+                {MinionSpawnType.MINION_TYPE_SUPER, "Blue_Minion_MechMelee"}
+            }},
+            {TeamId.TEAM_PURPLE, new Dictionary<MinionSpawnType, string>{
+                {MinionSpawnType.MINION_TYPE_MELEE, "Red_Minion_Basic"},
+                {MinionSpawnType.MINION_TYPE_CASTER, "Red_Minion_Wizard"},
+                {MinionSpawnType.MINION_TYPE_CANNON, "Red_Minion_MechCannon"},
+                {MinionSpawnType.MINION_TYPE_SUPER, "Red_Minion_MechMelee"}
+            }}
+        };
+
+        //List of every path minions will take, separated by team and lane
+        public Dictionary<LaneID, List<Vector2>> MinionPaths { get; set; }
+
         //Turret Items
         public Dictionary<TurretType, int[]> TurretItems { get; set; } = new Dictionary<TurretType, int[]>
         {
@@ -94,9 +91,6 @@ namespace MapScripts.Map10
             { TurretType.INHIBITOR_TURRET, new[] { 1501, 1502, 1503, 1505 } },
             { TurretType.NEXUS_TURRET, new[] { 1501, 1502, 1503, 1505 } }
         };
-
-        //List of every path minions will take, separated by team and lane
-        public Dictionary<LaneID, List<Vector2>> MinionPaths { get; set; }
 
         //List of every wave type
         public Dictionary<string, List<MinionSpawnType>> MinionWaveTypes = new Dictionary<string, List<MinionSpawnType>>
@@ -136,61 +130,7 @@ namespace MapScripts.Map10
             MinionSpawnType.MINION_TYPE_CASTER,
             MinionSpawnType.MINION_TYPE_CASTER,
             MinionSpawnType.MINION_TYPE_CASTER }
-        }
-        };
-
-        //Here you setup the conditions of which wave will be spawned
-        public Tuple<int, List<MinionSpawnType>> MinionWaveToSpawn(float gameTime, int cannonMinionCount, bool isInhibitorDead, bool areAllInhibitorsDead)
-        {
-            var cannonMinionTimestamps = new List<Tuple<long, int>>
-            {
-                new Tuple<long, int>(0, 2),
-                new Tuple<long, int>(20 * 60 * 1000, 1),
-                new Tuple<long, int>(35 * 60 * 1000, 0)
-            };
-            var cannonMinionCap = 2;
-
-            foreach (var timestamp in cannonMinionTimestamps)
-            {
-                if (gameTime >= timestamp.Item1)
-                {
-                    cannonMinionCap = timestamp.Item2;
-                }
-            }
-            var list = "RegularMinionWave";
-            if (cannonMinionCount >= cannonMinionCap)
-            {
-                list = "CannonMinionWave";
-            }
-
-            if (isInhibitorDead)
-            {
-                list = "SuperMinionWave";
-            }
-
-            if (areAllInhibitorsDead)
-            {
-                list = "DoubleSuperMinionWave";
-            }
-            return new Tuple<int, List<MinionSpawnType>>(cannonMinionCap, MinionWaveTypes[list]);
-        }
-
-        //Minion models for this map
-        public Dictionary<TeamId, Dictionary<MinionSpawnType, string>> MinionModels { get; set; } = new Dictionary<TeamId, Dictionary<MinionSpawnType, string>>
-        {
-            {TeamId.TEAM_BLUE, new Dictionary<MinionSpawnType, string>{
-                {MinionSpawnType.MINION_TYPE_MELEE, "Blue_Minion_Basic"},
-                {MinionSpawnType.MINION_TYPE_CASTER, "Blue_Minion_Wizard"},
-                {MinionSpawnType.MINION_TYPE_CANNON, "Blue_Minion_MechCannon"},
-                {MinionSpawnType.MINION_TYPE_SUPER, "Blue_Minion_MechMelee"}
-            }},
-            {TeamId.TEAM_PURPLE, new Dictionary<MinionSpawnType, string>{
-                {MinionSpawnType.MINION_TYPE_MELEE, "Red_Minion_Basic"},
-                {MinionSpawnType.MINION_TYPE_CASTER, "Red_Minion_Wizard"},
-                {MinionSpawnType.MINION_TYPE_CANNON, "Red_Minion_MechCannon"},
-                {MinionSpawnType.MINION_TYPE_SUPER, "Red_Minion_MechMelee"}
-            }}
-        };
+        }};
 
         //This function is executed in-between Loading the map structures and applying the structure protections. Is the first thing on this script to be executed
         public void Init(IMapScriptHandler map)
@@ -242,6 +182,7 @@ namespace MapScripts.Map10
 
                         turret.AddStatModifier(TurretHealthModifier);
                         turret.Stats.CurrentHealth += turret.Stats.HealthPoints.Total;
+                        AddTurretItems(turret, GetTurretItems(turret.Type));
                     }
                 }
             }
@@ -336,6 +277,66 @@ namespace MapScripts.Map10
                 NotifyMapAnnouncement(EventID.OnStartGameMessage1, _map.Id);
                 AnnouncedEvents.Add(EventID.OnStartGameMessage1);
             }
+        }
+
+        //Tower type enumeration might vary slightly from map to map, so we set that up here
+        public TurretType GetTurretType(int trueIndex, LaneID lane, TeamId teamId)
+        {
+            TurretType returnType = TurretType.NEXUS_TURRET;
+            switch (trueIndex)
+            {
+                case 1:
+                case 6:
+                case 7:
+                    returnType = TurretType.INHIBITOR_TURRET;
+                    break;
+                case 2:
+                    returnType = TurretType.INNER_TURRET;
+                    break;
+            }
+
+            if (trueIndex == 1 && lane == LaneID.MIDDLE)
+            {
+                returnType = TurretType.NEXUS_TURRET;
+            }
+
+            return returnType;
+        }
+
+        //Here you setup the conditions of which wave will be spawned
+        public Tuple<int, List<MinionSpawnType>> MinionWaveToSpawn(float gameTime, int cannonMinionCount, bool isInhibitorDead, bool areAllInhibitorsDead)
+        {
+            var cannonMinionTimestamps = new List<Tuple<long, int>>
+            {
+                new Tuple<long, int>(0, 2),
+                new Tuple<long, int>(20 * 60 * 1000, 1),
+                new Tuple<long, int>(35 * 60 * 1000, 0)
+            };
+            var cannonMinionCap = 2;
+
+            foreach (var timestamp in cannonMinionTimestamps)
+            {
+                if (gameTime >= timestamp.Item1)
+                {
+                    cannonMinionCap = timestamp.Item2;
+                }
+            }
+            var list = "RegularMinionWave";
+            if (cannonMinionCount >= cannonMinionCap)
+            {
+                list = "CannonMinionWave";
+            }
+
+            if (isInhibitorDead)
+            {
+                list = "SuperMinionWave";
+            }
+
+            if (areAllInhibitorsDead)
+            {
+                list = "DoubleSuperMinionWave";
+            }
+            return new Tuple<int, List<MinionSpawnType>>(cannonMinionCap, MinionWaveTypes[list]);
         }
     }
 }

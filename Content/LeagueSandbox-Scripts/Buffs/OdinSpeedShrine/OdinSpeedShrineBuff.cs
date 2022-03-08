@@ -22,8 +22,8 @@ namespace Buffs
         public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
             //TODO: Make it decay over the duration of the buff
-            p1 = AddParticleTarget(buff.SourceUnit, unit, "Odin_Speed_Shrine_buf", unit, buff.Duration);
-            p2 = AddParticleTarget(buff.SourceUnit, unit, "invis_runes_01", unit, buff.Duration);
+            p1 = AddParticleTarget(buff.SourceUnit, unit, "Odin_Speed_Shrine_buf", unit, -1.0f);
+            p2 = AddParticleTarget(buff.SourceUnit, unit, "invis_runes_01", unit, -1.0f);
             StatsModifier.MoveSpeed.PercentBonus += 0.3f;
             unit.AddStatModifier(StatsModifier);
         }

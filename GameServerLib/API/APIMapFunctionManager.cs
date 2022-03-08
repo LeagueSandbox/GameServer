@@ -2,10 +2,8 @@
 using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
-using GameServerCore.Maps;
 using GameServerLib.GameObjects;
 using LeaguePackets.Game.Common;
-using LeagueSandbox.GameServer;
 using LeagueSandbox.GameServer.GameObjects;
 using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
 using LeagueSandbox.GameServer.GameObjects.AttackableUnits.Buildings.AnimatedBuildings;
@@ -18,10 +16,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using System.Text;
+using static MapData;
 
-namespace GameServerLib.API
+namespace LeagueSandbox.GameServer.API
 {
-    public static class APIMapFunctionManager
+    public static class ApiMapFunctionManager
     {
         // Required variables.
         private static Game _game;
@@ -136,7 +135,9 @@ namespace GameServerLib.API
 
         public static IGameObject CreateShop(string name, Vector2 position, TeamId team)
         {
-            return new GameObject(_game, position, team: team, netId: Crc32Algorithm.Compute(Encoding.UTF8.GetBytes(name)) | 0xFF000000);
+            IGameObject shop = new GameObject(_game, position, team: team, netId: Crc32Algorithm.Compute(Encoding.UTF8.GetBytes(name)) | 0xFF000000);
+            _map.ShopList.Add(team, shop);
+            return shop;
         }
 
         /// <summary>
@@ -151,7 +152,34 @@ namespace GameServerLib.API
         /// <returns></returns>
         public static INexus CreateNexus(string name, string model, Vector2 position, TeamId team, int nexusRadius, int sightRange)
         {
-            return new Nexus(_game, model, team, nexusRadius, position, sightRange, Crc32Algorithm.Compute(Encoding.UTF8.GetBytes(name)) | 0xFF000000);
+            INexus nexus = new Nexus(_game, model, team, nexusRadius, position, sightRange, Crc32Algorithm.Compute(Encoding.UTF8.GetBytes(name)) | 0xFF000000);
+            _map.NexusList.Add(nexus);
+            return nexus;
+        }
+
+        /// <summary>
+        /// Creates and returns an inhibitor
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="model"></param>
+        /// <param name="position"></param>
+        /// <param name="team"></param>
+        /// <param name="lane"></param>
+        /// <param name="inhibRadius"></param>
+        /// <param name="sightRange"></param>
+        /// <returns></returns>
+        public static IInhibitor CreateInhibitor(string name, string model, Vector2 position, TeamId team, LaneID lane, int inhibRadius, int sightRange)
+        {
+            IInhibitor inhibitor = new Inhibitor(_game, model, lane, team, inhibRadius, position, sightRange, Crc32Algorithm.Compute(Encoding.UTF8.GetBytes(name)) | 0xFF000000);
+            _map.InhibitorList[team][lane].Add(inhibitor);
+            return inhibitor;
+        }
+
+        public static IMapObject CreateLaneMinionSpawnPos(string name, Vector3 position)
+        {
+            IMapObject spawnBarrack = new MapObject(name, position, _map.Id);
+            _map.SpawnBarracks.Add(name, spawnBarrack);
+            return spawnBarrack;
         }
 
         /// <summary>
@@ -168,9 +196,11 @@ namespace GameServerLib.API
         /// <param name="mapObject"></param>
         /// <param name="netId"></param>
         /// <returns></returns>
-        public static ILaneTurret CreateTurret(string name, string model, Vector2 position, TeamId team, TurretType turretType, int[] turretItems, LaneID lane, string aiScript, IMapObject mapObject = null, uint netId = 0)
+        public static ILaneTurret CreateLaneTurret(string name, string model, Vector2 position, TeamId team, TurretType turretType, LaneID lane, string aiScript, IMapObject mapObject = null, uint netId = 0)
         {
-            return new LaneTurret(_game, name, model, position, team, turretType, turretItems, netId, lane, mapObject, aiScript);
+            ILaneTurret turret = new LaneTurret(_game, name, model, position, team, turretType, netId, lane, mapObject, aiScript);
+            _map.TurretList[team][lane].Add(turret);
+            return turret;
         }
 
         /// <summary>
@@ -182,7 +212,7 @@ namespace GameServerLib.API
         {
             if (!_map.MapScript.TurretItems.ContainsKey(type))
             {
-                return null;
+                return new int[] {};
             }
 
             return _map.MapScript.TurretItems[type];
@@ -203,22 +233,6 @@ namespace GameServerLib.API
             _map.TurretList[team][desiredLaneID].Add(tower);
         }
 
-
-        /// <summary>
-        /// Creates and returns an inhibitor
-        /// </summary>
-        /// <param name="name"></param>
-        /// <param name="model"></param>
-        /// <param name="position"></param>
-        /// <param name="team"></param>
-        /// <param name="lane"></param>
-        /// <param name="inhibRadius"></param>
-        /// <param name="sightRange"></param>
-        /// <returns></returns>
-        public static IInhibitor CreateInhibitor(string name, string model, Vector2 position, TeamId team, LaneID lane, int inhibRadius, int sightRange)
-        {
-            return new Inhibitor(_game, model, lane, team, inhibRadius, position, sightRange, Crc32Algorithm.Compute(Encoding.UTF8.GetBytes(name)) | 0xFF000000);
-        }
         public static IInhibitor GetInhibitorById(uint id)
         {
             foreach (TeamId team in _map.InhibitorList.Keys)
@@ -377,8 +391,8 @@ namespace GameServerLib.API
             }
             else
             {
-                _map.Monsters.Add(monsterCamp.CampIndex, new List<IMonster> 
-                { 
+                _map.Monsters.Add(monsterCamp.CampIndex, new List<IMonster>
+                {
                     new Monster(_game, name, model, position, faceDirection, monsterCamp, team, netId, spawnAnimation, isTargetable, ignoresCollision, aiScript, damageBonus, healthBonus, initialLevel)
                 });
             }
@@ -414,9 +428,9 @@ namespace GameServerLib.API
         /// <param name="netId"></param>
         /// <param name="netNodeId"></param>
         /// <returns></returns>
-        public static ILevelProp AddLevelProp(string name, string model, Vector2 position, float height, Vector3 direction, Vector3 posOffset, Vector3 scale, int skinId = 0, byte skillLevel = 0, byte rank = 0, byte type = 2, uint netId = 0, byte netNodeId = 64)
+        public static ILevelProp AddLevelProp(string name, string model, Vector3 position, Vector3 direction, Vector3 posOffset, Vector3 scale, int skinId = 0, byte skillLevel = 0, byte rank = 0, byte type = 2, uint netId = 0, byte netNodeId = 64)
         {
-            var prop = new LevelProp(_game, netNodeId, name, model, position, height, direction, posOffset, scale, skinId, skillLevel, rank, type, netId);
+            var prop = new LevelProp(_game, netNodeId, name, model, position, direction, posOffset, scale, skinId, skillLevel, rank, type, netId);
             _game.ObjectManager.AddObject(prop);
             return prop;
         }
@@ -466,7 +480,7 @@ namespace GameServerLib.API
         /// </summary>
         /// <param name="team"></param>
         /// <param name="position"></param>
-        public static void AddFountain(TeamId team, Vector2 position, float radius = 1000.0f)
+        public static void CreateFountain(TeamId team, Vector2 position, float radius = 1000.0f)
         {
             _map.FountainList.Add(team, new Fountain(_game, team, position, radius));
         }
@@ -514,10 +528,17 @@ namespace GameServerLib.API
             //TODO: check if mapScripts should handle this directly
             var players = _game.PlayerManager.GetPlayers();
             _game.Stop();
+
             if (deathData != null)
             {
                 _game.PacketNotifier.NotifyBuilding_Die(deathData);
+                _game.PacketNotifier.NotifyS2C_SetGreyscaleEnabledWhenDead(false, deathData.Killer);
             }
+            else
+            {
+                _game.PacketNotifier.NotifyS2C_SetGreyscaleEnabledWhenDead(false);
+            }
+
             _game.PacketNotifier.NotifyS2C_EndGame(losingTeam, endGameTimer);
             foreach (var player in players)
             {
@@ -531,6 +552,19 @@ namespace GameServerLib.API
                 }
             }
             _game.SetGameToExit();
+        }
+
+        public static void AddTurretItems(IBaseTurret turret, int[] items)
+        {
+            foreach(var item in items)
+            {
+                turret.Inventory.AddItem(_game.ItemManager.SafeGetItemType(item), turret);
+            }
+        }
+
+        public static void NotifySpawn(IGameObject obj)
+        {
+            _game.PacketNotifier.NotifySpawn(obj);
         }
 
         //Everything from here on is supposed to get ported over to MapScripts in the future
@@ -586,7 +620,7 @@ namespace GameServerLib.API
         /// <param name="monsterCamp"></param>
         public static void SpawnCamp(IMonsterCamp monsterCamp)
         {
-            foreach(var monster in _map.Monsters[monsterCamp.CampIndex])
+            foreach (var monster in _map.Monsters[monsterCamp.CampIndex])
             {
                 monsterCamp.AddMonster(monster);
             }

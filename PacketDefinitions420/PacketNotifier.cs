@@ -567,7 +567,7 @@ namespace PacketDefinitions420
                     NotifyNPC_Hero_Die(deathData);
                     break;
                 case IMinion minion:
-                    if(minion.IsPet || minion.IsClone || minion is ILaneMinion)
+                    if (minion.IsPet || minion.IsClone || minion is ILaneMinion)
                     {
                         NotifyS2C_NPC_Die_MapView(deathData);
                     }
@@ -833,7 +833,7 @@ namespace PacketDefinitions420
                 LerpTime = turnTime
             };
 
-            _packetHandlerManager.BroadcastPacketVision(obj, facePacket.GetBytes(), Channel.CHL_S2C);
+            _packetHandlerManager.BroadcastPacket(facePacket.GetBytes(), Channel.CHL_S2C);
         }
 
         /// <summary>
@@ -1005,9 +1005,15 @@ namespace PacketDefinitions420
             var fxVisPacket = new S2C_FX_OnEnterTeamVisibility
             {
                 SenderNetID = particle.NetId,
-                NetID = particle.NetId,
-                VisibilityTeam = (byte)team
+                NetID = particle.NetId
             };
+
+            fxVisPacket.VisibilityTeam = 0;
+            if (team == TeamId.TEAM_PURPLE || team == TeamId.TEAM_NEUTRAL)
+            {
+                fxVisPacket.VisibilityTeam = 1;
+            }
+
             _packetHandlerManager.BroadcastPacketTeam(team, fxVisPacket.GetBytes(), Channel.CHL_S2C);
         }
 
@@ -1036,9 +1042,15 @@ namespace PacketDefinitions420
             var fxVisPacket = new S2C_FX_OnLeaveTeamVisibility
             {
                 SenderNetID = particle.NetId,
-                NetID = particle.NetId,
-                VisibilityTeam = (byte)team
+                NetID = particle.NetId
             };
+
+            fxVisPacket.VisibilityTeam = 0;
+            if (team == TeamId.TEAM_PURPLE || team == TeamId.TEAM_NEUTRAL)
+            {
+                fxVisPacket.VisibilityTeam = 1;
+            }
+
             _packetHandlerManager.BroadcastPacketTeam(team, fxVisPacket.GetBytes(), Channel.CHL_S2C);
         }
 
@@ -1140,12 +1152,12 @@ namespace PacketDefinitions420
                 SenderNetID = m.NetId,
                 ObjectID = m.NetId,
                 ObjectNodeID = 0x40, // TODO: check this
-                BarracksNetID = 0xFF000000 | Crc32Algorithm.Compute(Encoding.UTF8.GetBytes(m.BarracksName)), // TODO: Verify
+                BarracksNetID = 0xFF000000 | Crc32Algorithm.Compute(Encoding.UTF8.GetBytes(m.BarracksName)),
                 WaveCount = 1, // TODO: Unhardcode
                 MinionType = (byte)m.MinionSpawnType,
-                DamageBonus = 10, // TODO: Unhardcode
-                HealthBonus = 7, // TODO: Unhardcode
-                MinionLevel = 1 // TODO: Unhardcode
+                DamageBonus = (short)m.DamageBonus,
+                HealthBonus = (short)m.HealthBonus,
+                MinionLevel = m.Stats.Level
             };
 
             _packetHandlerManager.BroadcastPacket(p.GetBytes(), Channel.CHL_S2C);
@@ -2326,7 +2338,7 @@ namespace PacketDefinitions420
                 CampIndex = monsterCamp.CampIndex,
                 MinimapIcon = monsterCamp.MinimapIcon,
                 RevealAudioVOComponentEvent = monsterCamp.RevealEvent,
-                SideTeamID = (byte)monsterCamp.SideTeamId,
+                SideTeamID = monsterCamp.SideTeamId,
                 Expire = monsterCamp.Expire,
                 TimerType = monsterCamp.TimerType
             };
@@ -2346,20 +2358,21 @@ namespace PacketDefinitions420
                 InitialLevel = monster.InitialLevel,
                 NetID = monster.NetId,
                 GroupPosition = monster.Camp.Position,
-                BuffSideTeamID = (byte)monster.Camp.SideTeamId,
+                BuffSideTeamID = monster.Camp.SideTeamId,
                 Position = new Vector3(monster.Position.X, monster.GetHeight(), monster.Position.Y),
                 SpawnAnimationName = monster.SpawnAnimation,
                 AIscript = "",
                 //Seems to be the time it is supposed to spawn, not the time when it spawned, check this later
-                SpawnTime = time,
+                SpawnTime = time / 1000,
                 BehaviorTree = monster.AIScript.AIScriptMetaData.BehaviorTree,
                 RevealEvent = monster.Camp.RevealEvent,
                 GroupNumber = monster.Camp.CampIndex,
                 MinionRoamState = monster.AIScript.AIScriptMetaData.MinionRoamState,
                 SpawnDuration = monster.Camp.SpawnDuration,
-                TeamID = (byte)monster.Team,
+                TeamID = (uint)monster.Team,
                 NetNodeID = (byte)NetNodeID.Spawned
             };
+
             _packetHandlerManager.BroadcastPacket(packet.GetBytes(), Channel.CHL_S2C);
         }
         /// <summary>
@@ -2560,9 +2573,14 @@ namespace PacketDefinitions420
         {
             var enterTeamVis = new S2C_OnEnterTeamVisibility()
             {
-                SenderNetID = o.NetId,
-                VisibilityTeam = (byte)team
+                SenderNetID = o.NetId
             };
+
+            enterTeamVis.VisibilityTeam = 0;
+            if (team == TeamId.TEAM_PURPLE || team == TeamId.TEAM_NEUTRAL)
+            {
+                enterTeamVis.VisibilityTeam = 1;
+            }
 
             if (userId == 0)
             {
@@ -2606,20 +2624,25 @@ namespace PacketDefinitions420
         /// <param name="userId">User to send the packet to.</param>
         public void NotifyS2C_OnLeaveTeamVisibility(IGameObject o, TeamId team, int userId = 0)
         {
-            var enterTeamVis = new S2C_OnLeaveTeamVisibility()
+            var leaveTeamVis = new S2C_OnLeaveTeamVisibility()
             {
-                SenderNetID = o.NetId,
-                VisibilityTeam = (byte)team
+                SenderNetID = o.NetId
             };
+
+            leaveTeamVis.VisibilityTeam = 0;
+            if (team == TeamId.TEAM_PURPLE || team == TeamId.TEAM_NEUTRAL)
+            {
+                leaveTeamVis.VisibilityTeam = 1;
+            }
 
             if (userId == 0)
             {
                 // TODO: Verify if we should use BroadcastPacketTeam instead.
-                _packetHandlerManager.BroadcastPacket(enterTeamVis.GetBytes(), Channel.CHL_S2C);
+                _packetHandlerManager.BroadcastPacket(leaveTeamVis.GetBytes(), Channel.CHL_S2C);
             }
             else
             {
-                _packetHandlerManager.SendPacket(userId, enterTeamVis.GetBytes(), Channel.CHL_S2C);
+                _packetHandlerManager.SendPacket(userId, leaveTeamVis.GetBytes(), Channel.CHL_S2C);
             }
         }
 
@@ -2732,6 +2755,21 @@ namespace PacketDefinitions420
             };
 
             _packetHandlerManager.BroadcastPacket(setAnimPacket.GetBytes(), Channel.CHL_S2C);
+        }
+
+        public void NotifyS2C_SetGreyscaleEnabledWhenDead(bool enabled, IAttackableUnit sender = null)
+        {
+            var packet = new S2C_SetGreyscaleEnabledWhenDead
+            {
+                Enabled = enabled,
+            };
+
+            if (sender != null)
+            {
+                packet.SenderNetID = sender.NetId;
+            }
+            _packetHandlerManager.BroadcastPacket(packet.GetBytes(), Channel.CHL_S2C);
+
         }
 
         public void NotifyS2C_SetInputLockFlag(int userId, InputLockFlags flags, bool enabled)
@@ -2894,7 +2932,7 @@ namespace PacketDefinitions420
         /// <param name="maxAttackSpeedOverride">Value to override the maximum attack speed cap.</param>
         /// <param name="overrideMin">Whether or not to override the minimum attack speed cap.</param>
         /// <param name="minAttackSpeedOverride">Value to override the minimum attack speed cap.</param>
-        public void NotifyS2C_UpdateAttackSpeedCapOverrides(bool overrideMax, float maxAttackSpeedOverride, bool overrideMin, float minAttackSpeedOverride)
+        public void NotifyS2C_UpdateAttackSpeedCapOverrides(bool overrideMax, float maxAttackSpeedOverride, bool overrideMin, float minAttackSpeedOverride, IAttackableUnit unit = null)
         {
             var overridePacket = new S2C_UpdateAttackSpeedCapOverrides
             {
@@ -2903,7 +2941,10 @@ namespace PacketDefinitions420
                 MaxAttackSpeedOverride = maxAttackSpeedOverride,
                 MinAttackSpeedOverride = minAttackSpeedOverride
             };
-
+            if(unit != null)
+            {
+                overridePacket.SenderNetID = unit.NetId;
+            }
             _packetHandlerManager.BroadcastPacket(overridePacket.GetBytes(), Channel.CHL_S2C);
         }
 
@@ -3329,10 +3370,10 @@ namespace PacketDefinitions420
                 // TODO: Create a new TipConfig class and use it here (basically, unhardcode this).
                 TipConfig = new TipConfig
                 {
-                    TipID = 34,
-                    ColorID = 1,
-                    DurationID = 1,
-                    Flags = 15
+                    TipID = 0,
+                    ColorID = 0,
+                    DurationID = 0,
+                    Flags = 3
                 },
                 // Turret Range Indicators and others (taken from Map11 replay)
                 GameFeatures = 662166610

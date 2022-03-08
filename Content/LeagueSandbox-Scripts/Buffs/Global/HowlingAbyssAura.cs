@@ -7,7 +7,7 @@ using LeagueSandbox.GameServer.Scripting.CSharp;
 
 namespace Buffs
 {
-    internal class OdinPlayerBuff : IBuffGameScript
+    internal class HowlingAbyssAura : IBuffGameScript
     {
         public IBuffScriptMetaData BuffMetaData { get; set; } = new BuffScriptMetaData
         {
@@ -20,28 +20,20 @@ namespace Buffs
         IChampion Champion;
         public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell = null)
         {
-            if(unit is IChampion ch)
-            {
-                Champion = ch;
-            }
-
-            //TODO: Add 2% mana regeneration per 1% missing mana
-            if (unit.Stats.ParType == PrimaryAbilityResourceType.Energy)
-            {
-                StatsModifier.ManaRegeneration.FlatBonus += 2.0f;
-            }
+            //TODO: Reduce outgoing heal by 50%, 0.15% max mana as Mana regen
         }
 
         public void OnDeactivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
         }
+
         float XpCounter = 0;
         public void OnUpdate(float diff)
         {
             XpCounter += diff;
             if(XpCounter > 1000 && Champion != null)
             {
-                Champion.AddExperience(7.2f, false);
+                Champion.AddExperience(5.0f, false);
                 XpCounter = 0;
             }
         }

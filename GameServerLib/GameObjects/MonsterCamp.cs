@@ -6,6 +6,7 @@ using LeagueSandbox.GameServer.API;
 using LeagueSandbox.GameServer.GameObjects;
 using System.Collections.Generic;
 using System.Numerics;
+using System.Timers;
 
 namespace GameServerLib.GameObjects
 {
@@ -13,7 +14,7 @@ namespace GameServerLib.GameObjects
     {
         public byte CampIndex { get; set; }
         public Vector3 Position { get; set; }
-        public TeamId SideTeamId { get; set; }
+        public byte SideTeamId { get; set; }
         public string MinimapIcon { get; set; }
         public byte RevealEvent { get; set; }
         public float Expire { get; set; }
@@ -33,7 +34,13 @@ namespace GameServerLib.GameObjects
             RevealEvent = revealEvent;
             MinimapIcon = campTypeIcon;
             RespawnTimer = respawnTimer;
-            SideTeamId = teamSideOfTheMap;
+            SideTeamId = (byte)teamSideOfTheMap;
+
+            if (teamSideOfTheMap == TeamId.TEAM_NEUTRAL)
+            {
+                SideTeamId = 0;
+            }
+
             SpawnDuration = spawnDuration;
 
             game.PacketNotifier.NotifyS2C_CreateMinionCamp(this);
@@ -41,7 +48,6 @@ namespace GameServerLib.GameObjects
 
         public void AddMonster(IMonster monster)
         {
-            NotifyCampActivation();
             var aiscript = monster.AIScript.ToString().Remove(0, 10);
             var campMonster = new Monster
                     (
@@ -50,9 +56,11 @@ namespace GameServerLib.GameObjects
                     monster.SpawnAnimation, monster.IsTargetable, monster.IgnoresCollision, aiscript,
                     monster.DamageBonus, monster.HealthBonus, monster.InitialLevel
                     );
+
             Monsters.Add(campMonster);
             ApiEventManager.OnDeath.AddListener(campMonster, campMonster, OnMonsterDeath, true);
             _game.ObjectManager.AddObject(campMonster);
+            NotifyCampActivation();
         }
 
         public void OnMonsterDeath(IDeathData deathData)

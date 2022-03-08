@@ -911,7 +911,7 @@ namespace LeagueSandbox.GameServer.API
         public static void SpellCast(IObjAiBase caster, int slot, SpellSlotType slotType, Vector2 pos, Vector2 endPos, bool fireWithoutCasting, Vector2 overrideCastPos, List<ICastTarget> targets = null, bool isForceCastingOrChanneling = false, int overrideForceLevel = -1, bool updateAutoAttackTimer = false, bool useAutoAttackSpell = false)
         {
             slot = ConvertAPISlot(slotType, slot);
-
+            
             ISpell spell = caster.GetSpell((byte)slot);
 
             if (targets == null)
@@ -1043,6 +1043,12 @@ namespace LeagueSandbox.GameServer.API
         public static List<Vector2> GetPath(Vector2 from, Vector2 to, float distanceThreshold = 0)
         {
             return _game.Map.NavigationGrid.GetPath(from, to, distanceThreshold);
+        }
+
+        public static void OverrideUnitAttackSpeedCap(IAttackableUnit unit, bool doOverrideMax, float maxAttackSpeedOverride, bool doOverrideMin, float minAttackSpeedOverride)
+        {
+            //Investigate if we wanna update the stats here too
+            _game.PacketNotifier.NotifyS2C_UpdateAttackSpeedCapOverrides(doOverrideMax, maxAttackSpeedOverride, doOverrideMin, minAttackSpeedOverride, unit);
         }
     }
 }
