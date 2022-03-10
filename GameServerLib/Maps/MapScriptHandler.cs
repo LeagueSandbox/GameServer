@@ -46,9 +46,9 @@ namespace LeagueSandbox.GameServer.Maps
         /// </summary>
         public IMapScript MapScript { get; private set; }
 
-        //Investigate if we'd want All building to be handled directly in the MapScripts
-        public Dictionary<LaneID, List<Vector2>> BlueMinionPathing;
-        public Dictionary<LaneID, List<Vector2>> PurpleMinionPathing;
+        //TODO: Move all these variables to MapScripts, and instead, feed the MapScript just MapData.MapObjects, so each map can handle it independently
+        public Dictionary<LaneID, List<Vector2>> BlueMinionPathing { get; set; }
+        public Dictionary<LaneID, List<Vector2>> PurpleMinionPathing { get; set; }
         public Dictionary<string, IMapObject> SpawnBarracks { get; set; }
         public List<INexus> NexusList { get; set; } = new List<INexus>();
         public List<IMapObject> InfoPoints { get; set; } = new List<IMapObject>();
@@ -56,7 +56,6 @@ namespace LeagueSandbox.GameServer.Maps
         public Dictionary<TeamId, Dictionary<LaneID, List<IInhibitor>>> InhibitorList { get; set; }
         public Dictionary<TeamId, IFountain> FountainList { get; set; } = new Dictionary<TeamId, IFountain>();
         public Dictionary<TeamId, IGameObject> ShopList { get; set; } = new Dictionary<TeamId, IGameObject>();
-        public Dictionary<int, List<IMonster>> Monsters = new Dictionary<int, List<IMonster>>();
         public Dictionary<TeamId, Dictionary<int, Dictionary<int, Vector2>>> PlayerSpawnPoints { get; set; } = new Dictionary<TeamId, Dictionary<int, Dictionary<int, Vector2>>>();
 
         public readonly Dictionary<TeamId, SurrenderHandler> Surrenders = new Dictionary<TeamId, SurrenderHandler>();
@@ -113,42 +112,9 @@ namespace LeagueSandbox.GameServer.Maps
             CollisionHandler.Update();
             MapScript.Update(diff);
 
-            //TODO:Port everything bellow to MapScripts.
-            if (MapScript.MapScriptMetadata.MinionSpawnEnabled)
-            {
-                if (_minionNumber > 0)
-                {
-                    // Spawn new Minion every 0.8s
-                    if (_game.GameTime >= MapScript.NextSpawnTime + _minionNumber * 8 * 100)
-                    {
-                        if (SetUpLaneMinion())
-                        {
-                            _minionNumber = 0;
-                            MapScript.NextSpawnTime = (long)_game.GameTime + MapScript.MapScriptMetadata.SpawnInterval;
-                        }
-                        else
-                        {
-                            _minionNumber++;
-                        }
-                    }
-                }
-                else if (_game.GameTime >= MapScript.NextSpawnTime)
-                {
-                    SetUpLaneMinion();
-                    _minionNumber++;
-                }
-            }
             foreach (var surrender in Surrenders.Values)
             {
                 surrender.Update(diff);
-            }
-
-            if (MapScript.MapScriptMetadata.EnableFountainHealing)
-            {
-                foreach (var fountain in FountainList.Values)
-                {
-                    fountain.Update(diff);
-                }
             }
         }
 

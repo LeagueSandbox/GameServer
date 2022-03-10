@@ -13,7 +13,6 @@ namespace LeagueSandbox.GameServer.Scripting.CSharp
         public float ChampionMaxGoldValue { get; set; } = 500.0f;
         public float ChampionMinGoldValue { get; set; } = 50.0f;
         public bool EnableBuildingProtection { get; set; } = false;
-        public bool EnableFountainHealing { get; set; } = true;
         public float FirstBloodExtraGold { get; set; } = 100.0f;
         public float FirstGoldTime { get; set; } = 90 * 1000;
         public float GoldPerSecond { get; set; } = 1.9f;

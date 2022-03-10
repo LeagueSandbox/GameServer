@@ -377,7 +377,7 @@ namespace LeagueSandbox.GameServer.API
         /// <param name="damageBonus"></param>
         /// <param name="healthBonus"></param>
         /// <param name="initialLevel"></param>
-        public static void CreateJungleMonster
+        public static IMonster CreateJungleMonster
         (
             string name, string model, Vector2 position, Vector3 faceDirection,
             IMonsterCamp monsterCamp, TeamId team = TeamId.TEAM_NEUTRAL, string spawnAnimation = "", uint netId = 0,
@@ -385,17 +385,7 @@ namespace LeagueSandbox.GameServer.API
             int damageBonus = 0, int healthBonus = 0, int initialLevel = 1
         )
         {
-            if (_map.Monsters.ContainsKey(monsterCamp.CampIndex))
-            {
-                _map.Monsters[monsterCamp.CampIndex].Add(new Monster(_game, name, model, position, faceDirection, monsterCamp, team, netId, spawnAnimation, isTargetable, ignoresCollision, aiScript, damageBonus, healthBonus, initialLevel));
-            }
-            else
-            {
-                _map.Monsters.Add(monsterCamp.CampIndex, new List<IMonster>
-                {
-                    new Monster(_game, name, model, position, faceDirection, monsterCamp, team, netId, spawnAnimation, isTargetable, ignoresCollision, aiScript, damageBonus, healthBonus, initialLevel)
-                });
-            }
+            return new Monster(_game, name, model, position, faceDirection, monsterCamp, team, netId, spawnAnimation, isTargetable, ignoresCollision, aiScript, damageBonus, healthBonus, initialLevel);
         }
 
         /// <summary>
@@ -565,65 +555,6 @@ namespace LeagueSandbox.GameServer.API
         public static void NotifySpawn(IGameObject obj)
         {
             _game.PacketNotifier.NotifySpawn(obj);
-        }
-
-        //Everything from here on is supposed to get ported over to MapScripts in the future
-        public static int _minionNumber;
-        public static int _cannonMinionCount;
-
-        public static bool SetUpLaneMinion()
-        {
-            int cannonMinionCap = 2;
-            foreach (var barrack in _map.SpawnBarracks)
-            {
-                List<Vector2> waypoint = new List<Vector2>();
-                TeamId opposed_team = barrack.Value.GetOpposingTeamID();
-                TeamId barrackTeam = barrack.Value.GetTeamID();
-                LaneID lane = barrack.Value.GetSpawnBarrackLaneID();
-                IInhibitor inhibitor = _map.InhibitorList[opposed_team][lane][0];
-                bool isInhibitorDead = inhibitor.InhibitorState == InhibitorState.DEAD && !inhibitor.RespawnAnnounced;
-                bool areAllInhibitorsDead = AllInhibitorsDestroyedFromTeam(opposed_team) && !inhibitor.RespawnAnnounced;
-                Tuple<int, List<MinionSpawnType>> spawnWave = _map.MapScript.MinionWaveToSpawn(_game.GameTime, _cannonMinionCount, isInhibitorDead, areAllInhibitorsDead);
-                cannonMinionCap = spawnWave.Item1;
-
-                if (barrackTeam == TeamId.TEAM_BLUE)
-                {
-                    waypoint = _map.BlueMinionPathing[lane];
-                }
-                else if (barrackTeam == TeamId.TEAM_PURPLE)
-                {
-                    waypoint = _map.PurpleMinionPathing[lane];
-                }
-
-                CreateLaneMinion(spawnWave.Item2, _minionNumber, barrack.Value.Name, waypoint);
-            }
-
-            if (_minionNumber < 8)
-            {
-                return false;
-            }
-
-            if (_cannonMinionCount >= cannonMinionCap)
-            {
-                _cannonMinionCount = 0;
-            }
-            else
-            {
-                _cannonMinionCount++;
-            }
-            return true;
-        }
-
-        /// <summary>
-        /// Spawn a camp
-        /// </summary>
-        /// <param name="monsterCamp"></param>
-        public static void SpawnCamp(IMonsterCamp monsterCamp)
-        {
-            foreach (var monster in _map.Monsters[monsterCamp.CampIndex])
-            {
-                monsterCamp.AddMonster(monster);
-            }
         }
     }
 }

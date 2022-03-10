@@ -197,9 +197,40 @@ namespace MapScripts.Map10
         //This function gets executed every server tick
         public void Update(float diff)
         {
+            float gameTime = GameTime();
+
             NeutralMinionSpawn.OnUpdate(diff);
 
-            float gameTime = GameTime();
+            if (MapScriptMetadata.MinionSpawnEnabled)
+            {
+                if (_minionNumber > 0)
+                {
+                    // Spawn new Minion every 0.8s
+                    if (gameTime >= NextSpawnTime + _minionNumber * 8 * 100)
+                    {
+                        if (SetUpLaneMinion())
+                        {
+                            _minionNumber = 0;
+                            NextSpawnTime = (long)gameTime + MapScriptMetadata.SpawnInterval;
+                        }
+                        else
+                        {
+                            _minionNumber++;
+                        }
+                    }
+                }
+                else if (gameTime >= NextSpawnTime)
+                {
+                    SetUpLaneMinion();
+                    _minionNumber++;
+                }
+            }
+
+            foreach (var fountain in _map.FountainList.Values)
+            {
+                fountain.Update(diff);
+            }
+
             if (!AllAnnouncementsAnnounced)
             {
                 CheckInitialMapAnnouncements(gameTime);
@@ -337,6 +368,51 @@ namespace MapScripts.Map10
                 list = "DoubleSuperMinionWave";
             }
             return new Tuple<int, List<MinionSpawnType>>(cannonMinionCap, MinionWaveTypes[list]);
+        }
+
+        public int _minionNumber;
+        public int _cannonMinionCount;
+        public bool SetUpLaneMinion()
+        {
+            int cannonMinionCap = 2;
+            foreach (var barrack in _map.SpawnBarracks)
+            {
+                List<Vector2> waypoint = new List<Vector2>();
+                TeamId opposed_team = barrack.Value.GetOpposingTeamID();
+                TeamId barrackTeam = barrack.Value.GetTeamID();
+                LaneID lane = barrack.Value.GetSpawnBarrackLaneID();
+                IInhibitor inhibitor = _map.InhibitorList[opposed_team][lane][0];
+                bool isInhibitorDead = inhibitor.InhibitorState == InhibitorState.DEAD && !inhibitor.RespawnAnnounced;
+                bool areAllInhibitorsDead = AllInhibitorsDestroyedFromTeam(opposed_team) && !inhibitor.RespawnAnnounced;
+                Tuple<int, List<MinionSpawnType>> spawnWave = _map.MapScript.MinionWaveToSpawn(GameTime(), _cannonMinionCount, isInhibitorDead, areAllInhibitorsDead);
+                cannonMinionCap = spawnWave.Item1;
+
+                if (barrackTeam == TeamId.TEAM_BLUE)
+                {
+                    waypoint = _map.BlueMinionPathing[lane];
+                }
+                else if (barrackTeam == TeamId.TEAM_PURPLE)
+                {
+                    waypoint = _map.PurpleMinionPathing[lane];
+                }
+
+                CreateLaneMinion(spawnWave.Item2, _minionNumber, barrack.Value.Name, waypoint);
+            }
+
+            if (_minionNumber < 8)
+            {
+                return false;
+            }
+
+            if (_cannonMinionCount >= cannonMinionCap)
+            {
+                _cannonMinionCount = 0;
+            }
+            else
+            {
+                _cannonMinionCount++;
+            }
+            return true;
         }
     }
 }

@@ -13,7 +13,8 @@ namespace LeagueSandbox.GameServer.GameObjects
     {
         public IMonsterCamp Camp { get; private set; }
         public string SpawnAnimation { get; private set; }
-        
+        public int InitialLevel { get;  set; }
+
         private bool _hasBeenAdded;
         private float _additionTimer;
 
