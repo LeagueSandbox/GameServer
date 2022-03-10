@@ -198,9 +198,14 @@ namespace MapScripts.Map8
 
         public void Update(float diff)
         {
+            var gameTime = GameTime();
+
             NeutralMinionSpawn.OnUpdate(diff);
 
-            var gameTime = GameTime();
+            foreach (var fountain in _map.FountainList.Values)
+            {
+                fountain.Update(diff);
+            }
 
             if (!NotifiedAllInitialAnimations)
             {

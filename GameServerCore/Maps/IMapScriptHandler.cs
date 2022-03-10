@@ -67,5 +67,9 @@ namespace GameServerCore.Maps
         /// Initializes MapProperties. Usually only occurs once before players are added to Game.
         /// </summary>
         void Init();
+
+        //Adding these temporarily here
+        Dictionary<LaneID, List<Vector2>> BlueMinionPathing { get; }
+        Dictionary<LaneID, List<Vector2>> PurpleMinionPathing { get; }
     }
 }

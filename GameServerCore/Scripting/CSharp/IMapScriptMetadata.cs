@@ -18,10 +18,6 @@ namespace GameServerCore.Scripting.CSharp
         /// </summary>
         float ChampionMinGoldValue { get; }
         /// <summary>
-        /// Whether or not the fountain should heal the players (Default = true)
-        /// </summary>
-        bool EnableFountainHealing { get; }
-        /// <summary>
         /// Wether or not building should have protection. Don't change this if you don't know what you're doing! (Default: false)
         /// </summary>
         bool EnableBuildingProtection { get; }
