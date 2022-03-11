@@ -1038,12 +1038,19 @@ namespace PacketDefinitions420
 
         S2C_FX_OnEnterTeamVisibility ConstructFXEnterTeamVisibilityPacket(IParticle particle, TeamId team)
         {
-            return new S2C_FX_OnEnterTeamVisibility
+            var fxVisPacket = new S2C_FX_OnEnterTeamVisibility
             {
                 SenderNetID = particle.NetId,
-                NetID = particle.NetId,
-                VisibilityTeam = (byte)team
+                NetID = particle.NetId
             };
+
+            fxVisPacket.VisibilityTeam = 0;
+            if (team == TeamId.TEAM_PURPLE || team == TeamId.TEAM_NEUTRAL)
+            {
+                fxVisPacket.VisibilityTeam = 1;
+            }
+
+            return fxVisPacket;
         }
 
         /// <summary>
@@ -1054,13 +1061,6 @@ namespace PacketDefinitions420
         public void NotifyFXEnterTeamVisibility(IParticle particle, TeamId team)
         {
             var fxVisPacket = ConstructFXEnterTeamVisibilityPacket(particle, team);
-
-            fxVisPacket.VisibilityTeam = 0;
-            if (team == TeamId.TEAM_PURPLE || team == TeamId.TEAM_NEUTRAL)
-            {
-                fxVisPacket.VisibilityTeam = 1;
-            }
-
             _packetHandlerManager.BroadcastPacketTeam(team, fxVisPacket.GetBytes(), Channel.CHL_S2C);
         }
 
@@ -2672,11 +2672,18 @@ namespace PacketDefinitions420
 
         S2C_OnEnterTeamVisibility ConstructOnEnterTeamVisibilityPacket(IGameObject o, TeamId team)
         {
-            return new S2C_OnEnterTeamVisibility()
+            var enterTeamVis = new S2C_OnEnterTeamVisibility()
             {
-                SenderNetID = o.NetId,
-                VisibilityTeam = (byte)team
+                SenderNetID = o.NetId
             };
+
+            enterTeamVis.VisibilityTeam = 0;
+            if (team == TeamId.TEAM_PURPLE || team == TeamId.TEAM_NEUTRAL)
+            {
+                enterTeamVis.VisibilityTeam = 1;
+            }
+
+            return enterTeamVis;
         }
 
         /// <summary>
@@ -2688,12 +2695,6 @@ namespace PacketDefinitions420
         public void NotifyS2C_OnEnterTeamVisibility(IGameObject o, TeamId team, int userId = 0)
         {
             var enterTeamVis = ConstructOnEnterTeamVisibilityPacket(o, team);
-
-            enterTeamVis.VisibilityTeam = 0;
-            if (team == TeamId.TEAM_PURPLE || team == TeamId.TEAM_NEUTRAL)
-            {
-                enterTeamVis.VisibilityTeam = 1;
-            }
 
             if (userId == 0)
             {

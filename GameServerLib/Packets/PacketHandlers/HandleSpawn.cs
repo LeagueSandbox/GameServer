@@ -131,7 +131,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                     else
                     {
                         (_game.ObjectManager as ObjectManager)
-                        .UpdateVisionAndSpawn(obj, userInfo, forceSpawn: true);
+                        .UpdateVisionSpawnAndSync(obj, userInfo, forceSpawn: true);
                     }
                 }
             }

@@ -656,7 +656,7 @@ namespace LeagueSandbox.GameServer.Content.Navigation
 
             NavigationGridCell cell = GetCell((short)vector.X, (short)vector.Y);
 
-            return cell.HasFlag(flag);
+            return cell != null && cell.HasFlag(flag);
         }
 
         /// <summary>

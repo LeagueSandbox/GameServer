@@ -87,7 +87,8 @@ namespace LeagueSandbox.GameServer
                 obj.Update(diff);
             }
 
-            //BEGIN HACK
+            // It is now safe to call RemoveObject at any time,
+            // but compatibility with the older remove method remains.
             foreach (var obj in _objects.Values)
             {
                 if (obj.IsToRemove())
@@ -95,7 +96,6 @@ namespace LeagueSandbox.GameServer
                     RemoveObject(obj);
                 }
             }
-            //END HACK
             
             foreach (var obj in _objectsToRemove)
             {
@@ -118,6 +118,7 @@ namespace LeagueSandbox.GameServer
             
             foreach (IGameObject obj in _objects.Values)
             {
+                // Update the vision of the teams
                 if (IsAffectedByVision(obj))
                 {
                     foreach (var team in Teams)
@@ -128,7 +129,7 @@ namespace LeagueSandbox.GameServer
 
                 foreach (var kv in players)
                 {
-                    UpdateVisionAndSpawn(obj, kv.Item2);
+                    UpdateVisionSpawnAndSync(obj, kv.Item2);
                 }
 
                 if (obj is IAttackableUnit u)
@@ -142,7 +143,11 @@ namespace LeagueSandbox.GameServer
             _currentlyInUpdate = false;
         }
 
-        public void UpdateVisionAndSpawn(IGameObject obj, ClientInfo clientInfo, bool forceSpawn = false)
+
+        /// <summary>
+        /// Updates the player's vision, which may not be tied to the team's vision, sends a spawn notification or updates if the object is already spawned.
+        /// </summary>
+        public void UpdateVisionSpawnAndSync(IGameObject obj, ClientInfo clientInfo, bool forceSpawn = false)
         {
             int pid = (int)clientInfo.PlayerId;
             TeamId team = clientInfo.Team;
