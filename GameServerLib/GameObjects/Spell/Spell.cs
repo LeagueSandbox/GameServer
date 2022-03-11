@@ -1057,7 +1057,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
 
             ApiEventManager.OnLaunchMissile.Publish(new KeyValuePair<IObjAiBase, ISpell>(CastInfo.Owner, this), p);
 
-            _game.PacketNotifier.NotifyMissileReplication(p);
+            //_game.PacketNotifier.NotifyMissileReplication(p);
 
             // TODO: Verify when NotifyForceCreateMissile should be used instead.
 

@@ -231,6 +231,20 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             AIScript.OnActivate(this);
         }
 
+        public override void OnAdded()
+        {
+            base.OnAdded();
+
+            if (Spells.ContainsKey((int)SpellSlotType.PassiveSpellSlot))
+            {
+                CharScript.OnActivate(this, Spells[(int)SpellSlotType.PassiveSpellSlot]);
+            }
+            else
+            {
+                CharScript.OnActivate(this);
+            }
+        }
+
         /// <summary>
         /// Loads the Passive Script
         /// </summary>

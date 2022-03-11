@@ -9,6 +9,7 @@ using LeagueSandbox.GameServer.GameObjects;
 using LeagueSandbox.GameServer.Items;
 using LeagueSandbox.GameServer.Logging;
 using log4net;
+using System;
 
 namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 {
@@ -29,76 +30,115 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             _networkIdManager = game.NetworkIdManager;
         }
 
+        private bool _firstSpawn = true;
         public override bool HandlePacket(int userId, SpawnRequest req)
         {
-            _game.PacketNotifier.NotifyS2C_StartSpawn(userId);
-            _logger.Debug("Spawning map");
+            var players = _playerManager.GetPlayers(true);
 
-            var peerInfo = _playerManager.GetPeerInfo(userId);
-            var bluePill = _itemManager.GetItemType(_game.Map.MapScript.MapScriptMetadata.RecallSpellItemId);
-            var itemInstance = peerInfo.Champion.Inventory.SetExtraItem(7, bluePill);
-
-            // self-inform
-            _game.PacketNotifier.NotifyS2C_CreateHero(peerInfo, userId);
-            _game.PacketNotifier.NotifyAvatarInfo(peerInfo, userId);
-
-            _game.PacketNotifier.NotifyBuyItem(userId, peerInfo.Champion, itemInstance);
-
-            // Runes
-            byte runeItemSlot = 14;
-            foreach (var rune in peerInfo.Champion.RuneList.Runes)
+            if(_firstSpawn)
             {
-                var runeItem = _itemManager.GetItemType(rune.Value);
-                var newRune = peerInfo.Champion.Inventory.SetExtraItem(runeItemSlot, runeItem);
-                _playerManager.GetPeerInfo(userId).Champion.Stats.AddModifier(runeItem);
-                runeItemSlot++;
+                _firstSpawn = false;
+
+                var bluePill = _itemManager.GetItemType(_game.Map.MapScript.MapScriptMetadata.RecallSpellItemId);
+
+                foreach (var kv in players)
+                {
+                    var peerInfo = kv.Item2;
+
+                    var itemInstance = peerInfo.Champion.Inventory.SetExtraItem(7, bluePill);
+
+                    // Runes
+                    byte runeItemSlot = 14;
+                    foreach (var rune in peerInfo.Champion.RuneList.Runes)
+                    {
+                        var runeItem = _itemManager.GetItemType(rune.Value);
+                        var newRune = peerInfo.Champion.Inventory.SetExtraItem(runeItemSlot, runeItem);
+                        peerInfo.Champion.Stats.AddModifier(runeItem);
+                        runeItemSlot++;
+                    }
+
+                    peerInfo.Champion.Stats.SetSummonerSpellEnabled(0, true);
+                    peerInfo.Champion.Stats.SetSummonerSpellEnabled(1, true);
+
+                    _game.ObjectManager.AddObject(peerInfo.Champion);
+                }
             }
 
-            // Does not seem to work without Recall being skilled and enabled.
-            // TODO: Verify if ^ is still true! Commenting it out does not seem to cause any damage.
-            _game.PacketNotifier.NotifyNPC_UpgradeSpellAns(userId, peerInfo.Champion.NetId, 13, 1, peerInfo.Champion.SkillPoints);
+            _logger.Debug("Spawning map");
+            _game.PacketNotifier.NotifyS2C_StartSpawn(userId);
 
-            peerInfo.Champion.Stats.SetSummonerSpellEnabled(0, true);
-            peerInfo.Champion.Stats.SetSummonerSpellEnabled(1, true);
+            var userInfo = _playerManager.GetPeerInfo(userId);
 
-            var objects = _game.ObjectManager.GetObjects();
-            foreach (var kv in objects)
+            foreach (var kv in players)
             {
-                if (kv.Value is IChampion champion)
+                var peerInfo = kv.Item2;
+                var champ = peerInfo.Champion;
+
+                _game.PacketNotifier.NotifyS2C_CreateHero(peerInfo, userId);
+                _game.PacketNotifier.NotifyAvatarInfo(peerInfo, userId);
+
+                // Buy blue pill
+                var itemInstance = peerInfo.Champion.Inventory.GetItem(7);
+                _game.PacketNotifier.NotifyBuyItem(userId, peerInfo.Champion, itemInstance);
+                
+                champ.SetSpawnedForPlayer(userId);
+
+                if(_game.IsRunning)
                 {
-                    if (champion.IsVisibleByTeam(peerInfo.Champion.Team))
+                    bool ownChamp = peerInfo.PlayerId == userId;
+                    if(ownChamp || champ.IsVisibleForPlayer(userId))
                     {
-                        _game.PacketNotifier.NotifyEnterVisibilityClient(champion, userId, false, false, true);
+                        _game.PacketNotifier.NotifyVisibilityChange(champ, userInfo.Team, true, userId);
+                    }
+                    if(ownChamp)
+                    {
+                        // Set available skill points
+                        _game.PacketNotifier.NotifyNPC_LevelUp(champ, userId);
+                        // Set spell levels
+                        foreach(var spell in champ.Spells)
+                        {
+                            var castInfo = spell.Value.CastInfo;
+                            if(castInfo.SpellLevel > 0)
+                            {
+                                // NotifyNPC_UpgradeSpellAns has no effect here 
+                                _game.PacketNotifier.NotifyS2C_SetSpellLevel(userId, champ.NetId, castInfo.SpellSlot, castInfo.SpellLevel);
+                                
+                                float currentCD = spell.Value.CurrentCooldown;
+                                float totalCD = spell.Value.GetCooldown();
+                                if(currentCD > 0)
+                                {
+                                    _game.PacketNotifier.NotifyCHAR_SetCooldown(champ, castInfo.SpellSlot, currentCD, totalCD, userId);
+                                }
+                            }
+                        }
                     }
                 }
-                else if (kv.Value is ILaneTurret turret)
+            }
+
+            var objects = _game.ObjectManager.GetObjects();
+            foreach (var obj in objects.Values)
+            {
+                if(!(obj is IChampion))
                 {
-                    _game.PacketNotifier.NotifyS2C_CreateTurret(turret, userId);
-                }
-                else if (kv.Value is INexus nexus)
-                {
-                    _game.PacketNotifier.NotifyEnterVisibilityClient(nexus, userId, ignoreVision: true);
-                }
-                else if (kv.Value is IInhibitor inhib)
-                {
-                    _game.PacketNotifier.NotifyEnterVisibilityClient(inhib, userId, ignoreVision: true);
-                }
-                else if (kv.Value is ILevelProp levelProp)
-                {
-                    _game.PacketNotifier.NotifySpawnLevelPropS2C(levelProp, userId);
-                }
-                else
-                {
-                    _logger.Warn("Object of type: " + kv.Value.GetType() + " not handled in HandleSpawn.");
+                    if(_game.IsRunning)
+                    {
+                        if(obj.IsSpawnedForPlayer(userId))
+                        {
+                            bool isVisibleForPlayer = obj.IsVisibleForPlayer(userId);
+                            _game.PacketNotifier.NotifySpawn(obj, userInfo.Team, userId, _game.GameTime, isVisibleForPlayer);
+                        }
+                    }
+                    else
+                    {
+                        (_game.ObjectManager as ObjectManager)
+                        .UpdateVisionSpawnAndSync(obj, userInfo, forceSpawn: true);
+                    }
                 }
             }
 
-            // TODO shop map specific?
+            //TODO: shop map specific?
             // Level props are just models, we need button-object minions to allow the client to interact with it
-            if (peerInfo != null)
-            {
-                _game.PacketNotifier.NotifySpawn(_game.Map.ShopList[peerInfo.Team]);
-            }
+            _game.PacketNotifier.NotifySpawn(_game.Map.ShopList[userInfo.Team], userInfo.Team, userId, _game.GameTime, false);
 
             _game.PacketNotifier.NotifySpawnEnd(userId);
             return true;

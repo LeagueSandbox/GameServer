@@ -172,7 +172,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
             Game.PacketNotifier.NotifyAvatarInfo(clientInfoTemp);
             Game.ObjectManager.AddObject(c);
             Game.PacketNotifier.NotifyEnterLocalVisibilityClient(c, ignoreVision: true);
-            Game.PacketNotifier.NotifyUpdatedStats(c, false);
+            Game.PacketNotifier.NotifyUpdatedStats(c, partial: false);
 
             c.Stats.SetSpellEnabled(13, true);
             c.Stats.SetSummonerSpellEnabled(0, true);

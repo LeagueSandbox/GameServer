@@ -114,7 +114,19 @@ namespace PacketDefinitions420
                 GamePacketID.C2S_Exit,
                 GamePacketID.World_SendGameNumber,
                 GamePacketID.SendSelectedObjID,
-                GamePacketID.C2S_CharSelected
+                GamePacketID.C2S_CharSelected,
+
+                // The next two are required to reconnect 
+                GamePacketID.SynchVersionC2S,
+                GamePacketID.C2S_Ping_Load_Info,
+
+                // The next 5 are not really needed when reconnecting,
+                // but they don't do much harm either
+                GamePacketID.C2S_UpdateGameOptions,
+                GamePacketID.OnReplication_Acc,
+                GamePacketID.C2S_StatsUpdateReq,
+                GamePacketID.World_SendCamera_Server,
+                GamePacketID.C2S_OnTipEvent
             };
             if (_game.IsPaused && !packetsHandledWhilePaused.Contains(packetId))
             {
@@ -242,19 +254,10 @@ namespace PacketDefinitions420
         public bool BroadcastPacketVision(IGameObject o, byte[] data, Channel channelNo,
             PacketFlags flag = PacketFlags.Reliable)
         {
-            foreach (var team in _teamsEnumerator)
+            foreach (int pid in o.VisibleForPlayers)
             {
-                if (team == TeamId.TEAM_NEUTRAL)
-                {
-                    continue;
-                }
-
-                if (o.IsVisibleByTeam(team))
-                {
-                    BroadcastPacketTeam(team, data, channelNo, flag);
-                }
+                SendPacket(pid, data, channelNo, flag);
             }
-
             return true;
         }
 

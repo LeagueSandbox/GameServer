@@ -121,6 +121,9 @@ namespace LeagueSandbox.GameServer.API
         public static EventOnKill OnKill = new EventOnKill();
         public static EventOnKillUnit OnKillUnit = new EventOnKillUnit();
         public static EventOnLaunchAttack OnLaunchAttack = new EventOnLaunchAttack();
+        /// <summary>
+        /// Called immediately after the rocket is added to the scene. *NOTE*: At the time of the call, the rocket has not yet been spawned for players.
+        /// <summary>
         public static EventOnLaunchMissile OnLaunchMissile = new EventOnLaunchMissile();
         public static EventOnLevelUp OnLevelUp = new EventOnLevelUp();
         public static EventOnLevelUpSpell OnLevelUpSpell = new EventOnLevelUpSpell();

@@ -98,16 +98,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         {
             base.OnAdded();
             _game.ObjectManager.AddChampion(this);
-            _game.PacketNotifier.NotifySpawn(this);
-
-            if (Spells.ContainsKey((int)SpellSlotType.PassiveSpellSlot))
-            {
-                CharScript.OnActivate(this, (Spells[(int)SpellSlotType.PassiveSpellSlot]));
-            }
-            else
-            {
-                CharScript.OnActivate(this);
-            }
         }
 
         public override void OnRemoved()
@@ -309,7 +299,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 }
                 ApiEventManager.OnLevelUp.Publish(this);
                 _game.PacketNotifier.NotifyNPC_LevelUp(this);
-                _game.PacketNotifier.NotifyUpdatedStats(this, false);
+                _game.PacketNotifier.NotifyUpdatedStats(this, partial: false);
 
                 return true;
             }

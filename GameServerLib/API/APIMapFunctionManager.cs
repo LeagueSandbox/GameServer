@@ -554,7 +554,7 @@ namespace LeagueSandbox.GameServer.API
 
         public static void NotifySpawn(IGameObject obj)
         {
-            _game.PacketNotifier.NotifySpawn(obj);
+            _game.ObjectManager.SpawnObject(obj);
         }
     }
 }
