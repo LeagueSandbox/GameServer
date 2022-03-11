@@ -118,14 +118,7 @@ namespace LeagueSandbox.GameServer
             
             foreach (IGameObject obj in _objects.Values)
             {
-                // Update the vision of the teams
-                if (IsAffectedByVision(obj))
-                {
-                    foreach (var team in Teams)
-                    {
-                        obj.SetVisibleByTeam(team, TeamHasVisionOn(team, obj));
-                    }
-                }
+                UpdateTeamsVision(obj);
 
                 foreach (var kv in players)
                 {
@@ -143,6 +136,34 @@ namespace LeagueSandbox.GameServer
             _currentlyInUpdate = false;
         }
 
+        /// <summary>
+        /// Normally, objects will spawn at the end of the frame, but calling this function will force the teams' and players' vision of that object to update and send out a spawn notification.
+        /// </summary>
+        /// <param name="obj">Object to spawn.</param>
+        public void SpawnObject(IGameObject obj)
+        {
+            UpdateTeamsVision(obj);
+
+            var players = _game.PlayerManager.GetPlayers(includeBots: false);
+            foreach (var kv in players)
+            {
+                UpdateVisionSpawnAndSync(obj, kv.Item2, forceSpawn: true);
+            }
+        }
+
+        /// <summary>
+        /// Updates the vision of the teams on the object.
+        /// </summary>
+        void UpdateTeamsVision(IGameObject obj)
+        {
+            if (IsAffectedByVision(obj))
+            {
+                foreach (var team in Teams)
+                {
+                    obj.SetVisibleByTeam(team, TeamHasVisionOn(team, obj));
+                }
+            }
+        }
 
         /// <summary>
         /// Updates the player's vision, which may not be tied to the team's vision, sends a spawn notification or updates if the object is already spawned.
