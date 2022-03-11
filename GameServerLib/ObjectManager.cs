@@ -356,18 +356,11 @@ namespace LeagueSandbox.GameServer
         /// <returns>true/false; networked or not.</returns>
         public bool TeamHasVisionOn(TeamId team, IGameObject o)
         {
-            if (o == null)
+            if (o != null)
             {
-                return false;
-            }
-
-            foreach (var kv in _visionProviders[team])
-            {
-                if (
-                    UnitHasVisionOn(kv, o)
-                )
+                foreach (var p in _visionProviders[team])
                 {
-                    if (!(kv is IAttackableUnit unit && unit.IsDead))
+                    if (UnitHasVisionOn(p, o))
                     {
                         return true;
                     }
@@ -411,7 +404,8 @@ namespace LeagueSandbox.GameServer
             }
 
             if(
-                Vector2.DistanceSquared(observer.Position, tested.Position) < observer.VisionRadius * observer.VisionRadius
+                !(observer is IAttackableUnit u && u.IsDead)
+                && Vector2.DistanceSquared(observer.Position, tested.Position) < observer.VisionRadius * observer.VisionRadius
                 && !_game.Map.NavigationGrid.IsAnythingBetween(observer, tested, true)
             ){
                 return true;

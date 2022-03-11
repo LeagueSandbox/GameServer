@@ -56,6 +56,9 @@ namespace LeagueSandbox.GameServer.Players
                 summonerSkills,
                 p.Value.PlayerID // same as StartClient.bat
             );
+            
+            player.ClientId = (uint)_players.Count;
+
             var c = new Champion(_game, p.Value.Champion, (uint)player.PlayerId, _userIdsPerTeam[teamId]++, p.Value.Runes, player, 0, teamId);
 
             var pos = c.GetSpawnPosition((int)_userIdsPerTeam[teamId]);

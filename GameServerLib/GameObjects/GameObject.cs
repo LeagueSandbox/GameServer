@@ -47,9 +47,6 @@ namespace LeagueSandbox.GameServer.GameObjects
         /// Comparison variable for small distance movements.
         /// </summary>
         public static readonly uint MOVEMENT_EPSILON = 5; //TODO: Verify if this should be changed
-        /// <summary>
-        /// Whether or not this object counts as a single point target. *NOTE*: Will be depricated once Target class is removed.
-        /// </summary>
 
         /// <summary>
         ///  Identifier unique to this game object.
