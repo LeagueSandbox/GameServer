@@ -49,9 +49,9 @@ namespace LeagueSandbox.GameServer.Maps
         //TODO: Move all these variables to MapScripts, and instead, feed the MapScript just MapData.MapObjects, so each map can handle it independently
         public Dictionary<LaneID, List<Vector2>> BlueMinionPathing { get; set; }
         public Dictionary<LaneID, List<Vector2>> PurpleMinionPathing { get; set; }
-        public Dictionary<string, IMapObject> SpawnBarracks { get; set; }
+        public Dictionary<string, MapObject> SpawnBarracks { get; set; }
         public List<INexus> NexusList { get; set; } = new List<INexus>();
-        public List<IMapObject> InfoPoints { get; set; } = new List<IMapObject>();
+        public List<MapObject> InfoPoints { get; set; } = new List<MapObject>();
         public Dictionary<TeamId, Dictionary<LaneID, List<ILaneTurret>>> TurretList { get; set; }
         public Dictionary<TeamId, Dictionary<LaneID, List<IInhibitor>>> InhibitorList { get; set; }
         public Dictionary<TeamId, IFountain> FountainList { get; set; } = new Dictionary<TeamId, IFountain>();
@@ -151,7 +151,7 @@ namespace LeagueSandbox.GameServer.Maps
             var inhibRadius = 214;
             var nexusRadius = 353;
             var sightRange = 1700;
-            List<IMapObject> missedTurrets = new List<IMapObject>();
+            List<MapObject> missedTurrets = new List<MapObject>();
             foreach (var mapObject in MapData.MapObjects.Values)
             {
                 GameObjectTypes objectType = mapObject.GetGameObjectType();

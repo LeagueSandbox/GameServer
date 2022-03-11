@@ -11,12 +11,12 @@ namespace GameServerCore.Domain
         /// <summary>
         /// Collection of MapObjects present within a map's room file, with the key being the name present in the room file. Refer to <see cref="MapObject"/>.
         /// </summary>
-        Dictionary<string, IMapObject> MapObjects { get; }
+        Dictionary<string, MapObject> MapObjects { get; }
         /// <summary>
         /// Collection of MapObjects which represent lane minion spawn positions.
         /// Not present within the room file, therefor it is split into its own collection.
         /// </summary>
-        Dictionary<string, IMapObject> SpawnBarracks { get; }
+        Dictionary<string, MapObject> SpawnBarracks { get; }
         /// <summary>
         /// Experience required to level, ordered from 2 and up.
         /// </summary>

@@ -175,9 +175,9 @@ namespace LeagueSandbox.GameServer.API
             return inhibitor;
         }
 
-        public static IMapObject CreateLaneMinionSpawnPos(string name, Vector3 position)
+        public static MapObject CreateLaneMinionSpawnPos(string name, Vector3 position)
         {
-            IMapObject spawnBarrack = new MapObject(name, position, _map.Id);
+            MapObject spawnBarrack = new MapObject(name, position, _map.Id);
             _map.SpawnBarracks.Add(name, spawnBarrack);
             return spawnBarrack;
         }
@@ -196,7 +196,7 @@ namespace LeagueSandbox.GameServer.API
         /// <param name="mapObject"></param>
         /// <param name="netId"></param>
         /// <returns></returns>
-        public static ILaneTurret CreateLaneTurret(string name, string model, Vector2 position, TeamId team, TurretType turretType, LaneID lane, string aiScript, IMapObject mapObject = null, uint netId = 0)
+        public static ILaneTurret CreateLaneTurret(string name, string model, Vector2 position, TeamId team, TurretType turretType, LaneID lane, string aiScript, MapObject mapObject = default, uint netId = 0)
         {
             ILaneTurret turret = new LaneTurret(_game, name, model, position, team, turretType, netId, lane, mapObject, aiScript);
             _map.TurretList[team][lane].Add(turret);
@@ -212,7 +212,7 @@ namespace LeagueSandbox.GameServer.API
         {
             if (!_map.MapScript.TurretItems.ContainsKey(type))
             {
-                return new int[] {};
+                return new int[] { };
             }
 
             return _map.MapScript.TurretItems[type];
@@ -546,7 +546,7 @@ namespace LeagueSandbox.GameServer.API
 
         public static void AddTurretItems(IBaseTurret turret, int[] items)
         {
-            foreach(var item in items)
+            foreach (var item in items)
             {
                 turret.Inventory.AddItem(_game.ItemManager.SafeGetItemType(item), turret);
             }

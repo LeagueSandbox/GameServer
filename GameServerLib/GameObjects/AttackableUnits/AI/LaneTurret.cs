@@ -19,7 +19,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             TurretType type = TurretType.OUTER_TURRET,
             uint netId = 0,
             LaneID lane = LaneID.NONE,
-            IMapObject mapObject = null,
+            MapObject mapObject = default,
             string aiScript = ""
         ) : base(game, name, model, position, team, netId, lane, mapObject, aiScript: aiScript)
         {
