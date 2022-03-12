@@ -23,7 +23,6 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
         private readonly Game _game;
         private readonly CSharpScriptEngine _scriptEngine;
         private readonly NetworkIdManager _networkIdManager;
-        private uint _futureProjNetId;
         private float _overrrideCastRange;
         private AttackType _attackType;
 
@@ -81,7 +80,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
             _game = game;
             _scriptEngine = game.ScriptEngine;
             _networkIdManager = game.NetworkIdManager;
-            _futureProjNetId = _networkIdManager.GetNewNetId();
+            CastInfo.MissileNetID = _networkIdManager.GetNewNetId();
             _overrrideCastRange = 0;
             _attackType = AttackType.ATTACK_TYPE_RADIAL;
 
@@ -262,9 +261,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
 
             CastInfo.AttackSpeedModifier = stats.AttackSpeedMultiplier.Total;
 
-            _futureProjNetId = _networkIdManager.GetNewNetId();
-
-            CastInfo.MissileNetID = _futureProjNetId;
+            CastInfo.MissileNetID = _networkIdManager.GetNewNetId();
 
             CastInfo.TargetPosition = new Vector3(start.X, _game.Map.NavigationGrid.GetHeightAtLocation(start.X, start.Y), start.Y);
             CastInfo.TargetPositionEnd = new Vector3(end.X, _game.Map.NavigationGrid.GetHeightAtLocation(end.X, end.Y), end.Y);
@@ -374,9 +371,8 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
                 CastInfo.Owner.SetCastSpell(this);
                 CastInfo.Owner.AutoAttackSpell.CastCancelCheck();
             }
-
             // Prevents overriding current auto attack target
-            if (unit != null)
+            else if (unit != null)
             {
                 CastInfo.Owner.SetTargetUnit(unit, true);
             }
@@ -455,11 +451,11 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
                 {
                     if (!CastInfo.IsSecondAutoAttack)
                     {
-                        _game.PacketNotifier.NotifyBasic_Attack_Pos(CastInfo.Owner, CastInfo.Targets[0].Unit, _futureProjNetId, CastInfo.Owner.IsNextAutoCrit);
+                        _game.PacketNotifier.NotifyBasic_Attack_Pos(CastInfo.Owner, CastInfo.Targets[0].Unit, CastInfo.MissileNetID, CastInfo.Owner.IsNextAutoCrit);
                     }
                     else
                     {
-                        _game.PacketNotifier.NotifyBasic_Attack(CastInfo.Owner, CastInfo.Targets[0].Unit, _futureProjNetId, CastInfo.Owner.IsNextAutoCrit, CastInfo.Owner.HasMadeInitialAttack);
+                        _game.PacketNotifier.NotifyBasic_Attack(CastInfo.Owner, CastInfo.Targets[0].Unit, CastInfo.MissileNetID, CastInfo.Owner.IsNextAutoCrit, CastInfo.Owner.HasMadeInitialAttack);
                     }
                 }
 
@@ -540,9 +536,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
                 }
             }
 
-            _futureProjNetId = _networkIdManager.GetNewNetId();
-
-            CastInfo.MissileNetID = _futureProjNetId;
+            CastInfo.MissileNetID = _networkIdManager.GetNewNetId();
 
             CastInfo.ExtraCastTime = 0.0f; // TODO: Unhardcode
             CastInfo.Cooldown = GetCooldown();
@@ -666,11 +660,11 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
                 {
                     if (!CastInfo.IsSecondAutoAttack)
                     {
-                        _game.PacketNotifier.NotifyBasic_Attack_Pos(CastInfo.Owner, CastInfo.Targets[0].Unit, _futureProjNetId, CastInfo.Owner.IsNextAutoCrit);
+                        _game.PacketNotifier.NotifyBasic_Attack_Pos(CastInfo.Owner, CastInfo.Targets[0].Unit, CastInfo.MissileNetID, CastInfo.Owner.IsNextAutoCrit);
                     }
                     else
                     {
-                        _game.PacketNotifier.NotifyBasic_Attack(CastInfo.Owner, CastInfo.Targets[0].Unit, _futureProjNetId, CastInfo.Owner.IsNextAutoCrit, CastInfo.Owner.HasMadeInitialAttack);
+                        _game.PacketNotifier.NotifyBasic_Attack(CastInfo.Owner, CastInfo.Targets[0].Unit, CastInfo.MissileNetID, CastInfo.Owner.IsNextAutoCrit, CastInfo.Owner.HasMadeInitialAttack);
                     }
                 }
 
@@ -866,6 +860,17 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
         void ISpell.Deactivate()
         {
             CastInfo.Targets.Clear();
+            ResetSpellCast();
+            SetSpellToggle(false);
+            if (CastInfo.Owner.GetCastSpell() == this)
+            {
+                CastInfo.Owner.SetCastSpell(null);
+            }
+            if (CastInfo.Owner.ChannelSpell == this)
+            {
+                CastInfo.Owner.SetChannelSpell(null);
+            }
+
             Script.OnDeactivate(CastInfo.Owner, this);
         }
 
@@ -929,11 +934,6 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
             if (CastInfo.Owner.SpellToCast != null && CastInfo.Owner.SpellToCast == this)
             {
                 CastInfo.Owner.SetSpellToCast(null, Vector2.Zero);
-            }
-
-            if (CastInfo.Owner.GetCastSpell() == this)
-            {
-                CastInfo.Owner.SetCastSpell(null);
             }
 
             // Updates move order before script PostCast so teleports are sent to clients correctly (not sent if MoveOrder == CastSpell).
@@ -1353,11 +1353,11 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
 
                     if (!CastInfo.IsSecondAutoAttack)
                     {
-                        _game.PacketNotifier.NotifyBasic_Attack_Pos(CastInfo.Owner, CastInfo.Targets[0].Unit, _futureProjNetId, CastInfo.Owner.IsNextAutoCrit);
+                        _game.PacketNotifier.NotifyBasic_Attack_Pos(CastInfo.Owner, CastInfo.Targets[0].Unit, CastInfo.MissileNetID, CastInfo.Owner.IsNextAutoCrit);
                     }
                     else
                     {
-                        _game.PacketNotifier.NotifyBasic_Attack(CastInfo.Owner, CastInfo.Targets[0].Unit, _futureProjNetId, CastInfo.Owner.IsNextAutoCrit, CastInfo.Owner.HasMadeInitialAttack);
+                        _game.PacketNotifier.NotifyBasic_Attack(CastInfo.Owner, CastInfo.Targets[0].Unit, CastInfo.MissileNetID, CastInfo.Owner.IsNextAutoCrit, CastInfo.Owner.HasMadeInitialAttack);
                     }
                 }
 
@@ -1388,7 +1388,13 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
             switch (State)
             {
                 case SpellState.STATE_READY:
+                {
+                    if (CastInfo.Owner.GetCastSpell() == this)
+                    {
+                        CastInfo.Owner.SetCastSpell(null);
+                    }
                     break;
+                }
                 case SpellState.STATE_CASTING:
                 {
                     if (CastCancelCheck())
@@ -1397,6 +1403,10 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
                     }
                     if (!CastInfo.IsAutoAttack && !CastInfo.UseAttackCastTime)
                     {
+                        if (CastInfo.Owner.GetCastSpell() != this)
+                        {
+                            CastInfo.Owner.SetCastSpell(this);
+                        }
                         CurrentCastTime -= diff / 1000.0f;
                         if (CurrentCastTime <= 0)
                         {

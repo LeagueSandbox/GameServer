@@ -24,29 +24,35 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             var targetObj = _game.ObjectManager.GetObjectById(req.TargetNetId);
             var targetUnit = targetObj as IAttackableUnit;
             var owner = _playerManager.GetPeerInfo(userId).Champion;
-            if (owner == null || !owner.CanCast())
+            if (owner == null)
             {
                 return false;
             }
 
             var s = owner.GetSpell(req.SpellSlot);
-            if (s == null)
-            {
-                return false;
-            }
+            var ownerCastingSpell = owner.GetCastSpell();
 
-            if(s.Cast(req.Position, req.EndPosition, targetUnit))
+            // Instant cast spells can be cast during other spell casts.
+            if (s != null && owner.CanCast()
+                && (ownerCastingSpell == null
+                || (ownerCastingSpell != null
+                    && s.SpellData.Flags.HasFlag(SpellDataFlags.InstantCast))
+                    && !ownerCastingSpell.SpellData.CantCancelWhileWindingUp))
             {
-                if (s.CastInfo.SpellSlot >= (int)SpellSlotType.InventorySlots && s.CastInfo.SpellSlot < (int)SpellSlotType.BluePillSlot)
+                if (s.Cast(req.Position, req.EndPosition, targetUnit))
                 {
-                    var item = s.CastInfo.Owner.Inventory.GetItem(s.SpellName);
-                    if (item != null && item.ItemData.Consumed)
+                    if (s.CastInfo.SpellSlot >= (int)SpellSlotType.InventorySlots && s.CastInfo.SpellSlot < (int)SpellSlotType.BluePillSlot)
                     {
-                        var inventory = owner.Inventory;
-                        inventory.RemoveItem(inventory.GetItemSlot(item), owner);
+                        var item = s.CastInfo.Owner.Inventory.GetItem(s.SpellName);
+                        if (item != null && item.ItemData.Consumed)
+                        {
+                            var inventory = owner.Inventory;
+                            inventory.RemoveItem(inventory.GetItemSlot(item), owner);
+                        }
                     }
+
+                    return true;
                 }
-                return true;
             }
 
             return false;

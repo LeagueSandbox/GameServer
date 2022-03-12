@@ -35,6 +35,8 @@ namespace Spells
         public void OnSpellCast(ISpell spell)
         {
             var owner = spell.CastInfo.Owner;
+            var castPos = new Vector2(spell.CastInfo.TargetPosition.X, spell.CastInfo.TargetPosition.Z);
+            FaceDirection(castPos, owner, true);
             var endPoint = GetPointFromUnit(owner, 1100f);
             //AddParticleTarget(owner, null, "Lucian_Q_cas.troy", owner, lifetime: 1.0f);
             AddParticle(owner, owner, "Lucian_Q_laser_red", endPoint, bone: "C_BUFFBONE_GLB_CENTER_LOC", lifetime: 1.0f);
@@ -43,7 +45,10 @@ namespace Spells
         public void OnSpellPostCast(ISpell spell)
         {
             var owner = spell.CastInfo.Owner;
+            var castPos = new Vector2(spell.CastInfo.TargetPosition.X, spell.CastInfo.TargetPosition.Z);
             var endPoint = GetPointFromUnit(owner, 1100f);
+
+            FaceDirection(castPos, owner, true);
 
             spell.CreateSpellSector(new SectorParameters
             {

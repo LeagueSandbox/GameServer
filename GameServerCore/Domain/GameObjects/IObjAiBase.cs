@@ -67,7 +67,7 @@ namespace GameServerCore.Domain.GameObjects
         Dictionary<short, ISpell> Spells { get; }
         ICharScript CharScript { get; }
         /// <summary>
-        /// Unit this AI will auto attack when it is in auto attack range.
+        /// Unit this AI will auto attack or use a spell on when in range.
         /// </summary>
         IAttackableUnit TargetUnit { get; set; }
         
@@ -94,9 +94,21 @@ namespace GameServerCore.Domain.GameObjects
         /// <param name="keepFacingLastDirection">Whether or not the unit should maintain the direction they were facing before dashing.</param>
         /// <param name="followTargetMaxDistance">Maximum distance the unit will follow the Target before stopping the dash or reaching to the Target.</param>
         /// <param name="backDistance">Unknown parameter.</param>
-        /// <param name="travelTime">Total time the dash will follow the GameObject before stopping or reaching the Target.</param>
+        /// <param name="travelTime">Total time (in seconds) the dash will follow the GameObject before stopping or reaching the Target.</param>
+        /// <param name="consideredCC">Whether or not to prevent movement, casting, or attacking during the duration of the movement.</param>
         /// TODO: Implement Dash class which houses these parameters, then have that as the only parameter to this function (and other Dash-based functions).
-        void DashToTarget(IAttackableUnit target, float dashSpeed, string animation, float leapGravity, bool keepFacingLastDirection, float followTargetMaxDistance, float backDistance, float travelTime);
+        void DashToTarget
+        (
+            IAttackableUnit target,
+            float dashSpeed,
+            string animation,
+            float leapGravity,
+            bool keepFacingLastDirection,
+            float followTargetMaxDistance,
+            float backDistance,
+            float travelTime,
+            bool consideredCC = true
+        );
         /// <summary>
         /// Gets a random auto attack spell from the list of auto attacks available for this AI.
         /// Will only select crit auto attacks if the next auto attack is going to be a crit, otherwise normal auto attacks will be selected.

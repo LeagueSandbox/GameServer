@@ -25,5 +25,10 @@ namespace GameServerCore
         /// Function called every tick of the game by Map.cs.
         /// </summary>
         void Update();
+        /// <summary>
+        /// Updates collision for the specified object.
+        /// </summary>
+        /// <param name="obj">GameObject to check if colliding with other objects.</param>
+        void UpdateCollision(IGameObject obj);
     }
 }

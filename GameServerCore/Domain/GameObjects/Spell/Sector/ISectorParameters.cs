@@ -64,7 +64,7 @@ namespace GameServerCore.Domain.GameObjects.Spell.Sector
         bool CanHitSameTargetConsecutively { get; set; }
 
         /// <summary>
-        /// Maximum number of times the spell sector can hit something before being removed.
+        /// Maximum number of times the spell sector can hit something before being removed. A value of 0 or less means this variable will be unused.
         /// </summary>
         int MaximumHits { get; set; }
 

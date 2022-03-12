@@ -67,6 +67,16 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Sector
             Team = CastInfo.Owner.Team;
         }
 
+        public override void OnAdded()
+        {
+            base.OnAdded();
+
+            // Update same tick of creation.
+            // This prevents cases where single tick sectors change position before executing.
+            _game.Map.CollisionHandler.UpdateCollision(this);
+            Update(0f);
+        }
+
         public override void Update(float diff)
         {
             if (IsToRemove())
@@ -76,7 +86,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Sector
 
             _lastTickTime += diff;
 
-            if ((Parameters.Lifetime >= 0 && (Parameters.Lifetime * 1000.0f) <= _timeSinceCreation))
+            if (Parameters.Lifetime >= 0 && (Parameters.Lifetime * 1000.0f) <= _timeSinceCreation)
             {
                 SetToRemove();
                 return;
@@ -87,7 +97,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Sector
                 Move(diff);
             }
 
-            if (_lastTickTime >= (1000.0f / Parameters.Tickrate))
+            if (_lastTickTime >= (1000.0f / Parameters.Tickrate) || (Parameters.SingleTick && Parameters.Tickrate <= 0))
             {
                 _lastTickTime = 0;
 
@@ -184,7 +194,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Sector
 
             ObjectsHit.Add(unit);
 
-            if (ObjectsHit.Count >= Parameters.MaximumHits)
+            if (Parameters.MaximumHits > 0 && ObjectsHit.Count >= Parameters.MaximumHits)
             {
                 SetToRemove();
             }
