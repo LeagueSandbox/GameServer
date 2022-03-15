@@ -12,10 +12,8 @@ namespace MapScripts.Map8
 {
     public class NeutralMinionSpawn
     {
-        private static bool crystalSpawned;
         private static bool forceSpawn;
 
-        static List<IMinion> InfoPoints = new List<IMinion>();
         static Dictionary<IMonsterCamp, IMonster> SpeedShrines = new Dictionary<IMonsterCamp, IMonster>();
         static Dictionary<IMonsterCamp, IMonster> HealthPacks = new Dictionary<IMonsterCamp, IMonster>();
 
@@ -24,16 +22,8 @@ namespace MapScripts.Map8
         static List<MinionTemplate> CrystalsTemplates = new List<MinionTemplate>();
         static Dictionary<TeamId, float> CrystalTimers = new Dictionary<TeamId, float> { { TeamId.TEAM_BLUE, 180.0f * 1000 }, { TeamId.TEAM_PURPLE, 180.0f * 1000 } };
         static Dictionary<TeamId, List<IRegion>> CrystalRegions = new Dictionary<TeamId, List<IRegion>> { { TeamId.TEAM_BLUE, new List<IRegion>() }, { TeamId.TEAM_PURPLE, new List<IRegion>() } };
-        public static void InitializeNeutrals(IMapScriptHandler map)
+        public static void InitializeNeutrals()
         {
-            for (int i = 0; i < map.InfoPoints.Count; i++)
-            {
-                var point = CreateMinion("OdinNeutralGuardian", "OdinNeutralGuardian", new Vector2(map.InfoPoints[i].CentralPoint.X, map.InfoPoints[i].CentralPoint.Z), ignoreCollision: true);
-                InfoPoints.Add(point);
-                AddUnitPerceptionBubble(point, 800.0f, 25000.0f, TeamId.TEAM_BLUE, true, collisionArea: 120.0f, collisionOwner: point);
-                InfoPoints[i].PauseAi(true);
-            }
-
             CrystalsTemplates.Add(new MinionTemplate(null, "OdinCenterRelic", "OdinCenterRelic", new Vector2(7074.9736f, 6462.0273f), team: TeamId.TEAM_BLUE));
             CrystalsTemplates.Add(new MinionTemplate(null, "OdinCenterRelic", "OdinCenterRelic", new Vector2(6801.1855f, 6462.0273f), team: TeamId.TEAM_PURPLE));
 
@@ -52,24 +42,6 @@ namespace MapScripts.Map8
 
         public static void OnUpdate(float diff)
         {
-            if (crystalSpawned)
-            {
-                foreach (var crystal in Crystals.Values)
-                {
-                    string iconCategory = "CenterRelicLeft";
-
-                    if (crystal.Team == TeamId.TEAM_PURPLE)
-                    {
-                        iconCategory = "CenterRelicRight";
-                    }
-
-                    //For some Reason this only works here
-                    SetMinimapIcon(crystal, iconCategory, true);
-                }
-
-                crystalSpawned = false;
-            }
-
             foreach (var camp in HealthPacks.Keys)
             {
                 if (!camp.IsAlive)
@@ -95,6 +67,17 @@ namespace MapScripts.Map8
                                 crystalTemplate.NetId, crystalTemplate.Team, crystalTemplate.SkinId,
                                 crystalTemplate.IgnoresCollision, crystalTemplate.IsTargetable);
 
+                        NotifySpawn(crystal);
+
+                        string iconCategory = "CenterRelicLeft";
+
+                        if (crystal.Team == TeamId.TEAM_PURPLE)
+                        {
+                            iconCategory = "CenterRelicRight";
+                        }
+
+                        SetMinimapIcon(crystal, iconCategory, true);
+
                         AddUnitPerceptionBubble(crystal, 350.0f, 25000.0f, TeamId.TEAM_BLUE, collisionArea: 38.08f, collisionOwner: crystal);
                         AddUnitPerceptionBubble(crystal, 350.0f, 25000.0f, TeamId.TEAM_PURPLE, collisionArea: 38.08f, collisionOwner: crystal);
 
@@ -102,8 +85,6 @@ namespace MapScripts.Map8
 
                         Crystals.Add(crystal.Team, crystal);
                         CrystalTimers[crystalTemplate.Team] = 180.0f * 1000f;
-
-                        crystalSpawned = true;
                     }
                 }
             }

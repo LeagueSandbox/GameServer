@@ -4,6 +4,6 @@
     {
         IMonsterCamp Camp { get; }
         string SpawnAnimation { get; }
-        int InitialLevel { get; set; }
+        new int InitialLevel { get; set; }
     }
 }

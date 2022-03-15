@@ -18,10 +18,6 @@ namespace GameServerCore.Scripting.CSharp
         /// </summary>
         float ChampionMinGoldValue { get; }
         /// <summary>
-        /// Wether or not building should have protection. Don't change this if you don't know what you're doing! (Default: false)
-        /// </summary>
-        bool EnableBuildingProtection { get; }
-        /// <summary>
         /// The ammount of gold a player should be rewarded for getting the first blood (Default: 100.0f)
         /// </summary>
         float FirstBloodExtraGold { get; }
@@ -49,10 +45,6 @@ namespace GameServerCore.Scripting.CSharp
         /// Whether or not minions are enabled
         /// </summary>
         bool MinionSpawnEnabled { get; set; }
-        /// <summary>
-        /// Whether the map should use hardcoded minion path coordinates or use the one from league's files (if available) (Default: false)
-        /// </summary>
-        bool MinionPathingOverride { get; }
         /// <summary>
         /// Wether or not the map's position is to be overriden
         /// </summary>
