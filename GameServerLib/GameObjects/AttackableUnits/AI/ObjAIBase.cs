@@ -351,7 +351,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 && !Status.HasFlag(StatusFlags.Suppressed)
                 && !Status.HasFlag(StatusFlags.Taunted)
                 && _castingSpell == null
-                && (ChannelSpell == null || !ChannelSpell.SpellData.CantCancelWhileChanneling)
+                && (ChannelSpell == null || (ChannelSpell != null && !ChannelSpell.SpellData.CantCancelWhileChanneling))
                 && (!IsAttacking || (IsAttacking && !AutoAttackSpell.SpellData.CantCancelWhileWindingUp));
         }
 
@@ -476,17 +476,19 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         /// <param name="followTargetMaxDistance">Maximum distance the unit will follow the Target before stopping the dash or reaching to the Target.</param>
         /// <param name="backDistance">Unknown parameter.</param>
         /// <param name="travelTime">Total time (in seconds) the dash will follow the GameObject before stopping or reaching the Target.</param>
+        /// <param name="consideredCC">Whether or not to prevent movement, casting, or attacking during the duration of the movement.</param>
         /// TODO: Implement Dash class which houses these parameters, then have that as the only parameter to this function (and other Dash-based functions).
         public void DashToTarget
         (
             IAttackableUnit target,
             float dashSpeed,
-            string animation,
-            float leapGravity,
-            bool keepFacingLastDirection,
-            float followTargetMaxDistance,
-            float backDistance,
-            float travelTime
+            string animation = "",
+            float leapGravity = 0,
+            bool keepFacingLastDirection = true,
+            float followTargetMaxDistance = 0,
+            float backDistance = 0,
+            float travelTime = 0,
+            bool consideredCC = true
         )
         {
             SetWaypoints(new List<Vector2> { Position, target.Position }, false);
@@ -509,7 +511,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
             _game.PacketNotifier.NotifyWaypointGroupWithSpeed(this);
 
-            SetDashingState(true);
+            SetDashingState(true, consideredCC);
 
             if (animation != null && animation != "")
             {
@@ -816,6 +818,12 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             }
 
             ISpell newSpell = new Spell.Spell(_game, this, name, slot);
+            ISpell existingSpell = Spells[slot];
+
+            if (existingSpell != null)
+            {
+                Spells[slot].Deactivate();
+            }
 
             newSpell.SetLevel(Spells[slot].CastInfo.SpellLevel);
 

@@ -151,7 +151,7 @@ namespace LeagueSandbox.GameServer.Scripting.CSharp
         /// <summary>
         /// How many times a second the spell sector should check for hitbox collisions.
         /// </summary>
-        public int Tickrate { get; set; } = 60;
+        public int Tickrate { get; set; } = 0;
         /// <summary>
         /// Whether or not the spell sector should be able to hit something multiple times.
         /// Will only hit again if the unit hit re-enters the hitbox (constant per-collision hitbox).
@@ -165,7 +165,7 @@ namespace LeagueSandbox.GameServer.Scripting.CSharp
         /// </summary>
         public bool CanHitSameTargetConsecutively { get; set; } = false;
         /// <summary>
-        /// Maximum number of times the spell sector can hit something before being removed.
+        /// Maximum number of times the spell sector can hit something before being removed. A value of 0 or less means this variable will be unused.
         /// </summary>
         public int MaximumHits { get; set; } = int.MaxValue;
         /// <summary>
