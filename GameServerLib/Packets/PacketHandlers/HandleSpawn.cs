@@ -136,10 +136,6 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                 }
             }
 
-            //TODO: shop map specific?
-            // Level props are just models, we need button-object minions to allow the client to interact with it
-            _game.PacketNotifier.NotifySpawn(_game.Map.ShopList[userInfo.Team], userInfo.Team, userId, _game.GameTime, false);
-
             _game.PacketNotifier.NotifySpawnEnd(userId);
             return true;
         }

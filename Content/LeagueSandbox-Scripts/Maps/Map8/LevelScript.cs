@@ -148,7 +148,7 @@ namespace MapScripts.Map8
         public Dictionary<TeamId, ILevelProp> Nexus = new Dictionary<TeamId, ILevelProp>();
         public Dictionary<int, ILevelProp> SwainBeams = new Dictionary<int, ILevelProp>();
         //This function is executed in-between Loading the map structures and applying the structure protections. Is the first thing on this script to be executed
-        public void Init(Dictionary<GameObjectTypes, List<IMapObject>> mapObjects)
+        public void Init(Dictionary<GameObjectTypes, List<MapObject>> mapObjects)
         {
             //TODO: Implement Dynamic Minion spawn mechanics for Map8
             //SpawnEnabled = map.IsMinionSpawnEnabled();

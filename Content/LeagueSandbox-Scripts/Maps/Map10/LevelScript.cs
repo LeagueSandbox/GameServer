@@ -85,7 +85,7 @@ namespace MapScripts.Map10
         }};
 
         //This function is executed in-between Loading the map structures and applying the structure protections. Is the first thing on this script to be executed
-        public void Init(Dictionary<GameObjectTypes, List<IMapObject>> mapObjects)
+        public void Init(Dictionary<GameObjectTypes, List<MapObject>> mapObjects)
         {
             MapScriptMetadata.MinionSpawnEnabled = IsMinionSpawnEnabled();
             AddSurrender(1200000.0f, 300000.0f, 30.0f);
@@ -228,7 +228,7 @@ namespace MapScripts.Map10
                 {
                     TeamId opposed_team = barrack.GetOpposingTeamID();
                     LaneID lane = barrack.GetSpawnBarrackLaneID();
-                    IMapObject opposedBarrack = LevelScriptObjects.SpawnBarracks[opposed_team][lane];
+                    MapObject opposedBarrack = LevelScriptObjects.SpawnBarracks[opposed_team][lane];
                     IInhibitor inhibitor = LevelScriptObjects.InhibitorList[opposed_team][lane];
                     Vector2 position = new Vector2(barrack.CentralPoint.X, barrack.CentralPoint.Z);
                     bool isInhibitorDead = inhibitor.InhibitorState == InhibitorState.DEAD && !inhibitor.RespawnAnnounced;

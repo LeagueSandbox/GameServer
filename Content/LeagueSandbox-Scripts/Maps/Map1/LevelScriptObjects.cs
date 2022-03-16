@@ -12,10 +12,10 @@ namespace MapScripts.Map1
 {
     public static class LevelScriptObjects
     {
-        private static Dictionary<GameObjectTypes, List<IMapObject>> _mapObjects;
+        private static Dictionary<GameObjectTypes, List<MapObject>> _mapObjects;
 
         public static Dictionary<TeamId, IFountain> FountainList = new Dictionary<TeamId, IFountain>();
-        public static Dictionary<string, IMapObject> SpawnBarracks = new Dictionary<string, IMapObject>();
+        public static Dictionary<string, MapObject> SpawnBarracks = new Dictionary<string, MapObject>();
         static List<INexus> NexusList = new List<INexus>();
         public static string LaneTurretAI = "TurretAI";
 
@@ -95,7 +95,7 @@ namespace MapScripts.Map1
 
         static IStatsModifier TurretStatsModifier = new StatsModifier();
         static IStatsModifier OuterTurretStatsModifier = new StatsModifier();
-        public static void LoadBuildings(Dictionary<GameObjectTypes, List<IMapObject>> mapObjects)
+        public static void LoadBuildings(Dictionary<GameObjectTypes, List<MapObject>> mapObjects)
         {
             _mapObjects = mapObjects;
 

@@ -81,7 +81,7 @@ namespace MapScripts.Map12
         public Dictionary<int, ILevelProp> Poros = new Dictionary<int, ILevelProp>();
         public Dictionary<int, ILevelProp> LongChains = new Dictionary<int, ILevelProp>();
         public Dictionary<int, ILevelProp> Chains = new Dictionary<int, ILevelProp>();
-        public void Init(Dictionary<GameObjectTypes, List<IMapObject>> mapObjects)
+        public void Init(Dictionary<GameObjectTypes, List<MapObject>> mapObjects)
         {
             MapScriptMetadata.MinionSpawnEnabled = IsMinionSpawnEnabled();
 
@@ -239,7 +239,7 @@ namespace MapScripts.Map12
                 {
                     TeamId opposed_team = barrack.GetOpposingTeamID();
                     LaneID lane = barrack.GetSpawnBarrackLaneID();
-                    IMapObject opposedBarrack = LevelScriptObjects.SpawnBarracks[opposed_team][lane];
+                    MapObject opposedBarrack = LevelScriptObjects.SpawnBarracks[opposed_team][lane];
                     IInhibitor inhibitor = LevelScriptObjects.InhibitorList[opposed_team];
                     Vector2 position = new Vector2(barrack.CentralPoint.X, barrack.CentralPoint.Z);
                     bool isInhibitorDead = inhibitor.InhibitorState == InhibitorState.DEAD && !inhibitor.RespawnAnnounced;

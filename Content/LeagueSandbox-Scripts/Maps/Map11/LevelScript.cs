@@ -139,7 +139,7 @@ namespace MapScripts.Map11
         }};
 
         //This function is executed in-between Loading the map structures and applying the structure protections. Is the first thing on this script to be executed
-        public virtual void Init(Dictionary<GameObjectTypes, List<IMapObject>> mapObjects)
+        public virtual void Init(Dictionary<GameObjectTypes, List<MapObject>> mapObjects)
         {
             MapScriptMetadata.MinionSpawnEnabled = IsMinionSpawnEnabled();
             AddSurrender(1200000.0f, 300000.0f, 30.0f);

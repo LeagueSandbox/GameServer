@@ -13,11 +13,10 @@ namespace MapScripts.Map8
 {
     public static class LevelScriptObjects
     {
-        private static Dictionary<GameObjectTypes, List<IMapObject>> _mapObjects;
+        private static Dictionary<GameObjectTypes, List<MapObject>> _mapObjects;
 
         static List<IMinion> InfoPoints = new List<IMinion>();
         public static Dictionary<TeamId, IFountain> FountainList = new Dictionary<TeamId, IFountain>();
-        public static Dictionary<TeamId, Dictionary<LaneID, IMapObject>> SpawnBarracks = new Dictionary<TeamId, Dictionary<LaneID, IMapObject>> { { TeamId.TEAM_BLUE, new Dictionary<LaneID, IMapObject>() }, { TeamId.TEAM_PURPLE, new Dictionary<LaneID, IMapObject>() } };
         static Dictionary<TeamId, List<ILaneTurret>> TurretList = new Dictionary<TeamId, List<ILaneTurret>> { { TeamId.TEAM_BLUE, new List<ILaneTurret>() }, { TeamId.TEAM_PURPLE, new List<ILaneTurret>() } };
 
         static string LaneTurretAI = "TurretAI";
@@ -29,13 +28,11 @@ namespace MapScripts.Map8
             {TeamId.TEAM_PURPLE, "OdinChaosTurretShrine" }
         };
 
-        public static void LoadObjects(Dictionary<GameObjectTypes, List<IMapObject>> mapObjects)
+        public static void LoadObjects(Dictionary<GameObjectTypes, List<MapObject>> mapObjects)
         {
             _mapObjects = mapObjects;
 
             CreateBuildings();
-
-            LoadSpawnBarracks();
             LoadFountains();
         }
 
@@ -66,17 +63,6 @@ namespace MapScripts.Map8
             foreach (var shop in _mapObjects[GameObjectTypes.ObjBuilding_Shop])
             {
                 NotifySpawn(CreateShop(shop.Name, new Vector2(shop.CentralPoint.X, shop.CentralPoint.Z), shop.GetTeamID()));
-            }
-        }
-
-        static void LoadSpawnBarracks()
-        {
-            foreach (var spawnBarrack in _mapObjects[GameObjectTypes.ObjBuildingBarracks])
-            {
-                if (spawnBarrack.Name.Contains("____P"))
-                {
-                    SpawnBarracks[spawnBarrack.GetTeamID()].Add(spawnBarrack.GetLaneID(), spawnBarrack);
-                }
             }
         }
 

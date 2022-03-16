@@ -13,10 +13,10 @@ namespace MapScripts.Map10
 {
     public static class LevelScriptObjects
     {
-        private static Dictionary<GameObjectTypes, List<IMapObject>> _mapObjects;
+        private static Dictionary<GameObjectTypes, List<MapObject>> _mapObjects;
 
         public static Dictionary<TeamId, IFountain> FountainList = new Dictionary<TeamId, IFountain>();
-        public static Dictionary<TeamId, Dictionary<LaneID, IMapObject>> SpawnBarracks = new Dictionary<TeamId, Dictionary<LaneID, IMapObject>>();
+        public static Dictionary<TeamId, Dictionary<LaneID, MapObject>> SpawnBarracks = new Dictionary<TeamId, Dictionary<LaneID, MapObject>>();
         public static Dictionary<LaneID, List<Vector2>> MinionPaths = new Dictionary<LaneID, List<Vector2>> { { LaneID.TOP, new List<Vector2>() }, { LaneID.BOTTOM, new List<Vector2>() } };
         static List<INexus> NexusList = new List<INexus>();
         static string LaneTurretAI = "TurretAI";
@@ -92,7 +92,7 @@ namespace MapScripts.Map10
         };
 
         static IStatsModifier TurretStatsModifier = new StatsModifier();
-        public static void LoadObjects(Dictionary<GameObjectTypes, List<IMapObject>> mapObjects)
+        public static void LoadObjects(Dictionary<GameObjectTypes, List<MapObject>> mapObjects)
         {
             _mapObjects = mapObjects;
 
@@ -232,7 +232,7 @@ namespace MapScripts.Map10
                 var team = spawnBarrack.GetTeamID();
                 if (!SpawnBarracks.ContainsKey(team))
                 {
-                    SpawnBarracks.Add(team, new Dictionary<LaneID, IMapObject>());
+                    SpawnBarracks.Add(team, new Dictionary<LaneID, MapObject>());
                 }
                 SpawnBarracks[team].Add(spawnBarrack.GetLaneID(), spawnBarrack);
             }

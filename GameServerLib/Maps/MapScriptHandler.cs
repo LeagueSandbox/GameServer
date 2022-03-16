@@ -45,17 +45,6 @@ namespace LeagueSandbox.GameServer.Maps
         /// MapProperties specific to a Map Id. Contains information about passive gold gen, lane minion spawns, experience to level, etc.
         /// </summary>
         public IMapScript MapScript { get; private set; }
-
-        //TODO: Move all these variables to MapScripts, and instead, feed the MapScript just MapData.MapObjects, so each map can handle it independently
-        public Dictionary<LaneID, List<Vector2>> BlueMinionPathing { get; set; }
-        public Dictionary<LaneID, List<Vector2>> PurpleMinionPathing { get; set; }
-        public Dictionary<string, MapObject> SpawnBarracks { get; set; }
-        public List<INexus> NexusList { get; set; } = new List<INexus>();
-        public List<MapObject> InfoPoints { get; set; } = new List<MapObject>();
-        public Dictionary<TeamId, Dictionary<LaneID, List<ILaneTurret>>> TurretList { get; set; }
-        public Dictionary<TeamId, Dictionary<LaneID, List<IInhibitor>>> InhibitorList { get; set; }
-        public Dictionary<TeamId, IFountain> FountainList { get; set; } = new Dictionary<TeamId, IFountain>();
-        public Dictionary<TeamId, IGameObject> ShopList { get; set; } = new Dictionary<TeamId, IGameObject>();
         public Dictionary<TeamId, Dictionary<int, Dictionary<int, Vector2>>> PlayerSpawnPoints { get; set; } = new Dictionary<TeamId, Dictionary<int, Dictionary<int, Vector2>>>();
 
         public readonly Dictionary<TeamId, SurrenderHandler> Surrenders = new Dictionary<TeamId, SurrenderHandler>();
@@ -85,11 +74,6 @@ namespace LeagueSandbox.GameServer.Maps
             CollisionHandler = new CollisionHandler(this);
 
             MapScript = _scriptEngine.CreateObject<IMapScript>($"MapScripts.Map{Id}", $"{game.Config.GameConfig.GameMode}") ?? new EmptyMapScript();
-
-            if (game.Config.MapData.SpawnBarracks != null)
-            {
-                SpawnBarracks = game.Config.MapData.SpawnBarracks;
-            }
 
             if (MapScript.PlayerSpawnPoints != null && MapScript.MapScriptMetadata.OverrideSpawnPoints)
             {
@@ -123,35 +107,7 @@ namespace LeagueSandbox.GameServer.Maps
         /// </summary>
         public void Init()
         {
-            LoadMapInfo();
-            MapScript.Init(this);
-            if (MapScript.MapScriptMetadata.EnableBuildingProtection)
-            {
-                LoadBuildingProtection();
-            }
-            SpawnBuildings();
-        }
-
-        public void LoadMapInfo()
-        {
-            TurretList = new Dictionary<TeamId, Dictionary<LaneID, List<ILaneTurret>>>{
-                { TeamId.TEAM_BLUE, new Dictionary<LaneID, List<ILaneTurret>>{ { LaneID.NONE, new List<ILaneTurret>() },{ LaneID.TOP, new List<ILaneTurret>()}, {LaneID.MIDDLE, new List<ILaneTurret>()}, {LaneID.BOTTOM, new List<ILaneTurret>()} } },
-                { TeamId.TEAM_PURPLE, new Dictionary<LaneID, List<ILaneTurret>>{ { LaneID.NONE, new List<ILaneTurret>() }, { LaneID.TOP, new List<ILaneTurret>()}, {LaneID.MIDDLE, new List<ILaneTurret>()}, {LaneID.BOTTOM, new List<ILaneTurret>()} } },
-                { TeamId.TEAM_NEUTRAL, new Dictionary<LaneID, List<ILaneTurret>>{ { LaneID.NONE, new List<ILaneTurret>() }, { LaneID.TOP, new List<ILaneTurret>()}, {LaneID.MIDDLE, new List<ILaneTurret>()}, {LaneID.BOTTOM, new List<ILaneTurret>()} }}};
-
-            InhibitorList = new Dictionary<TeamId, Dictionary<LaneID, List<IInhibitor>>>{
-                { TeamId.TEAM_BLUE, new Dictionary<LaneID, List<IInhibitor>>{{LaneID.TOP, new List<IInhibitor>()}, {LaneID.MIDDLE, new List<IInhibitor>()}, {LaneID.BOTTOM, new List<IInhibitor>()} } },
-                { TeamId.TEAM_PURPLE, new Dictionary<LaneID, List<IInhibitor>>{{LaneID.TOP, new List<IInhibitor>()}, {LaneID.MIDDLE, new List<IInhibitor>()}, {LaneID.BOTTOM, new List<IInhibitor>()} } },
-                { TeamId.TEAM_NEUTRAL, new Dictionary<LaneID, List<IInhibitor>>{{LaneID.TOP, new List<IInhibitor>()}, {LaneID.MIDDLE, new List<IInhibitor>()}, {LaneID.BOTTOM, new List<IInhibitor>()} }}};
-
-            BlueMinionPathing = new Dictionary<LaneID, List<Vector2>> { { LaneID.NONE, new List<Vector2>() }, { LaneID.TOP, new List<Vector2>() }, { LaneID.MIDDLE, new List<Vector2>() }, { LaneID.BOTTOM, new List<Vector2>() } };
-            PurpleMinionPathing = new Dictionary<LaneID, List<Vector2>> { { LaneID.NONE, new List<Vector2>() }, { LaneID.TOP, new List<Vector2>() }, { LaneID.MIDDLE, new List<Vector2>() }, { LaneID.BOTTOM, new List<Vector2>() } };
-
-            //Investigate if we can unhardcode these variables
-            var inhibRadius = 214;
-            var nexusRadius = 353;
-            var sightRange = 1700;
-            List<MapObject> missedTurrets = new List<MapObject>();
+            Dictionary<GameObjectTypes, List<MapObject>> mapObjects = new Dictionary<GameObjectTypes, List<MapObject>>();
             foreach (var mapObject in MapData.MapObjects.Values)
             {
                 GameObjectTypes objectType = mapObject.GetGameObjectType();
@@ -160,102 +116,26 @@ namespace LeagueSandbox.GameServer.Maps
                 {
                     continue;
                 }
-                TeamId teamId = mapObject.GetTeamID();
-                LaneID lane = mapObject.GetLaneID();
-                Vector2 position = new Vector2(mapObject.CentralPoint.X, mapObject.CentralPoint.Z);
-                // Models are specific to team.
-                string teamName = mapObject.GetTeamName();
 
-                // Nexus
-                if (objectType == GameObjectTypes.ObjAnimated_HQ && teamId != TeamId.TEAM_NEUTRAL)
+                if (!mapObjects.ContainsKey(objectType))
                 {
-                    //Nexus model changes dont seem to take effect in-game
-                    CreateNexus(mapObject.Name, MapScript.NexusModels[teamId], position, teamId, nexusRadius, sightRange);
+                    mapObjects.Add(objectType, new List<MapObject>());
                 }
-                // Inhibitors
-                else if (objectType == GameObjectTypes.ObjAnimated_BarracksDampener)
-                {
-                    //Inhibitor model changes dont seem to take effect in-game
-                    CreateInhibitor(mapObject.Name, MapScript.InhibitorModels[teamId], position, teamId, lane, inhibRadius, sightRange);
-                }
-                // Turrets
-                else if (objectType == GameObjectTypes.ObjAIBase_Turret)
-                {
-                    if (mapObject.Name.Contains("Shrine"))
-                    {
 
-                        CreateLaneTurret(mapObject.Name + "_A", MapScript.TowerModels[teamId][TurretType.FOUNTAIN_TURRET], position, teamId, TurretType.FOUNTAIN_TURRET, LaneID.NONE, MapScript.LaneTurretAI, mapObject);
-                        continue;
-                    }
-
-                    int index = mapObject.ParseIndex();
-
-                    var turretType = MapScript.GetTurretType(index, lane, teamId);
-
-                    if (turretType == TurretType.FOUNTAIN_TURRET)
-                    {
-                        missedTurrets.Add(mapObject);
-                        continue;
-                    }
-
-                    CreateLaneTurret(mapObject.Name + "_A", MapScript.TowerModels[teamId][turretType], position, teamId, turretType, lane, MapScript.LaneTurretAI, mapObject);
-                }
-                else if (objectType == GameObjectTypes.InfoPoint)
-                {
-                    InfoPoints.Add(mapObject);
-                }
-                else if (objectType == GameObjectTypes.ObjBuilding_SpawnPoint)
-                {
-                    CreateFountain(teamId, position);
-                }
-                else if (objectType == GameObjectTypes.ObjBuilding_NavPoint)
-                {
-                    BlueMinionPathing[lane].Add(new Vector2(mapObject.CentralPoint.X, mapObject.CentralPoint.Z));
-                }
-                else if (objectType == GameObjectTypes.ObjBuilding_Shop)
-                {
-                    CreateShop(mapObject.Name, position, teamId);
-                }
+                mapObjects[objectType].Add(mapObject);
             }
 
-            //If the map doesn't have any Minion pathing file but the map script has Minion pathing hardcoded
-            if ((BlueMinionPathing.Count == 0 || MapScript.MapScriptMetadata.MinionPathingOverride) && MapScript.MinionPaths != null && MapScript.MinionPaths.Count != 0)
+            if (_game.Config.MapData.SpawnBarracks != null)
             {
-                foreach (var lane in MapScript.MinionPaths.Keys)
+                mapObjects.Add(GameObjectTypes.ObjBuildingBarracks, new List<MapObject>());
+
+                foreach (var spawnBarrack in _game.Config.MapData.SpawnBarracks)
                 {
-                    //Makes sure the coordinate list is empty
-                    BlueMinionPathing[lane].Clear();
-                    foreach (var value in MapScript.MinionPaths[lane])
-                    {
-                        BlueMinionPathing[lane].Add(value);
-                    }
+                    mapObjects[GameObjectTypes.ObjBuildingBarracks].Add(spawnBarrack.Value);
                 }
             }
 
-            //Sets purple team pathing by reversing Blue Team's pathing and adds an extra path coordinate towards the minions' spawn point.
-            foreach (var lane in BlueMinionPathing.Keys)
-            {
-                foreach (var value in BlueMinionPathing[lane])
-                {
-                    PurpleMinionPathing[lane].Add(value);
-                }
-                PurpleMinionPathing[lane].Reverse();
-
-                //The unhardcoded system results on minions stop walking right next to the nexus/nexus towers (since the last waypoint of a given minion, is the first one of the opsoite team, which isn't next to towers/nexus).
-                //TODO: Decide if we want to hardcode extra waypoints in order to force the minion to walk towards the nexus or let it somehow be handled automatically by the minion's A.I
-                var Barracks = SpawnBarracks.Values.ToList().FindAll(x => x.GetLaneID() == lane);
-                foreach (var barrack in Barracks)
-                {
-                    if (barrack.GetTeamID() == TeamId.TEAM_PURPLE)
-                    {
-                        BlueMinionPathing[lane].Add(new Vector2(barrack.CentralPoint.X, barrack.CentralPoint.Z));
-                    }
-                    else
-                    {
-                        PurpleMinionPathing[lane].Add(new Vector2(barrack.CentralPoint.X, barrack.CentralPoint.Z));
-                    }
-                }
-            }
+            MapScript.Init(mapObjects);
         }
     }
 }
