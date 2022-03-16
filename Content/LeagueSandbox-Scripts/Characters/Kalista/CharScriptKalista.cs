@@ -124,7 +124,7 @@ namespace CharScripts
                 // TODO: Verify flags.
                 PlayAnimation(owner, "Attack1_Dash", 0.0f, 0.0f, 1.0f, flags: AnimationFlags.Unknown8 | AnimationFlags.UniqueOverride);
                 owner.CancelAutoAttack(false, true);
-                ForceMovement(owner, "", targetPos, speed, 0.0f, 0.0f, 0.0f, ForceMovementType.FIRST_WALL_HIT, ForceMovementOrdersType.POSTPONE_CURRENT_ORDER, ForceMovementOrdersFacing.FACE_MOVEMENT_DIRECTION);
+                ForceMovement(owner, "", targetPos, speed, 0.0f, 0.0f, 0.0f, true, ForceMovementType.FIRST_WALL_HIT, ForceMovementOrdersType.POSTPONE_CURRENT_ORDER, ForceMovementOrdersFacing.FACE_MOVEMENT_DIRECTION);
             }
         }
 

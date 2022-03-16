@@ -1599,10 +1599,11 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// <param name="animation">Internal name of the dash animation.</param>
         /// <param name="leapGravity">Optionally how much gravity the unit will experience when above the ground while dashing.</param>
         /// <param name="keepFacingLastDirection">Whether or not the AI unit should face the direction they were facing before the dash.</param>
+        /// <param name="consideredCC">Whether or not to prevent movement, casting, or attacking during the duration of the movement.</param>
         /// TODO: Find a good way to grab these variables from spell data.
         /// TODO: Verify if we should count Dashing as a form of Crowd Control.
         /// TODO: Implement Dash class which houses these parameters, then have that as the only parameter to this function (and other Dash-based functions).
-        public void DashToLocation(Vector2 endPos, float dashSpeed, string animation = "", float leapGravity = 0.0f, bool keepFacingLastDirection = true)
+        public void DashToLocation(Vector2 endPos, float dashSpeed, string animation = "", float leapGravity = 0.0f, bool keepFacingLastDirection = true, bool consideredCC = true)
         {
             var newCoords = _game.Map.NavigationGrid.GetClosestTerrainExit(endPos, PathfindingRadius + 1.0f);
 
@@ -1623,7 +1624,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                 FollowTravelTime = 0
             };
 
-            SetDashingState(true);
+            SetDashingState(true, consideredCC);
 
             if (animation != null && animation != "")
             {
@@ -1642,8 +1643,9 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// Sets this unit's current dash state to the given state.
         /// </summary>
         /// <param name="state">State to set. True = dashing, false = not dashing.</param>
+        /// <param name="setStatus">Whether or not to modify movement, casting, and attacking states.</param>
         /// TODO: Implement ForcedMovement methods and enumerators to handle different kinds of dashes.
-        public virtual void SetDashingState(bool state, MoveStopReason reason = MoveStopReason.Finished)
+        public virtual void SetDashingState(bool state, bool setStatus = true, MoveStopReason reason = MoveStopReason.Finished)
         {
             if (MovementParameters != null && state == false)
             {
@@ -1664,11 +1666,14 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                 }
             }
 
-            // TODO: Implement this as a parameter.
-            SetStatus(StatusFlags.CanAttack, !state);
-            // TODO: Verify if changing cast status is correct.
-            SetStatus(StatusFlags.CanCast, !state);
-            SetStatus(StatusFlags.CanMove, !state);
+            if (setStatus)
+            {
+                // TODO: Implement this as a parameter.
+                SetStatus(StatusFlags.CanAttack, !state);
+                // TODO: Verify if changing cast status is correct.
+                SetStatus(StatusFlags.CanCast, !state);
+                SetStatus(StatusFlags.CanMove, !state);
+            }
         }
 
         /// <summary>

@@ -21,106 +21,77 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
         {
             var peerInfo = _playerManager.GetPeerInfo(userId);
 
-            if (!peerInfo.IsDisconnected)
+            if(_game.IsRunning)
             {
-                _game.IncrementReadyPlayers();
-            }
-
-            /* if (_game.IsRunning)
-                return true; */
-            
-            // Only one packet enter here
-            if (_game.PlayersReady == _playerManager.GetPlayers().Count)
-            {
-                _game.PacketNotifier.NotifyGameStart();
-
-                foreach (var player in _playerManager.GetPlayers())
+                if (_game.IsPaused)
                 {
-                    // Get notified about the spawn of other connected players - IMPORTANT: should only occur one-time
-                    foreach (var p in _playerManager.GetPlayers(true))
-                    {
-                        if (!p.Item2.IsStartedClient) continue; //user still didn't connect, not get informed about it
-                        if (player.Item2.PlayerId == p.Item2.PlayerId) continue; //Don't self-inform twice
-                        _game.PacketNotifier.NotifyS2C_CreateHero(p.Item2, (int)player.Item2.PlayerId);
-                        _game.PacketNotifier.NotifyAvatarInfo(p.Item2, (int)player.Item2.PlayerId);
-                    }
-
-                    if (player.Item2.PlayerId == userId && !player.Item2.IsMatchingVersion)
-                    {
-                        var msg = "Your client version does not match the server. " +
-                                  "Check the server log for more information.";
-                         _game.PacketNotifier.NotifyS2C_SystemMessage(userId, msg);
-                    }
-
-                    _game.PacketNotifier.NotifySpawn(player.Item2.Champion, userId, false);
-                    
-                    while(player.Item2.Champion.Stats.Level < _game.Map.MapScript.MapScriptMetadata.InitialLevel)
-                    {
-                        player.Item2.Champion.LevelUp(true);
-                    }
-
-                    // TODO: send this in one place only
-                    _game.PacketNotifier.NotifyS2C_HandleTipUpdatep((int) player.Item2.PlayerId, "Welcome to League Sandbox!",
-                        "This is a WIP project.", "", 0, player.Item2.Champion.NetId,
-                        _game.NetworkIdManager.GetNewNetId());
-                    _game.PacketNotifier.NotifyS2C_HandleTipUpdatep((int) player.Item2.PlayerId, "Server Build Date",
-                        ServerContext.BuildDateString, "", 0, player.Item2.Champion.NetId,
-                        _game.NetworkIdManager.GetNewNetId());
-                    _game.PacketNotifier.NotifyS2C_HandleTipUpdatep((int)player.Item2.PlayerId, "Your Champion:",
-                        player.Item2.Champion.Model, "", 0, player.Item2.Champion.NetId,
-                        _game.NetworkIdManager.GetNewNetId());
+                    _game.PacketNotifier.NotifyPausePacket(peerInfo, (int)_game.PauseTimeLeft, true);
                 }
-                _game.Start();
-            }
+                _game.PacketNotifier.NotifyGameStart(userId);
 
-            if (_game.IsRunning)
-            {
-                if (peerInfo.IsDisconnected)
+                if(peerInfo.IsDisconnected)
                 {
-                    foreach (var player in _playerManager.GetPlayers(true))
-                    {
-                        if (player.Item2.Team == peerInfo.Team)
-                        {
-                            _game.PacketNotifier.NotifySpawn(player.Item2.Champion, userId, false);
-
-                            /* This is probably not the best way
-                             * of updating a champion's level, but it works */
-                            _game.PacketNotifier.NotifyNPC_LevelUp(player.Item2.Champion);
-                            if (_game.IsPaused)
-                            {
-                                 _game.PacketNotifier.NotifyPausePacket(peerInfo, (int)_game.PauseTimeLeft, true);
-                            }
-                        }
-                    }
                     peerInfo.IsDisconnected = false;
+                    
                     var announcement = new OnReconnect { OtherNetID = peerInfo.Champion.NetId };
                     _game.PacketNotifier.NotifyS2C_OnEventWorld(announcement, peerInfo.Champion.NetId);
-
-                    // Send the initial game time sync packets, then let the map send another
-                    var gameTime = _game.GameTime;
-                     _game.PacketNotifier.NotifySynchSimTimeS2C(userId, gameTime);
-                     _game.PacketNotifier.NotifySyncMissionStartTimeS2C(userId, gameTime);
-
-                    return true;
                 }
+                
+                SyncTime(userId);
 
-                foreach (var p in _playerManager.GetPlayers(true))
+                return true;
+            }
+            else
+            {
+                if (!peerInfo.IsDisconnected)
                 {
-                    _game.ObjectManager.AddObject(p.Item2.Champion);
+                    _game.IncrementReadyPlayers();
+                }
+                
+                // Only one packet enter here
+                if (_game.PlayersReady == _playerManager.GetPlayers().Count)
+                {
+                    _game.PacketNotifier.NotifyGameStart();
 
-                    if (p.Item2.Champion.IsBot)
+                    foreach (var player in _playerManager.GetPlayers())
                     {
-                        continue;
-                    }
+                        if (player.Item2.PlayerId == userId && !player.Item2.IsMatchingVersion)
+                        {
+                            var msg = "Your client version does not match the server. " +
+                                    "Check the server log for more information.";
+                            _game.PacketNotifier.NotifyS2C_SystemMessage(userId, msg);
+                        }
 
-                    // Send the initial game time sync packets, then let the map send another
-                    var gameTime = _game.GameTime;
-                     _game.PacketNotifier.NotifySynchSimTimeS2C((int) p.Item2.PlayerId, gameTime);
-                     _game.PacketNotifier.NotifySyncMissionStartTimeS2C((int) p.Item2.PlayerId, gameTime);
+                        while(player.Item2.Champion.Stats.Level < _game.Map.MapScript.MapScriptMetadata.InitialLevel)
+                        {
+                            player.Item2.Champion.LevelUp(true);
+                        }
+
+                        // TODO: send this in one place only
+                        _game.PacketNotifier.NotifyS2C_HandleTipUpdatep((int) player.Item2.PlayerId, "Welcome to League Sandbox!",
+                            "This is a WIP project.", "", 0, player.Item2.Champion.NetId,
+                            _game.NetworkIdManager.GetNewNetId());
+                        _game.PacketNotifier.NotifyS2C_HandleTipUpdatep((int) player.Item2.PlayerId, "Server Build Date",
+                            ServerContext.BuildDateString, "", 0, player.Item2.Champion.NetId,
+                            _game.NetworkIdManager.GetNewNetId());
+                        _game.PacketNotifier.NotifyS2C_HandleTipUpdatep((int)player.Item2.PlayerId, "Your Champion:",
+                            player.Item2.Champion.Model, "", 0, player.Item2.Champion.NetId,
+                            _game.NetworkIdManager.GetNewNetId());
+
+                        SyncTime(player.Item2.PlayerId);
+                    }
+                    _game.Start();
                 }
             }
-
             return true;
+        }
+
+        void SyncTime(long userId)
+        {
+            // Send the initial game time sync packets, then let the map send another
+            var gameTime = _game.GameTime;
+            _game.PacketNotifier.NotifySynchSimTimeS2C((int) userId, gameTime);
+            _game.PacketNotifier.NotifySyncMissionStartTimeS2C((int) userId, gameTime);
         }
     }
 }

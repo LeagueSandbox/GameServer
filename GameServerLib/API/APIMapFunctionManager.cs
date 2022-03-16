@@ -39,18 +39,105 @@ namespace LeagueSandbox.GameServer.API
             _logger = LoggerProvider.GetLogger();
         }
 
-        public static void AddProtection(IAttackableUnit unit, IAttackableUnit[] dependOnAll, IAttackableUnit[] dependOnSingle)
+        //Spawn Buildings
+        public static void SpawnBuildings()
         {
-            _game.ProtectionManager.AddProtection(unit, dependOnAll, dependOnSingle);
+            //Spawn Nexus
+            foreach (var nexus in _map.NexusList)
+            {
+                _game.ObjectManager.AddObject(nexus);
+            }
+            foreach (var team in _map.InhibitorList.Keys)
+            {
+                foreach (var lane in _map.InhibitorList[team].Keys)
+                {
+                    //Spawn Inhibitors
+                    foreach (var inhibitor in _map.InhibitorList[team][lane])
+                    {
+                        _game.ObjectManager.AddObject(inhibitor);
+                    }
+                    //Spawn Turrets
+                    foreach (var turret in _map.TurretList[team][lane])
+                    {
+                        // Adds Turrets
+                        _game.ObjectManager.AddObject(turret);
+                    }
+                }
+                //Spawn FountainTurrets
+                foreach (var turret in _map.TurretList[team][LaneID.NONE])
+                {
+                    // Adds FountainTurret
+                    _game.ObjectManager.AddObject(turret);
+                }
+            }
         }
-        public static void AddProtection(IAttackableUnit unit, bool dependOnAll, params IAttackableUnit[] dependOn)
+
+        /// <summary>
+        /// Loads the Buildings protection system (Note: This can break a lot of maps if turrets types and lanes arent properly setup)
+        /// </summary>
+        public static void LoadBuildingProtection()
         {
-            _game.ProtectionManager.AddProtection(unit, dependOnAll, dependOn);
+            //I can't help but feel there's a better way to do this
+            Dictionary<TeamId, List<IInhibitor>> TeamInhibitors = new Dictionary<TeamId, List<IInhibitor>> { { TeamId.TEAM_BLUE, new List<IInhibitor>() }, { TeamId.TEAM_PURPLE, new List<IInhibitor>() } };
+            foreach (var teams in _map.InhibitorList.Keys)
+            {
+                foreach (var lane in _map.InhibitorList[teams].Keys)
+                {
+                    foreach (var inhibs in _map.InhibitorList[teams][lane])
+                    {
+                        TeamInhibitors[teams].Add(inhibs);
+                    }
+                }
+            }
+
+            foreach (var nexus in _map.NexusList)
+            {
+                // Adds Protection to Nexus
+                _game.ProtectionManager.AddProtection(nexus, _map.TurretList[nexus.Team][LaneID.MIDDLE].FindAll(turret => turret.Type == TurretType.NEXUS_TURRET).ToArray(), TeamInhibitors[nexus.Team].ToArray());
+            }
+
+            foreach (var InhibTeam in TeamInhibitors.Keys)
+            {
+                foreach (var inhibitor in TeamInhibitors[InhibTeam])
+                {
+                    var inhibitorTurret = _map.TurretList[inhibitor.Team][inhibitor.Lane].First(turret => turret.Type == TurretType.INHIBITOR_TURRET);
+
+                    // Adds Protection to Inhibitors
+                    if (inhibitorTurret != null)
+                    {
+                        // Depends on the first available inhibitor turret.
+                        _game.ProtectionManager.AddProtection(inhibitor, false, inhibitorTurret);
+                    }
+
+                    // Adds Protection to Turrets
+                    foreach (var turret in _map.TurretList[inhibitor.Team][inhibitor.Lane])
+                    {
+                        if (turret.Type == TurretType.NEXUS_TURRET)
+                        {
+                            _game.ProtectionManager.AddProtection(turret, false, TeamInhibitors[inhibitor.Team].ToArray());
+                        }
+                        else if (turret.Type == TurretType.INHIBITOR_TURRET)
+                        {
+                            _game.ProtectionManager.AddProtection(turret, false, _map.TurretList[inhibitor.Team][inhibitor.Lane].First(dependTurret => dependTurret.Type == TurretType.INNER_TURRET));
+                        }
+                        else if (turret.Type == TurretType.INNER_TURRET)
+                        {
+                            //Checks if there are outer turrets
+                            if (_map.TurretList[inhibitor.Team][inhibitor.Lane].Any(outerTurret => outerTurret.Type == TurretType.OUTER_TURRET))
+                            {
+                                _game.ProtectionManager.AddProtection(turret, false, _map.TurretList[inhibitor.Team][inhibitor.Lane].First(dependTurret => dependTurret.Type == TurretType.OUTER_TURRET));
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         public static IGameObject CreateShop(string name, Vector2 position, TeamId team)
         {
-            return new GameObject(_game, position, team: team, netId: Crc32Algorithm.Compute(Encoding.UTF8.GetBytes(name)) | 0xFF000000);
+            IGameObject shop = new GameObject(_game, position, team: team, netId: Crc32Algorithm.Compute(Encoding.UTF8.GetBytes(name)) | 0xFF000000);
+            _map.ShopList.Add(team, shop);
+            return shop;
         }
 
         /// <summary>
@@ -65,7 +152,9 @@ namespace LeagueSandbox.GameServer.API
         /// <returns></returns>
         public static INexus CreateNexus(string name, string model, Vector2 position, TeamId team, int nexusRadius, int sightRange)
         {
-            return new Nexus(_game, model, team, nexusRadius, position, sightRange, Crc32Algorithm.Compute(Encoding.UTF8.GetBytes(name)) | 0xFF000000);
+            INexus nexus = new Nexus(_game, model, team, nexusRadius, position, sightRange, Crc32Algorithm.Compute(Encoding.UTF8.GetBytes(name)) | 0xFF000000);
+            _map.NexusList.Add(nexus);
+            return nexus;
         }
 
         /// <summary>
@@ -81,12 +170,16 @@ namespace LeagueSandbox.GameServer.API
         /// <returns></returns>
         public static IInhibitor CreateInhibitor(string name, string model, Vector2 position, TeamId team, LaneID lane, int inhibRadius, int sightRange)
         {
-            return new Inhibitor(_game, model, lane, team, inhibRadius, position, sightRange, Crc32Algorithm.Compute(Encoding.UTF8.GetBytes(name)) | 0xFF000000);
+            IInhibitor inhibitor = new Inhibitor(_game, model, lane, team, inhibRadius, position, sightRange, Crc32Algorithm.Compute(Encoding.UTF8.GetBytes(name)) | 0xFF000000);
+            _map.InhibitorList[team][lane].Add(inhibitor);
+            return inhibitor;
         }
 
-        public static IMapObject CreateLaneMinionSpawnPos(string name, Vector3 position)
+        public static MapObject CreateLaneMinionSpawnPos(string name, Vector3 position)
         {
-            return new MapObject(name, position, _map.Id);
+            MapObject spawnBarrack = new MapObject(name, position, _map.Id);
+            _map.SpawnBarracks.Add(name, spawnBarrack);
+            return spawnBarrack;
         }
 
         /// <summary>
@@ -103,12 +196,27 @@ namespace LeagueSandbox.GameServer.API
         /// <param name="mapObject"></param>
         /// <param name="netId"></param>
         /// <returns></returns>
-        public static ILaneTurret CreateLaneTurret(string name, string model, Vector2 position, TeamId team, TurretType turretType, LaneID lane, string aiScript, IMapObject mapObject = null, uint netId = 0)
+        public static ILaneTurret CreateLaneTurret(string name, string model, Vector2 position, TeamId team, TurretType turretType, LaneID lane, string aiScript, MapObject mapObject = default, uint netId = 0)
         {
-            return new LaneTurret(_game, name, model, position, team, turretType, netId, lane, mapObject, aiScript);
+            ILaneTurret turret = new LaneTurret(_game, name, model, position, team, turretType, netId, lane, mapObject, aiScript);
+            _map.TurretList[team][lane].Add(turret);
+            return turret;
         }
 
+        /// <summary>
+        /// Gets the turret item list from MapScripts
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        public static int[] GetTurretItems(TurretType type)
+        {
+            if (!_map.MapScript.TurretItems.ContainsKey(type))
+            {
+                return new int[] { };
+            }
 
+            return _map.MapScript.TurretItems[type];
+        }
 
         /// <summary>
         /// Changes the lane of a tower in the _tower list, in order to fix missplaced towers due to riot's seemingly random naming scheme
@@ -117,23 +225,26 @@ namespace LeagueSandbox.GameServer.API
         /// <param name="team"></param>
         /// <param name="currentLaneId"></param>
         /// <param name="desiredLaneID"></param>
-        public static void ChangeTowerOnMapList(Dictionary<TeamId, Dictionary<LaneID, List<ILaneTurret>>> turretList, string towerName, TeamId team, LaneID currentLaneId, LaneID desiredLaneID)
+        public static void ChangeTowerOnMapList(string towerName, TeamId team, LaneID currentLaneId, LaneID desiredLaneID)
         {
-            var tower = turretList[team][currentLaneId].Find(x => x.Name == towerName);
+            var tower = _map.TurretList[team][currentLaneId].Find(x => x.Name == towerName);
             tower.SetLaneID(desiredLaneID);
-            turretList[team][currentLaneId].Remove(tower);
-            turretList[team][desiredLaneID].Add(tower);
+            _map.TurretList[team][currentLaneId].Remove(tower);
+            _map.TurretList[team][desiredLaneID].Add(tower);
         }
 
-        public static IInhibitor GetInhibitorById(Dictionary<TeamId, Dictionary<LaneID, IInhibitor>> inhibitorList, uint id)
+        public static IInhibitor GetInhibitorById(uint id)
         {
-            foreach (TeamId team in inhibitorList.Keys)
+            foreach (TeamId team in _map.InhibitorList.Keys)
             {
-                foreach (var inhibitor in inhibitorList[team].Values)
+                foreach (LaneID lane in _map.InhibitorList[team].Keys)
                 {
-                    if (inhibitor.NetId == id)
+                    foreach (var inhibitor in _map.InhibitorList[team][lane])
                     {
-                        return inhibitor;
+                        if (inhibitor.NetId == id)
+                        {
+                            return inhibitor;
+                        }
                     }
                 }
             }
@@ -145,18 +256,37 @@ namespace LeagueSandbox.GameServer.API
         /// </summary>
         /// <param name="team"></param>
         /// <returns></returns>
-        public static bool AllInhibitorsDestroyedFromTeam(Dictionary<TeamId, Dictionary<LaneID, IInhibitor>> inhibitorList, TeamId team)
+        public static bool AllInhibitorsDestroyedFromTeam(TeamId team)
         {
-            foreach (var inhibitor in inhibitorList[team].Values)
+            foreach (LaneID lane in _map.InhibitorList[team].Keys)
             {
-                if (inhibitor.Team == team && inhibitor.InhibitorState == InhibitorState.ALIVE)
+                foreach (var inhibitor in _map.InhibitorList[team][lane])
                 {
-                    return false;
+                    if (inhibitor.Team == team && inhibitor.InhibitorState == InhibitorState.ALIVE)
+                    {
+                        return false;
+                    }
                 }
             }
             return true;
         }
 
+        /// <summary>
+        /// Get minion spawninig position
+        /// </summary>
+        /// <param name="spawnPosition"></param>
+        /// <returns></returns>
+        public static Tuple<TeamId, Vector2> GetMinionSpawnPosition(string spawnPosition)
+        {
+            var coords = _map.SpawnBarracks[spawnPosition].CentralPoint;
+
+            var teamID = TeamId.TEAM_BLUE;
+            if (spawnPosition.Contains("Chaos"))
+            {
+                teamID = TeamId.TEAM_PURPLE;
+            }
+            return new Tuple<TeamId, Vector2>(teamID, new Vector2(coords.X, coords.Z));
+        }
 
         /// <summary>
         /// Spawns a LaneMinion
@@ -165,14 +295,15 @@ namespace LeagueSandbox.GameServer.API
         /// <param name="minionNo"></param>
         /// <param name="barracksName"></param>
         /// <param name="waypoints"></param>
-        public static void CreateLaneMinion(List<MinionSpawnType> list, Vector2 position, TeamId team, int minionNo, string barracksName, List<Vector2> waypoints)
+        public static void CreateLaneMinion(List<MinionSpawnType> list, int minionNo, string barracksName, List<Vector2> waypoints)
         {
             if (list.Count <= minionNo)
             {
                 return;
             }
 
-            var m = new LaneMinion(_game, list[minionNo], position, barracksName, waypoints, _map.MapScript.MinionModels[team][list[minionNo]], 0, team, _map.MapScript.LaneMinionAI);
+            var team = GetMinionSpawnPosition(barracksName).Item1;
+            var m = new LaneMinion(_game, list[minionNo], barracksName, waypoints, _map.MapScript.MinionModels[team][list[minionNo]], 0, team, _map.MapScript.LaneMinionAI);
             _game.ObjectManager.AddObject(m);
         }
 
@@ -339,9 +470,9 @@ namespace LeagueSandbox.GameServer.API
         /// </summary>
         /// <param name="team"></param>
         /// <param name="position"></param>
-        public static IFountain CreateFountain(TeamId team, Vector2 position, float radius = 1000.0f)
+        public static void CreateFountain(TeamId team, Vector2 position, float radius = 1000.0f)
         {
-            return new Fountain(_game, team, position, radius);
+            _map.FountainList.Add(team, new Fountain(_game, team, position, radius));
         }
 
         /// <summary>
@@ -423,22 +554,7 @@ namespace LeagueSandbox.GameServer.API
 
         public static void NotifySpawn(IGameObject obj)
         {
-            _game.PacketNotifier.NotifySpawn(obj);
-        }
-
-        public static void AddObject(IGameObject obj)
-        {
-            _game.ObjectManager.AddObject(obj);
-        }
-
-        public static int[] GetTurretItems(Dictionary<TurretType, int[]> turretItemList, TurretType type)
-        {
-            if (!turretItemList.ContainsKey(type))
-            {
-                return new int[] { };
-            }
-
-            return turretItemList[type];
+            _game.ObjectManager.SpawnObject(obj);
         }
     }
 }

@@ -73,11 +73,11 @@ namespace LeagueSandbox.GameServer.GameObjects.Other
         {
             bool collides = IsCollisionObject(obj);
             bool detects = IsCollisionAffected(obj);
-            if(collides || detects)
+            if (collides || detects)
             {
                 _objects.Add(obj);
             }
-            if(collides)
+            if (collides)
             {
                 QuadDynamic.Insert(obj, GetBounds(obj));
             }
@@ -123,6 +123,31 @@ namespace LeagueSandbox.GameServer.GameObjects.Other
             }
 
             UpdateQuadTree();
+        }
+
+        /// <summary>
+        /// Updates collision for the specified object.
+        /// </summary>
+        /// <param name="obj">GameObject to check if colliding with other objects.</param>
+        public void UpdateCollision(IGameObject obj)
+        {
+            if (IsCollisionAffected(obj))
+            {
+                if (!_map.NavigationGrid.IsWalkable(obj.Position.X, obj.Position.Y))
+                {
+                    obj.OnCollision(null, true);
+                }
+
+                var nearest = QuadDynamic.GetNodesInside(GetBounds(obj));
+                foreach (var obj2 in nearest)
+                {
+                    // TODO: Implement interpolation (or hull tracing) to account for fast moving gameobjects that may go past other gameobjects within one tick, which bypasses collision.
+                    if (obj != obj2 && !obj2.IsToRemove() && obj.IsCollidingWith(obj2))
+                    {
+                        obj.OnCollision(obj2);
+                    }
+                }
+            }
         }
 
         /// <summary>

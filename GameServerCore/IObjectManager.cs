@@ -23,6 +23,12 @@ namespace GameServerCore
         void AddObject(IGameObject o);
 
         /// <summary>
+        /// Normally, objects will spawn at the end of the frame, but calling this function will force the teams' and players' vision of that object to update and send out a spawn notification.
+        /// </summary>
+        /// <param name="obj">Object to spawn.</param>
+        void SpawnObject(IGameObject o);
+
+        /// <summary>
         /// Gets a new Dictionary of all NetID,GameObject pairs present in the dictionary of objects in ObjectManager.
         /// </summary>
         /// <returns>Dictionary of NetIDs and the GameObjects that they refer to.</returns>

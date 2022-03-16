@@ -24,11 +24,5 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             SetTeam(team);
             Stats.Range.BaseValue = 905.0f;
         }
-
-        public override void OnAdded()
-        {
-            base.OnAdded();
-            _game.PacketNotifier.NotifySpawn(this);
-        }
     }
 }

@@ -181,12 +181,12 @@ public class MapData : IMapData
     /// <summary>
     /// Collection of MapObjects present within a map's room file, with the key being the name present in the room file. Refer to <see cref="MapObject"/>.
     /// </summary>
-    public Dictionary<string, IMapObject> MapObjects { get; private set; }
+    public Dictionary<string, MapObject> MapObjects { get; private set; }
     /// <summary>
     /// Collection of MapObjects which represent lane minion spawn positions.
     /// Not present within the room file, therefor it is split into its own collection.
     /// </summary>
-    public Dictionary<string, IMapObject> SpawnBarracks { get; private set; }
+    public Dictionary<string, MapObject> SpawnBarracks { get; private set; }
     /// <summary>
     /// Experience required to level, ordered from 2 and up.
     /// </summary>
@@ -207,199 +207,11 @@ public class MapData : IMapData
     public MapData(int mapId)
     {
         Id = mapId;
-        MapObjects = new Dictionary<string, IMapObject>();
-        SpawnBarracks = new Dictionary<string, IMapObject>();
+        MapObjects = new Dictionary<string, MapObject>();
+        SpawnBarracks = new Dictionary<string, MapObject>();
         ExpCurve = new List<float>();
         DeathTimes = new List<float>();
         StatsProgression = new List<float>();
-    }
-
-    public class MapObject : IMapObject
-    {
-        public string Name { get; private set; } = "";
-        public Vector3 CentralPoint { get; private set; } = Vector3.Zero;
-        public int ParentMapId { get; private set; }
-
-        public MapObject(string name, Vector3 point, int id)
-        {
-            Name = name;
-            CentralPoint = point;
-            ParentMapId = id;
-        }
-
-        public static IMapObject Empty
-        {
-            get;
-        }
-
-        public GameObjectTypes GetGameObjectType()
-        {
-            GameObjectTypes type = 0;
-
-            if (Name.Contains("LevelProp"))
-            {
-                type = GameObjectTypes.LevelProp;
-            }
-            else if (Name.Contains("HQ"))
-            {
-                type = GameObjectTypes.ObjAnimated_HQ;
-            }
-            else if (Name.Contains("Barracks_T"))
-            {
-                // Inhibitors are dampeners for the enemy Nexus.
-                type = GameObjectTypes.ObjAnimated_BarracksDampener;
-            }
-            else if (Name.Contains("Turret"))
-            {
-                type = GameObjectTypes.ObjAIBase_Turret;
-            }
-            else if (Name.Contains("__Spawn"))
-            {
-                type = GameObjectTypes.ObjBuilding_SpawnPoint;
-            }
-            else if (Name.Contains("__NAV"))
-            {
-                type = GameObjectTypes.ObjBuilding_NavPoint;
-            }
-            else if (Name.Contains("Info_Point"))
-            {
-                type = GameObjectTypes.InfoPoint;
-            }
-            else if (Name.Contains("Shop"))
-            {
-                type = GameObjectTypes.ObjBuilding_Shop;
-            }
-            return type;
-        }
-
-        public TeamId GetTeamID()
-        {
-            var team = TeamId.TEAM_NEUTRAL;
-
-            if (Name.Contains("T1") || Name.ToLower().Contains("order"))
-            {
-                team = TeamId.TEAM_BLUE;
-            }
-            else if (Name.Contains("T2") || Name.ToLower().Contains("chaos"))
-            {
-                team = TeamId.TEAM_PURPLE;
-            }
-
-            return team;
-        }
-
-        public TeamId GetOpposingTeamID()
-        {
-            var team = TeamId.TEAM_NEUTRAL;
-
-            if (Name.Contains("T1") || Name.Contains("Order"))
-            {
-                team = TeamId.TEAM_PURPLE;
-            }
-            else if (Name.Contains("T2") || Name.Contains("Chaos"))
-            {
-                team = TeamId.TEAM_BLUE;
-            }
-
-            return team;
-        }
-
-        public string GetTeamName()
-        {
-            string teamName = "";
-            if (GetTeamID() == TeamId.TEAM_BLUE)
-            {
-                teamName = "Order";
-            }
-            // Chaos and Neutral
-            else
-            {
-                teamName = "Chaos";
-            }
-
-            return teamName;
-        }
-
-        public LaneID GetLaneID()
-        {
-            var laneId = LaneID.NONE;
-
-            if (Name.Contains("_L"))
-            {
-                laneId = LaneID.TOP;
-            }
-            //Using just _C would cause files with "_Chaos" to be mistakenly assigned as MidLane
-            else if (Name.Contains("_C0") || Name.Contains("_C1") || Name.Contains("_C_"))
-            {
-                laneId = LaneID.MIDDLE;
-            }
-            else if (Name.Contains("_R"))
-            {
-                laneId = LaneID.BOTTOM;
-            }
-
-            return laneId;
-        }
-
-        public LaneID GetSpawnBarrackLaneID()
-        {
-            var laneId = LaneID.NONE;
-
-            if (Name.Contains("__L"))
-            {
-                laneId = LaneID.TOP;
-            }
-            else if (Name.Contains("__C"))
-            {
-                laneId = LaneID.MIDDLE;
-            }
-            else if (Name.Contains("__R"))
-            {
-                laneId = LaneID.BOTTOM;
-            }
-
-            return laneId;
-        }
-
-        public int ParseIndex()
-        {
-            int index = -1;
-
-            if (GetGameObjectType() == 0)
-            {
-                return index;
-            }
-
-            var underscoreIndices = new List<int>();
-
-            // While there are underscores, it loops,
-            for (int i = Name.IndexOf('_'); i > -1; i = Name.IndexOf('_', i + 1))
-            {
-                // and ends when i = -1 (no underscore found).
-                underscoreIndices.Add(i);
-            }
-
-            // If the above failed to find any underscores or the underscore is the last character in the string.
-            if (underscoreIndices.Count == 0 || underscoreIndices.Last() == underscoreIndices.Count)
-            {
-                return index;
-            }
-
-            // Otherwise, we make a new string which starts at the last underscore (+1 character to the right),
-            string startString = Name.Substring(underscoreIndices.Last() + 1);
-
-            // and we check it for an index.
-            try
-            {
-                index = int.Parse(startString);
-            }
-            catch (FormatException)
-            {
-                return index;
-            }
-
-            return index;
-        }
     }
 }
 

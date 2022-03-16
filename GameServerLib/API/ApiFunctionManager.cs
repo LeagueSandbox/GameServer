@@ -695,6 +695,7 @@ namespace LeagueSandbox.GameServer.API
         /// <param name="idealDistance">How far the forced movement should travel from the unit's position.</param>
         /// <param name="gravity">How high the force movement should reach at the mid point of the force movement.</param>
         /// <param name="moveBackBy">How far behind the end point the force movement should go before finishing.</param>
+        /// <param name="consideredAsCC">Whether or not to prevent movement, casting, or attacking during the duration of the movement.</param>
         /// <param name="movementType">Type of force movement to perform. Refer to ForceMovementType enum.</param>
         /// <param name="movementOrdersType">How should the force movement affect the orders of the unit?</param>
         /// <param name="movementOrdersFacing">How should the force movement affect the facing direction of the unit?</param>
@@ -708,6 +709,7 @@ namespace LeagueSandbox.GameServer.API
             float idealDistance,
             float gravity,
             float moveBackBy,
+            bool consideredAsCC = true,
             ForceMovementType movementType = ForceMovementType.FURTHEST_WITHIN_RANGE,
             ForceMovementOrdersType movementOrdersType = ForceMovementOrdersType.POSTPONE_CURRENT_ORDER,
             ForceMovementOrdersFacing movementOrdersFacing = ForceMovementOrdersFacing.FACE_MOVEMENT_DIRECTION)
@@ -717,7 +719,7 @@ namespace LeagueSandbox.GameServer.API
             {
                 keepFacingLastDirection = true;
             }
-            unit.DashToLocation(target, speed, animation, gravity, keepFacingLastDirection);
+            unit.DashToLocation(target, speed, animation, gravity, keepFacingLastDirection, consideredAsCC);
         }
 
         /// <summary>
@@ -731,6 +733,7 @@ namespace LeagueSandbox.GameServer.API
         /// <param name="gravity">How high the force movement should reach at the mid point of the force movement.</param>
         /// <param name="moveBackBy">How far behind the end point the force movement should go before finishing.</param>
         /// <param name="maxTravelTime">Maximum amount of time the forced movement is allowed to last.</param>
+        /// <param name="consideredAsCC">Whether or not to prevent movement, casting, or attacking during the duration of the movement.</param>
         /// <param name="movementType">Type of force movement to perform. Refer to ForceMovementType enum.</param>
         /// <param name="movementOrdersType">How should the force movement affect the orders of the unit?</param>
         /// <param name="movementOrdersFacing">How should the force movement affect the facing direction of the unit?</param>
@@ -745,6 +748,7 @@ namespace LeagueSandbox.GameServer.API
             float gravity,
             float moveBackBy,
             float maxTravelTime,
+            bool consideredAsCC = true,
             ForceMovementType movementType = ForceMovementType.FURTHEST_WITHIN_RANGE,
             ForceMovementOrdersType movementOrdersType = ForceMovementOrdersType.POSTPONE_CURRENT_ORDER,
             ForceMovementOrdersFacing movementOrdersFacing = ForceMovementOrdersFacing.FACE_MOVEMENT_DIRECTION)
@@ -754,7 +758,7 @@ namespace LeagueSandbox.GameServer.API
             {
                 keepFacingLastDirection = true;
             }
-            unit.DashToTarget(target, speed, animation, gravity, keepFacingLastDirection, idealDistance, moveBackBy, maxTravelTime);
+            unit.DashToTarget(target, speed, animation, gravity, keepFacingLastDirection, idealDistance, moveBackBy, maxTravelTime, consideredAsCC);
         }
 
         /// <summary>

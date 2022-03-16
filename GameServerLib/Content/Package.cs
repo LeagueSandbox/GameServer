@@ -144,10 +144,10 @@ namespace LeagueSandbox.GameServer.Content
             {
                 string referenceName = Object.Value<string>("Name");
 
-                IMapObject objToAdd = AddMapObject(referenceName, contentType, mapName, mapId);
+                MapObject objToAdd = AddMapObject(referenceName, contentType, mapName, mapId);
 
                 // Skip empty map objects.
-                if (objToAdd != IMapObject.Empty)
+                if (objToAdd != MapObject.Empty)
                 {
                     toReturnMapData.MapObjects.Add(referenceName, objToAdd);
                 }
@@ -161,7 +161,7 @@ namespace LeagueSandbox.GameServer.Content
                     for (int i = 1; i <= 2; i++)
                     {
                         var mapObject = AddMapObject($"__Spawn_T{i}", contentType, mapName, mapId);
-                        if (mapObject != MapData.MapObject.Empty)
+                        if (mapObject != MapObject.Empty)
                         {
                             toReturnMapData.MapObjects.Add($"__Spawn_T{i}", mapObject);
                         }
@@ -258,7 +258,7 @@ namespace LeagueSandbox.GameServer.Content
                         Z = centralPoint.Value<float>("Z")
                     };
 
-                    var barracks = new MapData.MapObject(name, barrackCoords, mapId);
+                    var barracks = new MapObject(name, barrackCoords, mapId);
 
                     toReturnMapData.SpawnBarracks.Add(name, barracks);
                 }
@@ -266,14 +266,14 @@ namespace LeagueSandbox.GameServer.Content
             return toReturnMapData;
         }
 
-        public IMapObject AddMapObject(string objectName, string contentType, string mapName, int mapId)
+        public MapObject AddMapObject(string objectName, string contentType, string mapName, int mapId)
         {
             // Define the full path to the object file.
             var objectFileName = $"{mapName}/Scene/{objectName}.sco";
             var objectFilePath = $"{GetContentTypePath(contentType)}/{objectFileName}.json";
 
             // Create empty mapObject so we can fill it after we successfully read the object file.
-            IMapObject mapObject;
+            MapObject mapObject;
 
             try
             {
@@ -295,16 +295,16 @@ namespace LeagueSandbox.GameServer.Content
                         Y = pointJson.Value<float>("Y"),
                         Z = pointJson.Value<float>("Z")
                     };
-                    mapObject = new MapData.MapObject(name, point, mapId);
+                    mapObject = new MapObject(name, point, mapId);
                 }
                 else
                 {
-                    return MapData.MapObject.Empty;
+                    return MapObject.Empty;
                 }
             }
             catch (JsonReaderException)
             {
-                return MapData.MapObject.Empty;
+                return MapObject.Empty;
             }
 
             // Add the reference name and filled map object.
