@@ -156,17 +156,12 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 return _game.Map.PlayerSpawnPoints[Team][1][1];
             }
 
-            if (_game.Map.FountainList.ContainsKey(Team))
-            {
-                return _game.Map.FountainList[Team].Position;
-            }
-
-            return Vector2.Zero;
+            return _game.Map.MapScript.GetFountainPosition(Team);
         }
 
         public Vector2 GetRespawnPosition()
         {
-            return _game.Map.FountainList[Team].Position;
+            return _game.Map.MapScript.GetFountainPosition(Team);
         }
 
         public override ISpell LevelUpSpell(byte slot)

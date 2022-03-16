@@ -19,6 +19,8 @@ namespace LeagueSandbox.GameServer.Maps
         private Dictionary<IChampion, bool> _votes = new Dictionary<IChampion, bool>();
         private Game _game;
         private ILog _log;
+        private bool toEnd = false;
+        private float toEndTimer = 3000.0f;
 
         public float SurrenderMinimumTime { get; set; }
         public float SurrenderRestTime { get; set; }
@@ -84,16 +86,7 @@ namespace LeagueSandbox.GameServer.Maps
                     _game.PacketNotifier.NotifyTeamSurrenderStatus((int)p.Item1, Team, SurrenderReason.SURRENDER_PASSED, (byte)voteCounts.Item1, (byte)voteCounts.Item2); // TOOD: fix id casting
                 }
 
-                API.ApiFunctionManager.CreateTimer(3.0f, () =>
-                {
-                    INexus ourNexus = (INexus)_game.ObjectManager.GetObjects().First(o => o.Value is INexus && o.Value.Team == Team).Value;
-                    if (ourNexus == null)
-                    {
-                        _log.Error("Unable to surrender correctly, couldn't find the nexus!");
-                        return;
-                    }
-                    ourNexus.Die(null);
-                });
+                toEnd = true;
             }
         }
 
@@ -105,6 +98,22 @@ namespace LeagueSandbox.GameServer.Maps
                 Tuple<int, int> count = GetVoteCounts();
                 foreach (var p in _game.PlayerManager.GetPlayers().Where(kv => kv.Item2.Team == Team))
                     _game.PacketNotifier.NotifyTeamSurrenderStatus((int)p.Item1, Team, SurrenderReason.SURRENDER_FAILED, (byte)count.Item1, (byte)count.Item2); // TODO: fix id casting
+            }
+
+            if (toEnd)
+            {
+                toEndTimer -= diff;
+                if(toEndTimer <= 0)
+                {
+                    //This will have to be changed in the future in order to properly support Map8 surrender.
+                    INexus ourNexus = (INexus)_game.ObjectManager.GetObjects().First(o => o.Value is INexus && o.Value.Team == Team).Value;
+                    if (ourNexus == null)
+                    {
+                        _log.Error("Unable to surrender correctly, couldn't find the nexus!");
+                        return;
+                    }
+                    ourNexus.Die(null);
+                }
             }
         }
     }

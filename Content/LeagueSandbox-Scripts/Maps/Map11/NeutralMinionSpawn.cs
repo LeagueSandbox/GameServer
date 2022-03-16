@@ -178,7 +178,7 @@ namespace MapScripts.Map11
 
             foreach (var monster in MonsterCamps[monsterCamp])
             {
-                monster.InitialLevel = averageLevel;
+                monster.UpdateInitialLevel(averageLevel);
                 monster.Stats.Level = (byte)averageLevel;
                 monsterCamp.AddMonster(monster);
             }

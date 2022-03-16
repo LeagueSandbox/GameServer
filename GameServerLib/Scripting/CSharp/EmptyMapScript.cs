@@ -14,10 +14,7 @@ namespace MapScripts
 {
     public class EmptyMapScript : IMapScript
     {
-        public IMapScriptMetadata MapScriptMetadata { get; set; } = new MapScriptMetadata
-        {
-            MinionPathingOverride = true,
-        };
+        public IMapScriptMetadata MapScriptMetadata { get; set; } = new MapScriptMetadata();
 
         public virtual IGlobalData GlobalData { get; set; } = new GlobalData();
         public bool HasFirstBloodHappened { get; set; } = false;
@@ -103,7 +100,7 @@ namespace MapScripts
         };
 
         //This function is executed in-between Loading the map structures and applying the structure protections. Is the first thing on this script to be executed
-        public void Init(IMapScriptHandler map)
+        public void Init(Dictionary<GameObjectTypes, List<MapObject>> mapObjects)
         {
             MapScriptMetadata.MinionSpawnEnabled = IsMinionSpawnEnabled();
             AddSurrender(1200000.0f, 300000.0f, 30.0f);
@@ -123,6 +120,11 @@ namespace MapScripts
 
         public void SpawnAllCamps()
         {
+        }
+
+        public Vector2 GetFountainPosition(TeamId team)
+        {
+            return Vector2.Zero;
         }
 
         public float GetExperienceFor(IAttackableUnit u)

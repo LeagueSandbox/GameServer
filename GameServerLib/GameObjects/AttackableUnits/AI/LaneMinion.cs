@@ -22,6 +22,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         public LaneMinion(
             Game game,
             MinionSpawnType spawnType,
+            Vector2 position,
             string barracksName,
             List<Vector2> mainWaypoints,
             string model,
@@ -36,8 +37,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             PathingWaypoints = mainWaypoints;
             _aiPaused = false;
 
-            var spawnSpecifics = GetMinionSpawnPosition(BarracksName);
-            SetPosition(spawnSpecifics.Item2.X, spawnSpecifics.Item2.Y);
+            SetPosition(position.X, position.Y);
 
             StopMovement();
 

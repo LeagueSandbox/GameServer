@@ -16,54 +16,14 @@ namespace MapScripts.Map1
 {
     public class CLASSIC : IMapScript
     {
-        public virtual IMapScriptMetadata MapScriptMetadata { get; set; } = new MapScriptMetadata
-        {
-            MinionPathingOverride = true,
-            EnableBuildingProtection = true
-        };
+        public virtual IMapScriptMetadata MapScriptMetadata { get; set; } = new MapScriptMetadata();
 
-        public IMapScriptHandler _map;
         public virtual IGlobalData GlobalData { get; set; } = new GlobalData();
         public bool HasFirstBloodHappened { get; set; } = false;
         public long NextSpawnTime { get; set; } = 90 * 1000;
         public string LaneMinionAI { get; set; } = "LaneMinionAI";
-        public string LaneTurretAI { get; set; } = "TurretAI";
         public Dictionary<TeamId, Dictionary<int, Dictionary<int, Vector2>>> PlayerSpawnPoints { get; }
 
-        //Nexus models
-        public Dictionary<TeamId, string> NexusModels { get; set; } = new Dictionary<TeamId, string>
-        {
-            {TeamId.TEAM_BLUE, "OrderNexus" },
-            {TeamId.TEAM_PURPLE, "ChaosNexus" }
-        };
-        //Inhib models
-        public Dictionary<TeamId, string> InhibitorModels { get; set; } = new Dictionary<TeamId, string>
-        {
-            {TeamId.TEAM_BLUE, "OrderInhibitor" },
-            {TeamId.TEAM_PURPLE, "ChaosInhibitor" }
-        };
-        //Tower Models
-        public Dictionary<TeamId, Dictionary<TurretType, string>> TowerModels { get; set; } = new Dictionary<TeamId, Dictionary<TurretType, string>>
-        {
-            {TeamId.TEAM_BLUE, new Dictionary<TurretType, string>
-            {
-                {TurretType.FOUNTAIN_TURRET, "OrderTurretShrine" },
-                {TurretType.NEXUS_TURRET, "OrderTurretAngel" },
-                {TurretType.INHIBITOR_TURRET, "OrderTurretDragon" },
-                {TurretType.INNER_TURRET, "OrderTurretNormal2" },
-                {TurretType.OUTER_TURRET, "OrderTurretNormal" },
-            } },
-            {TeamId.TEAM_PURPLE, new Dictionary<TurretType, string>
-            {
-                {TurretType.FOUNTAIN_TURRET, "ChaosTurretShrine" },
-                {TurretType.NEXUS_TURRET, "ChaosTurretNormal" },
-                {TurretType.INHIBITOR_TURRET, "ChaosTurretGiant" },
-                {TurretType.INNER_TURRET, "ChaosTurretWorm2" },
-                {TurretType.OUTER_TURRET, "ChaosTurretWorm" },
-            } }
-        };
-
-        //Minion models for this map
         public Dictionary<TeamId, Dictionary<MinionSpawnType, string>> MinionModels { get; set; } = new Dictionary<TeamId, Dictionary<MinionSpawnType, string>>
         {
             {TeamId.TEAM_BLUE, new Dictionary<MinionSpawnType, string>{
@@ -78,15 +38,6 @@ namespace MapScripts.Map1
                 {MinionSpawnType.MINION_TYPE_CANNON, "Red_Minion_MechCannon"},
                 {MinionSpawnType.MINION_TYPE_SUPER, "Red_Minion_MechMelee"}
             }}
-        };
-
-        //Turret Items
-        public Dictionary<TurretType, int[]> TurretItems { get; set; } = new Dictionary<TurretType, int[]>
-        {
-            { TurretType.OUTER_TURRET, new[] { 1500, 1501, 1502, 1503 } },
-            { TurretType.INNER_TURRET, new[] { 1500, 1501, 1502, 1503, 1504 } },
-            { TurretType.INHIBITOR_TURRET, new[] { 1501, 1502, 1503, 1505 } },
-            { TurretType.NEXUS_TURRET, new[] { 1501, 1502, 1503, 1505 } }
         };
 
         //List of every path minions will take, separated by team and lane
@@ -171,22 +122,6 @@ namespace MapScripts.Map1
             MinionSpawnType.MINION_TYPE_CASTER }
         }};
 
-        //This function is executed in-between Loading the map structures and applying the structure protections. Is the first thing on this script to be executed
-        public virtual void Init(IMapScriptHandler map)
-        {
-            _map = map;
-            MapScriptMetadata.MinionSpawnEnabled = IsMinionSpawnEnabled();
-            AddSurrender(1200000.0f, 300000.0f, 30.0f);
-
-            //Due to riot's questionable map-naming scheme some towers are missplaced into other lanes during outomated setup, so we have to manually fix them.
-            ChangeTowerOnMapList("Turret_T1_C_06_A", TeamId.TEAM_BLUE, LaneID.MIDDLE, LaneID.TOP);
-            ChangeTowerOnMapList("Turret_T1_C_07_A", TeamId.TEAM_BLUE, LaneID.MIDDLE, LaneID.BOTTOM);
-
-            CreateLevelProps.CreateProps();
-        }
-
-        IStatsModifier TurretStatsModifier = new StatsModifier();
-
         //These minion modifiers will remain unused for the moment, untill i pull the spawning systems to MapScripts
         Dictionary<MinionSpawnType, IStatsModifier> MinionModifiers = new Dictionary<MinionSpawnType, IStatsModifier>
         {
@@ -196,59 +131,11 @@ namespace MapScripts.Map1
             { MinionSpawnType.MINION_TYPE_SUPER, new StatsModifier() },
         };
 
-        IStatsModifier OuterTurretStatsModifier = new StatsModifier();
-        Dictionary<TeamId, List<IChampion>> Players = new Dictionary<TeamId, List<IChampion>>();
-        public virtual void OnMatchStart()
+        //This function is executed in-between Loading the map structures and applying the structure protections. Is the first thing on this script to be executed
+        public virtual void Init(Dictionary<GameObjectTypes, List<MapObject>> mapObjects)
         {
-            foreach (var nexus in _map.NexusList)
-            {
-                ApiEventManager.OnDeath.AddListener(this, nexus, OnNexusDeath, true);
-            }
-
-            Players.Add(TeamId.TEAM_BLUE, ApiFunctionManager.GetAllPlayersFromTeam(TeamId.TEAM_BLUE));
-            Players.Add(TeamId.TEAM_PURPLE, ApiFunctionManager.GetAllPlayersFromTeam(TeamId.TEAM_PURPLE));
-
-            IStatsModifier TurretHealthModifier = new StatsModifier();
-            foreach (var team in _map.TurretList.Keys)
-            {
-                TeamId enemyTeam = TeamId.TEAM_BLUE;
-
-                if (team == TeamId.TEAM_BLUE)
-                {
-                    enemyTeam = TeamId.TEAM_PURPLE;
-                }
-
-                foreach (var lane in _map.TurretList[team].Keys)
-                {
-                    foreach (var turret in _map.TurretList[team][lane])
-                    {
-                        if (turret.Type == TurretType.FOUNTAIN_TURRET)
-                        {
-                            continue;
-                        }
-                        else if (turret.Type != TurretType.NEXUS_TURRET)
-                        {
-                            TurretHealthModifier.HealthPoints.BaseBonus = 250.0f * Players[enemyTeam].Count;
-                        }
-                        else
-                        {
-                            TurretHealthModifier.HealthPoints.BaseBonus = 125.0f * Players[enemyTeam].Count;
-                        }
-
-                        turret.AddStatModifier(TurretHealthModifier);
-                        turret.Stats.CurrentHealth += turret.Stats.HealthPoints.Total;
-                        AddTurretItems(turret, GetTurretItems(turret.Type));
-                    }
-                }
-            }
-
-            TurretStatsModifier.Armor.FlatBonus = 1;
-            TurretStatsModifier.MagicResist.FlatBonus = 1;
-            TurretStatsModifier.AttackDamage.FlatBonus = 4;
-
-            //Outer turrets dont get armor
-            OuterTurretStatsModifier.MagicResist.FlatBonus = 1;
-            OuterTurretStatsModifier.AttackDamage.FlatBonus = 4;
+            MapScriptMetadata.MinionSpawnEnabled = IsMinionSpawnEnabled();
+            AddSurrender(1200000.0f, 300000.0f, 30.0f);
 
             MinionModifiers[MinionSpawnType.MINION_TYPE_MELEE].GoldGivenOnDeath.FlatBonus = 0.5f;
             MinionModifiers[MinionSpawnType.MINION_TYPE_MELEE].HealthPoints.FlatBonus = 20.0f;
@@ -272,14 +159,22 @@ namespace MapScripts.Map1
             MinionModifiers[MinionSpawnType.MINION_TYPE_SUPER].HealthPoints.FlatBonus = 200.0f;
             MinionModifiers[MinionSpawnType.MINION_TYPE_SUPER].AttackDamage.FlatBonus = 10.0f;
 
+            CreateLevelProps.CreateProps();
+            LevelScriptObjects.LoadBuildings(mapObjects);
+        }
+
+        public virtual void OnMatchStart()
+        {
             NeutralMinionSpawn.InitializeCamps();
+            LevelScriptObjects.OnMatchStart();
         }
 
         public void Update(float diff)
         {
-            var gameTime = GameTime();
-
+            LevelScriptObjects.OnUpdate(diff);
             NeutralMinionSpawn.OnUpdate(diff);
+
+            var gameTime = GameTime();
 
             if (MapScriptMetadata.MinionSpawnEnabled)
             {
@@ -306,79 +201,20 @@ namespace MapScripts.Map1
                 }
             }
 
-            foreach (var fountain in _map.FountainList.Values)
-            {
-                fountain.Update(diff);
-            }
-
             if (!AllAnnouncementsAnnounced)
             {
                 CheckInitialMapAnnouncements(gameTime);
             }
-
-            if (gameTime >= timeCheck && timesApplied < 30)
-            {
-                UpdateTowerStats();
-            }
-            if (gameTime >= outerTurretTimeCheck && outerTurretTimesApplied < 7)
-            {
-                UpdateOuterTurretStats();
-            }
-        }
-
-        float timeCheck = 480.0f * 1000;
-        byte timesApplied = 0;
-        public void UpdateTowerStats()
-        {
-            foreach (var team in _map.TurretList.Keys)
-            {
-                foreach (var lane in _map.TurretList[team].Keys)
-                {
-                    foreach (var turret in _map.TurretList[team][lane])
-                    {
-                        if (turret.Type == TurretType.OUTER_TURRET || turret.Type == TurretType.FOUNTAIN_TURRET || (turret.Type == TurretType.INNER_TURRET && timesApplied >= 20))
-                        {
-                            continue;
-                        }
-
-                        turret.AddStatModifier(TurretStatsModifier);
-                    }
-                }
-            }
-
-            timesApplied++;
-            timeCheck += 60.0f * 1000;
-        }
-
-        float outerTurretTimeCheck = 30.0f * 1000;
-        byte outerTurretTimesApplied = 0;
-        public void UpdateOuterTurretStats()
-        {
-            foreach (var team in _map.TurretList.Keys)
-            {
-                foreach (var lane in _map.TurretList[team].Keys)
-                {
-                    var turret = _map.TurretList[team][lane].Find(x => x.Type == TurretType.OUTER_TURRET);
-
-                    if (turret != null)
-                    {
-                        turret.AddStatModifier(OuterTurretStatsModifier);
-                    }
-                }
-            }
-            outerTurretTimesApplied++;
-            outerTurretTimeCheck += 60.0f * 1000;
-        }
-
-        public void OnNexusDeath(IDeathData deathaData)
-        {
-            var nexus = deathaData.Unit;
-            EndGame(nexus.Team, new Vector3(nexus.Position.X, nexus.GetHeight(), nexus.Position.Y), deathData: deathaData);
         }
 
         public void SpawnAllCamps()
         {
             NeutralMinionSpawn.ForceCampSpawn();
+        }
+
+        public Vector2 GetFountainPosition(TeamId team)
+        {
+            return LevelScriptObjects.FountainList[team].Position;
         }
 
         bool AllAnnouncementsAnnounced = false;
@@ -395,49 +231,15 @@ namespace MapScripts.Map1
             else if (time >= 60.0f * 1000 && !AnnouncedEvents.Contains(EventID.OnStartGameMessage2))
             {
                 // 30 seconds until minions spawn
-                NotifyMapAnnouncement(EventID.OnStartGameMessage2, _map.Id);
+                NotifyMapAnnouncement(EventID.OnStartGameMessage2, 1);
                 AnnouncedEvents.Add(EventID.OnStartGameMessage2);
             }
             else if (time >= 30.0f * 1000 && !AnnouncedEvents.Contains(EventID.OnStartGameMessage1))
             {
                 // Welcome to Summoners Rift
-                NotifyMapAnnouncement(EventID.OnStartGameMessage1, _map.Id);
+                NotifyMapAnnouncement(EventID.OnStartGameMessage1, 1);
                 AnnouncedEvents.Add(EventID.OnStartGameMessage1);
             }
-        }
-
-        //Tower type enumeration might vary slightly from map to map, so we set that up here
-        public TurretType GetTurretType(int trueIndex, LaneID lane, TeamId teamId)
-        {
-            TurretType returnType = TurretType.FOUNTAIN_TURRET;
-
-            if (lane == LaneID.MIDDLE)
-            {
-                if (trueIndex < 3)
-                {
-                    returnType = TurretType.NEXUS_TURRET;
-                    return returnType;
-                }
-
-                trueIndex -= 2;
-            }
-
-            switch (trueIndex)
-            {
-                case 1:
-                case 4:
-                case 5:
-                    returnType = TurretType.INHIBITOR_TURRET;
-                    break;
-                case 2:
-                    returnType = TurretType.INNER_TURRET;
-                    break;
-                case 3:
-                    returnType = TurretType.OUTER_TURRET;
-                    break;
-            }
-
-            return returnType;
         }
 
         //Here you setup the conditions of which wave will be spawned
@@ -481,28 +283,26 @@ namespace MapScripts.Map1
         public bool SetUpLaneMinion()
         {
             int cannonMinionCap = 2;
-            foreach (var barrack in _map.SpawnBarracks)
+            foreach (var barrack in LevelScriptObjects.SpawnBarracks)
             {
-                List<Vector2> waypoint = new List<Vector2>();
                 TeamId opposed_team = barrack.Value.GetOpposingTeamID();
                 TeamId barrackTeam = barrack.Value.GetTeamID();
                 LaneID lane = barrack.Value.GetSpawnBarrackLaneID();
-                IInhibitor inhibitor = _map.InhibitorList[opposed_team][lane][0];
+                IInhibitor inhibitor = LevelScriptObjects.InhibitorList[opposed_team][lane];
+                Vector2 position = new Vector2(barrack.Value.CentralPoint.X, barrack.Value.CentralPoint.Z);
                 bool isInhibitorDead = inhibitor.InhibitorState == InhibitorState.DEAD && !inhibitor.RespawnAnnounced;
-                bool areAllInhibitorsDead = AllInhibitorsDestroyedFromTeam(opposed_team) && !inhibitor.RespawnAnnounced;
-                Tuple<int, List<MinionSpawnType>> spawnWave = _map.MapScript.MinionWaveToSpawn(GameTime(), _cannonMinionCount, isInhibitorDead, areAllInhibitorsDead);
+                bool areAllInhibitorsDead = AllInhibitorsDestroyedFromTeam(LevelScriptObjects.InhibitorList, opposed_team) && !inhibitor.RespawnAnnounced;
+                Tuple<int, List<MinionSpawnType>> spawnWave = MinionWaveToSpawn(GameTime(), _cannonMinionCount, isInhibitorDead, areAllInhibitorsDead);
                 cannonMinionCap = spawnWave.Item1;
 
-                if (barrackTeam == TeamId.TEAM_BLUE)
+                List<Vector2> waypoint = new List<Vector2>(MinionPaths[lane]);
+
+                if (barrackTeam == TeamId.TEAM_PURPLE)
                 {
-                    waypoint = _map.BlueMinionPathing[lane];
-                }
-                else if (barrackTeam == TeamId.TEAM_PURPLE)
-                {
-                    waypoint = _map.PurpleMinionPathing[lane];
+                    waypoint.Reverse();
                 }
 
-                CreateLaneMinion(spawnWave.Item2, _minionNumber, barrack.Value.Name, waypoint);
+                CreateLaneMinion(spawnWave.Item2, position, barrackTeam, _minionNumber, barrack.Value.Name, waypoint);
             }
 
             if (_minionNumber < 8)

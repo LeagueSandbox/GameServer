@@ -5,6 +5,8 @@ using LeagueSandbox.GameServer.Content;
 using GameServerCore.Scripting.CSharp;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using static LeagueSandbox.GameServer.API.ApiMapFunctionManager;
+using System.Collections.Generic;
+using GameServerCore.Enums;
 
 namespace MapScripts.Map1
 {
@@ -12,14 +14,12 @@ namespace MapScripts.Map1
     {
         public override IMapScriptMetadata MapScriptMetadata { get; set; } = new MapScriptMetadata
         {
-            MinionPathingOverride = true,
-            EnableBuildingProtection = true,
             MaxLevel = 30
         };
         public override IGlobalData GlobalData { get; set; } = new GlobalData { PercentCooldownModMinimun = 0.8f};
-        public override void Init(IMapScriptHandler map)
+        public override void Init(Dictionary<GameObjectTypes, List<MapObject>> mapObjects)
         {
-            base.Init(map);
+            base.Init(mapObjects);
             SetGameFeatures(GameServerCore.Enums.FeatureFlags.EnableManaCosts, false);
         }
 
