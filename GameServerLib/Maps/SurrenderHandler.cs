@@ -105,6 +105,7 @@ namespace LeagueSandbox.GameServer.Maps
                 toEndTimer -= diff;
                 if(toEndTimer <= 0)
                 {
+                    //This will have to be changed in the future in order to properly support Map8 surrender.
                     INexus ourNexus = (INexus)_game.ObjectManager.GetObjects().First(o => o.Value is INexus && o.Value.Team == Team).Value;
                     if (ourNexus == null)
                     {
