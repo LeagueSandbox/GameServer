@@ -77,7 +77,7 @@ namespace MapScripts.Map8
                 AddObject(fountainTurret);
             }
 
-            foreach(var infoPoint in _mapObjects[GameObjectTypes.InfoPoint])
+            foreach (var infoPoint in _mapObjects[GameObjectTypes.InfoPoint])
             {
                 var point = CreateMinion("OdinNeutralGuardian", "OdinNeutralGuardian", new Vector2(infoPoint.CentralPoint.X, infoPoint.CentralPoint.Z), ignoreCollision: true);
                 AddUnitPerceptionBubble(point, 800.0f, 25000.0f, TeamId.TEAM_BLUE, true, collisionArea: 120.0f, collisionOwner: point);

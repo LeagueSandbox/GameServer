@@ -91,8 +91,6 @@ namespace MapScripts.Map12
             LevelScriptObjects.LoadObjects(mapObjects);
         }
 
-        IStatsModifier TurretStatsModifier = new StatsModifier();
-        Dictionary<TeamId, List<IChampion>> Players = new Dictionary<TeamId, List<IChampion>>();
         public void OnMatchStart()
         {
             foreach (var champion in GetAllPlayers())
@@ -165,7 +163,7 @@ namespace MapScripts.Map12
             {
                 CheckMapInitialAnnouncements(gameTime);
             }
-        } 
+        }
 
         public void SpawnAllCamps()
         {
