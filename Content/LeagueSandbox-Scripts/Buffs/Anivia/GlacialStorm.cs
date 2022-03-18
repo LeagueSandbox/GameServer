@@ -96,7 +96,7 @@ namespace Buffs
                 if (SlowTimer >= 250f)
                 {
                     var spellPos = new Vector2(originSpell.CastInfo.TargetPositionEnd.X, originSpell.CastInfo.TargetPositionEnd.Z);
-                    if ((owner is IObjAiBase ai && !ai.CanCast()) || !GameServerCore.Extensions.IsVectorWithinRange(owner.Position, spellPos, 1200f))
+                    if ((owner is IObjAiBase ai && !ai.CanCast(originSpell)) || !GameServerCore.Extensions.IsVectorWithinRange(owner.Position, spellPos, 1200f))
                     {
                         RemoveBuff(thisBuff);
                     }

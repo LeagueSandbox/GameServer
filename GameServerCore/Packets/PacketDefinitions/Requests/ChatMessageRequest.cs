@@ -1,4 +1,4 @@
-﻿using GameServerCore.Packets.Enums;
+﻿using GameServerCore.Enums;
 
 namespace GameServerCore.Packets.PacketDefinitions.Requests
 {

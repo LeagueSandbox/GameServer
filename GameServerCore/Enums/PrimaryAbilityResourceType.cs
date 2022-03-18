@@ -10,9 +10,10 @@
         Dragonfury = 5,
         Rage = 6,
         Heat = 7,
-        Ferocity = 8,
-        BloodWell = 9,
-        Wind = 10,
-        Gnarfury = 11 
+        Gnarfury = 8,
+        Ferocity = 9,
+        BloodWell = 10,
+        Wind = 11,
+        Other = 12
     }
 }

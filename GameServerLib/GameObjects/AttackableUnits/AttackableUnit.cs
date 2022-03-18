@@ -206,6 +206,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                 // update Stats (hpregen, manaregen) every 0.5 seconds
                 Stats.Update(_statUpdateTimer);
                 _statUpdateTimer -= 500;
+                API.ApiEventManager.OnUpdateStats.Publish(this, diff);
             }
 
             Replication.Update();
@@ -1121,190 +1122,193 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// TODO: Probably needs a refactor to lessen thread usage. Make sure to stick very closely to the current method; just optimize it.
         public void AddBuff(IBuff b)
         {
-            // If this is the first buff of this name to be added, then add it to the parent buffs list (regardless of its add type).
-            if (!ParentBuffs.ContainsKey(b.Name))
+            if (ApiEventManager.OnAllowAddBuff.Publish(this, b.SourceUnit, b))
             {
-                // If the parent buff has ended, make the next oldest buff the parent buff.
-                if (HasBuff(b.Name))
+                // If this is the first buff of this name to be added, then add it to the parent buffs list (regardless of its add type).
+                if (!ParentBuffs.ContainsKey(b.Name))
                 {
-                    var buff = GetBuffsWithName(b.Name)[0];
-                    ParentBuffs.Add(b.Name, buff);
-                    return;
-                }
-                // If there is no other buffs of this name, make it the parent and add it normally.
-                ParentBuffs.Add(b.Name, b);
-                BuffList.Add(b);
-                // Add the buff to the visual hud.
-                if (!b.IsHidden)
-                {
-                    _game.PacketNotifier.NotifyNPC_BuffAdd2(b, b.Duration, b.TimeElapsed);
-                }
-                // Activate the buff for BuffScripts
-                b.ActivateBuff();
-            }
-            // If the buff is supposed to replace any existing buff instances of the same name
-            else if (b.BuffAddType == BuffAddType.REPLACE_EXISTING)
-            {
-                // Removing the previous buff of the same name.
-                var prevbuff = ParentBuffs[b.Name];
-
-                prevbuff.DeactivateBuff();
-                RemoveBuff(b.Name, false);
-
-                // Clear the newly given buff's slot since we will move it into the previous buff's slot.
-                RemoveBuffSlot(b);
-
-                // Adding the newly given buff instance into the slot of the previous buff.
-                BuffSlots[prevbuff.Slot] = b;
-                b.SetSlot(prevbuff.Slot);
-
-                // Add the buff as a parent and normally.
-                ParentBuffs.Add(b.Name, b);
-                BuffList.Add(b);
-
-                // Update the visual buff in-game (usually just resets the buff time of the visual icon).
-                if (!b.IsHidden)
-                {
-                    _game.PacketNotifier.NotifyNPC_BuffReplace(b);
-                }
-
-                // New buff means new script, so we need to activate it.
-                b.ActivateBuff();
-            }
-            else if (b.BuffAddType == BuffAddType.RENEW_EXISTING)
-            {
-                // Clear the newly created buff's slot so we aren't wasting slots.
-                if (b != ParentBuffs[b.Name])
-                {
-                    RemoveBuffSlot(b);
-                }
-
-                // Reset the already existing buff's timer.
-                ParentBuffs[b.Name].ResetTimeElapsed();
-
-                // Update the visual buff in-game (just resets the time on the icon).
-                if (!b.IsHidden)
-                {
-                    _game.PacketNotifier.NotifyNPC_BuffReplace(ParentBuffs[b.Name]);
-                }
-            }
-            // If the buff is supposed to be a single stackable buff with a timer = Duration * StackCount
-            else if (b.BuffAddType == BuffAddType.STACKS_AND_CONTINUE)
-            {
-                // If we've hit the max stacks count for this buff add type
-                if (ParentBuffs[b.Name].StackCount >= ParentBuffs[b.Name].MaxStacks)
-                {
-                    ParentBuffs[b.Name].ResetTimeElapsed();
-
+                    // If the parent buff has ended, make the next oldest buff the parent buff.
+                    if (HasBuff(b.Name))
+                    {
+                        var buff = GetBuffsWithName(b.Name)[0];
+                        ParentBuffs.Add(b.Name, buff);
+                        return;
+                    }
+                    // If there is no other buffs of this name, make it the parent and add it normally.
+                    ParentBuffs.Add(b.Name, b);
+                    BuffList.Add(b);
+                    // Add the buff to the visual hud.
                     if (!b.IsHidden)
                     {
-                        // If the buff is a counter buff (ex: Nasus Q stacks), then use a packet specialized for big buff stack counts (int.MaxValue).
-                        if (ParentBuffs[b.Name].BuffType == BuffType.COUNTER)
-                        {
-                            _game.PacketNotifier.NotifyNPC_BuffUpdateNumCounter(ParentBuffs[b.Name]);
-                        }
-                        // Otherwise, use the normal buff stack (254) update (usually just adds one to the number on the icon and refreshes the time of the icon).
-                        else
-                        {
-                            _game.PacketNotifier.NotifyNPC_BuffUpdateCount(ParentBuffs[b.Name], ParentBuffs[b.Name].Duration, ParentBuffs[b.Name].TimeElapsed);
-                        }
+                        _game.PacketNotifier.NotifyNPC_BuffAdd2(b, b.Duration, b.TimeElapsed);
                     }
-
-                    return;
+                    // Activate the buff for BuffScripts
+                    b.ActivateBuff();
                 }
-
-                ParentBuffs[b.Name].IncrementStackCount();
-
-                if (!b.IsHidden)
+                // If the buff is supposed to replace any existing buff instances of the same name
+                else if (b.BuffAddType == BuffAddType.REPLACE_EXISTING)
                 {
-                    _game.PacketNotifier.NotifyNPC_BuffUpdateCount(ParentBuffs[b.Name], ParentBuffs[b.Name].Duration - ParentBuffs[b.Name].TimeElapsed, ParentBuffs[b.Name].TimeElapsed);
-                }
-            }
-            // If the buff is supposed to be applied alongside any existing buff instances of the same name.
-            else if (b.BuffAddType == BuffAddType.STACKS_AND_OVERLAPS)
-            {
-                // If we've hit the max stacks count for this buff add type (usually 254 for this BuffAddType).
-                if (ParentBuffs[b.Name].StackCount >= ParentBuffs[b.Name].MaxStacks)
-                {
-                    // Get and remove the oldest buff of the same name so we can free up space for the newly given buff instance.
-                    var oldestbuff = ParentBuffs[b.Name];
+                    // Removing the previous buff of the same name.
+                    var prevbuff = ParentBuffs[b.Name];
 
-                    oldestbuff.DeactivateBuff();
-                    RemoveBuff(b.Name, true);
+                    prevbuff.DeactivateBuff();
+                    RemoveBuff(b.Name, false);
 
-                    // Move the next oldest buff of the same name into the position of the removed oldest buff.
-                    var tempbuffs = GetBuffsWithName(b.Name);
+                    // Clear the newly given buff's slot since we will move it into the previous buff's slot.
+                    RemoveBuffSlot(b);
 
-                    BuffSlots[oldestbuff.Slot] = tempbuffs[0];
-                    ParentBuffs.Add(oldestbuff.Name, tempbuffs[0]);
+                    // Adding the newly given buff instance into the slot of the previous buff.
+                    BuffSlots[prevbuff.Slot] = b;
+                    b.SetSlot(prevbuff.Slot);
+
+                    // Add the buff as a parent and normally.
+                    ParentBuffs.Add(b.Name, b);
                     BuffList.Add(b);
 
+                    // Update the visual buff in-game (usually just resets the buff time of the visual icon).
                     if (!b.IsHidden)
                     {
-                        // If the buff is a counter buff (ex: Nasus Q stacks), then use a packet specialized for big buff stack counts (int.MaxValue).
-                        if (ParentBuffs[b.Name].BuffType == BuffType.COUNTER)
+                        _game.PacketNotifier.NotifyNPC_BuffReplace(b);
+                    }
+
+                    // New buff means new script, so we need to activate it.
+                    b.ActivateBuff();
+                }
+                else if (b.BuffAddType == BuffAddType.RENEW_EXISTING)
+                {
+                    // Clear the newly created buff's slot so we aren't wasting slots.
+                    if (b != ParentBuffs[b.Name])
+                    {
+                        RemoveBuffSlot(b);
+                    }
+
+                    // Reset the already existing buff's timer.
+                    ParentBuffs[b.Name].ResetTimeElapsed();
+
+                    // Update the visual buff in-game (just resets the time on the icon).
+                    if (!b.IsHidden)
+                    {
+                        _game.PacketNotifier.NotifyNPC_BuffReplace(ParentBuffs[b.Name]);
+                    }
+                }
+                // If the buff is supposed to be a single stackable buff with a timer = Duration * StackCount
+                else if (b.BuffAddType == BuffAddType.STACKS_AND_CONTINUE)
+                {
+                    // If we've hit the max stacks count for this buff add type
+                    if (ParentBuffs[b.Name].StackCount >= ParentBuffs[b.Name].MaxStacks)
+                    {
+                        ParentBuffs[b.Name].ResetTimeElapsed();
+
+                        if (!b.IsHidden)
+                        {
+                            // If the buff is a counter buff (ex: Nasus Q stacks), then use a packet specialized for big buff stack counts (int.MaxValue).
+                            if (ParentBuffs[b.Name].BuffType == BuffType.COUNTER)
+                            {
+                                _game.PacketNotifier.NotifyNPC_BuffUpdateNumCounter(ParentBuffs[b.Name]);
+                            }
+                            // Otherwise, use the normal buff stack (254) update (usually just adds one to the number on the icon and refreshes the time of the icon).
+                            else
+                            {
+                                _game.PacketNotifier.NotifyNPC_BuffUpdateCount(ParentBuffs[b.Name], ParentBuffs[b.Name].Duration, ParentBuffs[b.Name].TimeElapsed);
+                            }
+                        }
+
+                        return;
+                    }
+
+                    ParentBuffs[b.Name].IncrementStackCount();
+
+                    if (!b.IsHidden)
+                    {
+                        _game.PacketNotifier.NotifyNPC_BuffUpdateCount(ParentBuffs[b.Name], ParentBuffs[b.Name].Duration - ParentBuffs[b.Name].TimeElapsed, ParentBuffs[b.Name].TimeElapsed);
+                    }
+                }
+                // If the buff is supposed to be applied alongside any existing buff instances of the same name.
+                else if (b.BuffAddType == BuffAddType.STACKS_AND_OVERLAPS)
+                {
+                    // If we've hit the max stacks count for this buff add type (usually 254 for this BuffAddType).
+                    if (ParentBuffs[b.Name].StackCount >= ParentBuffs[b.Name].MaxStacks)
+                    {
+                        // Get and remove the oldest buff of the same name so we can free up space for the newly given buff instance.
+                        var oldestbuff = ParentBuffs[b.Name];
+
+                        oldestbuff.DeactivateBuff();
+                        RemoveBuff(b.Name, true);
+
+                        // Move the next oldest buff of the same name into the position of the removed oldest buff.
+                        var tempbuffs = GetBuffsWithName(b.Name);
+
+                        BuffSlots[oldestbuff.Slot] = tempbuffs[0];
+                        ParentBuffs.Add(oldestbuff.Name, tempbuffs[0]);
+                        BuffList.Add(b);
+
+                        if (!b.IsHidden)
+                        {
+                            // If the buff is a counter buff (ex: Nasus Q stacks), then use a packet specialized for big buff stack counts (int.MaxValue).
+                            if (ParentBuffs[b.Name].BuffType == BuffType.COUNTER)
+                            {
+                                _game.PacketNotifier.NotifyNPC_BuffUpdateNumCounter(ParentBuffs[b.Name]);
+                            }
+                            // Otherwise, use the normal buff stack (254) update (usually just adds one to the number on the icon and refreshes the time of the icon).
+                            else
+                            {
+                                _game.PacketNotifier.NotifyNPC_BuffUpdateCount(b, b.Duration, b.TimeElapsed);
+                            }
+                        }
+                        b.ActivateBuff();
+
+                        return;
+                    }
+                    // If we haven't hit the max stack count (usually 254).
+                    BuffList.Add(b);
+
+                    // Increment the number of stacks on the parent buff, which is the buff instance which is used for packets.
+                    ParentBuffs[b.Name].IncrementStackCount();
+
+                    // Increment the number of stacks on every buff of the same name (so if any of them become the parent, there is no problem).
+                    GetBuffsWithName(b.Name).ForEach(buff => buff.SetStacks(ParentBuffs[b.Name].StackCount));
+
+                    if (!b.IsHidden)
+                    {
+                        if (b.BuffType == BuffType.COUNTER)
                         {
                             _game.PacketNotifier.NotifyNPC_BuffUpdateNumCounter(ParentBuffs[b.Name]);
                         }
-                        // Otherwise, use the normal buff stack (254) update (usually just adds one to the number on the icon and refreshes the time of the icon).
                         else
                         {
                             _game.PacketNotifier.NotifyNPC_BuffUpdateCount(b, b.Duration, b.TimeElapsed);
                         }
                     }
                     b.ActivateBuff();
-
-                    return;
                 }
-                // If we haven't hit the max stack count (usually 254).
-                BuffList.Add(b);
-
-                // Increment the number of stacks on the parent buff, which is the buff instance which is used for packets.
-                ParentBuffs[b.Name].IncrementStackCount();
-
-                // Increment the number of stacks on every buff of the same name (so if any of them become the parent, there is no problem).
-                GetBuffsWithName(b.Name).ForEach(buff => buff.SetStacks(ParentBuffs[b.Name].StackCount));
-
-                if (!b.IsHidden)
+                // If the buff is supposed to add a stack to any existing buffs of the same name and refresh their timer.
+                // Essentially the method is: have one parent buff which has the stacks, and just refresh its time, this means no overlapping buff instances, but functionally it is the same.
+                else if (ParentBuffs[b.Name].BuffAddType == BuffAddType.STACKS_AND_RENEWS)
                 {
-                    if (b.BuffType == BuffType.COUNTER)
-                    {
-                        _game.PacketNotifier.NotifyNPC_BuffUpdateNumCounter(ParentBuffs[b.Name]);
-                    }
-                    else
-                    {
-                        _game.PacketNotifier.NotifyNPC_BuffUpdateCount(b, b.Duration, b.TimeElapsed);
-                    }
-                }
-                b.ActivateBuff();
-            }
-            // If the buff is supposed to add a stack to any existing buffs of the same name and refresh their timer.
-            // Essentially the method is: have one parent buff which has the stacks, and just refresh its time, this means no overlapping buff instances, but functionally it is the same.
-            else if (ParentBuffs[b.Name].BuffAddType == BuffAddType.STACKS_AND_RENEWS)
-            {
-                // Don't need the newly added buff instance as we already have a parent who we can add stacks to.
-                RemoveBuffSlot(b);
+                    // Don't need the newly added buff instance as we already have a parent who we can add stacks to.
+                    RemoveBuffSlot(b);
 
-                // Refresh the time of the parent buff and adds a stack if Max Stacks wasn't reached.
-                ParentBuffs[b.Name].ResetTimeElapsed();
-                if (ParentBuffs[b.Name].IncrementStackCount())
-                {
-                    ParentBuffs[b.Name].ActivateBuff();
-                }
+                    // Refresh the time of the parent buff and adds a stack if Max Stacks wasn't reached.
+                    ParentBuffs[b.Name].ResetTimeElapsed();
+                    if (ParentBuffs[b.Name].IncrementStackCount())
+                    {
+                        ParentBuffs[b.Name].ActivateBuff();
+                    }
 
-                if (!b.IsHidden)
-                {
-                    if (ParentBuffs[b.Name].BuffType == BuffType.COUNTER)
+                    if (!b.IsHidden)
                     {
-                        _game.PacketNotifier.NotifyNPC_BuffUpdateNumCounter(ParentBuffs[b.Name]);
+                        if (ParentBuffs[b.Name].BuffType == BuffType.COUNTER)
+                        {
+                            _game.PacketNotifier.NotifyNPC_BuffUpdateNumCounter(ParentBuffs[b.Name]);
+                        }
+                        else
+                        {
+                            _game.PacketNotifier.NotifyNPC_BuffUpdateCount(ParentBuffs[b.Name], ParentBuffs[b.Name].Duration, ParentBuffs[b.Name].TimeElapsed);
+                        }
                     }
-                    else
-                    {
-                        _game.PacketNotifier.NotifyNPC_BuffUpdateCount(ParentBuffs[b.Name], ParentBuffs[b.Name].Duration, ParentBuffs[b.Name].TimeElapsed);
-                    }
+                    // TODO: Unload and reload all data of buff script here.
                 }
-                // TODO: Unload and reload all data of buff script here.
-            }
+            }    
         }
 
         /// <summary>

@@ -123,7 +123,8 @@ namespace GameServerCore.Domain.GameObjects
         /// <summary>
         /// Whether or not this AI is able to cast spells.
         /// </summary>
-        bool CanCast();
+        /// <param name="spell">Spell to check.</param>
+        bool CanCast(ISpell spell);
         ISpell GetSpell(byte slot);
         ISpell GetSpell(string name);
         /// <summary>
