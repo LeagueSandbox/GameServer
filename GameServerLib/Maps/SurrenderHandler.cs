@@ -51,14 +51,14 @@ namespace LeagueSandbox.GameServer.Maps
         {
             if (_game.GameTime < SurrenderMinimumTime)
             {
-                _game.PacketNotifier.NotifyTeamSurrenderStatus(userId, who.Team, SurrenderReason.SURRENDER_TOO_EARLY, 0, 0);
+                _game.PacketNotifier.NotifyTeamSurrenderStatus(userId, who.Team, SurrenderReason.NotAllowedYet, 0, 0);
                 return;
             }
             
             bool open = !IsSurrenderActive;
             if (!IsSurrenderActive && _game.GameTime < LastSurrenderTime + SurrenderRestTime)
             {
-                _game.PacketNotifier.NotifyTeamSurrenderStatus(userId, who.Team, SurrenderReason.SURRENDER_TOO_QUICKLY, 0, 0);
+                _game.PacketNotifier.NotifyTeamSurrenderStatus(userId, who.Team, SurrenderReason.DontSpamSurrender, 0, 0);
                 return;
             }
             IsSurrenderActive = true;
@@ -67,7 +67,7 @@ namespace LeagueSandbox.GameServer.Maps
 
             if (_votes.ContainsKey(who))
             {
-                _game.PacketNotifier.NotifyTeamSurrenderStatus(userId, who.Team, SurrenderReason.SURRENDER_ALREADY_VOTED, 0, 0);
+                _game.PacketNotifier.NotifyTeamSurrenderStatus(userId, who.Team, SurrenderReason.AlreadyVoted, 0, 0);
                 return;
             }
             _votes[who] = vote;
@@ -83,7 +83,7 @@ namespace LeagueSandbox.GameServer.Maps
                 IsSurrenderActive = false;
                 foreach (var p in _game.PlayerManager.GetPlayers(true))
                 {
-                    _game.PacketNotifier.NotifyTeamSurrenderStatus((int)p.Item1, Team, SurrenderReason.SURRENDER_PASSED, (byte)voteCounts.Item1, (byte)voteCounts.Item2); // TOOD: fix id casting
+                    _game.PacketNotifier.NotifyTeamSurrenderStatus((int)p.Item1, Team, SurrenderReason.SurrenderAgreed, (byte)voteCounts.Item1, (byte)voteCounts.Item2); // TOOD: fix id casting
                 }
 
                 toEnd = true;
@@ -97,7 +97,7 @@ namespace LeagueSandbox.GameServer.Maps
                 IsSurrenderActive = false;
                 Tuple<int, int> count = GetVoteCounts();
                 foreach (var p in _game.PlayerManager.GetPlayers().Where(kv => kv.Item2.Team == Team))
-                    _game.PacketNotifier.NotifyTeamSurrenderStatus((int)p.Item1, Team, SurrenderReason.SURRENDER_FAILED, (byte)count.Item1, (byte)count.Item2); // TODO: fix id casting
+                    _game.PacketNotifier.NotifyTeamSurrenderStatus((int)p.Item1, Team, SurrenderReason.VoteWasNoSurrender, (byte)count.Item1, (byte)count.Item2); // TODO: fix id casting
             }
 
             if (toEnd)

@@ -1,4 +1,5 @@
 ﻿using GameServerCore;
+using GameServerCore.Enums;
 using GameServerCore.Packets.Enums;
 using GameServerCore.Packets.Handlers;
 using GameServerCore.Packets.PacketDefinitions.Requests;
@@ -88,11 +89,11 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 
             switch (req.Type)
             {
-                case ChatType.CHAT_ALL:
+                case ChatType.All:
                      _game.PacketNotifier.NotifyS2C_SystemMessage(ownTeam, dmTeam);
                      _game.PacketNotifier.NotifyS2C_SystemMessage(enemyTeam, dmEnemy);
                     return true;
-                case ChatType.CHAT_TEAM:
+                case ChatType.Team:
                      _game.PacketNotifier.NotifyS2C_SystemMessage(ownTeam, dmTeam);
                     return true;
                 default:

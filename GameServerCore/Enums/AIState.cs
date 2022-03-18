@@ -1,0 +1,44 @@
+﻿using System;
+namespace GameServerCore.Enums
+{
+    public enum AIState : uint
+    {
+        AI_ATTACK,
+        AI_ATTACK_GOING_TO_LAST_KNOWN_LOCATION,
+        AI_ATTACK_HERO,
+        AI_ATTACKMOVESTATE,
+        AI_ATTACKMOVE_ATTACKING,
+        AI_CHARMED,
+        AI_FEARED,
+        AI_FOLLOW,
+        AI_FOLLOW_HERO,
+        AI_HALTED,
+        AI_HARDATTACK,
+        AI_HARDIDLE,
+        AI_HARDIDLE_ATTACKING,
+        AI_IDLE,
+        AI_MOVE,
+        AI_PET_ATTACK,
+        AI_PET_ATTACKMOVE,
+        AI_PET_ATTACKMOVE_ATTACKING,
+        AI_PET_HARDATTACK,
+        AI_PET_HARDIDLE,
+        AI_PET_HARDIDLE_ATTACKING,
+        AI_PET_HARDMOVE,
+        AI_PET_HARDRETURN,
+        AI_PET_HARDSTOP,
+        AI_PET_HOLDPOSITION,
+        AI_PET_HOLDPOSITION_ATTACKING,
+        AI_PET_IDLE,
+        AI_PET_MOVE,
+        AI_PET_RETURN,
+        AI_PET_RETURN_ATTACKING,
+        AI_PET_SPAWNING,
+        AI_RETREAT,
+        AI_SHOP,
+        AI_SOFTATTACK,
+        AI_STANDING,
+        AI_STOP,
+        AI_TAUNTED
+    }
+}

@@ -33,7 +33,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             var ownerCastingSpell = owner.GetCastSpell();
 
             // Instant cast spells can be cast during other spell casts.
-            if (s != null && owner.CanCast()
+            if (s != null && owner.CanCast(s)
                 && (ownerCastingSpell == null
                 || (ownerCastingSpell != null
                     && s.SpellData.Flags.HasFlag(SpellDataFlags.InstantCast))

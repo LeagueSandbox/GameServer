@@ -337,10 +337,12 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         /// <summary>
         /// Whether or not this AI is able to cast spells.
         /// </summary>
-        public bool CanCast()
+        /// <param name="spell">Spell to check.</param>
+        public bool CanCast(ISpell spell = null)
         {
             // TODO: Verify if all cases are accounted for.
-            return Status.HasFlag(StatusFlags.CanCast)
+            return ApiEventManager.OnCanCast.Publish(this, spell)
+                && Status.HasFlag(StatusFlags.CanCast)
                 && !Status.HasFlag(StatusFlags.Charmed)
                 && !Status.HasFlag(StatusFlags.Feared)
                 // TODO: Verify what pacified is

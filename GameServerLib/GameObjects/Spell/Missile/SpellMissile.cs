@@ -73,6 +73,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Missile
             {
                 _timeSinceCreation += diff;
                 Move(diff);
+                API.ApiEventManager.OnSpellMissileUpdate.Publish(this, diff);
             }
             else
             {
