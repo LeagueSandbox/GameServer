@@ -2,7 +2,6 @@
 using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
-using GameServerCore.Maps;
 using GameServerCore.NetInfo;
 using GameServerCore.Packets.Enums;
 using LeagueSandbox.GameServer.Logging;
@@ -11,7 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace LeagueSandbox.GameServer.Maps
+namespace LeagueSandbox.GameServer.Handlers
 {
     // TODO: Make the surrender UI button become clickable upon hitting SurrenderMinimumTime
     public class SurrenderHandler : IUpdate

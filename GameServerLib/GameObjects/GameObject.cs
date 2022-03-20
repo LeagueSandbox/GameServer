@@ -319,12 +319,7 @@ namespace LeagueSandbox.GameServer.GameObjects
         /// <param name="y">Y coordinate to set.</param>
         public virtual void TeleportTo(float x, float y)
         {
-            var position = new Vector2(x, y);
-
-            if (!_game.Map.NavigationGrid.IsWalkable(x, y, PathfindingRadius))
-            {
-                position = _game.Map.NavigationGrid.GetClosestTerrainExit(new Vector2(x, y), PathfindingRadius + 1.0f);
-            }
+            var position = _game.Map.NavigationGrid.GetClosestTerrainExit(new Vector2(x, y), PathfindingRadius + 1.0f);
 
             SetPosition(position);
 

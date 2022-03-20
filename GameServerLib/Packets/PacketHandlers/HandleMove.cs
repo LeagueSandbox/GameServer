@@ -1,7 +1,6 @@
 ﻿using GameServerCore;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
-using GameServerCore.Maps;
 using GameServerCore.Packets.Enums;
 using GameServerCore.Packets.Handlers;
 using GameServerCore.Packets.PacketDefinitions.Requests;
@@ -48,7 +47,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 
                 foreach (Vector2 wp in translatedWaypoints)
                 {
-                    if (!_game.Map.NavigationGrid.IsWalkable(wp))
+                    if (!_game.Map.PathingHandler.IsWalkable(wp))
                     {
                         Vector2 exit = nav.GetClosestTerrainExit(translatedWaypoints[lastindex]);
 
@@ -58,9 +57,9 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                             return true;
                         }
 
-                        if (_game.Map.NavigationGrid.IsWalkable(champion.Position))
+                        if (_game.Map.PathingHandler.IsWalkable(champion.Position))
                         {
-                            translatedWaypoints = nav.GetPath(champion.Position, exit);
+                            translatedWaypoints = _game.Map.PathingHandler.GetPath(champion.Position, exit);
                         }
                         break;
                     }
