@@ -539,9 +539,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 return false;
             }
 
-            var nearestObjects = _game.Map.CollisionHandler.QuadDynamic.GetNodesInside(
-                new Circle(Position, DETECT_RANGE)
-            );
+            var nearestObjects = _game.Map.CollisionHandler.GetNearestObjects(new Circle(Position, DETECT_RANGE));
 
             foreach (var gameObject in nearestObjects)
             {
@@ -653,12 +651,12 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                     }
                     else
                     {
-                        if (!_game.Map.NavigationGrid.IsWalkable(targetPos, PathfindingRadius))
+                        if (!_game.Map.PathingHandler.IsWalkable(targetPos, PathfindingRadius))
                         {
                             targetPos = _game.Map.NavigationGrid.GetClosestTerrainExit(targetPos, PathfindingRadius);
                         }
 
-                        var newWaypoints = _game.Map.NavigationGrid.GetPath(Position, targetPos);
+                        var newWaypoints = _game.Map.PathingHandler.GetPath(Position, targetPos);
                         if (newWaypoints.Count > 1)
                         {
                             SetWaypoints(newWaypoints);
@@ -865,7 +863,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             if (location != Vector2.Zero)
             {
                 var exit = _game.Map.NavigationGrid.GetClosestTerrainExit(location, PathfindingRadius);
-                var path = _game.Map.NavigationGrid.GetPath(Position, exit);
+                var path = _game.Map.PathingHandler.GetPath(Position, exit);
 
                 if (path != null)
                 {

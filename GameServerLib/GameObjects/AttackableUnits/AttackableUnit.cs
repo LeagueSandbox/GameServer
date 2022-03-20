@@ -181,7 +181,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             // Reevaluate our current path to account for the starting position being changed.
             if (repath && !IsPathEnded())
             {
-                List<Vector2> safePath = _game.Map.NavigationGrid.GetPath(Position, _game.Map.NavigationGrid.GetClosestTerrainExit(Waypoints.Last(), PathfindingRadius));
+                List<Vector2> safePath = _game.Map.PathingHandler.GetPath(Position, _game.Map.NavigationGrid.GetClosestTerrainExit(Waypoints.Last(), PathfindingRadius));
 
                 // TODO: When using this safePath, sometimes we collide with the terrain again, so we use an unsafe path the next collision, however,
                 // sometimes we collide again before we can finish the unsafe path, so we end up looping collisions between safe and unsafe paths, never actually escaping (ex: sharp corners).
@@ -926,7 +926,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         {
             var position = new Vector2(x, y);
 
-            if (!_game.Map.NavigationGrid.IsWalkable(x, y, PathfindingRadius))
+            if (!_game.Map.PathingHandler.IsWalkable(new Vector2(x, y), PathfindingRadius))
             {
                 position = _game.Map.NavigationGrid.GetClosestTerrainExit(new Vector2(x, y), PathfindingRadius + 1.0f);
             }

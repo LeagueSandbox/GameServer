@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using GameServerCore;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Domain.GameObjects.Spell.Missile;
-using GameServerCore.Maps;
 using System.Activities.Presentation.View;
+using GameServerCore.Handlers;
 
-namespace LeagueSandbox.GameServer.GameObjects.Other
+namespace LeagueSandbox.GameServer.Handlers
 {
     /// <summary>
     /// Class which calls collision based functions for GameObjects.
@@ -14,10 +14,8 @@ namespace LeagueSandbox.GameServer.GameObjects.Other
     public class CollisionHandler : ICollisionHandler
     {
         private IMapScriptHandler _map;
-
         private readonly List<IGameObject> _objects = new List<IGameObject>();
-
-        public QuadTree<IGameObject> QuadDynamic { get; private set; }
+        private QuadTree<IGameObject> _quadDynamic;
 
         public CollisionHandler(IMapScriptHandler map)
         {
@@ -25,15 +23,12 @@ namespace LeagueSandbox.GameServer.GameObjects.Other
 
             // Initializes a dynamic map using NavigationGrid properties and a CollisionObject which takes into account an object's CollisionRadius (+1 for insurance).
             // It will contain all GameObjects that should be able to collide with eachother, refer to IsCollisionObject.
-            QuadDynamic = new QuadTree<IGameObject>(
+            _quadDynamic = new QuadTree<IGameObject>(
                 _map.NavigationGrid.MinGridPosition.X, // MIN
                 _map.NavigationGrid.MaxGridPosition.Z, // yep, MAX
                 _map.NavigationGrid.MaxGridPosition.X -_map.NavigationGrid.MinGridPosition.X,
                 _map.NavigationGrid.MaxGridPosition.Z - _map.NavigationGrid.MinGridPosition.Z
             );
-
-            //Pathfinder.setMap(map);
-            // Initialise the pathfinder.
         }
 
         /// <summary>
@@ -79,7 +74,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Other
             }
             if (collides)
             {
-                QuadDynamic.Insert(obj, GetBounds(obj));
+                _quadDynamic.Insert(obj, GetBounds(obj));
             }
         }
 
@@ -91,7 +86,33 @@ namespace LeagueSandbox.GameServer.GameObjects.Other
         public bool RemoveObject(IGameObject obj)
         {
             return _objects.Remove(obj);
-            //&& QuadDynamic.Remove(obj); - QuadTree is rebuilt every frame, no need to remove
+        }
+
+        /// <summary>
+        /// Gets the nearest GameObjects to the given GameObject.
+        /// </summary>
+        /// <param name="obj">GameObject which will be the origin of the check.</param>
+        /// <returns>List of GameObjects. Null if GameObject is not present in the QuadTree.</returns>
+        public List<IGameObject> GetNearestObjects(IGameObject obj)
+        {
+            return GetNearestObjects(GetBounds(obj));
+        }
+
+        /// <summary>
+        /// Gets the nearest GameObjects to the given temporary circle object.
+        /// </summary>
+        /// <param name="circle"></param>
+        /// <returns>List of GameObjects.</returns>
+        public List<IGameObject> GetNearestObjects(Circle circle)
+        {
+            var nearest = new List<IGameObject>();
+
+            foreach (var obj in _quadDynamic.GetNodesInside(circle))
+            {
+                nearest.Add(obj);
+            }
+
+            return nearest;
         }
 
         /// <summary>
@@ -103,23 +124,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Other
             var objectsCopy = new List<IGameObject>(_objects);
             foreach (var obj in objectsCopy)
             {
-                if (IsCollisionAffected(obj))
-                {
-                    if (!_map.NavigationGrid.IsWalkable(obj.Position.X, obj.Position.Y))
-                    {
-                        obj.OnCollision(null, true);
-                    }
-
-                    var nearest = QuadDynamic.GetNodesInside(GetBounds(obj));
-                    foreach (var obj2 in nearest)
-                    {
-                        // TODO: Implement interpolation (or hull tracing) to account for fast moving gameobjects that may go past other gameobjects within one tick, which bypasses collision.
-                        if (obj != obj2 && !obj2.IsToRemove() && obj.IsCollidingWith(obj2))
-                        {
-                            obj.OnCollision(obj2);
-                        }
-                    }
-                }
+                UpdateCollision(obj);
             }
 
             UpdateQuadTree();
@@ -133,12 +138,12 @@ namespace LeagueSandbox.GameServer.GameObjects.Other
         {
             if (IsCollisionAffected(obj))
             {
-                if (!_map.NavigationGrid.IsWalkable(obj.Position.X, obj.Position.Y))
+                if (!_map.PathingHandler.IsWalkable(obj.Position))
                 {
                     obj.OnCollision(null, true);
                 }
 
-                var nearest = QuadDynamic.GetNodesInside(GetBounds(obj));
+                var nearest = GetNearestObjects(obj);
                 foreach (var obj2 in nearest)
                 {
                     // TODO: Implement interpolation (or hull tracing) to account for fast moving gameobjects that may go past other gameobjects within one tick, which bypasses collision.
@@ -155,12 +160,12 @@ namespace LeagueSandbox.GameServer.GameObjects.Other
         /// </summary>
         private void UpdateQuadTree()
         {
-            QuadDynamic.Clear();
-            foreach(var obj in _objects)
+            _quadDynamic.Clear();
+            foreach (var obj in _objects)
             {
-                if(IsCollisionObject(obj))
+                if (IsCollisionObject(obj))
                 {
-                    QuadDynamic.Insert(obj, GetBounds(obj));
+                    _quadDynamic.Insert(obj, GetBounds(obj));
                 }
             }
         }

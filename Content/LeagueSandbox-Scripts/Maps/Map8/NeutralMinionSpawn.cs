@@ -1,7 +1,6 @@
 ﻿using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
-using GameServerCore.Maps;
 using LeagueSandbox.GameServer.API;
 using System.Collections.Generic;
 using System.Numerics;

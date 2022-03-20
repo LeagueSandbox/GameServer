@@ -6,7 +6,7 @@ using GameServerCore.Content;
 using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
-using GameServerCore.Maps;
+using GameServerCore.Handlers;
 using LeagueSandbox.GameServer.Content;
 using LeagueSandbox.GameServer.GameObjects.Other;
 using LeagueSandbox.GameServer.Logging;
@@ -15,7 +15,7 @@ using log4net;
 using MapScripts;
 using static LeagueSandbox.GameServer.API.ApiMapFunctionManager;
 
-namespace LeagueSandbox.GameServer.Maps
+namespace LeagueSandbox.GameServer.Handlers
 {
     /// <summary>
     /// Class responsible for all map related game settings such as collision handler, navigation grid, announcer events, and map properties.
@@ -36,6 +36,10 @@ namespace LeagueSandbox.GameServer.Maps
         /// Collision Handler to be instanced by the map. Used for collisions between GameObjects or GameObjects and terrain.
         /// </summary>
         public ICollisionHandler CollisionHandler { get; private set; }
+        /// <summary>
+        /// Pathing Handler to be instanced by the map. Used for pathfinding for units.
+        /// </summary>
+        public IPathingHandler PathingHandler { get; private set; }
         /// <summary>
         /// Navigation Grid to be instanced by the map. Used for terrain data.
         /// </summary>
@@ -72,6 +76,7 @@ namespace LeagueSandbox.GameServer.Maps
             }
 
             CollisionHandler = new CollisionHandler(this);
+            PathingHandler = new PathingHandler(this);
 
             MapScript = _scriptEngine.CreateObject<IMapScript>($"MapScripts.Map{Id}", $"{game.Config.GameConfig.GameMode}") ?? new EmptyMapScript();
 
@@ -94,6 +99,7 @@ namespace LeagueSandbox.GameServer.Maps
         public void Update(float diff)
         {
             CollisionHandler.Update();
+            PathingHandler.Update(diff);
             MapScript.Update(diff);
 
             foreach (var surrender in Surrenders.Values)

@@ -4,7 +4,6 @@ using System.Numerics;
 using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
-using GameServerCore.Maps;
 using LeagueSandbox.GameServer.Content;
 using GameServerCore.Scripting.CSharp;
 using LeagueSandbox.GameServer.Scripting.CSharp;

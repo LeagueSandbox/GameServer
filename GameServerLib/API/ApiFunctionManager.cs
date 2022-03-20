@@ -254,7 +254,7 @@ namespace LeagueSandbox.GameServer.API
         /// <returns>True/False</returns>
         public static bool IsWalkable(float x, float y, float checkRadius = 0)
         {
-            return _game.Map.NavigationGrid.IsWalkable(x, y, checkRadius);
+            return _game.Map.PathingHandler.IsWalkable(new Vector2(x, y), checkRadius);
         }
 
         /// <summary>
@@ -565,7 +565,7 @@ namespace LeagueSandbox.GameServer.API
         /// <param name="range">Range to check from the target position.</param>
         /// <param name="isAlive">Whether or not to return alive AttackableUnits.</param>
         /// <returns>List of AttackableUnits.</returns>
-        public static List<IAttackableUnit> GetUnitsInRange(Vector2 targetPos, float range, bool isAlive)
+        public static List<IAttackableUnit> GetUnitsInRangeOld(Vector2 targetPos, float range, bool isAlive)
         {
             return _game.ObjectManager.GetUnitsInRange(targetPos, range, isAlive);
         }
@@ -578,13 +578,33 @@ namespace LeagueSandbox.GameServer.API
         /// <returns>List of AttackableUnits.</returns>
         public static IEnumerable<IAttackableUnit> EnumerateUnitsInRange(Vector2 targetPos, float range, bool isAlive)
         {
-            foreach (var obj in _game.Map.CollisionHandler.QuadDynamic.GetNodesInside(targetPos, range))
+            foreach (var obj in _game.Map.CollisionHandler.GetNearestObjects(new System.Activities.Presentation.View.Circle(targetPos, range)))
             {
                 if (obj is IAttackableUnit u && (!isAlive || !u.IsDead))
                 {
                     yield return u;
                 }
             }
+        }
+
+        /// <summary>
+        /// Acquires all dead or alive AttackableUnits within the specified range of a target position.
+        /// </summary>
+        /// <param name="targetPos">Origin of the range to check.</param>
+        /// <param name="range">Range to check from the target position.</param>
+        /// <returns>List of AttackableUnits.</returns>
+        public static List<IAttackableUnit> GetUnitsInRange(Vector2 targetPos, float range, bool isAlive)
+        {
+            var returnList = new List<IAttackableUnit>();
+            foreach (var obj in _game.Map.CollisionHandler.GetNearestObjects(new System.Activities.Presentation.View.Circle(targetPos, range)))
+            {
+                if (obj is IAttackableUnit u && (!isAlive || !u.IsDead))
+                {
+                    returnList.Add(u);
+                }
+            }
+
+            return returnList;
         }
 
         /// <summary>
@@ -596,7 +616,7 @@ namespace LeagueSandbox.GameServer.API
         /// <returns>Closest AttackableUnit.</returns>
         public static IAttackableUnit GetClosestUnitInRange(Vector2 targetPos, float range, bool isAlive)
         {
-            var units = _game.ObjectManager.GetUnitsInRange(targetPos, range, isAlive);
+            var units = GetUnitsInRange(targetPos, range, isAlive);
             var orderedUnits = units.OrderBy(unit => Vector2.DistanceSquared(targetPos, unit.Position));
 
             return orderedUnits.First();
@@ -611,7 +631,7 @@ namespace LeagueSandbox.GameServer.API
         /// <returns>Closest AttackableUnit.</returns>
         public static IAttackableUnit GetClosestUnitInRange(IAttackableUnit target, float range, bool isAlive)
         {
-            var units = _game.ObjectManager.GetUnitsInRange(target.Position, range, isAlive);
+            var units = GetUnitsInRange(target.Position, range, isAlive);
             var orderedUnits = units.OrderBy(unit => Vector2.DistanceSquared(target.Position, unit.Position));
 
             if (orderedUnits.First() == target && orderedUnits.Count() > 1)
@@ -1046,7 +1066,7 @@ namespace LeagueSandbox.GameServer.API
         /// <returns></returns>
         public static List<Vector2> GetPath(Vector2 from, Vector2 to, float distanceThreshold = 0)
         {
-            return _game.Map.NavigationGrid.GetPath(from, to, distanceThreshold);
+            return _game.Map.PathingHandler.GetPath(from, to, distanceThreshold);
         }
 
         public static void OverrideUnitAttackSpeedCap(IAttackableUnit unit, bool doOverrideMax, float maxAttackSpeedOverride, bool doOverrideMin, float minAttackSpeedOverride)

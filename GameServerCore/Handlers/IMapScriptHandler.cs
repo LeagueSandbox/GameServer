@@ -7,7 +7,7 @@ using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
 using LeaguePackets.Game.Common;
 
-namespace GameServerCore.Maps
+namespace GameServerCore.Handlers
 {
     /// <summary>
     /// Contains all map related game settings such as collision handler, navigation grid, announcer events, and map properties. Doubles as a Handler/Manager for all MapScripts.
@@ -22,6 +22,10 @@ namespace GameServerCore.Maps
         /// Collision Handler to be instanced by the map. Used for collisions between GameObjects or GameObjects and terrain.
         /// </summary>
         ICollisionHandler CollisionHandler { get; }
+        /// <summary>
+        /// Pathing Handler to be instanced by the map. Used for pathfinding for units.
+        /// </summary>
+        IPathingHandler PathingHandler { get; }
         /// <summary>
         /// Navigation Grid to be instanced by the map. Used for terrain data.
         /// </summary>

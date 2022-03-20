@@ -1,5 +1,5 @@
-﻿using GameServerCore.Maps;
-using GameServerCore.Domain;
+﻿using GameServerCore.Domain;
+using GameServerCore.Handlers;
 using GameServerCore.Packets.Interfaces;
 
 namespace GameServerCore

@@ -1,6 +1,5 @@
 ﻿using GameServerCore.Domain;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
-using GameServerCore.Maps;
 using LeagueSandbox.GameServer.Content;
 using GameServerCore.Scripting.CSharp;
 using LeagueSandbox.GameServer.Scripting.CSharp;
