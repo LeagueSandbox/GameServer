@@ -7,7 +7,6 @@ using GameServerCore.Enums;
 using LeagueSandbox.GameServer.Content;
 using GameServerCore.Scripting.CSharp;
 using LeagueSandbox.GameServer.Scripting.CSharp;
-using LeagueSandbox.GameServer.API;
 using LeagueSandbox.GameServer.GameObjects.Stats;
 using static LeagueSandbox.GameServer.API.ApiMapFunctionManager;
 

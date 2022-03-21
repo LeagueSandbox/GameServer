@@ -7,10 +7,7 @@ using GameServerCore.Enums;
 using LeagueSandbox.GameServer.Content;
 using GameServerCore.Scripting.CSharp;
 using LeagueSandbox.GameServer.Scripting.CSharp;
-using LeagueSandbox.GameServer.API;
-using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 using static LeagueSandbox.GameServer.API.ApiMapFunctionManager;
-using LeagueSandbox.GameServer.GameObjects.Stats;
 
 namespace MapScripts.Map11
 {

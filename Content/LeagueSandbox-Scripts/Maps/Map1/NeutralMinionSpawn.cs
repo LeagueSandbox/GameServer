@@ -1,10 +1,8 @@
 ﻿using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
-using System;
 using System.Collections.Generic;
 using System.Numerics;
-using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 using static LeagueSandbox.GameServer.API.ApiMapFunctionManager;
 
 namespace MapScripts.Map1

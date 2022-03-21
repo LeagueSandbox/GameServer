@@ -1,6 +1,5 @@
 ﻿using GameServerCore.Domain.GameObjects;
 using System.Collections.Generic;
-using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 
 namespace MapScripts.Map1
 {
