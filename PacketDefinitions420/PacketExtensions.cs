@@ -100,6 +100,17 @@ namespace PacketDefinitions420
         /// <returns>Default MovementDataStop, otherwise: If GameObject, None or Stop. If AttackableUnit, all of the above.</returns>
         public static MovementData CreateMovementData(IGameObject o, INavigationGrid grid, MovementDataType type, SpeedParams speeds = null, bool useTeleportID = false)
         {
+            /*
+            if(useTeleportID)
+            {
+                var st = Environment.StackTrace;
+                if(!st.Contains("ConstructEnterVisibilityClientPacket"))
+                {
+                    Console.WriteLine($"JUMP {st}");
+                }
+            }
+            */
+
             MovementData md = new MovementDataStop
             {
                 SyncID = (int)o.SyncId,
@@ -132,72 +143,47 @@ namespace PacketDefinitions420
                     return md;
                 }
 
+                //TODO: Modify MOVE and just throw out the visited points from the list of waypoints
+                List<Vector2> currentWaypoints = unit.Waypoints;
+                if (useTeleportID)
+                {
+                    currentWaypoints = new List<Vector2>();
+                    currentWaypoints.AddRange(unit.Waypoints);
+                    currentWaypoints.RemoveAt(0);
+                    currentWaypoints.Insert(0, unit.Position);
+
+                    var count = 2 + ((currentWaypoints.Count - 1) - unit.CurrentWaypoint.Key);
+                    if (count >= 2)
+                    {
+                        currentWaypoints.RemoveRange(1, currentWaypoints.Count - count);
+                    }
+                }
+                var waypoints = currentWaypoints.ConvertAll(v => Vector2ToWaypoint(TranslateToCenteredCoordinates(v, grid)));
+
                 switch (type)
                 {
                     case MovementDataType.WithSpeed:
                     {
-                        if (speeds == null)
+                        //TODO: assert?
+                        if (speeds != null)
                         {
-                            break;
-                        }
-
-                        var waypoints = unit.Waypoints.ConvertAll(v => Vector2ToWaypoint(TranslateToCenteredCoordinates(v, grid)));
-
-                        if (useTeleportID)
-                        {
-                            var currentWaypoints = new List<Vector2>();
-                            currentWaypoints.AddRange(unit.Waypoints);
-                            currentWaypoints.RemoveAt(0);
-                            currentWaypoints.Insert(0, unit.Position);
-
-                            var count = 2 + ((currentWaypoints.Count - 1) - unit.CurrentWaypoint.Key);
-                            if (count >= 2)
+                            md = new MovementDataWithSpeed
                             {
-                                currentWaypoints.RemoveRange(1, currentWaypoints.Count - count);
-                            }
-
-                            waypoints = currentWaypoints.ConvertAll(v => Vector2ToWaypoint(TranslateToCenteredCoordinates(v, grid)));
-                        }
-
-                        md = new MovementDataWithSpeed
-                        {
-                            SyncID = unit.SyncId,
-                            TeleportNetID = unit.NetId,
-                            // TODO: Implement teleportID (likely to be the index (starting at 1) of a waypoint we want to TP to).
-                            // Crucial in syncing client positions with server positions, especially when entering vision
-                            HasTeleportID = useTeleportID,
-                            TeleportID = unit.TeleportID,
-                            Waypoints = waypoints,
-                            SpeedParams = speeds
-                        };
-
-                        if (useTeleportID)
-                        {
-                            unit.TeleportID++;
+                                SyncID = unit.SyncId,
+                                TeleportNetID = unit.NetId,
+                                // TODO: Implement teleportID (likely to be the index (starting at 1) of a waypoint we want to TP to).
+                                // Crucial in syncing client positions with server positions, especially when entering vision
+                                HasTeleportID = useTeleportID,
+                                TeleportID = useTeleportID ? unit.TeleportID : (byte)0,
+                                Waypoints = waypoints,
+                                SpeedParams = speeds
+                            };
                         }
 
                         break;
                     }
                     case MovementDataType.Normal:
                     {
-                        var waypoints = unit.Waypoints.ConvertAll(v => Vector2ToWaypoint(TranslateToCenteredCoordinates(v, grid)));
-
-                        if (useTeleportID)
-                        {
-                            var currentWaypoints = new List<Vector2>();
-                            currentWaypoints.AddRange(unit.Waypoints);
-                            currentWaypoints.RemoveAt(0);
-                            currentWaypoints.Insert(0, unit.Position);
-
-                            var count = 2 + ((currentWaypoints.Count - 1) - unit.CurrentWaypoint.Key);
-                            if (count >= 2)
-                            {
-                                currentWaypoints.RemoveRange(1, currentWaypoints.Count - count);
-                            }
-
-                            waypoints = currentWaypoints.ConvertAll(v => Vector2ToWaypoint(TranslateToCenteredCoordinates(v, grid)));
-                        }
-
                         md = new MovementDataNormal
                         {
                             SyncID = unit.SyncId,
@@ -205,14 +191,9 @@ namespace PacketDefinitions420
                             // TODO: Implement teleportID (likely to be the index (starting at 1) of a waypoint we want to TP to).
                             // Crucial in syncing client positions with server positions, especially when entering vision
                             HasTeleportID = useTeleportID,
-                            TeleportID = unit.TeleportID,
+                            TeleportID = useTeleportID ? unit.TeleportID : (byte)0,
                             Waypoints = waypoints
                         };
-
-                        if (useTeleportID)
-                        {
-                            unit.TeleportID++;
-                        }
 
                         break;
                     }
