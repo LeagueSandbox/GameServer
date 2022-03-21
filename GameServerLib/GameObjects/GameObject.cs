@@ -322,6 +322,9 @@ namespace LeagueSandbox.GameServer.GameObjects
             var position = _game.Map.NavigationGrid.GetClosestTerrainExit(new Vector2(x, y), PathfindingRadius + 1.0f);
 
             SetPosition(position);
+
+            // TODO: Find a suitable function for this. Maybe modify NotifyWaypointGroup to accept simple objects. 
+            _game.PacketNotifier.NotifyEnterVisibilityClient(this);
         }
 
         /// <summary>

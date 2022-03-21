@@ -100,17 +100,6 @@ namespace PacketDefinitions420
         /// <returns>Default MovementDataStop, otherwise: If GameObject, None or Stop. If AttackableUnit, all of the above.</returns>
         public static MovementData CreateMovementData(IGameObject o, INavigationGrid grid, MovementDataType type, SpeedParams speeds = null, bool useTeleportID = false)
         {
-            /*
-            if(useTeleportID)
-            {
-                var st = Environment.StackTrace;
-                if(!st.Contains("ConstructEnterVisibilityClientPacket"))
-                {
-                    Console.WriteLine($"JUMP {st}");
-                }
-            }
-            */
-
             MovementData md = new MovementDataStop
             {
                 SyncID = (int)o.SyncId,
@@ -143,7 +132,6 @@ namespace PacketDefinitions420
                     return md;
                 }
 
-                //TODO: Modify MOVE and just throw out the visited points from the list of waypoints
                 List<Vector2> currentWaypoints = unit.Waypoints;
                 if (useTeleportID)
                 {
@@ -164,15 +152,12 @@ namespace PacketDefinitions420
                 {
                     case MovementDataType.WithSpeed:
                     {
-                        //TODO: assert?
                         if (speeds != null)
                         {
                             md = new MovementDataWithSpeed
                             {
                                 SyncID = unit.SyncId,
                                 TeleportNetID = unit.NetId,
-                                // TODO: Implement teleportID (likely to be the index (starting at 1) of a waypoint we want to TP to).
-                                // Crucial in syncing client positions with server positions, especially when entering vision
                                 HasTeleportID = useTeleportID,
                                 TeleportID = useTeleportID ? unit.TeleportID : (byte)0,
                                 Waypoints = waypoints,
@@ -188,8 +173,6 @@ namespace PacketDefinitions420
                         {
                             SyncID = unit.SyncId,
                             TeleportNetID = unit.NetId,
-                            // TODO: Implement teleportID (likely to be the index (starting at 1) of a waypoint we want to TP to).
-                            // Crucial in syncing client positions with server positions, especially when entering vision
                             HasTeleportID = useTeleportID,
                             TeleportID = useTeleportID ? unit.TeleportID : (byte)0,
                             Waypoints = waypoints
