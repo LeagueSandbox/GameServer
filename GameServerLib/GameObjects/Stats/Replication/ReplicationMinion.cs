@@ -17,7 +17,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
             // UpdateFloat(Stats.LifeTimeTicks, 1, 4); //mLifetimeTicks
             // UpdateFloat(Stats.ManaPoints.Total, 1, 5); //mMaxMP
             // UpdateFloat(Stats.CurrentMana, 1, 6); //mMP
-            UpdateUint((uint)Stats.ActionState, 1, 7); //ActionState
+            UpdateUint((uint)(Stats.ActionState | GameServerCore.Enums.ActionState.IS_GHOSTED), 1, 7); //ActionState
             UpdateBool(Stats.IsMagicImmune, 1, 8); //MagicImmune
             UpdateBool(Stats.IsInvulnerable, 1, 9); //IsInvulnerable
             UpdateBool(Stats.IsPhysicalImmune, 1, 10); //IsPhysicalImmune

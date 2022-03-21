@@ -26,7 +26,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
             {
                 UpdateFloat(Stats.ManaCost[45 + i], 0, 12 + i); //ManaCost_Ex{i}
             }
-            UpdateUint((uint)Stats.ActionState, 1, 0); //ActionState
+            UpdateUint((uint)(Stats.ActionState | GameServerCore.Enums.ActionState.IS_GHOSTED), 1, 0); //ActionState
             UpdateBool(Stats.IsMagicImmune, 1, 1); //MagicImmune
             UpdateBool(Stats.IsInvulnerable, 1, 2); //IsInvulnerable
             UpdateBool(Stats.IsPhysicalImmune, 1, 3); //IsPhysicalImmune
