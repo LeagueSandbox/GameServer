@@ -572,8 +572,7 @@ namespace PacketDefinitions420
             {
                 SenderNetID = inhibitor.NetId,
                 State = (byte)inhibitor.InhibitorState,
-                //Not sure if this is right
-                Duration = (ushort)inhibitor.GetRespawnTimer()
+                Duration = (ushort)inhibitor.RespawnTime
             };
             _packetHandlerManager.BroadcastPacket(inhibState.GetBytes(), Channel.CHL_S2C);
         }
@@ -1131,20 +1130,6 @@ namespace PacketDefinitions420
             {
                 _packetHandlerManager.SendPacket(userId, start.GetBytes(), Channel.CHL_S2C);
             }
-        }
-
-        /// <summary>
-        /// Sends a packet to all players which announces that the team which owns the specified inhibitor has an inhibitor which is respawning soon.
-        /// </summary>
-        /// <param name="inhibitor">Inhibitor that is respawning soon.</param>
-        public void NotifyInhibitorSpawningSoon(IInhibitor inhibitor)
-        {
-            //I'm not sure about any of these NetIds, the values i saw on packets seemed random, without any mention to the creation of that entity
-            var dampenerRespawnSoon = new OnDampenerRespawnSoon
-            {
-                OtherNetID = inhibitor.NetId
-            };
-            NotifyS2C_OnEventWorld(dampenerRespawnSoon, inhibitor.NetId);
         }
 
         /// <summary>
@@ -3275,7 +3260,7 @@ namespace PacketDefinitions420
         /// <summary>
         /// Calls for the appropriate spawn packet to be sent given the specified GameObject's type and calls for a vision packet to be sent for the specified GameObject.
         /// </summary>
-        /// <param name="o">GameObject that has spawned.</param>
+        /// <param name="obj">GameObject that has spawned.</param>
         /// <param name="team">The team the user belongs to.</param>
         /// <param name="userId">UserId to send the packet to.</param>
         /// <param name="gameTime">Time elapsed since the start of the game</param>

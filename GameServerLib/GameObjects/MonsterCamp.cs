@@ -46,7 +46,7 @@ namespace GameServerLib.GameObjects
             game.PacketNotifier.NotifyS2C_CreateMinionCamp(this);
         }
 
-        public void AddMonster(IMonster monster)
+        public IMonster AddMonster(IMonster monster)
         {
             var aiscript = monster.AIScript.ToString().Remove(0, 10);
             var campMonster = new Monster
@@ -56,11 +56,15 @@ namespace GameServerLib.GameObjects
                     monster.SpawnAnimation, monster.IsTargetable, monster.IgnoresCollision, aiscript,
                     monster.DamageBonus, monster.HealthBonus, monster.InitialLevel
                     );
-
+            while(campMonster.Stats.Level < monster.InitialLevel)
+            {
+                campMonster.Stats.LevelUp();
+            }
             Monsters.Add(campMonster);
             ApiEventManager.OnDeath.AddListener(campMonster, campMonster, OnMonsterDeath, true);
             _game.ObjectManager.AddObject(campMonster);
             NotifyCampActivation();
+            return campMonster;
         }
 
         public void OnMonsterDeath(IDeathData deathData)

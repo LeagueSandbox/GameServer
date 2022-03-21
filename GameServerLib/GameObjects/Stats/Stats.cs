@@ -39,6 +39,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
         public IStat CooldownReduction { get; }
         public IStat CriticalChance { get; }
         public IStat CriticalDamage { get; }
+        public IStat ExpGivenOnDeath { get; }
         public IStat GoldPerSecond { get; }
         public IStat GoldGivenOnDeath { get; }
         public IStat HealthPoints { get; }
@@ -92,6 +93,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
             CooldownReduction = new Stat();
             CriticalChance = new Stat();
             CriticalDamage = new Stat(2, 0, 0, 0, 0);
+            ExpGivenOnDeath = new Stat();
             GoldPerSecond = new Stat();
             GoldGivenOnDeath = new Stat();
             HealthPoints = new Stat();
@@ -118,6 +120,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
             AttackDamage.BaseValue = charData.BaseDamage;
             // AttackSpeedFlat = GlobalAttackSpeed / CharAttackDelay
             AttackSpeedFlat = (1.0f / charData.GlobalCharData.AttackDelay) / (1.0f + charData.AttackDelayOffsetPercent[0]);
+            ExpGivenOnDeath.BaseValue = charData.ExpGivenOnDeath;
             GoldGivenOnDeath.BaseValue = charData.GoldGivenOnDeath;
             GrowthAttackSpeed = charData.AttackSpeedPerLevel;
             HealthPerLevel = charData.HpPerLevel;

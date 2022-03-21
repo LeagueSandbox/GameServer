@@ -20,7 +20,9 @@ namespace MapScripts.Map12
             StartingGold = 1375.0f,
             GoldPerSecond = 5.0f,
             RecallSpellItemId = 2007,
-            InitialLevel = 3
+            InitialLevel = 3,
+            ExpRange = 1250.0f,
+            GoldRange = 0.0f
         };
 
         public virtual IGlobalData GlobalData { get; set; } = new GlobalData();
@@ -240,7 +242,7 @@ namespace MapScripts.Map12
                     MapObject opposedBarrack = LevelScriptObjects.SpawnBarracks[opposed_team][lane];
                     IInhibitor inhibitor = LevelScriptObjects.InhibitorList[opposed_team];
                     Vector2 position = new Vector2(barrack.CentralPoint.X, barrack.CentralPoint.Z);
-                    bool isInhibitorDead = inhibitor.InhibitorState == InhibitorState.DEAD && !inhibitor.RespawnAnnounced;
+                    bool isInhibitorDead = inhibitor.InhibitorState == InhibitorState.DEAD;
                     Tuple<int, List<MinionSpawnType>> spawnWave = MinionWaveToSpawn(GameTime(), _cannonMinionCount, isInhibitorDead);
                     cannonMinionCap = spawnWave.Item1;
 

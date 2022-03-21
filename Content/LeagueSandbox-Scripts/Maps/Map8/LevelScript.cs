@@ -22,7 +22,9 @@ namespace MapScripts.Map8
             RecallSpellItemId = 2005,
             GoldPerSecond = 5.6f,
             FirstGoldTime = 90.0f * 1000,
-            InitialLevel = 3
+            InitialLevel = 3,
+            ExpRange = 1250.0f,
+            GoldRange = 0.0f
         };
 
         public virtual IGlobalData GlobalData { get; set; } = new GlobalData();

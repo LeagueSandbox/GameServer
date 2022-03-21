@@ -180,19 +180,9 @@ namespace MapScripts.Map11
             {
                 monster.UpdateInitialLevel(averageLevel);
                 monster.Stats.Level = (byte)averageLevel;
-                monsterCamp.AddMonster(monster);
+                IMonster campMonster = monsterCamp.AddMonster(monster);
+                MonsterDataTable.UpdateStats(campMonster);
             }
-        }
-
-        public static int GetAverageLevel()
-        {
-            float average = 0;
-            var players = GetAllPlayers();
-            foreach (var player in players)
-            {
-                average += player.Stats.Level / players.Count;
-            }
-            return Math.Min((int)average, 18);
         }
 
         public static void ForceCampSpawn()

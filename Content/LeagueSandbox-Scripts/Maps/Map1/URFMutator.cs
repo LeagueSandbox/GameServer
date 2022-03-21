@@ -19,7 +19,7 @@ namespace MapScripts.Map1
         public override void Init(Dictionary<GameObjectTypes, List<MapObject>> mapObjects)
         {
             base.Init(mapObjects);
-            SetGameFeatures(GameServerCore.Enums.FeatureFlags.EnableManaCosts, false);
+            SetGameFeatures(FeatureFlags.EnableManaCosts, false);
         }
 
         public override void OnMatchStart()

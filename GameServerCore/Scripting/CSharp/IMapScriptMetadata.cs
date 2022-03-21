@@ -18,6 +18,10 @@ namespace GameServerCore.Scripting.CSharp
         /// </summary>
         float ChampionMinGoldValue { get; }
         /// <summary>
+        /// Max range where you can receive XP when a minion dies (Default: 1400.0f)
+        /// </summary>
+        float ExpRange { get; }
+        /// <summary>
         /// The ammount of gold a player should be rewarded for getting the first blood (Default: 100.0f)
         /// </summary>
         float FirstBloodExtraGold { get; }
@@ -37,6 +41,10 @@ namespace GameServerCore.Scripting.CSharp
         /// Ammount of gold per second for all players (Default: 1.9f)
         /// </summary>
         float GoldPerSecond { get; }
+        /// <summary>
+        /// Functionality still unknown, I thought it was used in ARAM, but it's map script sets it to 0 (Default: 1250.0f)
+        /// </summary>
+        float GoldRange { get; }
         /// <summary>
         /// Maximum level a player can reach (Default: 18)
         /// </summary>

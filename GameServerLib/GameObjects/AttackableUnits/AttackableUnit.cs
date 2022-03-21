@@ -26,11 +26,10 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         private float _statUpdateTimer;
         private object _buffsLock;
         private IDeathData _death;
-
-        // Utility Vars.
-        internal const float DETECT_RANGE = 475.0f;
-        internal const int EXP_RANGE = 1400;
         protected readonly ILog Logger;
+
+        //TODO: Find out where this variable came from and if it can be unhardcoded
+        internal const float DETECT_RANGE = 475.0f;
 
         /// <summary>
         /// Whether or not this Unit is dead. Refer to TakeDamage() and Die().
@@ -702,13 +701,13 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             ApiEventManager.OnDeath.Publish(data);
             if (data.Unit is IObjAiBase obj)
             {
-                var champs = _game.ObjectManager.GetChampionsInRange(Position, EXP_RANGE, true);
+                var champs = _game.ObjectManager.GetChampionsInRange(Position, _game.Map.MapScript.MapScriptMetadata.ExpRange, true);
                 //Cull allied champions
                 champs.RemoveAll(l => l.Team == Team);
 
                 if (champs.Count > 0)
                 {
-                    var expPerChamp = obj.CharData.ExpGivenOnDeath / champs.Count;
+                    var expPerChamp = obj.Stats.ExpGivenOnDeath.Total / champs.Count;
                     foreach (var c in champs)
                     {
                         c.AddExperience(expPerChamp);
