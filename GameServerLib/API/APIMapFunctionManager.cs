@@ -398,7 +398,7 @@ namespace LeagueSandbox.GameServer.API
         /// Returns the average level of all players in the game
         /// </summary>
         /// <returns></returns>
-        public static int GetAverageLevel()
+        public static int GetPlayerAverageLevel()
         {
             float average = 0;
             var players = _game.PlayerManager.GetPlayers(true);
