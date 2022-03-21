@@ -106,7 +106,7 @@ namespace MapScripts.Map10
 
         public static void SpawnCamp(IMonsterCamp monsterCamp)
         {
-            var averageLevel = GetAverageLevel();
+            var averageLevel = GetPlayerAverageLevel();
 
             foreach (var monster in MonsterCamps[monsterCamp])
             {
