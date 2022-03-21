@@ -701,22 +701,30 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             ApiEventManager.OnDeath.Publish(data);
             if (data.Unit is IObjAiBase obj)
             {
-                var champs = _game.ObjectManager.GetChampionsInRange(Position, _game.Map.MapScript.MapScriptMetadata.ExpRange, true);
-                //Cull allied champions
-                champs.RemoveAll(l => l.Team == Team);
-
-                if (champs.Count > 0)
+                if(!(obj is IMonster))
                 {
-                    var expPerChamp = obj.Stats.ExpGivenOnDeath.Total / champs.Count;
-                    foreach (var c in champs)
+                    var champs = _game.ObjectManager.GetChampionsInRangeFromTeam(Position, _game.Map.MapScript.MapScriptMetadata.ExpRange, Team, true);
+                    if (champs.Count > 0)
                     {
-                        c.AddExperience(expPerChamp);
+                        var expPerChamp = obj.Stats.ExpGivenOnDeath.Total / champs.Count;
+                        foreach (var c in champs)
+                        {
+                            c.AddExperience(expPerChamp);
+                        }
                     }
                 }
             }
 
             if (data.Killer != null && data.Killer is IChampion champion)
+            {
+                //Monsters give XP exclusively to the killer
+                if (data.Unit is IMonster)
+                {
+                    champion.AddExperience(data.Unit.Stats.ExpGivenOnDeath.Total);
+                }
+
                 champion.OnKill(data);
+            }
 
             _game.PacketNotifier.NotifyDeath(data);
         }
