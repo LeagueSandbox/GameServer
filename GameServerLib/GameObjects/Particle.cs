@@ -13,6 +13,7 @@ namespace LeagueSandbox.GameServer.GameObjects
     {
         // Function Vars
         private float _currentTime;
+        private bool _isInfinite = false;
 
         /// <summary>
         /// Creator of this particle.
@@ -126,6 +127,11 @@ namespace LeagueSandbox.GameServer.GameObjects
                 Name = $"{particleName}.troy";
             }
 
+            if(Lifetime <= 0)
+            {
+                _isInfinite = true;
+            }
+
             _game.ObjectManager.AddObject(this);
         }
 
@@ -188,6 +194,11 @@ namespace LeagueSandbox.GameServer.GameObjects
                 Name = $"{particleName}.troy";
             }
 
+            if (Lifetime <= 0)
+            {
+                _isInfinite = true;
+            }
+
             _game.ObjectManager.AddObject(this);
         }
 
@@ -242,6 +253,11 @@ namespace LeagueSandbox.GameServer.GameObjects
                 Name = $"{particleName}.troy";
             }
 
+            if (Lifetime <= 0)
+            {
+                _isInfinite = true;
+            }
+
             _game.ObjectManager.AddObject(this);
         }
 
@@ -252,7 +268,7 @@ namespace LeagueSandbox.GameServer.GameObjects
         public override void Update(float diff)
         {
             _currentTime += diff / 1000.0f;
-            if (_currentTime >= Lifetime)
+            if (_currentTime >= Lifetime && !_isInfinite)
             {
                 SetToRemove();
             }
