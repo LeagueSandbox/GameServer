@@ -681,7 +681,7 @@ namespace LeagueSandbox.GameServer
             foreach (var kv in _champions)
             {
                 var c = kv.Value;
-                if (Vector2.DistanceSquared(checkPos, c.Position) <= Math.Pow(range, 2))
+                if (Vector2.DistanceSquared(checkPos, c.Position) <= range * range)
                     if (onlyAlive && !c.IsDead || !onlyAlive)
                         champs.Add(c);
             }
@@ -702,7 +702,7 @@ namespace LeagueSandbox.GameServer
             foreach (var kv in _champions)
             {
                 var c = kv.Value;
-                if (Vector2.DistanceSquared(checkPos, c.Position) <= Math.Pow(range, 2))
+                if (Vector2.DistanceSquared(checkPos, c.Position) <= range * range)
                     if (c.Team == team && (onlyAlive && !c.IsDead || !onlyAlive))
                         champs.Add(c);
             }
