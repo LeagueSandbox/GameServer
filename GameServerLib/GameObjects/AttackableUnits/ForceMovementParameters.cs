@@ -1,10 +1,15 @@
 ﻿using GameServerCore.Domain.GameObjects;
+using GameServerCore.Enums;
 using System.Numerics;
 
 namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
 {
     public class ForceMovementParameters : IForceMovementParameters
     {
+        /// <summary>
+        /// Status flags which are disabled while dashing.
+        /// </summary>
+        public StatusFlags SetStatus { get; set; } = StatusFlags.CanAttack | StatusFlags.CanCast | StatusFlags.CanMove;
         /// <summary>
         /// Amount of time passed since the unit started dashing.
         /// </summary>

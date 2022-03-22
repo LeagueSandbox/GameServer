@@ -369,7 +369,10 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
             // TODO: Verify if we should also do this for manual SpellCasts
             if (!CastInfo.IsAutoAttack)
             {
-                CastInfo.Owner.SetCastSpell(this);
+                if (!SpellData.Flags.HasFlag(SpellDataFlags.InstantCast))
+                {
+                    CastInfo.Owner.SetCastSpell(this);
+                }
                 CastInfo.Owner.AutoAttackSpell.CastCancelCheck();
             }
             // Prevents overriding current auto attack target
@@ -1404,7 +1407,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
                     }
                     if (!CastInfo.IsAutoAttack && !CastInfo.UseAttackCastTime)
                     {
-                        if (CastInfo.Owner.GetCastSpell() != this)
+                        if (!SpellData.Flags.HasFlag(SpellDataFlags.InstantCast) && CastInfo.Owner.GetCastSpell() != this)
                         {
                             CastInfo.Owner.SetCastSpell(this);
                         }

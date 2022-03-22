@@ -8,6 +8,7 @@ namespace GameServerCore.Enums
     [Flags]
     public enum StatusFlags
     {
+        None,
         CallForHelpSuppressor = 1 << 0,
         CanAttack = 1 << 1,
         CanCast = 1 << 2,

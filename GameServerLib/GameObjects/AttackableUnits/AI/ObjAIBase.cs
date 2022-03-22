@@ -500,6 +500,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             // TODO: Take into account the rest of the arguments
             MovementParameters = new ForceMovementParameters
             {
+                SetStatus = StatusFlags.None,
                 ElapsedTime = 0,
                 PathSpeedOverride = dashSpeed,
                 ParabolicGravity = leapGravity,
@@ -511,9 +512,14 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 FollowTravelTime = travelTime
             };
 
+            if (consideredCC)
+            {
+                MovementParameters.SetStatus = StatusFlags.CanAttack | StatusFlags.CanCast | StatusFlags.CanMove;
+            }
+
             _game.PacketNotifier.NotifyWaypointGroupWithSpeed(this);
 
-            SetDashingState(true, consideredCC);
+            SetDashingState(true);
 
             if (animation != null && animation != "")
             {
@@ -585,6 +591,13 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                     else
                     {
                         SetWaypoints(new List<Vector2> { Position, TargetUnit.Position });
+                    }
+                }
+                else
+                {
+                    if (IsPathEnded())
+                    {
+                        SetDashingState(false);
                     }
                 }
 
