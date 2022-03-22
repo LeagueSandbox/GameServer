@@ -196,10 +196,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                 else
                 {
                     Waypoints[0] = Position;
-                    if(CurrentWaypoint.Key == 0)
-                    {
-                        CurrentWaypoint = new KeyValuePair<int, Vector2>(0, Position);
-                    }
                 }
             }
             else
@@ -292,7 +288,11 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                 // We should not teleport here because Pathfinding should handle it.
                 // TODO: Implement a PathfindingHandler, and remove currently implemented manual pathfinding.
                 Vector2 exit = Extensions.GetCircleEscapePoint(Position, PathfindingRadius + 1, collider.Position, collider.PathfindingRadius);
-                TeleportTo(exit.X, exit.Y, false);
+                if (!_game.Map.PathingHandler.IsWalkable(exit, PathfindingRadius))
+                {
+                    exit = _game.Map.NavigationGrid.GetClosestTerrainExit(exit, PathfindingRadius + 1.0f);
+                }
+                SetPosition(exit, false);
             }
         }
 
@@ -979,6 +979,11 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             if (!_game.Map.PathingHandler.IsWalkable(new Vector2(x, y), PathfindingRadius))
             {
                 position = _game.Map.NavigationGrid.GetClosestTerrainExit(new Vector2(x, y), PathfindingRadius + 1.0f);
+            }
+
+            if (!repath)
+            {
+                ResetWaypoints();
             }
 
             SetPosition(position, repath);
