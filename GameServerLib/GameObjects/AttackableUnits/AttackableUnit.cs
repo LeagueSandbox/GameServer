@@ -974,21 +974,29 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// <param name="repath">Whether or not to repath from the new position.</param>
         public void TeleportTo(float x, float y, bool repath = false)
         {
-            var position = new Vector2(x, y);
+            TeleportTo(new Vector2(x, y), repath);
+        }
 
-            if (!_game.Map.PathingHandler.IsWalkable(new Vector2(x, y), PathfindingRadius))
+        /// <summary>
+        /// Teleports this unit to the given position, and optionally repaths from the new position.
+        /// </summary>
+        public void TeleportTo(Vector2 position, bool repath = false)
+        {
+            position = _game.Map.NavigationGrid.GetClosestTerrainExit(position, PathfindingRadius + 1.0f);
+            
+            if(repath)
             {
-                position = _game.Map.NavigationGrid.GetClosestTerrainExit(new Vector2(x, y), PathfindingRadius + 1.0f);
+                SetPosition(position, true);
             }
-
-            if (!repath)
+            else
             {
+                Position = position;
                 ResetWaypoints();
             }
 
-            SetPosition(position, repath);
             TeleportID++;
-            _game.PacketNotifier.NotifyTeleport(this, position);
+            _game.PacketNotifier.NotifyWaypointGroup(this, useTeleportID: true);
+            _movementUpdated = false;
         }
 
         /// <summary>
@@ -1697,11 +1705,11 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                 SetAnimStates(animPairs);
             }
 
-            _game.PacketNotifier.NotifyWaypointGroupWithSpeed(this);
-
             // Movement is networked this way instead.
             // TODO: Verify if we want to use NotifyWaypointListWithSpeed instead as it does not require conversions.
             //_game.PacketNotifier.NotifyWaypointListWithSpeed(this, dashSpeed, leapGravity, keepFacingLastDirection, null, 0, 0, 20000.0f);
+            _game.PacketNotifier.NotifyWaypointGroupWithSpeed(this);
+            _movementUpdated = false;
         }
 
         /// <summary>
