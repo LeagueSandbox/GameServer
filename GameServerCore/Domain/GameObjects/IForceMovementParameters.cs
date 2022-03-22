@@ -1,9 +1,11 @@
-﻿using System.Numerics;
+﻿using GameServerCore.Enums;
+using System.Numerics;
 
 namespace GameServerCore.Domain.GameObjects
 {
     public interface IForceMovementParameters
     {
+        StatusFlags SetStatus { get; set; }
         /// <summary>
         /// Amount of time passed since the unit started dashing.
         /// </summary>

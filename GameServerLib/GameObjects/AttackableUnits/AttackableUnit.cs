@@ -217,14 +217,8 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
 
             if (MovementParameters != null && MovementParameters.FollowNetID > 0)
             {
-                if (MovementParameters.FollowTravelTime <= 0)
-                {
-                    SetDashingState(false);
-                    return;
-                }
-
                 MovementParameters.SetTimeElapsed(MovementParameters.ElapsedTime + diff);
-                if (MovementParameters.ElapsedTime >= MovementParameters.FollowTravelTime)
+                if (MovementParameters.ElapsedTime >= MovementParameters.FollowTravelTime && MovementParameters.FollowTravelTime >= 0)
                 {
                     SetDashingState(false);
                 }
@@ -1624,6 +1618,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             // TODO: Take into account the rest of the arguments
             MovementParameters = new ForceMovementParameters
             {
+                SetStatus = StatusFlags.None,
                 ElapsedTime = 0,
                 PathSpeedOverride = dashSpeed,
                 ParabolicGravity = leapGravity,
@@ -1635,7 +1630,12 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                 FollowTravelTime = 0
             };
 
-            SetDashingState(true, consideredCC);
+            if (consideredCC)
+            {
+                MovementParameters.SetStatus = StatusFlags.CanAttack | StatusFlags.CanCast | StatusFlags.CanMove;
+            }
+
+            SetDashingState(true);
 
             if (animation != null && animation != "")
             {
@@ -1656,8 +1656,11 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// <param name="state">State to set. True = dashing, false = not dashing.</param>
         /// <param name="setStatus">Whether or not to modify movement, casting, and attacking states.</param>
         /// TODO: Implement ForcedMovement methods and enumerators to handle different kinds of dashes.
-        public virtual void SetDashingState(bool state, bool setStatus = true, MoveStopReason reason = MoveStopReason.Finished)
+        public virtual void SetDashingState(bool state, MoveStopReason reason = MoveStopReason.Finished)
         {
+            // TODO: Implement this as a parameter.
+            SetStatus(MovementParameters.SetStatus, !state);
+
             if (MovementParameters != null && state == false)
             {
                 MovementParameters = null;
@@ -1675,15 +1678,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                 {
                     ApiEventManager.OnMoveFailure.Publish(this);
                 }
-            }
-
-            if (setStatus)
-            {
-                // TODO: Implement this as a parameter.
-                SetStatus(StatusFlags.CanAttack, !state);
-                // TODO: Verify if changing cast status is correct.
-                SetStatus(StatusFlags.CanCast, !state);
-                SetStatus(StatusFlags.CanMove, !state);
             }
         }
 

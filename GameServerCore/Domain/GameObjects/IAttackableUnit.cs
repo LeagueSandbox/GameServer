@@ -274,9 +274,8 @@ namespace GameServerCore.Domain.GameObjects
         /// Sets this unit's current dash state to the given state.
         /// </summary>
         /// <param name="state">State to set. True = dashing, false = not dashing.</param>
-        /// <param name="setStatus">Whether or not to modify movement, casting, and attacking states.</param>
         /// TODO: Implement ForcedMovement methods and enumerators to handle different kinds of dashes.
-        void SetDashingState(bool state, bool setStatus = true, MoveStopReason reason = MoveStopReason.Finished);
+        void SetDashingState(bool state, MoveStopReason reason = MoveStopReason.Finished);
         /// <summary>
         /// Sets this unit's animation states to the given set of states.
         /// Given state pairs are expected to follow a specific structure:
