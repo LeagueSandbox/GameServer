@@ -1,10 +1,8 @@
 ﻿using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
-using System;
 using System.Collections.Generic;
 using System.Numerics;
-using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 using static LeagueSandbox.GameServer.API.ApiMapFunctionManager;
 
 namespace MapScripts.Map11
@@ -174,25 +172,15 @@ namespace MapScripts.Map11
 
         public static void SpawnCamp(IMonsterCamp monsterCamp)
         {
-            var averageLevel = GetAverageLevel();
+            var averageLevel = GetPlayerAverageLevel();
 
             foreach (var monster in MonsterCamps[monsterCamp])
             {
                 monster.UpdateInitialLevel(averageLevel);
                 monster.Stats.Level = (byte)averageLevel;
-                monsterCamp.AddMonster(monster);
+                IMonster campMonster = monsterCamp.AddMonster(monster);
+                MonsterDataTable.UpdateStats(campMonster);
             }
-        }
-
-        public static int GetAverageLevel()
-        {
-            float average = 0;
-            var players = GetAllPlayers();
-            foreach (var player in players)
-            {
-                average += player.Stats.Level / players.Count;
-            }
-            return Math.Min((int)average, 18);
         }
 
         public static void ForceCampSpawn()

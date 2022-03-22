@@ -7,7 +7,6 @@ using GameServerCore.Enums;
 using LeagueSandbox.GameServer.Content;
 using GameServerCore.Scripting.CSharp;
 using LeagueSandbox.GameServer.Scripting.CSharp;
-using LeagueSandbox.GameServer.API;
 using LeagueSandbox.GameServer.GameObjects.Stats;
 using static LeagueSandbox.GameServer.API.ApiMapFunctionManager;
 
@@ -289,9 +288,8 @@ namespace MapScripts.Map1
                 LaneID lane = barrack.Value.GetSpawnBarrackLaneID();
                 IInhibitor inhibitor = LevelScriptObjects.InhibitorList[opposed_team][lane];
                 Vector2 position = new Vector2(barrack.Value.CentralPoint.X, barrack.Value.CentralPoint.Z);
-                bool isInhibitorDead = inhibitor.InhibitorState == InhibitorState.DEAD && !inhibitor.RespawnAnnounced;
-                bool areAllInhibitorsDead = AllInhibitorsDestroyedFromTeam(LevelScriptObjects.InhibitorList, opposed_team) && !inhibitor.RespawnAnnounced;
-                Tuple<int, List<MinionSpawnType>> spawnWave = MinionWaveToSpawn(GameTime(), _cannonMinionCount, isInhibitorDead, areAllInhibitorsDead);
+                bool isInhibitorDead = inhibitor.InhibitorState == InhibitorState.DEAD;
+                Tuple<int, List<MinionSpawnType>> spawnWave = MinionWaveToSpawn(GameTime(), _cannonMinionCount, isInhibitorDead, LevelScriptObjects.AllInhibitorsAreDead[opposed_team]);
                 cannonMinionCap = spawnWave.Item1;
 
                 List<Vector2> waypoint = new List<Vector2>(MinionPaths[lane]);

@@ -11,12 +11,9 @@ using LeagueSandbox.GameServer.Handlers;
 using LeagueSandbox.GameServer.Logging;
 using log4net;
 using PacketDefinitions420;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Numerics;
 using System.Text;
-using static MapData;
 
 namespace LeagueSandbox.GameServer.API
 {
@@ -122,59 +119,6 @@ namespace LeagueSandbox.GameServer.API
             }
 
             return turretItemList[type];
-        }
-
-        /// <summary>
-        /// Changes the lane of a tower in the _tower list, in order to fix missplaced towers due to riot's seemingly random naming scheme
-        /// </summary>
-        /// <param name="towerName"></param>
-        /// <param name="team"></param>
-        /// <param name="currentLaneId"></param>
-        /// <param name="desiredLaneID"></param>
-        public static void ChangeTowerOnMapList(Dictionary<TeamId, Dictionary<LaneID, List<ILaneTurret>>> turretList, string towerName, TeamId team, LaneID currentLaneId, LaneID desiredLaneID)
-        {
-            var tower = turretList[team][currentLaneId].Find(x => x.Name == towerName);
-            tower.SetLaneID(desiredLaneID);
-            turretList[team][currentLaneId].Remove(tower);
-            turretList[team][desiredLaneID].Add(tower);
-        }
-
-        public static IInhibitor GetInhibitorById(Dictionary<TeamId, Dictionary<LaneID, IInhibitor>> inhibitorList, uint id)
-        {
-            foreach (TeamId team in inhibitorList.Keys)
-            {
-                foreach (var inhibitor in inhibitorList[team].Values)
-                {
-                    if (inhibitor.NetId == id)
-                    {
-                        if (inhibitor.NetId == id)
-                        {
-                            return inhibitor;
-                        }
-                    }
-                }
-            }
-            return null;
-        }
-
-        /// <summary>
-        /// Checks is all inhibitors of a specific team are dead
-        /// </summary>
-        /// <param name="team"></param>
-        /// <returns></returns>
-        public static bool AllInhibitorsDestroyedFromTeam(Dictionary<TeamId, Dictionary<LaneID, IInhibitor>> inhibitorList, TeamId team)
-        {
-            foreach (var inhibitor in inhibitorList[team].Values)
-            {
-                if (inhibitor.Team == team && inhibitor.InhibitorState == InhibitorState.ALIVE)
-                {
-                    if (inhibitor.Team == team && inhibitor.InhibitorState == InhibitorState.ALIVE)
-                    {
-                        return false;
-                    }
-                }
-            }
-            return true;
         }
 
         /// <summary>
@@ -448,6 +392,21 @@ namespace LeagueSandbox.GameServer.API
         public static void AddObject(IGameObject obj)
         {
             _game.ObjectManager.AddObject(obj);
+        }
+
+        /// <summary>
+        /// Returns the average level of all players in the game
+        /// </summary>
+        /// <returns></returns>
+        public static int GetPlayerAverageLevel()
+        {
+            float average = 0;
+            var players = _game.PlayerManager.GetPlayers(true);
+            foreach (var player in players)
+            {
+                average += player.Item2.Champion.Stats.Level / players.Count;
+            }
+            return (int)average;
         }
     }
 }

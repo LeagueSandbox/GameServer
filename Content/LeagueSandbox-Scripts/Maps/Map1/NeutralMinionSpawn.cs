@@ -155,9 +155,14 @@ namespace MapScripts.Map1
 
         public static void SpawnCamp(IMonsterCamp monsterCamp)
         {
+            var averageLevel = GetPlayerAverageLevel();
+
             foreach (var monster in MonsterCamps[monsterCamp])
             {
-                monsterCamp.AddMonster(monster);
+                monster.UpdateInitialLevel(averageLevel);
+                monster.Stats.Level = (byte)averageLevel;
+                IMonster campMonster = monsterCamp.AddMonster(monster);
+                MonsterDataTable.UpdateStats(campMonster);
             }
         }
 

@@ -166,6 +166,15 @@ namespace GameServerCore
         List<IChampion> GetChampionsInRange(Vector2 checkPos, float range, bool onlyAlive = false);
 
         /// <summary>
+        /// Gets a list of all GameObjects of type Champion from a specific team that are within a certain distance from a specified position.
+        /// </summary>
+        /// <param name="checkPos">Vector2 position to check.</param>
+        /// <param name="range">Distance to check.</param>
+        /// <param name="onlyAlive">Whether dead Champions should be excluded or not.</param>
+        /// <returns>List of all Champions within the specified range of the position and of the specified alive status.</returns>
+        List<IChampion> GetChampionsInRangeFromTeam(Vector2 checkPos, float range, TeamId team, bool onlyAlive = false);
+
+        /// <summary>
         /// Removes a GameObject of type Champion from the list of Champions in ObjectManager.
         /// </summary>
         /// <param name="champion">Champion to remove.</param>

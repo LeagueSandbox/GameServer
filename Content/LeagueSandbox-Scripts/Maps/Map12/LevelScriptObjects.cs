@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using GameServerCore.Domain;
 using System.Numerics;
 using System.Linq;
-using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 
 namespace MapScripts.Map12
 {
@@ -18,6 +17,7 @@ namespace MapScripts.Map12
         public static Dictionary<TeamId, IFountain> FountainList = new Dictionary<TeamId, IFountain>();
         public static Dictionary<TeamId, Dictionary<LaneID, MapObject>> SpawnBarracks = new Dictionary<TeamId, Dictionary<LaneID, MapObject>> { { TeamId.TEAM_BLUE, new Dictionary<LaneID, MapObject>() }, { TeamId.TEAM_PURPLE, new Dictionary<LaneID, MapObject>() } };
         public static Dictionary<LaneID, List<Vector2>> MinionPaths = new Dictionary<LaneID, List<Vector2>> { { LaneID.MIDDLE, new List<Vector2>() } };
+        static Dictionary<TeamId, Dictionary<IInhibitor, float>> DeadInhibitors = new Dictionary<TeamId, Dictionary<IInhibitor, float>> { { TeamId.TEAM_BLUE, new Dictionary<IInhibitor, float>() }, { TeamId.TEAM_PURPLE, new Dictionary<IInhibitor, float>() } };
         static List<INexus> NexusList = new List<INexus>();
         static string LaneTurretAI = "TurretAI";
 
@@ -100,18 +100,15 @@ namespace MapScripts.Map12
             }
         }
 
-        static Dictionary<TeamId, List<IChampion>> Players = new Dictionary<TeamId, List<IChampion>>();
         public static void OnMatchStart()
         {
             LoadShops();
 
-            foreach (var nexus in NexusList)
+            Dictionary<TeamId, List<IChampion>> Players = new Dictionary<TeamId, List<IChampion>>
             {
-                ApiEventManager.OnDeath.AddListener(nexus, nexus, OnNexusDeath, true);
-            }
-
-            Players.Add(TeamId.TEAM_BLUE, GetAllPlayersFromTeam(TeamId.TEAM_BLUE));
-            Players.Add(TeamId.TEAM_PURPLE, GetAllPlayersFromTeam(TeamId.TEAM_PURPLE));
+                {TeamId.TEAM_BLUE, ApiFunctionManager.GetAllPlayersFromTeam(TeamId.TEAM_BLUE) },
+                {TeamId.TEAM_PURPLE, ApiFunctionManager.GetAllPlayersFromTeam(TeamId.TEAM_PURPLE) }
+            };
 
             IStatsModifier TurretHealthModifier = new StatsModifier();
             foreach (var team in TurretList.Keys)
@@ -154,12 +151,37 @@ namespace MapScripts.Map12
             {
                 UpdateTowerStats();
             }
+
+            foreach (var team in DeadInhibitors.Keys)
+            {
+                foreach (var inhibitor in DeadInhibitors[team].Keys.ToList())
+                {
+                    DeadInhibitors[team][inhibitor] -= diff;
+                    if (DeadInhibitors[team][inhibitor] <= 0)
+                    {
+                        inhibitor.Stats.CurrentHealth = inhibitor.Stats.HealthPoints.Total;
+                        inhibitor.NotifyState();
+                        DeadInhibitors[inhibitor.Team].Remove(inhibitor);
+                    }
+                    else if (DeadInhibitors[team][inhibitor] <= 15.0f * 1000)
+                    {
+                        inhibitor.SetState(InhibitorState.ALIVE);
+                    }
+                }
+            }
         }
 
         static void OnNexusDeath(IDeathData deathaData)
         {
             var nexus = deathaData.Unit;
             EndGame(nexus.Team, new Vector3(nexus.Position.X, nexus.GetHeight(), nexus.Position.Y), deathData: deathaData);
+        }
+
+        public static void OnInhibitorDeath(IDeathData deathData)
+        {
+            var inhibitor = deathData.Unit as IInhibitor;
+
+            DeadInhibitors[inhibitor.Team].Add(inhibitor, inhibitor.RespawnTime * 1000);
         }
 
         static float timeCheck = 0.0f * 1000;
@@ -222,6 +244,7 @@ namespace MapScripts.Map12
                 var position = new Vector2(nexusObj.CentralPoint.X, nexusObj.CentralPoint.Z);
 
                 var nexus = CreateNexus(nexusObj.Name, NexusModels[teamId], position, teamId, 353, 1700);
+                ApiEventManager.OnDeath.AddListener(nexus, nexus, OnNexusDeath, true);
                 NexusList.Add(nexus);
                 AddObject(nexus);
             }
@@ -233,6 +256,10 @@ namespace MapScripts.Map12
                 var position = new Vector2(inhibitorObj.CentralPoint.X, inhibitorObj.CentralPoint.Z);
 
                 var inhibitor = CreateInhibitor(inhibitorObj.Name, InhibitorModels[teamId], position, teamId, lane, 214, 0);
+                ApiEventManager.OnDeath.AddListener(inhibitor, inhibitor, OnInhibitorDeath, false);
+                inhibitor.RespawnTime = 300.0f;
+                inhibitor.Stats.CurrentHealth = 4000.0f;
+                inhibitor.Stats.HealthPoints.BaseValue = 4000.0f;
                 InhibitorList.Add(teamId, inhibitor);
                 AddObject(inhibitor);
             }
@@ -252,7 +279,6 @@ namespace MapScripts.Map12
                 }
 
                 var turretType = GetTurretType(turretObj.ParseIndex());
-                LogInfo(turretObj.Name + ": " + turretType.ToString());
 
                 var turret = CreateLaneTurret(turretObj.Name + "_A", TowerModels[teamId][turretType], position, teamId, turretType, LaneID.MIDDLE, LaneTurretAI, turretObj);
                 TurretList[teamId][LaneID.MIDDLE].Add(turret);

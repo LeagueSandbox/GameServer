@@ -688,5 +688,26 @@ namespace LeagueSandbox.GameServer
 
             return champs;
         }
+
+        /// <summary>
+        /// Gets a list of all GameObjects of type Champion that are within a certain distance from a specified position.
+        /// </summary>
+        /// <param name="checkPos">Vector2 position to check.</param>
+        /// <param name="range">Distance to check.</param>
+        /// <param name="onlyAlive">Whether dead Champions should be excluded or not.</param>
+        /// <returns>List of all Champions within the specified range of the position and of the specified alive status.</returns>
+        public List<IChampion> GetChampionsInRangeFromTeam(Vector2 checkPos, float range, TeamId team, bool onlyAlive = false)
+        {
+            var champs = new List<IChampion>();
+            foreach (var kv in _champions)
+            {
+                var c = kv.Value;
+                if (Vector2.DistanceSquared(checkPos, c.Position) <= range * range)
+                    if (c.Team == team && (onlyAlive && !c.IsDead || !onlyAlive))
+                        champs.Add(c);
+            }
+
+            return champs;
+        }
     }
 }

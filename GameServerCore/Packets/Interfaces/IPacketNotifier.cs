@@ -243,11 +243,6 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="userId">UserId to send the packet to. If not specified or zero, the packet is broadcasted to all players.</param>
         void NotifyGameStart(int userId = 0);
         /// <summary>
-        /// Sends a packet to all players which announces that the team which owns the specified inhibitor has an inhibitor which is respawning soon.
-        /// </summary>
-        /// <param name="inhibitor">Inhibitor that is respawning soon.</param>
-        void NotifyInhibitorSpawningSoon(IInhibitor inhibitor);
-        /// <summary>
         /// Sends a packet to all players detailing the state (DEAD/ALIVE) of the specified inhibitor.
         /// </summary>
         /// <param name="inhibitor">Inhibitor to check.</param>
