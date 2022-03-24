@@ -935,6 +935,11 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
                 CreateSpellSector();
             }
 
+            if (CastInfo.Owner.GetCastSpell() == this)
+            {
+                CastInfo.Owner.SetCastSpell(null);
+            }
+
             if (CastInfo.Owner.SpellToCast != null && CastInfo.Owner.SpellToCast == this)
             {
                 CastInfo.Owner.SetSpellToCast(null, Vector2.Zero);
