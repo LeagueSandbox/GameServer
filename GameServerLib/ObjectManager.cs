@@ -243,17 +243,7 @@ namespace LeagueSandbox.GameServer
 
         void LateUpdate(IGameObject obj, float diff)
         {
-            // Destroy any missiles which are targeting an untargetable unit.
-            // TODO: Verify if this should apply to SpellSector.
-            if (obj is ISpellMissile m)
-            {
-                if (m.TargetUnit != null && !m.TargetUnit.Status.HasFlag(StatusFlags.Targetable))
-                {
-                    m.SetToRemove();
-                }
-            }
-
-            else if (obj is IAttackableUnit u)
+            if (obj is IAttackableUnit u)
             {
                 if (u is IObjAiBase ai)
                 {
