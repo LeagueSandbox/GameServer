@@ -759,7 +759,7 @@ namespace LeagueSandbox.GameServer.Content.Navigation
         /// <param name="origin">Vector position to start the ray cast from.</param>
         /// <param name="destination">Vector2 position to end the ray cast at.</param>
         /// <param name="checkWalkable">Whether or not the ray stops when hitting a position which blocks pathing.</param>
-        /// <param name="checkVisible">Whether or not the ray stops when hitting a position which blocks vision. *NOTE*: Does not apply if checkWalkable is also true.</param>
+        /// <param name="checkVisible">Whether or not the ray stops when hitting a position which blocks vision.</param>
         /// <returns>True = Reached destination with destination. False = Failed, with stopping position.</returns>
         public KeyValuePair<bool, Vector2> CastRay(Vector2 origin, Vector2 destination, bool checkWalkable = false, bool checkVisible = false)
         {
@@ -796,7 +796,8 @@ namespace LeagueSandbox.GameServer.Content.Navigation
                         break;
                     }
                 }
-                else if(checkVisible)
+                
+                if (checkVisible)
                 {
                     var cell = GetCell((short)origin.X, (short)origin.Y);
 
