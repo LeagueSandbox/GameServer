@@ -369,6 +369,11 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
             // TODO: Verify if we should also do this for manual SpellCasts
             if (!CastInfo.IsAutoAttack)
             {
+                if (!SpellData.DoesntBreakChannels)
+                {
+                    CastInfo.Owner.StopChanneling(ChannelingStopCondition.Cancel, ChannelingStopSource.Casting);
+                }
+
                 if (!SpellData.Flags.HasFlag(SpellDataFlags.InstantCast))
                 {
                     CastInfo.Owner.SetCastSpell(this);
@@ -766,6 +771,30 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
 
         public void ChannelCancelCheck()
         {
+            if (CastInfo.Owner.IsDead)
+            {
+                CastInfo.Owner.StopChanneling(ChannelingStopCondition.Cancel, ChannelingStopSource.Die);
+                return;
+            }
+
+            // TODO: Verify if this should only be checked at the start of channeling.
+            if (CastInfo.Owner.MovementParameters != null)
+            {
+                CastInfo.Owner.StopChanneling(ChannelingStopCondition.Cancel, ChannelingStopSource.Move);
+            }
+
+            // TODO: Verify if Taunted should be handled by the Taunt buff script instead.
+            var status = CastInfo.Owner.Status;
+            if (status.HasFlag(StatusFlags.Charmed)
+            || status.HasFlag(StatusFlags.Feared)
+            || status.HasFlag(StatusFlags.Silenced)
+            || status.HasFlag(StatusFlags.Stunned)
+            || status.HasFlag(StatusFlags.Suppressed)
+            || status.HasFlag(StatusFlags.Taunted))
+            {
+                CastInfo.Owner.StopChanneling(ChannelingStopCondition.Cancel, ChannelingStopSource.StunnedOrSilencedOrTaunted);
+            }
+
             // Uncancellable
             if (SpellData.CantCancelWhileChanneling)
             {
@@ -777,35 +806,17 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
                 var spellTarget = CastInfo.Targets[0].Unit;
 
                 if (spellTarget != null
-                && !spellTarget.IsVisibleByTeam(CastInfo.Owner.Team))
+                && (!spellTarget.IsVisibleByTeam(CastInfo.Owner.Team)
+                || spellTarget.IsDead))
                 {
                     CastInfo.Owner.StopChanneling(ChannelingStopCondition.Cancel, ChannelingStopSource.LostTarget);
                     return;
                 }
             }
 
-            var status = CastInfo.Owner.Status;
-
-            if (status == StatusFlags.Charmed
-            || status == StatusFlags.Feared
-            || status == StatusFlags.Silenced
-            || status == StatusFlags.Stunned
-            || status == StatusFlags.Suppressed
-            || status == StatusFlags.Taunted)
-            {
-                CastInfo.Owner.StopChanneling(ChannelingStopCondition.Cancel, ChannelingStopSource.StunnedOrSilencedOrTaunted);
-            }
-
-            if (CastInfo.Owner.IsDead)
-            {
-                CastInfo.Owner.StopChanneling(ChannelingStopCondition.Cancel, ChannelingStopSource.Die);
-                return;
-            }
-
             // TODO: ChannelingStopSource.HeroReincarnate
 
             var order = CastInfo.Owner.MoveOrder;
-
             if (!SpellData.CanMoveWhileChanneling
             && (order == OrderType.MoveTo
                 || order == OrderType.AttackMove
@@ -829,8 +840,9 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
                 return;
             }
 
-            if (CastInfo.Owner.GetCastSpell() != null
-            && !CastInfo.Owner.GetCastSpell().SpellData.DoesntBreakChannels
+            var castSpell = CastInfo.Owner.GetCastSpell();
+            if (castSpell != null
+            && !castSpell.SpellData.DoesntBreakChannels
             && (order == OrderType.CastSpell
             || order == OrderType.TempCastSpell))
             {
@@ -873,6 +885,10 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
             if (CastInfo.Owner.ChannelSpell == this)
             {
                 CastInfo.Owner.SetChannelSpell(null);
+            }
+            if (CastInfo.Owner.SpellToCast == this)
+            {
+                CastInfo.Owner.SetSpellToCast(null, Vector2.Zero);
             }
 
             Script.OnDeactivate(CastInfo.Owner, this);
@@ -933,6 +949,11 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
             if (Script.ScriptMetadata.SectorParameters != null)
             {
                 CreateSpellSector();
+            }
+
+            if (CastInfo.Owner.GetCastSpell() == this)
+            {
+                CastInfo.Owner.SetCastSpell(null);
             }
 
             if (CastInfo.Owner.SpellToCast != null && CastInfo.Owner.SpellToCast == this)
@@ -1159,7 +1180,10 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
         {
             ApiEventManager.OnSpellPostChannel.Publish(this);
 
-            CastInfo.Owner.SetChannelSpell(null);
+            if (CastInfo.Owner.ChannelSpell == this)
+            {
+                CastInfo.Owner.SetChannelSpell(null);
+            }
 
             CastInfo.Owner.UpdateMoveOrder(OrderType.Hold, true);
 
@@ -1393,10 +1417,6 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
             {
                 case SpellState.STATE_READY:
                 {
-                    if (CastInfo.Owner.GetCastSpell() == this)
-                    {
-                        CastInfo.Owner.SetCastSpell(null);
-                    }
                     break;
                 }
                 case SpellState.STATE_CASTING:
@@ -1407,10 +1427,6 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
                     }
                     if (!CastInfo.IsAutoAttack && !CastInfo.UseAttackCastTime)
                     {
-                        if (!SpellData.Flags.HasFlag(SpellDataFlags.InstantCast) && CastInfo.Owner.GetCastSpell() != this)
-                        {
-                            CastInfo.Owner.SetCastSpell(this);
-                        }
                         CurrentCastTime -= diff / 1000.0f;
                         if (CurrentCastTime <= 0)
                         {

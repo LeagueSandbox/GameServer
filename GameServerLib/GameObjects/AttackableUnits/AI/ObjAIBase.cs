@@ -291,19 +291,17 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
         public override bool CanMove()
         {
-            // TODO: Verify if Dashes should bypass this.
-            return !IsDead
-                // TODO: Verify if priority is still maintained with the MovementParameters checks.
-                && ((Status.HasFlag(StatusFlags.CanMove) && Status.HasFlag(StatusFlags.CanMoveEver)) || MovementParameters != null)
-                && ((MoveOrder != OrderType.CastSpell && _castingSpell == null) || MovementParameters != null)
+            return (!IsDead
+                && MovementParameters != null)
+                || (Status.HasFlag(StatusFlags.CanMove) && Status.HasFlag(StatusFlags.CanMoveEver)
+                && (MoveOrder != OrderType.CastSpell && _castingSpell == null)
                 && (ChannelSpell == null || (ChannelSpell != null && ChannelSpell.SpellData.CanMoveWhileChanneling))
                 && (!IsAttacking || !AutoAttackSpell.SpellData.CantCancelWhileWindingUp)
-                && (!(Status.HasFlag(StatusFlags.Netted)
+                && !(Status.HasFlag(StatusFlags.Netted)
                 || Status.HasFlag(StatusFlags.Rooted)
                 || Status.HasFlag(StatusFlags.Sleep)
                 || Status.HasFlag(StatusFlags.Stunned)
-                || Status.HasFlag(StatusFlags.Suppressed))
-                || MovementParameters != null);
+                || Status.HasFlag(StatusFlags.Suppressed)));
         }
 
         public override bool CanChangeWaypoints()
