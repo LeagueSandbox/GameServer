@@ -236,7 +236,7 @@ namespace LeagueSandbox.GameServer.GameObjects
                 // Escape functionality should be moved to GameObject.OnCollision.
                 // only time we would collide with terrain is if we are inside of it, so we should teleport out of it.
                 Vector2 exit = _game.Map.NavigationGrid.GetClosestTerrainExit(Position, PathfindingRadius + 1.0f);
-                TeleportTo(exit.X, exit.Y);
+                SetPosition(exit);
             }
         }
 

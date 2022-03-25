@@ -132,20 +132,15 @@ namespace PacketDefinitions420
                     return md;
                 }
 
-                List<Vector2> currentWaypoints = unit.Waypoints;
-                if (useTeleportID)
-                {
-                    currentWaypoints = new List<Vector2>();
-                    currentWaypoints.AddRange(unit.Waypoints);
-                    currentWaypoints.RemoveAt(0);
-                    currentWaypoints.Insert(0, unit.Position);
+                var currentWaypoints = new List<Vector2>(unit.Waypoints);
+                currentWaypoints[0] = unit.Position;
 
-                    var count = 2 + ((currentWaypoints.Count - 1) - unit.CurrentWaypoint.Key);
-                    if (count >= 2)
-                    {
-                        currentWaypoints.RemoveRange(1, currentWaypoints.Count - count);
-                    }
+                int count = 2 + ((currentWaypoints.Count - 1) - unit.CurrentWaypoint.Key);
+                if (count >= 2)
+                {
+                    currentWaypoints.RemoveRange(1, currentWaypoints.Count - count);
                 }
+                
                 var waypoints = currentWaypoints.ConvertAll(v => Vector2ToWaypoint(TranslateToCenteredCoordinates(v, grid)));
 
                 switch (type)
