@@ -176,21 +176,29 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         public void SetPosition(Vector2 vec, bool repath = true)
         {
             Position = vec;
+            _movementUpdated = true;
 
-            // Reevaluate our current path to account for the starting position being changed.
-            if (repath && !IsPathEnded())
+            if(!IsPathEnded())
             {
-                List<Vector2> safePath = _game.Map.PathingHandler.GetPath(Position, _game.Map.NavigationGrid.GetClosestTerrainExit(Waypoints.Last(), PathfindingRadius));
-
-                // TODO: When using this safePath, sometimes we collide with the terrain again, so we use an unsafe path the next collision, however,
-                // sometimes we collide again before we can finish the unsafe path, so we end up looping collisions between safe and unsafe paths, never actually escaping (ex: sharp corners).
-                // This is a more fundamental issue where the pathfinding should be taking into account collision radius, rather than simply pathing from center of an object.
-                if (safePath != null)
+                // Reevaluate our current path to account for the starting position being changed.
+                if(repath)
                 {
-                    SetWaypoints(safePath);
+                    List<Vector2> safePath = _game.Map.PathingHandler.GetPath(Position, _game.Map.NavigationGrid.GetClosestTerrainExit(Waypoints.Last(), PathfindingRadius));
+
+                    // TODO: When using this safePath, sometimes we collide with the terrain again, so we use an unsafe path the next collision, however,
+                    // sometimes we collide again before we can finish the unsafe path, so we end up looping collisions between safe and unsafe paths, never actually escaping (ex: sharp corners).
+                    // This is a more fundamental issue where the pathfinding should be taking into account collision radius, rather than simply pathing from center of an object.
+                    if (safePath != null)
+                    {
+                        SetWaypoints(safePath);
+                    }
+                }
+                else
+                {
+                    Waypoints[0] = Position;
                 }
             }
-            else if (!repath && !IsPathEnded())
+            else
             {
                 ResetWaypoints();
             }
@@ -264,7 +272,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
 
                 // only time we would collide with terrain is if we are inside of it, so we should teleport out of it.
                 Vector2 exit = _game.Map.NavigationGrid.GetClosestTerrainExit(Position, PathfindingRadius + 1.0f);
-                TeleportTo(exit.X, exit.Y, true);
+                SetPosition(exit, false);
             }
             else
             {
@@ -280,7 +288,11 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                 // We should not teleport here because Pathfinding should handle it.
                 // TODO: Implement a PathfindingHandler, and remove currently implemented manual pathfinding.
                 Vector2 exit = Extensions.GetCircleEscapePoint(Position, PathfindingRadius + 1, collider.Position, collider.PathfindingRadius);
-                TeleportTo(exit.X, exit.Y, true);
+                if (!_game.Map.PathingHandler.IsWalkable(exit, PathfindingRadius))
+                {
+                    exit = _game.Map.NavigationGrid.GetClosestTerrainExit(exit, PathfindingRadius + 1.0f);
+                }
+                SetPosition(exit, false);
             }
         }
 
@@ -962,16 +974,29 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// <param name="repath">Whether or not to repath from the new position.</param>
         public void TeleportTo(float x, float y, bool repath = false)
         {
-            var position = new Vector2(x, y);
+            TeleportTo(new Vector2(x, y), repath);
+        }
 
-            if (!_game.Map.PathingHandler.IsWalkable(new Vector2(x, y), PathfindingRadius))
+        /// <summary>
+        /// Teleports this unit to the given position, and optionally repaths from the new position.
+        /// </summary>
+        public void TeleportTo(Vector2 position, bool repath = false)
+        {
+            position = _game.Map.NavigationGrid.GetClosestTerrainExit(position, PathfindingRadius + 1.0f);
+            
+            if(repath)
             {
-                position = _game.Map.NavigationGrid.GetClosestTerrainExit(new Vector2(x, y), PathfindingRadius + 1.0f);
+                SetPosition(position, true);
+            }
+            else
+            {
+                Position = position;
+                ResetWaypoints();
             }
 
-            SetPosition(position, repath);
             TeleportID++;
-            _game.PacketNotifier.NotifyTeleport(this, position);
+            _game.PacketNotifier.NotifyWaypointGroup(this, useTeleportID: true);
+            _movementUpdated = false;
         }
 
         /// <summary>
@@ -1680,11 +1705,11 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                 SetAnimStates(animPairs);
             }
 
-            _game.PacketNotifier.NotifyWaypointGroupWithSpeed(this);
-
             // Movement is networked this way instead.
             // TODO: Verify if we want to use NotifyWaypointListWithSpeed instead as it does not require conversions.
             //_game.PacketNotifier.NotifyWaypointListWithSpeed(this, dashSpeed, leapGravity, keepFacingLastDirection, null, 0, 0, 20000.0f);
+            _game.PacketNotifier.NotifyWaypointGroupWithSpeed(this);
+            _movementUpdated = false;
         }
 
         /// <summary>

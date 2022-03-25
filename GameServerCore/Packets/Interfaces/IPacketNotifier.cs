@@ -195,11 +195,10 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="o">GameObject entering vision.</param>
         /// <param name="userId">User to send the packet to.</param>
         /// <param name="isChampion">Whether or not the GameObject entering vision is a Champion.</param>
-        /// <param name="useTeleportID">Whether or not to teleport the object to its current position.</param>
         /// <param name="ignoreVision">Optionally ignore vision checks when sending this packet.</param>
         /// <param name="packets">Takes in a list of packets to send alongside this vision packet.</param>
         /// TODO: Incomplete implementation.
-        void NotifyEnterVisibilityClient(IGameObject o, int userId = 0, bool isChampion = false, bool useTeleportID = false, bool ignoreVision = false, List<GamePacket> packets = null);
+        void NotifyEnterVisibilityClient(IGameObject o, int userId = 0, bool isChampion = false, bool ignoreVision = false, List<GamePacket> packets = null);
         /// <summary>
         /// Sends a packet to all players with vision of the specified unit detailing that the unit has begun facing the specified direction.
         /// </summary>
@@ -938,7 +937,7 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="u">AttackableUnit that is moving.</param>
         /// <param name="userId">UserId to send the packet to. If not specified or zero, the packet is broadcasted to all players that have vision of the specified unit.</param>
         /// <param name="useTeleportID">Whether or not to teleport the unit to its current position in its path.</param>
-        void NotifyWaypointGroup(IAttackableUnit u, int userId = 0, bool useTeleportID = true);
+        void NotifyWaypointGroup(IAttackableUnit u, int userId = 0, bool useTeleportID = false);
         /// <summary>
         /// Sends a packet to all players that have vision of the specified unit.
         /// The packet details a group of waypoints with speed parameters which determine what kind of movement will be done to reach the waypoints, or optionally a GameObject.

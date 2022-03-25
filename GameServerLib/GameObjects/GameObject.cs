@@ -236,7 +236,7 @@ namespace LeagueSandbox.GameServer.GameObjects
                 // Escape functionality should be moved to GameObject.OnCollision.
                 // only time we would collide with terrain is if we are inside of it, so we should teleport out of it.
                 Vector2 exit = _game.Map.NavigationGrid.GetClosestTerrainExit(Position, PathfindingRadius + 1.0f);
-                TeleportTo(exit.X, exit.Y);
+                SetPosition(exit);
             }
         }
 
@@ -320,12 +320,12 @@ namespace LeagueSandbox.GameServer.GameObjects
         public virtual void TeleportTo(float x, float y)
         {
             var position = _game.Map.NavigationGrid.GetClosestTerrainExit(new Vector2(x, y), PathfindingRadius + 1.0f);
-
+            
             SetPosition(position);
 
-            // TODO: Verify which one we want to use. WaypointList does not require conversions, however WaypointGroup does (and it has TeleportID functionality).
-            //_game.PacketNotifier.NotifyWaypointList(this, new List<Vector2> { Position });
-            _game.PacketNotifier.NotifyEnterVisibilityClient(this, useTeleportID: true);
+            // TODO: Find a suitable function for this. Maybe modify NotifyWaypointGroup to accept simple objects. 
+            _game.PacketNotifier.NotifyEnterVisibilityClient(this);
+            _movementUpdated = false;
         }
 
         /// <summary>

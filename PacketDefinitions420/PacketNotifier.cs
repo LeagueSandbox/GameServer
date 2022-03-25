@@ -724,7 +724,7 @@ namespace PacketDefinitions420
             }
         }
 
-        OnEnterVisibilityClient ConstructEnterVisibilityClientPacket(IGameObject o, bool isChampion = false, bool useTeleportID = false, List<GamePacket> packets = null)
+        OnEnterVisibilityClient ConstructEnterVisibilityClientPacket(IGameObject o, bool isChampion = false, List<GamePacket> packets = null)
         {
             var itemData = new List<ItemData>(); //TODO: Fix item system so this can be finished
             var shields = new ShieldValues(); //TODO: Implement shields so this can be finished
@@ -793,7 +793,7 @@ namespace PacketDefinitions420
                 }
             }
 
-            var md = PacketExtensions.CreateMovementData(o, _navGrid, type, speeds, useTeleportID: useTeleportID);
+            var md = PacketExtensions.CreateMovementData(o, _navGrid, type, speeds, useTeleportID: true);
 
             var enterVis = new OnEnterVisibilityClient // TYPO >:(
             {
@@ -822,14 +822,13 @@ namespace PacketDefinitions420
         /// <param name="o">GameObject entering vision.</param>
         /// <param name="userId">User to send the packet to.</param>
         /// <param name="isChampion">Whether or not the GameObject entering vision is a Champion.</param>
-        /// <param name="useTeleportID">Whether or not to teleport the object to its current position.</param>
         /// <param name="ignoreVision">Optionally ignore vision checks when sending this packet.</param>
         /// <param name="packets">Takes in a list of packets to send alongside this vision packet.</param>
         /// TODO: Incomplete implementation.
-        public void NotifyEnterVisibilityClient(IGameObject o, int userId = 0, bool isChampion = false, bool useTeleportID = false, bool ignoreVision = false, List<GamePacket> packets = null)
+        public void NotifyEnterVisibilityClient(IGameObject o, int userId = 0, bool isChampion = false, bool ignoreVision = false, List<GamePacket> packets = null)
         {
             
-            var enterVis = ConstructEnterVisibilityClientPacket(o, isChampion, useTeleportID, packets);
+            var enterVis = ConstructEnterVisibilityClientPacket(o, isChampion, packets);
         
             if (userId != 0)
             {
@@ -3312,7 +3311,7 @@ namespace PacketDefinitions420
                     return ConstructFXCreateGroupPacket(particle);
             }
             // Generic object
-            return ConstructEnterVisibilityClientPacket(o, useTeleportID: true);
+            return ConstructEnterVisibilityClientPacket(o);
         }      
 
         /// <summary>
@@ -3802,12 +3801,7 @@ namespace PacketDefinitions420
                     {
                         packets = new List<GamePacket>(1){ spawnPacket };
                     }
-                    visibilityPacket = ConstructEnterVisibilityClientPacket(
-                        obj,
-                        isChampion: obj is IChampion,
-                        useTeleportID: true,
-                        packets: packets
-                    );
+                    visibilityPacket = ConstructEnterVisibilityClientPacket(obj, obj is IChampion, packets);
                 }
                 var healthbarPacket = ConstructEnterLocalVisibilityClientPacket(obj);
                 //TODO: try to include it to packets too?
@@ -3873,7 +3867,7 @@ namespace PacketDefinitions420
         /// <param name="u">AttackableUnit that is moving.</param>
         /// <param name="userId">UserId to send the packet to. If not specified or zero, the packet is broadcasted to all players that have vision of the specified unit.</param>
         /// <param name="useTeleportID">Whether or not to teleport the unit to its current position in its path.</param>
-        public void NotifyWaypointGroup(IAttackableUnit u, int userId = 0, bool useTeleportID = true)
+        public void NotifyWaypointGroup(IAttackableUnit u, int userId = 0, bool useTeleportID = false)
         {
             // TODO: Verify if casts correctly
             var move = (MovementDataNormal)PacketExtensions.CreateMovementData(u, _navGrid, MovementDataType.Normal, useTeleportID: useTeleportID);
