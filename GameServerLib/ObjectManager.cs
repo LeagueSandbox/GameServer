@@ -236,7 +236,7 @@ namespace LeagueSandbox.GameServer
                     // TODO: Verify which one we want to use. WaypointList does not require conversions, however WaypointGroup does (and it has TeleportID functionality).
                     //_game.PacketNotifier.NotifyWaypointList(u);
                     // TODO: Verify if we want to use TeleportID.
-                    _game.PacketNotifier.NotifyWaypointGroup(u, userId, true);
+                    _game.PacketNotifier.NotifyWaypointGroup(u, userId, false);
                 }
             }
         }
