@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using GameServerCore;
@@ -633,6 +633,11 @@ namespace LeagueSandbox.GameServer.Content.Navigation
             NavigationGridCell cell = GetCell((short)vector.X, (short)vector.Y);
 
             //TODO: implement bush logic here
+            return IsVisible(cell);
+        }
+
+        bool IsVisible(NavigationGridCell cell)
+        {
             return cell != null 
                 && (!cell.HasFlag(NavigationGridCellFlags.NOT_PASSABLE) 
                 || cell.HasFlag(NavigationGridCellFlags.SEE_THROUGH)
@@ -754,75 +759,82 @@ namespace LeagueSandbox.GameServer.Content.Navigation
         /// <param name="origin">Vector position to start the ray cast from.</param>
         /// <param name="destination">Vector2 position to end the ray cast at.</param>
         /// <param name="checkWalkable">Whether or not the ray stops when hitting a position which blocks pathing.</param>
-        /// <param name="checkVisible">Whether or not the ray stops when hitting a position which blocks vision. *NOTE*: Does not apply if checkWalkable is also true.</param>
+        /// <param name="checkVisible">Whether or not the ray stops when hitting a position which blocks vision.</param>
         /// <returns>True = Reached destination with destination. False = Failed, with stopping position.</returns>
         public KeyValuePair<bool, Vector2> CastRay(Vector2 origin, Vector2 destination, bool checkWalkable = false, bool checkVisible = false)
         {
-            float x1 = origin.X;
-            float y1 = origin.Y;
-            float x2 = destination.X;
-            float y2 = destination.Y;
-
             // Out of bounds
-            if (x1 < MinGridPosition.X || y1 < MinGridPosition.Z || x1 >= MaxGridPosition.X || y1 >= MaxGridPosition.Z)
+            if (origin.X < MinGridPosition.X || origin.X >= MaxGridPosition.X || origin.Y < MinGridPosition.Z || origin.Y >= MaxGridPosition.Z)
             {
                 return new KeyValuePair<bool, Vector2>(false, new Vector2(float.NaN, float.NaN));
             }
 
-            float distx = x2 - x1;
-            float disty = y2 - y1;
-            float greatestdist = Math.Abs(distx);
-            if (Math.Abs(disty) > greatestdist)
-            {
-                greatestdist = Math.Abs(disty);
-            }
+            origin = TranslateToNavGrid(origin);
+            destination = TranslateToNavGrid(destination);
 
-            int il = (int)greatestdist;
-            float dx = distx / greatestdist;
-            float dy = disty / greatestdist;
+            Vector2 dist = destination - origin;
+            float greatestdist = Math.Max(
+                Math.Abs(dist.X),
+                Math.Abs(dist.Y)
+            );
+
             int i;
-            bool prevPosHadBush = HasFlag(origin, NavigationGridCellFlags.HAS_GRASS);
-            bool destinationHasGrass = HasFlag(destination, NavigationGridCellFlags.HAS_GRASS);
+            int il = (int)greatestdist;
+            Vector2 d = dist / greatestdist;
+
+            bool prevPosHadBush = HasFlag(origin, NavigationGridCellFlags.HAS_GRASS, false);
+            bool destinationHasGrass = HasFlag(destination, NavigationGridCellFlags.HAS_GRASS, false);
 
             for (i = 0; i < il; i++)
             {
+                
                 //TODO: Implement methods for maps whose NavGrids don't use SEE_THROUGH flags for buildings
-                if ((checkWalkable && !IsWalkable(x1, y1)) || (checkVisible && !IsVisible(x1, y1)))
+                if (checkWalkable)
                 {
-                    break;
-                }
-
-                bool isGrass = HasFlag(new Vector2(x1, y1), NavigationGridCellFlags.HAS_GRASS);
-                // If you are outside of a bush
-                if (checkVisible && !prevPosHadBush)
-                {
-                    if (isGrass)
+                    if(!IsWalkable(origin, translate: false))
                     {
                         break;
                     }
                 }
-
-                // If you are in a different bush
-                if (checkVisible && prevPosHadBush && destinationHasGrass)
+                
+                if (checkVisible)
                 {
-                    if (!isGrass)
+                    var cell = GetCell((short)origin.X, (short)origin.Y);
+
+                    if (!IsVisible(cell))
                     {
                         break;
+                    }
+
+                    bool isGrass = cell.HasFlag(NavigationGridCellFlags.HAS_GRASS);
+
+                    // If you are outside of a bush
+                    if (!prevPosHadBush)
+                    {
+                        if (isGrass)
+                        {
+                            break;
+                        }
+                    }
+
+                    // If you are in a different bush
+                    if (prevPosHadBush && destinationHasGrass)
+                    {
+                        if (!isGrass)
+                        {
+                            break;
+                        }
                     }
                 }
 
                 // if checkWalkable == true, stop incrementing when (x1, x2) is a see-able position
                 // if checkWalkable == false, stop incrementing when (x1, x2) is a non-see-able position
-                x1 += dx;
-                y1 += dy;
+                origin += d;
             }
 
-            if (i == il || (x1 == destination.X && y1 == destination.Y))
-            {
-                return new KeyValuePair<bool, Vector2>(true, new Vector2(x2, y2));
-            }
-
-            return new KeyValuePair<bool, Vector2>(false, new Vector2(x1, y1));
+            return new KeyValuePair<bool, Vector2>(
+                i == il, TranslateFrmNavigationGrid(origin)
+            );
         }
 
         /// <summary>
