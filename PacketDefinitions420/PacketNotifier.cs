@@ -751,18 +751,20 @@ namespace PacketDefinitions420
                     {
                         charStackData.SkinID = (uint)c.SkinID;
                     }
-
-                    foreach (var item in obj.Inventory.GetAllItems())
+                    if(obj.Inventory != null)
                     {
-                        var itemData = item.ItemData;
-                        itemDataList.Add(new ItemData
+                        foreach (var item in obj.Inventory.GetAllItems())
                         {
-                            ItemID = (uint)itemData.ItemId,
-                            ItemsInSlot = (byte)item.StackCount,
-                            Slot = obj.Inventory.GetItemSlot(item),
-                            //Unhardcode this when spell ammo gets introduced
-                            SpellCharges = 0
-                        });
+                            var itemData = item.ItemData;
+                            itemDataList.Add(new ItemData
+                            {
+                                ItemID = (uint)itemData.ItemId,
+                                ItemsInSlot = (byte)item.StackCount,
+                                Slot = obj.Inventory.GetItemSlot(item),
+                                //Unhardcode this when spell ammo gets introduced
+                                SpellCharges = 0
+                            });
+                        }
                     }
                 }
                 buffCountList = new List<KeyValuePair<byte, int>>();
