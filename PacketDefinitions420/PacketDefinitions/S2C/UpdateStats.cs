@@ -5,11 +5,13 @@ using GameServerCore.Packets.Enums;
 
 namespace PacketDefinitions420.PacketDefinitions.S2C
 {
-    public class UpdateStats : BasePacket
+    public class UpdateStats : Packet
     {
         public UpdateStats(IReplication r, bool partial = true)
             : base(PacketCmd.PKT_S2C_CHAR_STATS)
         {
+            Write(0);
+
             Write(Environment.TickCount); // syncID
             Write((byte)1); // updating 1 unit
 

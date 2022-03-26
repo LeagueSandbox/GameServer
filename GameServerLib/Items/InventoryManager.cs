@@ -24,8 +24,8 @@ namespace LeagueSandbox.GameServer.Items
         public KeyValuePair<IItem, bool> AddItem(IItemData itemData, IObjAiBase owner = null)
         {
             var item = _inventory.AddItem(itemData, owner);
-            
-            if(item == null)
+
+            if (item == null)
             {
                 return KeyValuePair.Create(item, false);
             }
@@ -51,6 +51,16 @@ namespace LeagueSandbox.GameServer.Items
         public IItem GetItem(string itemSpellName)
         {
             return _inventory.GetItem(itemSpellName);
+        }
+        public List<IItem> GetAllItems(bool includeRunes = false)
+        {
+            List<IItem> toReturn = new List<IItem>(_inventory.Items.ToList());
+            toReturn.RemoveAll(x => x == null);
+            if (!includeRunes)
+            {
+                toReturn.RemoveAll(x => x.ItemData.ItemId >= 5000);
+            }
+            return toReturn;
         }
 
         public bool HasItemWithID(int ItemID)
@@ -87,7 +97,7 @@ namespace LeagueSandbox.GameServer.Items
         {
             var slot = _inventory.GetItemSlot(item);
 
-            if(_inventory.Items[slot] == null)
+            if (_inventory.Items[slot] == null)
             {
                 return false;
             }
