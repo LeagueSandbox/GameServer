@@ -66,9 +66,7 @@ namespace PacketDefinitions420
         [PacketType(GamePacketID.C2S_Ping_Load_Info)]
         public static PingLoadInfoRequest ReadPingLoadInfoRequest(byte[] data)
         {
-            var rq = new PacketDefinitions.C2S.PingLoadInfoRequest(data);
-            return new PingLoadInfoRequest(rq.NetId, rq.Position, rq.UserId, rq.Loaded, rq.Unk2, rq.Ping, rq.Unk3,
-                rq.Unk4);
+            return new PingLoadInfoRequest(data);
         }
 
         [PacketType(GamePacketID.SwapItemReq)]
@@ -117,16 +115,16 @@ namespace PacketDefinitions420
             Emotions type;
             switch (rq.Id)
             {
-                case EmotionType.DANCE:
+                case EmoteID.Dance:
                     type = Emotions.DANCE;
                     break;
-                case EmotionType.TAUNT:
+                case EmoteID.Taunt:
                     type = Emotions.TAUNT;
                     break;
-                case EmotionType.LAUGH:
+                case EmoteID.Laugh:
                     type = Emotions.LAUGH;
                     break;
-                case EmotionType.JOKE:
+                case EmoteID.Joke:
                     type = Emotions.JOKE;
                     break;
                 default:

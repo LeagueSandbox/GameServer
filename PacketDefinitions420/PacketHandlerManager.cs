@@ -378,7 +378,15 @@ namespace PacketDefinitions420
             // inform players about their player numbers
             foreach (var player in _playerManager.GetPlayers(false))
             {
-                var response = new KeyCheckResponse(player.Item2.PlayerId, player.Item2.ClientId);
+                var response = new KeyCheckPacket
+                {
+                    ClientID = (int)player.Item2.ClientId,
+                    PlayerID = player.Item2.PlayerId,
+                    //TODO: Unhardcode all values bellow
+                    VersionNumber = 42000315,
+                    Action = 0,
+                    CheckSum = 0
+                };
                 // TODO: fix casting
                 result = result && SendPacket((int)request.PlayerID, response.GetBytes(), Channel.CHL_HANDSHAKE);
             }

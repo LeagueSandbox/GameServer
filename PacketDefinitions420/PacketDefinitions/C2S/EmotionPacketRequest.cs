@@ -1,6 +1,5 @@
 using System.IO;
-using GameServerCore.Packets.Enums;
-using PacketDefinitions420.Enums;
+using GameServerCore.Enums;
 
 namespace PacketDefinitions420.PacketDefinitions.C2S
 {
@@ -8,7 +7,7 @@ namespace PacketDefinitions420.PacketDefinitions.C2S
     {
         public PacketCmd Cmd;
         public uint NetId;
-        public EmotionType Id;
+        public EmoteID Id;
 
         public EmotionPacketRequest(byte[] data)
         {
@@ -16,7 +15,7 @@ namespace PacketDefinitions420.PacketDefinitions.C2S
             {
                 Cmd = (PacketCmd)reader.ReadByte();
                 NetId = reader.ReadUInt32();
-                Id = (EmotionType)reader.ReadByte();
+                Id = (EmoteID)reader.ReadByte();
             }
         }
     }
