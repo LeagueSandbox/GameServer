@@ -18,6 +18,10 @@ namespace GameServerCore.Scripting.CSharp
         /// </summary>
         float ChampionMinGoldValue { get; }
         /// <summary>
+        /// Used to override the default ExpCurve (Default: string.Empty)
+        /// </summary>
+        string ExpCurveOverride { get; }
+        /// <summary>
         /// Max range where you can receive XP when a minion dies (Default: 1400.0f)
         /// </summary>
         float ExpRange { get; }
@@ -54,7 +58,11 @@ namespace GameServerCore.Scripting.CSharp
         /// </summary>
         bool MinionSpawnEnabled { get; set; }
         /// <summary>
-        /// Wether or not the map's position is to be overriden
+        /// An override for the navGrid of an specific map, allowing gamemodes with custom navGrids (Ascension) to function
+        /// </summary>
+        string NavGridOverride { get; set; }
+        /// <summary>
+        /// Wether or not the map's position is to be overriden (Default: string.Empty)
         /// </summary>
         bool OverrideSpawnPoints { get; }
         /// <summary>

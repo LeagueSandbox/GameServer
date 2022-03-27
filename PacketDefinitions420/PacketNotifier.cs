@@ -9,7 +9,6 @@ using GameServerCore.Enums;
 using GameServerCore.NetInfo;
 using GameServerCore.Packets.Enums;
 using GameServerCore.Packets.Interfaces;
-using PacketDefinitions420.Enums;
 using PacketDefinitions420.PacketDefinitions.C2S;
 using PacketDefinitions420.PacketDefinitions.S2C;
 using LeaguePackets.Game;
@@ -751,7 +750,7 @@ namespace PacketDefinitions420
                     {
                         charStackData.SkinID = (uint)c.SkinID;
                     }
-                    if(obj.Inventory != null)
+                    if (obj.Inventory != null)
                     {
                         foreach (var item in obj.Inventory.GetAllItems())
                         {
@@ -2550,6 +2549,36 @@ namespace PacketDefinitions420
             };
 
             timer.Start();
+        }
+
+        public void NotifyS2C_HandleCapturePointUpdate(byte capturePointIndex, uint otherNetId, byte PARType, byte attackTeam, CapturePointUpdateCommand capturePointUpdateCommand)
+        {
+            var packet = new S2C_HandleCapturePointUpdate
+            {
+                CapturePointIndex = capturePointIndex,
+                OtherNetID = otherNetId,
+                PARType = PARType,
+                AttackTeam = attackTeam,
+                CapturePointUpdateCommand = (byte)capturePointUpdateCommand
+            };
+
+            _packetHandlerManager.BroadcastPacket(packet.GetBytes(), Channel.CHL_S2C, PacketFlags.None);
+        }
+
+        /// <summary>
+        /// Notifies the game about a score
+        /// </summary>
+        /// <param name="team"></param>
+        /// <param name="score"></param>
+        public void NotifyS2C_HandleGameScore(TeamId team, int score)
+        {
+            var packet = new S2C_HandleGameScore
+            {
+                TeamID = (uint)team,
+                Score = score
+            };
+            
+            _packetHandlerManager.BroadcastPacket(packet.GetBytes(), Channel.CHL_S2C, PacketFlags.None);
         }
 
         /// <summary>

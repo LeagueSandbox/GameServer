@@ -60,23 +60,9 @@ namespace LeagueSandbox.GameServer.Handlers
         public MapScriptHandler(Game game)
         {
             _game = game;
-            MapData = game.Config.MapData;
             _scriptEngine = game.ScriptEngine;
             _logger = LoggerProvider.GetLogger();
             Id = _game.Config.GameConfig.Map;
-
-            try
-            {
-                NavigationGrid = _game.Config.ContentManager.GetNavigationGrid(Id);
-            }
-            catch (ContentNotFoundException exception)
-            {
-                _logger.Error(exception.Message);
-                return;
-            }
-
-            CollisionHandler = new CollisionHandler(this);
-            PathingHandler = new PathingHandler(this);
 
             MapScript = _scriptEngine.CreateObject<IMapScript>($"MapScripts.Map{Id}", $"{game.Config.GameConfig.GameMode}") ?? new EmptyMapScript();
 
@@ -106,6 +92,7 @@ namespace LeagueSandbox.GameServer.Handlers
             {
                 surrender.Update(diff);
             }
+
         }
 
         /// <summary>
@@ -113,6 +100,21 @@ namespace LeagueSandbox.GameServer.Handlers
         /// </summary>
         public void Init()
         {
+            MapData = _game.Config.ContentManager.GetMapData(Id);
+
+            try
+            {
+                NavigationGrid = _game.Config.ContentManager.GetNavigationGrid(Id);
+            }
+            catch (ContentNotFoundException exception)
+            {
+                _logger.Error(exception.Message);
+                return;
+            }
+
+            CollisionHandler = new CollisionHandler(this);
+            PathingHandler = new PathingHandler(this);
+
             Dictionary<GameObjectTypes, List<MapObject>> mapObjects = new Dictionary<GameObjectTypes, List<MapObject>>();
             foreach (var mapObject in MapData.MapObjects.Values)
             {
@@ -131,11 +133,11 @@ namespace LeagueSandbox.GameServer.Handlers
                 mapObjects[objectType].Add(mapObject);
             }
 
-            if (_game.Config.MapData.SpawnBarracks != null)
+            if (MapData != null)
             {
                 mapObjects.Add(GameObjectTypes.ObjBuildingBarracks, new List<MapObject>());
 
-                foreach (var spawnBarrack in _game.Config.MapData.SpawnBarracks)
+                foreach (var spawnBarrack in MapData.SpawnBarracks)
                 {
                     mapObjects[GameObjectTypes.ObjBuildingBarracks].Add(spawnBarrack.Value);
                 }
