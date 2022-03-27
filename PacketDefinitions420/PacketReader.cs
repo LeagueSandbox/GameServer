@@ -4,7 +4,6 @@ using GameServerCore.Packets.PacketDefinitions.Requests;
 using LeaguePackets;
 using LeaguePackets.Game;
 using LeaguePackets.LoadScreen;
-using PacketDefinitions420.Enums;
 using PacketDefinitions420.PacketDefinitions.C2S;
 using System;
 using AttentionPingRequest = GameServerCore.Packets.PacketDefinitions.Requests.AttentionPingRequest;

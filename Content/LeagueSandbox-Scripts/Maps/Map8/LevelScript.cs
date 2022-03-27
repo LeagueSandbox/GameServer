@@ -62,20 +62,6 @@ namespace MapScripts.Map8
             }},
 
         };
-        //Nexus models
-        public Dictionary<TeamId, string> NexusModels { get; set; } = new Dictionary<TeamId, string>
-        {
-            {TeamId.TEAM_BLUE, "OrderNexus" },
-            {TeamId.TEAM_PURPLE, "ChaosNexus" }
-        };
-        //Inhib models
-        public Dictionary<TeamId, string> InhibitorModels { get; set; } = new Dictionary<TeamId, string>
-        {
-            {TeamId.TEAM_BLUE, "OrderInhibitor" },
-            {TeamId.TEAM_PURPLE, "ChaosInhibitor" }
-        };
-        //Tower Models
-
 
         //Minion models for this map
         public Dictionary<TeamId, Dictionary<MinionSpawnType, string>> MinionModels { get; set; } = new Dictionary<TeamId, Dictionary<MinionSpawnType, string>>
@@ -159,6 +145,7 @@ namespace MapScripts.Map8
             CreateLevelProps.CreateProps(this);
         }
 
+        Dictionary<TeamId, int> TeamScores = new Dictionary<TeamId, int> { { TeamId.TEAM_BLUE, 500 }, { TeamId.TEAM_PURPLE, 500 } };
         public void OnMatchStart()
         {
             LevelScriptObjects.OnMatchStart();
@@ -179,6 +166,11 @@ namespace MapScripts.Map8
             foreach (var champion in GetAllPlayers())
             {
                 AddBuff("OdinPlayerBuff", 25000, 1, null, champion, null);
+            }
+
+            foreach (var team in TeamScores.Keys)
+            {
+                NotifyGameScore(team, TeamScores[team]);
             }
 
             NeutralMinionSpawn.InitializeNeutrals();

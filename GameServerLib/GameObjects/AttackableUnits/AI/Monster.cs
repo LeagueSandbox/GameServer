@@ -14,9 +14,6 @@ namespace LeagueSandbox.GameServer.GameObjects
         public IMonsterCamp Camp { get; private set; }
         public string SpawnAnimation { get; private set; }
 
-        private bool _hasBeenAdded;
-        private float _additionTimer;
-
         public Monster(
             Game game,
             string name,
@@ -40,15 +37,6 @@ namespace LeagueSandbox.GameServer.GameObjects
                 null, aiScript, damageBonus, healthBonus, initialLevel
             )
         {
-            _additionTimer = monsterCamp.SpawnDuration;
-            _hasBeenAdded = false;
-            SetStatus(StatusFlags.Targetable, false);
-            SetStatus(StatusFlags.Invulnerable, true);
-            SetStatus(StatusFlags.Ghosted, true);
-            SetStatus(StatusFlags.CanMove, false);
-            SetStatus(StatusFlags.CanAttack, false);
-            SetStatus(StatusFlags.CanCast, false);
-
             Camp = monsterCamp;
             Team = team;
             SpawnAnimation = spawnAnimation;
@@ -57,25 +45,6 @@ namespace LeagueSandbox.GameServer.GameObjects
             FaceDirection(faceDirection);
             IsTargetable = isTargetable;
             IgnoresCollision = ignoresCollision;
-        }
-
-        public override void Update(float diff)
-        {
-            if (!_hasBeenAdded)
-            {
-                _additionTimer -= diff;
-                if(_additionTimer <= 0)
-                {
-                    SetStatus(StatusFlags.Targetable, true);
-                    SetStatus(StatusFlags.Invulnerable, false);
-                    SetStatus(StatusFlags.Ghosted, false);
-                    SetStatus(StatusFlags.CanMove, true);
-                    SetStatus(StatusFlags.CanAttack, true);
-                    SetStatus(StatusFlags.CanCast, true);
-                    _hasBeenAdded = true;
-                }
-            }
-            base.Update(diff);
         }
 
         public void UpdateInitialLevel(int level)

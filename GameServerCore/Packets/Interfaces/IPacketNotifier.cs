@@ -559,6 +559,13 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="losingTeam">The Team that lost the match</param>
         /// <param name="time">The offset for the result to actually be displayed</param>
         void NotifyS2C_EndGame(TeamId losingTeam, float time = 5000);
+        void NotifyS2C_HandleCapturePointUpdate(byte capturePointIndex, uint otherNetId, byte PARType, byte attackTeam, CapturePointUpdateCommand capturePointUpdateCommand);
+        /// <summary>
+        /// Notifies the game about a map score
+        /// </summary>
+        /// <param name="team"></param>
+        /// <param name="score"></param>
+        void NotifyS2C_HandleGameScore(TeamId team, int score);
         /// <summary>
         /// Sends a side bar tip to the specified player (ex: quest tips).
         /// </summary>

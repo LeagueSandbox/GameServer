@@ -408,5 +408,23 @@ namespace LeagueSandbox.GameServer.API
             }
             return (int)average;
         }
+
+        public static void NotifyGameScore(TeamId team, int score)
+        {
+            _game.PacketNotifier.NotifyS2C_HandleGameScore(team, score);
+        }
+
+        /// <summary>
+        /// I couldn't tell the functionality for this besides Notifying the scoreboard at the start of the match
+        /// </summary>
+        /// <param name="capturePointIndex"></param>
+        /// <param name="otherNetId"></param>
+        /// <param name="PARType"></param>
+        /// <param name="attackTeam"></param>
+        /// <param name="capturePointUpdateCommand"></param>
+        public static void NotifyHandleCapturePointUpdate(byte capturePointIndex, uint otherNetId, byte PARType, byte attackTeam, CapturePointUpdateCommand capturePointUpdateCommand)
+        {
+            _game.PacketNotifier.NotifyS2C_HandleCapturePointUpdate(capturePointIndex, otherNetId, PARType, attackTeam, capturePointUpdateCommand);
+        }
     }
 }

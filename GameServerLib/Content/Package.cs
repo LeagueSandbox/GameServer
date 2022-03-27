@@ -179,7 +179,12 @@ namespace LeagueSandbox.GameServer.Content
             var statProgressionFile = new ContentFile();
             try
             {
-                expFile = (ContentFile)GetContentFileFromJson("Maps", "ExpCurve", mapName);
+                var expFileName = "ExpCurve";
+                if (!string.IsNullOrEmpty(_game.Map.MapScript.MapScriptMetadata.ExpCurveOverride))
+                {
+                    expFileName = _game.Map.MapScript.MapScriptMetadata.ExpCurveOverride;
+                }
+                expFile = (ContentFile)GetContentFileFromJson("Maps", expFileName, mapName);
                 deathTimefile = (ContentFile)GetContentFileFromJson("Maps", "DeathTimes", mapName);
                 statProgressionFile = (ContentFile)GetContentFileFromJson("Maps", "StatsProgression", mapName);
             }
@@ -351,7 +356,13 @@ namespace LeagueSandbox.GameServer.Content
 
         public INavigationGrid GetNavigationGrid(int mapId)
         {
-            string navigationGridPath = $"{this.PackagePath}/AIMesh/Map{mapId}/AIPath.aimesh_ngrid";
+            string navgridName = "AIPath";
+            if (!string.IsNullOrEmpty(_game.Map.MapScript.MapScriptMetadata.NavGridOverride))
+            {
+                navgridName = _game.Map.MapScript.MapScriptMetadata.NavGridOverride;
+            }
+
+            string navigationGridPath = $"{this.PackagePath}/AIMesh/Map{mapId}/{navgridName}.aimesh_ngrid";
 
             if (!File.Exists(navigationGridPath))
             {

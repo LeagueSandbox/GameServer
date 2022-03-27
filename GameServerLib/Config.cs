@@ -20,7 +20,6 @@ namespace LeagueSandbox.GameServer
     {
         public Dictionary<string, IPlayerConfig> Players { get; private set; }
         public GameConfig GameConfig { get; private set; }
-        public MapData MapData { get; private set; }
         public ContentManager ContentManager { get; private set; }
         public FeatureFlags GameFeatures { get; private set; }
         public const string VERSION_STRING = "Version 4.20.0.315 [PUBLIC]";
@@ -88,9 +87,6 @@ namespace LeagueSandbox.GameServer
 
             // Load data package
             ContentManager = ContentManager.LoadDataPackage(game, GameConfig.DataPackage, ContentPath);
-
-            // Read data & spawns info
-            MapData = ContentManager.GetMapData(GameConfig.Map);
         }
 
         private string GetContentPath()
