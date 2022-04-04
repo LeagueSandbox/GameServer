@@ -22,11 +22,6 @@ namespace Buffs
         public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
             OverrideAnimation(unit, "IDLE1OVERRIDE", "IDLE1");
-
-            while (unit.Stats.Level < GetPlayerAverageLevel())
-            {
-                unit.Stats.LevelUp();
-            }
         }
 
         public void OnDeactivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)

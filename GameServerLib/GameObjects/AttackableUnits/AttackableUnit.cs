@@ -1203,7 +1203,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                     // Add the buff to the visual hud.
                     if (!b.IsHidden)
                     {
-                        _game.PacketNotifier.NotifyNPC_BuffAdd2(b, b.Duration, b.TimeElapsed);
+                        _game.PacketNotifier.NotifyNPC_BuffAdd2(b);
                     }
                     // Activate the buff for BuffScripts
                     b.ActivateBuff();
@@ -1543,7 +1543,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                     // Add the buff to the visual hud.
                     if (!b.IsHidden)
                     {
-                        _game.PacketNotifier.NotifyNPC_BuffAdd2(tempBuff, tempBuff.Duration, tempBuff.TimeElapsed);
+                        _game.PacketNotifier.NotifyNPC_BuffAdd2(tempBuff);
                     }
                     // Activate the buff for BuffScripts
                     tempBuff.ActivateBuff();

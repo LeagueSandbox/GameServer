@@ -136,7 +136,7 @@ public class AscXerath
     {
         var ascXerath = Camp.AddMonster(Xerath);
         NotifySpawnBroadcast(ascXerath);
-        NotifyMapAnnouncement(EventID.OnMinionAscended);
+        ascXerath.PauseAnimation(true);
         SetMinimapIcon(ascXerath, "Dragon", true);
     }
 }

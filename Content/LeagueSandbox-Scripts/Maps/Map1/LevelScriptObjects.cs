@@ -275,7 +275,7 @@ namespace MapScripts.Map1
         {
             foreach (var shop in _mapObjects[GameObjectTypes.ObjBuilding_Shop])
             {
-                NotifySpawn(CreateShop(shop.Name, new Vector2(shop.CentralPoint.X, shop.CentralPoint.Z), shop.GetTeamID()));
+                CreateShop(shop.Name, new Vector2(shop.CentralPoint.X, shop.CentralPoint.Z), shop.GetTeamID());
             }
         }
 

@@ -48,7 +48,9 @@ namespace LeagueSandbox.GameServer.API
 
         public static IGameObject CreateShop(string name, Vector2 position, TeamId team)
         {
-            return new GameObject(_game, position, team: team, netId: Crc32Algorithm.Compute(Encoding.UTF8.GetBytes(name)) | 0xFF000000);
+            var shop = new GameObject(_game, position, team: team, netId: Crc32Algorithm.Compute(Encoding.UTF8.GetBytes(name)) | 0xFF000000);
+            _game.ObjectManager.SpawnObject(shop);
+            return shop;
         }
 
         /// <summary>
@@ -156,12 +158,12 @@ namespace LeagueSandbox.GameServer.API
         /// <param name="initialLevel"></param>
         /// <returns></returns>
         public static IMinion CreateMinion(
-            string name, string model, Vector2 position, uint netId = 0,
+            string name, string model, Vector2 position, IObjAiBase owner = null, uint netId = 0,
             TeamId team = TeamId.TEAM_NEUTRAL, int skinId = 0, bool ignoreCollision = false,
             bool isTargetable = false, bool isWard = false,string aiScript = "", int damageBonus = 0,
             int healthBonus = 0, int initialLevel = 1, bool instantNotifyBroadcast = false)
         {
-            var m = new Minion(_game, null, position, model, name, netId, team, skinId, ignoreCollision, isTargetable, isWard, null, aiScript, damageBonus, healthBonus, initialLevel);
+            var m = new Minion(_game, owner, position, model, name, netId, team, skinId, ignoreCollision, isTargetable, isWard, null, aiScript, damageBonus, healthBonus, initialLevel);
             if(name == "AscRelic")
             {
 

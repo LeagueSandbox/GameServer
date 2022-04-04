@@ -124,7 +124,7 @@ namespace MapScripts.Map8
             NeutralMinionSpawnAscension.OnUpdate(diff);
             poiintsTimer -= diff;
 
-            if (poiintsTimer < 0)
+            if (poiintsTimer < 0 && TeamScores[TeamId.TEAM_BLUE] < 200)
             {
                 foreach (var team in TeamScores.Keys.ToList())
                 {

@@ -1641,7 +1641,7 @@ namespace PacketDefinitions420
         /// Sends a packet to all players who have vision of the specified buff's target detailing that the buff has been added to the target.
         /// </summary>
         /// <param name="b">Buff being added.</param>
-        public void NotifyNPC_BuffAdd2(IBuff b, float duration, float runningTime)
+        public void NotifyNPC_BuffAdd2(IBuff b)
         {
             var addPacket = new NPC_BuffAdd2
             {
@@ -1651,18 +1651,15 @@ namespace PacketDefinitions420
                 Count = (byte)b.StackCount,
                 IsHidden = b.IsHidden,
                 BuffNameHash = HashFunctions.HashString(b.Name),
-                PackageHash = 0,
-                RunningTime = runningTime,
-                Duration = duration,
-                CasterNetID = 0
+                PackageHash = HashFunctions.HashStringNorm(b.TargetUnit.Model),
+                RunningTime = b.TimeElapsed,
+                Duration = b.Duration,
             };
             if (b.SourceUnit != null)
             {
-                // TODO: Verify
-                addPacket.PackageHash = b.SourceUnit.GetObjHash();
                 addPacket.CasterNetID = b.SourceUnit.NetId;
             }
-            _packetHandlerManager.BroadcastPacketVision(b.TargetUnit, addPacket.GetBytes(), Channel.CHL_S2C);
+            _packetHandlerManager.BroadcastPacket(addPacket.GetBytes(), Channel.CHL_S2C);
         }
 
         /// <summary>
@@ -2587,7 +2584,7 @@ namespace PacketDefinitions420
                 TeamID = (uint)team,
                 Score = score
             };
-            
+
             _packetHandlerManager.BroadcastPacket(packet.GetBytes(), Channel.CHL_S2C, PacketFlags.None);
         }
 
@@ -3111,7 +3108,7 @@ namespace PacketDefinitions420
         public void NotifyS2C_UpdateAscended(IObjAiBase ascendant = null)
         {
             var packet = new S2C_UpdateAscended();
-            if(ascendant != null)
+            if (ascendant != null)
             {
                 packet.AscendedNetID = ascendant.NetId;
             }
@@ -3365,7 +3362,7 @@ namespace PacketDefinitions420
                 }
                 else
                 {
-                    if(userId <= 0)
+                    if (userId <= 0)
                     {
                         _packetHandlerManager.BroadcastPacket(spawnPacket.GetBytes(), Channel.CHL_S2C);
                     }

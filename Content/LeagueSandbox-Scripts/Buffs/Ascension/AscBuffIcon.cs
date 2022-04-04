@@ -7,6 +7,7 @@ using LeagueSandbox.GameServer.API;
 using GameServerCore.Scripting.CSharp;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using GameServerCore.Domain;
+using LeagueSandbox.GameServer.GameObjects.Stats;
 
 namespace Buffs
 {
@@ -17,7 +18,7 @@ namespace Buffs
             BuffType = BuffType.COMBAT_ENCHANCER,
             BuffAddType = BuffAddType.REPLACE_EXISTING
         };
-        public IStatsModifier StatsModifier { get; private set; }
+        public IStatsModifier StatsModifier { get; private set; } = new StatsModifier();
 
         IParticle p1;
         IParticle p2;
@@ -43,6 +44,22 @@ namespace Buffs
             AddParticleTarget(unit, unit, "LeonaPassive_tar", unit, size: 2.5f);
 
             ApiEventManager.OnDeath.AddListener(unit, unit, OnDeath, true);
+
+            StatsModifier.HealthPoints.FlatBonus = 150.0f;
+            StatsModifier.AttackDamage.FlatBonus = 36.0f;
+            StatsModifier.AbilityPower.FlatBonus = 36.0f;
+            StatsModifier.ArmorPenetration.PercentBonus = 0.15f;
+            StatsModifier.MagicPenetration.PercentBonus = 0.15f;
+            StatsModifier.CooldownReduction.FlatBonus = 0.25f;
+            StatsModifier.Size.FlatBonus = 2;
+
+            unit.AddStatModifier(StatsModifier);
+
+            //TODO: 
+            // - Add 100% mana/energy cost reduction
+            // - Add 50% Health cost reduction
+            AddUnitPerceptionBubble(unit, 0f, 25000f, TeamId.TEAM_BLUE, true, unit);
+            AddUnitPerceptionBubble(unit, 0f, 25000f, TeamId.TEAM_PURPLE, true, unit);
         }
 
         public void OnDeath(IDeathData deathData)

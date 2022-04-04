@@ -347,7 +347,7 @@ namespace GameServerCore.Packets.Interfaces
         /// Sends a packet to all players who have vision of the specified buff's target detailing that the buff has been added to the target.
         /// </summary>
         /// <param name="b">Buff being added.</param>
-        void NotifyNPC_BuffAdd2(IBuff b, float duration, float runningTime);
+        void NotifyNPC_BuffAdd2(IBuff b);
         /// <summary>
         /// Sends a packet to all players with vision of the specified ObjAiBase detailing that the specified group of buffs has been added to the ObjAiBase.
         /// </summary>
