@@ -82,10 +82,10 @@ namespace LeagueSandbox.GameServer.GameObjects
             {
                 VisionBindNetID = visionTarget.NetId;
 
-                if (Team != visionTarget.Team)
+                /*if (Team != visionTarget.Team)
                 {
                     Team = visionTarget.Team;
-                }
+                }*/
             }
 
             Lifetime = lifetime;

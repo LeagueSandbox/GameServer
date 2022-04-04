@@ -158,12 +158,29 @@ namespace LeagueSandbox.GameServer.API
         public static IMinion CreateMinion(
             string name, string model, Vector2 position, uint netId = 0,
             TeamId team = TeamId.TEAM_NEUTRAL, int skinId = 0, bool ignoreCollision = false,
-            bool isTargetable = false, string aiScript = "", int damageBonus = 0,
-            int healthBonus = 0, int initialLevel = 1)
+            bool isTargetable = false, bool isWard = false,string aiScript = "", int damageBonus = 0,
+            int healthBonus = 0, int initialLevel = 1, bool instantNotifyBroadcast = false)
         {
-            var m = new Minion(_game, null, position, model, name, netId, team, skinId, ignoreCollision, isTargetable, null, aiScript, damageBonus, healthBonus, initialLevel);
+            var m = new Minion(_game, null, position, model, name, netId, team, skinId, ignoreCollision, isTargetable, isWard, null, aiScript, damageBonus, healthBonus, initialLevel);
+            if(name == "AscRelic")
+            {
+
+            }
             _game.ObjectManager.AddObject(m);
+            if (instantNotifyBroadcast)
+            {
+                NotifySpawnBroadcast(m);
+            }
             return m;
+        }
+
+        public static IMinion CreateMinionTemplete(
+            string name, string model, Vector2 position, uint netId = 0,
+            TeamId team = TeamId.TEAM_NEUTRAL, int skinId = 0, bool ignoreCollision = false,
+            bool isTargetable = false, bool isWard = false, string aiScript = "", int damageBonus = 0,
+            int healthBonus = 0, int initialLevel = 1, bool instantNotifyBroadcast = false)
+        {
+            return new Minion(_game, null, position, model, name, netId, team, skinId, ignoreCollision, isTargetable, isWard, null, aiScript, damageBonus, healthBonus, initialLevel);
         }
 
         /// <summary>
@@ -228,9 +245,9 @@ namespace LeagueSandbox.GameServer.API
         /// <param name="changeIcon"></param>
         /// <param name="borderCategory"></param>
         /// <param name="changeBorder"></param>
-        public static void SetMinimapIcon(IAttackableUnit unit, string iconCategory = "", bool changeIcon = false, string borderCategory = "", bool changeBorder = false)
+        public static void SetMinimapIcon(IAttackableUnit unit, string iconCategory = "", bool changeIcon = false, string borderCategory = "", bool changeBorder = false, string borderScriptName = "")
         {
-            _game.PacketNotifier.NotifyS2C_UnitSetMinimapIcon(unit, iconCategory, changeIcon, borderCategory, changeBorder);
+            _game.PacketNotifier.NotifyS2C_UnitSetMinimapIcon(unit, iconCategory, changeIcon, borderCategory, changeBorder, borderScriptName);
         }
 
         /// <summary>
@@ -321,9 +338,9 @@ namespace LeagueSandbox.GameServer.API
         /// </summary>
         /// <param name="Event"></param>
         /// <param name="mapId"></param>
-        public static void NotifyMapAnnouncement(GameServerCore.Enums.EventID Event, int mapId = 0)
+        public static void NotifyMapAnnouncement(EventID Event, int mapId = 0, uint sourceNetId = 0)
         {
-            _game.PacketNotifier.NotifyS2C_OnEventWorld(PacketExtensions.GetAnnouncementID(Event, mapId));
+            _game.PacketNotifier.NotifyS2C_OnEventWorld(PacketExtensions.GetAnnouncementID(Event, mapId), sourceNetId);
         }
 
         /// <summary>
@@ -384,9 +401,10 @@ namespace LeagueSandbox.GameServer.API
             }
         }
 
-        public static void NotifySpawn(IGameObject obj)
+        public static void NotifySpawnBroadcast(IGameObject obj)
         {
-            _game.ObjectManager.SpawnObject(obj);
+            _game.PacketNotifier.NotifySpawn(obj, TeamId.TEAM_BLUE, 0, _game.GameTime, false);
+            _game.PacketNotifier.NotifySpawn(obj, TeamId.TEAM_PURPLE, 0, _game.GameTime, false);
         }
 
         public static void AddObject(IGameObject obj)
@@ -425,6 +443,16 @@ namespace LeagueSandbox.GameServer.API
         public static void NotifyHandleCapturePointUpdate(byte capturePointIndex, uint otherNetId, byte PARType, byte attackTeam, CapturePointUpdateCommand capturePointUpdateCommand)
         {
             _game.PacketNotifier.NotifyS2C_HandleCapturePointUpdate(capturePointIndex, otherNetId, PARType, attackTeam, capturePointUpdateCommand);
+        }
+
+        public static void TeleportCamera(IChampion target, Vector3 position)
+        {
+            _game.PacketNotifier.NotifyS2C_CameraBehavior(target, position);
+        }
+
+        public static void NotifyAscendant(IObjAiBase ascendant = null)
+        {
+            _game.PacketNotifier.NotifyS2C_UpdateAscended(ascendant);
         }
     }
 }

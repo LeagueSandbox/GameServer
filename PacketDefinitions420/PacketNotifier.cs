@@ -1358,7 +1358,7 @@ namespace PacketDefinitions420
                 VisibilitySize = minion.VisionRadius,
                 Name = minion.Name,
                 SkinName = minion.Model,
-                InitialLevel = 1, // TODO: Unhardcode
+                InitialLevel = (ushort)minion.InitialLevel,
                 OnlyVisibleToNetID = 0
             };
 
@@ -1488,6 +1488,16 @@ namespace PacketDefinitions420
             }
         }
 
+        public void NotifyS2C_CameraBehavior(IChampion target, Vector3 position)
+        {
+            var packet = new S2C_CameraBehavior
+            {
+                SenderNetID = target.NetId,
+                Position = position
+            };
+
+            _packetHandlerManager.SendPacket((int)target.GetPlayerId(), packet.GetBytes(), Channel.CHL_S2C);
+        }
         /// <summary>
         /// Sends a packet to all players that updates the specified unit's model.
         /// </summary>
@@ -2881,6 +2891,17 @@ namespace PacketDefinitions420
             _packetHandlerManager.BroadcastPacket(packet.GetBytes(), Channel.CHL_S2C);
         }
 
+        public void NotifyS2C_PlaySound(string soundName, IAttackableUnit soundOwner)
+        {
+            var packet = new S2C_PlaySound
+            {
+                SoundName = soundName,
+                OwnerNetID = soundOwner.NetId
+            };
+
+            _packetHandlerManager.BroadcastPacket(packet.GetBytes(), Channel.CHL_S2C);
+        }
+
         /// <summary>
         /// Sends a packet to the specified player which is meant as a response to the players query about the status of the game.
         /// </summary>
@@ -3087,6 +3108,16 @@ namespace PacketDefinitions420
             _packetHandlerManager.BroadcastPacketVision(attacker, lookAtPacket.GetBytes(), Channel.CHL_S2C);
         }
 
+        public void NotifyS2C_UpdateAscended(IObjAiBase ascendant = null)
+        {
+            var packet = new S2C_UpdateAscended();
+            if(ascendant != null)
+            {
+                packet.AscendedNetID = ascendant.NetId;
+            }
+            _packetHandlerManager.BroadcastPacket(packet.GetBytes(), Channel.CHL_S2C, PacketFlags.None);
+        }
+
         /// <summary>
         /// Sends a packet to all players detailing the attack speed cap overrides for this game.
         /// </summary>
@@ -3216,7 +3247,7 @@ namespace PacketDefinitions420
             _packetHandlerManager.BroadcastPacketTeam(team, dm.GetBytes(), Channel.CHL_S2C);
         }
 
-        public void NotifyS2C_UnitSetMinimapIcon(IAttackableUnit unit, string iconCategory = "", bool changeIcon = false, string borderCategory = "", bool changeBorder = false)
+        public void NotifyS2C_UnitSetMinimapIcon(IAttackableUnit unit, string iconCategory = "", bool changeIcon = false, string borderCategory = "", bool changeBorder = false, string borderScriptName = "")
         {
             var packet = new S2C_UnitSetMinimapIcon
             {
@@ -3226,7 +3257,7 @@ namespace PacketDefinitions420
                 ChangeIcon = changeIcon,
                 BorderCategory = borderCategory,
                 ChangeBorder = changeBorder,
-                BorderScriptName = "" //?
+                BorderScriptName = borderScriptName
             };
             _packetHandlerManager.BroadcastPacket(packet.GetBytes(), Channel.CHL_S2C);
         }
@@ -3323,7 +3354,7 @@ namespace PacketDefinitions420
         /// <param name="doVision">Whether or not to package the packets into a vision packet.</param>
         public void NotifySpawn(IGameObject obj, TeamId team, int userId, float gameTime, bool doVision = true)
         {
-            Debug.Assert(userId > 0);
+            //Debug.Assert(userId > 0);
 
             var spawnPacket = ConstructSpawnPacket(obj, gameTime);
             if (spawnPacket != null)
@@ -3334,7 +3365,14 @@ namespace PacketDefinitions420
                 }
                 else
                 {
-                    _packetHandlerManager.SendPacket(userId, spawnPacket.GetBytes(), Channel.CHL_S2C);
+                    if(userId <= 0)
+                    {
+                        _packetHandlerManager.BroadcastPacket(spawnPacket.GetBytes(), Channel.CHL_S2C);
+                    }
+                    else
+                    {
+                        _packetHandlerManager.SendPacket(userId, spawnPacket.GetBytes(), Channel.CHL_S2C);
+                    }
                 }
             }
         }

@@ -71,22 +71,29 @@ namespace PacketDefinitions420
         }
         public static IEventEmptyHistory GetAnnouncementID(GameServerCore.Enums.EventID Event, int mapId = 0)
         {
-            switch (Event)
+            var worldEvent = (EventID)(byte)Event;
+            switch (worldEvent)
             {
-                case GameServerCore.Enums.EventID.OnStartGameMessage1:
+                case EventID.OnStartGameMessage1:
                     return new OnStartGameMessage1 { MapNumber = mapId };
-                case GameServerCore.Enums.EventID.OnStartGameMessage2:
+                case EventID.OnStartGameMessage2:
                     return new OnStartGameMessage2 { MapNumber = mapId };
-                case GameServerCore.Enums.EventID.OnStartGameMessage3:
+                case EventID.OnStartGameMessage3:
                     return new OnStartGameMessage3 { MapNumber = mapId };
-                case GameServerCore.Enums.EventID.OnStartGameMessage4:
+                case EventID.OnStartGameMessage4:
                     return new OnStartGameMessage4 { MapNumber = mapId };
-                case GameServerCore.Enums.EventID.OnStartGameMessage5:
+                case EventID.OnStartGameMessage5:
                     return new OnStartGameMessage5 { MapNumber = mapId };
-                case GameServerCore.Enums.EventID.OnMinionsSpawn:
+                case EventID.OnMinionsSpawn:
                     return new OnMinionsSpawn();
-                case GameServerCore.Enums.EventID.OnNexusCrystalStart:
+                case EventID.OnNexusCrystalStart:
                     return new OnNexusCrystalStart();
+                case EventID.OnMinionAscended:
+                    return new OnMinionAscended();
+                case EventID.OnChampionAscended:
+                    return new OnChampionAscended();
+                case EventID.OnClearAscended:
+                    return new OnClearAscended();
             }
             return null;
         }

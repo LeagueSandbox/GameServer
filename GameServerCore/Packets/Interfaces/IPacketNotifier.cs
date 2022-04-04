@@ -299,6 +299,7 @@ namespace GameServerCore.Packets.Interfaces
         /// </summary>
         /// <param name="p">Projectile that was created.</param>
         void NotifyMissileReplication(ISpellMissile p);
+        void NotifyS2C_CameraBehavior(IChampion target, Vector3 position);
         /// <summary>
         /// Sends a packet to all players that updates the specified unit's model.
         /// </summary>
@@ -651,6 +652,7 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="type">Type of emotion being performed; DANCE/TAUNT/LAUGH/JOKE/UNK.</param>
         /// <param name="netId">NetID of the unit performing the emotion.</param>
         void NotifyS2C_PlayEmote(Emotions type, uint netId);
+        void NotifyS2C_PlaySound(string soundName, IAttackableUnit soundOwner);
         /// <summary>
         /// Sends a packet to the specified player which is meant as a response to the players query about the status of the game.
         /// </summary>
@@ -734,7 +736,8 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="attacked">Unit that is being attacked.</param>
         /// <param name="attackType">AttackType that the attacker is using to attack.</param>
         void NotifyS2C_UnitSetLookAt(IAttackableUnit attacker, IAttackableUnit attacked, AttackType attackType);
-        void NotifyS2C_UnitSetMinimapIcon(IAttackableUnit unit, string iconCategory = "", bool changeIcon = false, string borderCategory = "", bool changeBorder = false);
+        void NotifyS2C_UnitSetMinimapIcon(IAttackableUnit unit, string iconCategory = "", bool changeIcon = false, string borderCategory = "", bool changeBorder = false, string borderScriptName = "");
+        void NotifyS2C_UpdateAscended(IObjAiBase ascendant = null);
         /// <summary>
         /// Sends a packet to all players detailing the attack speed cap overrides for this game.
         /// </summary>

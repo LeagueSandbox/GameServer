@@ -152,7 +152,7 @@ namespace MapScripts.Map8
             AddParticle(null, Nexus[TeamId.TEAM_BLUE], "Odin_Crystal_blue", Nexus[TeamId.TEAM_BLUE].Position, 25000, bone: "center_crystal");
             AddParticle(null, Nexus[TeamId.TEAM_PURPLE], "Odin_Crystal_purple", Nexus[TeamId.TEAM_PURPLE].Position, 25000, bone: "center_crystal");
 
-            AddParticle(null, null, "Odin_Forcefield_blue", new Vector2(580f, 4124f), 80.0f);
+            AddParticle(null, null, "odin_shrine_time", new Vector2(580f, 4124f), 80.0f);
             AddParticle(null, null, "Odin_Forcefield_purple", new Vector2(13310f, 4124f), 80.0f);
 
             foreach (var stair in TeamStairs.Values)

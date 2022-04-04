@@ -23,8 +23,8 @@ namespace MapScripts.Map8
         static Dictionary<TeamId, List<IRegion>> CrystalRegions = new Dictionary<TeamId, List<IRegion>> { { TeamId.TEAM_BLUE, new List<IRegion>() }, { TeamId.TEAM_PURPLE, new List<IRegion>() } };
         public static void InitializeNeutrals()
         {
-            CrystalsTemplates.Add(new MinionTemplate(null, "OdinCenterRelic", "OdinCenterRelic", new Vector2(7074.9736f, 6462.0273f), team: TeamId.TEAM_BLUE));
-            CrystalsTemplates.Add(new MinionTemplate(null, "OdinCenterRelic", "OdinCenterRelic", new Vector2(6801.1855f, 6462.0273f), team: TeamId.TEAM_PURPLE));
+            CrystalsTemplates.Add(new MinionTemplate(null, "OdinCenterRelic", "OdinCenterRelic", new Vector2(7074.9736f, 6462.0273f), team: TeamId.TEAM_BLUE, instantNotify: true));
+            CrystalsTemplates.Add(new MinionTemplate(null, "OdinCenterRelic", "OdinCenterRelic", new Vector2(6801.1855f, 6462.0273f), team: TeamId.TEAM_PURPLE, instantNotify: true));
 
             SetupCamps();
 
@@ -64,9 +64,7 @@ namespace MapScripts.Map8
                     {
                         var crystal = CreateMinion(crystalTemplate.Name, crystalTemplate.Model, crystalTemplate.Position,
                                 crystalTemplate.NetId, crystalTemplate.Team, crystalTemplate.SkinId,
-                                crystalTemplate.IgnoresCollision, crystalTemplate.IsTargetable);
-
-                        NotifySpawn(crystal);
+                                crystalTemplate.IgnoresCollision, crystalTemplate.IsTargetable, instantNotifyBroadcast: crystalTemplate.InstantNotify);
 
                         string iconCategory = "CenterRelicLeft";
 
@@ -171,7 +169,7 @@ namespace MapScripts.Map8
         public int HealthBonus { get; set; }
         public int InitialLevel { get; set; }
         public IObjAiBase VisibilityOwner { get; set; }
-
+        public bool InstantNotify { get; set; }
         public MinionTemplate(
             IObjAiBase owner,
             string model,
@@ -186,7 +184,8 @@ namespace MapScripts.Map8
             string aiScript = "",
             int damageBonus = 0,
             int healthBonus = 0,
-            int initialLevel = 1
+            int initialLevel = 1,
+            bool instantNotify = false
         )
         {
             Owner = owner;
@@ -203,6 +202,7 @@ namespace MapScripts.Map8
             InitialLevel = initialLevel;
             VisibilityOwner = visibilityOwner;
             SkinId = skinId;
+            InstantNotify = instantNotify;
         }
     }
 }

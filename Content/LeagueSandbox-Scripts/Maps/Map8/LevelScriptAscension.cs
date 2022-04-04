@@ -9,6 +9,7 @@ using LeagueSandbox.GameServer.Scripting.CSharp;
 using GameServerCore.Scripting.CSharp;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 using static LeagueSandbox.GameServer.API.ApiMapFunctionManager;
+using System.Linq;
 
 namespace MapScripts.Map8
 {
@@ -19,7 +20,7 @@ namespace MapScripts.Map8
             MinionSpawnEnabled = false,
             StartingGold = 1300.0f,
             OverrideSpawnPoints = true,
-            RecallSpellItemId = 2005,
+            //RecallSpellItemId = 2007,
             GoldPerSecond = 9.85f,
             FirstGoldTime = 5 * 1000,
             InitialLevel = 3,
@@ -91,21 +92,46 @@ namespace MapScripts.Map8
             LevelScriptObjectsAscension.LoadObjects(mapObjects);
         }
 
-        Dictionary<TeamId, int> TeamScores = new Dictionary<TeamId, int> { { TeamId.TEAM_BLUE, 200}, { TeamId.TEAM_PURPLE, 200} };
+        Dictionary<TeamId, int> TeamScores = new Dictionary<TeamId, int> { { TeamId.TEAM_BLUE, 0 }, { TeamId.TEAM_PURPLE, 0 } };
         public void OnMatchStart()
         {
             LevelScriptObjectsAscension.OnMatchStart();
             NeutralMinionSpawnAscension.InitializeNeutrals();
 
-            foreach(var team in TeamScores.Keys)
+            foreach (var team in TeamScores.Keys)
             {
                 NotifyGameScore(team, TeamScores[team]);
             }
+
+            AddParticle(null, null, "Odin_Forcefield_blue", new Vector2(3184f, 1247), -1, flags: (FXFlags)32);
+            AddParticle(null, null, "Odin_Forcefield_purple", new Vector2(13310f, 4124f), -1);
+
+            foreach (var player in GetAllPlayers())
+            {
+                player.Inventory.AddItem(GetItemData(3460), player);
+            }
+
+            AddPosPerceptionBubble(new Vector2(6930.0f, 6443.0f), 550.0f, 25000, TeamId.TEAM_BLUE);
+            AddPosPerceptionBubble(new Vector2(6930.0f, 6443.0f), 550.0f, 25000, TeamId.TEAM_PURPLE);
+
+            NotifyMapAnnouncement(EventID.OnClearAscended);
+            NotifyAscendant();
         }
 
+        float poiintsTimer = 1000;
         public void Update(float diff)
         {
             NeutralMinionSpawnAscension.OnUpdate(diff);
+            poiintsTimer -= diff;
+
+            if (poiintsTimer < 0)
+            {
+                foreach (var team in TeamScores.Keys.ToList())
+                {
+                    NotifyGameScore(team, TeamScores[team]++);
+                }
+                poiintsTimer = 1000;
+            }
         }
 
         public void SpawnAllCamps()
@@ -115,7 +141,7 @@ namespace MapScripts.Map8
 
         public Vector2 GetFountainPosition(TeamId team)
         {
-            return LevelScriptObjects.FountainList[team].Position;
+            return LevelScriptObjectsAscension.FountainList[team].Position;
         }
     }
 }
