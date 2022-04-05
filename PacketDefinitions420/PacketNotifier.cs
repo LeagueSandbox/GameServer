@@ -3362,14 +3362,7 @@ namespace PacketDefinitions420
                 }
                 else
                 {
-                    if (userId <= 0)
-                    {
-                        _packetHandlerManager.BroadcastPacket(spawnPacket.GetBytes(), Channel.CHL_S2C);
-                    }
-                    else
-                    {
-                        _packetHandlerManager.SendPacket(userId, spawnPacket.GetBytes(), Channel.CHL_S2C);
-                    }
+                    _packetHandlerManager.SendPacket(userId, spawnPacket.GetBytes(), Channel.CHL_S2C);
                 }
             }
         }

@@ -135,8 +135,6 @@ public class AscXerath
     public void SpawnXerath()
     {
         var ascXerath = Camp.AddMonster(Xerath);
-        NotifySpawnBroadcast(ascXerath);
-        ascXerath.PauseAnimation(true);
         SetMinimapIcon(ascXerath, "Dragon", true);
     }
 }
@@ -154,7 +152,7 @@ public class AscensionCrystal
 
     public void SpawnCrystal()
     {
-        var crystal = CreateMinion("AscRelic", "AscRelic", Position, team: TeamId.TEAM_NEUTRAL, ignoreCollision: true, instantNotifyBroadcast: true);
+        var crystal = CreateMinion("AscRelic", "AscRelic", Position, team: TeamId.TEAM_NEUTRAL, ignoreCollision: true);
         AddUnitPerceptionBubble(crystal, 800.0f, 25000.0f, TeamId.TEAM_BLUE, false, null, 38.08f);
         AddUnitPerceptionBubble(crystal, 800.0f, 25000.0f, TeamId.TEAM_PURPLE, false, null, 38.08f);
         SetMinimapIcon(crystal, "Relic", true);

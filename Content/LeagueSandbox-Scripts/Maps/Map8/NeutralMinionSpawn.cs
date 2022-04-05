@@ -138,16 +138,7 @@ namespace MapScripts.Map8
 
         public void SpawnCrystal()
         {
-            var crystal = CreateMinion("OdinCenterRelic", "OdinCenterRelic", Position, team: Team, instantNotifyBroadcast: true);
-
-            string iconCategory = "CenterRelicLeft";
-
-            if (Team == TeamId.TEAM_PURPLE)
-            {
-                iconCategory = "CenterRelicRight";
-            }
-
-            SetMinimapIcon(crystal, iconCategory, true);
+            var crystal = CreateMinion("OdinCenterRelic", "OdinCenterRelic", Position, team: Team);
 
             Regions.Add(AddUnitPerceptionBubble(crystal, 350.0f, 25000.0f, TeamId.TEAM_BLUE, collisionArea: 38.08f, collisionOwner: crystal));
             Regions.Add(AddUnitPerceptionBubble(crystal, 350.0f, 25000.0f, TeamId.TEAM_PURPLE, collisionArea: 38.08f, collisionOwner: crystal));

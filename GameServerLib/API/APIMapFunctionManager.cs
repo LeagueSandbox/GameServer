@@ -161,18 +161,10 @@ namespace LeagueSandbox.GameServer.API
             string name, string model, Vector2 position, IObjAiBase owner = null, uint netId = 0,
             TeamId team = TeamId.TEAM_NEUTRAL, int skinId = 0, bool ignoreCollision = false,
             bool isTargetable = false, bool isWard = false,string aiScript = "", int damageBonus = 0,
-            int healthBonus = 0, int initialLevel = 1, bool instantNotifyBroadcast = false)
+            int healthBonus = 0, int initialLevel = 1)
         {
             var m = new Minion(_game, owner, position, model, name, netId, team, skinId, ignoreCollision, isTargetable, isWard, null, aiScript, damageBonus, healthBonus, initialLevel);
-            if(name == "AscRelic")
-            {
-
-            }
             _game.ObjectManager.AddObject(m);
-            if (instantNotifyBroadcast)
-            {
-                NotifySpawnBroadcast(m);
-            }
             return m;
         }
 
@@ -405,8 +397,7 @@ namespace LeagueSandbox.GameServer.API
 
         public static void NotifySpawnBroadcast(IGameObject obj)
         {
-            _game.PacketNotifier.NotifySpawn(obj, TeamId.TEAM_BLUE, 0, _game.GameTime, false);
-            _game.PacketNotifier.NotifySpawn(obj, TeamId.TEAM_PURPLE, 0, _game.GameTime, false);
+            _game.PacketNotifier.NotifySpawn(obj, obj.Team, 0, _game.GameTime, true);
         }
 
         public static void AddObject(IGameObject obj)

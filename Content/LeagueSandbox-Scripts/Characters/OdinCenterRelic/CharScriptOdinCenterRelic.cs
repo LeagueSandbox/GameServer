@@ -20,7 +20,7 @@ namespace CharScripts
             SetStatus(owner, StatusFlags.CanAttack, false);
             SetStatus(owner, StatusFlags.CanMove, false);
 
-            AddBuff("OdinBombBuff", 25000.0f, 1, null, owner, owner, false);
+            AddBuff("OdinCenterRelicBuff", 25000.0f, 1, null, owner, owner, false);
         }
 
         public void OnDeactivate(IObjAiBase owner, ISpell spell = null)
