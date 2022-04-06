@@ -13,8 +13,7 @@ namespace CharScripts
     {
         public void OnActivate(IObjAiBase owner, ISpell spell = null)
         {
-            AddParticleTarget(owner, owner, "Asc_RelicPrism_Sand", owner, 25000.0f, direction: new Vector3(0.0f, 0.0f, -1.0f), flags: (FXFlags)304);
-            AddParticleTarget(owner, owner, "Asc_relic_Sand_buf", owner, 25000.0f, flags: (FXFlags)32);
+            AddBuff("AscRelicPointBuff", 25000.0f, 1, null, owner, owner);
         }
         public void OnDeactivate(IObjAiBase owner, ISpell spell = null)
         {

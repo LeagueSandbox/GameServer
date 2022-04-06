@@ -183,14 +183,14 @@ namespace MapScripts.Map12
             if (time >= 60.0f * 1000)
             {
                 // Minions have spawned
-                NotifyMapAnnouncement(EventID.OnMinionsSpawn, 0);
-                NotifyMapAnnouncement(EventID.OnNexusCrystalStart, 0);
+                NotifyWorldEvent(EventID.OnMinionsSpawn, 0);
+                NotifyWorldEvent(EventID.OnNexusCrystalStart, 0);
                 AllAnnouncementsAnnounced = true;
             }
             else if (time >= 30.0f * 1000 && !AnnouncedEvents.Contains(EventID.OnStartGameMessage1))
             {
                 // Welcome to the Howling Abyss
-                NotifyMapAnnouncement(EventID.OnStartGameMessage1, 12);
+                NotifyWorldEvent(EventID.OnStartGameMessage1, 12);
                 AnnouncedEvents.Add(EventID.OnStartGameMessage1);
             }
         }

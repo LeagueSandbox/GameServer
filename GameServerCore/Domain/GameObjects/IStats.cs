@@ -51,6 +51,7 @@ namespace GameServerCore.Domain.GameObjects
         float Gold { get; set; }
         byte Level { get; set; }
         float Experience { get; set; }
+        public float Points { get; set; }
         float CurrentHealth { get; set; }
         float CurrentMana { get; set; }
         bool IsGeneratingGold { get; set; }

@@ -287,6 +287,10 @@ namespace LeagueSandbox.GameServer
                 {
                     _objects.Add(o.NetId, o);
                 }
+                if(!(o is IChampion))
+                {
+                    SpawnObject(o);
+                }
                 o.OnAdded();
             }
         }

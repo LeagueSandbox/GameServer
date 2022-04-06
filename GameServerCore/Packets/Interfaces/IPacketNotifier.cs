@@ -170,12 +170,9 @@ namespace GameServerCore.Packets.Interfaces
         /// Sends a packet to either all players with vision of a target, or the specified player.
         /// The packet displays the specified message of the specified type as floating text over a target.
         /// </summary>
-        /// <param name="target">Target to display on.</param>
-        /// <param name="message">Message to display.</param>
-        /// <param name="textType">Type of text to display. Refer to FloatTextType</param>
+        /// <param name="floatTextData">Contains all the data from a floating text.</param>
         /// <param name="userId">User to send to. 0 = sends to all in vision.</param>
-        /// <param name="param">Optional parameters for the text. Untested, function unknown.</param>
-        void NotifyDisplayFloatingText(IGameObject target, string message, FloatTextType textType = FloatTextType.Debug, int userId = 0, int param = 0);
+        void NotifyDisplayFloatingText(IFloatTextData floatTextData, TeamId team = 0, int userId = 0);
         /// <summary>
         /// Sends a packet to the specified user detailing that the GameObject that owns the specified netId has finished being initialized into vision.
         /// </summary>
@@ -559,7 +556,7 @@ namespace GameServerCore.Packets.Interfaces
         /// </summary>
         /// <param name="losingTeam">The Team that lost the match</param>
         /// <param name="time">The offset for the result to actually be displayed</param>
-        void NotifyS2C_EndGame(TeamId losingTeam, float time = 5000);
+        void NotifyS2C_EndGame(TeamId losingTeam);
         void NotifyS2C_HandleCapturePointUpdate(byte capturePointIndex, uint otherNetId, byte PARType, byte attackTeam, CapturePointUpdateCommand capturePointUpdateCommand);
         /// <summary>
         /// Notifies the game about a map score
@@ -584,6 +581,7 @@ namespace GameServerCore.Packets.Interfaces
         /// </summary>
         /// <param name="champion">Champion owned by the player.</param>
         void NotifyS2C_HeroStats(IChampion champion);
+        void NotifyS2C_IncrementPlayerScore(IScoreData scoreData);
         /// <summary>
         /// Sends a packet to the specified client's team detailing a map ping.
         /// </summary>

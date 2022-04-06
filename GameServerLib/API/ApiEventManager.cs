@@ -91,6 +91,7 @@ namespace LeagueSandbox.GameServer.API
             OnDealDamage.RemoveListener(owner);
             OnDeath.RemoveListener(owner);
             OnHitUnit.RemoveListener(owner);
+            OnIncrementChampionScore.RemoveListener(owner);
             OnKill.RemoveListener(owner);
             OnKillUnit.RemoveListener(owner);
             OnLaunchAttack.RemoveListener(owner);
@@ -131,6 +132,7 @@ namespace LeagueSandbox.GameServer.API
         public static EventOnDealDamage OnDealDamage = new EventOnDealDamage();
         public static EventOnDeath OnDeath = new EventOnDeath();
         public static EventOnHitUnit OnHitUnit = new EventOnHitUnit();
+        public static EventOnIncrementChampionScore OnIncrementChampionScore = new EventOnIncrementChampionScore();
         public static EventOnKill OnKill = new EventOnKill();
         public static EventOnKillUnit OnKillUnit = new EventOnKillUnit();
         public static EventOnLaunchAttack OnLaunchAttack = new EventOnLaunchAttack();
@@ -628,6 +630,47 @@ namespace LeagueSandbox.GameServer.API
             }
         }
     }
+
+    public class EventOnIncrementChampionScore
+    {
+        private readonly List<Tuple<object, IChampion, Action<IScoreData>, bool>> _listeners = new List<Tuple<object, IChampion, Action<IScoreData>, bool>>();
+
+        public void AddListener(object owner, IChampion champion, Action<IScoreData> callback, bool singleInstance)
+        {
+            var listenerTuple = new Tuple<object, IChampion, Action<IScoreData>, bool>(owner, champion, callback, singleInstance);
+            _listeners.Add(listenerTuple);
+        }
+
+        public void RemoveListener(object owner)
+        {
+            _listeners.RemoveAll((listener) => listener.Item1 == owner);
+        }
+
+        public void Publish(IScoreData scoreData)
+        {
+            var count = _listeners.Count;
+
+            if (count == 0)
+            {
+                return;
+            }
+
+            for (int i = count - 1; i >= 0; i--)
+            {
+                if (_listeners[i].Item2 == scoreData.Owner)
+                {
+                    var listener = _listeners[i];
+                    listener.Item3(scoreData);
+
+                    if (listener.Item4)
+                    {
+                        _listeners.Remove(listener);
+                    }
+                }
+            }
+        }
+    }
+
     public class EventOnKill
     {
         private readonly List<Tuple<object, IAttackableUnit, Action<IDeathData>, bool>> _listeners = new List<Tuple<object, IAttackableUnit, Action<IDeathData>, bool>>();

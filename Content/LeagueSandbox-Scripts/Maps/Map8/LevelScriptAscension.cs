@@ -9,6 +9,7 @@ using LeagueSandbox.GameServer.Scripting.CSharp;
 using GameServerCore.Scripting.CSharp;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 using static LeagueSandbox.GameServer.API.ApiMapFunctionManager;
+using LeagueSandbox.GameServer.API;
 using System.Linq;
 
 namespace MapScripts.Map8
@@ -92,7 +93,7 @@ namespace MapScripts.Map8
             LevelScriptObjectsAscension.LoadObjects(mapObjects);
         }
 
-        Dictionary<TeamId, int> TeamScores = new Dictionary<TeamId, int> { { TeamId.TEAM_BLUE, 0 }, { TeamId.TEAM_PURPLE, 0 } };
+        Dictionary<TeamId, float> TeamScores = new Dictionary<TeamId, float> { { TeamId.TEAM_BLUE, 0.0f }, { TeamId.TEAM_PURPLE, 0.0f } };
         public void OnMatchStart()
         {
             LevelScriptObjectsAscension.OnMatchStart();
@@ -103,35 +104,66 @@ namespace MapScripts.Map8
                 NotifyGameScore(team, TeamScores[team]);
             }
 
-            AddParticle(null, null, "Odin_Forcefield_blue", new Vector2(3184f, 1247), -1, flags: (FXFlags)32);
+            AddParticle(null, null, "Odin_Forcefield_blue", new Vector2(580f, 4124f), -1);
             AddParticle(null, null, "Odin_Forcefield_purple", new Vector2(13310f, 4124f), -1);
-
-            foreach (var player in GetAllPlayers())
-            {
-                player.Inventory.AddItem(GetItemData(3460), player);
-            }
 
             AddPosPerceptionBubble(new Vector2(6930.0f, 6443.0f), 550.0f, 25000, TeamId.TEAM_BLUE);
             AddPosPerceptionBubble(new Vector2(6930.0f, 6443.0f), 550.0f, 25000, TeamId.TEAM_PURPLE);
 
-            NotifyMapAnnouncement(EventID.OnClearAscended);
+            NotifyWorldEvent(EventID.OnClearAscended);
             NotifyAscendant();
+
+            foreach (var champion in GetAllChampions())
+            {
+                ApiEventManager.OnIncrementChampionScore.AddListener(this, champion, OnIncrementPoints, false);
+                ApiEventManager.OnKill.AddListener(this, champion, OnChampionKill, false);
+            }
+
+            foreach (var player in GetAllPlayers())
+            {
+                player.Inventory.AddItem(GetItemData(3460), player);
+                player.Spells[6 + (byte)SpellSlotType.InventorySlots].SetCooldown(45, true);
+            }
         }
 
-        float poiintsTimer = 1000;
         public void Update(float diff)
         {
             NeutralMinionSpawnAscension.OnUpdate(diff);
-            poiintsTimer -= diff;
-
-            if (poiintsTimer < 0 && TeamScores[TeamId.TEAM_BLUE] < 200)
+            if (!allAnnouncementsAnnounced)
             {
-                foreach (var team in TeamScores.Keys.ToList())
-                {
-                    NotifyGameScore(team, TeamScores[team]++);
-                }
-                poiintsTimer = 1000;
+                Announcements(GameTime());
             }
+        }
+
+        void OnIncrementPoints(IScoreData scoreData)
+        {
+            var owner = scoreData.Owner;
+            var team = owner.Team;
+
+            TeamScores[team] += scoreData.Points;
+            NotifyGameScore(team, TeamScores[team]);
+
+            if(TeamScores[team] >= 200)
+            {
+                foreach(var player in GetAllPlayersFromTeam(team))
+                {
+                    AddBuff("AscRespawn", 5.7f, 1, null, player, player);
+                }
+
+                var losingTeam = TeamId.TEAM_BLUE;
+                if(team == TeamId.TEAM_BLUE)
+                {
+                    losingTeam = TeamId.TEAM_PURPLE;
+                }
+                EndGame(losingTeam, new Vector3(owner.Position.X, owner.GetHeight(), owner.Position.Y), 10000.0f, true, 2.0f);
+            }
+        }
+
+        public void OnChampionKill(IDeathData data)
+        {
+            var killer = data.Killer as IChampion;
+
+            killer.IncrementScore(1.0f, ScoreCategory.Combat, ScoreEvent.ChampKill, true);
         }
 
         public void SpawnAllCamps()
@@ -142,6 +174,28 @@ namespace MapScripts.Map8
         public Vector2 GetFountainPosition(TeamId team)
         {
             return LevelScriptObjectsAscension.FountainList[team].Position;
+        }
+
+        float notificationCounter = 0;
+        bool allAnnouncementsAnnounced = false;
+        public void Announcements(float gametime)
+        {
+            if(gametime >= 90.0f * 1000 && notificationCounter == 2)
+            {
+                NotifyWorldEvent(EventID.OnNexusCrystalStart);
+                allAnnouncementsAnnounced=true;
+            }
+            else if(gametime >= 45.5f * 1000 && notificationCounter == 1)
+            {
+                NotifyWorldEvent(EventID.OnStartGameMessage2, 8);
+                notificationCounter++;
+
+            }
+            else if(gametime >= 15.5f * 1000 && notificationCounter == 0)
+            {
+                NotifyWorldEvent(EventID.OnStartGameMessage1, 8);
+                notificationCounter++;
+            }
         }
     }
 }

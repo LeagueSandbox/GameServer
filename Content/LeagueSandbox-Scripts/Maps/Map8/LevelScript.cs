@@ -210,26 +210,26 @@ namespace MapScripts.Map8
         {
             if (time >= 90.0f * 1000)
             {
-                NotifyMapAnnouncement(EventID.OnNexusCrystalStart, 0);
+                NotifyWorldEvent(EventID.OnNexusCrystalStart, 0);
                 AllAnnouncementsAnnounced = true;
 
             }
             if (time >= 80.0f * 1000 && !AnnouncedEvents.Contains(EventID.OnStartGameMessage2))
             {
                 // The Battle Has Beguns!
-                NotifyMapAnnouncement(EventID.OnStartGameMessage2, 8);
+                NotifyWorldEvent(EventID.OnStartGameMessage2, 8);
                 AnnouncedEvents.Add(EventID.OnStartGameMessage2);
             }
             else if (time >= 50.0f * 1000 && !AnnouncedEvents.Contains(EventID.OnStartGameMessage1))
             {
                 // The battle will begin in 30 seconds!
-                NotifyMapAnnouncement(EventID.OnStartGameMessage1, 8);
+                NotifyWorldEvent(EventID.OnStartGameMessage1, 8);
                 AnnouncedEvents.Add(EventID.OnStartGameMessage1);
             }
             else if (time >= 30.0f * 1000 && !AnnouncedEvents.Contains(EventID.OnStartGameMessage3))
             {
                 // Welcome to the Crystal Scar!
-                NotifyMapAnnouncement(EventID.OnStartGameMessage3, 8);
+                NotifyWorldEvent(EventID.OnStartGameMessage3, 8);
                 AnnouncedEvents.Add(EventID.OnStartGameMessage3);
             }
         }

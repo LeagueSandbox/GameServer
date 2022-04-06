@@ -3,6 +3,7 @@ using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
 using LeagueSandbox.GameServer.API;
 using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
+using LeagueSandbox.GameServer.GameObjects.Stats;
 using System.Collections.Generic;
 using System.Numerics;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
@@ -45,10 +46,10 @@ namespace MapScripts.Map8
                 }
             }
 
-            if (!Xerath.Camp.IsAlive)
+            if (!Xerath.Camp.IsAlive && Xerath.AscendedChampion == null)
             {
                 Xerath.RespawnTimer -= diff;
-                if(Xerath.RespawnTimer <= 0)
+                if (Xerath.RespawnTimer <= 0)
                 {
                     Xerath.SpawnXerath();
                     Xerath.RespawnTimer = 30.0f * 1000;
@@ -90,7 +91,6 @@ namespace MapScripts.Map8
             CaptureCrystals.Add(new AscensionCrystal(new Vector2(8838.0f, 7760.0f)));
             CaptureCrystals.Add(new AscensionCrystal(new Vector2(6960.0f, 4080.0f)));
 
-            LogInfo(CaptureCrystals.Count.ToString());
             var speedShrine1 = CreateJungleCamp(new Vector3(5022.9287f, 60.0f, 7778.2695f), 102, 0, "NoIcon", 0);
             SpeedShrines.Add(speedShrine1, CreateJungleMonster("OdinSpeedShrine", "OdinSpeedShrine", new Vector2(5022.9287f, 7778.2695f), new Vector3(-0.0f, 0.0f, 1.0f), speedShrine1, isTargetable: false, ignoresCollision: true));
 
@@ -127,6 +127,7 @@ public class AscXerath
     IMonster Xerath;
     public IMonsterCamp Camp;
     public float RespawnTimer { get; set; } = 30.0f * 1000;
+    public IChampion AscendedChampion;
     public AscXerath(IMonster xerath)
     {
         Xerath = xerath;
@@ -136,6 +137,23 @@ public class AscXerath
     {
         var ascXerath = Camp.AddMonster(Xerath);
         SetMinimapIcon(ascXerath, "Dragon", true);
+        ApiEventManager.OnDeath.AddListener(ascXerath, ascXerath, OnXerathDeath, true);
+    }
+
+    public void OnXerathDeath(IDeathData data)
+    {
+        if (data.Killer is IChampion ch)
+        {
+            ch.IncrementScore(5.0f, ScoreCategory.Combat, ScoreEvent.ChampKill, true);
+            AscendedChampion = ch;
+
+            ApiEventManager.OnDeath.AddListener(ch, ch, OnKillerDeath, true);
+        }
+    }
+
+    public void OnKillerDeath(IDeathData data)
+    {
+        AscendedChampion = null;
     }
 }
 
@@ -152,16 +170,27 @@ public class AscensionCrystal
 
     public void SpawnCrystal()
     {
-        var crystal = CreateMinion("AscRelic", "AscRelic", Position, team: TeamId.TEAM_NEUTRAL, ignoreCollision: true);
-        AddUnitPerceptionBubble(crystal, 800.0f, 25000.0f, TeamId.TEAM_BLUE, false, null, 38.08f);
-        AddUnitPerceptionBubble(crystal, 800.0f, 25000.0f, TeamId.TEAM_PURPLE, false, null, 38.08f);
-        SetMinimapIcon(crystal, "Relic", true);
+        var crystal = CreateMinion("AscRelic", "AscRelic", Position, team: TeamId.TEAM_NEUTRAL, isTargetable: true);
+
+        //Note: Since we still don't have a capture system in place, I'm doing this just to simulate it
+        var crystalStatModifier = new StatsModifier();
+        crystalStatModifier.HealthPoints.FlatBonus = 1000;
+        crystalStatModifier.HealthRegeneration.FlatBonus = 10;
+        crystal.AddStatModifier(crystalStatModifier);
+        crystal.Stats.CurrentHealth = crystal.Stats.HealthPoints.Total;
+
+        NotifySpawnBroadcast(crystal);
         ApiEventManager.OnDeath.AddListener(crystal, crystal, OnDeath, true);
         IsDead = false;
+        SetMinimapIcon(crystal, "Relic", true);
     }
 
     public void OnDeath(IDeathData deathData)
     {
         IsDead = true;
+        if(deathData.Killer is IChampion ch)
+        {
+            ch.IncrementScore(3.0f, ScoreCategory.Objective, ScoreEvent.MajorRelicPickup, true, true);
+        }
     }
 }

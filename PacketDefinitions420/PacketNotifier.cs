@@ -647,22 +647,31 @@ namespace PacketDefinitions420
         /// <param name="textType">Type of text to display. Refer to FloatTextType</param>
         /// <param name="userId">User to send to. 0 = sends to all in vision.</param>
         /// <param name="param">Optional parameters for the text. Untested, function unknown.</param>
-        public void NotifyDisplayFloatingText(IGameObject target, string message, FloatTextType textType = FloatTextType.Debug, int userId = 0, int param = 0)
+        public void NotifyDisplayFloatingText(IFloatTextData floatTextData, TeamId team = 0, int userId = 0)
         {
             var textPacket = new DisplayFloatingText
             {
-                TargetNetID = target.NetId,
-                FloatTextType = (uint)textType,
-                Param = param,
-                Message = message
+                TargetNetID = floatTextData.Target.NetId,
+                FloatTextType = (uint)floatTextData.FloatTextType,
+                Param = floatTextData.Param,
+                Message = floatTextData.Message
             };
 
             if (userId == 0)
             {
-                _packetHandlerManager.BroadcastPacketVision(target, textPacket.GetBytes(), Channel.CHL_S2C);
+                if(team != 0)
+                {
+                    _packetHandlerManager.BroadcastPacketTeam(team, textPacket.GetBytes(), Channel.CHL_S2C);
+                }
+                else
+                {
+                    _packetHandlerManager.BroadcastPacketVision(floatTextData.Target, textPacket.GetBytes(), Channel.CHL_S2C);
+                }
             }
-
-            _packetHandlerManager.SendPacket(userId, textPacket.GetBytes(), Channel.CHL_S2C);
+            else
+            {
+                _packetHandlerManager.SendPacket(userId, textPacket.GetBytes(), Channel.CHL_S2C);
+            }
         }
 
         /// <summary>
@@ -2542,20 +2551,13 @@ namespace PacketDefinitions420
         /// </summary>
         /// <param name="losingTeam">The Team that lost the match</param>
         /// <param name="time">The offset for the result to actually be displayed</param>
-        public void NotifyS2C_EndGame(TeamId losingTeam, float time = 5000)
+        public void NotifyS2C_EndGame(TeamId losingTeam)
         {
-            var timer = new Timer(time) { AutoReset = false };
-            timer.Elapsed += (a, b) =>
+            var gameEndPacket = new S2C_EndGame
             {
-                var gameEndPacket = new S2C_EndGame
-                {
-                    SenderNetID = 0,
-                    IsTeamOrderWin = losingTeam != TeamId.TEAM_BLUE
-                };
-                _packetHandlerManager.BroadcastPacket(gameEndPacket.GetBytes(), Channel.CHL_S2C);
+                IsTeamOrderWin = losingTeam != TeamId.TEAM_BLUE
             };
-
-            timer.Start();
+            _packetHandlerManager.BroadcastPacket(gameEndPacket.GetBytes(), Channel.CHL_S2C);
         }
 
         public void NotifyS2C_HandleCapturePointUpdate(byte capturePointIndex, uint otherNetId, byte PARType, byte attackTeam, CapturePointUpdateCommand capturePointUpdateCommand)
@@ -2622,6 +2624,21 @@ namespace PacketDefinitions420
             var response = new S2C_HeroStats { Data = champion.ChampStats.GetBytes() };
             // TODO: research how to send the packet
             _packetHandlerManager.BroadcastPacket(response.GetBytes(), Channel.CHL_S2C);
+        }
+
+        public void NotifyS2C_IncrementPlayerScore(IScoreData scoreData)
+        {
+            var packet = new S2C_IncrementPlayerScore
+            {
+                PlayerNetID = scoreData.Owner.NetId,
+                TotalPointValue = scoreData.Owner.Stats.Points,
+                PointValue = scoreData.Points,
+                ShouldCallout = scoreData.DoCallOut,
+                ScoreCategory = (byte)scoreData.ScoreCategory,
+                ScoreEvent = (byte)scoreData.ScoreEvent
+            };
+
+            _packetHandlerManager.BroadcastPacketVision(scoreData.Owner, packet.GetBytes(), Channel.CHL_S2C);
         }
 
         /// <summary>

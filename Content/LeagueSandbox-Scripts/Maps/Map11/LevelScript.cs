@@ -205,20 +205,20 @@ namespace MapScripts.Map11
             if (time >= 90.0f * 1000)
             {
                 // Minions have spawned
-                NotifyMapAnnouncement(EventID.OnMinionsSpawn, 0);
-                NotifyMapAnnouncement(EventID.OnNexusCrystalStart, 0);
+                NotifyWorldEvent(EventID.OnMinionsSpawn, 0);
+                NotifyWorldEvent(EventID.OnNexusCrystalStart, 0);
                 AllAnnouncementsAnnounced = true;
             }
             else if (time >= 60.0f * 1000 && !AnnouncedEvents.Contains(EventID.OnStartGameMessage2))
             {
                 // 30 seconds until minions spawn
-                NotifyMapAnnouncement(EventID.OnStartGameMessage2, 11);
+                NotifyWorldEvent(EventID.OnStartGameMessage2, 11);
                 AnnouncedEvents.Add(EventID.OnStartGameMessage2);
             }
             else if (time >= 30.0f * 1000 && !AnnouncedEvents.Contains(EventID.OnStartGameMessage1))
             {
                 // Welcome to Summoners Rift
-                NotifyMapAnnouncement(EventID.OnStartGameMessage1, 11);
+                NotifyWorldEvent(EventID.OnStartGameMessage1, 11);
                 AnnouncedEvents.Add(EventID.OnStartGameMessage1);
             }
         }

@@ -2,6 +2,7 @@
 using GameServerCore.Domain.GameObjects.Spell;
 using GameServerCore.Domain.GameObjects.Spell.Missile;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
+using LeagueSandbox.GameServer.API;
 using static LeagueSandbox.GameServer.API.ApiMapFunctionManager;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using System.Numerics;
@@ -21,6 +22,12 @@ namespace ItemSpells
         public Vector2 teleportTo;
         public void OnActivate(IObjAiBase owner, ISpell spell)
         {
+            ApiEventManager.OnResurrect.AddListener(this, owner, OnRespawn, false);
+        }
+
+        public void OnRespawn(IObjAiBase owner)
+        {
+            owner.Spells[6 + (byte)SpellSlotType.InventorySlots].SetCooldown(0, true);
         }
 
         public void OnDeactivate(IObjAiBase owner, ISpell spell)
@@ -39,7 +46,7 @@ namespace ItemSpells
                     {
                         AddBuff("AscWarp", 3.5f, 1, spell, spell.CastInfo.Owner, spell.CastInfo.Owner);
                         var minion = AddMinion(owner, "TestCubeRender10Vision", "k", start, team: owner.Team, targetable: false, isVisible: false, skinId: owner.SkinID, isWard: true);
-                        NotifySpawnBroadcast(minion);
+                        //NotifySpawnBroadcast(minion);
                         AddBuff("AscWarpTarget", 3.5f, 1, spell, minion, owner);
                     }
                 }

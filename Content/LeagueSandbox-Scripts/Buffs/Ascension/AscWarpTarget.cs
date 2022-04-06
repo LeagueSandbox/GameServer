@@ -40,6 +40,8 @@ namespace Buffs
                 TeleportCamera(ch, new Vector3(unit.Position.X, unit.GetHeight(), unit.Position.Y));
             }
             unit.Die(CreateDeathData(false, 3, unit, unit, DamageType.DAMAGE_TYPE_PHYSICAL, DamageSource.DAMAGE_SOURCE_RAW, 0.0f));
+            buff.SourceUnit.Spells[6 + (byte)SpellSlotType.InventorySlots].SetCooldown(float.MaxValue, true);
+
         }
 
         public void OnUpdate(float diff)

@@ -11,6 +11,7 @@ using LeagueSandbox.GameServer.Items;
 using LeagueSandbox.GameServer.API;
 using LeaguePackets.Game.Events;
 using System;
+using GameServerLib.GameObjects.AttackableUnits;
 
 namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 {
@@ -274,6 +275,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             }
         }
 
+        //TODO: Move this down to ObjAiBase
         public bool LevelUp(bool force = false)
         {
             var stats = Stats;
@@ -441,6 +443,21 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         public void UpdateSkin(int skinNo)
         {
             SkinID = skinNo;
+        }
+
+        public void IncrementScore(float points, ScoreCategory scoreCategory, ScoreEvent scoreEvent, bool doCallOut, bool notifyText = true)
+        {
+            Stats.Points += points;
+            var scoreData = new ScoreData(this, points, scoreCategory, scoreEvent, doCallOut);
+            _game.PacketNotifier.NotifyS2C_IncrementPlayerScore(scoreData);
+
+            if (notifyText)
+            {
+                //TODO: Figure out what "Params" is exactly
+                _game.PacketNotifier.NotifyDisplayFloatingText(new FloatTextData(this, $"+{(int)points} Points", FloatTextType.Score, 1073741833), Team);
+            }
+
+            ApiEventManager.OnIncrementChampionScore.Publish(scoreData);
         }
     }
 }

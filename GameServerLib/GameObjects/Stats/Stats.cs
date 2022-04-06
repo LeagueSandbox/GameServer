@@ -59,6 +59,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
         public float Gold { get; set; }
         public byte Level { get; set; }
         public float Experience { get; set; }
+        public float Points { get; set; }
 
         private float _currentHealth;
         public float CurrentHealth

@@ -28,19 +28,20 @@ namespace Buffs
             {
                 if (unit is IChampion)
                 {
-                    NotifyMapAnnouncement(EventID.OnChampionAscended, sourceNetId: unit.NetId);
+                    NotifyWorldEvent(EventID.OnChampionAscended, sourceNetId: unit.NetId);
 
                 }
                 else if (unit is IMonster)
                 {
-                    NotifyMapAnnouncement(EventID.OnMinionAscended);
+                    NotifyWorldEvent(EventID.OnMinionAscended);
                 }
                 NotifyAscendant(obj);
             }
 
-            buff.SetStatusEffect(StatusFlags.Targetable, false);
-            buff.SetStatusEffect(StatusFlags.Stunned, true);
-            buff.SetStatusEffect(StatusFlags.Invulnerable, true);
+            //Using SetStatus temporarily due to: https://github.com/LeagueSandbox/GameServer/issues/1385
+            SetStatus(unit, StatusFlags.Targetable, false);
+            SetStatus(unit, StatusFlags.Stunned, true);
+            SetStatus(unit, StatusFlags.Invulnerable, true);
 
             unit.PauseAnimation(true);
 
@@ -51,6 +52,10 @@ namespace Buffs
 
         public void OnDeactivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
+            SetStatus(unit, StatusFlags.Targetable, true);
+            SetStatus(unit, StatusFlags.Stunned, false);
+            SetStatus(unit, StatusFlags.Invulnerable, false);
+
             unit.PauseAnimation(false);
             if (unit is IObjAiBase obj)
             {

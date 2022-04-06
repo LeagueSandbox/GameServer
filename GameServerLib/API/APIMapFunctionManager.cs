@@ -3,6 +3,7 @@ using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
 using GameServerLib.GameObjects;
+using GameServerLib.GameObjects.AttackableUnits;
 using LeaguePackets.Game.Common;
 using LeagueSandbox.GameServer.GameObjects;
 using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
@@ -14,6 +15,7 @@ using PacketDefinitions420;
 using System.Collections.Generic;
 using System.Numerics;
 using System.Text;
+using System.Timers;
 
 namespace LeagueSandbox.GameServer.API
 {
@@ -332,7 +334,7 @@ namespace LeagueSandbox.GameServer.API
         /// </summary>
         /// <param name="Event"></param>
         /// <param name="mapId"></param>
-        public static void NotifyMapAnnouncement(EventID Event, int mapId = 0, uint sourceNetId = 0)
+        public static void NotifyWorldEvent(EventID Event, int mapId = 0, uint sourceNetId = 0)
         {
             _game.PacketNotifier.NotifyS2C_OnEventWorld(PacketExtensions.GetAnnouncementID(Event, mapId), sourceNetId);
         }
@@ -360,7 +362,6 @@ namespace LeagueSandbox.GameServer.API
         {
             //TODO: check if mapScripts should handle this directly
             var players = _game.PlayerManager.GetPlayers();
-            _game.Stop();
 
             if (deathData != null)
             {
@@ -372,7 +373,6 @@ namespace LeagueSandbox.GameServer.API
                 _game.PacketNotifier.NotifyS2C_SetGreyscaleEnabledWhenDead(false);
             }
 
-            _game.PacketNotifier.NotifyS2C_EndGame(losingTeam, endGameTimer);
             foreach (var player in players)
             {
                 if (disableUI)
@@ -384,7 +384,16 @@ namespace LeagueSandbox.GameServer.API
                     _game.PacketNotifier.NotifyS2C_MoveCameraToPoint(player, Vector3.Zero, finalCameraPosition, cameraTimer);
                 }
             }
-            _game.SetGameToExit();
+
+            //The way we handle the end of a game has to be reworked
+            var timer = new Timer(endGameTimer) { AutoReset = false };
+            timer.Elapsed += (a, b) =>
+            {
+                _game.Stop();
+                _game.PacketNotifier.NotifyS2C_EndGame(losingTeam);
+                _game.SetGameToExit();
+            };
+            timer.Start();
         }
 
         public static void AddTurretItems(IBaseTurret turret, int[] items)
@@ -397,7 +406,9 @@ namespace LeagueSandbox.GameServer.API
 
         public static void NotifySpawnBroadcast(IGameObject obj)
         {
-            _game.PacketNotifier.NotifySpawn(obj, obj.Team, 0, _game.GameTime, true);
+            //Just a workaround for our current vision problem.
+            _game.PacketNotifier.NotifySpawn(obj, TeamId.TEAM_PURPLE, 0, _game.GameTime, true);
+            _game.PacketNotifier.NotifySpawn(obj, TeamId.TEAM_BLUE, 0, _game.GameTime, true);
         }
 
         public static void AddObject(IGameObject obj)
@@ -420,9 +431,9 @@ namespace LeagueSandbox.GameServer.API
             return (int)average;
         }
 
-        public static void NotifyGameScore(TeamId team, int score)
+        public static void NotifyGameScore(TeamId team, float score)
         {
-            _game.PacketNotifier.NotifyS2C_HandleGameScore(team, score);
+            _game.PacketNotifier.NotifyS2C_HandleGameScore(team, (int)score);
         }
 
         /// <summary>
