@@ -2,6 +2,7 @@
 using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
+using GameServerCore.Packets.Enums;
 using GameServerLib.GameObjects;
 using GameServerLib.GameObjects.AttackableUnits;
 using LeaguePackets.Game.Common;
@@ -457,6 +458,11 @@ namespace LeagueSandbox.GameServer.API
         public static void NotifyAscendant(IObjAiBase ascendant = null)
         {
             _game.PacketNotifier.NotifyS2C_UpdateAscended(ascendant);
+        }
+
+        public static void NotifyMapPing(Vector2 position, PingCategory ping)
+        {
+            _game.PacketNotifier.NotifyS2C_MapPing(position, (Pings)ping);
         }
     }
 }

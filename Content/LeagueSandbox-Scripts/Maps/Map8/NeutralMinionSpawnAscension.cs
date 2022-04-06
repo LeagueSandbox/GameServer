@@ -52,7 +52,6 @@ namespace MapScripts.Map8
                 if (Xerath.RespawnTimer <= 0)
                 {
                     Xerath.SpawnXerath();
-                    Xerath.RespawnTimer = 30.0f * 1000;
                 }
             }
 
@@ -64,7 +63,6 @@ namespace MapScripts.Map8
                     if (crystal.RespawnTimer <= 0 || forceSpawn)
                     {
                         crystal.SpawnCrystal();
-                        crystal.RespawnTimer = 20.0f * 1000f;
                     }
                 }
             }
@@ -138,6 +136,7 @@ public class AscXerath
         var ascXerath = Camp.AddMonster(Xerath);
         SetMinimapIcon(ascXerath, "Dragon", true);
         ApiEventManager.OnDeath.AddListener(ascXerath, ascXerath, OnXerathDeath, true);
+        RespawnTimer = 30.0f * 1000;
     }
 
     public void OnXerathDeath(IDeathData data)
@@ -160,8 +159,9 @@ public class AscXerath
 public class AscensionCrystal
 {
     Vector2 Position;
-    public float RespawnTimer { get; set; } = 20.0f * 1000;
+    public float RespawnTimer { get; set; } = 5.0f * 1000;
     public bool IsDead { get; set; }
+    bool isFirstSpawn = true;
     public AscensionCrystal(Vector2 position)
     {
         Position = position;
@@ -181,8 +181,14 @@ public class AscensionCrystal
 
         NotifySpawnBroadcast(crystal);
         ApiEventManager.OnDeath.AddListener(crystal, crystal, OnDeath, true);
-        IsDead = false;
         SetMinimapIcon(crystal, "Relic", true);
+        IsDead = false;
+        RespawnTimer = 20.0f * 1000f;
+
+        if (isFirstSpawn)
+        {
+            NotifyMapPing(crystal.Position, PingCategory.Command);
+        }
     }
 
     public void OnDeath(IDeathData deathData)

@@ -589,7 +589,7 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="pos">2D top-down position of the ping.</param>
         /// <param name="targetNetId">Target of the ping (if applicable).</param>
         /// <param name="type">Type of ping; COMMAND/ATTACK/DANGER/MISSING/ONMYWAY/FALLBACK/REQUESTHELP. *NOTE*: Not all ping types are supported yet.</param>
-        void NotifyS2C_MapPing(ClientInfo client, Vector2 pos, uint targetNetId, Pings type);
+        void NotifyS2C_MapPing(Vector2 pos, Pings type, uint targetNetId = 0, ClientInfo client = null);
         /// <summary>
         /// Notifies the camera of a given player to move
         /// </summary>

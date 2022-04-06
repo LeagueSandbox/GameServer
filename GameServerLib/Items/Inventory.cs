@@ -198,20 +198,23 @@ namespace LeagueSandbox.GameServer.Items
         {
             if (Items[TRINKET_SLOT] != null)
             {
-                RemoveItem(TRINKET_SLOT, owner, force: true);
+                return null;
             }
 
             var itemResult = SetItem(TRINKET_SLOT, item);
-            if (!string.IsNullOrEmpty(item.SpellName))
+            if (owner != null)
             {
-                owner.SetSpell(item.SpellName, TRINKET_SLOT + (byte)SpellSlotType.InventorySlots, true);
-            }
-            //Checks if the item's script was already loaded before
-            if (!ItemScripts.ContainsKey(item.ItemId))
-            {
-                //Loads the Script
-                ItemScripts.Add(item.ItemId, _scriptEngine.CreateObject<IItemScript>("ItemPassives", $"ItemID_{item.ItemId}") ?? new ItemScriptEmpty());
-                ItemScripts[item.ItemId].OnActivate(owner);
+                if (!string.IsNullOrEmpty(item.SpellName))
+                {
+                    owner.SetSpell(item.SpellName, TRINKET_SLOT + (byte)SpellSlotType.InventorySlots, true);
+                }
+                //Checks if the item's script was already loaded before
+                if (!ItemScripts.ContainsKey(item.ItemId))
+                {
+                    //Loads the Script
+                    ItemScripts.Add(item.ItemId, _scriptEngine.CreateObject<IItemScript>("ItemPassives", $"ItemID_{item.ItemId}") ?? new ItemScriptEmpty());
+                    ItemScripts[item.ItemId].OnActivate(owner);
+                }
             }
 
             return itemResult;

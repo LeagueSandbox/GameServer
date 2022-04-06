@@ -659,7 +659,7 @@ namespace PacketDefinitions420
 
             if (userId == 0)
             {
-                if(team != 0)
+                if (team != 0)
                 {
                     _packetHandlerManager.BroadcastPacketTeam(team, textPacket.GetBytes(), Channel.CHL_S2C);
                 }
@@ -2648,13 +2648,12 @@ namespace PacketDefinitions420
         /// <param name="pos">2D top-down position of the ping.</param>
         /// <param name="targetNetId">Target of the ping (if applicable).</param>
         /// <param name="type">Type of ping; COMMAND/ATTACK/DANGER/MISSING/ONMYWAY/FALLBACK/REQUESTHELP. *NOTE*: Not all ping types are supported yet.</param>
-        public void NotifyS2C_MapPing(ClientInfo client, Vector2 pos, uint targetNetId, Pings type)
+        public void NotifyS2C_MapPing(Vector2 pos, Pings type, uint targetNetId = 0, ClientInfo client = null)
         {
             var response = new S2C_MapPing
             {
                 // TODO: Verify if this is correct. Usually 0.
-                SenderNetID = client.Champion.NetId,
-                SourceNetID = client.Champion.NetId,
+
                 TargetNetID = targetNetId,
                 PingCategory = (byte)type,
                 Position = pos,
@@ -2664,7 +2663,22 @@ namespace PacketDefinitions420
                 PingThrottled = false,
                 PlayVO = true
             };
-            _packetHandlerManager.BroadcastPacketTeam(client.Team, response.GetBytes(), Channel.CHL_S2C);
+
+            if(targetNetId != 0)
+            {
+                response.TargetNetID = targetNetId;
+            }
+
+            if (client != null)
+            {
+                response.SenderNetID = client.Champion.NetId;
+                response.SourceNetID = client.Champion.NetId;
+                _packetHandlerManager.BroadcastPacketTeam(client.Team, response.GetBytes(), Channel.CHL_S2C);
+            }
+            else
+            {
+                _packetHandlerManager.BroadcastPacket(response.GetBytes(), Channel.CHL_S2C);
+            }
         }
 
         /// <summary>
