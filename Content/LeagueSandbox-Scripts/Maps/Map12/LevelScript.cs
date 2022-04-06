@@ -17,7 +17,7 @@ namespace MapScripts.Map12
         public IMapScriptMetadata MapScriptMetadata { get; set; } = new MapScriptMetadata
         {
             StartingGold = 1375.0f,
-            GoldPerSecond = 5.0f,
+            BaseGoldPerGoldTick = 1.7f,
             RecallSpellItemId = 2007,
             InitialLevel = 3,
             ExpRange = 1250.0f,

@@ -57,7 +57,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             Shop = Items.Shop.CreateShop(this, game);
 
             Stats.Gold = _game.Map.MapScript.MapScriptMetadata.StartingGold;
-            Stats.GoldPerSecond.BaseValue = _game.Map.MapScript.MapScriptMetadata.GoldPerSecond;
+            Stats.GoldPerGoldTick.BaseValue = _game.Map.MapScript.MapScriptMetadata.BaseGoldPerGoldTick;
             Stats.IsGeneratingGold = false;
 
             //TODO: automaticaly rise spell levels with CharData.SpellLevelsUp
@@ -190,11 +190,22 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             _tipsChanged.Clear();
         }
 
+        float goldTimer;
         public override void Update(float diff)
         {
             base.Update(diff);
 
-            if (!Stats.IsGeneratingGold && _game.GameTime >= _game.Map.MapScript.MapScriptMetadata.FirstGoldTime)
+            if (Stats.IsGeneratingGold && Stats.GoldPerGoldTick.Total > 0)
+            {
+                goldTimer -= diff;
+
+                if(goldTimer <= 0)
+                {
+                    Stats.Gold += Stats.GoldPerGoldTick.Total;
+                    goldTimer = _game.Map.MapScript.MapScriptMetadata.GoldTickSpeed;
+                }
+            }
+            else if (!Stats.IsGeneratingGold && _game.GameTime >= _game.Map.MapScript.MapScriptMetadata.FirstGoldTime)
             {
                 Stats.IsGeneratingGold = true;
                 Logger.Debug("Generating Gold!");

@@ -33,7 +33,7 @@ namespace GameServerCore.Domain.GameObjects
         IStat CriticalChance { get; }
         IStat CriticalDamage { get; }
         IStat ExpGivenOnDeath { get; }
-        IStat GoldPerSecond { get; }
+        IStat GoldPerGoldTick { get; }
         IStat GoldGivenOnDeath { get; }
         IStat HealthPoints { get; }
         IStat HealthRegeneration { get; }

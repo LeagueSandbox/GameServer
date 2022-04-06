@@ -15,6 +15,7 @@ namespace MapScripts.Map10
     {
         public IMapScriptMetadata MapScriptMetadata { get; set; } = new MapScriptMetadata
         {
+            BaseGoldPerGoldTick = 0.95f,
             StartingGold = 825.0f,
             ExpRange = 1250.0f
         };
