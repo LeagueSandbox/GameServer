@@ -11,11 +11,11 @@ using LeagueSandbox.GameServer.GameObjects.Stats;
 
 namespace Buffs
 {
-    internal class AscBuffIcon : IBuffGameScript
+    internal class AscBuff : IBuffGameScript
     {
         public IBuffScriptMetaData BuffMetaData { get; set; } = new BuffScriptMetaData
         {
-            BuffType = BuffType.COMBAT_ENCHANCER,
+            BuffType = BuffType.INTERNAL,
             BuffAddType = BuffAddType.REPLACE_EXISTING
         };
         public IStatsModifier StatsModifier { get; private set; } = new StatsModifier();
