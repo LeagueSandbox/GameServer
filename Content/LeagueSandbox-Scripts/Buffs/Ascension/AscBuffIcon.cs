@@ -67,7 +67,7 @@ namespace Buffs
         {
             if (deathData.Unit is IMonster xerath)
             {
-                AddBuff("AscRespawn", 5.7f, 1, null, deathData.Killer, xerath);
+                AddBuff("AscBuffTransfer", 5.7f, 1, null, deathData.Killer, xerath);
             }
             if(deathData.Unit is IChampion)
             {

@@ -8,7 +8,7 @@ using LeagueSandbox.GameServer.Scripting.CSharp;
 
 namespace Buffs
 {
-    internal class AscRespawn : IBuffGameScript
+    internal class AscBuffTransfer : IBuffGameScript
     {
         public IBuffScriptMetaData BuffMetaData { get; set; } = new BuffScriptMetaData
         {
@@ -24,10 +24,11 @@ namespace Buffs
         {
             Unit = unit;
 
-            if (unit is IObjAiBase obj)
+            if (unit is IChampion ch)
             {
-                NotifyWorldEvent(EventID.OnMinionAscended);
-                NotifyAscendant(obj);
+                NotifyWorldEvent(EventID.OnChampionAscended, sourceNetId: unit.NetId);
+
+                NotifyAscendant(ch);
             }
 
             //Using SetStatus temporarily due to: https://github.com/LeagueSandbox/GameServer/issues/1385
@@ -51,8 +52,11 @@ namespace Buffs
             unit.PauseAnimation(false);
             if (unit is IObjAiBase obj)
             {
-                AddBuff("AscBuffIcon", 25000.0f, 1, null, obj, obj);
-                AddBuff("AscXerathControl", 999999.0f, 1, null, obj, obj);
+                AddBuff("AscBuffIcon", 25000.0f, 1, null, unit, obj);
+                if (unit is IMonster)
+                {
+                    AddBuff("AscXerathControl", 999999.0f, 1, null, obj, obj);
+                }
             }
         }
 
