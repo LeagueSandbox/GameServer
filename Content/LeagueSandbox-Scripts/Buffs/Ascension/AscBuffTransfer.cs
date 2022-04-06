@@ -27,7 +27,6 @@ namespace Buffs
             if (unit is IChampion ch)
             {
                 NotifyWorldEvent(EventID.OnChampionAscended, sourceNetId: unit.NetId);
-
                 NotifyAscendant(ch);
             }
 
@@ -53,10 +52,6 @@ namespace Buffs
             if (unit is IObjAiBase obj)
             {
                 AddBuff("AscBuffIcon", 25000.0f, 1, null, unit, obj);
-                if (unit is IMonster)
-                {
-                    AddBuff("AscXerathControl", 999999.0f, 1, null, obj, obj);
-                }
             }
         }
 
