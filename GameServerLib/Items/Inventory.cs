@@ -206,6 +206,13 @@ namespace LeagueSandbox.GameServer.Items
             {
                 owner.SetSpell(item.SpellName, TRINKET_SLOT + (byte)SpellSlotType.InventorySlots, true);
             }
+            //Checks if the item's script was already loaded before
+            if (!ItemScripts.ContainsKey(item.ItemId))
+            {
+                //Loads the Script
+                ItemScripts.Add(item.ItemId, _scriptEngine.CreateObject<IItemScript>("ItemPassives", $"ItemID_{item.ItemId}") ?? new ItemScriptEmpty());
+                ItemScripts[item.ItemId].OnActivate(owner);
+            }
 
             return itemResult;
         }

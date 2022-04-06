@@ -122,7 +122,6 @@ namespace MapScripts.Map8
             foreach (var player in GetAllPlayers())
             {
                 player.Inventory.AddItem(GetItemData(3460), player);
-                player.Spells[6 + (byte)SpellSlotType.InventorySlots].SetCooldown(45, true);
             }
         }
 
