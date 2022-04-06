@@ -4,13 +4,13 @@ using GameServerCore.Enums;
 
 namespace GameServerLib.GameObjects.AttackableUnits
 {
-    class FloatTextData : IFloatTextData
+    class FloatingTextData : IFloatingTextData
     {
         public IChampion Target { get; }
         public FloatTextType FloatTextType { get; }
         public string Message { get; }
         public int Param { get; }
-        public FloatTextData(IChampion target, string message, FloatTextType floatTextType, int param)
+        public FloatingTextData(IChampion target, string message, FloatTextType floatTextType, int param)
         {
             Target = target;
             Message = message;

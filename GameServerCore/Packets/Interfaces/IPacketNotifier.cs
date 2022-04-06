@@ -172,7 +172,7 @@ namespace GameServerCore.Packets.Interfaces
         /// </summary>
         /// <param name="floatTextData">Contains all the data from a floating text.</param>
         /// <param name="userId">User to send to. 0 = sends to all in vision.</param>
-        void NotifyDisplayFloatingText(IFloatTextData floatTextData, TeamId team = 0, int userId = 0);
+        void NotifyDisplayFloatingText(IFloatingTextData floatTextData, TeamId team = 0, int userId = 0);
         /// <summary>
         /// Sends a packet to the specified user detailing that the GameObject that owns the specified netId has finished being initialized into vision.
         /// </summary>

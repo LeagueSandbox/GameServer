@@ -465,7 +465,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             if (notifyText)
             {
                 //TODO: Figure out what "Params" is exactly
-                _game.PacketNotifier.NotifyDisplayFloatingText(new FloatTextData(this, $"+{(int)points} Points", FloatTextType.Score, 1073741833), Team);
+                _game.PacketNotifier.NotifyDisplayFloatingText(new FloatingTextData(this, $"+{(int)points} Points", FloatTextType.Score, 1073741833), Team);
             }
 
             ApiEventManager.OnIncrementChampionScore.Publish(scoreData);

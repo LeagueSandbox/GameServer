@@ -647,7 +647,7 @@ namespace PacketDefinitions420
         /// <param name="textType">Type of text to display. Refer to FloatTextType</param>
         /// <param name="userId">User to send to. 0 = sends to all in vision.</param>
         /// <param name="param">Optional parameters for the text. Untested, function unknown.</param>
-        public void NotifyDisplayFloatingText(IFloatTextData floatTextData, TeamId team = 0, int userId = 0)
+        public void NotifyDisplayFloatingText(IFloatingTextData floatTextData, TeamId team = 0, int userId = 0)
         {
             var textPacket = new DisplayFloatingText
             {
@@ -3368,8 +3368,6 @@ namespace PacketDefinitions420
         /// <param name="doVision">Whether or not to package the packets into a vision packet.</param>
         public void NotifySpawn(IGameObject obj, TeamId team, int userId, float gameTime, bool doVision = true)
         {
-            //Debug.Assert(userId > 0);
-
             var spawnPacket = ConstructSpawnPacket(obj, gameTime);
             if (spawnPacket != null)
             {

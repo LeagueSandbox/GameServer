@@ -3,7 +3,7 @@ using GameServerCore.Enums;
 
 namespace GameServerCore.Domain
 {
-    public interface IFloatTextData
+    public interface IFloatingTextData
     {
         IChampion Target { get; }
         FloatTextType FloatTextType { get; }
