@@ -4,6 +4,7 @@ using GameServerCore.Packets.Enums;
 using GameServerCore.Packets.Handlers;
 using GameServerCore.Packets.Interfaces;
 using GameServerCore.Packets.PacketDefinitions;
+using LeaguePackets;
 using PacketDefinitions420.Exceptions;
 using System;
 using System.Collections.Generic;
@@ -37,7 +38,7 @@ namespace PacketDefinitions420
         /// <param name="game">Game instance.</param>
         /// <param name="netReq">Network request handler instance.</param>
         /// <param name="netResp">Network response handler instance.</param>
-        public void InitServer(ushort port, Dictionary<long, string> blowfishKeys, IGame game, NetworkHandler<ICoreRequest> netReq, NetworkHandler<ICoreResponse> netResp)
+        public void InitServer(ushort port, Dictionary<long, string> blowfishKeys, IGame game, NetworkHandler<BasePacket> netReq, NetworkHandler<BasePacket> netResp)
         {
             _game = game;
             _server = new Host();

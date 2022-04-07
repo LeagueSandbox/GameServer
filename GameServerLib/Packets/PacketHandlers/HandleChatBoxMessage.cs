@@ -3,6 +3,7 @@ using GameServerCore.Enums;
 using GameServerCore.Packets.Enums;
 using GameServerCore.Packets.Handlers;
 using GameServerCore.Packets.PacketDefinitions.Requests;
+using LeaguePackets.LoadScreen;
 using LeagueSandbox.GameServer.Chatbox;
 using LeagueSandbox.GameServer.Logging;
 using log4net;
@@ -10,7 +11,7 @@ using System.Numerics;
 
 namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 {
-    public class HandleChatBoxMessage : PacketHandlerBase<ChatMessageRequest>
+    public class HandleChatBoxMessage : PacketHandlerBase<Chat>
     {
         private readonly Game _game;
         private readonly ChatCommandManager _chatCommandManager;
@@ -25,7 +26,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             _logger = LoggerProvider.GetLogger();
         }
 
-        public override bool HandlePacket(int userId, ChatMessageRequest req)
+        public override bool HandlePacket(int userId, Chat req)
         {
             var split = req.Message.Split(' ');
             if (split.Length > 1)
@@ -87,7 +88,8 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                 return true;
             }
 
-            switch (req.Type)
+            var type = (ChatType)req.ChatType;
+            switch (type)
             {
                 case ChatType.All:
                      _game.PacketNotifier.NotifyS2C_SystemMessage(ownTeam, dmTeam);
@@ -97,7 +99,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                      _game.PacketNotifier.NotifyS2C_SystemMessage(ownTeam, dmTeam);
                     return true;
                 default:
-                    _logger.Error("Unknown ChatMessageType:" + req.Type.ToString());
+                    _logger.Error("Unknown ChatMessageType:" + req.ChatType.ToString());
                     return false;
             }
         }

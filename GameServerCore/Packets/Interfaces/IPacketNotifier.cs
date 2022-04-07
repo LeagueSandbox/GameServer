@@ -474,7 +474,7 @@ namespace GameServerCore.Packets.Interfaces
         /// </summary>
         /// <param name="request">Info of the target client given via the client who requested loading screen progress.</param>
         /// <param name="clientInfo">Client info of the client who's progress is being requested.</param>
-        void NotifyPingLoadInfo(PingLoadInfoRequest request, ClientInfo clientInfo);
+        void NotifyPingLoadInfo(C2S_Ping_Load_Info request, ClientInfo clientInfo);
         /// <summary>
         /// Sends a packet to all players that a champion has respawned.
         /// </summary>
@@ -994,6 +994,6 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="request">ViewRequest housing information about the camera's view.</param>
         /// TODO: Verify if this is the correct implementation.
         /// TODO: Fix LeaguePackets Typos.
-        void NotifyWorld_SendCamera_Server_Acknologment(int userId, ViewRequest request);
+        void NotifyWorld_SendCamera_Server_Acknologment(int userId, World_SendCamera_Server request);
     }
 }
