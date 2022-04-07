@@ -5,7 +5,7 @@ namespace GameServerCore.Domain
 {
     public interface IFloatingTextData
     {
-        IChampion Target { get; }
+        IGameObject Target { get; }
         FloatTextType FloatTextType { get; }
         string Message { get; }
         int Param { get; }

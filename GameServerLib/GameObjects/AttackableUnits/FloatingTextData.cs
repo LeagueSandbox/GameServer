@@ -6,7 +6,7 @@ namespace GameServerLib.GameObjects.AttackableUnits
 {
     class FloatingTextData : IFloatingTextData
     {
-        public IChampion Target { get; }
+        public IGameObject Target { get; }
         public FloatTextType FloatTextType { get; }
         public string Message { get; }
         public int Param { get; }
