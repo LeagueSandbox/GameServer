@@ -14,7 +14,7 @@ namespace CharScripts
         public void OnActivate(IObjAiBase owner, ISpell spell = null)
         {
             AddBuff("ResistantSkinDragon", 25000.0f, 1, null, owner, owner);
-            AddBuff("AscRespawn", 5.7f, 1, null, owner, owner);
+            AddBuff("AscBuffTransfer", 5.7f, 1, null, owner, owner);
         }
         public void OnDeactivate(IObjAiBase owner, ISpell spell = null)
         {

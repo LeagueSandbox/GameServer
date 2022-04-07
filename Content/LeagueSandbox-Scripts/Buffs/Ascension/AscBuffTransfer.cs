@@ -24,10 +24,18 @@ namespace Buffs
         {
             Unit = unit;
 
-            if (unit is IChampion ch)
+            if (unit is IObjAiBase obj)
             {
-                NotifyWorldEvent(EventID.OnChampionAscended, sourceNetId: unit.NetId);
-                NotifyAscendant(ch);
+                if (unit is IChampion)
+                {
+                    NotifyWorldEvent(EventID.OnChampionAscended, sourceNetId: unit.NetId);
+
+                }
+                else if (unit is IMonster)
+                {
+                    NotifyWorldEvent(EventID.OnMinionAscended);
+                }
+                NotifyAscendant(obj);
             }
 
             //Using SetStatus temporarily due to: https://github.com/LeagueSandbox/GameServer/issues/1385
@@ -52,6 +60,10 @@ namespace Buffs
             if (unit is IObjAiBase obj)
             {
                 AddBuff("AscBuffIcon", 25000.0f, 1, null, unit, obj);
+                if (unit is IMonster)
+                {
+                    AddBuff("AscXerathControl", 999999.0f, 1, null, obj, obj);
+                }
             }
         }
 

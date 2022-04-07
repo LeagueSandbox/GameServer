@@ -22,12 +22,6 @@ namespace ItemSpells
         public Vector2 teleportTo;
         public void OnActivate(IObjAiBase owner, ISpell spell)
         {
-            ApiEventManager.OnResurrect.AddListener(this, owner, OnRespawn, false);
-        }
-
-        public void OnRespawn(IObjAiBase owner)
-        {
-            owner.Spells[6 + (byte)SpellSlotType.InventorySlots].SetCooldown(0, true);
         }
 
         public void OnDeactivate(IObjAiBase owner, ISpell spell)
