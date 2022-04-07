@@ -13,7 +13,7 @@ namespace CharScripts
     {
         public void OnActivate(IObjAiBase owner, ISpell spell = null)
         {
-            AddBuff("AscRelicPointBuff", 25000.0f, 1, null, owner, owner);
+            AddBuff("AscRelicBombBuff", 25000.0f, 1, null, owner, owner);
         }
         public void OnDeactivate(IObjAiBase owner, ISpell spell = null)
         {
