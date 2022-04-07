@@ -84,6 +84,7 @@ namespace LeagueSandbox.GameServer.API
             OnAllowAddBuff.RemoveListener(owner);
             OnBeingHit.RemoveListener(owner);
             OnBeingSpellHit.RemoveListener(owner);
+            OnBuffDeactivated.RemoveListener(owner);
             OnCanCast.RemoveListener(owner);
             OnCollision.RemoveListener(owner);
             OnCollisionTerrain.RemoveListener(owner);
@@ -114,17 +115,18 @@ namespace LeagueSandbox.GameServer.API
             OnSpellPostCast.RemoveListener(owner);
             OnSpellPostChannel.RemoveListener(owner);
             OnTakeDamage.RemoveListener(owner);
+            OnUnitBuffDeactivated.RemoveListener(owner);
             OnUnitCrowdControlled.RemoveListener(owner);
             OnUnitUpdateMoveOrder.RemoveListener(owner);
             OnUpdateStats.RemoveListener(owner);
         }
-
 
         // Unused
         public static EventOnAddPAR OnAddPAR = new EventOnAddPAR();
         public static EventOnAllowAddBuff OnAllowAddBuff = new EventOnAllowAddBuff();
         public static EventOnBeingHit OnBeingHit = new EventOnBeingHit();
         public static EventOnBeingSpellHit OnBeingSpellHit = new EventOnBeingSpellHit();
+        public static EventOnBuffDeactivated OnBuffDeactivated = new EventOnBuffDeactivated();
         public static EventOnCanCast OnCanCast = new EventOnCanCast();
         public static EventOnCollision OnCollision = new EventOnCollision();
         public static EventOnCollisionTerrain OnCollisionTerrain = new EventOnCollisionTerrain();
@@ -158,6 +160,7 @@ namespace LeagueSandbox.GameServer.API
         public static EventOnSpellPostCast OnSpellPostCast = new EventOnSpellPostCast();
         public static EventOnSpellPostChannel OnSpellPostChannel = new EventOnSpellPostChannel();
         public static EventOnTakeDamage OnTakeDamage = new EventOnTakeDamage();
+        public static EventOnUnitBuffDeactivated OnUnitBuffDeactivated = new EventOnUnitBuffDeactivated();
         // TODO: Handle crowd control the same as normal dashes.
         public static EventOnUnitCrowdControlled OnUnitCrowdControlled = new EventOnUnitCrowdControlled();
         // TODO: Change to OnMoveSuccess and change where Publish is called internally to reflect the name.
@@ -325,6 +328,43 @@ namespace LeagueSandbox.GameServer.API
                 {
                     var listener = _listeners[i];
                     listener.Item3(target, attacker, spell, missile, sector);
+
+                    if (listener.Item4)
+                    {
+                        _listeners.Remove(listener);
+                    }
+                }
+            }
+        }
+    }
+
+    public class EventOnBuffDeactivated
+    {
+        private readonly List<Tuple<object, IBuff, Action<IBuff>, bool>> _listeners = new List<Tuple<object, IBuff, Action<IBuff>, bool>>();
+        public void AddListener(object owner, IBuff buff, Action<IBuff> callback, bool singleInstance)
+        {
+            var listenerTuple = new Tuple<object, IBuff, Action<IBuff>, bool>(owner, buff, callback, singleInstance);
+            _listeners.Add(listenerTuple);
+        }
+        public void RemoveListener(object owner)
+        {
+            _listeners.RemoveAll((listener) => listener.Item1 == owner);
+        }
+        public void Publish(IBuff buff)
+        {
+            var count = _listeners.Count;
+
+            if (count == 0)
+            {
+                return;
+            }
+
+            for (int i = count - 1; i >= 0; i--)
+            {
+                if (_listeners[i].Item2 == buff)
+                {
+                    var listener = _listeners[i];
+                    listener.Item3(buff);
 
                     if (listener.Item4)
                     {
@@ -1563,6 +1603,43 @@ namespace LeagueSandbox.GameServer.API
                     if (_listeners[i].Item4)
                     {
                         _listeners.RemoveAt(i);
+                    }
+                }
+            }
+        }
+    }
+
+    public class EventOnUnitBuffDeactivated
+    {
+        private readonly List<Tuple<object, IAttackableUnit, Action<IBuff>, bool>> _listeners = new List<Tuple<object, IAttackableUnit, Action<IBuff>, bool>>();
+        public void AddListener(object owner, IAttackableUnit unit, Action<IBuff> callback, bool singleInstance)
+        {
+            var listenerTuple = new Tuple<object, IAttackableUnit, Action<IBuff>, bool>(owner, unit, callback, singleInstance);
+            _listeners.Add(listenerTuple);
+        }
+        public void RemoveListener(object owner)
+        {
+            _listeners.RemoveAll((listener) => listener.Item1 == owner);
+        }
+        public void Publish(IBuff buff, IAttackableUnit unit)
+        {
+            var count = _listeners.Count;
+
+            if (count == 0)
+            {
+                return;
+            }
+
+            for (int i = count - 1; i >= 0; i--)
+            {
+                if (_listeners[i].Item2 == unit)
+                {
+                    var listener = _listeners[i];
+                    listener.Item3(buff);
+
+                    if (listener.Item4)
+                    {
+                        _listeners.Remove(listener);
                     }
                 }
             }

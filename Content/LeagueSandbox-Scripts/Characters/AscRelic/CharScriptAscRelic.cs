@@ -4,7 +4,7 @@ using GameServerCore.Enums;
 using GameServerCore.Scripting.CSharp;
 using System.Numerics;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
-using static LeagueSandbox.GameServer.API.ApiMapFunctionManager;
+using LeagueSandbox.GameServer.API;
 
 
 namespace CharScripts
