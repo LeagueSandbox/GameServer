@@ -10,7 +10,7 @@ using LeagueSandbox.GameServer.Scripting.CSharp;
 
 namespace Buffs
 {
-    internal class OdinCenterRelicBuff : IBuffGameScript
+    internal class OdinBombBuff : IBuffGameScript
     {
         public IBuffScriptMetaData BuffMetaData { get; set; } = new BuffScriptMetaData
         {
