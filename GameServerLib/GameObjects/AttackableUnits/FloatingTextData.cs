@@ -10,7 +10,7 @@ namespace GameServerLib.GameObjects.AttackableUnits
         public FloatTextType FloatTextType { get; }
         public string Message { get; }
         public int Param { get; }
-        public FloatingTextData(IChampion target, string message, FloatTextType floatTextType, int param)
+        public FloatingTextData(IGameObject target, string message, FloatTextType floatTextType, int param)
         {
             Target = target;
             Message = message;
