@@ -39,10 +39,6 @@ namespace Buffs
             p1 = AddParticle(unit, unit, "Global_Asc_Avatar", unit.Position, -1);
             p2 = AddParticle(unit, unit, "Global_Asc_Aura", unit.Position, -1);
             AddParticleTarget(unit, unit, "AscForceBubble", unit, size: 3.3f);
-            AddParticleTarget(unit, unit, "CassPetrifyMiss_tar", unit, size: 3.0f);
-            AddParticleTarget(unit, unit, "Rebirth_cas", unit);
-            AddParticleTarget(unit, unit, "TurnBack", unit);
-            AddParticleTarget(unit, unit, "LeonaPassive_tar", unit, size: 2.5f);
 
             ApiEventManager.OnDeath.AddListener(unit, unit, OnDeath, true);
 

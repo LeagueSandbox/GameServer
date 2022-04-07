@@ -57,6 +57,12 @@ namespace Buffs
             SetStatus(unit, StatusFlags.Invulnerable, false);
 
             unit.PauseAnimation(false);
+
+            AddParticleTarget(unit, unit, "CassPetrifyMiss_tar", unit, size: 3.0f);
+            AddParticleTarget(unit, unit, "Rebirth_cas", unit);
+            AddParticleTarget(unit, unit, "TurnBack", unit);
+            AddParticleTarget(unit, unit, "LeonaPassive_tar", unit, size: 2.5f);
+
             if (unit is IObjAiBase obj)
             {
                 AddBuff("AscBuff", 25000.0f, 1, null, unit, obj);
