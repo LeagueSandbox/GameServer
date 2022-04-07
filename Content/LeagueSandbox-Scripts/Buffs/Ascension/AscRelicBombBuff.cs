@@ -9,7 +9,7 @@ using System.Numerics;
 
 namespace Buffs
 {
-    internal class AscRelicPointBuff : IBuffGameScript
+    internal class AscRelicBombBuff : IBuffGameScript
     {
         public IBuffScriptMetaData BuffMetaData { get; set; } = new BuffScriptMetaData
         {
