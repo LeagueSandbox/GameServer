@@ -1,10 +1,7 @@
-﻿using GameServerCore.Enums;
-using GameServerCore.Packets.Enums;
-using GameServerCore.Packets.PacketDefinitions.Requests;
+﻿using GameServerCore.Packets.Enums;
 using LeaguePackets;
 using LeaguePackets.Game;
 using LeaguePackets.LoadScreen;
-using System;
 
 namespace PacketDefinitions420
 {
@@ -163,6 +160,7 @@ namespace PacketDefinitions420
         {
             var rq = new NPC_IssueOrderReq();
             rq.Read(data);
+            var test = rq.MovementData.Waypoints.ConvertAll(PacketExtensions.WaypointToVector2);
             return rq;
         }
 

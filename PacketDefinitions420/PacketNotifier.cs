@@ -3762,15 +3762,6 @@ namespace PacketDefinitions420
             _packetHandlerManager.SendPacket(userId, drawPacket.GetBytes(), Channel.CHL_S2C);
         }
 
-        /// <summary>
-        /// Unfinished(?) function which intends to resume the game automatically (without client requests). This is usually called after the pause time has ended in Game.GameLoop.
-        /// </summary>
-        /// TODO: Verify if this works and if not, then finish it.
-        public void NotifyUnpauseGame()
-        {
-            // TODO: currently unpause disabled cause it shouldn't handled like this
-            _packetHandlerManager.UnpauseGame();
-        }
         public void NotifyUpdateLevelPropS2C(UpdateLevelPropData propData)
         {
             var packet = new UpdateLevelPropS2C

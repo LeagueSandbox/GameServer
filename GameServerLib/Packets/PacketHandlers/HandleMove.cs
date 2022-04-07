@@ -3,6 +3,7 @@ using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
 using GameServerCore.Packets.Handlers;
 using LeaguePackets.Game;
+using System.Collections.Generic;
 using System.Numerics;
 using static PacketDefinitions420.PacketExtensions;
 
@@ -32,7 +33,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             {
                 // Last waypoint position
                 var pos = req.Position;
-                var translatedWaypoints = req.MovementData.Waypoints.ConvertAll(x => WaypointToVector2(x));
+                List<Vector2> translatedWaypoints = req.MovementData.Waypoints.ConvertAll(WaypointToVector2).ConvertAll(TranslateFromCenteredCoordinates);
                 var lastindex = 0;
                 if (!(translatedWaypoints.Count - 1 < 0))
                 {

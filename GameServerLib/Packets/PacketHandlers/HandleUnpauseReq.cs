@@ -1,7 +1,6 @@
 ﻿using GameServerCore;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Packets.Handlers;
-using GameServerCore.Packets.PacketDefinitions.Requests;
 using LeaguePackets.Game;
 using System.Timers;
 

@@ -1,7 +1,6 @@
 ﻿using GameServerCore;
 using GameServerCore.Packets.Enums;
 using GameServerCore.Packets.Handlers;
-using GameServerCore.Packets.PacketDefinitions.Requests;
 using LeaguePackets.Game;
 using LeagueSandbox.GameServer.Logging;
 using log4net;

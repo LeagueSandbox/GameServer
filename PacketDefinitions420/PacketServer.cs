@@ -2,10 +2,7 @@
 using GameServerCore;
 using GameServerCore.Packets.Enums;
 using GameServerCore.Packets.Handlers;
-using GameServerCore.Packets.Interfaces;
-using GameServerCore.Packets.PacketDefinitions;
 using LeaguePackets;
-using PacketDefinitions420.Exceptions;
 using System;
 using System.Collections.Generic;
 
@@ -50,7 +47,8 @@ namespace PacketDefinitions420
                 var key = Convert.FromBase64String(rawKey.Value);
                 if (key.Length <= 0)
                 {
-                    throw new InvalidKeyException($"Invalid blowfish key supplied ({key})");
+                   
+                    throw new Exception($"Invalid blowfish key supplied({ key })");
                 }
                 blowfishes.Add(rawKey.Key, new BlowFish(key));
             }

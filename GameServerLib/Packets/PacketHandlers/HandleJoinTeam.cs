@@ -1,6 +1,5 @@
 ﻿using GameServerCore;
 using GameServerCore.Packets.Handlers;
-using GameServerCore.Packets.PacketDefinitions.Requests;
 using LeaguePackets.LoadScreen;
 
 namespace LeagueSandbox.GameServer.Packets.PacketHandlers
