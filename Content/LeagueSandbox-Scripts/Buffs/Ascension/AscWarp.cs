@@ -30,7 +30,10 @@ namespace Buffs
         {
             SetStatus(unit, StatusFlags.Stunned, false);
             SetMinimapIcon(unit, changeBorder: true);
-            AddParticleTarget(unit, unit, "Global_Asc_Teleport_reappear", unit, 10.0f);
+            if(unit is IObjAiBase obj)
+            {
+                AddBuff("AscWarpReappear", 10.0f, 1, null, unit, obj);
+            }
             AddBuff("AscWarpProtection", 2.5f, 1, null, unit, buff.SourceUnit);
         }
 

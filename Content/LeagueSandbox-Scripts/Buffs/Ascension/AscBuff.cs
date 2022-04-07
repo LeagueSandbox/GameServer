@@ -34,7 +34,6 @@ namespace Buffs
             PlaySound("Stop_sfx_ZhonyasRingShield_OnBuffActivate", unit);
             PlaySound("Play_sfx_Leona_LeonaSolarFlare_hit", unit);
             PlaySound("Play_sfx_Lux_LuxIlluminationPassive_hit", unit);
-            SetBuffToolTipVar(buff, 3, 15.0f);
 
             p1 = AddParticle(unit, unit, "Global_Asc_Avatar", unit.Position, -1);
             p2 = AddParticle(unit, unit, "Global_Asc_Aura", unit.Position, -1);

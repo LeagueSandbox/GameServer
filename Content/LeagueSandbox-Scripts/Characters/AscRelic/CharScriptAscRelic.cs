@@ -1,10 +1,7 @@
 ﻿using GameServerCore.Domain.GameObjects;
 using GameServerCore.Domain.GameObjects.Spell;
-using GameServerCore.Enums;
 using GameServerCore.Scripting.CSharp;
-using System.Numerics;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
-using LeagueSandbox.GameServer.API;
 
 
 namespace CharScripts
