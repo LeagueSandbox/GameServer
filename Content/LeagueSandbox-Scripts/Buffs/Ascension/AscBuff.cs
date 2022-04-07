@@ -28,7 +28,7 @@ namespace Buffs
             thisBuff = buff;
             if(unit is IObjAiBase obj)
             {
-                AddBuff("AscBuff", 25000.0f, 1, null, unit, obj);
+                AddBuff("AscBuffIcon", 25000.0f, 1, null, unit, obj);
             }
 
             PlaySound("Stop_sfx_ZhonyasRingShield_OnBuffActivate", unit);
