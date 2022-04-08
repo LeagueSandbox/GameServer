@@ -2,6 +2,7 @@
 using GameServerCore.Enums;
 using GameServerCore.Domain.GameObjects.Spell;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
+using static LeagueSandbox.GameServer.API.ApiMapFunctionManager;
 using GameServerCore.Scripting.CSharp;
 using LeagueSandbox.GameServer.API;
 using GameServerCore.Domain;
@@ -55,6 +56,15 @@ namespace Buffs
                 redTeamParticle2=AddParticleTarget(Unit, null, "Odin_Prism_Ground_Red", Unit, buff.Duration, teamOnly: TeamId.TEAM_PURPLE);
                 redTeamParticle3=AddParticleTarget(Unit, null, "odin_relic_buf_red", Unit, buff.Duration, teamOnly: TeamId.TEAM_PURPLE);
             }
+
+            string iconCategory = "CenterRelicLeft";
+
+            if (unit.Team == TeamId.TEAM_PURPLE)
+            {
+                iconCategory = "CenterRelicRight";
+            }
+
+            SetMinimapIcon(unit, iconCategory, true);
         }
         public void OnDeath(IDeathData deathData)
         {

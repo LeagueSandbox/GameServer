@@ -1,4 +1,6 @@
-﻿namespace GameServerCore.Domain.GameObjects
+﻿using GameServerCore.Enums;
+
+namespace GameServerCore.Domain.GameObjects
 {
     public interface IChampion : IObjAiBase
     {
@@ -21,7 +23,7 @@
         void Respawn();
         bool OnDisconnect();
         void AddToolTipChange(IToolTipData data);
-
         void OnKill(IDeathData deathData);
+        void IncrementScore(float points, ScoreCategory scoreCategory, ScoreEvent scoreEvent, bool doCallOut, bool notifyText = true);
     }
 }

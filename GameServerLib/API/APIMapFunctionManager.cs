@@ -2,7 +2,9 @@
 using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
+using GameServerCore.Packets.Enums;
 using GameServerLib.GameObjects;
+using GameServerLib.GameObjects.AttackableUnits;
 using LeaguePackets.Game.Common;
 using LeagueSandbox.GameServer.GameObjects;
 using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
@@ -14,6 +16,7 @@ using PacketDefinitions420;
 using System.Collections.Generic;
 using System.Numerics;
 using System.Text;
+using System.Timers;
 
 namespace LeagueSandbox.GameServer.API
 {
@@ -48,7 +51,9 @@ namespace LeagueSandbox.GameServer.API
 
         public static IGameObject CreateShop(string name, Vector2 position, TeamId team)
         {
-            return new GameObject(_game, position, team: team, netId: Crc32Algorithm.Compute(Encoding.UTF8.GetBytes(name)) | 0xFF000000);
+            var shop = new GameObject(_game, position, team: team, netId: Crc32Algorithm.Compute(Encoding.UTF8.GetBytes(name)) | 0xFF000000);
+            _game.ObjectManager.SpawnObject(shop);
+            return shop;
         }
 
         /// <summary>
@@ -156,14 +161,23 @@ namespace LeagueSandbox.GameServer.API
         /// <param name="initialLevel"></param>
         /// <returns></returns>
         public static IMinion CreateMinion(
-            string name, string model, Vector2 position, uint netId = 0,
+            string name, string model, Vector2 position, IObjAiBase owner = null, uint netId = 0,
             TeamId team = TeamId.TEAM_NEUTRAL, int skinId = 0, bool ignoreCollision = false,
-            bool isTargetable = false, string aiScript = "", int damageBonus = 0,
+            bool isTargetable = false, bool isWard = false,string aiScript = "", int damageBonus = 0,
             int healthBonus = 0, int initialLevel = 1)
         {
-            var m = new Minion(_game, null, position, model, name, netId, team, skinId, ignoreCollision, isTargetable, null, aiScript, damageBonus, healthBonus, initialLevel);
+            var m = new Minion(_game, owner, position, model, name, netId, team, skinId, ignoreCollision, isTargetable, isWard, null, aiScript, damageBonus, healthBonus, initialLevel);
             _game.ObjectManager.AddObject(m);
             return m;
+        }
+
+        public static IMinion CreateMinionTemplete(
+            string name, string model, Vector2 position, uint netId = 0,
+            TeamId team = TeamId.TEAM_NEUTRAL, int skinId = 0, bool ignoreCollision = false,
+            bool isTargetable = false, bool isWard = false, string aiScript = "", int damageBonus = 0,
+            int healthBonus = 0, int initialLevel = 1, bool instantNotifyBroadcast = false)
+        {
+            return new Minion(_game, null, position, model, name, netId, team, skinId, ignoreCollision, isTargetable, isWard, null, aiScript, damageBonus, healthBonus, initialLevel);
         }
 
         /// <summary>
@@ -228,9 +242,9 @@ namespace LeagueSandbox.GameServer.API
         /// <param name="changeIcon"></param>
         /// <param name="borderCategory"></param>
         /// <param name="changeBorder"></param>
-        public static void SetMinimapIcon(IAttackableUnit unit, string iconCategory = "", bool changeIcon = false, string borderCategory = "", bool changeBorder = false)
+        public static void SetMinimapIcon(IAttackableUnit unit, string iconCategory = "", bool changeIcon = false, string borderCategory = "", bool changeBorder = false, string borderScriptName = "")
         {
-            _game.PacketNotifier.NotifyS2C_UnitSetMinimapIcon(unit, iconCategory, changeIcon, borderCategory, changeBorder);
+            _game.PacketNotifier.NotifyS2C_UnitSetMinimapIcon(unit, iconCategory, changeIcon, borderCategory, changeBorder, borderScriptName);
         }
 
         /// <summary>
@@ -321,9 +335,9 @@ namespace LeagueSandbox.GameServer.API
         /// </summary>
         /// <param name="Event"></param>
         /// <param name="mapId"></param>
-        public static void NotifyMapAnnouncement(GameServerCore.Enums.EventID Event, int mapId = 0)
+        public static void NotifyWorldEvent(EventID Event, int mapId = 0, uint sourceNetId = 0)
         {
-            _game.PacketNotifier.NotifyS2C_OnEventWorld(PacketExtensions.GetAnnouncementID(Event, mapId));
+            _game.PacketNotifier.NotifyS2C_OnEventWorld(PacketExtensions.GetAnnouncementID(Event, mapId), sourceNetId);
         }
 
         /// <summary>
@@ -349,7 +363,6 @@ namespace LeagueSandbox.GameServer.API
         {
             //TODO: check if mapScripts should handle this directly
             var players = _game.PlayerManager.GetPlayers();
-            _game.Stop();
 
             if (deathData != null)
             {
@@ -361,7 +374,6 @@ namespace LeagueSandbox.GameServer.API
                 _game.PacketNotifier.NotifyS2C_SetGreyscaleEnabledWhenDead(false);
             }
 
-            _game.PacketNotifier.NotifyS2C_EndGame(losingTeam, endGameTimer);
             foreach (var player in players)
             {
                 if (disableUI)
@@ -373,7 +385,16 @@ namespace LeagueSandbox.GameServer.API
                     _game.PacketNotifier.NotifyS2C_MoveCameraToPoint(player, Vector3.Zero, finalCameraPosition, cameraTimer);
                 }
             }
-            _game.SetGameToExit();
+
+            //The way we handle the end of a game has to be reworked
+            var timer = new Timer(endGameTimer) { AutoReset = false };
+            timer.Elapsed += (a, b) =>
+            {
+                _game.Stop();
+                _game.PacketNotifier.NotifyS2C_EndGame(losingTeam);
+                _game.SetGameToExit();
+            };
+            timer.Start();
         }
 
         public static void AddTurretItems(IBaseTurret turret, int[] items)
@@ -384,9 +405,11 @@ namespace LeagueSandbox.GameServer.API
             }
         }
 
-        public static void NotifySpawn(IGameObject obj)
+        public static void NotifySpawnBroadcast(IGameObject obj)
         {
-            _game.ObjectManager.SpawnObject(obj);
+            //Just a workaround for our current vision problem.
+            _game.PacketNotifier.NotifySpawn(obj, TeamId.TEAM_PURPLE, 0, _game.GameTime, true);
+            _game.PacketNotifier.NotifySpawn(obj, TeamId.TEAM_BLUE, 0, _game.GameTime, true);
         }
 
         public static void AddObject(IGameObject obj)
@@ -409,9 +432,9 @@ namespace LeagueSandbox.GameServer.API
             return (int)average;
         }
 
-        public static void NotifyGameScore(TeamId team, int score)
+        public static void NotifyGameScore(TeamId team, float score)
         {
-            _game.PacketNotifier.NotifyS2C_HandleGameScore(team, score);
+            _game.PacketNotifier.NotifyS2C_HandleGameScore(team, (int)score);
         }
 
         /// <summary>
@@ -425,6 +448,21 @@ namespace LeagueSandbox.GameServer.API
         public static void NotifyHandleCapturePointUpdate(byte capturePointIndex, uint otherNetId, byte PARType, byte attackTeam, CapturePointUpdateCommand capturePointUpdateCommand)
         {
             _game.PacketNotifier.NotifyS2C_HandleCapturePointUpdate(capturePointIndex, otherNetId, PARType, attackTeam, capturePointUpdateCommand);
+        }
+
+        public static void TeleportCamera(IChampion target, Vector3 position)
+        {
+            _game.PacketNotifier.NotifyS2C_CameraBehavior(target, position);
+        }
+
+        public static void NotifyAscendant(IObjAiBase ascendant = null)
+        {
+            _game.PacketNotifier.NotifyS2C_UpdateAscended(ascendant);
+        }
+
+        public static void NotifyMapPing(Vector2 position, PingCategory ping)
+        {
+            _game.PacketNotifier.NotifyS2C_MapPing(position, (Pings)ping);
         }
     }
 }

@@ -66,6 +66,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             int skinId = 0,
             bool ignoreCollision = false,
             bool targetable = true,
+            bool isWard = false,
             IObjAiBase visibilityOwner = null,
             string aiScript = "",
             int damageBonus = 0,
@@ -87,6 +88,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             }
 
             IsLaneMinion = false;
+            IsWard = isWard;
             IgnoresCollision = ignoreCollision;
             if (IgnoresCollision)
             {

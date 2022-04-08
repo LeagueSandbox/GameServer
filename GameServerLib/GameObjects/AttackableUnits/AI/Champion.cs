@@ -11,6 +11,7 @@ using LeagueSandbox.GameServer.Items;
 using LeagueSandbox.GameServer.API;
 using LeaguePackets.Game.Events;
 using System;
+using GameServerLib.GameObjects.AttackableUnits;
 
 namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 {
@@ -56,7 +57,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             Shop = Items.Shop.CreateShop(this, game);
 
             Stats.Gold = _game.Map.MapScript.MapScriptMetadata.StartingGold;
-            Stats.GoldPerSecond.BaseValue = _game.Map.MapScript.MapScriptMetadata.GoldPerSecond;
+            Stats.GoldPerGoldTick.BaseValue = _game.Map.MapScript.MapScriptMetadata.BaseGoldPerGoldTick;
             Stats.IsGeneratingGold = false;
 
             //TODO: automaticaly rise spell levels with CharData.SpellLevelsUp
@@ -189,11 +190,22 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             _tipsChanged.Clear();
         }
 
+        float goldTimer;
         public override void Update(float diff)
         {
             base.Update(diff);
 
-            if (!Stats.IsGeneratingGold && _game.GameTime >= _game.Map.MapScript.MapScriptMetadata.FirstGoldTime)
+            if (Stats.IsGeneratingGold && Stats.GoldPerGoldTick.Total > 0)
+            {
+                goldTimer -= diff;
+
+                if(goldTimer <= 0)
+                {
+                    Stats.Gold += Stats.GoldPerGoldTick.Total;
+                    goldTimer = _game.Map.MapScript.MapScriptMetadata.GoldTickSpeed;
+                }
+            }
+            else if (!Stats.IsGeneratingGold && _game.GameTime >= _game.Map.MapScript.MapScriptMetadata.FirstGoldTime)
             {
                 Stats.IsGeneratingGold = true;
                 Logger.Debug("Generating Gold!");
@@ -274,6 +286,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             }
         }
 
+        //TODO: Move this down to ObjAiBase
         public bool LevelUp(bool force = false)
         {
             var stats = Stats;
@@ -441,6 +454,21 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         public void UpdateSkin(int skinNo)
         {
             SkinID = skinNo;
+        }
+
+        public void IncrementScore(float points, ScoreCategory scoreCategory, ScoreEvent scoreEvent, bool doCallOut, bool notifyText = true)
+        {
+            Stats.Points += points;
+            var scoreData = new ScoreData(this, points, scoreCategory, scoreEvent, doCallOut);
+            _game.PacketNotifier.NotifyS2C_IncrementPlayerScore(scoreData);
+
+            if (notifyText)
+            {
+                //TODO: Figure out what "Params" is exactly
+                _game.PacketNotifier.NotifyDisplayFloatingText(new FloatingTextData(this, $"+{(int)points} Points", FloatTextType.Score, 1073741833), Team);
+            }
+
+            ApiEventManager.OnIncrementChampionScore.Publish(scoreData);
         }
     }
 }
