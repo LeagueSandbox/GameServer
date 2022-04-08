@@ -176,7 +176,7 @@ namespace MapScripts.Map11
                 particle = "SRU_Chaos_Nexus_Explosion";
             }
 
-            NotifySpawn(AddParticle(nexus, nexus, particle, nexus.Position, 10));
+            NotifySpawnBroadcast(AddParticle(nexus, nexus, particle, nexus.Position, 10));
             EndGame(nexus.Team, new Vector3(nexus.Position.X, nexus.GetHeight(), nexus.Position.Y), deathData: deathaData);
         }
 
@@ -246,7 +246,7 @@ namespace MapScripts.Map11
         {
             foreach (var shop in _mapObjects[GameObjectTypes.ObjBuilding_Shop])
             {
-                NotifySpawn(CreateShop(shop.Name, new Vector2(shop.CentralPoint.X, shop.CentralPoint.Z), shop.GetTeamID()));
+                CreateShop(shop.Name, new Vector2(shop.CentralPoint.X, shop.CentralPoint.Z), shop.GetTeamID());
             }
         }
 

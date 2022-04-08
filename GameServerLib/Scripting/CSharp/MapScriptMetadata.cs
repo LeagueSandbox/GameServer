@@ -9,6 +9,7 @@ namespace LeagueSandbox.GameServer.Scripting.CSharp
 {
     public class MapScriptMetadata : IMapScriptMetadata
     {
+        public float BaseGoldPerGoldTick { get; set; } = 0.95f;
         public float ChampionBaseGoldValue { get; set; } = 300.0f;
         public float ChampionMaxGoldValue { get; set; } = 500.0f;
         public float ChampionMinGoldValue { get; set; } = 50.0f;
@@ -16,7 +17,7 @@ namespace LeagueSandbox.GameServer.Scripting.CSharp
         public float ExpRange { get; set; } = 1400.0f;
         public float FirstBloodExtraGold { get; set; } = 100.0f;
         public float FirstGoldTime { get; set; } = 90 * 1000;
-        public float GoldPerSecond { get; set; } = 1.9f;
+        public float GoldTickSpeed { get; set; } = 500f;
         public float GoldRange { get; set; } = 1250.0f;
         public int InitialLevel { get; set; } = 1;
         public bool IsKillGoldRewardReductionActive { get; set; } = true;

@@ -125,6 +125,9 @@ namespace LeagueSandbox.GameServer.GameObjects
             {
                 TargetUnit.RemoveStatModifier(BuffScript.StatsModifier);
             }
+
+            ApiEventManager.OnBuffDeactivated.Publish(this);
+            ApiEventManager.OnUnitBuffDeactivated.Publish(this, TargetUnit);
         }
 
         public bool Elapsed()

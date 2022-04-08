@@ -1130,7 +1130,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             // Dashes are excluded as their paths should be set before being applied.
             // TODO: Find out the specific cases where we shouldn't be able to set our waypoints. Perhaps CC?
             // Setting waypoints during auto attacks is allowed.
-            if (newWaypoints.Count <= 1 || newWaypoints[0] != Position || !CanChangeWaypoints())
+            if (newWaypoints == null || newWaypoints.Count <= 1 || newWaypoints[0] != Position || !CanChangeWaypoints())
             {
                 return;
             }
@@ -1203,7 +1203,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                     // Add the buff to the visual hud.
                     if (!b.IsHidden)
                     {
-                        _game.PacketNotifier.NotifyNPC_BuffAdd2(b, b.Duration, b.TimeElapsed);
+                        _game.PacketNotifier.NotifyNPC_BuffAdd2(b);
                     }
                     // Activate the buff for BuffScripts
                     b.ActivateBuff();
@@ -1543,7 +1543,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                     // Add the buff to the visual hud.
                     if (!b.IsHidden)
                     {
-                        _game.PacketNotifier.NotifyNPC_BuffAdd2(tempBuff, tempBuff.Duration, tempBuff.TimeElapsed);
+                        _game.PacketNotifier.NotifyNPC_BuffAdd2(tempBuff);
                     }
                     // Activate the buff for BuffScripts
                     tempBuff.ActivateBuff();

@@ -15,7 +15,7 @@ namespace MapScripts.Map8
         static List<IMinion> InfoPoints = new List<IMinion>();
         public static Dictionary<TeamId, IFountain> FountainList = new Dictionary<TeamId, IFountain>();
         static Dictionary<TeamId, List<ILaneTurret>> TurretList = new Dictionary<TeamId, List<ILaneTurret>> { { TeamId.TEAM_BLUE, new List<ILaneTurret>() }, { TeamId.TEAM_PURPLE, new List<ILaneTurret>() } };
-
+        static List<IMinion> TeleportPlates = new List<IMinion>();
         static string LaneTurretAI = "TurretAI";
 
         public static Dictionary<TeamId, string> TowerModels { get; set; } = new Dictionary<TeamId, string>
@@ -36,6 +36,7 @@ namespace MapScripts.Map8
         public static void OnMatchStart()
         {
             LoadShops();
+            LoadTeleportPlates();
         }
 
         public static void OnUpdate(float diff)
@@ -59,7 +60,7 @@ namespace MapScripts.Map8
         {
             foreach (var shop in _mapObjects[GameObjectTypes.ObjBuilding_Shop])
             {
-                NotifySpawn(CreateShop(shop.Name, new Vector2(shop.CentralPoint.X, shop.CentralPoint.Z), shop.GetTeamID()));
+                CreateShop(shop.Name, new Vector2(shop.CentralPoint.X, shop.CentralPoint.Z), shop.GetTeamID());
             }
         }
 
@@ -73,6 +74,38 @@ namespace MapScripts.Map8
                 TurretList[teamId].Add(fountainTurret);
                 AddObject(fountainTurret);
             }
+        }
+
+        static void LoadTeleportPlates()
+        {
+            foreach (var infoPoint in _mapObjects[GameObjectTypes.InfoPoint])
+            {
+                var position = new Vector2(infoPoint.CentralPoint.X, infoPoint.CentralPoint.Z);
+                NotifySpawnBroadcast(AddPosPerceptionBubble(position, 500.0f, 25000.0f, TeamId.TEAM_BLUE, false));
+                NotifySpawnBroadcast(AddPosPerceptionBubble(position, 500.0f, 25000.0f, TeamId.TEAM_PURPLE, false));
+
+                if (infoPoint.Name == "Info_PointA" || infoPoint.Name == "Info_PointB")
+                {
+                    CreateTeleportPoint(position, TeamId.TEAM_BLUE, "CapturePoint");
+                }
+                else if (infoPoint.Name == "Info_PointD" || infoPoint.Name == "Info_PointE")
+                {
+                    CreateTeleportPoint(position, TeamId.TEAM_PURPLE, "CapturePoint");
+                }
+                else
+                {
+                    CreateTeleportPoint(position, TeamId.TEAM_BLUE, "NeutralPointOrder");
+                    CreateTeleportPoint(position, TeamId.TEAM_PURPLE, "NeutralPointChaos");
+                }
+            }
+        }
+
+        public static void CreateTeleportPoint(Vector2 position, TeamId team, string mapIcon)
+        {
+            var point = CreateMinion("AscWarpIcon", "AscWarpIcon", position, team: team, ignoreCollision: false, isTargetable: false);
+            SetMinimapIcon(point, mapIcon, true);
+            TeleportPlates.Add(point);
+            point.PauseAi(true);
         }
     }
 }

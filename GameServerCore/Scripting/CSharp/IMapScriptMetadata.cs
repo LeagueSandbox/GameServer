@@ -6,6 +6,10 @@ namespace GameServerCore.Scripting.CSharp
     public interface IMapScriptMetadata
     {
         /// <summary>
+        /// Ammount of gold all players receive every gold tick (Default: 0.95f)
+        /// </summary>
+        float BaseGoldPerGoldTick { get; }
+        /// <summary>
         /// The base gold value of all champions in the match (Default: 300.0f)
         /// </summary>
         float ChampionBaseGoldValue { get; }
@@ -42,9 +46,9 @@ namespace GameServerCore.Scripting.CSharp
         /// </summary>
         bool IsKillGoldRewardReductionActive { get; }
         /// <summary>
-        /// Ammount of gold per second for all players (Default: 1.9f)
+        /// How Fast gold should be added for players in milliseconds (Default: 500.0f);
         /// </summary>
-        float GoldPerSecond { get; }
+        float GoldTickSpeed { get;}
         /// <summary>
         /// Functionality still unknown, I thought it was used in ARAM, but it's map script sets it to 0 (Default: 1250.0f)
         /// </summary>

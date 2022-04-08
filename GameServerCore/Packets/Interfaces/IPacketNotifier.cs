@@ -170,12 +170,9 @@ namespace GameServerCore.Packets.Interfaces
         /// Sends a packet to either all players with vision of a target, or the specified player.
         /// The packet displays the specified message of the specified type as floating text over a target.
         /// </summary>
-        /// <param name="target">Target to display on.</param>
-        /// <param name="message">Message to display.</param>
-        /// <param name="textType">Type of text to display. Refer to FloatTextType</param>
+        /// <param name="floatTextData">Contains all the data from a floating text.</param>
         /// <param name="userId">User to send to. 0 = sends to all in vision.</param>
-        /// <param name="param">Optional parameters for the text. Untested, function unknown.</param>
-        void NotifyDisplayFloatingText(IGameObject target, string message, FloatTextType textType = FloatTextType.Debug, int userId = 0, int param = 0);
+        void NotifyDisplayFloatingText(IFloatingTextData floatTextData, TeamId team = 0, int userId = 0);
         /// <summary>
         /// Sends a packet to the specified user detailing that the GameObject that owns the specified netId has finished being initialized into vision.
         /// </summary>
@@ -299,6 +296,7 @@ namespace GameServerCore.Packets.Interfaces
         /// </summary>
         /// <param name="p">Projectile that was created.</param>
         void NotifyMissileReplication(ISpellMissile p);
+        void NotifyS2C_CameraBehavior(IChampion target, Vector3 position);
         /// <summary>
         /// Sends a packet to all players that updates the specified unit's model.
         /// </summary>
@@ -346,7 +344,7 @@ namespace GameServerCore.Packets.Interfaces
         /// Sends a packet to all players who have vision of the specified buff's target detailing that the buff has been added to the target.
         /// </summary>
         /// <param name="b">Buff being added.</param>
-        void NotifyNPC_BuffAdd2(IBuff b, float duration, float runningTime);
+        void NotifyNPC_BuffAdd2(IBuff b);
         /// <summary>
         /// Sends a packet to all players with vision of the specified ObjAiBase detailing that the specified group of buffs has been added to the ObjAiBase.
         /// </summary>
@@ -558,7 +556,7 @@ namespace GameServerCore.Packets.Interfaces
         /// </summary>
         /// <param name="losingTeam">The Team that lost the match</param>
         /// <param name="time">The offset for the result to actually be displayed</param>
-        void NotifyS2C_EndGame(TeamId losingTeam, float time = 5000);
+        void NotifyS2C_EndGame(TeamId losingTeam);
         void NotifyS2C_HandleCapturePointUpdate(byte capturePointIndex, uint otherNetId, byte PARType, byte attackTeam, CapturePointUpdateCommand capturePointUpdateCommand);
         /// <summary>
         /// Notifies the game about a map score
@@ -583,6 +581,7 @@ namespace GameServerCore.Packets.Interfaces
         /// </summary>
         /// <param name="champion">Champion owned by the player.</param>
         void NotifyS2C_HeroStats(IChampion champion);
+        void NotifyS2C_IncrementPlayerScore(IScoreData scoreData);
         /// <summary>
         /// Sends a packet to the specified client's team detailing a map ping.
         /// </summary>
@@ -590,7 +589,7 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="pos">2D top-down position of the ping.</param>
         /// <param name="targetNetId">Target of the ping (if applicable).</param>
         /// <param name="type">Type of ping; COMMAND/ATTACK/DANGER/MISSING/ONMYWAY/FALLBACK/REQUESTHELP. *NOTE*: Not all ping types are supported yet.</param>
-        void NotifyS2C_MapPing(ClientInfo client, Vector2 pos, uint targetNetId, Pings type);
+        void NotifyS2C_MapPing(Vector2 pos, Pings type, uint targetNetId = 0, ClientInfo client = null);
         /// <summary>
         /// Notifies the camera of a given player to move
         /// </summary>
@@ -651,6 +650,7 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="type">Type of emotion being performed; DANCE/TAUNT/LAUGH/JOKE/UNK.</param>
         /// <param name="netId">NetID of the unit performing the emotion.</param>
         void NotifyS2C_PlayEmote(Emotions type, uint netId);
+        void NotifyS2C_PlaySound(string soundName, IAttackableUnit soundOwner);
         /// <summary>
         /// Sends a packet to the specified player which is meant as a response to the players query about the status of the game.
         /// </summary>
@@ -734,7 +734,8 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="attacked">Unit that is being attacked.</param>
         /// <param name="attackType">AttackType that the attacker is using to attack.</param>
         void NotifyS2C_UnitSetLookAt(IAttackableUnit attacker, IAttackableUnit attacked, AttackType attackType);
-        void NotifyS2C_UnitSetMinimapIcon(IAttackableUnit unit, string iconCategory = "", bool changeIcon = false, string borderCategory = "", bool changeBorder = false);
+        void NotifyS2C_UnitSetMinimapIcon(IAttackableUnit unit, string iconCategory = "", bool changeIcon = false, string borderCategory = "", bool changeBorder = false, string borderScriptName = "");
+        void NotifyS2C_UpdateAscended(IObjAiBase ascendant = null);
         /// <summary>
         /// Sends a packet to all players detailing the attack speed cap overrides for this game.
         /// </summary>
