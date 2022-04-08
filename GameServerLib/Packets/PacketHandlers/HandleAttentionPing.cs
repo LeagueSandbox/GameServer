@@ -20,7 +20,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
         public override bool HandlePacket(int userId, C2S_MapPing req)
         {
             var client = _playerManager.GetPeerInfo(userId);
-            _game.PacketNotifier.NotifyS2C_MapPing(client, new Vector2(req.Position.X, req.Position.Y), req.TargetNetID, (Pings)req.PingCategory);
+            _game.PacketNotifier.NotifyS2C_MapPing(req.Position, (Pings)req.PingCategory, req.TargetNetID, client);
             return true;
         }
     }
