@@ -6,6 +6,7 @@ using LeagueSandbox.GameServer.Scripting.CSharp;
 
 namespace Buffs
 {
+    // NOTE: May or may not be the proper functionality (unknown what this script is actually supposed to do).
     internal class AscHardModeEvent : IBuffGameScript
     {
         public IBuffScriptMetaData BuffMetaData { get; set; } = new BuffScriptMetaData
