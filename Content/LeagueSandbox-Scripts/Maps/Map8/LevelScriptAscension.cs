@@ -117,7 +117,8 @@ namespace MapScripts.Map8
             {
                 ApiEventManager.OnIncrementChampionScore.AddListener(this, champion, OnIncrementPoints, false);
                 ApiEventManager.OnKill.AddListener(this, champion, OnChampionKill, false);
-                AddBuff("AscRespawn", 25000.0f, 1, null, champion, champion);
+                AddBuff("AscRespawn", 25000.0f, 1, null, champion, null);
+                AddBuff("AscHardModeEvent", 25000.0f, 1, null, champion, null);
             }
 
             foreach (var player in GetAllPlayers())
