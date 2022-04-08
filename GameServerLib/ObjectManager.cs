@@ -287,7 +287,10 @@ namespace LeagueSandbox.GameServer
                 {
                     _objects.Add(o.NetId, o);
                 }
-                if(!(o is IChampion))
+                // TODO: This is a hack-fix for units which have packets being sent before spawning (ex: AscWarp minion)
+                // Instead, we need a dedicated packet queue system which takes all packets which are not vision/spawn related,
+                // and queues them if the object is not spawned yet for clients.
+                if (!(o is IChampion))
                 {
                     SpawnObject(o);
                 }
