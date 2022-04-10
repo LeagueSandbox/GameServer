@@ -1,11 +1,12 @@
 ﻿using GameServerCore.Packets.PacketDefinitions;
 using System;
 using System.Collections.Generic;
+using LeaguePackets;
 
 namespace GameServerCore.Packets.Handlers
 {
     // the global generic network handler between the bridge and the server
-    public class NetworkHandler<MessageType> where MessageType : ICoreMessage
+    public class NetworkHandler<MessageType> where MessageType : BasePacket
     {
         public delegate bool MessageHandler<T>(int userId, T msg) where T : MessageType;
         private readonly Dictionary<Type, List<Delegate>> _handlers = new Dictionary<Type, List<Delegate>>();

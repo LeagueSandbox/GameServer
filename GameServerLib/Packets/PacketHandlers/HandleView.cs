@@ -1,9 +1,9 @@
 ﻿using GameServerCore.Packets.Handlers;
-using GameServerCore.Packets.PacketDefinitions.Requests;
+using LeaguePackets.Game;
 
 namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 {
-    public class HandleView : PacketHandlerBase<ViewRequest>
+    public class HandleView : PacketHandlerBase<World_SendCamera_Server>
     {
         private readonly Game _game;
 
@@ -12,7 +12,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             _game = game;
         }
 
-        public override bool HandlePacket(int userId, ViewRequest req)
+        public override bool HandlePacket(int userId, World_SendCamera_Server req)
         {
              _game.PacketNotifier.NotifyWorld_SendCamera_Server_Acknologment(userId, req);
             return true;

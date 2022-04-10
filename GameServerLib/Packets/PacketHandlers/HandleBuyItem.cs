@@ -1,11 +1,11 @@
 ﻿using GameServerCore;
 using GameServerCore.Packets.Handlers;
-using GameServerCore.Packets.PacketDefinitions.Requests;
+using LeaguePackets.Game;
 using LeagueSandbox.GameServer.Items;
 
 namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 {
-    public class HandleBuyItem : PacketHandlerBase<BuyItemRequest>
+    public class HandleBuyItem : PacketHandlerBase<BuyItemReq>
     {
         private readonly Game _game;
         private readonly ItemManager _itemManager;
@@ -18,10 +18,10 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             _playerManager = game.PlayerManager;
         }
 
-        public override bool HandlePacket(int userId, BuyItemRequest req)
+        public override bool HandlePacket(int userId, BuyItemReq req)
         {
             var champion = _playerManager.GetPeerInfo(userId).Champion;
-            return champion.Shop.HandleItemBuyRequest(req.ItemId);
+            return champion.Shop.HandleItemBuyRequest((int)req.ItemID);
         }
     }
 }

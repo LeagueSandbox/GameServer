@@ -23,7 +23,7 @@ namespace PacketDefinitions420
     /// </summary>
     public class PacketHandlerManager : IPacketHandlerManager
     {
-        private delegate ICoreRequest RequestConvertor(byte[] data);
+        private delegate BasePacket RequestConvertor(byte[] data);
         private readonly Dictionary<Tuple<GamePacketID, Channel>, RequestConvertor> _gameConvertorTable;
         private readonly Dictionary<LoadScreenPacketID, RequestConvertor> _loadScreenConvertorTable;
         // should be one-to-one, no two users for the same Peer
@@ -34,10 +34,10 @@ namespace PacketDefinitions420
         private readonly Host _server;
         private readonly IGame _game;
 
-        private readonly NetworkHandler<ICoreRequest> _netReq;
-        private readonly NetworkHandler<ICoreResponse> _netResp;
+        private readonly NetworkHandler<BasePacket> _netReq;
+        private readonly NetworkHandler<BasePacket> _netResp;
 
-        public PacketHandlerManager(Dictionary<long, BlowFish> blowfishes, Host server, IGame game, NetworkHandler<ICoreRequest> netReq, NetworkHandler<ICoreResponse> netResp)
+        public PacketHandlerManager(Dictionary<long, BlowFish> blowfishes, Host server, IGame game, NetworkHandler<BasePacket> netReq, NetworkHandler<BasePacket> netResp)
         {
             _blowfishes = blowfishes;
             _server = server;
@@ -137,20 +137,9 @@ namespace PacketDefinitions420
             return null;
         }
 
-        public bool SendPacket(int playerId, Packet packet, Channel channelNo)
-        {
-            return SendPacket(playerId, packet, channelNo, PacketFlags.Reliable);
-        }
-
         public bool SendPacket(int playerId, Packet packet, Channel channelNo, PacketFlags flags)
         {
             return SendPacket(playerId, packet.GetBytes(), channelNo, flags);
-        }
-
-        public void UnpauseGame()
-        {
-            // FIXME: test this
-            GetConvertor(GamePacketID.ResumePacket, Channel.CHL_C2S)(new byte[0]);
         }
 
         private void PrintPacket(byte[] buffer, string str)
@@ -213,13 +202,6 @@ namespace PacketDefinitions420
             }
         }
 
-        public bool BroadcastPacket(Packet packet, Channel channelNo,
-            PacketFlags flag = PacketFlags.Reliable)
-        {
-            return BroadcastPacket(packet.GetBytes(), channelNo, flag);
-        }
-
-
         // TODO: find a way with no need of player manager
         public bool BroadcastPacketTeam(TeamId team, byte[] data, Channel channelNo,
             PacketFlags flag = PacketFlags.Reliable)
@@ -233,12 +215,6 @@ namespace PacketDefinitions420
             }
 
             return true;
-        }
-
-        public bool BroadcastPacketTeam(TeamId team, Packet packet, Channel channelNo,
-            PacketFlags flag = PacketFlags.Reliable)
-        {
-            return BroadcastPacketTeam(team, packet.GetBytes(), channelNo, flag);
         }
 
         public bool BroadcastPacketVision(IGameObject o, Packet packet, Channel channelNo,

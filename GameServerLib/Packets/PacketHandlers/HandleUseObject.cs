@@ -1,15 +1,12 @@
 ﻿using GameServerCore;
-using GameServerCore.Domain.GameObjects;
 using GameServerCore.Packets.Handlers;
-using GameServerCore.Packets.PacketDefinitions.Requests;
+using LeaguePackets.Game;
 using LeagueSandbox.GameServer.Logging;
 using log4net;
-using GameServerCore.Enums;
-using LeagueSandbox.GameServer.API;
 
 namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 {
-    public class HandleUseObject : PacketHandlerBase<UseObjectRequest>
+    public class HandleUseObject : PacketHandlerBase<UseObjectC2S>
     {
         private readonly Game _game;
         private readonly ILog _logger;
@@ -22,32 +19,13 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             _playerManager = game.PlayerManager;
         }
 
-        public override bool HandlePacket(int userId, UseObjectRequest req)
+        public override bool HandlePacket(int userId, UseObjectC2S req)
         {
             var champion = _playerManager.GetPeerInfo(userId).Champion;
-            var targetObj = _game.ObjectManager.GetObjectById(req.TargetNetId) as IAttackableUnit;
+            var msg = $"Object {champion.NetId} is trying to use (right clicked) {req.TargetNetID}";
+            _logger.Debug(msg);
 
-            if (targetObj is IObjAiBase obj)
-            {
-                champion.SetSpell(obj.CharData.HeroUseSpell, (byte)SpellSlotType.UseSpellSlot, true);
-            }
-
-            var s = champion.GetSpell((byte)SpellSlotType.UseSpellSlot);
-            var ownerCastingSpell = champion.GetCastSpell();
-
-            // Instant cast spells can be cast during other spell casts.
-            if (s != null && champion.CanCast(s)
-                && champion.ChannelSpell == null
-                && (ownerCastingSpell == null
-                || (ownerCastingSpell != null
-                    && s.SpellData.Flags.HasFlag(SpellDataFlags.InstantCast))
-                    && !ownerCastingSpell.SpellData.CantCancelWhileWindingUp))
-            {
-                s.Cast(targetObj.Position, targetObj.Position, targetObj);
-                return true;
-            }
-
-            return false;
+            return true;
         }
     }
 }

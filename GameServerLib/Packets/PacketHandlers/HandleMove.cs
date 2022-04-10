@@ -1,17 +1,15 @@
 ﻿using GameServerCore;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
-using GameServerCore.Packets.Enums;
 using GameServerCore.Packets.Handlers;
-using GameServerCore.Packets.PacketDefinitions.Requests;
-using System.Collections;
+using LeaguePackets.Game;
 using System.Collections.Generic;
-using System.IO;
 using System.Numerics;
+using static PacketDefinitions420.PacketExtensions;
 
 namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 {
-    public class HandleMove : PacketHandlerBase<MovementRequest>
+    public class HandleMove : PacketHandlerBase<NPC_IssueOrderReq>
     {
         private readonly Game _game;
         private readonly IPlayerManager _playerManager;
@@ -22,7 +20,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             _playerManager = game.PlayerManager;
         }
 
-        public override bool HandlePacket(int userId, MovementRequest req)
+        public override bool HandlePacket(int userId, NPC_IssueOrderReq req)
         {
             var peerInfo = _playerManager.GetPeerInfo(userId);
             var champion = peerInfo?.Champion;
@@ -35,8 +33,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             {
                 // Last waypoint position
                 var pos = req.Position;
-                var translatedWaypoints = req.Waypoints.ConvertAll(TranslateFromCenteredCoordinates);
-
+                List<Vector2> translatedWaypoints = req.MovementData.Waypoints.ConvertAll(WaypointToVector2).ConvertAll(TranslateFromCenteredCoordinates);
                 var lastindex = 0;
                 if (!(translatedWaypoints.Count - 1 < 0))
                 {
@@ -65,7 +62,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                     }
                 }
 
-                switch (req.Type)
+                switch ((OrderType)req.OrderType)
                 {
                     case OrderType.AttackTo:
                         translatedWaypoints[0] = champion.Position;
@@ -96,7 +93,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                 }
             }
 
-            var u = _game.ObjectManager.GetObjectById(req.TargetNetId) as IAttackableUnit;
+            var u = _game.ObjectManager.GetObjectById(req.TargetNetID) as IAttackableUnit;
             champion.SetTargetUnit(u);
 
             if (champion.SpellToCast != null)

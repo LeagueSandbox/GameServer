@@ -1,10 +1,10 @@
 ﻿using GameServerCore.Packets.Handlers;
-using GameServerCore.Packets.PacketDefinitions.Requests;
+using LeaguePackets.Game;
 using LeagueSandbox.GameServer.Chatbox;
 
 namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 {
-    public class HandleAutoAttackOption : PacketHandlerBase<AutoAttackOptionRequest>
+    public class HandleAutoAttackOption : PacketHandlerBase<C2S_UpdateGameOptions>
     {
         private readonly Game _game;
         private readonly ChatCommandManager _chatCommandManager;
@@ -15,7 +15,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             _chatCommandManager = game.ChatCommandManager;
         }
 
-        public override bool HandlePacket(int userId, AutoAttackOptionRequest req)
+        public override bool HandlePacket(int userId, C2S_UpdateGameOptions req)
         {
             return true;
         }

@@ -1,12 +1,12 @@
 ﻿using GameServerCore;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Packets.Handlers;
-using GameServerCore.Packets.PacketDefinitions.Requests;
+using LeaguePackets.Game;
 using System.Timers;
 
 namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 {
-    public class HandleUnpauseReq : PacketHandlerBase<UnpauseRequest>
+    public class HandleUnpauseReq : PacketHandlerBase<ResumePacket>
     {
         private readonly Game _game;
         private readonly IPlayerManager _playerManager;
@@ -17,7 +17,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             _playerManager = game.PlayerManager;
         }
 
-        public override bool HandlePacket(int userId, UnpauseRequest req)
+        public override bool HandlePacket(int userId, ResumePacket req)
         {
             if (!_game.IsPaused)
             {

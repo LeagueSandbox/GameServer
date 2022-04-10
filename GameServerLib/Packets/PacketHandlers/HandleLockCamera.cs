@@ -1,13 +1,13 @@
 ﻿using GameServerCore.Packets.Handlers;
-using GameServerCore.Packets.PacketDefinitions.Requests;
+using LeaguePackets.Game;
 
 namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 {
-    public class HandleLockCamera : PacketHandlerBase<LockCameraRequest>
+    public class HandleLockCamera : PacketHandlerBase<World_LockCamera_Server>
     {
         public HandleLockCamera(Game game) { }
 
-        public override bool HandlePacket(int userId, LockCameraRequest req)
+        public override bool HandlePacket(int userId, World_LockCamera_Server req)
         {
             return true;
         }

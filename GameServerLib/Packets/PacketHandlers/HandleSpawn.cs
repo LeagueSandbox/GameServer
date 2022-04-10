@@ -1,11 +1,7 @@
 ﻿using GameServerCore;
-using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
-using GameServerCore.Domain.GameObjects.Spell.Missile;
-using GameServerCore.Enums;
 using GameServerCore.Packets.Handlers;
-using GameServerCore.Packets.PacketDefinitions.Requests;
-using LeagueSandbox.GameServer.GameObjects;
+using LeaguePackets.Game;
 using LeagueSandbox.GameServer.Items;
 using LeagueSandbox.GameServer.Logging;
 using log4net;
@@ -13,7 +9,7 @@ using System;
 
 namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 {
-    public class HandleSpawn : PacketHandlerBase<SpawnRequest>
+    public class HandleSpawn : PacketHandlerBase<C2S_CharSelected>
     {
         private readonly ILog _logger;
         private readonly Game _game;
@@ -31,7 +27,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
         }
 
         private bool _firstSpawn = true;
-        public override bool HandlePacket(int userId, SpawnRequest req)
+        public override bool HandlePacket(int userId, C2S_CharSelected req)
         {
             var players = _playerManager.GetPlayers(true);
 

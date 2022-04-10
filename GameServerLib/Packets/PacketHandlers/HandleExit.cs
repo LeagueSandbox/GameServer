@@ -1,12 +1,11 @@
 ﻿using GameServerCore;
-using GameServerCore.Enums;
 using GameServerCore.Packets.Handlers;
-using GameServerCore.Packets.PacketDefinitions.Requests;
+using LeaguePackets.Game;
 using LeaguePackets.Game.Events;
 
 namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 {
-    public class HandleExit : PacketHandlerBase<ExitRequest>
+    public class HandleExit : PacketHandlerBase<C2S_Exit>
     {
         private readonly Game _game;
         private readonly IPlayerManager _playerManager;
@@ -17,7 +16,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             _playerManager = game.PlayerManager;
         }
 
-        public override bool HandlePacket(int userId, ExitRequest req)
+        public override bool HandlePacket(int userId, C2S_Exit req)
         {
             var peerinfo = _playerManager.GetPeerInfo(userId);
             var annoucement = new OnQuit { OtherNetID = peerinfo.Champion.NetId };

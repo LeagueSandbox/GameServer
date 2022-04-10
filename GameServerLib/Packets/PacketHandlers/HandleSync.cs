@@ -1,12 +1,12 @@
 ﻿using GameServerCore;
 using GameServerCore.Packets.Handlers;
-using GameServerCore.Packets.PacketDefinitions.Requests;
+using LeaguePackets.Game;
 using LeagueSandbox.GameServer.Logging;
 using log4net;
 
 namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 {
-    public class HandleSync : PacketHandlerBase<SynchVersionRequest>
+    public class HandleSync : PacketHandlerBase<SynchVersionC2S>
     {
         private readonly ILog _logger;
         private readonly Game _game;
@@ -19,7 +19,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             _playerManager = game.PlayerManager;
         }
 
-        public override bool HandlePacket(int userId, SynchVersionRequest req)
+        public override bool HandlePacket(int userId, SynchVersionC2S req)
         {
             //Logging->writeLine("Client version: %s", version->version);
 
@@ -35,7 +35,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             }
             else
             {
-                _logger.Debug("Accepted client version (" + req.Version + ") from client = " + req.ClientId + " & PlayerID = " + userId);
+                _logger.Debug("Accepted client version (" + req.Version + ") from client = " + req.ClientID + " & PlayerID = " + userId);
             }
 
             foreach (var player in _playerManager.GetPlayers())
