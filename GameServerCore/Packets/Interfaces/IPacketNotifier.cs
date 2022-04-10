@@ -472,7 +472,7 @@ namespace GameServerCore.Packets.Interfaces
         /// </summary>
         /// <param name="request">Info of the target client given via the client who requested loading screen progress.</param>
         /// <param name="clientInfo">Client info of the client who's progress is being requested.</param>
-        void NotifyPingLoadInfo(PingLoadInfoRequest request, ClientInfo clientInfo);
+        void NotifyPingLoadInfo(C2S_Ping_Load_Info request, ClientInfo clientInfo);
         /// <summary>
         /// Sends a packet to all players that a champion has respawned.
         /// </summary>
@@ -909,11 +909,6 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="mode">Draw path mode to set. Refer to DrawPathMode enum.</param>
         /// TODO: Verify the functionality of this packet (and its parameters) and create an enum for the mode.
         void NotifyUnitSetDrawPathMode(int userId, IAttackableUnit unit, IGameObject target, DrawPathMode mode);
-        /// <summary>
-        /// Unfinished(?) function which intends to resume the game automatically (without client requests). This is usually called after the pause time has ended in Game.GameLoop.
-        /// </summary>
-        /// TODO: Verify if this works and if not, then finish it.
-        void NotifyUnpauseGame();
         void NotifyUpdateLevelPropS2C(UpdateLevelPropData propData);
         /// <summary>
         /// Sends a packet to all players with vision of the specified unit detailing that the specified unit's stats have been updated.
@@ -995,6 +990,6 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="request">ViewRequest housing information about the camera's view.</param>
         /// TODO: Verify if this is the correct implementation.
         /// TODO: Fix LeaguePackets Typos.
-        void NotifyWorld_SendCamera_Server_Acknologment(int userId, ViewRequest request);
+        void NotifyWorld_SendCamera_Server_Acknologment(int userId, World_SendCamera_Server request);
     }
 }

@@ -18,12 +18,13 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using Timer = System.Timers.Timer;
-using GameServerCore.Packets.PacketDefinitions;
-using GameServerCore.Packets.PacketDefinitions.Requests;
 using LeagueSandbox.GameServer.Packets.PacketHandlers;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Handlers;
 using LeagueSandbox.GameServer.Handlers;
+using LeaguePackets.Game;
+using LeaguePackets;
+using LeaguePackets.LoadScreen;
 
 namespace LeagueSandbox.GameServer
 {
@@ -73,11 +74,11 @@ namespace LeagueSandbox.GameServer
         /// <summary>
         /// Handler for request packets sent by game clients.
         /// </summary>
-        public NetworkHandler<ICoreRequest> RequestHandler { get; }
+        public NetworkHandler<BasePacket> RequestHandler { get; }
         /// <summary>
         /// Handler for response packets sent by the server to game clients.
         /// </summary>
-        public NetworkHandler<ICoreResponse> ResponseHandler { get; }
+        public NetworkHandler<BasePacket> ResponseHandler { get; }
         /// <summary>
         /// Interface containing all function related packets (except handshake) which are sent by the server to game clients.
         /// </summary>
@@ -136,8 +137,8 @@ namespace LeagueSandbox.GameServer
             NetworkIdManager = new NetworkIdManager();
             PlayerManager = new PlayerManager(this);
             ScriptEngine = new CSharpScriptEngine();
-            RequestHandler = new NetworkHandler<ICoreRequest>();
-            ResponseHandler = new NetworkHandler<ICoreResponse>();
+            RequestHandler = new NetworkHandler<BasePacket>();
+            ResponseHandler = new NetworkHandler<BasePacket>();
         }
 
         /// <summary>
@@ -191,37 +192,37 @@ namespace LeagueSandbox.GameServer
             // a problem with passing generic delegate to non-generic function, if we try to only constraint the
             // argument to interface ICoreRequest we will get an error cause our generic handlers use generic type
             // even with where statement that doesn't work
-            RequestHandler.Register<AttentionPingRequest>(new HandleAttentionPing(this).HandlePacket);
-            RequestHandler.Register<AutoAttackOptionRequest>(new HandleAutoAttackOption(this).HandlePacket);
-            RequestHandler.Register<BlueTipClickedRequest>(new HandleBlueTipClicked(this).HandlePacket);
-            RequestHandler.Register<BuyItemRequest>(new HandleBuyItem(this).HandlePacket);
-            RequestHandler.Register<CastSpellRequest>(new HandleCastSpell(this).HandlePacket);
-            RequestHandler.Register<ChatMessageRequest>(new HandleChatBoxMessage(this).HandlePacket);
-            RequestHandler.Register<ClickRequest>(new HandleClick(this).HandlePacket);
-            RequestHandler.Register<SpellChargeUpdateReq>(new HandleSpellChargeUpdateReq(this).HandlePacket);
-            RequestHandler.Register<EmotionPacketRequest>(new HandleEmotion(this).HandlePacket);
-            RequestHandler.Register<ExitRequest>(new HandleExit(this).HandlePacket);
-            RequestHandler.Register<SyncSimTimeRequest>(new HandleSyncSimTime(this).HandlePacket);
-            RequestHandler.Register<PingLoadInfoRequest>(new HandleLoadPing(this).HandlePacket);
-            RequestHandler.Register<LockCameraRequest>(new HandleLockCamera(this).HandlePacket);
-            RequestHandler.Register<JoinTeamRequest>(new HandleJoinTeam(this).HandlePacket);
-            RequestHandler.Register<MovementRequest>(new HandleMove(this).HandlePacket);
-            RequestHandler.Register<MoveConfirmRequest>(new HandleMoveConfirm(this).HandlePacket);
-            RequestHandler.Register<PauseRequest>(new HandlePauseReq(this).HandlePacket);
-            RequestHandler.Register<QueryStatusRequest>(new HandleQueryStatus(this).HandlePacket);
-            RequestHandler.Register<QuestClickedRequest>(new HandleQuestClicked(this).HandlePacket);
-            RequestHandler.Register<ScoreboardRequest>(new HandleScoreboard(this).HandlePacket);
-            RequestHandler.Register<SellItemRequest>(new HandleSellItem(this).HandlePacket);
-            RequestHandler.Register<UpgradeSpellReq>(new HandleUpgradeSpellReq(this).HandlePacket);
-            RequestHandler.Register<SpawnRequest>(new HandleSpawn(this).HandlePacket);
-            RequestHandler.Register<StartGameRequest>(new HandleStartGame(this).HandlePacket);
-            RequestHandler.Register<StatsConfirmRequest>(new HandleStatsConfirm(this).HandlePacket);
-            RequestHandler.Register<SurrenderRequest>(new HandleSurrender(this).HandlePacket);
-            RequestHandler.Register<SwapItemsRequest>(new HandleSwapItems(this).HandlePacket);
-            RequestHandler.Register<SynchVersionRequest>(new HandleSync(this).HandlePacket);
-            RequestHandler.Register<UnpauseRequest>(new HandleUnpauseReq(this).HandlePacket);
-            RequestHandler.Register<UseObjectRequest>(new HandleUseObject(this).HandlePacket);
-            RequestHandler.Register<ViewRequest>(new HandleView(this).HandlePacket);
+            RequestHandler.Register<C2S_MapPing>(new HandleAttentionPing(this).HandlePacket);
+            RequestHandler.Register<C2S_UpdateGameOptions>(new HandleAutoAttackOption(this).HandlePacket);
+            RequestHandler.Register<C2S_OnTipEvent>(new HandleBlueTipClicked(this).HandlePacket);
+            RequestHandler.Register<BuyItemReq>(new HandleBuyItem(this).HandlePacket);
+            RequestHandler.Register<NPC_CastSpellReq>(new HandleCastSpell(this).HandlePacket);
+            RequestHandler.Register<Chat>(new HandleChatBoxMessage(this).HandlePacket);
+            RequestHandler.Register<SendSelectedObjID>(new HandleClick(this).HandlePacket);
+            RequestHandler.Register<C2S_SpellChargeUpdateReq>(new HandleSpellChargeUpdateReq(this).HandlePacket);
+            RequestHandler.Register<C2S_PlayEmote>(new HandleEmotion(this).HandlePacket);
+            RequestHandler.Register<C2S_Exit>(new HandleExit(this).HandlePacket);
+            RequestHandler.Register<SynchSimTimeC2S>(new HandleSyncSimTime(this).HandlePacket);
+            RequestHandler.Register<C2S_Ping_Load_Info>(new HandleLoadPing(this).HandlePacket);
+            RequestHandler.Register<World_LockCamera_Server>(new HandleLockCamera(this).HandlePacket);
+            RequestHandler.Register<RequestJoinTeam>(new HandleJoinTeam(this).HandlePacket);
+            RequestHandler.Register<NPC_IssueOrderReq>(new HandleMove(this).HandlePacket);
+            RequestHandler.Register<Waypoint_Acc>(new HandleMoveConfirm(this).HandlePacket);
+            RequestHandler.Register<PausePacket>(new HandlePauseReq(this).HandlePacket);
+            RequestHandler.Register<C2S_QueryStatusReq>(new HandleQueryStatus(this).HandlePacket);
+            RequestHandler.Register<C2S_OnQuestEvent>(new HandleQuestClicked(this).HandlePacket);
+            RequestHandler.Register<C2S_StatsUpdateReq>(new HandleScoreboard(this).HandlePacket);
+            RequestHandler.Register<RemoveItemReq>(new HandleSellItem(this).HandlePacket);
+            RequestHandler.Register<NPC_UpgradeSpellReq>(new HandleUpgradeSpellReq(this).HandlePacket);
+            RequestHandler.Register<C2S_CharSelected>(new HandleSpawn(this).HandlePacket);
+            RequestHandler.Register<C2S_ClientReady>(new HandleStartGame(this).HandlePacket);
+            RequestHandler.Register<OnReplication_Acc>(new HandleStatsConfirm(this).HandlePacket);
+            RequestHandler.Register<C2S_TeamSurrenderVote>(new HandleSurrender(this).HandlePacket);
+            RequestHandler.Register<SwapItemReq>(new HandleSwapItems(this).HandlePacket);
+            RequestHandler.Register<SynchVersionC2S>(new HandleSync(this).HandlePacket);
+            RequestHandler.Register<ResumePacket>(new HandleUnpauseReq(this).HandlePacket);
+            RequestHandler.Register<UseObjectC2S>(new HandleUseObject(this).HandlePacket);
+            RequestHandler.Register<World_SendCamera_Server>(new HandleView(this).HandlePacket);
         }
 
         /// <summary>

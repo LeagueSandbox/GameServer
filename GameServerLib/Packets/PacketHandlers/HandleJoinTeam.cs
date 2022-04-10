@@ -1,10 +1,10 @@
 ﻿using GameServerCore;
 using GameServerCore.Packets.Handlers;
-using GameServerCore.Packets.PacketDefinitions.Requests;
+using LeaguePackets.LoadScreen;
 
 namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 {
-    public class HandleJoinTeam : PacketHandlerBase<JoinTeamRequest>
+    public class HandleJoinTeam : PacketHandlerBase<RequestJoinTeam>
     {
         private readonly Game _game;
         private readonly IPlayerManager _playerManager;
@@ -15,7 +15,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             _playerManager = game.PlayerManager;
         }
 
-        public override bool HandlePacket(int userId, JoinTeamRequest req)
+        public override bool HandlePacket(int userId, RequestJoinTeam req)
         {
             var players = _playerManager.GetPlayers(true);
             uint version = uint.Parse(Config.VERSION.ToString().Replace(".", string.Empty));

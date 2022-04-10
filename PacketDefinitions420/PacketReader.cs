@@ -1,22 +1,7 @@
-﻿using GameServerCore.Enums;
-using GameServerCore.Packets.Enums;
-using GameServerCore.Packets.PacketDefinitions.Requests;
+﻿using GameServerCore.Packets.Enums;
 using LeaguePackets;
 using LeaguePackets.Game;
 using LeaguePackets.LoadScreen;
-using PacketDefinitions420.PacketDefinitions.C2S;
-using System;
-using AttentionPingRequest = GameServerCore.Packets.PacketDefinitions.Requests.AttentionPingRequest;
-using BuyItemRequest = GameServerCore.Packets.PacketDefinitions.Requests.BuyItemRequest;
-using CastSpellRequest = GameServerCore.Packets.PacketDefinitions.Requests.CastSpellRequest;
-using EmotionPacketRequest = GameServerCore.Packets.PacketDefinitions.Requests.EmotionPacketRequest;
-using KeyCheckRequest = GameServerCore.Packets.PacketDefinitions.Requests.KeyCheckRequest;
-using MovementRequest = GameServerCore.Packets.PacketDefinitions.Requests.MovementRequest;
-using PingLoadInfoRequest = GameServerCore.Packets.PacketDefinitions.Requests.PingLoadInfoRequest;
-using UpgradeSpellReq = GameServerCore.Packets.PacketDefinitions.Requests.UpgradeSpellReq;
-using SwapItemsRequest = GameServerCore.Packets.PacketDefinitions.Requests.SwapItemsRequest;
-using SynchVersionRequest = GameServerCore.Packets.PacketDefinitions.Requests.SynchVersionRequest;
-using ViewRequest = GameServerCore.Packets.PacketDefinitions.Requests.ViewRequest;
 
 namespace PacketDefinitions420
 {
@@ -27,249 +12,259 @@ namespace PacketDefinitions420
     public class PacketReader
     {
         // this one only used in packet definitions, not exposed to the API currently, so no packet cmd assigned
-        public static KeyCheckRequest ReadKeyCheckRequest(byte[] data)
+        public static KeyCheckPacket ReadKeyCheckRequest(byte[] data)
         {
             var rq = new KeyCheckPacket();
             rq.Read(data);
-            //var rq = new PacketDefinitions.C2S.KeyCheckRequest(data);
-            return new KeyCheckRequest(rq.PlayerID, rq.ClientID, rq.VersionNumber, rq.CheckSum);
+            return rq;
         }
 
         [PacketType(GamePacketID.SynchSimTimeC2S, Channel.CHL_GAMEPLAY)]
-        public static SyncSimTimeRequest ReadSyncSimTimeRequest(byte[] data)
+        public static SynchSimTimeC2S ReadSyncSimTimeRequest(byte[] data)
         {
-            var sync = new SynchSimTimeC2S();
-            sync.Read(data);
-            return new SyncSimTimeRequest((int)sync.SenderNetID, sync.TimeLastClient, sync.TimeLastServer);
+            var rq = new SynchSimTimeC2S();
+            rq.Read(data);
+            return rq;
         }
 
         [PacketType(GamePacketID.RemoveItemReq)]
-        public static SellItemRequest ReadSellItemRequest(byte[] data)
+        public static RemoveItemReq ReadSellItemRequest(byte[] data)
         {
-            var rq = new SellItem(data);
-            return new SellItemRequest(rq.NetId, rq.SlotId);
+            var rq = new RemoveItemReq();
+            rq.Read(data);
+            return rq;
         }
 
         [PacketType(GamePacketID.ResumePacket)]
-        public static UnpauseRequest ReadUnpauseRequest(byte[] data)
+        public static ResumePacket ReadUnpauseRequest(byte[] data)
         {
-            return new UnpauseRequest();
+            var rq = new ResumePacket();
+            rq.Read(data);
+            return rq;
         }
 
         [PacketType(GamePacketID.C2S_QueryStatusReq)]
-        public static QueryStatusRequest ReadQueryStatusRequest(byte[] data)
+        public static C2S_QueryStatusReq ReadQueryStatusRequest(byte[] data)
         {
-            return new QueryStatusRequest();
+            var rq = new C2S_QueryStatusReq();
+            rq.Read(data);
+            return rq;
         }
 
         [PacketType(GamePacketID.C2S_Ping_Load_Info)]
-        public static PingLoadInfoRequest ReadPingLoadInfoRequest(byte[] data)
+        public static C2S_Ping_Load_Info ReadPingLoadInfoRequest(byte[] data)
         {
-            return new PingLoadInfoRequest(data);
+            var rq = new C2S_Ping_Load_Info();
+            rq.Read(data);
+            return rq;
         }
 
         [PacketType(GamePacketID.SwapItemReq)]
-        public static SwapItemsRequest ReadSwapItemsRequest(byte[] data)
+        public static SwapItemReq ReadSwapItemsRequest(byte[] data)
         {
-            var rq = new PacketDefinitions.C2S.SwapItemsRequest(data);
-            return new SwapItemsRequest(rq.NetId, rq.SlotFrom, rq.SlotTo);
+            var rq = new SwapItemReq();
+            rq.Read(data);
+            return rq;
         }
 
         [PacketType(GamePacketID.World_SendCamera_Server)]
-        public static ViewRequest ReadViewRequest(byte[] data)
+        public static World_SendCamera_Server ReadViewRequest(byte[] data)
         {
-            var rq = new PacketDefinitions.C2S.ViewRequest(data);
-            return new ViewRequest(rq.NetId, rq.X, rq.Zoom, rq.Y, rq.Y2, rq.Width, rq.Height, rq.Unk2, rq.RequestNo);
+            var rq = new World_SendCamera_Server();
+            rq.Read(data);
+            return rq;
         }
 
         [PacketType(GamePacketID.NPC_UpgradeSpellReq)]
-        public static UpgradeSpellReq ReadUpgradeSpellReq(byte[] data)
+        public static NPC_UpgradeSpellReq ReadUpgradeSpellReq(byte[] data)
         {
             var rq = new NPC_UpgradeSpellReq();
             rq.Read(data);
-            return new UpgradeSpellReq(rq.Slot, rq.IsEvolve);
+            return rq;
         }
 
         [PacketType(GamePacketID.UseObjectC2S)]
-        public static UseObjectRequest ReadUseObjectRequest(byte[] data)
+        public static UseObjectC2S ReadUseObjectRequest(byte[] data)
         {
-            var rq = new UseObject(data);
-            return new UseObjectRequest(rq.NetId, rq.TargetNetId);
+            var rq = new UseObjectC2S();
+            rq.Read(data);
+            return rq;
         }
 
         [PacketType(GamePacketID.C2S_UpdateGameOptions)]
-        public static AutoAttackOptionRequest ReadAutoAttackOptionRequest(byte[] data)
+        public static C2S_UpdateGameOptions ReadAutoAttackOptionRequest(byte[] data)
         {
-            var rq = new AutoAttackOption(data);
-            return new AutoAttackOptionRequest(rq.Netid, rq.Activated == 1);
+            var rq = new C2S_UpdateGameOptions();
+            rq.Read(data);
+            return rq;
         }
 
         [PacketType(GamePacketID.C2S_PlayEmote)]
-        public static EmotionPacketRequest ReadEmotionPacketRequest(byte[] data)
+        public static C2S_PlayEmote ReadEmotionPacketRequest(byte[] data)
         {
-            var rq = new PacketDefinitions.C2S.EmotionPacketRequest(data);
-
-            // Convert packet emotion type to server emotion type
-            // This is done so that when emotion ID changes in other packet versions, its functionality remains the same on server
-            Emotions type;
-            switch (rq.Id)
-            {
-                case EmoteID.Dance:
-                    type = Emotions.DANCE;
-                    break;
-                case EmoteID.Taunt:
-                    type = Emotions.TAUNT;
-                    break;
-                case EmoteID.Laugh:
-                    type = Emotions.LAUGH;
-                    break;
-                case EmoteID.Joke:
-                    type = Emotions.JOKE;
-                    break;
-                default:
-                    type = Emotions.UNK;
-                    break;
-            }
-
-            return new EmotionPacketRequest(rq.NetId, type);
+            var rq = new C2S_PlayEmote();
+            rq.Read(data);
+            return rq;
         }
 
         [PacketType(GamePacketID.C2S_ClientReady)]
-        public static StartGameRequest ReadStartGameRequest(byte[] data)
+        public static C2S_ClientReady ReadStartGameRequest(byte[] data)
         {
-            return new StartGameRequest();
+            var rq = new C2S_ClientReady();
+            rq.Read(data);
+            return rq;
         }
 
         [PacketType(GamePacketID.C2S_StatsUpdateReq)]
-        public static ScoreboardRequest ReadScoreboardRequest(byte[] data)
+        public static C2S_StatsUpdateReq ReadScoreboardRequest(byte[] data)
         {
-            return new ScoreboardRequest();
+            var rq = new C2S_StatsUpdateReq();
+            rq.Read(data);
+            return rq;
         }
 
         [PacketType(GamePacketID.C2S_MapPing)]
-        public static AttentionPingRequest ReadAttentionPingRequest(byte[] data)
+        public static C2S_MapPing ReadAttentionPingRequest(byte[] data)
         {
-            var rq = new PacketDefinitions.C2S.AttentionPingRequest(data);
-            return new AttentionPingRequest(rq.X, rq.Y, rq.TargetNetId, rq.Type);
+            var rq = new C2S_MapPing();
+            rq.Read(data);
+            return rq;
         }
 
         [PacketType(LoadScreenPacketID.RequestJoinTeam)]
-        public static JoinTeamRequest ReadClientJoinTeamRequest(byte[] data)
+        public static RequestJoinTeam ReadClientJoinTeamRequest(byte[] data)
         {
             var rq = new RequestJoinTeam();
             rq.Read(data);
-            return new JoinTeamRequest(rq.ClientID, rq.NetTeamID);
+            return rq;
         }
 
         [PacketType(LoadScreenPacketID.Chat, Channel.CHL_COMMUNICATION)]
-        public static ChatMessageRequest ReadChatMessageRequest(byte[] data)
+        public static Chat ReadChatMessageRequest(byte[] data)
         {
             var rq = new Chat();
             rq.Read(data);
-            return new ChatMessageRequest(rq.Message, (ChatType)rq.ChatType);
+            return rq;
         }
 
         [PacketType(GamePacketID.C2S_OnTipEvent)]
-        public static BlueTipClickedRequest ReadBlueTipRequest(byte[] data)
+        public static C2S_OnTipEvent ReadBlueTipRequest(byte[] data)
         {
-            var rq = new BlueTipClicked(data);
-            return new BlueTipClickedRequest(rq.Playernetid, rq.Netid);
+            var rq = new C2S_OnTipEvent();
+            rq.Read(data);
+            return rq;
         }
 
         [PacketType(GamePacketID.NPC_IssueOrderReq)]
-        public static MovementRequest ReadMovementRequest(byte[] data)
+        public static NPC_IssueOrderReq ReadMovementRequest(byte[] data)
         {
             var rq = new NPC_IssueOrderReq();
             rq.Read(data);
-            // TODO: Verify if the MoveType cast works correctly.
-            return new MovementRequest(rq.SenderNetID, rq.TargetNetID, rq.Position, (OrderType)rq.OrderType, rq.MovementData.Waypoints.ConvertAll(PacketExtensions.WaypointToVector2));
+            var test = rq.MovementData.Waypoints.ConvertAll(PacketExtensions.WaypointToVector2);
+            return rq;
         }
 
         [PacketType(GamePacketID.Waypoint_Acc)]
-        public static MoveConfirmRequest ReadMoveConfirmRequest(byte[] data)
+        public static Waypoint_Acc ReadMoveConfirmRequest(byte[] data)
         {
-            return new MoveConfirmRequest();
+            var rq = new Waypoint_Acc();
+            rq.Read(data);
+            return rq;
         }
 
         [PacketType(GamePacketID.World_LockCamera_Server)]
-        public static LockCameraRequest ReadCameraLockRequest(byte[] data)
+        public static World_LockCamera_Server ReadCameraLockRequest(byte[] data)
         {
-            return new LockCameraRequest();
+            var rq = new World_LockCamera_Server();
+            rq.Read(data);
+            return rq;
         }
 
         [PacketType(GamePacketID.BuyItemReq)]
-        public static BuyItemRequest ReadBuyItemRequest(byte[] data)
+        public static BuyItemReq ReadBuyItemRequest(byte[] data)
         {
-            var rq = new PacketDefinitions.C2S.BuyItemRequest(data);
-            return new BuyItemRequest(rq.NetId, rq.Id);
+            var rq = new BuyItemReq();
+            rq.Read(data);
+            return rq;
         }
 
         [PacketType(GamePacketID.C2S_Exit)]
-        public static ExitRequest ReadExitRequest(byte[] data)
+        public static C2S_Exit ReadExitRequest(byte[] data)
         {
-            return new ExitRequest();
+            var rq = new C2S_Exit();
+            rq.Read(data);
+            return rq;
         }
 
         [PacketType(GamePacketID.NPC_CastSpellReq)]
-        public static CastSpellRequest ReadCastSpellRequest(byte[] data)
+        public static NPC_CastSpellReq ReadCastSpellRequest(byte[] data)
         {
             var rq = new NPC_CastSpellReq();
             rq.Read(data);
-            return new CastSpellRequest(rq.Slot, rq.IsSummonerSpellBook, rq.IsHudClickCast, rq.Position, rq.EndPosition, rq.TargetNetID);
+            return rq;
         }
 
         [PacketType(GamePacketID.PausePacket)]
-        public static PauseRequest ReadPauseGameRequest(byte[] data)
+        public static PausePacket ReadPauseGameRequest(byte[] data)
         {
-            return new PauseRequest();
+            var rq = new PausePacket();
+            rq.Read(data);
+            return rq;
         }
         [PacketType(GamePacketID.C2S_TeamSurrenderVote)]
-        public static SurrenderRequest ReadSurrenderRequest(byte[] data)
+        public static C2S_TeamSurrenderVote ReadSurrenderRequest(byte[] data)
         {
             var rq = new C2S_TeamSurrenderVote();
             rq.Read(data);
-            return new SurrenderRequest(rq.VotedYes);
+            return rq;
         }
 
         [PacketType(GamePacketID.OnReplication_Acc)]
-        public static StatsConfirmRequest ReadStatsConfirmRequest(byte[] data)
+        public static OnReplication_Acc ReadStatsConfirmRequest(byte[] data)
         {
-            return new StatsConfirmRequest();
+            var rq = new OnReplication_Acc();
+            rq.Read(data);
+            return rq;
         }
 
         [PacketType(GamePacketID.SendSelectedObjID)]
-        public static ClickRequest ReadClickRequest(byte[] data)
+        public static SendSelectedObjID ReadClickRequest(byte[] data)
         {
-            var rq = new Click(data);
-            return new ClickRequest(rq.TargetNetId);
+            var rq = new SendSelectedObjID();
+            rq.Read(data);
+            return rq;
         }
 
         [PacketType(GamePacketID.SynchVersionC2S)]
-        public static SynchVersionRequest ReadSynchVersionRequest(byte[] data)
+        public static SynchVersionC2S ReadSynchVersionRequest(byte[] data)
         {
-            var rq = new PacketDefinitions.C2S.SynchVersionRequest(data);
-            return new SynchVersionRequest(rq.NetId, rq.ClientId, rq.Version);
+            var rq = new SynchVersionC2S();
+            rq.Read(data);
+            return rq;
         }
 
         [PacketType(GamePacketID.C2S_CharSelected)]
-        public static SpawnRequest ReadSpawn(byte[] data)
+        public static C2S_CharSelected ReadSpawn(byte[] data)
         {
-            return new SpawnRequest();
+            var rq = new C2S_CharSelected();
+            rq.Read(data);
+            return rq;
         }
 
         [PacketType(GamePacketID.C2S_OnQuestEvent)]
-        public static QuestClickedRequest ReadQuestClickedRequest(byte[] data)
+        public static C2S_OnQuestEvent ReadQuestClickedRequest(byte[] data)
         {
-            var rq = new QuestClicked(data);
-            return new QuestClickedRequest(rq.Netid);
+            var rq = new C2S_OnQuestEvent();
+            rq.Read(data);
+            return rq;
         }
 
         [PacketType(GamePacketID.C2S_SpellChargeUpdateReq)]
-        public static SpellChargeUpdateReq ReadSpellChargeUpdateReq(byte[] data)
+        public static C2S_SpellChargeUpdateReq ReadSpellChargeUpdateReq(byte[] data)
         {
             var rq = new C2S_SpellChargeUpdateReq();
             rq.Read(data);
-            return new SpellChargeUpdateReq(rq.Slot, rq.IsSummonerSpellBook, rq.Position, rq.ForceStop);
+            return rq;
         }
     }
 }

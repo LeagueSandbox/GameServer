@@ -1,11 +1,12 @@
 ﻿using GameServerCore;
+using GameServerCore.Packets.Enums;
 using GameServerCore.Packets.Handlers;
-using GameServerCore.Packets.PacketDefinitions.Requests;
+using LeaguePackets.Game;
 using System.Numerics;
 
 namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 {
-    public class HandleAttentionPing : PacketHandlerBase<AttentionPingRequest>
+    public class HandleAttentionPing : PacketHandlerBase<C2S_MapPing>
     {
         private readonly Game _game;
         private readonly IPlayerManager _playerManager;
@@ -16,10 +17,10 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             _playerManager = game.PlayerManager;
         }
 
-        public override bool HandlePacket(int userId, AttentionPingRequest req)
+        public override bool HandlePacket(int userId, C2S_MapPing req)
         {
             var client = _playerManager.GetPeerInfo(userId);
-            _game.PacketNotifier.NotifyS2C_MapPing( new Vector2(req.X, req.Y), req.Type, req.TargetNetId, client);
+            _game.PacketNotifier.NotifyS2C_MapPing(req.Position, (Pings)req.PingCategory, req.TargetNetID, client);
             return true;
         }
     }

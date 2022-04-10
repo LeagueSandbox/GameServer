@@ -2,11 +2,11 @@
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
 using GameServerCore.Packets.Handlers;
-using GameServerCore.Packets.PacketDefinitions.Requests;
+using LeaguePackets.Game;
 
 namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 {
-    public class HandleCastSpell : PacketHandlerBase<CastSpellRequest>
+    public class HandleCastSpell : PacketHandlerBase<NPC_CastSpellReq>
     {
         private readonly Game _game;
         private readonly NetworkIdManager _networkIdManager;
@@ -19,9 +19,9 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             _playerManager = game.PlayerManager;
         }
 
-        public override bool HandlePacket(int userId, CastSpellRequest req)
+        public override bool HandlePacket(int userId, NPC_CastSpellReq req)
         {
-            var targetObj = _game.ObjectManager.GetObjectById(req.TargetNetId);
+            var targetObj = _game.ObjectManager.GetObjectById(req.TargetNetID);
             var targetUnit = targetObj as IAttackableUnit;
             var owner = _playerManager.GetPeerInfo(userId).Champion;
             if (owner == null)
@@ -29,7 +29,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                 return false;
             }
 
-            var s = owner.GetSpell(req.SpellSlot);
+            var s = owner.GetSpell(req.Slot);
             var ownerCastingSpell = owner.GetCastSpell();
 
             // Instant cast spells can be cast during other spell casts.

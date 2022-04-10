@@ -9,7 +9,6 @@ using GameServerCore.Enums;
 using GameServerCore.NetInfo;
 using GameServerCore.Packets.Enums;
 using GameServerCore.Packets.Interfaces;
-using PacketDefinitions420.PacketDefinitions.C2S;
 using PacketDefinitions420.PacketDefinitions.S2C;
 using LeaguePackets.Game;
 using System;
@@ -2176,9 +2175,9 @@ namespace PacketDefinitions420
         /// </summary>
         /// <param name="request">Info of the target client given via the client who requested loading screen progress.</param>
         /// <param name="clientInfo">Client info of the client who's progress is being requested.</param>
-        public void NotifyPingLoadInfo(PingLoadInfoRequest request, ClientInfo clientInfo)
+        public void NotifyPingLoadInfo(C2S_Ping_Load_Info request, ClientInfo clientInfo)
         {
-            var reqInfo = request.InfoRequest.ConnectionInfo;
+            var reqInfo = request.ConnectionInfo;
             var response = new S2C_Ping_Load_Info
             {
                 ConnectionInfo = new ConnectionInfo
@@ -3820,15 +3819,6 @@ namespace PacketDefinitions420
             _packetHandlerManager.SendPacket(userId, drawPacket.GetBytes(), Channel.CHL_S2C);
         }
 
-        /// <summary>
-        /// Unfinished(?) function which intends to resume the game automatically (without client requests). This is usually called after the pause time has ended in Game.GameLoop.
-        /// </summary>
-        /// TODO: Verify if this works and if not, then finish it.
-        public void NotifyUnpauseGame()
-        {
-            // TODO: currently unpause disabled cause it shouldn't handled like this
-            _packetHandlerManager.UnpauseGame();
-        }
         public void NotifyUpdateLevelPropS2C(UpdateLevelPropData propData)
         {
             var packet = new UpdateLevelPropS2C
@@ -4139,13 +4129,13 @@ namespace PacketDefinitions420
         /// <param name="userId">User to send the packet to.</param>
         /// <param name="request">ViewRequest housing information about the camera's view.</param>
         /// TODO: Verify if this is the correct implementation.
-        public void NotifyWorld_SendCamera_Server_Acknologment(int userId, ViewRequest request)
+        public void NotifyWorld_SendCamera_Server_Acknologment(int userId, World_SendCamera_Server request)
         {
             var answer = new World_SendCamera_Server_Acknologment
             {
                 //TODO: Check these values
-                SenderNetID = (uint)request.NetId,
-                SyncID = request.RequestNo
+                SenderNetID = (uint)request.SenderNetID,
+                SyncID = request.SyncID,
             };
             _packetHandlerManager.SendPacket(userId, answer.GetBytes(), Channel.CHL_S2C, PacketFlags.None);
         }
