@@ -93,7 +93,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
             AttackSpeedMultiplier = new Stat(1.0f, 0, 0, 0, 0);
             CooldownReduction = new Stat();
             CriticalChance = new Stat();
-            CriticalDamage = new Stat(2, 0, 0, 0, 0);
+            CriticalDamage = new Stat();
             ExpGivenOnDeath = new Stat();
             GoldPerGoldTick = new Stat();
             GoldGivenOnDeath = new Stat();
@@ -106,7 +106,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
             ManaRegeneration = new Stat();
             MoveSpeed = new Stat();
             Range = new Stat();
-            Size = new Stat(1.0f, 0, 0, 0, 0);
+            Size = new Stat();
             SpellVamp = new Stat();
             Tenacity = new Stat();
             AcquisitionRange = new Stat();
@@ -121,6 +121,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
             AttackDamage.BaseValue = charData.BaseDamage;
             // AttackSpeedFlat = GlobalAttackSpeed / CharAttackDelay
             AttackSpeedFlat = (1.0f / charData.GlobalCharData.AttackDelay) / (1.0f + charData.AttackDelayOffsetPercent[0]);
+            CriticalDamage.BaseValue = charData.CritDamageBonus;
             ExpGivenOnDeath.BaseValue = charData.ExpGivenOnDeath;
             GoldGivenOnDeath.BaseValue = charData.GoldGivenOnDeath;
             GrowthAttackSpeed = charData.AttackSpeedPerLevel;
@@ -137,6 +138,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
             MoveSpeed.BaseValue = charData.MoveSpeed;
             ParType = charData.ParType;
             Range.BaseValue = charData.AttackRange;
+            Size.BaseValue = charData.SkinScale;
         }
 
         public void AddModifier(IStatsModifier modifier)

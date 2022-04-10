@@ -1,0 +1,29 @@
+﻿namespace GameServerCore.Enums
+{
+    public enum UnitTag
+    {
+        Champion,
+        Monster,
+        Monster_Large,
+        Minion,
+        Minion_Summon,
+        Structure,
+        Structure_Nexus,
+        Structure_Inhibitor,
+        Monster_Epic,
+        Structure_Turret,
+        Minion_Lane,
+        Minion_Lane_Siege,
+        Minion_Lane_Super,
+        Structure_Turret_Inhib,
+        Structure_Turret_Nexus,
+        Structure_Turret_Shrine,
+        Structure_Turret_Outer,
+        Structure_Turret_Inner,
+        Ward,
+        Special,
+        Special_TeleportTarget,
+        Champion_Clone,
+        Special_SyndraSphere
+    }
+}

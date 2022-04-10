@@ -34,6 +34,8 @@ namespace LeagueSandbox.GameServer.Content
         public IGlobalData GlobalCharData { get; private set; } = new GlobalData();
 
         public float AcquisitionRange { get; private set; } = 475;
+        public bool AlwaysVisible { get; private set; } = false;
+        public bool AlwaysUpdatePAR { get; private set; } = false;
         public float Armor { get; private set; } = 1.0f;
         public float ArmorPerLevel { get; private set; } = 1.0f;
         public float[] AttackDelayCastOffsetPercent { get; private set; } = new float[18];
@@ -46,24 +48,36 @@ namespace LeagueSandbox.GameServer.Content
         public float BaseMp { get; private set; } = 100.0f;
         public float BaseStaticHpRegen { get; private set; } = 0.30000001f;
         public float BaseStaticMpRegen { get; private set; } = 0.30000001f;
+        public float CritDamageBonus { get; private set; } = 2.0f;
         public float DamagePerLevel { get; private set; } = 10.0f;
+        public bool DisableContinuousTargetFacing { get; private set; } = false;
+        public bool EnemyCanUse { get; private set; } = false;
         public float ExpGivenOnDeath { get; private set; } = 0.0f;
         public float GameplayCollisionRadius { get; private set; } = 65.0f;
         public float GlobalExpGivenOnDeath { get; private set; } = 0.0f;
         public float GlobalGoldGivenOnDeath { get; private set; } = 0.0f;
         public float GoldGivenOnDeath { get; private set; } = 0.0f;
+        public string HeroUseSpell { get; private set; } = string.Empty;
         public float HpPerLevel { get; private set; } = 10.0f;
         public float HpRegenPerLevel { get; private set; }
         public bool IsMelee { get; private set; } //Yes or no
+        public bool Imobile { get; private set; } = false;
+        public bool IsTower { get; private set; } = false;
+        public bool IsUseable { get; private set; } = false;
         public float LocalGoldGivenOnDeath { get; private set; } = 0.0f;
+        public bool MinionUseable { get; private set; } = false;
+        public string MinionUseSpell { get; private set; } = string.Empty;
         public int MoveSpeed { get; private set; } = 100;
         public float MpPerLevel { get; private set; } = 10.0f;
         public float MpRegenPerLevel { get; private set; }
         public PrimaryAbilityResourceType ParType { get; private set; } = PrimaryAbilityResourceType.MANA;
         public float PathfindingCollisionRadius { get; private set; } = -1.0f;
         public float PerceptionBubbleRadius { get; private set; } = 0.0f;
+        public bool ShouldFaceTarget { get; private set; } = true;
+        public float SkinScale { get; private set; } = 1.0f;
         public float SpellBlock { get; private set; }
         public float SpellBlockPerLevel { get; private set; }
+        public List<UnitTag> UnitTags { get; private set; } = new List<UnitTag>();
 
         public string[] SpellNames { get; private set; } = new string[4];
         public string[] ExtraSpells { get; private set; } = new string[16];
@@ -113,7 +127,9 @@ namespace LeagueSandbox.GameServer.Content
             BaseMp = file.GetFloat("Data", "BaseMP", BaseMp);
             BaseStaticHpRegen = file.GetFloat("Data", "BaseStaticHPRegen", BaseStaticHpRegen);
             BaseStaticMpRegen = file.GetFloat("Data", "BaseStaticMPRegen", BaseStaticMpRegen);
+            CritDamageBonus = file.GetFloat("Data", "CritDamageBonus", CritDamageBonus);
             DamagePerLevel = file.GetFloat("Data", "DamagePerLevel", DamagePerLevel);
+            DisableContinuousTargetFacing = file.GetBool("Data", "DisableContinuousTargetFacing");
             ExpGivenOnDeath = file.GetFloat("Data", "ExpGivenOnDeath", ExpGivenOnDeath);
             GameplayCollisionRadius = file.GetFloat("Data", "GameplayCollisionRadius", GameplayCollisionRadius);
             GlobalExpGivenOnDeath = file.GetFloat("Data", "GlobalExpGivenOnDeath", GlobalExpGivenOnDeath);
@@ -121,6 +137,7 @@ namespace LeagueSandbox.GameServer.Content
             GoldGivenOnDeath = file.GetFloat("Data", "GoldGivenOnDeath", GoldGivenOnDeath);
             HpRegenPerLevel = file.GetFloat("Data", "HPRegenPerLevel", HpRegenPerLevel);
             HpPerLevel = file.GetFloat("Data", "HPPerLevel", HpPerLevel);
+            Imobile = file.GetBool("Data", "Imobile", Imobile);
             IsMelee = file.GetString("Data", "IsMelee", IsMelee ? "true" : "false").Equals("true");
             LocalGoldGivenOnDeath = file.GetFloat("Data", "LocalGoldGivenOnDeath", LocalGoldGivenOnDeath);
             MoveSpeed = file.GetInt("Data", "MoveSpeed", MoveSpeed);
@@ -128,8 +145,27 @@ namespace LeagueSandbox.GameServer.Content
             MpPerLevel = file.GetFloat("Data", "MPPerLevel", MpPerLevel);
             PathfindingCollisionRadius = file.GetFloat("Data", "PathfindingCollisionRadius", PathfindingCollisionRadius);
             PerceptionBubbleRadius = file.GetFloat("Data", "PerceptionBubbleRadius", PerceptionBubbleRadius);
+            ShouldFaceTarget = file.GetBool("Data", "ShouldFaceTarget", ShouldFaceTarget);
             SpellBlock = file.GetFloat("Data", "SpellBlock", SpellBlock);
             SpellBlockPerLevel = file.GetFloat("Data", "SpellBlockPerLevel", SpellBlockPerLevel);
+
+            EnemyCanUse = file.GetBool("Useable", "EnemyCanUse", EnemyCanUse);
+            HeroUseSpell = file.GetString("Useable", "HeroUseSpell", HeroUseSpell);
+            IsUseable = file.GetBool("Useable", "IsUseable", IsUseable);
+            MinionUseable = file.GetBool("Useable", "MinionUseable", MinionUseable);
+            MinionUseSpell = file.GetString("Useable", "MinionUseSpell", MinionUseSpell);
+
+            AlwaysVisible = file.GetBool("Minion", "AlwaysVisible", AlwaysVisible);
+            IsTower = file.GetBool("Minion", "IsTower", IsTower);
+            AlwaysUpdatePAR = file.GetBool("Minion", "AlwaysUpdatePAR", AlwaysUpdatePAR);
+
+            SkinScale = file.GetFloat("MeshSkin", "SkinScale", SkinScale);
+
+            foreach (var tag in file.GetString("Data", "UnitTags").Split(" | "))
+            {
+                Enum.TryParse(tag, out UnitTag unitTag);
+                UnitTags.Add(unitTag);
+            }
 
             Enum.TryParse<PrimaryAbilityResourceType>(file.GetString("Data", "PARType", ParType.ToString()),
                 out var tempPar);
