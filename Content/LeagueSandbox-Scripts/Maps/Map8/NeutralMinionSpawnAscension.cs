@@ -170,15 +170,7 @@ public class AscensionCrystal
 
     public void SpawnCrystal()
     {
-        var crystal = CreateMinion("AscRelic", "AscRelic", Position, team: TeamId.TEAM_NEUTRAL, isTargetable: true);
-
-        //Note: Since we still don't have a capture system in place, I'm doing this just to simulate it
-        var crystalStatModifier = new StatsModifier();
-        crystalStatModifier.HealthPoints.FlatBonus = 1000;
-        crystalStatModifier.HealthRegeneration.FlatBonus = 10;
-        crystal.AddStatModifier(crystalStatModifier);
-        crystal.Stats.CurrentHealth = crystal.Stats.HealthPoints.Total;
-
+        var crystal = CreateMinion("AscRelic", "AscRelic", Position, ignoreCollision: true, isTargetable: false);
         NotifySpawnBroadcast(crystal);
         ApiEventManager.OnDeath.AddListener(crystal, crystal, OnDeath, true);
         SetMinimapIcon(crystal, "Relic", true);
@@ -188,15 +180,12 @@ public class AscensionCrystal
         if (isFirstSpawn)
         {
             NotifyMapPing(crystal.Position, PingCategory.Command);
+            isFirstSpawn = false;
         }
     }
 
     public void OnDeath(IDeathData deathData)
     {
         IsDead = true;
-        if(deathData.Killer is IChampion ch)
-        {
-            ch.IncrementScore(3.0f, ScoreCategory.Objective, ScoreEvent.MajorRelicPickup, true, true);
-        }
     }
 }

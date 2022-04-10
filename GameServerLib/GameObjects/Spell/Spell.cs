@@ -862,6 +862,15 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
                 // For some reason this is the packet used for manually cancelling channels.
                 _game.PacketNotifier.NotifyNPC_InstantStop_Attack(CastInfo.Owner, false);
 
+                if (CastInfo.Owner.ChannelSpell == this)
+                {
+                    CastInfo.Owner.SetChannelSpell(null);
+                }
+
+                CastInfo.Owner.UpdateMoveOrder(OrderType.Hold, true);
+
+                State = SpellState.STATE_COOLDOWN;
+                
                 // TODO: Find out how League calculates cooldown reduction for incomplete channels (assuming it isn't done in-script).
             }
 

@@ -1,8 +1,11 @@
 ﻿using GameServerCore;
+using GameServerCore.Domain.GameObjects;
 using GameServerCore.Packets.Handlers;
 using GameServerCore.Packets.PacketDefinitions.Requests;
 using LeagueSandbox.GameServer.Logging;
 using log4net;
+using GameServerCore.Enums;
+using LeagueSandbox.GameServer.API;
 
 namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 {
@@ -22,10 +25,29 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
         public override bool HandlePacket(int userId, UseObjectRequest req)
         {
             var champion = _playerManager.GetPeerInfo(userId).Champion;
-            var msg = $"Object {champion.NetId} is trying to use (right clicked) {req.TargetNetId}";
-            _logger.Debug(msg);
+            var targetObj = _game.ObjectManager.GetObjectById(req.TargetNetId) as IAttackableUnit;
 
-            return true;
+            if (targetObj is IObjAiBase obj)
+            {
+                champion.SetSpell(obj.CharData.HeroUseSpell, (byte)SpellSlotType.UseSpellSlot, true);
+            }
+
+            var s = champion.GetSpell((byte)SpellSlotType.UseSpellSlot);
+            var ownerCastingSpell = champion.GetCastSpell();
+
+            // Instant cast spells can be cast during other spell casts.
+            if (s != null && champion.CanCast(s)
+                && champion.ChannelSpell == null
+                && (ownerCastingSpell == null
+                || (ownerCastingSpell != null
+                    && s.SpellData.Flags.HasFlag(SpellDataFlags.InstantCast))
+                    && !ownerCastingSpell.SpellData.CantCancelWhileWindingUp))
+            {
+                s.Cast(targetObj.Position, targetObj.Position, targetObj);
+                return true;
+            }
+
+            return false;
         }
     }
 }

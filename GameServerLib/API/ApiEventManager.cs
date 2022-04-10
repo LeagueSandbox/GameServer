@@ -1599,10 +1599,12 @@ namespace LeagueSandbox.GameServer.API
             {
                 if (_listeners[i].Item2 == damageData.Target)
                 {
-                    _listeners[i].Item3(damageData);
-                    if (_listeners[i].Item4)
+                    var listener = _listeners[i];
+                    listener.Item3(damageData);
+
+                    if (listener.Item4)
                     {
-                        _listeners.RemoveAt(i);
+                        _listeners.Remove(listener);
                     }
                 }
             }

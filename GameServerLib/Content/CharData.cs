@@ -47,15 +47,19 @@ namespace LeagueSandbox.GameServer.Content
         public float BaseStaticHpRegen { get; private set; } = 0.30000001f;
         public float BaseStaticMpRegen { get; private set; } = 0.30000001f;
         public float DamagePerLevel { get; private set; } = 10.0f;
+        public bool EnemyCanUse { get; private set; } = false;
         public float ExpGivenOnDeath { get; private set; } = 0.0f;
         public float GameplayCollisionRadius { get; private set; } = 65.0f;
         public float GlobalExpGivenOnDeath { get; private set; } = 0.0f;
         public float GlobalGoldGivenOnDeath { get; private set; } = 0.0f;
         public float GoldGivenOnDeath { get; private set; } = 0.0f;
+        public string HeroUseSpell { get; private set; } = "";
         public float HpPerLevel { get; private set; } = 10.0f;
         public float HpRegenPerLevel { get; private set; }
         public bool IsMelee { get; private set; } //Yes or no
+        public bool IsUseable { get; private set; } = false;
         public float LocalGoldGivenOnDeath { get; private set; } = 0.0f;
+        public bool MinionUseable { get; private set; } = false;
         public int MoveSpeed { get; private set; } = 100;
         public float MpPerLevel { get; private set; } = 10.0f;
         public float MpRegenPerLevel { get; private set; }
@@ -114,15 +118,19 @@ namespace LeagueSandbox.GameServer.Content
             BaseStaticHpRegen = file.GetFloat("Data", "BaseStaticHPRegen", BaseStaticHpRegen);
             BaseStaticMpRegen = file.GetFloat("Data", "BaseStaticMPRegen", BaseStaticMpRegen);
             DamagePerLevel = file.GetFloat("Data", "DamagePerLevel", DamagePerLevel);
+            EnemyCanUse = file.GetBool("Useable", "EnemyCanUse");
             ExpGivenOnDeath = file.GetFloat("Data", "ExpGivenOnDeath", ExpGivenOnDeath);
             GameplayCollisionRadius = file.GetFloat("Data", "GameplayCollisionRadius", GameplayCollisionRadius);
             GlobalExpGivenOnDeath = file.GetFloat("Data", "GlobalExpGivenOnDeath", GlobalExpGivenOnDeath);
             GlobalGoldGivenOnDeath = file.GetFloat("Data", "GlobalGoldGivenOnDeath", GlobalGoldGivenOnDeath);
             GoldGivenOnDeath = file.GetFloat("Data", "GoldGivenOnDeath", GoldGivenOnDeath);
+            HeroUseSpell = file.GetString("Useable", "HeroUseSpell");
             HpRegenPerLevel = file.GetFloat("Data", "HPRegenPerLevel", HpRegenPerLevel);
             HpPerLevel = file.GetFloat("Data", "HPPerLevel", HpPerLevel);
             IsMelee = file.GetString("Data", "IsMelee", IsMelee ? "true" : "false").Equals("true");
+            IsUseable = file.GetBool("Useable", "IsUseable");
             LocalGoldGivenOnDeath = file.GetFloat("Data", "LocalGoldGivenOnDeath", LocalGoldGivenOnDeath);
+            MinionUseable = file.GetBool("Useable", "MinionUseable");
             MoveSpeed = file.GetInt("Data", "MoveSpeed", MoveSpeed);
             MpRegenPerLevel = file.GetFloat("Data", "MPRegenPerLevel", MpRegenPerLevel);
             MpPerLevel = file.GetFloat("Data", "MPPerLevel", MpPerLevel);

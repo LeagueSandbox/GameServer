@@ -3,7 +3,6 @@ using GameServerCore.Domain.GameObjects.Spell;
 using GameServerCore.Scripting.CSharp;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 
-
 namespace CharScripts
 {
     internal class CharScriptAscRelic : ICharScript

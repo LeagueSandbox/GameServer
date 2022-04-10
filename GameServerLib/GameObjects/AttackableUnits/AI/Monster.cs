@@ -40,8 +40,6 @@ namespace LeagueSandbox.GameServer.GameObjects
             Camp = monsterCamp;
             Team = team;
             SpawnAnimation = spawnAnimation;
-            IsTargetable = true;
-            IgnoresCollision = false;
             FaceDirection(faceDirection);
             IsTargetable = isTargetable;
             IgnoresCollision = ignoresCollision;

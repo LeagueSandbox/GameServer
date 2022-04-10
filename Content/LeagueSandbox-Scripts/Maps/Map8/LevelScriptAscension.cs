@@ -23,7 +23,7 @@ namespace MapScripts.Map8
             OverrideSpawnPoints = true,
             RecallSpellItemId = 2007,
             BaseGoldPerGoldTick = 5.0f,
-            FirstGoldTime = 5 * 1000,
+            FirstGoldTime = 45 * 1000,
             InitialLevel = 3,
             ExpRange = 1250.0f,
             GoldRange = 0.0f,

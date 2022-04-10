@@ -884,7 +884,8 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                         {
                             Stats.IsTargetable = enabled;
                             // TODO: Verify.
-                            Stats.SetActionState(ActionState.TARGETABLE, enabled);
+                            //Doesn't seem to be corret
+                            //Stats.SetActionState(ActionState.TARGETABLE, enabled);
                             break;
                         }
                         case StatusFlags.Taunted:

@@ -22,9 +22,6 @@ namespace Buffs
         IParticle p1;
         public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
-            //For some still unknown reson, the borders aren't getting applied to the minion, but if this buff gets applied to the teleport plates, it works(?)
-            SetMinimapIcon(unit, changeBorder: true, borderCategory: "Teleport", borderScriptName: "ascwarptarget");
-            SetMinimapIcon(unit, changeBorder: true, borderCategory: "Teleport", borderScriptName: "ascwarptarget");
             SetMinimapIcon(unit, changeBorder: true, borderCategory: "Teleport", borderScriptName: "ascwarptarget");
             SetMinimapIcon(unit, "NoIcon", true);
             p1 = AddParticleTarget(buff.SourceUnit, null, "global_asc_teleport_target", unit, -1);
@@ -41,7 +38,6 @@ namespace Buffs
             }
             unit.Die(CreateDeathData(false, 3, unit, unit, DamageType.DAMAGE_TYPE_PHYSICAL, DamageSource.DAMAGE_SOURCE_RAW, 0.0f));
             buff.SourceUnit.Spells[6 + (byte)SpellSlotType.InventorySlots].SetCooldown(float.MaxValue, true);
-
         }
 
         public void OnUpdate(float diff)

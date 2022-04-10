@@ -261,7 +261,7 @@ namespace LeagueSandbox.GameServer
                     }
 
                     // Stop targeting an untargetable unit.
-                    if (ai.TargetUnit != null && !ai.TargetUnit.Status.HasFlag(StatusFlags.Targetable))
+                    if (ai.TargetUnit != null && !ai.TargetUnit.Status.HasFlag(StatusFlags.Targetable) && !ai.Stats.ActionState.HasFlag(ActionState.TARGETABLE))
                     {
                         StopTargeting(ai.TargetUnit);
                     }
@@ -494,6 +494,10 @@ namespace LeagueSandbox.GameServer
                     if (ai.TargetUnit == target)
                     {
                         ai.SetTargetUnit(null, true);
+                    }
+                    if (ai.ChannelSpell != null &&  ai.ChannelSpell.CastInfo.Targets[0].Unit == target)
+                    {
+                        ai.ChannelSpell.StopChanneling(ChannelingStopCondition.Cancel, ChannelingStopSource.LostTarget);
                     }
                 }
             }
