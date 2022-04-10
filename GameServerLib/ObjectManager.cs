@@ -261,8 +261,12 @@ namespace LeagueSandbox.GameServer
                     }
 
                     // Stop targeting an untargetable unit.
-                    if (ai.TargetUnit != null && !ai.TargetUnit.Status.HasFlag(StatusFlags.Targetable) && !ai.Stats.ActionState.HasFlag(ActionState.TARGETABLE))
+                    if (ai.TargetUnit != null && !ai.TargetUnit.Status.HasFlag(StatusFlags.Targetable))
                     {
+                        if(ai.TargetUnit is IObjAiBase aiTar && aiTar.CharData.IsUseable)
+                        {
+                            return;
+                        }
                         StopTargeting(ai.TargetUnit);
                     }
                 }
