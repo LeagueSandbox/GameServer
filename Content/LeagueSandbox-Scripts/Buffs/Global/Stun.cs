@@ -21,7 +21,7 @@ namespace Buffs
 
         public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
-            buff.SetStatusEffect(StatusFlags.Stunned, true);
+            SetStatus(unit, StatusFlags.Stunned, true);
             stun = AddParticleTarget(ownerSpell.CastInfo.Owner, unit, "LOC_Stun", unit, buff.Duration, bone: "head");
         }
 
