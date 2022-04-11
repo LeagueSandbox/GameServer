@@ -34,6 +34,7 @@ namespace LeagueSandbox.GameServer.Content
         public IGlobalData GlobalCharData { get; private set; } = new GlobalData();
 
         public float AcquisitionRange { get; private set; } = 475;
+        public bool AllyCanUse { get; private set; } = false;
         public bool AlwaysVisible { get; private set; } = false;
         public bool AlwaysUpdatePAR { get; private set; } = false;
         public float Armor { get; private set; } = 1.0f;
@@ -48,6 +49,7 @@ namespace LeagueSandbox.GameServer.Content
         public float BaseMp { get; private set; } = 100.0f;
         public float BaseStaticHpRegen { get; private set; } = 0.30000001f;
         public float BaseStaticMpRegen { get; private set; } = 0.30000001f;
+        public float CooldownSpellSlot { get; private set; } = 0.0f;
         public float CritDamageBonus { get; private set; } = 2.0f;
         public float DamagePerLevel { get; private set; } = 10.0f;
         public bool DisableContinuousTargetFacing { get; private set; } = false;
@@ -150,7 +152,9 @@ namespace LeagueSandbox.GameServer.Content
             SpellBlockPerLevel = file.GetFloat("Data", "SpellBlockPerLevel", SpellBlockPerLevel);
 
             EnemyCanUse = file.GetBool("Useable", "EnemyCanUse", EnemyCanUse);
+            AllyCanUse = file.GetBool("Useable", "AllyCanUse", AllyCanUse);
             HeroUseSpell = file.GetString("Useable", "HeroUseSpell", HeroUseSpell);
+            CooldownSpellSlot = file.GetFloat("Useable", "CooldownSpellSlot", CooldownSpellSlot);
             IsUseable = file.GetBool("Useable", "IsUseable", IsUseable);
             MinionUseable = file.GetBool("Useable", "MinionUseable", MinionUseable);
             MinionUseSpell = file.GetString("Useable", "MinionUseSpell", MinionUseSpell);

@@ -7,6 +7,7 @@ namespace GameServerCore.Domain
     {
         IGlobalData GlobalCharData { get; }
         float AcquisitionRange { get; }
+        bool AllyCanUse { get; }
         bool AlwaysVisible { get; }
         bool AlwaysUpdatePAR { get; }
         float Armor { get; }
@@ -23,6 +24,7 @@ namespace GameServerCore.Domain
         float BaseMp { get; }
         float BaseStaticHpRegen { get; }
         float BaseStaticMpRegen { get; }
+        float CooldownSpellSlot { get; }
         float CritDamageBonus { get; }
         float DamagePerLevel { get; }
         bool EnemyCanUse { get; }
