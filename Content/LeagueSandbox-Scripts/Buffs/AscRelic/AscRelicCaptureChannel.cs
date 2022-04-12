@@ -55,8 +55,9 @@ namespace Buffs
                 windUpTime -= diff;
                 if (windUpTime <= 0)
                 {
-                    PlayAnimation(Owner, "channel", flags: (AnimationFlags)2);
+                    PlayAnimation(Owner, "Channel", flags: (AnimationFlags)224);
                     AddBuff("AscRelicSuppression", 10.0f, 1, Spell, Target, Owner);
+                    AddBuff("OdinChannelVision", 20.0f, 1, Spell, Owner, Owner);
 
                     p1 = AddParticleTarget(Buff.SourceUnit, Buff.SourceUnit, "OdinCaptureBeamEngaged", Target, Buff.Duration - Buff.TimeElapsed, 1, "BuffBone_Glb_CHANNEL_Loc", "spine");
 

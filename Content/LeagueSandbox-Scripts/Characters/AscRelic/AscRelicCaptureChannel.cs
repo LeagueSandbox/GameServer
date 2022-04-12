@@ -14,9 +14,12 @@ namespace Spells
     {
         public ISpellScriptMetadata ScriptMetadata { get; private set; } = new SpellScriptMetadata()
         {
+            NotSingleTargetSpell = true,
+            DoesntBreakShields = true,
             TriggersSpellCasts = true,
-            ChannelDuration = 7.0f,
             CastingBreaksStealth = true,
+            IsDamagingSpell = true,
+            ChannelDuration = 7.0f
         };
 
         ISpell Spell;
@@ -69,6 +72,7 @@ namespace Spells
             }
 
             AddParticleTarget(Owner, Owner, "OdinCaptureCancel", Owner, 1, 1, "spine", "spine");
+            AddParticleTarget(Owner, Owner, "ezreal_essenceflux_tar", Owner, 1, 1, "ROOT");
 
             StopChannel();
         }
@@ -78,7 +82,7 @@ namespace Spells
             if (spell.CastInfo.Targets[0].Unit != null)
             {
                 var crystal = spell.CastInfo.Targets[0].Unit;
-                crystal.Die(CreateDeathData(false, 0, crystal, spell.CastInfo.Owner, DamageType.DAMAGE_TYPE_TRUE, DamageSource.DAMAGE_SOURCE_INTERNALRAW, 0.0f));
+                crystal.Die(CreateDeathData(true, 0, crystal, null, DamageType.DAMAGE_TYPE_PHYSICAL, DamageSource.DAMAGE_SOURCE_RAW, 0.0f));
                 
                 if (spell.CastInfo.Owner is IChampion ch)
                 {
@@ -95,6 +99,7 @@ namespace Spells
             var orderSupression = Target.GetBuffWithName("OdinBombSuppressionOrder");
             var chaosSupression = Target.GetBuffWithName("OdinBombSuppressionChaos");
             var captureChannel = Spell.CastInfo.Owner.GetBuffWithName("AscRelicCaptureChannel");
+            var odinChannelVision = Spell.CastInfo.Owner.GetBuffWithName("OdinChannelVision");
 
             if(relicSupression != null)
             {
@@ -111,6 +116,10 @@ namespace Spells
             if(captureChannel != null)
             {
                 captureChannel.DeactivateBuff();
+            }
+            if(odinChannelVision != null)
+            {
+                odinChannelVision.DeactivateBuff();
             }
 
             Owner.StopAnimation("", true, true);
