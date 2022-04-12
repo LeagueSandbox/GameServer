@@ -47,7 +47,6 @@ namespace GameServerCore.Domain
         float PathfindingCollisionRadius { get; }
         float PerceptionBubbleRadius { get; }
         bool ShouldFaceTarget { get; }
-        float SkinScale { get; }
         float SpellBlock { get; }
         float SpellBlockPerLevel { get; }
         string[] SpellNames { get; }

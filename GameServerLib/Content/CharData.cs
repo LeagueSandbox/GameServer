@@ -76,7 +76,6 @@ namespace LeagueSandbox.GameServer.Content
         public float PathfindingCollisionRadius { get; private set; } = -1.0f;
         public float PerceptionBubbleRadius { get; private set; } = 0.0f;
         public bool ShouldFaceTarget { get; private set; } = true;
-        public float SkinScale { get; private set; } = 1.0f;
         public float SpellBlock { get; private set; }
         public float SpellBlockPerLevel { get; private set; }
         public List<UnitTag> UnitTags { get; private set; } = new List<UnitTag>();
@@ -162,8 +161,6 @@ namespace LeagueSandbox.GameServer.Content
             AlwaysVisible = file.GetBool("Minion", "AlwaysVisible", AlwaysVisible);
             IsTower = file.GetBool("Minion", "IsTower", IsTower);
             AlwaysUpdatePAR = file.GetBool("Minion", "AlwaysUpdatePAR", AlwaysUpdatePAR);
-
-            SkinScale = file.GetFloat("MeshSkin", "SkinScale", SkinScale);
 
             foreach (var tag in file.GetString("Data", "UnitTags").Split(" | "))
             {

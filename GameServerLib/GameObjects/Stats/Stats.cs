@@ -106,7 +106,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
             ManaRegeneration = new Stat();
             MoveSpeed = new Stat();
             Range = new Stat();
-            Size = new Stat();
+            Size = new Stat(1.0f, 0, 0, 0, 0);
             SpellVamp = new Stat();
             Tenacity = new Stat();
             AcquisitionRange = new Stat();
@@ -138,7 +138,6 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
             MoveSpeed.BaseValue = charData.MoveSpeed;
             ParType = charData.ParType;
             Range.BaseValue = charData.AttackRange;
-            Size.BaseValue = charData.SkinScale;
         }
 
         public void AddModifier(IStatsModifier modifier)
