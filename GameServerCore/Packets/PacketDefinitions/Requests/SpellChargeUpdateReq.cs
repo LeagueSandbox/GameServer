@@ -6,9 +6,7 @@ namespace GameServerCore.Packets.PacketDefinitions.Requests
     {
         public byte Slot { get; }
         public bool IsSummonerSpellBook { get; }
-        // TODO: Verify if deprecated.
         public bool ForceStop { get; }
-        
         public Vector3 Position { get; }
 
         public SpellChargeUpdateReq(byte slot, bool isSummonerSpellBook, Vector3 position, bool forceStop = false)
@@ -16,7 +14,6 @@ namespace GameServerCore.Packets.PacketDefinitions.Requests
             Slot = slot;
             IsSummonerSpellBook = isSummonerSpellBook;
             ForceStop = forceStop;
-
             Position = position;
         }
     }

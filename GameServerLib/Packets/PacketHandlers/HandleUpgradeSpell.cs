@@ -1,10 +1,10 @@
-﻿using GameServerCore;
+﻿using GameServerCore.Packets.PacketDefinitions.Requests;
+using GameServerCore;
 using GameServerCore.Packets.Handlers;
-using LeaguePackets.Game;
 
 namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 {
-    public class HandleUpgradeSpellReq : PacketHandlerBase<NPC_UpgradeSpellReq>
+    public class HandleUpgradeSpellReq : PacketHandlerBase<UpgradeSpellReq>
     {
         private readonly Game _game;
         private readonly IPlayerManager _playerManager;
@@ -15,7 +15,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             _playerManager = game.PlayerManager;
         }
 
-        public override bool HandlePacket(int userId, NPC_UpgradeSpellReq req)
+        public override bool HandlePacket(int userId, UpgradeSpellReq req)
         {
             // TODO: Check if can up skill
             // TODO: Implement usage of req.IsEvolve

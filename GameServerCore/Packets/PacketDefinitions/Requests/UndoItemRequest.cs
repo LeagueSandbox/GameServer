@@ -2,10 +2,5 @@
 {
     class UndoItemRequest : ICoreRequest
     {
-        public int NetId { get; }
-        public UndoItemRequest(int netId)
-        {
-            NetId = netId;
-        }
     }
 }

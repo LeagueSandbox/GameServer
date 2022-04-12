@@ -1,9 +1,9 @@
-﻿using GameServerCore.Packets.Handlers;
-using LeaguePackets.Game;
+﻿using GameServerCore.Packets.PacketDefinitions.Requests;
+using GameServerCore.Packets.Handlers;
 
 namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 {
-    public class HandleQueryStatus : PacketHandlerBase<C2S_QueryStatusReq>
+    public class HandleQueryStatus : PacketHandlerBase<QueryStatusRequest>
     {
         private readonly Game _game;
 
@@ -12,7 +12,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             _game = game;
         }
 
-        public override bool HandlePacket(int userId, C2S_QueryStatusReq req)
+        public override bool HandlePacket(int userId, QueryStatusRequest req)
         {
             _game.PacketNotifier.NotifyS2C_QueryStatusAns(userId);
             return true;

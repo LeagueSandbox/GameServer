@@ -1,13 +1,13 @@
-﻿using GameServerCore;
+﻿using GameServerCore.Packets.PacketDefinitions.Requests;
+using GameServerCore;
 using GameServerCore.Packets.Enums;
 using GameServerCore.Packets.Handlers;
-using LeaguePackets.Game;
 using LeagueSandbox.GameServer.Logging;
 using log4net;
 
 namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 {
-    public class HandleEmotion : PacketHandlerBase<C2S_PlayEmote>
+    public class HandleEmotion : PacketHandlerBase<EmotionPacketRequest>
     {
         private readonly Game _game;
         private readonly IPlayerManager _playerManager;
@@ -20,14 +20,14 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             _logger = LoggerProvider.GetLogger();
         }
 
-        public override bool HandlePacket(int userId, C2S_PlayEmote req)
+        public override bool HandlePacket(int userId, EmotionPacketRequest req)
         {
             var champion = _playerManager.GetPeerInfo(userId).Champion;
             champion.StopMovement();
             champion.UpdateMoveOrder(GameServerCore.Enums.OrderType.Taunt);
             //for later use -> tracking, etc.
             var playerName = _playerManager.GetPeerInfo(userId).Champion.Model;
-            switch ((Emotions)req.EmoteID)
+            switch (req.EmoteID)
             {
                 case Emotions.DANCE:
                     _logger.Debug("Player " + playerName + " is dancing.");
@@ -43,7 +43,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                     break;
             }
 
-            _game.PacketNotifier.NotifyS2C_PlayEmote((Emotions)req.EmoteID, req.SenderNetID);
+            _game.PacketNotifier.NotifyS2C_PlayEmote((Emotions)req.EmoteID, champion.NetId);
             return true;
         }
     }

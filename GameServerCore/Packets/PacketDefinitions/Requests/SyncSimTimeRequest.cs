@@ -2,15 +2,13 @@
 {
     public class SyncSimTimeRequest : ICoreRequest
     {
-        public int NetId { get; }
-        public float ReceiveTime { get; }
-        public float AckTime { get; }
+        public float TimeLastServer { get; }
+        public float TimeLastClient { get; }
 
-        public SyncSimTimeRequest(int netId, float receiveTime, float ackTime)
+        public SyncSimTimeRequest(float timeLastServer, float timeLastClient)
         {
-            NetId = netId;
-            ReceiveTime = receiveTime;
-            AckTime = ackTime;
+            TimeLastServer = timeLastServer;
+            TimeLastClient = timeLastClient;
         }
     }
 }

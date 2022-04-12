@@ -1,12 +1,12 @@
-﻿using GameServerCore;
+﻿using GameServerCore.Packets.PacketDefinitions.Requests;
+using GameServerCore;
 using GameServerCore.Packets.Handlers;
-using LeaguePackets.Game;
 using LeagueSandbox.GameServer.Logging;
 using log4net;
 
 namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 {
-    public class HandleSyncSimTime : PacketHandlerBase<SynchSimTimeC2S>
+    public class HandleSyncSimTime : PacketHandlerBase<SyncSimTimeRequest>
     {
         private readonly Game _game;
         private readonly ILog _logger;
@@ -19,7 +19,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             _playerManager = game.PlayerManager;
         }
 
-        public override bool HandlePacket(int userId, SynchSimTimeC2S req)
+        public override bool HandlePacket(int userId, SyncSimTimeRequest req)
         {
             //Check this
             var diff = req.TimeLastServer - req.TimeLastClient;

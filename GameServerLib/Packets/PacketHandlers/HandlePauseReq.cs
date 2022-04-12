@@ -1,9 +1,9 @@
-﻿using GameServerCore.Packets.Handlers;
-using LeaguePackets.Game;
+﻿using GameServerCore.Packets.PacketDefinitions.Requests;
+using GameServerCore.Packets.Handlers;
 
 namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 {
-    public class HandlePauseReq : PacketHandlerBase<PausePacket>
+    public class HandlePauseReq : PacketHandlerBase<PauseRequest>
     {
         private readonly Game _game;
 
@@ -12,7 +12,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             _game = game;
         }
 
-        public override bool HandlePacket(int userId, PausePacket req)
+        public override bool HandlePacket(int userId, PauseRequest req)
         {
             _game.Pause();
             return true;

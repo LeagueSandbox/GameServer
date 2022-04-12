@@ -1,10 +1,10 @@
-﻿using GameServerCore;
+﻿using GameServerCore.Packets.PacketDefinitions.Requests;
+using GameServerCore;
 using GameServerCore.Packets.Handlers;
-using LeaguePackets.Game;
 
 namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 {
-    public class HandleSellItem : PacketHandlerBase<RemoveItemReq>
+    public class HandleSellItem : PacketHandlerBase<SellItemRequest>
     {
         private readonly Game _game;
         private readonly IPlayerManager _playerManager;
@@ -15,7 +15,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             _playerManager = game.PlayerManager;
         }
 
-        public override bool HandlePacket(int userId, RemoveItemReq req)
+        public override bool HandlePacket(int userId, SellItemRequest req)
         {
             var champion = _playerManager.GetPeerInfo(userId).Champion;
             return champion.Shop.HandleItemSellRequest(req.Slot);
