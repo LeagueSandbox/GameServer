@@ -1,12 +1,12 @@
-﻿using GameServerCore;
+﻿using GameServerCore.Packets.PacketDefinitions.Requests;
+using GameServerCore;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Packets.Handlers;
-using LeaguePackets.Game;
 using System.Timers;
 
 namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 {
-    public class HandleUnpauseReq : PacketHandlerBase<ResumePacket>
+    public class HandleUnpauseReq : PacketHandlerBase<UnpauseRequest>
     {
         private readonly Game _game;
         private readonly IPlayerManager _playerManager;
@@ -17,7 +17,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             _playerManager = game.PlayerManager;
         }
 
-        public override bool HandlePacket(int userId, ResumePacket req)
+        public override bool HandlePacket(int userId, UnpauseRequest req)
         {
             if (!_game.IsPaused)
             {
@@ -27,7 +27,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             IChampion unpauser = null;
 
             unpauser = _playerManager.GetPeerInfo(userId).Champion;
-            foreach(var player in _playerManager.GetPlayers())
+            foreach (var player in _playerManager.GetPlayers())
             {
                 _game.PacketNotifier.NotifyResumePacket(unpauser, player.Item2, true);
             }
@@ -39,7 +39,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             };
             timer.Elapsed += (sender, args) =>
             {
-                foreach(var player in _playerManager.GetPlayers())
+                foreach (var player in _playerManager.GetPlayers())
                 {
                     _game.PacketNotifier.NotifyResumePacket(unpauser, player.Item2, false);
                 }

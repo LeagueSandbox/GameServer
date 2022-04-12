@@ -1,12 +1,12 @@
-﻿using GameServerCore;
+﻿using GameServerCore.Packets.PacketDefinitions.Requests;
+using GameServerCore;
 using GameServerCore.Packets.Handlers;
-using LeaguePackets.Game;
 using LeagueSandbox.GameServer.Logging;
 using log4net;
 
 namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 {
-    public class HandleScoreboard : PacketHandlerBase<C2S_StatsUpdateReq>
+    public class HandleScoreboard : PacketHandlerBase<ScoreboardRequest>
     {
         private readonly IPlayerManager _playerManager;
         private readonly ILog _logger;
@@ -19,12 +19,12 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             _logger = LoggerProvider.GetLogger();
         }
 
-        public override bool HandlePacket(int userId, C2S_StatsUpdateReq req)
+        public override bool HandlePacket(int userId, ScoreboardRequest req)
         {
             _logger.Debug($"Player {_playerManager.GetPeerInfo(userId).Name} has looked at the scoreboard.");
             // Send to that player stats packet
             var champion = _playerManager.GetPeerInfo(userId).Champion;
-             _game.PacketNotifier.NotifyS2C_HeroStats(champion);
+            _game.PacketNotifier.NotifyS2C_HeroStats(champion);
             return true;
         }
     }

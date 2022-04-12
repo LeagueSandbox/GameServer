@@ -2,15 +2,13 @@
 {
     public class SwapItemsRequest : ICoreRequest
     {
-        public int NetId { get; }
-        public byte SlotFrom { get; }
-        public byte SlotTo { get; }
+        public byte Source { get; }
+        public byte Destination { get; }
 
-        public SwapItemsRequest(int netId, byte slotFrom, byte slotTo)
+        public SwapItemsRequest(byte source, byte destination)
         {
-            NetId = netId;
-            SlotFrom = slotFrom;
-            SlotTo = slotTo;
+            Source = source;
+            Destination = destination;
         }
     }
 }

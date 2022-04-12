@@ -1,14 +1,16 @@
-﻿namespace GameServerCore.Packets.PacketDefinitions.Requests
+﻿using GameServerCore.Enums;
+
+namespace GameServerCore.Packets.PacketDefinitions.Requests
 {
     public class BlueTipClickedRequest : ICoreRequest
     {
-        public uint PlayerNetId { get; }
-        public uint NetId { get; }
+        public TipCommand TipCommand { get; }
+        public uint TipID { get; }
 
-        public BlueTipClickedRequest(uint playerNetId, uint netId)
+        public BlueTipClickedRequest(TipCommand tipCommand, uint tipId)
         {
-            PlayerNetId = playerNetId;
-            NetId = netId;
+            TipCommand = tipCommand;
+            TipID = tipId;
         }
     }
 }

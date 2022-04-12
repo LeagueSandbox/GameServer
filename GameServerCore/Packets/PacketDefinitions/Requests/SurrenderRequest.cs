@@ -2,7 +2,7 @@
 {
     public class SurrenderRequest : ICoreRequest
     {
-        public bool VotedYes { get; }
+        public bool VotedYes { get; set; }
 
         public SurrenderRequest(bool vote)
         {

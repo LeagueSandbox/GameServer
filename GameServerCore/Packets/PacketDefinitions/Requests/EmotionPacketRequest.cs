@@ -4,13 +4,11 @@ namespace GameServerCore.Packets.PacketDefinitions.Requests
 {
     public class EmotionPacketRequest : ICoreRequest
     {
-        public uint NetId;
-        public Emotions Id;
+        public Emotions EmoteID;
 
-        public EmotionPacketRequest(uint netId, Emotions id)
+        public EmotionPacketRequest(Emotions emoteId)
         {
-            NetId = netId;
-            Id = id;
+            EmoteID = emoteId;
         }
     }
 }

@@ -1,12 +1,12 @@
-﻿using GameServerCore;
+﻿using GameServerCore.Packets.PacketDefinitions.Requests;
+using GameServerCore;
 using GameServerCore.Packets.Handlers;
-using LeaguePackets.Game;
 using LeagueSandbox.GameServer.Items;
 
 
 namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 {
-    public class HandleSwapItems : PacketHandlerBase<SwapItemReq>
+    public class HandleSwapItems : PacketHandlerBase<SwapItemsRequest>
     {
         private readonly Game _game;
         private readonly IPlayerManager _playerManager;
@@ -17,7 +17,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             _playerManager = game.PlayerManager;
         }
 
-        public override bool HandlePacket(int userId, SwapItemReq req)
+        public override bool HandlePacket(int userId, SwapItemsRequest req)
         {
             if (req.Source > 6 || req.Destination > 6)
             {

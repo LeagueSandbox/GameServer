@@ -2175,20 +2175,19 @@ namespace PacketDefinitions420
         /// </summary>
         /// <param name="request">Info of the target client given via the client who requested loading screen progress.</param>
         /// <param name="clientInfo">Client info of the client who's progress is being requested.</param>
-        public void NotifyPingLoadInfo(C2S_Ping_Load_Info request, ClientInfo clientInfo)
+        public void NotifyPingLoadInfo(ClientInfo client, PingLoadInfoRequest request)
         {
-            var reqInfo = request.ConnectionInfo;
             var response = new S2C_Ping_Load_Info
             {
                 ConnectionInfo = new ConnectionInfo
                 {
-                    ClientID = reqInfo.ClientID,
-                    Ping = reqInfo.Ping,
-                    PlayerID = clientInfo.PlayerId,
-                    ETA = reqInfo.ETA,
-                    Ready = reqInfo.Ready,
-                    Percentage = reqInfo.Percentage,
-                    Count = reqInfo.Count
+                    ClientID = request.ClientID,
+                    Ping = request.Ping,
+                    PlayerID = client.PlayerId,
+                    ETA = request.ETA,
+                    Ready = request.Ready,
+                    Percentage = request.Percentage,
+                    Count = request.Count
                 },
             };
             //Logging->writeLine("loaded: %f, ping: %f, %f", loadInfo->loaded, loadInfo->ping, loadInfo->f3);
@@ -2663,7 +2662,7 @@ namespace PacketDefinitions420
                 PlayVO = true
             };
 
-            if(targetNetId != 0)
+            if (targetNetId != 0)
             {
                 response.TargetNetID = targetNetId;
             }
@@ -4129,15 +4128,15 @@ namespace PacketDefinitions420
         /// <param name="userId">User to send the packet to.</param>
         /// <param name="request">ViewRequest housing information about the camera's view.</param>
         /// TODO: Verify if this is the correct implementation.
-        public void NotifyWorld_SendCamera_Server_Acknologment(int userId, World_SendCamera_Server request)
+        public void NotifyWorld_SendCamera_Server_Acknologment(ClientInfo client, ViewRequest request)
         {
             var answer = new World_SendCamera_Server_Acknologment
             {
                 //TODO: Check these values
-                SenderNetID = (uint)request.SenderNetID,
+                SenderNetID = client.Champion.NetId,
                 SyncID = request.SyncID,
             };
-            _packetHandlerManager.SendPacket(userId, answer.GetBytes(), Channel.CHL_S2C, PacketFlags.None);
+            _packetHandlerManager.SendPacket((int)client.PlayerId, answer.GetBytes(), Channel.CHL_S2C, PacketFlags.None);
         }
     }
 }
