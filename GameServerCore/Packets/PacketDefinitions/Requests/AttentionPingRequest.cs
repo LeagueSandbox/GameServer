@@ -5,9 +5,9 @@ namespace GameServerCore.Packets.PacketDefinitions.Requests
 {
     public class AttentionPingRequest : ICoreRequest
     {
-        public Vector2 Position { get; set; }
-        public uint TargetNetID { get; set; }
-        public Pings PingCategory { get; set; }
+        public Vector2 Position { get; }
+        public uint TargetNetID { get; }
+        public Pings PingCategory { get; }
 
         public AttentionPingRequest(Vector2 position, uint targetNetId, Pings type)
         {

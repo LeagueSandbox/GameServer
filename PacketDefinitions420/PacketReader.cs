@@ -132,7 +132,7 @@ namespace PacketDefinitions420
         {
             var rq = new C2S_MapPing();
             rq.Read(data);
-            return new AttentionPingRequest(rq.Position,rq.TargetNetID, (Pings)rq.PingCategory);
+            return new AttentionPingRequest(rq.Position, rq.TargetNetID, (Pings)rq.PingCategory);
         }
 
         [PacketType(LoadScreenPacketID.RequestJoinTeam)]

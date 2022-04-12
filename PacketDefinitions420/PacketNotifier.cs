@@ -2662,7 +2662,7 @@ namespace PacketDefinitions420
                 PlayVO = true
             };
 
-            if(targetNetId != 0)
+            if (targetNetId != 0)
             {
                 response.TargetNetID = targetNetId;
             }

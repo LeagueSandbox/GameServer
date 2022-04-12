@@ -273,7 +273,7 @@ namespace LeagueSandbox.GameServer
             {
                 foreach (var unit in ObjectManager.GetObjects().Values)
                 {
-                    if(unit is IObjAiBase obj)
+                    if (unit is IObjAiBase obj)
                     {
                         if (obj.Spells.ContainsKey((int)SpellSlotType.PassiveSpellSlot))
                         {
@@ -298,10 +298,10 @@ namespace LeagueSandbox.GameServer
         public void GameLoop()
         {
             int timeout = (int)REFRESH_RATE;
-            
+
             Stopwatch lastMapDurationWatch = new Stopwatch();
-            lastMapDurationWatch.Start();  
-            
+            lastMapDurationWatch.Start();
+
             bool isJustPaused = true;
             bool autoResumeCheck = false;
 
@@ -311,13 +311,13 @@ namespace LeagueSandbox.GameServer
 
                 if (IsPaused)
                 {
-                    if(isJustPaused)
+                    if (isJustPaused)
                     {
                         lastMapDurationWatch.Stop();
                         isJustPaused = false;
                         timeout = 1000;
                     }
-                    else if(!autoResumeCheck)
+                    else if (!autoResumeCheck)
                     {
                         PauseTimeLeft--;
                         _logger.Debug(PauseTimeLeft.ToString());
@@ -325,14 +325,14 @@ namespace LeagueSandbox.GameServer
                         {
                             autoResumeCheck = true;
                             timeout = (int)REFRESH_RATE;
-                            
+
                             //TODO: fix these
                             //PacketNotifier.NotifyUnpauseGame();
 
                             // Pure water framing
                             var players = PlayerManager.GetPlayers();
                             var unpauser = players[0].Item2.Champion;
-                            foreach(var player in players)
+                            foreach (var player in players)
                             {
                                 PacketNotifier.NotifyResumePacket(unpauser, player.Item2, false);
                             }
@@ -438,7 +438,7 @@ namespace LeagueSandbox.GameServer
                 return;
             }
             IsPaused = true;
-            foreach(var player in PlayerManager.GetPlayers())
+            foreach (var player in PlayerManager.GetPlayers())
             {
                 PacketNotifier.NotifyPausePacket(player.Item2, (int)PauseTimeLeft, true);
             }

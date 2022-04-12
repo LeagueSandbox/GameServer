@@ -23,7 +23,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                 return false;
             }
 
-             _game.PacketNotifier.NotifyPingLoadInfo(peerInfo, req);
+            _game.PacketNotifier.NotifyPingLoadInfo(peerInfo, req);
             return true;
         }
     }

@@ -4,10 +4,10 @@ namespace GameServerCore.Packets.PacketDefinitions.Requests
 {
     public class SpellChargeUpdateReq : ICoreRequest
     {
-        public byte Slot { get; set; }
-        public bool IsSummonerSpellBook { get; set; }
-        public bool ForceStop { get; set; }
-        public Vector3 Position { get; set; }
+        public byte Slot { get; }
+        public bool IsSummonerSpellBook { get; }
+        public bool ForceStop { get; }
+        public Vector3 Position { get; }
 
         public SpellChargeUpdateReq(byte slot, bool isSummonerSpellBook, Vector3 position, bool forceStop = false)
         {
