@@ -1,8 +1,8 @@
-﻿using GameServerCore;
+﻿using GameServerCore.Packets.PacketDefinitions.Requests;
+using GameServerCore;
 using GameServerCore.Enums;
 using GameServerCore.Packets.Enums;
 using GameServerCore.Packets.Handlers;
-using LeaguePackets.LoadScreen;
 using LeagueSandbox.GameServer.Chatbox;
 using LeagueSandbox.GameServer.Logging;
 using log4net;
@@ -10,7 +10,7 @@ using System.Numerics;
 
 namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 {
-    public class HandleChatBoxMessage : PacketHandlerBase<Chat>
+    public class HandleChatBoxMessage : PacketHandlerBase<ChatMessageRequest>
     {
         private readonly Game _game;
         private readonly ChatCommandManager _chatCommandManager;
@@ -25,7 +25,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             _logger = LoggerProvider.GetLogger();
         }
 
-        public override bool HandlePacket(int userId, Chat req)
+        public override bool HandlePacket(int userId, ChatMessageRequest req)
         {
             var split = req.Message.Split(' ');
             if (split.Length > 1)
@@ -35,7 +35,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                     if (int.TryParse(split[1], out var y))
                     {
                         var client = _playerManager.GetPeerInfo(userId);
-                         _game.PacketNotifier.NotifyS2C_MapPing(new Vector2(x, y), Pings.PING_DEFAULT, client: client);
+                        _game.PacketNotifier.NotifyS2C_MapPing(new Vector2(x, y), Pings.PING_DEFAULT, client: client);
                     }
                 }
             }
@@ -57,7 +57,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                     catch
                     {
                         _logger.Warn(command + " sent an exception.");
-                         _game.PacketNotifier.NotifyS2C_SystemMessage(userId, "Something went wrong...Did you wrote the command well ? ");
+                        _game.PacketNotifier.NotifyS2C_SystemMessage(userId, "Something went wrong...Did you wrote the command well ? ");
                     }
                     return true;
                 }
@@ -82,8 +82,8 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 
             if (_game.Config.ChatCheatsEnabled)
             {
-                 _game.PacketNotifier.NotifyS2C_SystemMessage(ownTeam, dmTeam);
-                 _game.PacketNotifier.NotifyS2C_SystemMessage(enemyTeam, dmEnemy);
+                _game.PacketNotifier.NotifyS2C_SystemMessage(ownTeam, dmTeam);
+                _game.PacketNotifier.NotifyS2C_SystemMessage(enemyTeam, dmEnemy);
                 return true;
             }
 
@@ -91,11 +91,11 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             switch (type)
             {
                 case ChatType.All:
-                     _game.PacketNotifier.NotifyS2C_SystemMessage(ownTeam, dmTeam);
-                     _game.PacketNotifier.NotifyS2C_SystemMessage(enemyTeam, dmEnemy);
+                    _game.PacketNotifier.NotifyS2C_SystemMessage(ownTeam, dmTeam);
+                    _game.PacketNotifier.NotifyS2C_SystemMessage(enemyTeam, dmEnemy);
                     return true;
                 case ChatType.Team:
-                     _game.PacketNotifier.NotifyS2C_SystemMessage(ownTeam, dmTeam);
+                    _game.PacketNotifier.NotifyS2C_SystemMessage(ownTeam, dmTeam);
                     return true;
                 default:
                     _logger.Error("Unknown ChatMessageType:" + req.ChatType.ToString());

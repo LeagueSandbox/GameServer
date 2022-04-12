@@ -25,6 +25,8 @@ using LeagueSandbox.GameServer.Handlers;
 using LeaguePackets.Game;
 using LeaguePackets;
 using LeaguePackets.LoadScreen;
+using GameServerCore.Packets.PacketDefinitions;
+using GameServerCore.Packets.PacketDefinitions.Requests;
 
 namespace LeagueSandbox.GameServer
 {
@@ -74,11 +76,11 @@ namespace LeagueSandbox.GameServer
         /// <summary>
         /// Handler for request packets sent by game clients.
         /// </summary>
-        public NetworkHandler<BasePacket> RequestHandler { get; }
+        public NetworkHandler<ICoreRequest> RequestHandler { get; }
         /// <summary>
         /// Handler for response packets sent by the server to game clients.
         /// </summary>
-        public NetworkHandler<BasePacket> ResponseHandler { get; }
+        public NetworkHandler<ICoreRequest> ResponseHandler { get; }
         /// <summary>
         /// Interface containing all function related packets (except handshake) which are sent by the server to game clients.
         /// </summary>
@@ -137,8 +139,8 @@ namespace LeagueSandbox.GameServer
             NetworkIdManager = new NetworkIdManager();
             PlayerManager = new PlayerManager(this);
             ScriptEngine = new CSharpScriptEngine();
-            RequestHandler = new NetworkHandler<BasePacket>();
-            ResponseHandler = new NetworkHandler<BasePacket>();
+            RequestHandler = new NetworkHandler<ICoreRequest>();
+            ResponseHandler = new NetworkHandler<ICoreRequest>();
         }
 
         /// <summary>
@@ -192,37 +194,37 @@ namespace LeagueSandbox.GameServer
             // a problem with passing generic delegate to non-generic function, if we try to only constraint the
             // argument to interface ICoreRequest we will get an error cause our generic handlers use generic type
             // even with where statement that doesn't work
-            RequestHandler.Register<C2S_MapPing>(new HandleAttentionPing(this).HandlePacket);
-            RequestHandler.Register<C2S_UpdateGameOptions>(new HandleAutoAttackOption(this).HandlePacket);
-            RequestHandler.Register<C2S_OnTipEvent>(new HandleBlueTipClicked(this).HandlePacket);
-            RequestHandler.Register<BuyItemReq>(new HandleBuyItem(this).HandlePacket);
-            RequestHandler.Register<NPC_CastSpellReq>(new HandleCastSpell(this).HandlePacket);
-            RequestHandler.Register<Chat>(new HandleChatBoxMessage(this).HandlePacket);
-            RequestHandler.Register<SendSelectedObjID>(new HandleClick(this).HandlePacket);
-            RequestHandler.Register<C2S_SpellChargeUpdateReq>(new HandleSpellChargeUpdateReq(this).HandlePacket);
-            RequestHandler.Register<C2S_PlayEmote>(new HandleEmotion(this).HandlePacket);
-            RequestHandler.Register<C2S_Exit>(new HandleExit(this).HandlePacket);
-            RequestHandler.Register<SynchSimTimeC2S>(new HandleSyncSimTime(this).HandlePacket);
-            RequestHandler.Register<C2S_Ping_Load_Info>(new HandleLoadPing(this).HandlePacket);
-            RequestHandler.Register<World_LockCamera_Server>(new HandleLockCamera(this).HandlePacket);
-            RequestHandler.Register<RequestJoinTeam>(new HandleJoinTeam(this).HandlePacket);
-            RequestHandler.Register<NPC_IssueOrderReq>(new HandleMove(this).HandlePacket);
-            RequestHandler.Register<Waypoint_Acc>(new HandleMoveConfirm(this).HandlePacket);
-            RequestHandler.Register<PausePacket>(new HandlePauseReq(this).HandlePacket);
-            RequestHandler.Register<C2S_QueryStatusReq>(new HandleQueryStatus(this).HandlePacket);
-            RequestHandler.Register<C2S_OnQuestEvent>(new HandleQuestClicked(this).HandlePacket);
-            RequestHandler.Register<C2S_StatsUpdateReq>(new HandleScoreboard(this).HandlePacket);
-            RequestHandler.Register<RemoveItemReq>(new HandleSellItem(this).HandlePacket);
-            RequestHandler.Register<NPC_UpgradeSpellReq>(new HandleUpgradeSpellReq(this).HandlePacket);
-            RequestHandler.Register<C2S_CharSelected>(new HandleSpawn(this).HandlePacket);
-            RequestHandler.Register<C2S_ClientReady>(new HandleStartGame(this).HandlePacket);
-            RequestHandler.Register<OnReplication_Acc>(new HandleStatsConfirm(this).HandlePacket);
-            RequestHandler.Register<C2S_TeamSurrenderVote>(new HandleSurrender(this).HandlePacket);
-            RequestHandler.Register<SwapItemReq>(new HandleSwapItems(this).HandlePacket);
-            RequestHandler.Register<SynchVersionC2S>(new HandleSync(this).HandlePacket);
-            RequestHandler.Register<ResumePacket>(new HandleUnpauseReq(this).HandlePacket);
-            RequestHandler.Register<UseObjectC2S>(new HandleUseObject(this).HandlePacket);
-            RequestHandler.Register<World_SendCamera_Server>(new HandleView(this).HandlePacket);
+            RequestHandler.Register<AttentionPingRequest>(new HandleAttentionPing(this).HandlePacket);
+            RequestHandler.Register<AutoAttackOptionRequest>(new HandleAutoAttackOption(this).HandlePacket);
+            RequestHandler.Register<BlueTipClickedRequest>(new HandleBlueTipClicked(this).HandlePacket);
+            RequestHandler.Register<BuyItemRequest>(new HandleBuyItem(this).HandlePacket);
+            RequestHandler.Register<CastSpellRequest>(new HandleCastSpell(this).HandlePacket);
+            RequestHandler.Register<ChatMessageRequest>(new HandleChatBoxMessage(this).HandlePacket);
+            RequestHandler.Register<ClickRequest>(new HandleClick(this).HandlePacket);
+            RequestHandler.Register<SpellChargeUpdateReq>(new HandleSpellChargeUpdateReq(this).HandlePacket);
+            RequestHandler.Register<EmotionPacketRequest>(new HandleEmotion(this).HandlePacket);
+            RequestHandler.Register<ExitRequest>(new HandleExit(this).HandlePacket);
+            RequestHandler.Register<SyncSimTimeRequest>(new HandleSyncSimTime(this).HandlePacket);
+            RequestHandler.Register<PingLoadInfoRequest>(new HandleLoadPing(this).HandlePacket);
+            RequestHandler.Register<LockCameraRequest>(new HandleLockCamera(this).HandlePacket);
+            RequestHandler.Register<JoinTeamRequest>(new HandleJoinTeam(this).HandlePacket);
+            RequestHandler.Register<MovementRequest>(new HandleMove(this).HandlePacket);
+            RequestHandler.Register<MoveConfirmRequest>(new HandleMoveConfirm(this).HandlePacket);
+            RequestHandler.Register<PauseRequest>(new HandlePauseReq(this).HandlePacket);
+            RequestHandler.Register<QueryStatusRequest>(new HandleQueryStatus(this).HandlePacket);
+            RequestHandler.Register<QuestClickedRequest>(new HandleQuestClicked(this).HandlePacket);
+            RequestHandler.Register<ScoreboardRequest>(new HandleScoreboard(this).HandlePacket);
+            RequestHandler.Register<SellItemRequest>(new HandleSellItem(this).HandlePacket);
+            RequestHandler.Register<UpgradeSpellReq>(new HandleUpgradeSpellReq(this).HandlePacket);
+            RequestHandler.Register<SpawnRequest>(new HandleSpawn(this).HandlePacket);
+            RequestHandler.Register<StartGameRequest>(new HandleStartGame(this).HandlePacket);
+            RequestHandler.Register<ReplicationConfirmRequest>(new HandleStatsConfirm(this).HandlePacket);
+            RequestHandler.Register<SurrenderRequest>(new HandleSurrender(this).HandlePacket);
+            RequestHandler.Register<SwapItemsRequest>(new HandleSwapItems(this).HandlePacket);
+            RequestHandler.Register<SynchVersionRequest>(new HandleSync(this).HandlePacket);
+            RequestHandler.Register<UnpauseRequest>(new HandleUnpauseReq(this).HandlePacket);
+            RequestHandler.Register<UseObjectRequest>(new HandleUseObject(this).HandlePacket);
+            RequestHandler.Register<ViewRequest>(new HandleView(this).HandlePacket);
         }
 
         /// <summary>
@@ -271,7 +273,7 @@ namespace LeagueSandbox.GameServer
             {
                 foreach (var unit in ObjectManager.GetObjects().Values)
                 {
-                    if(unit is IObjAiBase obj)
+                    if (unit is IObjAiBase obj)
                     {
                         if (obj.Spells.ContainsKey((int)SpellSlotType.PassiveSpellSlot))
                         {
@@ -296,10 +298,10 @@ namespace LeagueSandbox.GameServer
         public void GameLoop()
         {
             int timeout = (int)REFRESH_RATE;
-            
+
             Stopwatch lastMapDurationWatch = new Stopwatch();
-            lastMapDurationWatch.Start();  
-            
+            lastMapDurationWatch.Start();
+
             bool isJustPaused = true;
             bool autoResumeCheck = false;
 
@@ -309,13 +311,13 @@ namespace LeagueSandbox.GameServer
 
                 if (IsPaused)
                 {
-                    if(isJustPaused)
+                    if (isJustPaused)
                     {
                         lastMapDurationWatch.Stop();
                         isJustPaused = false;
                         timeout = 1000;
                     }
-                    else if(!autoResumeCheck)
+                    else if (!autoResumeCheck)
                     {
                         PauseTimeLeft--;
                         _logger.Debug(PauseTimeLeft.ToString());
@@ -323,14 +325,14 @@ namespace LeagueSandbox.GameServer
                         {
                             autoResumeCheck = true;
                             timeout = (int)REFRESH_RATE;
-                            
+
                             //TODO: fix these
                             //PacketNotifier.NotifyUnpauseGame();
 
                             // Pure water framing
                             var players = PlayerManager.GetPlayers();
                             var unpauser = players[0].Item2.Champion;
-                            foreach(var player in players)
+                            foreach (var player in players)
                             {
                                 PacketNotifier.NotifyResumePacket(unpauser, player.Item2, false);
                             }
@@ -436,7 +438,7 @@ namespace LeagueSandbox.GameServer
                 return;
             }
             IsPaused = true;
-            foreach(var player in PlayerManager.GetPlayers())
+            foreach (var player in PlayerManager.GetPlayers())
             {
                 PacketNotifier.NotifyPausePacket(player.Item2, (int)PauseTimeLeft, true);
             }

@@ -2,13 +2,13 @@
 {
     public class SellItemRequest : ICoreRequest
     {
-        public int NetId { get; }
-        public byte SlotId { get; }
+        public byte Slot { get; }
+        public bool Sell { get; }
 
-        public SellItemRequest(int netId, byte slotId)
+        public SellItemRequest(byte slot, bool sell)
         {
-            NetId = netId;
-            SlotId = slotId;
+            Slot = slot;
+            Sell = sell;
         }
     }
 }

@@ -1,15 +1,14 @@
-﻿using GameServerCore;
+﻿using GameServerCore.Packets.PacketDefinitions.Requests;
+using GameServerCore;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
 using GameServerCore.Packets.Handlers;
-using LeaguePackets.Game;
-using System.Collections.Generic;
 using System.Numerics;
-using static PacketDefinitions420.PacketExtensions;
+using System.Collections.Generic;
 
 namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 {
-    public class HandleMove : PacketHandlerBase<NPC_IssueOrderReq>
+    public class HandleMove : PacketHandlerBase<MovementRequest>
     {
         private readonly Game _game;
         private readonly IPlayerManager _playerManager;
@@ -20,7 +19,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             _playerManager = game.PlayerManager;
         }
 
-        public override bool HandlePacket(int userId, NPC_IssueOrderReq req)
+        public override bool HandlePacket(int userId, MovementRequest req)
         {
             var peerInfo = _playerManager.GetPeerInfo(userId);
             var champion = peerInfo?.Champion;
@@ -32,8 +31,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             if (champion.MovementParameters == null)
             {
                 // Last waypoint position
-                var pos = req.Position;
-                List<Vector2> translatedWaypoints = req.MovementData.Waypoints.ConvertAll(WaypointToVector2).ConvertAll(TranslateFromCenteredCoordinates);
+                List<Vector2> translatedWaypoints = req.Waypoints.ConvertAll(TranslateFromCenteredCoordinates);
                 var lastindex = 0;
                 if (!(translatedWaypoints.Count - 1 < 0))
                 {

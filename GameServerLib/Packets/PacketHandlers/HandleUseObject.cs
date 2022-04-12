@@ -1,12 +1,12 @@
-﻿using GameServerCore;
+﻿using GameServerCore.Packets.PacketDefinitions.Requests;
+using GameServerCore;
 using GameServerCore.Packets.Handlers;
-using LeaguePackets.Game;
 using LeagueSandbox.GameServer.Logging;
 using log4net;
 
 namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 {
-    public class HandleUseObject : PacketHandlerBase<UseObjectC2S>
+    public class HandleUseObject : PacketHandlerBase<UseObjectRequest>
     {
         private readonly Game _game;
         private readonly ILog _logger;
@@ -19,7 +19,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             _playerManager = game.PlayerManager;
         }
 
-        public override bool HandlePacket(int userId, UseObjectC2S req)
+        public override bool HandlePacket(int userId, UseObjectRequest req)
         {
             var champion = _playerManager.GetPeerInfo(userId).Champion;
             var msg = $"Object {champion.NetId} is trying to use (right clicked) {req.TargetNetID}";

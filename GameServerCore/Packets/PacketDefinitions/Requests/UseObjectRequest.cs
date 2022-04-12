@@ -2,13 +2,11 @@
 {
     public class UseObjectRequest : ICoreRequest
     {
-        public uint NetId { get; }
-        public uint TargetNetId { get; }
+        public uint TargetNetID { get; }
 
-        public UseObjectRequest(uint netId, uint targetNetId)
+        public UseObjectRequest(uint targetNetId)
         {
-            NetId = netId;
-            TargetNetId = targetNetId;
+            TargetNetID = targetNetId;
         }
     }
 }

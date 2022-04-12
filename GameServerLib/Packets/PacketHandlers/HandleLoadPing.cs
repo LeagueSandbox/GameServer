@@ -1,10 +1,10 @@
-﻿using GameServerCore;
+﻿using GameServerCore.Packets.PacketDefinitions.Requests;
+using GameServerCore;
 using GameServerCore.Packets.Handlers;
-using LeaguePackets.Game;
 
 namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 {
-    public class HandleLoadPing : PacketHandlerBase<C2S_Ping_Load_Info>
+    public class HandleLoadPing : PacketHandlerBase<PingLoadInfoRequest>
     {
         private readonly Game _game;
         private readonly IPlayerManager _playerManager;
@@ -15,7 +15,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             _playerManager = game.PlayerManager;
         }
 
-        public override bool HandlePacket(int userId, C2S_Ping_Load_Info req)
+        public override bool HandlePacket(int userId, PingLoadInfoRequest req)
         {
             var peerInfo = _playerManager.GetPeerInfo(userId);
             if (peerInfo == null)
@@ -23,7 +23,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                 return false;
             }
 
-             _game.PacketNotifier.NotifyPingLoadInfo(req, peerInfo);
+            _game.PacketNotifier.NotifyPingLoadInfo(peerInfo, req);
             return true;
         }
     }
