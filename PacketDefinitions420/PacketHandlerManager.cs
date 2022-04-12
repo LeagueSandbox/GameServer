@@ -23,7 +23,7 @@ namespace PacketDefinitions420
     /// </summary>
     public class PacketHandlerManager : IPacketHandlerManager
     {
-        private delegate BasePacket RequestConvertor(byte[] data);
+        private delegate ICoreRequest RequestConvertor(byte[] data);
         private readonly Dictionary<Tuple<GamePacketID, Channel>, RequestConvertor> _gameConvertorTable;
         private readonly Dictionary<LoadScreenPacketID, RequestConvertor> _loadScreenConvertorTable;
         // should be one-to-one, no two users for the same Peer
@@ -34,10 +34,10 @@ namespace PacketDefinitions420
         private readonly Host _server;
         private readonly IGame _game;
 
-        private readonly NetworkHandler<BasePacket> _netReq;
-        private readonly NetworkHandler<BasePacket> _netResp;
+        private readonly NetworkHandler<ICoreRequest> _netReq;
+        private readonly NetworkHandler<ICoreRequest> _netResp;
 
-        public PacketHandlerManager(Dictionary<long, BlowFish> blowfishes, Host server, IGame game, NetworkHandler<BasePacket> netReq, NetworkHandler<BasePacket> netResp)
+        public PacketHandlerManager(Dictionary<long, BlowFish> blowfishes, Host server, IGame game, NetworkHandler<ICoreRequest> netReq, NetworkHandler<ICoreRequest> netResp)
         {
             _blowfishes = blowfishes;
             _server = server;

@@ -1,11 +1,12 @@
-﻿using GameServerCore;
+﻿using GameServerCore.Packets.PacketDefinitions.Requests;
+using GameServerCore;
 using GameServerCore.Packets.Handlers;
 using LeaguePackets.Game;
 using LeaguePackets.Game.Events;
 
 namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 {
-    public class HandleStartGame : PacketHandlerBase<C2S_ClientReady>
+    public class HandleStartGame : PacketHandlerBase<StartGameRequest>
     {
         private readonly Game _game;
         private readonly IPlayerManager _playerManager;
@@ -16,7 +17,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             _playerManager = game.PlayerManager;
         }
 
-        public override bool HandlePacket(int userId, C2S_ClientReady req)
+        public override bool HandlePacket(int userId, StartGameRequest req)
         {
             var peerInfo = _playerManager.GetPeerInfo(userId);
 

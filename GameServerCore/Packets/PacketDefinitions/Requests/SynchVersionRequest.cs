@@ -2,14 +2,12 @@
 {
     public class SynchVersionRequest : ICoreRequest
     {
-        public int NetId { get; }
-        public uint ClientId { get; }
+        public int ClientID { get; }
         public string Version { get; }
 
-        public SynchVersionRequest(int netId, uint clientId, string version)
+        public SynchVersionRequest(int clientId, string version)
         {
-            NetId = netId;
-            ClientId = clientId;
+            ClientID = clientId;
             Version = version;
         }
     }

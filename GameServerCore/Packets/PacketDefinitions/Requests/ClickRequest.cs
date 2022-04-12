@@ -2,11 +2,13 @@
 {
     public class ClickRequest : ICoreRequest
     {
-        public uint TargetNetId { get; }
+        public int ClientID { get; }
+        public uint SelectedNetID { get; }
 
-        public ClickRequest(uint targetNetId)
+        public ClickRequest(uint targetNetId, int clientId)
         {
-            TargetNetId = targetNetId;
+            SelectedNetID = targetNetId;
+            ClientID = clientId;
         }
     }
 }

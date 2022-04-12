@@ -1,11 +1,11 @@
-﻿using GameServerCore;
+﻿using GameServerCore.Packets.PacketDefinitions.Requests;
+using GameServerCore;
 using GameServerCore.Packets.Handlers;
-using LeaguePackets.Game;
 using static LeagueSandbox.GameServer.API.ApiMapFunctionManager;
 
 namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 {
-    public class HandleSurrender : PacketHandlerBase<C2S_TeamSurrenderVote>
+    public class HandleSurrender : PacketHandlerBase<SurrenderRequest>
     {
         private readonly Game _game;
         private readonly IPlayerManager _pm;
@@ -16,7 +16,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             _pm = game.PlayerManager;
         }
 
-        public override bool HandlePacket(int userId, C2S_TeamSurrenderVote req)
+        public override bool HandlePacket(int userId, SurrenderRequest req)
         {
             var c = _pm.GetPeerInfo(userId).Champion;
             HandleSurrender(userId, c, req.VotedYes);

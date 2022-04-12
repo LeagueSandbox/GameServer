@@ -1,15 +1,24 @@
-﻿using LeaguePackets;
-using LeaguePackets.Game;
-
-namespace GameServerCore.Packets.PacketDefinitions.Requests
+﻿namespace GameServerCore.Packets.PacketDefinitions.Requests
 {
     public class PingLoadInfoRequest : ICoreRequest
     {
-        public C2S_Ping_Load_Info InfoRequest = new C2S_Ping_Load_Info();
+        public int ClientID { get; }
+        public long PlayerID { get; }
+        public float Percentage { get; }
+        public float ETA { get; }
+        public ushort Count { get; }
+        public ushort Ping { get; }
+        public bool Ready { get; }
 
-        public PingLoadInfoRequest(byte[] data)
+        public PingLoadInfoRequest(int clientId, long playerId, float percentage, float eta, ushort count, ushort ping, bool ready)
         {
-            InfoRequest.Read(data);
+            ClientID = clientId;
+            PlayerID = playerId;
+            Percentage = percentage;
+            ETA = eta;
+            Count = count;
+            Ping = ping;
+            Ready = ready;
         }
     }
 }

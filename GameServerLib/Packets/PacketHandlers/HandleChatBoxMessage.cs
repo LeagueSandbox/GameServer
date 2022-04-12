@@ -1,8 +1,8 @@
-﻿using GameServerCore;
+﻿using GameServerCore.Packets.PacketDefinitions.Requests;
+using GameServerCore;
 using GameServerCore.Enums;
 using GameServerCore.Packets.Enums;
 using GameServerCore.Packets.Handlers;
-using LeaguePackets.LoadScreen;
 using LeagueSandbox.GameServer.Chatbox;
 using LeagueSandbox.GameServer.Logging;
 using log4net;
@@ -10,7 +10,7 @@ using System.Numerics;
 
 namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 {
-    public class HandleChatBoxMessage : PacketHandlerBase<Chat>
+    public class HandleChatBoxMessage : PacketHandlerBase<ChatMessageRequest>
     {
         private readonly Game _game;
         private readonly ChatCommandManager _chatCommandManager;
@@ -25,7 +25,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             _logger = LoggerProvider.GetLogger();
         }
 
-        public override bool HandlePacket(int userId, Chat req)
+        public override bool HandlePacket(int userId, ChatMessageRequest req)
         {
             var split = req.Message.Split(' ');
             if (split.Length > 1)

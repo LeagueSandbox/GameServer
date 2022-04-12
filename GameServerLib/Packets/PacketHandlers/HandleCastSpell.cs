@@ -1,12 +1,12 @@
-﻿using GameServerCore;
+﻿using GameServerCore.Packets.PacketDefinitions.Requests;
+using GameServerCore;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
 using GameServerCore.Packets.Handlers;
-using LeaguePackets.Game;
 
 namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 {
-    public class HandleCastSpell : PacketHandlerBase<NPC_CastSpellReq>
+    public class HandleCastSpell : PacketHandlerBase<CastSpellRequest>
     {
         private readonly Game _game;
         private readonly NetworkIdManager _networkIdManager;
@@ -19,7 +19,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             _playerManager = game.PlayerManager;
         }
 
-        public override bool HandlePacket(int userId, NPC_CastSpellReq req)
+        public override bool HandlePacket(int userId, CastSpellRequest req)
         {
             var targetObj = _game.ObjectManager.GetObjectById(req.TargetNetID);
             var targetUnit = targetObj as IAttackableUnit;
