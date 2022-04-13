@@ -33,6 +33,7 @@ namespace GameServerCore.Domain
         float GlobalExpGivenOnDeath { get; }
         float GlobalGoldGivenOnDeath { get; }
         float GoldGivenOnDeath { get; }
+        string HeroUseSpell { get; }
         float HpPerLevel { get; }
         float HpRegenPerLevel { get; }
         bool IsMelee { get; } //Yes or no
