@@ -7,7 +7,7 @@ using GameServerCore.Enums;
 using GameServerCore.Scripting.CSharp;
 using LeaguePackets.Game.Events;
 using LeagueSandbox.GameServer.GameObjects.Stats;
-using LeagueSandbox.GameServer.Items;
+using LeagueSandbox.GameServer.Inventory;
 
 namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 {

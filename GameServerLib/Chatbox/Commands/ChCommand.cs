@@ -35,6 +35,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
                 (uint)_playerManager.GetPeerInfo(userId).PlayerId,
                 0, // Doesnt matter at this point
                 currentChampion.RuneList,
+                currentChampion.TalentInventory,
                 _playerManager.GetClientInfoByChampion(currentChampion),
                 currentChampion.NetId,
                 _playerManager.GetPeerInfo(userId).Champion.Team

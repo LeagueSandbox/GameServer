@@ -8,6 +8,7 @@ using GameServerCore.Domain;
 using GameServerCore.Enums;
 using LeagueSandbox.GameServer;
 using LeagueSandbox.GameServer.Content;
+using LeagueSandbox.GameServer.Inventory;
 using Newtonsoft.Json.Linq;
 
 namespace LeagueSandbox.GameServer
@@ -50,17 +51,7 @@ namespace LeagueSandbox.GameServer
 
         private void LoadConfig(Game game, string json)
         {
-            Players = new Dictionary<string, IPlayerConfig>();
-
             var data = JObject.Parse(json);
-
-            // Read the player configuration
-            var playerConfigurations = data.SelectToken("players");
-            foreach (var player in playerConfigurations)
-            {
-                var playerConfig = new PlayerConfig(player, game);
-                Players.Add($"player{playerConfig.PlayerID}", playerConfig);
-            }
 
             var gameInfo = data.SelectToken("gameInfo");
             SetGameFeatures(FeatureFlags.EnableCooldowns, (bool)gameInfo.SelectToken("COOLDOWNS_ENABLED"));
@@ -88,6 +79,16 @@ namespace LeagueSandbox.GameServer
 
             // Load data package
             ContentManager = ContentManager.LoadDataPackage(game, GameConfig.DataPackage, ContentPath);
+
+            Players = new Dictionary<string, IPlayerConfig>();
+
+            // Read the player configuration
+            var playerConfigurations = data.SelectToken("players");
+            foreach (var player in playerConfigurations)
+            {
+                var playerConfig = new PlayerConfig(player, game);
+                Players.Add($"player{playerConfig.PlayerID}", playerConfig);
+            }
         }
 
         private string GetContentPath()
@@ -241,7 +242,7 @@ public class PlayerConfig : IPlayerConfig
     public int Icon { get; private set; }
     public string BlowfishKey { get; private set; }
     public IRuneCollection Runes { get; }
-    public IMasteryCollection Masteries { get; }
+    public ITalentInventory Talents { get; }
 
     public PlayerConfig(JToken playerData, Game game)
     {
@@ -272,33 +273,16 @@ public class PlayerConfig : IPlayerConfig
             // no runes set in config
         }
 
-        var masteries = playerData.SelectToken("masteries");
-        if(masteries != null)
+        var talents = playerData.SelectToken("talents");
+        Talents = new TalentInventory(game);
+
+        if (talents != null)
         {
-            Masteries = new MasteryCollection(game);
-            foreach(JProperty mastery in masteries)
+            foreach (JProperty mastery in talents)
             {
-                var name = mastery.Name;
-                var level = mastery.Value<byte>();
-                Masteries.Add(name, level );
+                var level = mastery.Value.Value<byte>();
+                Talents.Add(mastery.Name, level);
             }
         }
-    }
-
-    public PlayerConfig(string name, string champion, long playerId = -1, string rank = "", string team = "BLUE", short skin = 0, string summoner1 = "SummonerHeal", string summoner2 = "SummonerFlash", short ribbon = 0, int icon = 0, string blowfishKey = "")
-    {
-        PlayerID = playerId;
-        Rank = rank;
-        Name = name;
-        Champion = champion;
-        Team = team;
-        Skin = skin;
-        Summoner1 = summoner1;
-        Summoner2 = summoner2;
-        Ribbon = ribbon;
-        Icon = icon;
-        BlowfishKey = blowfishKey;
-
-        Runes = new RuneCollection();
     }
 }

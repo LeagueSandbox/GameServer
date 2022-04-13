@@ -17,7 +17,6 @@ namespace GameServerCore.Domain.GameObjects
         float AttackSpeedFlat { get; set; }
         float HealthPerLevel { get; }
         float ManaPerLevel { get; }
-        float AdPerLevel { get; }
         float ArmorPerLevel { get; }
         float MagicResistPerLevel { get; }
         float HealthRegenerationPerLevel { get; }
@@ -28,6 +27,7 @@ namespace GameServerCore.Domain.GameObjects
         IStat Armor { get; }
         IStat ArmorPenetration { get; }
         IStat AttackDamage { get; }
+        IStat AttackDamagePerLevel { get; }
         IStat AttackSpeedMultiplier { get; }
         IStat CooldownReduction { get; }
         IStat CriticalChance { get; }

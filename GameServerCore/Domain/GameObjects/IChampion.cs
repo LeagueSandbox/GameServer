@@ -10,6 +10,7 @@ namespace GameServerCore.Domain.GameObjects
         int KillSpree { get; set;  }
         float GoldFromMinions { get; set; }
         IRuneCollection RuneList { get; }
+        ITalentInventory TalentInventory { get; }
         IChampionStats ChampStats { get; }
         byte SkillPoints { get; set; }
 

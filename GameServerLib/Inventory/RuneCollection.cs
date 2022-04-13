@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using GameServerCore.Domain;
 
-namespace LeagueSandbox.GameServer.Content
+namespace LeagueSandbox.GameServer.Inventory
 {
     public class RuneCollection : IRuneCollection
     {

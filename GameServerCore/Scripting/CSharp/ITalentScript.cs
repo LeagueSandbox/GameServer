@@ -3,12 +3,9 @@ using System.Collections.Generic;
 
 namespace GameServerCore.Scripting.CSharp
 {
-    public interface IMasteryScript
+    public interface ITalentScript
     {
-        void OnActivate(IObjAiBase owner, byte level)
-        {
-        }
-        void OnUpdate(float diff)
+        void OnActivate(IObjAiBase owner, byte rank)
         {
         }
     }

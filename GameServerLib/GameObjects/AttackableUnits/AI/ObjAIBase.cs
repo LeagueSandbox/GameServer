@@ -13,7 +13,7 @@ using LeagueSandbox.GameServer.API;
 using LeagueSandbox.GameServer.Content;
 using LeagueSandbox.GameServer.GameObjects.Spell;
 using LeagueSandbox.GameServer.GameObjects.Spell.Missile;
-using LeagueSandbox.GameServer.Items;
+using LeagueSandbox.GameServer.Inventory;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using System.Activities.Presentation.View;
 

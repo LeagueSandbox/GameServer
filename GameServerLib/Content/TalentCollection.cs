@@ -1,26 +1,35 @@
 ﻿using System;
 using System.Collections.Generic;
-using GameServerCore.Domain;
-using GameServerCore.Scripting.CSharp;
+using System.IO;
+using Newtonsoft.Json;
 
 namespace LeagueSandbox.GameServer.Content
 {
-    public class MasteryCollection : IMasteryCollection
-    {
-        Game _game;
-        public Dictionary<string, byte> Masteries = new Dictionary<string, byte>();
-        public Dictionary<string, IMasteryScript> MasteryScripts = new Dictionary<string, IMasteryScript>();
 
-        public MasteryCollection(Game game)
+    public class TalentContentCollection
+    {
+        public class TalentCollectionEntry : ContentFile
         {
-            _game = game;
+            public byte MaxLevel => Convert.ToByte(Values["SpellData"]["Ranks"]);
+            public string Name => Convert.ToString(MetaData["Name"]);
+            public object Id => MetaData["Id"];
         }
-        
-        public void Add(string name, byte level)
+
+        private static Dictionary<string, TalentCollectionEntry> _masteries = new Dictionary<string, TalentCollectionEntry>();
+        public static void LoadMasteriesFrom(string directoryPath)
         {
-            //Find a better way to limit levels to prevent cheating.
-            Masteries.Add(name, Math.Min(level, (byte)3));
-            MasteryScripts.Add(name, _game.ScriptEngine.CreateObject<IMasteryScript>("Masteries", $"Mastery_{name}"));
+            var files = Directory.GetFiles(directoryPath, "*.json", SearchOption.AllDirectories);
+            foreach (var file in files)
+            {
+                string data = File.ReadAllText(file);
+                var collectionEntry = JsonConvert.DeserializeObject<TalentCollectionEntry>(data);
+                _masteries.Add(collectionEntry.Name, collectionEntry);
+            }
+        }
+
+        public static byte GetMasteryMaxLevel(string mastery)
+        {
+            return _masteries[mastery].MaxLevel;
         }
     }
 }

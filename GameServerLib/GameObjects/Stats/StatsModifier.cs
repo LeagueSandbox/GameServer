@@ -10,6 +10,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
         public IStatModifier Armor { get; } = new StatModifier();
         public IStatModifier ArmorPenetration { get; } = new StatModifier();
         public IStatModifier AttackDamage { get; } = new StatModifier();
+        public IStatModifier AttackDamagePerLevel { get; } = new StatModifier();
         public IStatModifier AttackSpeed { get; } = new StatModifier();
         public IStatModifier CooldownReduction { get; } = new StatModifier();
         public IStatModifier CriticalChance { get; } = new StatModifier();
