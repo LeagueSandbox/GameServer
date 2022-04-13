@@ -93,7 +93,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
             AttackSpeedMultiplier = new Stat(1.0f, 0, 0, 0, 0);
             CooldownReduction = new Stat();
             CriticalChance = new Stat();
-            CriticalDamage = new Stat(2, 0, 0, 0, 0);
+            CriticalDamage = new Stat();
             ExpGivenOnDeath = new Stat();
             GoldPerGoldTick = new Stat();
             GoldGivenOnDeath = new Stat();
@@ -121,6 +121,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
             AttackDamage.BaseValue = charData.BaseDamage;
             // AttackSpeedFlat = GlobalAttackSpeed / CharAttackDelay
             AttackSpeedFlat = (1.0f / charData.GlobalCharData.AttackDelay) / (1.0f + charData.AttackDelayOffsetPercent[0]);
+            CriticalDamage.BaseValue = charData.CritDamageBonus;
             ExpGivenOnDeath.BaseValue = charData.ExpGivenOnDeath;
             GoldGivenOnDeath.BaseValue = charData.GoldGivenOnDeath;
             GrowthAttackSpeed = charData.AttackSpeedPerLevel;
