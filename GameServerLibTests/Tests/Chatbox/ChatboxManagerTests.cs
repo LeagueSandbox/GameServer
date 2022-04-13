@@ -1,7 +1,6 @@
 using LeagueSandbox.GameServer;
 using LeagueSandbox.GameServer.Chatbox;
-using LeagueSandbox.GameServer.Content;
-using LeagueSandbox.GameServer.Items;
+using LeagueSandbox.GameServer.Inventory;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace LeagueSandbox.GameServerTests.Tests.Chatbox
