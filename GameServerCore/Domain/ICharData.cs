@@ -36,6 +36,7 @@ namespace GameServerCore.Domain
         float HpPerLevel { get; }
         float HpRegenPerLevel { get; }
         bool IsMelee { get; } //Yes or no
+        bool Immobile { get; }
         bool IsUseable { get; }
         float LocalGoldGivenOnDeath { get; }
         bool MinionUseable { get; }
@@ -51,7 +52,7 @@ namespace GameServerCore.Domain
         float SpellBlockPerLevel { get; }
         string[] SpellNames { get; }
         int[][] SpellsUpLevels { get; }
-        List<UnitTag> UnitTags { get; }
+        UnitTag UnitTags { get; }
         int[] MaxLevels { get; }
         string[] ExtraSpells { get; }
         // TODO: Verify if we want this to be an array.

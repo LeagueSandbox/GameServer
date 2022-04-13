@@ -63,7 +63,7 @@ namespace LeagueSandbox.GameServer.Content
         public float HpPerLevel { get; private set; } = 10.0f;
         public float HpRegenPerLevel { get; private set; }
         public bool IsMelee { get; private set; } //Yes or no
-        public bool Imobile { get; private set; } = false;
+        public bool Immobile { get; private set; } = false;
         public bool IsTower { get; private set; } = false;
         public bool IsUseable { get; private set; } = false;
         public float LocalGoldGivenOnDeath { get; private set; } = 0.0f;
@@ -78,7 +78,7 @@ namespace LeagueSandbox.GameServer.Content
         public bool ShouldFaceTarget { get; private set; } = true;
         public float SpellBlock { get; private set; }
         public float SpellBlockPerLevel { get; private set; }
-        public List<UnitTag> UnitTags { get; private set; } = new List<UnitTag>();
+        public UnitTag UnitTags { get; private set; }
 
         public string[] SpellNames { get; private set; } = new string[4];
         public string[] ExtraSpells { get; private set; } = new string[16];
@@ -138,7 +138,7 @@ namespace LeagueSandbox.GameServer.Content
             GoldGivenOnDeath = file.GetFloat("Data", "GoldGivenOnDeath", GoldGivenOnDeath);
             HpRegenPerLevel = file.GetFloat("Data", "HPRegenPerLevel", HpRegenPerLevel);
             HpPerLevel = file.GetFloat("Data", "HPPerLevel", HpPerLevel);
-            Imobile = file.GetBool("Data", "Imobile", Imobile);
+            Immobile = file.GetBool("Data", "Imobile", Immobile);
             IsMelee = file.GetString("Data", "IsMelee", IsMelee ? "true" : "false").Equals("true");
             LocalGoldGivenOnDeath = file.GetFloat("Data", "LocalGoldGivenOnDeath", LocalGoldGivenOnDeath);
             MoveSpeed = file.GetInt("Data", "MoveSpeed", MoveSpeed);
@@ -165,7 +165,7 @@ namespace LeagueSandbox.GameServer.Content
             foreach (var tag in file.GetString("Data", "UnitTags").Split(" | "))
             {
                 Enum.TryParse(tag, out UnitTag unitTag);
-                UnitTags.Add(unitTag);
+                UnitTags |= unitTag;
             }
 
             Enum.TryParse<PrimaryAbilityResourceType>(file.GetString("Data", "PARType", ParType.ToString()),
