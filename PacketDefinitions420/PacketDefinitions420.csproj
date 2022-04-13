@@ -14,4 +14,10 @@
 		<ProjectReference Include="..\LeaguePackets\LeaguePackets\LeaguePackets.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+		<Reference Include="LENet, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+			<HintPath>..\LENet.dll</HintPath>
+		</Reference>
+	</ItemGroup>
+
 </Project>

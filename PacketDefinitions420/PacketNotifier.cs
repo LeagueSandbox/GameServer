@@ -1,4 +1,4 @@
-using ENet;
+using LENet;
 using GameServerCore;
 using GameServerCore.Content;
 using GameServerCore.Domain;
@@ -7,8 +7,8 @@ using GameServerCore.Domain.GameObjects.Spell;
 using GameServerCore.Domain.GameObjects.Spell.Missile;
 using GameServerCore.Enums;
 using GameServerCore.NetInfo;
-using GameServerCore.Packets.Enums;
 using GameServerCore.Packets.Interfaces;
+using GameServerCore.Packets.Enums;
 using PacketDefinitions420.PacketDefinitions.S2C;
 using LeaguePackets.Game;
 using System;
@@ -26,8 +26,7 @@ using System.Linq;
 using LeaguePackets;
 using LeaguePackets.LoadScreen;
 using LeaguePackets.Game.Events;
-using GameServerCore.Scripting.CSharp;
-using System.Diagnostics;
+using Channel = GameServerCore.Packets.Enums.Channel;
 
 namespace PacketDefinitions420
 {
@@ -2191,7 +2190,7 @@ namespace PacketDefinitions420
                 },
             };
             //Logging->writeLine("loaded: %f, ping: %f, %f", loadInfo->loaded, loadInfo->ping, loadInfo->f3);
-            _packetHandlerManager.BroadcastPacket(response.GetBytes(), Channel.CHL_LOW_PRIORITY, PacketFlags.None);
+            _packetHandlerManager.BroadcastPacket(response.GetBytes(), Channel.CHL_LOW_PRIORITY, PacketFlags.NONE);
         }
 
         /// <summary>
@@ -2569,7 +2568,7 @@ namespace PacketDefinitions420
                 CapturePointUpdateCommand = (byte)capturePointUpdateCommand
             };
 
-            _packetHandlerManager.BroadcastPacket(packet.GetBytes(), Channel.CHL_S2C, PacketFlags.None);
+            _packetHandlerManager.BroadcastPacket(packet.GetBytes(), Channel.CHL_S2C, PacketFlags.NONE);
         }
 
         /// <summary>
@@ -2585,7 +2584,7 @@ namespace PacketDefinitions420
                 Score = score
             };
 
-            _packetHandlerManager.BroadcastPacket(packet.GetBytes(), Channel.CHL_S2C, PacketFlags.None);
+            _packetHandlerManager.BroadcastPacket(packet.GetBytes(), Channel.CHL_S2C, PacketFlags.NONE);
         }
 
         /// <summary>
@@ -3112,7 +3111,7 @@ namespace PacketDefinitions420
                 Tooltips = variables
             };
 
-            _packetHandlerManager.BroadcastPacket(answer.GetBytes(), Channel.CHL_S2C, PacketFlags.None);
+            _packetHandlerManager.BroadcastPacket(answer.GetBytes(), Channel.CHL_S2C, PacketFlags.NONE);
         }
 
         /// <summary>
@@ -3141,7 +3140,7 @@ namespace PacketDefinitions420
             {
                 packet.AscendedNetID = ascendant.NetId;
             }
-            _packetHandlerManager.BroadcastPacket(packet.GetBytes(), Channel.CHL_S2C, PacketFlags.None);
+            _packetHandlerManager.BroadcastPacket(packet.GetBytes(), Channel.CHL_S2C, PacketFlags.NONE);
         }
 
         /// <summary>
@@ -3842,11 +3841,11 @@ namespace PacketDefinitions420
                 var channel = Channel.CHL_LOW_PRIORITY;
                 if (userId == 0)
                 {
-                    _packetHandlerManager.BroadcastPacketVision(u, us, channel, PacketFlags.Unsequenced);
+                    _packetHandlerManager.BroadcastPacketVision(u, us, channel, PacketFlags.UNSEQUENCED);
                 }
                 else
                 {
-                    _packetHandlerManager.SendPacket(userId, us, channel, PacketFlags.Unsequenced);
+                    _packetHandlerManager.SendPacket(userId, us, channel, PacketFlags.UNSEQUENCED);
                 }
             }
         }
@@ -4136,7 +4135,7 @@ namespace PacketDefinitions420
                 SenderNetID = client.Champion.NetId,
                 SyncID = request.SyncID,
             };
-            _packetHandlerManager.SendPacket((int)client.PlayerId, answer.GetBytes(), Channel.CHL_S2C, PacketFlags.None);
+            _packetHandlerManager.SendPacket((int)client.PlayerId, answer.GetBytes(), Channel.CHL_S2C, PacketFlags.NONE);
         }
     }
 }
