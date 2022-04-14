@@ -9,7 +9,6 @@ using GameServerCore.Enums;
 using GameServerCore.NetInfo;
 using GameServerCore.Packets.Enums;
 using GameServerCore.Packets.Interfaces;
-using PacketDefinitions420.PacketDefinitions.S2C;
 using LeaguePackets.Game;
 using System;
 using System.Collections.Generic;
@@ -2160,6 +2159,36 @@ namespace PacketDefinitions420
         }
 
         /// <summary>
+        /// Sends a packet to all players with vision of the specified unit detailing that the specified unit's stats have been updated.
+        /// </summary>
+        /// <param name="u">Unit who's stats have been updated.</param>
+        /// <param name="userId">UserId to send the packet to. If not specified or zero, the packet is broadcasted to all players that have vision of the specified unit.</param>
+        /// <param name="partial">Whether or not the packet should be counted as a partial update (whether the stats have actually changed or not). *NOTE*: Use case for this parameter is unknown.</param>
+        /// TODO: Replace with LeaguePackets and preferably move all uses of this function to a central EventHandler class (if one is fully implemented).
+        public void NotifyOnReplication(IAttackableUnit u, int userId = 0, bool partial = true)
+        {
+            if (u.Replication != null)
+            {
+                var us = new OnReplication(){
+                    SyncID = (uint)Environment.TickCount,
+                    // TODO: Support multi-unit replication creation (perhaps via a separate function which takes in a list of units).
+                    ReplicationData = new List<ReplicationData>(1){
+                        u.Replication.GetData(partial)
+                    }
+                };
+                var channel = Channel.CHL_LOW_PRIORITY;
+                if(userId == 0)
+                {
+                    _packetHandlerManager.BroadcastPacketVision(u, us.GetBytes(), channel, PacketFlags.Unsequenced);
+                }
+                else
+                {
+                    _packetHandlerManager.SendPacket(userId, us.GetBytes(), channel, PacketFlags.Unsequenced);
+                }
+            }
+        }
+
+        /// <summary>
         /// Sends a packet to all players detailing that the game has paused.
         /// </summary>
         /// <param name="seconds">Amount of time till the pause ends.</param>
@@ -3835,29 +3864,6 @@ namespace PacketDefinitions420
             };
             _packetHandlerManager.BroadcastPacket(packet.GetBytes(), Channel.CHL_S2C);
         }
-        /// <summary>
-        /// Sends a packet to all players with vision of the specified unit detailing that the specified unit's stats have been updated.
-        /// </summary>
-        /// <param name="u">Unit who's stats have been updated.</param>
-        /// <param name="userId">UserId to send the packet to. If not specified or zero, the packet is broadcasted to all players that have vision of the specified unit.</param>
-        /// <param name="partial">Whether or not the packet should be counted as a partial update (whether the stats have actually changed or not). *NOTE*: Use case for this parameter is unknown.</param>
-        /// TODO: Replace with LeaguePackets and preferably move all uses of this function to a central EventHandler class (if one is fully implemented).
-        public void NotifyUpdatedStats(IAttackableUnit u, int userId = 0, bool partial = true)
-        {
-            if (u.Replication != null)
-            {
-                var us = new UpdateStats(u.Replication, partial);
-                var channel = Channel.CHL_LOW_PRIORITY;
-                if (userId == 0)
-                {
-                    _packetHandlerManager.BroadcastPacketVision(u, us, channel, PacketFlags.Unsequenced);
-                }
-                else
-                {
-                    _packetHandlerManager.SendPacket(userId, us, channel, PacketFlags.Unsequenced);
-                }
-            }
-        }
 
         /// <summary>
         /// Sends a packet to the player attempting to use an item that the item was used successfully.
@@ -3916,7 +3922,12 @@ namespace PacketDefinitions420
                 }
                 var healthbarPacket = ConstructEnterLocalVisibilityClientPacket(obj);
                 //TODO: try to include it to packets too?
-                var us = new UpdateStats(u.Replication, false);
+                var us = new OnReplication(){
+                    SyncID = (uint)Environment.TickCount,
+                    ReplicationData = new List<ReplicationData>(1){
+                        u.Replication.GetData(false)
+                    }
+                };
 
                 if (userId == 0)
                 {

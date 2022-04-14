@@ -460,6 +460,14 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="critSlot">Optional spell slot to cast when a crit is going to occur.</param>
         void NotifyNPC_SetAutocast(int userId, IObjAiBase caster, ISpell spell, byte critSlot = 0);
         /// <summary>
+        /// Sends a packet to all players with vision of the specified unit detailing that the specified unit's stats have been updated.
+        /// </summary>
+        /// <param name="u">Unit who's stats have been updated.</param>
+        /// <param name="userId">UserId to send the packet to. If not specified or zero, the packet is broadcasted to all players that have vision of the specified unit.</param>
+        /// <param name="partial">Whether or not the packet should be counted as a partial update (whether the stats have actually changed or not). *NOTE*: Use case for this parameter is unknown.</param>
+        /// TODO: Replace with LeaguePackets and preferably move all uses of this function to a central EventHandler class (if one is fully implemented).
+        void NotifyOnReplication(IAttackableUnit u, int userId = 0, bool partial = true);
+        /// <summary>
         /// Sends a packet to all players detailing that the game has paused.
         /// </summary>
         /// <param name="seconds">Amount of time till the pause ends.</param>
@@ -908,14 +916,6 @@ namespace GameServerCore.Packets.Interfaces
         /// TODO: Verify the functionality of this packet (and its parameters) and create an enum for the mode.
         void NotifyUnitSetDrawPathMode(int userId, IAttackableUnit unit, IGameObject target, DrawPathMode mode);
         void NotifyUpdateLevelPropS2C(UpdateLevelPropData propData);
-        /// <summary>
-        /// Sends a packet to all players with vision of the specified unit detailing that the specified unit's stats have been updated.
-        /// </summary>
-        /// <param name="u">Unit who's stats have been updated.</param>
-        /// <param name="userId">UserId to send the packet to. If not specified or zero, the packet is broadcasted to all players that have vision of the specified unit.</param>
-        /// <param name="partial">Whether or not the packet should be counted as a partial update (whether the stats have actually changed or not). *NOTE*: Use case for this parameter is unknown.</param>
-        /// TODO: Replace with LeaguePackets and preferably move all uses of this function to a central EventHandler class (if one is fully implemented).
-        void NotifyUpdatedStats(IAttackableUnit u, int userId = 0, bool partial = true);
         /// <summary>
         /// Sends a packet to the player attempting to use an item that the item was used successfully.
         /// </summary>

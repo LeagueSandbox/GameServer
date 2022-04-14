@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
+using LeaguePackets.Game.Common;
 
 namespace LeagueSandbox.GameServer.GameObjects.Stats
 {
@@ -83,5 +85,56 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
         }
 
         public abstract void Update();
+
+        public ReplicationData GetData(bool partial = true)
+        {
+            var data = new ReplicationData(){
+                UnitNetID = Owner.NetId
+            };
+
+            for (byte primaryId = 0; primaryId < 6; primaryId++)
+            {
+                uint secondaryIdArray = 0;
+                List<byte> bytes = new List<byte>(8);
+                for (byte secondaryId = 0; secondaryId < 32; secondaryId++)
+                {
+                    var rep = Values[primaryId, secondaryId];
+                    if (rep != null && (!partial || rep.Changed))
+                    {
+                        secondaryIdArray |= 1u << secondaryId;
+
+                        if (rep.IsFloat)
+                        {
+                            var source = BitConverter.GetBytes(rep.Value);
+
+                            if (source[0] >= 0xFE)
+                            {
+                                bytes.Add((byte)0xFE);
+                            }
+
+                            bytes.AddRange(source);
+                        }
+                        else
+                        {
+                            var num = rep.Value;
+                            while (num >= 0x80)
+                            {
+                                bytes.Add((byte)(num | 0x80));
+                                num >>= 7;
+                            }
+
+                            bytes.Add((byte)num);
+                        }
+                    }
+                }
+
+                if(bytes.Count > 0)
+                {
+                    data.Data[primaryId] = new Tuple<uint, byte[]>(secondaryIdArray, bytes.ToArray());
+                }
+            }
+
+            return data;
+        }
     }
 }
