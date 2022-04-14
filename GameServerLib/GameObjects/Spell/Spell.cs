@@ -21,7 +21,6 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
     {
         // Crucial Vars.
         private readonly Game _game;
-        private readonly CSharpScriptEngine _scriptEngine;
         private readonly NetworkIdManager _networkIdManager;
         private float _overrrideCastRange;
         private AttackType _attackType;
@@ -78,7 +77,6 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
         public Spell(Game game, IObjAiBase owner, string spellName, byte slot)
         {
             _game = game;
-            _scriptEngine = game.ScriptEngine;
             _networkIdManager = game.NetworkIdManager;
             CastInfo.MissileNetID = _networkIdManager.GetNewNetId();
             _overrrideCastRange = 0;
@@ -124,7 +122,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
             {
                 nameSpace = "ItemSpells";
             }
-            Script = _scriptEngine.CreateObject<ISpellScript>(nameSpace, SpellName) ?? new SpellScriptEmpty();
+            Script = CSharpScriptEngine.CreateObjectStatic<ISpellScript>(nameSpace, SpellName) ?? new SpellScriptEmpty();
 
             if (Script.ScriptMetadata.TriggersSpellCasts)
             {
@@ -1010,64 +1008,64 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
             switch (parameters.Type)
             {
                 case MissileType.Target:
-                {
-                    p = new SpellMissile(
-                        _game,
-                        (int)SpellData.LineWidth,
-                        this,
-                        CastInfo,
-                        SpellData.MissileSpeed,
-                        SpellData.Flags,
-                        netId,
-                        isServerOnly
-                    );
-                    break;
-                }
+                    {
+                        p = new SpellMissile(
+                            _game,
+                            (int)SpellData.LineWidth,
+                            this,
+                            CastInfo,
+                            SpellData.MissileSpeed,
+                            SpellData.Flags,
+                            netId,
+                            isServerOnly
+                        );
+                        break;
+                    }
                 case MissileType.Chained:
-                {
-                    p = new SpellChainMissile(
-                        _game,
-                        (int)SpellData.LineWidth,
-                        this,
-                        CastInfo,
-                        parameters,
-                        SpellData.MissileSpeed,
-                        SpellData.Flags,
-                        netId,
-                        isServerOnly
-                    );
-                    break;
-                }
+                    {
+                        p = new SpellChainMissile(
+                            _game,
+                            (int)SpellData.LineWidth,
+                            this,
+                            CastInfo,
+                            parameters,
+                            SpellData.MissileSpeed,
+                            SpellData.Flags,
+                            netId,
+                            isServerOnly
+                        );
+                        break;
+                    }
                 case MissileType.Circle:
-                {
-                    p = new SpellCircleMissile(
-                        _game,
-                        (int)SpellData.LineWidth,
-                        this,
-                        CastInfo,
-                        SpellData.MissileSpeed,
-                        parameters.OverrideEndPosition,
-                        SpellData.Flags,
-                        netId,
-                        isServerOnly
-                    );
-                    break;
-                }
+                    {
+                        p = new SpellCircleMissile(
+                            _game,
+                            (int)SpellData.LineWidth,
+                            this,
+                            CastInfo,
+                            SpellData.MissileSpeed,
+                            parameters.OverrideEndPosition,
+                            SpellData.Flags,
+                            netId,
+                            isServerOnly
+                        );
+                        break;
+                    }
                 case MissileType.Arc:
-                {
-                    p = new SpellLineMissile(
-                        _game,
-                        (int)SpellData.LineWidth,
-                        this,
-                        CastInfo,
-                        SpellData.MissileSpeed,
-                        parameters.OverrideEndPosition,
-                        SpellData.Flags,
-                        netId,
-                        isServerOnly
-                    );
-                    break;
-                }
+                    {
+                        p = new SpellLineMissile(
+                            _game,
+                            (int)SpellData.LineWidth,
+                            this,
+                            CastInfo,
+                            SpellData.MissileSpeed,
+                            parameters.OverrideEndPosition,
+                            SpellData.Flags,
+                            netId,
+                            isServerOnly
+                        );
+                        break;
+                    }
             }
 
             // If the position is the same as the destination, the server will have destroyed the missile before notifying of creation, causing the client to crash.
@@ -1120,43 +1118,43 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
             switch (parameters.Type)
             {
                 case SectorType.Area:
-                {
-                    s = new SpellSector(
-                        _game,
-                        parameters,
-                        this,
-                        CastInfo,
-                        netId
-                    );
-                    break;
-                }
+                    {
+                        s = new SpellSector(
+                            _game,
+                            parameters,
+                            this,
+                            CastInfo,
+                            netId
+                        );
+                        break;
+                    }
                 case SectorType.Cone:
-                {
-                    s = new SpellSectorCone(
-                        _game,
-                        parameters,
-                        this,
-                        CastInfo,
-                        netId
-                    );
-                    break;
-                }
+                    {
+                        s = new SpellSectorCone(
+                            _game,
+                            parameters,
+                            this,
+                            CastInfo,
+                            netId
+                        );
+                        break;
+                    }
                 case SectorType.Polygon:
-                {
-                    s = new SpellSectorPolygon(
-                        _game,
-                        parameters,
-                        this,
-                        CastInfo,
-                        netId
-                    );
-                    break;
-                }
+                    {
+                        s = new SpellSectorPolygon(
+                            _game,
+                            parameters,
+                            this,
+                            CastInfo,
+                            netId
+                        );
+                        break;
+                    }
                 case SectorType.Ring:
-                {
-                    // TODO
-                    break;
-                }
+                    {
+                        // TODO
+                        break;
+                    }
             }
 
             _game.ObjectManager.AddObject(s);
@@ -1416,56 +1414,56 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
             switch (State)
             {
                 case SpellState.STATE_READY:
-                {
-                    break;
-                }
-                case SpellState.STATE_CASTING:
-                {
-                    if (CastCancelCheck())
                     {
                         break;
                     }
-                    if (!CastInfo.IsAutoAttack && !CastInfo.UseAttackCastTime)
+                case SpellState.STATE_CASTING:
                     {
-                        CurrentCastTime -= diff / 1000.0f;
-                        if (CurrentCastTime <= 0)
+                        if (CastCancelCheck())
                         {
-                            FinishCasting();
-                            if (SpellData.ChannelDuration[CastInfo.SpellLevel] > 0 || Script.ScriptMetadata.ChannelDuration > 0)
+                            break;
+                        }
+                        if (!CastInfo.IsAutoAttack && !CastInfo.UseAttackCastTime)
+                        {
+                            CurrentCastTime -= diff / 1000.0f;
+                            if (CurrentCastTime <= 0)
                             {
-                                Channel();
+                                FinishCasting();
+                                if (SpellData.ChannelDuration[CastInfo.SpellLevel] > 0 || Script.ScriptMetadata.ChannelDuration > 0)
+                                {
+                                    Channel();
+                                }
                             }
                         }
-                    }
-                    else
-                    {
-                        CurrentDelayTime += diff / 1000.0f;
-                        if (CurrentDelayTime >= CastInfo.DesignerCastTime / CastInfo.AttackSpeedModifier)
+                        else
                         {
-                            FinishCasting();
+                            CurrentDelayTime += diff / 1000.0f;
+                            if (CurrentDelayTime >= CastInfo.DesignerCastTime / CastInfo.AttackSpeedModifier)
+                            {
+                                FinishCasting();
+                            }
                         }
+                        break;
                     }
-                    break;
-                }
                 case SpellState.STATE_COOLDOWN:
-                {
-                    CurrentCooldown -= diff / 1000.0f;
-                    if (CurrentCooldown < 0)
                     {
-                        State = SpellState.STATE_READY;
+                        CurrentCooldown -= diff / 1000.0f;
+                        if (CurrentCooldown < 0)
+                        {
+                            State = SpellState.STATE_READY;
+                        }
+                        break;
                     }
-                    break;
-                }
                 case SpellState.STATE_CHANNELING:
-                {
-                    CurrentChannelDuration -= diff / 1000.0f;
-                    ChannelCancelCheck();
-                    if (CurrentChannelDuration <= 0)
                     {
-                        FinishChanneling();
+                        CurrentChannelDuration -= diff / 1000.0f;
+                        ChannelCancelCheck();
+                        if (CurrentChannelDuration <= 0)
+                        {
+                            FinishChanneling();
+                        }
+                        break;
                     }
-                    break;
-                }
             }
         }
     }

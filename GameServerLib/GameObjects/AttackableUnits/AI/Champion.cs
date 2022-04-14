@@ -53,7 +53,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             _playerTeamSpecialId = playerTeamSpecialId;
             RuneList = runeList;
 
-            Inventory = InventoryManager.CreateInventory(game.PacketNotifier, game.ScriptEngine);
+            Inventory = InventoryManager.CreateInventory(game.PacketNotifier);
             Shop = Items.Shop.CreateShop(this, game);
 
             Stats.Gold = _game.Map.MapScript.MapScriptMetadata.StartingGold;
@@ -199,7 +199,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             {
                 goldTimer -= diff;
 
-                if(goldTimer <= 0)
+                if (goldTimer <= 0)
                 {
                     Stats.Gold += Stats.GoldPerGoldTick.Total;
                     goldTimer = _game.Map.MapScript.MapScriptMetadata.GoldTickSpeed;

@@ -17,7 +17,6 @@ namespace LeagueSandbox.GameServer.GameObjects
     {
         // Crucial Vars.
         private readonly Game _game;
-        private readonly CSharpScriptEngine _scriptEngine;
 
         // Function Vars.
         private readonly bool _infiniteDuration;
@@ -56,7 +55,6 @@ namespace LeagueSandbox.GameServer.GameObjects
             _infiniteDuration = infiniteDuration;
             _game = game;
             _remove = false;
-            _scriptEngine = game.ScriptEngine;
             Name = buffName;
 
             LoadScript();
@@ -101,7 +99,7 @@ namespace LeagueSandbox.GameServer.GameObjects
         public void LoadScript()
         {
             ApiEventManager.RemoveAllListenersForOwner(BuffScript);
-            BuffScript = _scriptEngine.CreateObject<IBuffGameScript>("Buffs", Name) ?? new BuffScriptEmpty();
+            BuffScript = CSharpScriptEngine.CreateObjectStatic<IBuffGameScript>("Buffs", Name) ?? new BuffScriptEmpty();
         }
 
         public void ActivateBuff()
