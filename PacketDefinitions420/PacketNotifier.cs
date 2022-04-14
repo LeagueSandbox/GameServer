@@ -2163,6 +2163,7 @@ namespace PacketDefinitions420
             {
                 var us = new OnReplication(){
                     SyncID = (uint)Environment.TickCount,
+                    // TODO: Support multi-unit replication creation (perhaps via a separate function which takes in a list of units).
                     ReplicationData = new List<ReplicationData>(1){
                         u.Replication.GetData(partial)
                     }
