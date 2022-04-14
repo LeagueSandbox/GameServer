@@ -178,10 +178,10 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             Position = vec;
             _movementUpdated = true;
 
-            if(!IsPathEnded())
+            if (!IsPathEnded())
             {
                 // Reevaluate our current path to account for the starting position being changed.
-                if(repath)
+                if (repath)
                 {
                     List<Vector2> safePath = _game.Map.PathingHandler.GetPath(Position, _game.Map.NavigationGrid.GetClosestTerrainExit(Waypoints.Last(), PathfindingRadius));
 
@@ -382,29 +382,29 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             switch (type)
             {
                 case DamageType.DAMAGE_TYPE_PHYSICAL:
-                {
-                    if (Status.HasFlag(StatusFlags.PhysicalImmune))
                     {
-                        return false;
+                        if (Status.HasFlag(StatusFlags.PhysicalImmune))
+                        {
+                            return false;
+                        }
+                        break;
                     }
-                    break;
-                }
                 case DamageType.DAMAGE_TYPE_MAGICAL:
-                {
-                    if (Status.HasFlag(StatusFlags.MagicImmune))
                     {
-                        return false;
+                        if (Status.HasFlag(StatusFlags.MagicImmune))
+                        {
+                            return false;
+                        }
+                        break;
                     }
-                    break;
-                }
                 case DamageType.DAMAGE_TYPE_MIXED:
-                {
-                    if (Status.HasFlag(StatusFlags.MagicImmune) || Status.HasFlag(StatusFlags.PhysicalImmune))
                     {
-                        return false;
+                        if (Status.HasFlag(StatusFlags.MagicImmune) || Status.HasFlag(StatusFlags.PhysicalImmune))
+                        {
+                            return false;
+                        }
+                        break;
                     }
-                    break;
-                }
             }
 
             return true;
@@ -717,7 +717,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             ApiEventManager.OnDeath.Publish(data);
             if (data.Unit is IObjAiBase obj)
             {
-                if(!(obj is IMonster))
+                if (!(obj is IMonster))
                 {
                     var champs = _game.ObjectManager.GetChampionsInRangeFromTeam(Position, _game.Map.MapScript.MapScriptMetadata.ExpRange, Team, true);
                     if (champs.Count > 0)
@@ -803,96 +803,100 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                     {
                         // CallForHelpSuppressor
                         case StatusFlags.CanAttack:
-                        {
-                            Stats.SetActionState(ActionState.CAN_ATTACK, enabled);
-                            break;
-                        }
+                            {
+                                Stats.SetActionState(ActionState.CAN_ATTACK, enabled);
+                                break;
+                            }
                         case StatusFlags.CanCast:
-                        {
-                            Stats.SetActionState(ActionState.CAN_CAST, enabled);
-                            break;
-                        }
+                            {
+                                Stats.SetActionState(ActionState.CAN_CAST, enabled);
+                                break;
+                            }
                         case StatusFlags.CanMove:
-                        {
-                            Stats.SetActionState(ActionState.CAN_MOVE, enabled);
-                            break;
-                        }
+                            {
+                                Stats.SetActionState(ActionState.CAN_MOVE, enabled);
+                                break;
+                            }
                         case StatusFlags.CanMoveEver:
-                        {
-                            Stats.SetActionState(ActionState.CAN_NOT_MOVE, !enabled);
-                            break;
-                        }
+                            {
+                                Stats.SetActionState(ActionState.CAN_NOT_MOVE, !enabled);
+                                break;
+                            }
                         case StatusFlags.Charmed:
-                        {
-                            Stats.SetActionState(ActionState.CHARMED, enabled);
-                            break;
-                        }
+                            {
+                                Stats.SetActionState(ActionState.CHARMED, enabled);
+                                break;
+                            }
                         // DisableAmbientGold
                         case StatusFlags.Feared:
-                        {
-                            Stats.SetActionState(ActionState.FEARED, enabled);
-                            // TODO: Verify
-                            Stats.SetActionState(ActionState.IS_FLEEING, enabled);
-                            break;
-                        }
+                            {
+                                Stats.SetActionState(ActionState.FEARED, enabled);
+                                // TODO: Verify
+                                Stats.SetActionState(ActionState.IS_FLEEING, enabled);
+                                break;
+                            }
                         case StatusFlags.ForceRenderParticles:
-                        {
-                            Stats.SetActionState(ActionState.FORCE_RENDER_PARTICLES, enabled);
-                            break;
-                        }
+                            {
+                                Stats.SetActionState(ActionState.FORCE_RENDER_PARTICLES, enabled);
+                                break;
+                            }
                         // GhostProof
                         case StatusFlags.Ghosted:
-                        {
-                            Stats.SetActionState(ActionState.IS_GHOSTED, enabled);
-                            break;
-                        }
+                            {
+                                Stats.SetActionState(ActionState.IS_GHOSTED, enabled);
+                                break;
+                            }
                         // IgnoreCallForHelp
                         // Immovable
                         // Invulnerable
                         // MagicImmune
                         case StatusFlags.NearSighted:
-                        {
-                            Stats.SetActionState(ActionState.IS_NEAR_SIGHTED, enabled);
-                            break;
-                        }
+                            {
+                                Stats.SetActionState(ActionState.IS_NEAR_SIGHTED, enabled);
+                                break;
+                            }
                         // Netted
                         case StatusFlags.NoRender:
-                        {
-                            Stats.SetActionState(ActionState.NO_RENDER, enabled);
-                            break;
-                        }
+                            {
+                                Stats.SetActionState(ActionState.NO_RENDER, enabled);
+                                break;
+                            }
                         // PhysicalImmune
                         case StatusFlags.RevealSpecificUnit:
-                        {
-                            Stats.SetActionState(ActionState.REVEAL_SPECIFIC_UNIT, enabled);
-                            break;
-                        }
+                            {
+                                Stats.SetActionState(ActionState.REVEAL_SPECIFIC_UNIT, enabled);
+                                break;
+                            }
                         // Rooted
                         // Silenced
                         case StatusFlags.Sleep:
-                        {
-                            Stats.SetActionState(ActionState.IS_ASLEEP, enabled);
-                            break;
-                        }
+                            {
+                                Stats.SetActionState(ActionState.IS_ASLEEP, enabled);
+                                break;
+                            }
                         case StatusFlags.Stealthed:
-                        {
-                            Stats.SetActionState(ActionState.STEALTHED, enabled);
-                            break;
-                        }
+                            {
+                                Stats.SetActionState(ActionState.STEALTHED, enabled);
+                                break;
+                            }
                         // SuppressCallForHelp
                         case StatusFlags.Targetable:
-                        {
-                            Stats.IsTargetable = enabled;
-                            // TODO: Verify.
-                            //Doesn't seem to be corret
-                            //Stats.SetActionState(ActionState.TARGETABLE, enabled);
-                            break;
-                        }
+                            {
+                                Stats.IsTargetable = enabled;
+                                // TODO: Verify.
+                                //Doesn't seem to be corret
+                                if (this is IObjAiBase obj && !obj.CharData.IsUseable)
+                                {
+                                    Stats.SetActionState(ActionState.TARGETABLE, enabled);
+
+                                }
+                                break;
+                            }
                         case StatusFlags.Taunted:
-                        {
-                            Stats.SetActionState(ActionState.TAUNTED, enabled);
-                            break;
-                        }
+                            {
+                                Stats.SetActionState(ActionState.TAUNTED, enabled);
+                                break;
+                            }
                     }
                 }
             }
@@ -984,8 +988,8 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         public void TeleportTo(Vector2 position, bool repath = false)
         {
             position = _game.Map.NavigationGrid.GetClosestTerrainExit(position, PathfindingRadius + 1.0f);
-            
-            if(repath)
+
+            if (repath)
             {
                 SetPosition(position, true);
             }
@@ -1372,7 +1376,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                     }
                     // TODO: Unload and reload all data of buff script here.
                 }
-            }    
+            }
         }
 
         /// <summary>

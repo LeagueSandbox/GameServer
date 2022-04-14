@@ -1080,7 +1080,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                     CancelAutoAttack(!HasAutoAttacked, true);
                 }
             }
-            else if (TargetUnit.IsDead || (TargetUnit.Status.HasFlag(StatusFlags.Targetable) && !TargetUnit.Stats.ActionState.HasFlag(ActionState.TARGETABLE)) || !TargetUnit.IsVisibleByTeam(Team))
+            else if (TargetUnit.IsDead || (TargetUnit.Status.HasFlag(StatusFlags.Targetable) && !CharData.IsUseable)  || !TargetUnit.IsVisibleByTeam(Team))
             {
                 if (IsAttacking)
                 {
