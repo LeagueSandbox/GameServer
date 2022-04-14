@@ -203,7 +203,6 @@ namespace LeagueSandbox.GameServer
                 obj.SetVisibleForPlayer(pid, shouldBeVisibleForPlayer);
                 obj.SetSpawnedForPlayer(pid);
 
-                // TODO: Centralize this, should only be done once at start of game.
                 if (obj is ILaneTurret turret)
                 {
                     foreach (var item in turret.Inventory)
@@ -223,7 +222,7 @@ namespace LeagueSandbox.GameServer
             {
                 if(u.Replication.Changed)
                 {
-                    _game.PacketNotifier.NotifyUpdatedStats(u, userId, true);
+                    _game.PacketNotifier.NotifyOnReplication(u, userId, true);
                 }
 
                 if (u.IsModelUpdated)
