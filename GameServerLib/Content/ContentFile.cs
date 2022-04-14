@@ -77,7 +77,7 @@ namespace LeagueSandbox.GameServer.Content
             return GetInt(section, name, defaultValue ? 1 : 0) != 0;
         }
 
-        public float[] GetFloatArray(string section, string name, float[] defaultValue )
+        public float[] GetFloatArray(string section, string name, float[] defaultValue)
         {
             var obj = GetObject(section, name);
             if (obj != null)
@@ -85,7 +85,7 @@ namespace LeagueSandbox.GameServer.Content
                 var list = obj.Split(' ');
                 if (defaultValue.Length == list.Length)
                 {
-                    for (var i = 0; i<defaultValue.Length; i++)
+                    for (var i = 0; i < defaultValue.Length; i++)
                     {
                         float.TryParse(list[i], NumberStyles.Any, CultureInfo.InvariantCulture, out defaultValue[i]);
                     }
@@ -116,7 +116,7 @@ namespace LeagueSandbox.GameServer.Content
 
         public float[] GetMultiFloat(string section, string name, int num = 6, float defaultValue = 0)
         {
-            var result = new float[num+1];
+            var result = new float[num + 1];
             result[0] = GetFloat(section, name, defaultValue);
             for (var i = 1; i < num + 1; i++)
             {
