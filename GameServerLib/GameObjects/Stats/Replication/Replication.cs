@@ -125,9 +125,12 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
 
                             bytes.Add((byte)num);
                         }
-
-                        data.Data[primaryId] = new Tuple<uint, byte[]>(secondaryIdArray, bytes.ToArray());
                     }
+                }
+
+                if(bytes.Count > 0)
+                {
+                    data.Data[primaryId] = new Tuple<uint, byte[]>(secondaryIdArray, bytes.ToArray());
                 }
             }
 
