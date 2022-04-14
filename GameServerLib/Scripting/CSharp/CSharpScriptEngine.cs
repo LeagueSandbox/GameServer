@@ -174,12 +174,13 @@ namespace LeagueSandbox.GameServer.Scripting.CSharp
             scriptClass = scriptClass.Replace(" ", "_");
             string fullClassName = scriptNamespace + "." + scriptClass;
 
-            if (assembly.GetTypes().Any(t => t.FullName == fullClassName))
+            var type = assembly.GetType(fullClassName, throwOnError: false);
+            if (type != null)
             {
-                var type = assembly.GetType(fullClassName);
                 return (T)Activator.CreateInstance(type);
             }
 
+            LoggerProvider.GetLogger().Warn($"Could not find script: {scriptNamespace}.{scriptClass}");
             return default;
         }
 
