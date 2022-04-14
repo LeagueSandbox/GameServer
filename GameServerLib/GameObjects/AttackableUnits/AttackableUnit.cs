@@ -382,29 +382,29 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             switch (type)
             {
                 case DamageType.DAMAGE_TYPE_PHYSICAL:
+                {
+                    if (Status.HasFlag(StatusFlags.PhysicalImmune))
                     {
-                        if (Status.HasFlag(StatusFlags.PhysicalImmune))
-                        {
-                            return false;
-                        }
-                        break;
+                        return false;
                     }
+                    break;
+                }
                 case DamageType.DAMAGE_TYPE_MAGICAL:
+                {
+                    if (Status.HasFlag(StatusFlags.MagicImmune))
                     {
-                        if (Status.HasFlag(StatusFlags.MagicImmune))
-                        {
-                            return false;
-                        }
-                        break;
+                        return false;
                     }
+                    break;
+                }
                 case DamageType.DAMAGE_TYPE_MIXED:
+                {
+                    if (Status.HasFlag(StatusFlags.MagicImmune) || Status.HasFlag(StatusFlags.PhysicalImmune))
                     {
-                        if (Status.HasFlag(StatusFlags.MagicImmune) || Status.HasFlag(StatusFlags.PhysicalImmune))
-                        {
-                            return false;
-                        }
-                        break;
+                        return false;
                     }
+                    break;
+                }
             }
 
             return true;
@@ -803,100 +803,98 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                     {
                         // CallForHelpSuppressor
                         case StatusFlags.CanAttack:
-                            {
-                                Stats.SetActionState(ActionState.CAN_ATTACK, enabled);
-                                break;
-                            }
+                        {
+                            Stats.SetActionState(ActionState.CAN_ATTACK, enabled);
+                            break;
+                        }
                         case StatusFlags.CanCast:
-                            {
-                                Stats.SetActionState(ActionState.CAN_CAST, enabled);
-                                break;
-                            }
+                        {
+                            Stats.SetActionState(ActionState.CAN_CAST, enabled);
+                            break;
+                        }
                         case StatusFlags.CanMove:
-                            {
-                                Stats.SetActionState(ActionState.CAN_MOVE, enabled);
-                                break;
-                            }
+                        {
+                            Stats.SetActionState(ActionState.CAN_MOVE, enabled);
+                            break;
+                        }
                         case StatusFlags.CanMoveEver:
-                            {
-                                Stats.SetActionState(ActionState.CAN_NOT_MOVE, !enabled);
-                                break;
-                            }
+                        {
+                            Stats.SetActionState(ActionState.CAN_NOT_MOVE, !enabled);
+                            break;
+                        }
                         case StatusFlags.Charmed:
-                            {
-                                Stats.SetActionState(ActionState.CHARMED, enabled);
-                                break;
-                            }
+                        {
+                            Stats.SetActionState(ActionState.CHARMED, enabled);
+                            break;
+                        }
                         // DisableAmbientGold
                         case StatusFlags.Feared:
-                            {
-                                Stats.SetActionState(ActionState.FEARED, enabled);
-                                // TODO: Verify
-                                Stats.SetActionState(ActionState.IS_FLEEING, enabled);
-                                break;
-                            }
+                        {
+                            Stats.SetActionState(ActionState.FEARED, enabled);
+                            // TODO: Verify
+                            Stats.SetActionState(ActionState.IS_FLEEING, enabled);
+                            break;
+                        }
                         case StatusFlags.ForceRenderParticles:
-                            {
-                                Stats.SetActionState(ActionState.FORCE_RENDER_PARTICLES, enabled);
-                                break;
-                            }
+                        {
+                            Stats.SetActionState(ActionState.FORCE_RENDER_PARTICLES, enabled);
+                            break;
+                        }
                         // GhostProof
                         case StatusFlags.Ghosted:
-                            {
-                                Stats.SetActionState(ActionState.IS_GHOSTED, enabled);
-                                break;
-                            }
+                        {
+                            Stats.SetActionState(ActionState.IS_GHOSTED, enabled);
+                            break;
+                        }
                         // IgnoreCallForHelp
                         // Immovable
                         // Invulnerable
                         // MagicImmune
                         case StatusFlags.NearSighted:
-                            {
-                                Stats.SetActionState(ActionState.IS_NEAR_SIGHTED, enabled);
-                                break;
-                            }
+                        {
+                            Stats.SetActionState(ActionState.IS_NEAR_SIGHTED, enabled);
+                            break;
+                        }
                         // Netted
                         case StatusFlags.NoRender:
-                            {
-                                Stats.SetActionState(ActionState.NO_RENDER, enabled);
-                                break;
-                            }
+                        {
+                            Stats.SetActionState(ActionState.NO_RENDER, enabled);
+                            break;
+                        }
                         // PhysicalImmune
                         case StatusFlags.RevealSpecificUnit:
-                            {
-                                Stats.SetActionState(ActionState.REVEAL_SPECIFIC_UNIT, enabled);
-                                break;
-                            }
+                        {
+                            Stats.SetActionState(ActionState.REVEAL_SPECIFIC_UNIT, enabled);
+                            break;
+                        }
                         // Rooted
                         // Silenced
                         case StatusFlags.Sleep:
-                            {
-                                Stats.SetActionState(ActionState.IS_ASLEEP, enabled);
-                                break;
-                            }
+                        {
+                            Stats.SetActionState(ActionState.IS_ASLEEP, enabled);
+                            break;
+                        }
                         case StatusFlags.Stealthed:
-                            {
-                                Stats.SetActionState(ActionState.STEALTHED, enabled);
-                                break;
-                            }
+                        {
+                            Stats.SetActionState(ActionState.STEALTHED, enabled);
+                            break;
+                        }
                         // SuppressCallForHelp
                         case StatusFlags.Targetable:
+                        {
+                            Stats.IsTargetable = enabled;
+                            // TODO: Refactor this.
+                            if (this is IObjAiBase obj && !obj.CharData.IsUseable)
                             {
-                                Stats.IsTargetable = enabled;
-                                // TODO: Verify.
-                                //Doesn't seem to be corret
-                                if (this is IObjAiBase obj && !obj.CharData.IsUseable)
-                                {
-                                    Stats.SetActionState(ActionState.TARGETABLE, enabled);
-
-                                }
-                                break;
+                                Stats.SetActionState(ActionState.TARGETABLE, enabled);
                             }
+                            break;
+                        }
                         case StatusFlags.Taunted:
-                            {
-                                Stats.SetActionState(ActionState.TAUNTED, enabled);
-                                break;
-                            }
+                        {
+                            Stats.SetActionState(ActionState.TAUNTED, enabled);
+                            break;
+                        }
                     }
                 }
             }
