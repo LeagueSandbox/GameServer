@@ -1,12 +1,10 @@
 using System;
-using GameServerCore.Domain;
 using GameServerCore.Packets.Interfaces;
 using LeagueSandbox.GameServer;
 using LeagueSandbox.GameServer.Content;
-using LeagueSandbox.GameServer.Items;
+using LeagueSandbox.GameServer.Inventory;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using PacketDefinitions420;
 
 namespace LeagueSandbox.GameServerTests.Tests.Items
 {

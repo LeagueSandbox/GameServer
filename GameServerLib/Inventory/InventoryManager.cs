@@ -8,7 +8,7 @@ using GameServerCore.Domain.GameObjects;
 using GameServerCore.Packets.Interfaces;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 
-namespace LeagueSandbox.GameServer.Items
+namespace LeagueSandbox.GameServer.Inventory
 {
     public class InventoryManager : IInventoryManager
     {

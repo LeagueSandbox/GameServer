@@ -7,7 +7,7 @@ using GameServerCore.Domain.GameObjects.Spell;
 using GameServerCore.NetInfo;
 using GameServerCore.Enums;
 using LeagueSandbox.GameServer.GameObjects.Stats;
-using LeagueSandbox.GameServer.Items;
+using LeagueSandbox.GameServer.Inventory;
 using LeagueSandbox.GameServer.API;
 using LeaguePackets.Game.Events;
 using System;
@@ -35,6 +35,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         public int KillSpree { get; set; } = 0;
         public float GoldFromMinions { get; set; }
         public IRuneCollection RuneList { get; }
+        public ITalentInventory TalentInventory { get; set; }
         public IChampionStats ChampStats { get; private set; } = new ChampionStats();
 
         public byte SkillPoints { get; set; }
@@ -44,6 +45,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                         uint playerId,
                         uint playerTeamSpecialId,
                         IRuneCollection runeList,
+                        ITalentInventory talentInventory,
                         ClientInfo clientInfo,
                         uint netId = 0,
                         TeamId team = TeamId.TEAM_BLUE)
@@ -54,7 +56,8 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             RuneList = runeList;
 
             Inventory = InventoryManager.CreateInventory(game.PacketNotifier);
-            Shop = Items.Shop.CreateShop(this, game);
+            TalentInventory = talentInventory;
+            Shop = GameServer.Inventory.Shop.CreateShop(this, game);
 
             Stats.Gold = _game.Map.MapScript.MapScriptMetadata.StartingGold;
             Stats.GoldPerGoldTick.BaseValue = _game.Map.MapScript.MapScriptMetadata.BaseGoldPerGoldTick;
@@ -97,8 +100,9 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
         public override void OnAdded()
         {
-            base.OnAdded();
             _game.ObjectManager.AddChampion(this);
+            base.OnAdded();
+            TalentInventory.Initialize(this);
         }
 
         public override void OnRemoved()

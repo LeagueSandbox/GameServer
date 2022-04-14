@@ -9,7 +9,7 @@ using LeagueSandbox.GameServer.Packets;
 using LeagueSandbox.GameServer.Players;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using log4net;
-using LeagueSandbox.GameServer.Items;
+using LeagueSandbox.GameServer.Inventory;
 using PacketDefinitions420;
 using System;
 using System.Collections.Generic;

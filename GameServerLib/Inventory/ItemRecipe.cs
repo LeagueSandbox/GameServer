@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using GameServerCore.Domain;
 
-namespace LeagueSandbox.GameServer.Items
+namespace LeagueSandbox.GameServer.Inventory
 {
     public class ItemRecipe: IItemRecipe
     {

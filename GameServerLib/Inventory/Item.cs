@@ -1,7 +1,7 @@
 using GameServerCore.Domain;
 using LeagueSandbox.GameServer.GameObjects.Other;
 
-namespace LeagueSandbox.GameServer.Items
+namespace LeagueSandbox.GameServer.Inventory
 {
     public class Item : Stackable, IItem
     {

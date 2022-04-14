@@ -2,7 +2,7 @@ using GameServerCore.Domain;
 using LeagueSandbox.GameServer.Content;
 using LeagueSandbox.GameServer.GameObjects.Stats;
 
-namespace LeagueSandbox.GameServer.Items
+namespace LeagueSandbox.GameServer.Inventory
 {
     public class ItemData : StatsModifier, IItemData
     {

@@ -7,6 +7,7 @@
         IStatModifier Armor { get; }
         IStatModifier ArmorPenetration { get; }
         IStatModifier AttackDamage { get; }
+        IStatModifier AttackDamagePerLevel { get; }
         IStatModifier AttackSpeed { get; }
         IStatModifier CooldownReduction { get; }
         IStatModifier CriticalChance { get; }
