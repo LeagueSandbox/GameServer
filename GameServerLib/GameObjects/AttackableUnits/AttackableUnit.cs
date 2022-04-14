@@ -883,12 +883,10 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                         case StatusFlags.Targetable:
                         {
                             Stats.IsTargetable = enabled;
-                            // TODO: Verify.
-                            //Doesn't seem to be corret
+                            // TODO: Refactor this.
                             if (this is IObjAiBase obj && !obj.CharData.IsUseable)
                             {
                                 Stats.SetActionState(ActionState.TARGETABLE, enabled);
-
                             }
                             break;
                         }
