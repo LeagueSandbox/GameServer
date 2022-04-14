@@ -458,7 +458,7 @@ namespace LeagueSandbox.GameServer.Content
             }
             catch (DirectoryNotFoundException)
             {
-                _logger.Debug($"Package: {PackageName} does not contain any Mastery, skipping...");
+                _logger.Debug($"Package: {PackageName} does not contain any Talents, skipping...");
             }
         }
 
