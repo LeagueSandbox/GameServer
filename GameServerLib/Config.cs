@@ -9,6 +9,8 @@ using GameServerCore.Enums;
 using LeagueSandbox.GameServer;
 using LeagueSandbox.GameServer.Content;
 using LeagueSandbox.GameServer.Inventory;
+using LeagueSandbox.GameServer.Logging;
+using log4net;
 using Newtonsoft.Json.Linq;
 
 namespace LeagueSandbox.GameServer
@@ -227,7 +229,6 @@ public class GameConfig
     }
 }
 
-
 public class PlayerConfig : IPlayerConfig
 {
     public long PlayerID { get; private set; }
@@ -246,6 +247,8 @@ public class PlayerConfig : IPlayerConfig
 
     public PlayerConfig(JToken playerData, Game game)
     {
+        ILog logger = LoggerProvider.GetLogger();
+
         PlayerID = (long)playerData.SelectToken("playerId");
         Rank = (string)playerData.SelectToken("rank");
         Name = (string)playerData.SelectToken("name");
@@ -258,30 +261,36 @@ public class PlayerConfig : IPlayerConfig
         Icon = (int)playerData.SelectToken("icon");
         BlowfishKey = (string)playerData.SelectToken("blowfishKey");
 
-        try
+        Runes = new RuneCollection();
+        var runes = playerData.SelectToken("runes");
+        if (runes != null)
         {
-            var runes = playerData.SelectToken("runes");
-            Runes = new RuneCollection();
-
             foreach (JProperty runeCategory in runes)
             {
                 Runes.Add(Convert.ToInt32(runeCategory.Name), Convert.ToInt32(runeCategory.Value));
             }
         }
-        catch (Exception)
+        else
         {
-            // no runes set in config
+            logger.Warn($"No runes found for player {PlayerID}!");
         }
 
+        Talents = new TalentInventory();
         var talents = playerData.SelectToken("talents");
-        Talents = new TalentInventory(game);
-
         if (talents != null)
         {
-            foreach (JProperty mastery in talents)
+            foreach (JProperty talent in talents)
             {
-                var level = mastery.Value.Value<byte>();
-                Talents.Add(mastery.Name, level);
+                byte level = 1;
+                try
+                {
+                    level = talent.Value.Value<byte>();
+                }
+                catch
+                {
+                    logger.Warn($"Invalid Talent Rank for Talent {talent.Name}! Please use ranks between 1 and {byte.MaxValue}! Defaulting to Rank 1...");
+                }
+                Talents.Add(talent.Name, level);
             }
         }
     }

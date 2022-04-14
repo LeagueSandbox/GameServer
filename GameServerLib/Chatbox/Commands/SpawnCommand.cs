@@ -148,7 +148,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
             var championPos = _playerManager.GetPeerInfo(userId).Champion.Position;
 
             var runesTemp = new RuneCollection();
-            var talents = new TalentInventory(_game);
+            var talents = new TalentInventory();
             var clientInfoTemp = new ClientInfo("", team, 0, 0, 0, model, new string[] { "SummonerHeal", "SummonerFlash" }, -1);
             uint num = (uint)_playerManager.GetPlayers(true).Count + 1;
             var playerTemp = new Tuple<uint, ClientInfo>(num, clientInfoTemp);

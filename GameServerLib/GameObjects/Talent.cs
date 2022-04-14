@@ -1,5 +1,6 @@
 ﻿using System;
 using GameServerCore.Scripting.CSharp;
+using LeagueSandbox.GameServer.Scripting.CSharp;
 using static LeagueSandbox.GameServer.Content.TalentContentCollection;
 
 namespace LeagueSandbox.GameServer.GameObjects
@@ -10,11 +11,11 @@ namespace LeagueSandbox.GameServer.GameObjects
         public byte Rank { get; }
         public ITalentScript Script { get; }
 
-        public Talent(Game game, string name, byte level)
+        public Talent(string name, byte level)
         {
             Name = name;
             Rank = Math.Min(level, GetTalentMaxRank(name));
-            Script = game.ScriptEngine.CreateObject<ITalentScript>("Talents", $"Talent_{name}") ?? new EmptyTalentScript();
+            Script = CSharpScriptEngine.CreateObjectStatic<ITalentScript>("Talents", $"Talent_{name}") ?? new EmptyTalentScript();
         }
     }
 }
