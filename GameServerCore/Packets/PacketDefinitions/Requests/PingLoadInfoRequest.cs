@@ -2,25 +2,23 @@
 {
     public class PingLoadInfoRequest : ICoreRequest
     {
-        public uint NetId;
-        public int ClientId;
-        public long UserId;
-        public float Loaded;
-        public float Unk2;
-        public short Ping;
-        public short Unk3;
-        public byte Unk4;
+        public int ClientID { get; }
+        public long PlayerID { get; }
+        public float Percentage { get; }
+        public float ETA { get; }
+        public ushort Count { get; }
+        public ushort Ping { get; }
+        public bool Ready { get; }
 
-        public PingLoadInfoRequest(uint netId, int clientId, long userId, float loaded, float unk2, short ping, short unk3, byte unk4)
+        public PingLoadInfoRequest(int clientId, long playerId, float percentage, float eta, ushort count, ushort ping, bool ready)
         {
-            NetId = netId;
-            ClientId = clientId;
-            UserId = userId;
-            Loaded = loaded;
-            Unk2 = unk2;
+            ClientID = clientId;
+            PlayerID = playerId;
+            Percentage = percentage;
+            ETA = eta;
+            Count = count;
             Ping = ping;
-            Unk3 = unk3;
-            Unk4 = unk4;
+            Ready = ready;
         }
     }
 }

@@ -5,7 +5,7 @@ using System.Collections.Generic;
 namespace GameServerCore.Packets.Handlers
 {
     // the global generic network handler between the bridge and the server
-    public class NetworkHandler<MessageType> where MessageType : ICoreMessage
+    public class NetworkHandler<MessageType> where MessageType : ICoreRequest
     {
         public delegate bool MessageHandler<T>(int userId, T msg) where T : MessageType;
         private readonly Dictionary<Type, List<Delegate>> _handlers = new Dictionary<Type, List<Delegate>>();

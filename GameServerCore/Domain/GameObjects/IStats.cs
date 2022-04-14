@@ -33,7 +33,7 @@ namespace GameServerCore.Domain.GameObjects
         IStat CriticalChance { get; }
         IStat CriticalDamage { get; }
         IStat ExpGivenOnDeath { get; }
-        IStat GoldPerSecond { get; }
+        IStat GoldPerGoldTick { get; }
         IStat GoldGivenOnDeath { get; }
         IStat HealthPoints { get; }
         IStat HealthRegeneration { get; }
@@ -51,6 +51,7 @@ namespace GameServerCore.Domain.GameObjects
         float Gold { get; set; }
         byte Level { get; set; }
         float Experience { get; set; }
+        float Points { get; set; }
         float CurrentHealth { get; set; }
         float CurrentMana { get; set; }
         bool IsGeneratingGold { get; set; }

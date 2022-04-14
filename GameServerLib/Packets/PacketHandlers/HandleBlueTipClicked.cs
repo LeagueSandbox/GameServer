@@ -1,6 +1,6 @@
-﻿using GameServerCore;
+﻿using GameServerCore.Packets.PacketDefinitions.Requests;
+using GameServerCore;
 using GameServerCore.Packets.Handlers;
-using GameServerCore.Packets.PacketDefinitions.Requests;
 using LeagueSandbox.GameServer.Chatbox;
 
 namespace LeagueSandbox.GameServer.Packets.PacketHandlers
@@ -22,9 +22,9 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
         {
             // TODO: can we use player net id from request?
             var playerNetId = _playerManager.GetPeerInfo(userId).Champion.NetId;
-             _game.PacketNotifier.NotifyS2C_HandleTipUpdatep(userId, "", "", "", 0, playerNetId, req.NetId);
+            _game.PacketNotifier.NotifyS2C_HandleTipUpdatep(userId, "", "", "", 0, playerNetId, req.TipID);
 
-            var msg = $"Clicked blue tip with netid: {req.NetId}";
+            var msg = $"Clicked blue tip with netid: {req.TipID}";
             _chatCommandManager.SendDebugMsgFormatted(DebugMsgType.NORMAL, msg);
             return true;
         }

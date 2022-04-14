@@ -14,7 +14,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 
         public override bool HandlePacket(int userId, ViewRequest req)
         {
-             _game.PacketNotifier.NotifyWorld_SendCamera_Server_Acknologment(userId, req);
+            _game.PacketNotifier.NotifyWorld_SendCamera_Server_Acknologment(_game.PlayerManager.GetPeerInfo(userId), req);
             return true;
         }
     }

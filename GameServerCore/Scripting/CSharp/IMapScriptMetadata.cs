@@ -6,6 +6,10 @@ namespace GameServerCore.Scripting.CSharp
     public interface IMapScriptMetadata
     {
         /// <summary>
+        /// Ammount of gold all players receive every gold tick (Default: 0.95f)
+        /// </summary>
+        float BaseGoldPerGoldTick { get; }
+        /// <summary>
         /// The base gold value of all champions in the match (Default: 300.0f)
         /// </summary>
         float ChampionBaseGoldValue { get; }
@@ -17,6 +21,10 @@ namespace GameServerCore.Scripting.CSharp
         /// The Minimun gold value a champion can reach in the match (Default: 50.0f)
         /// </summary>
         float ChampionMinGoldValue { get; }
+        /// <summary>
+        /// Used to override the default ExpCurve (Default: string.Empty)
+        /// </summary>
+        string ExpCurveOverride { get; }
         /// <summary>
         /// Max range where you can receive XP when a minion dies (Default: 1400.0f)
         /// </summary>
@@ -38,9 +46,9 @@ namespace GameServerCore.Scripting.CSharp
         /// </summary>
         bool IsKillGoldRewardReductionActive { get; }
         /// <summary>
-        /// Ammount of gold per second for all players (Default: 1.9f)
+        /// How Fast gold should be added for players in milliseconds (Default: 500.0f);
         /// </summary>
-        float GoldPerSecond { get; }
+        float GoldTickSpeed { get;}
         /// <summary>
         /// Functionality still unknown, I thought it was used in ARAM, but it's map script sets it to 0 (Default: 1250.0f)
         /// </summary>
@@ -54,7 +62,11 @@ namespace GameServerCore.Scripting.CSharp
         /// </summary>
         bool MinionSpawnEnabled { get; set; }
         /// <summary>
-        /// Wether or not the map's position is to be overriden
+        /// An override for the navGrid of an specific map, allowing gamemodes with custom navGrids (Ascension) to function
+        /// </summary>
+        string NavGridOverride { get; set; }
+        /// <summary>
+        /// Wether or not the map's position is to be overriden (Default: string.Empty)
         /// </summary>
         bool OverrideSpawnPoints { get; }
         /// <summary>

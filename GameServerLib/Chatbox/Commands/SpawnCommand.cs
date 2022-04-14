@@ -178,7 +178,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
             c.Stats.SetSummonerSpellEnabled(0, true);
             c.Stats.SetSummonerSpellEnabled(1, true);
 
-            Game.PacketNotifier.NotifyEnterVisibilityClient(c, 0, true, false, true);
+            Game.PacketNotifier.NotifyEnterVisibilityClient(c, 0, true, true);
 
             ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.INFO, "Spawned Bot" + clientInfoTemp.Name + " as " + c.Model + " with NetID: " + c.NetId + ".");
         }

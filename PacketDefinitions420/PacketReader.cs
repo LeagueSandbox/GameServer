@@ -1,23 +1,11 @@
-﻿using GameServerCore.Enums;
+﻿using GameServerCore.Packets.PacketDefinitions.Requests;
 using GameServerCore.Packets.Enums;
-using GameServerCore.Packets.PacketDefinitions.Requests;
 using LeaguePackets;
 using LeaguePackets.Game;
 using LeaguePackets.LoadScreen;
-using PacketDefinitions420.Enums;
-using PacketDefinitions420.PacketDefinitions.C2S;
+using GameServerCore.Enums;
 using System;
-using AttentionPingRequest = GameServerCore.Packets.PacketDefinitions.Requests.AttentionPingRequest;
-using BuyItemRequest = GameServerCore.Packets.PacketDefinitions.Requests.BuyItemRequest;
-using CastSpellRequest = GameServerCore.Packets.PacketDefinitions.Requests.CastSpellRequest;
-using EmotionPacketRequest = GameServerCore.Packets.PacketDefinitions.Requests.EmotionPacketRequest;
-using KeyCheckRequest = GameServerCore.Packets.PacketDefinitions.Requests.KeyCheckRequest;
-using MovementRequest = GameServerCore.Packets.PacketDefinitions.Requests.MovementRequest;
-using PingLoadInfoRequest = GameServerCore.Packets.PacketDefinitions.Requests.PingLoadInfoRequest;
-using UpgradeSpellReq = GameServerCore.Packets.PacketDefinitions.Requests.UpgradeSpellReq;
-using SwapItemsRequest = GameServerCore.Packets.PacketDefinitions.Requests.SwapItemsRequest;
-using SynchVersionRequest = GameServerCore.Packets.PacketDefinitions.Requests.SynchVersionRequest;
-using ViewRequest = GameServerCore.Packets.PacketDefinitions.Requests.ViewRequest;
+using static PacketDefinitions420.PacketExtensions;
 
 namespace PacketDefinitions420
 {
@@ -32,57 +20,63 @@ namespace PacketDefinitions420
         {
             var rq = new KeyCheckPacket();
             rq.Read(data);
-            //var rq = new PacketDefinitions.C2S.KeyCheckRequest(data);
             return new KeyCheckRequest(rq.PlayerID, rq.ClientID, rq.VersionNumber, rq.CheckSum);
         }
 
         [PacketType(GamePacketID.SynchSimTimeC2S, Channel.CHL_GAMEPLAY)]
         public static SyncSimTimeRequest ReadSyncSimTimeRequest(byte[] data)
         {
-            var sync = new SynchSimTimeC2S();
-            sync.Read(data);
-            return new SyncSimTimeRequest((int)sync.SenderNetID, sync.TimeLastClient, sync.TimeLastServer);
+            var rq = new SynchSimTimeC2S();
+            rq.Read(data);
+            return new SyncSimTimeRequest(rq.TimeLastServer, rq.TimeLastClient);
         }
 
         [PacketType(GamePacketID.RemoveItemReq)]
         public static SellItemRequest ReadSellItemRequest(byte[] data)
         {
-            var rq = new SellItem(data);
-            return new SellItemRequest(rq.NetId, rq.SlotId);
+            var rq = new RemoveItemReq();
+            rq.Read(data);
+            return new SellItemRequest(rq.Slot, rq.Sell);
         }
 
         [PacketType(GamePacketID.ResumePacket)]
         public static UnpauseRequest ReadUnpauseRequest(byte[] data)
         {
-            return new UnpauseRequest();
+            var rq = new ResumePacket();
+            rq.Read(data);
+            return new UnpauseRequest(rq.ClientID, rq.Delayed);
         }
 
         [PacketType(GamePacketID.C2S_QueryStatusReq)]
         public static QueryStatusRequest ReadQueryStatusRequest(byte[] data)
         {
+            var rq = new C2S_QueryStatusReq();
+            rq.Read(data);
             return new QueryStatusRequest();
         }
 
         [PacketType(GamePacketID.C2S_Ping_Load_Info)]
         public static PingLoadInfoRequest ReadPingLoadInfoRequest(byte[] data)
         {
-            var rq = new PacketDefinitions.C2S.PingLoadInfoRequest(data);
-            return new PingLoadInfoRequest(rq.NetId, rq.Position, rq.UserId, rq.Loaded, rq.Unk2, rq.Ping, rq.Unk3,
-                rq.Unk4);
+            var rq = new C2S_Ping_Load_Info();
+            rq.Read(data);
+            return new PingLoadInfoRequest(rq.ConnectionInfo.ClientID, rq.ConnectionInfo.PlayerID, rq.ConnectionInfo.Percentage, rq.ConnectionInfo.ETA, rq.ConnectionInfo.Count, rq.ConnectionInfo.Ping, rq.ConnectionInfo.Ready);
         }
 
         [PacketType(GamePacketID.SwapItemReq)]
         public static SwapItemsRequest ReadSwapItemsRequest(byte[] data)
         {
-            var rq = new PacketDefinitions.C2S.SwapItemsRequest(data);
-            return new SwapItemsRequest(rq.NetId, rq.SlotFrom, rq.SlotTo);
+            var rq = new SwapItemReq();
+            rq.Read(data);
+            return new SwapItemsRequest(rq.Source, rq.Destination);
         }
 
         [PacketType(GamePacketID.World_SendCamera_Server)]
         public static ViewRequest ReadViewRequest(byte[] data)
         {
-            var rq = new PacketDefinitions.C2S.ViewRequest(data);
-            return new ViewRequest(rq.NetId, rq.X, rq.Zoom, rq.Y, rq.Y2, rq.Width, rq.Height, rq.Unk2, rq.RequestNo);
+            var rq = new World_SendCamera_Server();
+            rq.Read(data);
+            return new ViewRequest(rq.CameraPosition, rq.CameraDirection, rq.ClientID, rq.SyncID);
         }
 
         [PacketType(GamePacketID.NPC_UpgradeSpellReq)]
@@ -96,64 +90,49 @@ namespace PacketDefinitions420
         [PacketType(GamePacketID.UseObjectC2S)]
         public static UseObjectRequest ReadUseObjectRequest(byte[] data)
         {
-            var rq = new UseObject(data);
-            return new UseObjectRequest(rq.NetId, rq.TargetNetId);
+            var rq = new UseObjectC2S();
+            rq.Read(data);
+            return new UseObjectRequest(rq.TargetNetID);
         }
 
         [PacketType(GamePacketID.C2S_UpdateGameOptions)]
         public static AutoAttackOptionRequest ReadAutoAttackOptionRequest(byte[] data)
         {
-            var rq = new AutoAttackOption(data);
-            return new AutoAttackOptionRequest(rq.Netid, rq.Activated == 1);
+            var rq = new C2S_UpdateGameOptions();
+            rq.Read(data);
+            return new AutoAttackOptionRequest(rq.AutoAttackEnabled);
         }
 
         [PacketType(GamePacketID.C2S_PlayEmote)]
         public static EmotionPacketRequest ReadEmotionPacketRequest(byte[] data)
         {
-            var rq = new PacketDefinitions.C2S.EmotionPacketRequest(data);
-
-            // Convert packet emotion type to server emotion type
-            // This is done so that when emotion ID changes in other packet versions, its functionality remains the same on server
-            Emotions type;
-            switch (rq.Id)
-            {
-                case EmotionType.DANCE:
-                    type = Emotions.DANCE;
-                    break;
-                case EmotionType.TAUNT:
-                    type = Emotions.TAUNT;
-                    break;
-                case EmotionType.LAUGH:
-                    type = Emotions.LAUGH;
-                    break;
-                case EmotionType.JOKE:
-                    type = Emotions.JOKE;
-                    break;
-                default:
-                    type = Emotions.UNK;
-                    break;
-            }
-
-            return new EmotionPacketRequest(rq.NetId, type);
+            var rq = new C2S_PlayEmote();
+            rq.Read(data);
+            return new EmotionPacketRequest((Emotions)rq.EmoteID);
         }
 
         [PacketType(GamePacketID.C2S_ClientReady)]
         public static StartGameRequest ReadStartGameRequest(byte[] data)
         {
-            return new StartGameRequest();
+            var rq = new C2S_ClientReady();
+            rq.Read(data);
+            return new StartGameRequest(rq.TipConfig.TipID, rq.TipConfig.ColorID, rq.TipConfig.DurationID, rq.TipConfig.Flags);
         }
 
         [PacketType(GamePacketID.C2S_StatsUpdateReq)]
         public static ScoreboardRequest ReadScoreboardRequest(byte[] data)
         {
+            var rq = new C2S_StatsUpdateReq();
+            rq.Read(data);
             return new ScoreboardRequest();
         }
 
         [PacketType(GamePacketID.C2S_MapPing)]
         public static AttentionPingRequest ReadAttentionPingRequest(byte[] data)
         {
-            var rq = new PacketDefinitions.C2S.AttentionPingRequest(data);
-            return new AttentionPingRequest(rq.X, rq.Y, rq.TargetNetId, rq.Type);
+            var rq = new C2S_MapPing();
+            rq.Read(data);
+            return new AttentionPingRequest(rq.Position, rq.TargetNetID, (Pings)rq.PingCategory);
         }
 
         [PacketType(LoadScreenPacketID.RequestJoinTeam)]
@@ -169,14 +148,15 @@ namespace PacketDefinitions420
         {
             var rq = new Chat();
             rq.Read(data);
-            return new ChatMessageRequest(rq.Message, (ChatType)rq.ChatType);
+            return new ChatMessageRequest(rq.Message, (ChatType)rq.ChatType, rq.Params, rq.Localized, rq.NetID, rq.ClientID);
         }
 
         [PacketType(GamePacketID.C2S_OnTipEvent)]
         public static BlueTipClickedRequest ReadBlueTipRequest(byte[] data)
         {
-            var rq = new BlueTipClicked(data);
-            return new BlueTipClickedRequest(rq.Playernetid, rq.Netid);
+            var rq = new C2S_OnTipEvent();
+            rq.Read(data);
+            return new BlueTipClickedRequest((TipCommand)rq.TipCommand, rq.TipID);
         }
 
         [PacketType(GamePacketID.NPC_IssueOrderReq)]
@@ -184,32 +164,39 @@ namespace PacketDefinitions420
         {
             var rq = new NPC_IssueOrderReq();
             rq.Read(data);
-            // TODO: Verify if the MoveType cast works correctly.
-            return new MovementRequest(rq.SenderNetID, rq.TargetNetID, rq.Position, (OrderType)rq.OrderType, rq.MovementData.Waypoints.ConvertAll(PacketExtensions.WaypointToVector2));
+            var test = rq.MovementData.Waypoints.ConvertAll(PacketExtensions.WaypointToVector2);
+            return new MovementRequest((OrderType)rq.OrderType, rq.Position, rq.TargetNetID, rq.MovementData.TeleportNetID, rq.MovementData.HasTeleportID, rq.MovementData.Waypoints.ConvertAll(WaypointToVector2));
         }
 
         [PacketType(GamePacketID.Waypoint_Acc)]
         public static MoveConfirmRequest ReadMoveConfirmRequest(byte[] data)
         {
-            return new MoveConfirmRequest();
+            var rq = new Waypoint_Acc();
+            rq.Read(data);
+            return new MoveConfirmRequest(rq.SyncID, rq.TeleportCount);
         }
 
         [PacketType(GamePacketID.World_LockCamera_Server)]
         public static LockCameraRequest ReadCameraLockRequest(byte[] data)
         {
-            return new LockCameraRequest();
+            var rq = new World_LockCamera_Server();
+            rq.Read(data);
+            return new LockCameraRequest(rq.Locked, rq.ClientID);
         }
 
         [PacketType(GamePacketID.BuyItemReq)]
         public static BuyItemRequest ReadBuyItemRequest(byte[] data)
         {
-            var rq = new PacketDefinitions.C2S.BuyItemRequest(data);
-            return new BuyItemRequest(rq.NetId, rq.Id);
+            var rq = new BuyItemReq();
+            rq.Read(data);
+            return new BuyItemRequest(rq.ItemID);
         }
 
         [PacketType(GamePacketID.C2S_Exit)]
         public static ExitRequest ReadExitRequest(byte[] data)
         {
+            var rq = new C2S_Exit();
+            rq.Read(data);
             return new ExitRequest();
         }
 
@@ -224,6 +211,8 @@ namespace PacketDefinitions420
         [PacketType(GamePacketID.PausePacket)]
         public static PauseRequest ReadPauseGameRequest(byte[] data)
         {
+            var rq = new PausePacket();
+            rq.Read(data);
             return new PauseRequest();
         }
         [PacketType(GamePacketID.C2S_TeamSurrenderVote)]
@@ -235,36 +224,43 @@ namespace PacketDefinitions420
         }
 
         [PacketType(GamePacketID.OnReplication_Acc)]
-        public static StatsConfirmRequest ReadStatsConfirmRequest(byte[] data)
+        public static ReplicationConfirmRequest ReadStatsConfirmRequest(byte[] data)
         {
-            return new StatsConfirmRequest();
+            var rq = new OnReplication_Acc();
+            rq.Read(data);
+            return new ReplicationConfirmRequest((uint)Environment.TickCount);
         }
 
         [PacketType(GamePacketID.SendSelectedObjID)]
         public static ClickRequest ReadClickRequest(byte[] data)
         {
-            var rq = new Click(data);
-            return new ClickRequest(rq.TargetNetId);
+            var rq = new SendSelectedObjID();
+            rq.Read(data);
+            return new ClickRequest(rq.SelectedNetID, rq.ClientID);
         }
 
         [PacketType(GamePacketID.SynchVersionC2S)]
         public static SynchVersionRequest ReadSynchVersionRequest(byte[] data)
         {
-            var rq = new PacketDefinitions.C2S.SynchVersionRequest(data);
-            return new SynchVersionRequest(rq.NetId, rq.ClientId, rq.Version);
+            var rq = new SynchVersionC2S();
+            rq.Read(data);
+            return new SynchVersionRequest(rq.ClientID, rq.Version);
         }
 
         [PacketType(GamePacketID.C2S_CharSelected)]
         public static SpawnRequest ReadSpawn(byte[] data)
         {
+            var rq = new C2S_CharSelected();
+            rq.Read(data);
             return new SpawnRequest();
         }
 
         [PacketType(GamePacketID.C2S_OnQuestEvent)]
         public static QuestClickedRequest ReadQuestClickedRequest(byte[] data)
         {
-            var rq = new QuestClicked(data);
-            return new QuestClickedRequest(rq.Netid);
+            var rq = new C2S_OnQuestEvent();
+            rq.Read(data);
+            return new QuestClickedRequest(rq.QuestID, (QuestEvent)rq.QuestEvent);
         }
 
         [PacketType(GamePacketID.C2S_SpellChargeUpdateReq)]

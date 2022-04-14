@@ -1,7 +1,7 @@
-﻿using GameServerCore;
+﻿using GameServerCore.Packets.PacketDefinitions.Requests;
+using GameServerCore;
 using GameServerCore.Packets.Enums;
 using GameServerCore.Packets.Handlers;
-using GameServerCore.Packets.PacketDefinitions.Requests;
 using LeagueSandbox.GameServer.Logging;
 using log4net;
 
@@ -27,7 +27,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             champion.UpdateMoveOrder(GameServerCore.Enums.OrderType.Taunt);
             //for later use -> tracking, etc.
             var playerName = _playerManager.GetPeerInfo(userId).Champion.Model;
-            switch (req.Id)
+            switch (req.EmoteID)
             {
                 case Emotions.DANCE:
                     _logger.Debug("Player " + playerName + " is dancing.");
@@ -43,7 +43,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                     break;
             }
 
-            _game.PacketNotifier.NotifyS2C_PlayEmote(req.Id, req.NetId);
+            _game.PacketNotifier.NotifyS2C_PlayEmote((Emotions)req.EmoteID, champion.NetId);
             return true;
         }
     }

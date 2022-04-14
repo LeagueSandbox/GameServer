@@ -15,18 +15,14 @@ namespace MapScripts.Map8
 
         static Dictionary<IMonsterCamp, IMonster> SpeedShrines = new Dictionary<IMonsterCamp, IMonster>();
         static Dictionary<IMonsterCamp, IMonster> HealthPacks = new Dictionary<IMonsterCamp, IMonster>();
+        static List<Crystal> Crystals = new List<Crystal>();
 
-        //Since the center crystals are treated as simple minions intead of camp/monster, we have to hand everything individually
-        static Dictionary<TeamId, IMinion> Crystals = new Dictionary<TeamId, IMinion>();
-        static List<MinionTemplate> CrystalsTemplates = new List<MinionTemplate>();
-        static Dictionary<TeamId, float> CrystalTimers = new Dictionary<TeamId, float> { { TeamId.TEAM_BLUE, 180.0f * 1000 }, { TeamId.TEAM_PURPLE, 180.0f * 1000 } };
-        static Dictionary<TeamId, List<IRegion>> CrystalRegions = new Dictionary<TeamId, List<IRegion>> { { TeamId.TEAM_BLUE, new List<IRegion>() }, { TeamId.TEAM_PURPLE, new List<IRegion>() } };
         public static void InitializeNeutrals()
         {
-            CrystalsTemplates.Add(new MinionTemplate(null, "OdinCenterRelic", "OdinCenterRelic", new Vector2(7074.9736f, 6462.0273f), team: TeamId.TEAM_BLUE));
-            CrystalsTemplates.Add(new MinionTemplate(null, "OdinCenterRelic", "OdinCenterRelic", new Vector2(6801.1855f, 6462.0273f), team: TeamId.TEAM_PURPLE));
-
             SetupCamps();
+
+            Crystals.Add(new Crystal(new Vector2(7074.9736f, 6462.0273f), TeamId.TEAM_BLUE));
+            Crystals.Add(new Crystal(new Vector2(6801.1855f, 6462.0273f), TeamId.TEAM_PURPLE));
 
             foreach (var camp in SpeedShrines.Keys)
             {
@@ -54,51 +50,21 @@ namespace MapScripts.Map8
                 }
             }
 
-            foreach (var crystalTemplate in CrystalsTemplates)
+            foreach (var crystal in Crystals)
             {
-                if (!Crystals.ContainsKey(crystalTemplate.Team))
+                if (crystal.IsDead)
                 {
-                    CrystalTimers[crystalTemplate.Team] -= diff;
-
-                    if (CrystalTimers[crystalTemplate.Team] <= 0 || forceSpawn)
+                    crystal.RespawnTimer -= diff;
+                    if (crystal.RespawnTimer <= 0 || forceSpawn)
                     {
-                        var crystal = CreateMinion(crystalTemplate.Name, crystalTemplate.Model, crystalTemplate.Position,
-                                crystalTemplate.NetId, crystalTemplate.Team, crystalTemplate.SkinId,
-                                crystalTemplate.IgnoresCollision, crystalTemplate.IsTargetable);
-
-                        NotifySpawn(crystal);
-
-                        string iconCategory = "CenterRelicLeft";
-
-                        if (crystal.Team == TeamId.TEAM_PURPLE)
-                        {
-                            iconCategory = "CenterRelicRight";
-                        }
-
-                        SetMinimapIcon(crystal, iconCategory, true);
-
-                        AddUnitPerceptionBubble(crystal, 350.0f, 25000.0f, TeamId.TEAM_BLUE, collisionArea: 38.08f, collisionOwner: crystal);
-                        AddUnitPerceptionBubble(crystal, 350.0f, 25000.0f, TeamId.TEAM_PURPLE, collisionArea: 38.08f, collisionOwner: crystal);
-
-                        ApiEventManager.OnDeath.AddListener(crystal, crystal, OnCrystalDeath, true);
-
-                        Crystals.Add(crystal.Team, crystal);
-                        CrystalTimers[crystalTemplate.Team] = 180.0f * 1000f;
+                        crystal.SpawnCrystal();
+                        crystal.RespawnTimer = 180.0f * 1000f;
                     }
                 }
             }
             if (forceSpawn)
             {
                 forceSpawn = false;
-            }
-        }
-
-        public static void OnCrystalDeath(IDeathData deathData)
-        {
-            Crystals.Remove(deathData.Unit.Team);
-            foreach (var region in CrystalRegions[deathData.Unit.Team])
-            {
-                region.SetToRemove();
             }
         }
 
@@ -116,7 +82,7 @@ namespace MapScripts.Map8
         {
             var speedShrine1 = CreateJungleCamp(new Vector3(5022.9287f, 60.0f, 7778.2695f), 102, 0, "Shrine", 0);
             SpeedShrines.Add(speedShrine1, CreateJungleMonster("OdinSpeedShrine", "OdinSpeedShrine", new Vector2(5022.9287f, 7778.2695f), new Vector3(-0.0f, 0.0f, 1.0f), speedShrine1, isTargetable: false, ignoresCollision: true));
-            
+
             var speedShrine2 = CreateJungleCamp(new Vector3(8859.897f, 60.0f, 7788.1064f), 103, 0, "Shrine", 0);
             SpeedShrines.Add(speedShrine2, CreateJungleMonster("OdinSpeedShrine", "OdinSpeedShrine", new Vector2(8859.897f, 7788.1064f), new Vector3(-0.0f, 0.0f, 1.0f), speedShrine2, isTargetable: false, ignoresCollision: true));
 
@@ -155,54 +121,39 @@ namespace MapScripts.Map8
             HealthPacks.Add(healthPacket10, CreateJungleMonster("OdinShieldRelic", "OdinShieldRelic", new Vector2(9573.432f, 5530.13f), new Vector3(-0.0f, 0.0f, 1.0f), healthPacket10));
         }
     }
-    public class MinionTemplate
-    {
-        public IObjAiBase Owner { get; set; }
-        public string Name { get; set; }
-        public string Model { get; set; }
-        public Vector2 Position { get; set; }
-        public int SkinId { get; set; }
-        public TeamId Team { get; set; }
-        public uint NetId { get; set; }
-        public bool IsTargetable { get; set; }
-        public bool IgnoresCollision { get; set; }
-        public string AiScript { get; set; }
-        public int DamageBonus { get; set; }
-        public int HealthBonus { get; set; }
-        public int InitialLevel { get; set; }
-        public IObjAiBase VisibilityOwner { get; set; }
 
-        public MinionTemplate(
-            IObjAiBase owner,
-            string model,
-            string name,
-            Vector2 position,
-            uint netId = 0,
-            TeamId team = TeamId.TEAM_NEUTRAL,
-            int skinId = 0,
-            bool ignoreCollision = false,
-            bool targetable = true,
-            IObjAiBase visibilityOwner = null,
-            string aiScript = "",
-            int damageBonus = 0,
-            int healthBonus = 0,
-            int initialLevel = 1
-        )
+    public class Crystal
+    {
+        public float RespawnTimer = 180.0f * 1000;
+        public bool IsDead = true;
+
+        Vector2 Position;
+        TeamId Team;
+        List<IRegion> Regions = new List<IRegion>();
+        public Crystal(Vector2 position, TeamId team)
         {
-            Owner = owner;
-            Name = name;
-            Model = model;
-            Team = team;
             Position = position;
-            NetId = netId;
-            IsTargetable = targetable;
-            IgnoresCollision = ignoreCollision;
-            AiScript = aiScript;
-            DamageBonus = damageBonus;
-            HealthBonus = healthBonus;
-            InitialLevel = initialLevel;
-            VisibilityOwner = visibilityOwner;
-            SkinId = skinId;
+            Team = team;
+        }
+
+        public void SpawnCrystal()
+        {
+            var crystal = CreateMinion("OdinCenterRelic", "OdinCenterRelic", Position, team: Team);
+
+            Regions.Add(AddUnitPerceptionBubble(crystal, 350.0f, 25000.0f, TeamId.TEAM_BLUE, collisionArea: 38.08f, collisionOwner: crystal));
+            Regions.Add(AddUnitPerceptionBubble(crystal, 350.0f, 25000.0f, TeamId.TEAM_PURPLE, collisionArea: 38.08f, collisionOwner: crystal));
+
+            ApiEventManager.OnDeath.AddListener(crystal, crystal, OnCrystalDeath, true);
+            IsDead = false;
+        }
+
+        public void OnCrystalDeath(IDeathData deathData)
+        {
+            IsDead = true;
+            foreach (var region in Regions)
+            {
+                region.SetToRemove();
+            }
         }
     }
 }

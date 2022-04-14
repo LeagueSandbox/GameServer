@@ -38,7 +38,7 @@ namespace LeagueSandbox.GameServer.Items
         {
             if (item.ItemGroup.ToLower().Equals("relicbase"))
             {
-                return AddTrinketItem(item);
+                return AddTrinketItem(item, owner);
             }
 
             if (owner != null)
@@ -113,7 +113,7 @@ namespace LeagueSandbox.GameServer.Items
             return null;
         }
 
-        public void RemoveItem(byte slot, IObjAiBase owner, int stacksToRemove = 1)
+        public void RemoveItem(byte slot, IObjAiBase owner, int stacksToRemove = 1, bool force = false)
         {
             if (stacksToRemove < 0)
             {
@@ -123,12 +123,12 @@ namespace LeagueSandbox.GameServer.Items
             var itemID = Items[slot].ItemData.ItemId;
             int finalStacks = Items[slot].StackCount - stacksToRemove;
 
-            if (finalStacks <= 0)
+            if (finalStacks <= 0 || force)
             {
-                if (Items[slot] == null )
+                if (Items[slot] == null)
                     return;
 
-                if(owner != null)
+                if (owner != null)
                 {
                     owner.Stats.RemoveModifier(Items[slot].ItemData);
                 }
@@ -147,7 +147,7 @@ namespace LeagueSandbox.GameServer.Items
                     }
                     ItemScripts.Remove(itemID);
                 }
-                
+
             }
             else
             {
@@ -194,14 +194,30 @@ namespace LeagueSandbox.GameServer.Items
             Items[slot2] = buffer;
         }
 
-        private IItem AddTrinketItem(IItemData item)
+        private IItem AddTrinketItem(IItemData item, IObjAiBase owner)
         {
             if (Items[TRINKET_SLOT] != null)
             {
                 return null;
             }
 
-            return SetItem(TRINKET_SLOT, item);
+            var itemResult = SetItem(TRINKET_SLOT, item);
+            if (owner != null)
+            {
+                if (!string.IsNullOrEmpty(item.SpellName))
+                {
+                    owner.SetSpell(item.SpellName, TRINKET_SLOT + (byte)SpellSlotType.InventorySlots, true);
+                }
+                //Checks if the item's script was already loaded before
+                if (!ItemScripts.ContainsKey(item.ItemId))
+                {
+                    //Loads the Script
+                    ItemScripts.Add(item.ItemId, _scriptEngine.CreateObject<IItemScript>("ItemPassives", $"ItemID_{item.ItemId}") ?? new ItemScriptEmpty());
+                    ItemScripts[item.ItemId].OnActivate(owner);
+                }
+            }
+
+            return itemResult;
         }
 
         private IItem AddStackingItem(IItemData item)

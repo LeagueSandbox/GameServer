@@ -1,6 +1,7 @@
-﻿using GameServerCore;
+﻿using GameServerCore.Packets.PacketDefinitions.Requests;
+using GameServerCore;
 using GameServerCore.Packets.Handlers;
-using GameServerCore.Packets.PacketDefinitions.Requests;
+using LeaguePackets.Game;
 using LeagueSandbox.GameServer.Logging;
 using log4net;
 
@@ -35,7 +36,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             }
             else
             {
-                _logger.Debug("Accepted client version (" + req.Version + ") from client = " + req.ClientId + " & PlayerID = " + userId);
+                _logger.Debug("Accepted client version (" + req.Version + ") from client = " + req.ClientID + " & PlayerID = " + userId);
             }
 
             foreach (var player in _playerManager.GetPlayers())
@@ -47,8 +48,8 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                 }
             }
 
-             _game.PacketNotifier.NotifySynchVersion(userId, _playerManager.GetPlayers(), Config.VERSION_STRING, _game.Config.GameConfig.GameMode,
-                mapId);
+            _game.PacketNotifier.NotifySynchVersion(userId, _playerManager.GetPlayers(), Config.VERSION_STRING, _game.Config.GameConfig.GameMode,
+               mapId);
 
             return true;
         }

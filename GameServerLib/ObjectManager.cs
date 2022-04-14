@@ -235,24 +235,14 @@ namespace LeagueSandbox.GameServer
                     // TODO: Verify which one we want to use. WaypointList does not require conversions, however WaypointGroup does (and it has TeleportID functionality).
                     //_game.PacketNotifier.NotifyWaypointList(u);
                     // TODO: Verify if we want to use TeleportID.
-                    _game.PacketNotifier.NotifyWaypointGroup(u, userId, true);
+                    _game.PacketNotifier.NotifyWaypointGroup(u, userId, false);
                 }
             }
         }
 
         void LateUpdate(IGameObject obj, float diff)
         {
-            // Destroy any missiles which are targeting an untargetable unit.
-            // TODO: Verify if this should apply to SpellSector.
-            if (obj is ISpellMissile m)
-            {
-                if (m.TargetUnit != null && !m.TargetUnit.Status.HasFlag(StatusFlags.Targetable))
-                {
-                    m.SetToRemove();
-                }
-            }
-
-            else if (obj is IAttackableUnit u)
+            if (obj is IAttackableUnit u)
             {
                 if (u is IObjAiBase ai)
                 {
@@ -295,6 +285,13 @@ namespace LeagueSandbox.GameServer
                 else
                 {
                     _objects.Add(o.NetId, o);
+                }
+                // TODO: This is a hack-fix for units which have packets being sent before spawning (ex: AscWarp minion)
+                // Instead, we need a dedicated packet queue system which takes all packets which are not vision/spawn related,
+                // and queues them if the object is not spawned yet for clients.
+                if (!(o is IChampion))
+                {
+                    SpawnObject(o);
                 }
                 o.OnAdded();
             }

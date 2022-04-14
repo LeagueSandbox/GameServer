@@ -447,13 +447,14 @@ namespace LeagueSandbox.GameServer.API
             int skinId = 0,
             bool ignoreCollision = false,
             bool targetable = true,
+             bool isWard = false,
             SpellDataFlags targetingFlags = 0,
             IObjAiBase visibilityOwner = null,
             bool isVisible = true,
             bool aiPaused = true
         )
         {
-            var m = new Minion(_game, owner, position, model, name, 0, team, skinId, ignoreCollision, targetable, visibilityOwner);
+            var m = new Minion(_game, owner, position, model, name, 0, team, skinId, ignoreCollision, targetable, isWard, visibilityOwner);
             m.Stats.IsTargetableToTeam = targetingFlags;
             _game.ObjectManager.AddObject(m);
             if (owner != null)
@@ -877,16 +878,7 @@ namespace LeagueSandbox.GameServer.API
         /// <param name="enabled">Whether or not the status should be enabled.</param>
         public static void SetStatus(IAttackableUnit unit, StatusFlags status, bool enabled)
         {
-            // Loop over all possible status flags and set them individually.
-            for (int i = 0; i < 30; i++)
-            {
-                StatusFlags currentFlag = (StatusFlags)(1 << i);
-
-                if (status.HasFlag(currentFlag))
-                {
-                    unit.SetStatus(currentFlag, enabled);
-                }
-            }
+            unit.SetStatus(status, enabled);
         }
 
         public static void SetTargetingType(IObjAiBase target, SpellSlotType slotType, int slot, TargetingType newType)
@@ -935,7 +927,7 @@ namespace LeagueSandbox.GameServer.API
         public static void SpellCast(IObjAiBase caster, int slot, SpellSlotType slotType, Vector2 pos, Vector2 endPos, bool fireWithoutCasting, Vector2 overrideCastPos, List<ICastTarget> targets = null, bool isForceCastingOrChanneling = false, int overrideForceLevel = -1, bool updateAutoAttackTimer = false, bool useAutoAttackSpell = false)
         {
             slot = ConvertAPISlot(slotType, slot);
-            
+
             ISpell spell = caster.GetSpell((byte)slot);
 
             if (targets == null)
@@ -1073,6 +1065,16 @@ namespace LeagueSandbox.GameServer.API
         {
             //Investigate if we wanna update the stats here too
             _game.PacketNotifier.NotifyS2C_UpdateAttackSpeedCapOverrides(doOverrideMax, maxAttackSpeedOverride, doOverrideMin, minAttackSpeedOverride, unit);
+        }
+
+        public static IItemData GetItemData(int Id)
+        {
+            return _game.ItemManager.SafeGetItemType(Id);
+        }
+
+        public static void PlaySound(string soundName, IAttackableUnit soundOwner)
+        {
+            _game.PacketNotifier.NotifyS2C_PlaySound(soundName, soundOwner);
         }
     }
 }

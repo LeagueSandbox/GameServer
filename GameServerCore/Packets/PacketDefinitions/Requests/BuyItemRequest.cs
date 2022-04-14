@@ -2,13 +2,11 @@
 {
     public class BuyItemRequest : ICoreRequest
     {
-        public int NetId { get; }
-        public int ItemId { get; }
+        public uint ItemID { get; }
 
-        public BuyItemRequest(int netId, int itemId)
+        public BuyItemRequest(uint itemId)
         {
-            NetId = netId;
-            ItemId = itemId;
+            ItemID = itemId;
         }
     }
 }

@@ -1,6 +1,6 @@
-﻿using GameServerCore;
+﻿using GameServerCore.Packets.PacketDefinitions.Requests;
+using GameServerCore;
 using GameServerCore.Packets.Handlers;
-using GameServerCore.Packets.PacketDefinitions.Requests;
 using LeagueSandbox.GameServer.Logging;
 using log4net;
 
@@ -22,7 +22,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
         public override bool HandlePacket(int userId, UseObjectRequest req)
         {
             var champion = _playerManager.GetPeerInfo(userId).Champion;
-            var msg = $"Object {champion.NetId} is trying to use (right clicked) {req.TargetNetId}";
+            var msg = $"Object {champion.NetId} is trying to use (right clicked) {req.TargetNetID}";
             _logger.Debug(msg);
 
             return true;

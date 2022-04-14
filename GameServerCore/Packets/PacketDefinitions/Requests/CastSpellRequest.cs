@@ -4,22 +4,21 @@ namespace GameServerCore.Packets.PacketDefinitions.Requests
 {
     public class CastSpellRequest : ICoreRequest
     {
-        public byte SpellSlot { get; }
+        public byte Slot { get; }
         public bool IsSummonerSpellBook { get; }
         public bool IsHudClickCast { get; }
         public Vector2 Position { get; }
         public Vector2 EndPosition { get; }
-        // TODO: change type to IAttackableUnit
-        public uint TargetNetId { get; }
+        public uint TargetNetID { get; }
 
         public CastSpellRequest(byte spellSlot, bool isSummonerSpellBook, bool isHudClickCast, Vector2 start, Vector2 end, uint targetNetId)
         {
-            SpellSlot = spellSlot;
+            Slot = spellSlot;
             IsSummonerSpellBook = isSummonerSpellBook;
             IsHudClickCast = isHudClickCast;
             Position = start;
             EndPosition = end;
-            TargetNetId = targetNetId;
+            TargetNetID = targetNetId;
         }
     }
 }

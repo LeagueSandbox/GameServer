@@ -20,7 +20,7 @@ namespace MapScripts.Map8
             StartingGold = 1375.0f,
             OverrideSpawnPoints = true,
             RecallSpellItemId = 2005,
-            GoldPerSecond = 5.6f,
+            BaseGoldPerGoldTick = 2.8f,
             FirstGoldTime = 90.0f * 1000,
             InitialLevel = 3,
             ExpRange = 1250.0f,
@@ -62,20 +62,6 @@ namespace MapScripts.Map8
             }},
 
         };
-        //Nexus models
-        public Dictionary<TeamId, string> NexusModels { get; set; } = new Dictionary<TeamId, string>
-        {
-            {TeamId.TEAM_BLUE, "OrderNexus" },
-            {TeamId.TEAM_PURPLE, "ChaosNexus" }
-        };
-        //Inhib models
-        public Dictionary<TeamId, string> InhibitorModels { get; set; } = new Dictionary<TeamId, string>
-        {
-            {TeamId.TEAM_BLUE, "OrderInhibitor" },
-            {TeamId.TEAM_PURPLE, "ChaosInhibitor" }
-        };
-        //Tower Models
-
 
         //Minion models for this map
         public Dictionary<TeamId, Dictionary<MinionSpawnType, string>> MinionModels { get; set; } = new Dictionary<TeamId, Dictionary<MinionSpawnType, string>>
@@ -159,6 +145,7 @@ namespace MapScripts.Map8
             CreateLevelProps.CreateProps(this);
         }
 
+        Dictionary<TeamId, int> TeamScores = new Dictionary<TeamId, int> { { TeamId.TEAM_BLUE, 500 }, { TeamId.TEAM_PURPLE, 500 } };
         public void OnMatchStart()
         {
             LevelScriptObjects.OnMatchStart();
@@ -179,6 +166,11 @@ namespace MapScripts.Map8
             foreach (var champion in GetAllPlayers())
             {
                 AddBuff("OdinPlayerBuff", 25000, 1, null, champion, null);
+            }
+
+            foreach (var team in TeamScores.Keys)
+            {
+                NotifyGameScore(team, TeamScores[team]);
             }
 
             NeutralMinionSpawn.InitializeNeutrals();
@@ -218,26 +210,26 @@ namespace MapScripts.Map8
         {
             if (time >= 90.0f * 1000)
             {
-                NotifyMapAnnouncement(EventID.OnNexusCrystalStart, 0);
+                NotifyWorldEvent(EventID.OnNexusCrystalStart, 0);
                 AllAnnouncementsAnnounced = true;
 
             }
             if (time >= 80.0f * 1000 && !AnnouncedEvents.Contains(EventID.OnStartGameMessage2))
             {
                 // The Battle Has Beguns!
-                NotifyMapAnnouncement(EventID.OnStartGameMessage2, 8);
+                NotifyWorldEvent(EventID.OnStartGameMessage2, 8);
                 AnnouncedEvents.Add(EventID.OnStartGameMessage2);
             }
             else if (time >= 50.0f * 1000 && !AnnouncedEvents.Contains(EventID.OnStartGameMessage1))
             {
                 // The battle will begin in 30 seconds!
-                NotifyMapAnnouncement(EventID.OnStartGameMessage1, 8);
+                NotifyWorldEvent(EventID.OnStartGameMessage1, 8);
                 AnnouncedEvents.Add(EventID.OnStartGameMessage1);
             }
             else if (time >= 30.0f * 1000 && !AnnouncedEvents.Contains(EventID.OnStartGameMessage3))
             {
                 // Welcome to the Crystal Scar!
-                NotifyMapAnnouncement(EventID.OnStartGameMessage3, 8);
+                NotifyWorldEvent(EventID.OnStartGameMessage3, 8);
                 AnnouncedEvents.Add(EventID.OnStartGameMessage3);
             }
         }

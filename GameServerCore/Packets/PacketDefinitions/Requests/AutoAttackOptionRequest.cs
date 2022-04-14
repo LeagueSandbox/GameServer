@@ -2,12 +2,10 @@
 {
     public class AutoAttackOptionRequest : ICoreRequest
     {
-        public int NetId { get; }
         public bool Activated { get; }
 
-        public AutoAttackOptionRequest(int netId, bool activated)
+        public AutoAttackOptionRequest(bool activated)
         {
-            NetId = netId;
             Activated = activated;
         }
     }

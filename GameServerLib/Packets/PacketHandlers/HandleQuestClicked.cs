@@ -1,5 +1,5 @@
-﻿using GameServerCore.Packets.Handlers;
-using GameServerCore.Packets.PacketDefinitions.Requests;
+﻿using GameServerCore.Packets.PacketDefinitions.Requests;
+using GameServerCore.Packets.Handlers;
 using LeagueSandbox.GameServer.Chatbox;
 
 namespace LeagueSandbox.GameServer.Packets.PacketHandlers
@@ -17,7 +17,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 
         public override bool HandlePacket(int userId, QuestClickedRequest req)
         {
-            var msg = $"Clicked quest with netid: {req.QuestNetId}";
+            var msg = $"Clicked quest with netid: {req.QuestID}";
             _chatCommandManager.SendDebugMsgFormatted(DebugMsgType.NORMAL, msg);
             return true;
         }

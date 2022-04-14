@@ -1,15 +1,10 @@
-﻿using GameServerCore;
-using GameServerCore.Domain;
+﻿using GameServerCore.Packets.PacketDefinitions.Requests;
+using GameServerCore;
 using GameServerCore.Domain.GameObjects;
-using GameServerCore.Domain.GameObjects.Spell.Missile;
-using GameServerCore.Enums;
 using GameServerCore.Packets.Handlers;
-using GameServerCore.Packets.PacketDefinitions.Requests;
-using LeagueSandbox.GameServer.GameObjects;
 using LeagueSandbox.GameServer.Items;
 using LeagueSandbox.GameServer.Logging;
 using log4net;
-using System;
 
 namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 {
@@ -35,7 +30,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
         {
             var players = _playerManager.GetPlayers(true);
 
-            if(_firstSpawn)
+            if (_firstSpawn)
             {
                 _firstSpawn = false;
 
@@ -80,32 +75,32 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                 // Buy blue pill
                 var itemInstance = peerInfo.Champion.Inventory.GetItem(7);
                 _game.PacketNotifier.NotifyBuyItem(userId, peerInfo.Champion, itemInstance);
-                
+
                 champ.SetSpawnedForPlayer(userId);
 
-                if(_game.IsRunning)
+                if (_game.IsRunning)
                 {
                     bool ownChamp = peerInfo.PlayerId == userId;
-                    if(ownChamp || champ.IsVisibleForPlayer(userId))
+                    if (ownChamp || champ.IsVisibleForPlayer(userId))
                     {
                         _game.PacketNotifier.NotifyVisibilityChange(champ, userInfo.Team, true, userId);
                     }
-                    if(ownChamp)
+                    if (ownChamp)
                     {
                         // Set available skill points
                         _game.PacketNotifier.NotifyNPC_LevelUp(champ, userId);
                         // Set spell levels
-                        foreach(var spell in champ.Spells)
+                        foreach (var spell in champ.Spells)
                         {
                             var castInfo = spell.Value.CastInfo;
-                            if(castInfo.SpellLevel > 0)
+                            if (castInfo.SpellLevel > 0)
                             {
                                 // NotifyNPC_UpgradeSpellAns has no effect here 
                                 _game.PacketNotifier.NotifyS2C_SetSpellLevel(userId, champ.NetId, castInfo.SpellSlot, castInfo.SpellLevel);
-                                
+
                                 float currentCD = spell.Value.CurrentCooldown;
                                 float totalCD = spell.Value.GetCooldown();
-                                if(currentCD > 0)
+                                if (currentCD > 0)
                                 {
                                     _game.PacketNotifier.NotifyCHAR_SetCooldown(champ, castInfo.SpellSlot, currentCD, totalCD, userId);
                                 }
@@ -118,11 +113,11 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             var objects = _game.ObjectManager.GetObjects();
             foreach (var obj in objects.Values)
             {
-                if(!(obj is IChampion))
+                if (!(obj is IChampion))
                 {
-                    if(_game.IsRunning)
+                    if (_game.IsRunning)
                     {
-                        if(obj.IsSpawnedForPlayer(userId))
+                        if (obj.IsSpawnedForPlayer(userId))
                         {
                             bool isVisibleForPlayer = obj.IsVisibleForPlayer(userId);
                             _game.PacketNotifier.NotifySpawn(obj, userInfo.Team, userId, _game.GameTime, isVisibleForPlayer);
@@ -130,8 +125,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                     }
                     else
                     {
-                        (_game.ObjectManager as ObjectManager)
-                        .UpdateVisionSpawnAndSync(obj, userInfo, forceSpawn: true);
+                        (_game.ObjectManager as ObjectManager).UpdateVisionSpawnAndSync(obj, userInfo, forceSpawn: true);
                     }
                 }
             }

@@ -1,6 +1,6 @@
-﻿using GameServerCore;
+﻿using GameServerCore.Packets.PacketDefinitions.Requests;
+using GameServerCore;
 using GameServerCore.Packets.Handlers;
-using GameServerCore.Packets.PacketDefinitions.Requests;
 
 namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 {
@@ -18,7 +18,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
         public override bool HandlePacket(int userId, SellItemRequest req)
         {
             var champion = _playerManager.GetPeerInfo(userId).Champion;
-            return champion.Shop.HandleItemSellRequest(req.SlotId);
+            return champion.Shop.HandleItemSellRequest(req.Slot);
         }
     }
 }

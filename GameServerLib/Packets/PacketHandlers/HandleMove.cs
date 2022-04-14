@@ -1,13 +1,10 @@
-﻿using GameServerCore;
+﻿using GameServerCore.Packets.PacketDefinitions.Requests;
+using GameServerCore;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
-using GameServerCore.Packets.Enums;
 using GameServerCore.Packets.Handlers;
-using GameServerCore.Packets.PacketDefinitions.Requests;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
 using System.Numerics;
+using System.Collections.Generic;
 
 namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 {
@@ -34,9 +31,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             if (champion.MovementParameters == null)
             {
                 // Last waypoint position
-                var pos = req.Position;
-                var translatedWaypoints = req.Waypoints.ConvertAll(TranslateFromCenteredCoordinates);
-
+                List<Vector2> translatedWaypoints = req.Waypoints.ConvertAll(TranslateFromCenteredCoordinates);
                 var lastindex = 0;
                 if (!(translatedWaypoints.Count - 1 < 0))
                 {
@@ -65,7 +60,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                     }
                 }
 
-                switch (req.Type)
+                switch ((OrderType)req.OrderType)
                 {
                     case OrderType.AttackTo:
                         translatedWaypoints[0] = champion.Position;
@@ -96,7 +91,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                 }
             }
 
-            var u = _game.ObjectManager.GetObjectById(req.TargetNetId) as IAttackableUnit;
+            var u = _game.ObjectManager.GetObjectById(req.TargetNetID) as IAttackableUnit;
             champion.SetTargetUnit(u);
 
             if (champion.SpellToCast != null)

@@ -88,6 +88,10 @@ namespace GameServerCore.Domain.GameObjects
         /// <returns></returns>
         bool CanMove();
         /// <summary>
+        /// Whether or not this unit can modify its Waypoints.
+        /// </summary>
+        bool CanChangeWaypoints();
+        /// <summary>
         /// Whether or not this unit can take damage of the given type.
         /// </summary>
         /// <param name="type">Type of damage to check.</param>

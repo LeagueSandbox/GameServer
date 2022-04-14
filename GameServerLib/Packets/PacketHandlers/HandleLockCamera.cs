@@ -1,5 +1,5 @@
-﻿using GameServerCore.Packets.Handlers;
-using GameServerCore.Packets.PacketDefinitions.Requests;
+﻿using GameServerCore.Packets.PacketDefinitions.Requests;
+using GameServerCore.Packets.Handlers;
 
 namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 {

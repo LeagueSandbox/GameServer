@@ -176,21 +176,29 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         public void SetPosition(Vector2 vec, bool repath = true)
         {
             Position = vec;
+            _movementUpdated = true;
 
-            // Reevaluate our current path to account for the starting position being changed.
-            if (repath && !IsPathEnded())
+            if(!IsPathEnded())
             {
-                List<Vector2> safePath = _game.Map.PathingHandler.GetPath(Position, _game.Map.NavigationGrid.GetClosestTerrainExit(Waypoints.Last(), PathfindingRadius));
-
-                // TODO: When using this safePath, sometimes we collide with the terrain again, so we use an unsafe path the next collision, however,
-                // sometimes we collide again before we can finish the unsafe path, so we end up looping collisions between safe and unsafe paths, never actually escaping (ex: sharp corners).
-                // This is a more fundamental issue where the pathfinding should be taking into account collision radius, rather than simply pathing from center of an object.
-                if (safePath != null)
+                // Reevaluate our current path to account for the starting position being changed.
+                if(repath)
                 {
-                    SetWaypoints(safePath);
+                    List<Vector2> safePath = _game.Map.PathingHandler.GetPath(Position, _game.Map.NavigationGrid.GetClosestTerrainExit(Waypoints.Last(), PathfindingRadius));
+
+                    // TODO: When using this safePath, sometimes we collide with the terrain again, so we use an unsafe path the next collision, however,
+                    // sometimes we collide again before we can finish the unsafe path, so we end up looping collisions between safe and unsafe paths, never actually escaping (ex: sharp corners).
+                    // This is a more fundamental issue where the pathfinding should be taking into account collision radius, rather than simply pathing from center of an object.
+                    if (safePath != null)
+                    {
+                        SetWaypoints(safePath);
+                    }
+                }
+                else
+                {
+                    Waypoints[0] = Position;
                 }
             }
-            else if (!repath && !IsPathEnded())
+            else
             {
                 ResetWaypoints();
             }
@@ -213,6 +221,13 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             if (Waypoints.Count > 1 && CanMove())
             {
                 Move(diff);
+            }
+
+            // Prevents edge cases where a movement command is performed in the same tick as a ForceMovement.
+            // TODO: Perhaps just make a check for MovementParameters in ObjectManager.Sync, and send WaypointGroupWithSpeed instead.
+            if (IsMovementUpdated() && !CanChangeWaypoints())
+            {
+                _movementUpdated = false;
             }
 
             if (MovementParameters != null && MovementParameters.FollowNetID > 0)
@@ -257,7 +272,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
 
                 // only time we would collide with terrain is if we are inside of it, so we should teleport out of it.
                 Vector2 exit = _game.Map.NavigationGrid.GetClosestTerrainExit(Position, PathfindingRadius + 1.0f);
-                TeleportTo(exit.X, exit.Y, true);
+                SetPosition(exit, false);
             }
             else
             {
@@ -273,7 +288,11 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                 // We should not teleport here because Pathfinding should handle it.
                 // TODO: Implement a PathfindingHandler, and remove currently implemented manual pathfinding.
                 Vector2 exit = Extensions.GetCircleEscapePoint(Position, PathfindingRadius + 1, collider.Position, collider.PathfindingRadius);
-                TeleportTo(exit.X, exit.Y, true);
+                if (!_game.Map.PathingHandler.IsWalkable(exit, PathfindingRadius))
+                {
+                    exit = _game.Map.NavigationGrid.GetClosestTerrainExit(exit, PathfindingRadius + 1.0f);
+                }
+                SetPosition(exit, false);
             }
         }
 
@@ -339,6 +358,9 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             return MovementParameters != null;
         }
 
+        /// <summary>
+        /// Whether or not this unit can modify its Waypoints.
+        /// </summary>
         public virtual bool CanChangeWaypoints()
         {
             // Only case where we can change waypoints is if we are being forced to move towards a target.
@@ -761,108 +783,135 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// <param name="enabled">Whether or not to enable the flag.</param>
         public void SetStatus(StatusFlags status, bool enabled)
         {
-            if (enabled)
+            // Loop over all possible status flags and set them individually.
+            for (int i = 0; i < Enum.GetNames(typeof(StatusFlags)).Length - 1; i++)
             {
-                Status |= status;
-            }
-            else
-            {
-                Status &= ~status;
+                StatusFlags currentFlag = (StatusFlags)(1 << i);
+
+                if (status.HasFlag(currentFlag))
+                {
+                    if (enabled)
+                    {
+                        Status |= currentFlag;
+                    }
+                    else
+                    {
+                        Status &= ~currentFlag;
+                    }
+
+                    switch (currentFlag)
+                    {
+                        // CallForHelpSuppressor
+                        case StatusFlags.CanAttack:
+                        {
+                            Stats.SetActionState(ActionState.CAN_ATTACK, enabled);
+                            break;
+                        }
+                        case StatusFlags.CanCast:
+                        {
+                            Stats.SetActionState(ActionState.CAN_CAST, enabled);
+                            break;
+                        }
+                        case StatusFlags.CanMove:
+                        {
+                            Stats.SetActionState(ActionState.CAN_MOVE, enabled);
+                            break;
+                        }
+                        case StatusFlags.CanMoveEver:
+                        {
+                            Stats.SetActionState(ActionState.CAN_NOT_MOVE, !enabled);
+                            break;
+                        }
+                        case StatusFlags.Charmed:
+                        {
+                            Stats.SetActionState(ActionState.CHARMED, enabled);
+                            break;
+                        }
+                        // DisableAmbientGold
+                        case StatusFlags.Feared:
+                        {
+                            Stats.SetActionState(ActionState.FEARED, enabled);
+                            // TODO: Verify
+                            Stats.SetActionState(ActionState.IS_FLEEING, enabled);
+                            break;
+                        }
+                        case StatusFlags.ForceRenderParticles:
+                        {
+                            Stats.SetActionState(ActionState.FORCE_RENDER_PARTICLES, enabled);
+                            break;
+                        }
+                        // GhostProof
+                        case StatusFlags.Ghosted:
+                        {
+                            Stats.SetActionState(ActionState.IS_GHOSTED, enabled);
+                            break;
+                        }
+                        // IgnoreCallForHelp
+                        // Immovable
+                        // Invulnerable
+                        // MagicImmune
+                        case StatusFlags.NearSighted:
+                        {
+                            Stats.SetActionState(ActionState.IS_NEAR_SIGHTED, enabled);
+                            break;
+                        }
+                        // Netted
+                        case StatusFlags.NoRender:
+                        {
+                            Stats.SetActionState(ActionState.NO_RENDER, enabled);
+                            break;
+                        }
+                        // PhysicalImmune
+                        case StatusFlags.RevealSpecificUnit:
+                        {
+                            Stats.SetActionState(ActionState.REVEAL_SPECIFIC_UNIT, enabled);
+                            break;
+                        }
+                        // Rooted
+                        // Silenced
+                        case StatusFlags.Sleep:
+                        {
+                            Stats.SetActionState(ActionState.IS_ASLEEP, enabled);
+                            break;
+                        }
+                        case StatusFlags.Stealthed:
+                        {
+                            Stats.SetActionState(ActionState.STEALTHED, enabled);
+                            break;
+                        }
+                        // SuppressCallForHelp
+                        case StatusFlags.Targetable:
+                        {
+                            Stats.IsTargetable = enabled;
+                            // TODO: Verify.
+                            Stats.SetActionState(ActionState.TARGETABLE, enabled);
+                            break;
+                        }
+                        case StatusFlags.Taunted:
+                        {
+                            Stats.SetActionState(ActionState.TAUNTED, enabled);
+                            break;
+                        }
+                    }
+                }
             }
 
-            switch (status)
+            if (!Status.HasFlag(StatusFlags.CanMove)
+                || Status.HasFlag(StatusFlags.Charmed)
+                || Status.HasFlag(StatusFlags.Feared)
+                || Status.HasFlag(StatusFlags.Immovable)
+                || Status.HasFlag(StatusFlags.Netted)
+                || Status.HasFlag(StatusFlags.Rooted)
+                || Status.HasFlag(StatusFlags.Sleep)
+                || Status.HasFlag(StatusFlags.Stunned)
+                || Status.HasFlag(StatusFlags.Suppressed)
+                || Status.HasFlag(StatusFlags.Taunted))
             {
-                // CallForHelpSuppressor
-                case StatusFlags.CanAttack:
-                {
-                    Stats.SetActionState(ActionState.CAN_ATTACK, enabled);
-                    return;
-                }
-                case StatusFlags.CanCast:
-                {
-                    Stats.SetActionState(ActionState.CAN_CAST, enabled);
-                    return;
-                }
-                case StatusFlags.CanMove:
-                {
-                    Stats.SetActionState(ActionState.CAN_MOVE, enabled);
-                    return;
-                }
-                case StatusFlags.CanMoveEver:
-                {
-                    Stats.SetActionState(ActionState.CAN_NOT_MOVE, !enabled);
-                    return;
-                }
-                case StatusFlags.Charmed:
-                {
-                    Stats.SetActionState(ActionState.CHARMED, enabled);
-                    return;
-                }
-                // DisableAmbientGold
-                case StatusFlags.Feared:
-                {
-                    Stats.SetActionState(ActionState.FEARED, enabled);
-                    // TODO: Verify
-                    Stats.SetActionState(ActionState.IS_FLEEING, enabled);
-                    return;
-                }
-                case StatusFlags.ForceRenderParticles:
-                {
-                    Stats.SetActionState(ActionState.FORCE_RENDER_PARTICLES, enabled);
-                    return;
-                }
-                // GhostProof
-                case StatusFlags.Ghosted:
-                {
-                    Stats.SetActionState(ActionState.IS_GHOSTED, enabled);
-                    return;
-                }
-                // IgnoreCallForHelp
-                // Immovable
-                // Invulnerable
-                // MagicImmune
-                case StatusFlags.NearSighted:
-                {
-                    Stats.SetActionState(ActionState.IS_NEAR_SIGHTED, enabled);
-                    return;
-                }
-                // Netted
-                case StatusFlags.NoRender:
-                {
-                    Stats.SetActionState(ActionState.NO_RENDER, enabled);
-                    return;
-                }
-                // PhysicalImmune
-                case StatusFlags.RevealSpecificUnit:
-                {
-                    Stats.SetActionState(ActionState.REVEAL_SPECIFIC_UNIT, enabled);
-                    return;
-                }
-                // Rooted
-                // Silenced
-                case StatusFlags.Sleep:
-                {
-                    Stats.SetActionState(ActionState.IS_ASLEEP, enabled);
-                    return;
-                }
-                case StatusFlags.Stealthed:
-                {
-                    Stats.SetActionState(ActionState.STEALTHED, enabled);
-                    return;
-                }
-                // SuppressCallForHelp
-                case StatusFlags.Targetable:
-                {
-                    Stats.IsTargetable = enabled;
-                    // TODO: Verify.
-                    Stats.SetActionState(ActionState.TARGETABLE, enabled);
-                    return;
-                }
-                case StatusFlags.Taunted:
-                {
-                    Stats.SetActionState(ActionState.TAUNTED, enabled);
-                    return;
-                }
+                Stats.SetActionState(ActionState.CAN_NOT_MOVE, true);
+            }
+            else if (Stats.GetActionState(ActionState.CAN_NOT_MOVE))
+            {
+                Stats.SetActionState(ActionState.CAN_NOT_MOVE, false);
             }
 
             if (!(Status.HasFlag(StatusFlags.CanAttack)
@@ -925,16 +974,29 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// <param name="repath">Whether or not to repath from the new position.</param>
         public void TeleportTo(float x, float y, bool repath = false)
         {
-            var position = new Vector2(x, y);
+            TeleportTo(new Vector2(x, y), repath);
+        }
 
-            if (!_game.Map.PathingHandler.IsWalkable(new Vector2(x, y), PathfindingRadius))
+        /// <summary>
+        /// Teleports this unit to the given position, and optionally repaths from the new position.
+        /// </summary>
+        public void TeleportTo(Vector2 position, bool repath = false)
+        {
+            position = _game.Map.NavigationGrid.GetClosestTerrainExit(position, PathfindingRadius + 1.0f);
+            
+            if(repath)
             {
-                position = _game.Map.NavigationGrid.GetClosestTerrainExit(new Vector2(x, y), PathfindingRadius + 1.0f);
+                SetPosition(position, true);
+            }
+            else
+            {
+                Position = position;
+                ResetWaypoints();
             }
 
-            SetPosition(position, repath);
             TeleportID++;
-            _game.PacketNotifier.NotifyTeleport(this, position);
+            _game.PacketNotifier.NotifyWaypointGroup(this, useTeleportID: true);
+            _movementUpdated = false;
         }
 
         /// <summary>
@@ -1068,7 +1130,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             // Dashes are excluded as their paths should be set before being applied.
             // TODO: Find out the specific cases where we shouldn't be able to set our waypoints. Perhaps CC?
             // Setting waypoints during auto attacks is allowed.
-            if (newWaypoints.Count <= 1 || newWaypoints[0] != Position || !CanChangeWaypoints())
+            if (newWaypoints == null || newWaypoints.Count <= 1 || newWaypoints[0] != Position || !CanChangeWaypoints())
             {
                 return;
             }
@@ -1141,7 +1203,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                     // Add the buff to the visual hud.
                     if (!b.IsHidden)
                     {
-                        _game.PacketNotifier.NotifyNPC_BuffAdd2(b, b.Duration, b.TimeElapsed);
+                        _game.PacketNotifier.NotifyNPC_BuffAdd2(b);
                     }
                     // Activate the buff for BuffScripts
                     b.ActivateBuff();
@@ -1481,7 +1543,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                     // Add the buff to the visual hud.
                     if (!b.IsHidden)
                     {
-                        _game.PacketNotifier.NotifyNPC_BuffAdd2(tempBuff, tempBuff.Duration, tempBuff.TimeElapsed);
+                        _game.PacketNotifier.NotifyNPC_BuffAdd2(tempBuff);
                     }
                     // Activate the buff for BuffScripts
                     tempBuff.ActivateBuff();
@@ -1643,11 +1705,11 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                 SetAnimStates(animPairs);
             }
 
-            _game.PacketNotifier.NotifyWaypointGroupWithSpeed(this);
-
             // Movement is networked this way instead.
             // TODO: Verify if we want to use NotifyWaypointListWithSpeed instead as it does not require conversions.
             //_game.PacketNotifier.NotifyWaypointListWithSpeed(this, dashSpeed, leapGravity, keepFacingLastDirection, null, 0, 0, 20000.0f);
+            _game.PacketNotifier.NotifyWaypointGroupWithSpeed(this);
+            _movementUpdated = false;
         }
 
         /// <summary>

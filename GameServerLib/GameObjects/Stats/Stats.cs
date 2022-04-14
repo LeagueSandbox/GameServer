@@ -40,7 +40,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
         public IStat CriticalChance { get; }
         public IStat CriticalDamage { get; }
         public IStat ExpGivenOnDeath { get; }
-        public IStat GoldPerSecond { get; }
+        public IStat GoldPerGoldTick { get; }
         public IStat GoldGivenOnDeath { get; }
         public IStat HealthPoints { get; }
         public IStat HealthRegeneration { get; }
@@ -59,6 +59,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
         public float Gold { get; set; }
         public byte Level { get; set; }
         public float Experience { get; set; }
+        public float Points { get; set; }
 
         private float _currentHealth;
         public float CurrentHealth
@@ -92,9 +93,9 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
             AttackSpeedMultiplier = new Stat(1.0f, 0, 0, 0, 0);
             CooldownReduction = new Stat();
             CriticalChance = new Stat();
-            CriticalDamage = new Stat(2, 0, 0, 0, 0);
+            CriticalDamage = new Stat();
             ExpGivenOnDeath = new Stat();
-            GoldPerSecond = new Stat();
+            GoldPerGoldTick = new Stat();
             GoldGivenOnDeath = new Stat();
             HealthPoints = new Stat();
             HealthRegeneration = new Stat();
@@ -120,6 +121,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
             AttackDamage.BaseValue = charData.BaseDamage;
             // AttackSpeedFlat = GlobalAttackSpeed / CharAttackDelay
             AttackSpeedFlat = (1.0f / charData.GlobalCharData.AttackDelay) / (1.0f + charData.AttackDelayOffsetPercent[0]);
+            CriticalDamage.BaseValue = charData.CritDamageBonus;
             ExpGivenOnDeath.BaseValue = charData.ExpGivenOnDeath;
             GoldGivenOnDeath.BaseValue = charData.GoldGivenOnDeath;
             GrowthAttackSpeed = charData.AttackSpeedPerLevel;
@@ -148,7 +150,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
             CooldownReduction.ApplyStatModifier(modifier.CooldownReduction);
             CriticalChance.ApplyStatModifier(modifier.CriticalChance);
             CriticalDamage.ApplyStatModifier(modifier.CriticalDamage);
-            GoldPerSecond.ApplyStatModifier(modifier.GoldPerSecond);
+            GoldPerGoldTick.ApplyStatModifier(modifier.GoldPerSecond);
             HealthPoints.ApplyStatModifier(modifier.HealthPoints);
             HealthRegeneration.ApplyStatModifier(modifier.HealthRegeneration);
             LifeSteal.ApplyStatModifier(modifier.LifeSteal);
@@ -173,7 +175,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
             CooldownReduction.RemoveStatModifier(modifier.CooldownReduction);
             CriticalChance.RemoveStatModifier(modifier.CriticalChance);
             CriticalDamage.RemoveStatModifier(modifier.CriticalDamage);
-            GoldPerSecond.RemoveStatModifier(modifier.GoldPerSecond);
+            GoldPerGoldTick.RemoveStatModifier(modifier.GoldPerSecond);
             HealthPoints.RemoveStatModifier(modifier.HealthPoints);
             HealthRegeneration.RemoveStatModifier(modifier.HealthRegeneration);
             LifeSteal.RemoveStatModifier(modifier.LifeSteal);
@@ -200,12 +202,6 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
                 var newHealth = CurrentHealth + HealthRegeneration.Total * diff * 0.001f;
                 newHealth = Math.Min(HealthPoints.Total, newHealth);
                 CurrentHealth = newHealth;
-            }
-
-            if (IsGeneratingGold && GoldPerSecond.Total > 0)
-            {
-                var newGold = Gold + GoldPerSecond.Total * (diff * 0.001f);
-                Gold = newGold;
             }
 
             if ((byte)ParType > 1)

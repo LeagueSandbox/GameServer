@@ -1,6 +1,6 @@
-﻿using GameServerCore;
+﻿using GameServerCore.Packets.PacketDefinitions.Requests;
+using GameServerCore;
 using GameServerCore.Packets.Handlers;
-using GameServerCore.Packets.PacketDefinitions.Requests;
 using LeagueSandbox.GameServer.Logging;
 using log4net;
 
@@ -24,7 +24,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             _logger.Debug($"Player {_playerManager.GetPeerInfo(userId).Name} has looked at the scoreboard.");
             // Send to that player stats packet
             var champion = _playerManager.GetPeerInfo(userId).Champion;
-             _game.PacketNotifier.NotifyS2C_HeroStats(champion);
+            _game.PacketNotifier.NotifyS2C_HeroStats(champion);
             return true;
         }
     }

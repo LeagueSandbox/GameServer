@@ -1,6 +1,6 @@
-﻿using GameServerCore;
+﻿using GameServerCore.Packets.PacketDefinitions.Requests;
+using GameServerCore;
 using GameServerCore.Packets.Handlers;
-using GameServerCore.Packets.PacketDefinitions.Requests;
 using static LeagueSandbox.GameServer.API.ApiMapFunctionManager;
 
 namespace LeagueSandbox.GameServer.Packets.PacketHandlers

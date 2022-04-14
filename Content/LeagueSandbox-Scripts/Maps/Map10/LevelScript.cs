@@ -15,6 +15,7 @@ namespace MapScripts.Map10
     {
         public IMapScriptMetadata MapScriptMetadata { get; set; } = new MapScriptMetadata
         {
+            BaseGoldPerGoldTick = 0.95f,
             StartingGold = 825.0f,
             ExpRange = 1250.0f
         };
@@ -154,27 +155,27 @@ namespace MapScripts.Map10
             if (time >= 180.0f * 1000)
             {
                 //The Altars have unlocked!
-                NotifyMapAnnouncement(EventID.OnStartGameMessage4, 10);
+                NotifyWorldEvent(EventID.OnStartGameMessage4, 10);
                 AllAnnouncementsAnnounced = true;
             }
             else if (time >= 150.0f * 1000 && !AnnouncedEvents.Contains(EventID.OnStartGameMessage2))
             {
                 // The Altars will unlock in 30 seconds
-                NotifyMapAnnouncement(EventID.OnStartGameMessage2, 10);
+                NotifyWorldEvent(EventID.OnStartGameMessage2, 10);
                 AnnouncedEvents.Add(EventID.OnStartGameMessage2);
 
             }
             else if (time >= 75.0f * 1000 && !AnnouncedEvents.Contains(EventID.OnStartGameMessage3))
             {
                 // Minions have Spawned
-                NotifyMapAnnouncement(EventID.OnStartGameMessage3, 10);
-                NotifyMapAnnouncement(EventID.OnNexusCrystalStart, 0);
+                NotifyWorldEvent(EventID.OnStartGameMessage3, 10);
+                NotifyWorldEvent(EventID.OnNexusCrystalStart, 0);
                 AnnouncedEvents.Add(EventID.OnStartGameMessage3);
             }
             else if (time >= 30.0f * 1000 && !AnnouncedEvents.Contains(EventID.OnStartGameMessage1))
             {
                 // Welcome to the Twisted Tree Line!
-                NotifyMapAnnouncement(EventID.OnStartGameMessage1, 10);
+                NotifyWorldEvent(EventID.OnStartGameMessage1, 10);
                 AnnouncedEvents.Add(EventID.OnStartGameMessage1);
             }
         }

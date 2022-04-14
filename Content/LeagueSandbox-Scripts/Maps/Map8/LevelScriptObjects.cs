@@ -12,7 +12,7 @@ namespace MapScripts.Map8
     {
         private static Dictionary<GameObjectTypes, List<MapObject>> _mapObjects;
 
-        static List<IMinion> InfoPoints = new List<IMinion>();
+        static Dictionary<byte, IMinion> InfoPoints = new Dictionary<byte, IMinion>();
         public static Dictionary<TeamId, IFountain> FountainList = new Dictionary<TeamId, IFountain>();
         static Dictionary<TeamId, List<ILaneTurret>> TurretList = new Dictionary<TeamId, List<ILaneTurret>> { { TeamId.TEAM_BLUE, new List<ILaneTurret>() }, { TeamId.TEAM_PURPLE, new List<ILaneTurret>() } };
 
@@ -36,6 +36,11 @@ namespace MapScripts.Map8
         public static void OnMatchStart()
         {
             LoadShops();
+
+            foreach (var index in InfoPoints.Keys)
+            {
+                NotifyHandleCapturePointUpdate(index, InfoPoints[index].NetId, 0, 0, CapturePointUpdateCommand.AttachToObject);
+            }
         }
 
         public static void OnUpdate(float diff)
@@ -59,7 +64,7 @@ namespace MapScripts.Map8
         {
             foreach (var shop in _mapObjects[GameObjectTypes.ObjBuilding_Shop])
             {
-                NotifySpawn(CreateShop(shop.Name, new Vector2(shop.CentralPoint.X, shop.CentralPoint.Z), shop.GetTeamID()));
+                NotifySpawnBroadcast(CreateShop(shop.Name, new Vector2(shop.CentralPoint.X, shop.CentralPoint.Z), shop.GetTeamID()));
             }
         }
 
@@ -74,12 +79,14 @@ namespace MapScripts.Map8
                 AddObject(fountainTurret);
             }
 
+            byte pointIndex = 0;
             foreach (var infoPoint in _mapObjects[GameObjectTypes.InfoPoint])
             {
                 var point = CreateMinion("OdinNeutralGuardian", "OdinNeutralGuardian", new Vector2(infoPoint.CentralPoint.X, infoPoint.CentralPoint.Z), ignoreCollision: true);
                 AddUnitPerceptionBubble(point, 800.0f, 25000.0f, TeamId.TEAM_BLUE, true, collisionArea: 120.0f, collisionOwner: point);
                 point.PauseAi(true);
-                InfoPoints.Add(point);
+                InfoPoints.Add(pointIndex, point);
+                pointIndex++;
             }
         }
     }

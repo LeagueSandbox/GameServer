@@ -1,12 +1,15 @@
-﻿namespace GameServerCore.Packets.PacketDefinitions.Requests
+﻿using GameServerCore.Enums;
+
+namespace GameServerCore.Packets.PacketDefinitions.Requests
 {
     public class QuestClickedRequest : ICoreRequest
     {
-        public uint QuestNetId { get; }
-
-        public QuestClickedRequest(uint questNetId)
+        public QuestEvent QuestEvent { get;  }
+        public uint QuestID { get;  }
+        public QuestClickedRequest(uint questNetId, QuestEvent questEvent)
         {
-            QuestNetId = questNetId;
+            QuestID = questNetId;
+            QuestEvent = questEvent;
         }
     }
 }

@@ -21,6 +21,9 @@ namespace GameServerCore.Domain
         /// Experience required to level, ordered from 2 and up.
         /// </summary>
         List<float> ExpCurve { get; }
+        float BaseExpMultiple { get; set; }
+        float LevelDifferenceExpMultiple { get; set; }
+        float MinimumExpMultiple { get; set; }
         /// <summary>
         /// Amount of time death should last depending on level.
         /// </summary>
