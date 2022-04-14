@@ -21,7 +21,6 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
     {
         // Crucial Vars.
         private readonly Game _game;
-        private readonly CSharpScriptEngine _scriptEngine;
         private readonly NetworkIdManager _networkIdManager;
         private float _overrrideCastRange;
         private AttackType _attackType;
@@ -78,7 +77,6 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
         public Spell(Game game, IObjAiBase owner, string spellName, byte slot)
         {
             _game = game;
-            _scriptEngine = game.ScriptEngine;
             _networkIdManager = game.NetworkIdManager;
             CastInfo.MissileNetID = _networkIdManager.GetNewNetId();
             _overrrideCastRange = 0;
@@ -124,7 +122,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
             {
                 nameSpace = "ItemSpells";
             }
-            Script = _scriptEngine.CreateObject<ISpellScript>(nameSpace, SpellName) ?? new SpellScriptEmpty();
+            Script = CSharpScriptEngine.CreateObjectStatic<ISpellScript>(nameSpace, SpellName) ?? new SpellScriptEmpty();
 
             if (Script.ScriptMetadata.TriggersSpellCasts)
             {

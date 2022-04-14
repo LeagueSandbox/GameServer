@@ -30,7 +30,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         private bool _skipNextAutoAttack;
         private ISpell _castingSpell;
         private Random _random = new Random();
-        private readonly CSharpScriptEngine _charScriptEngine;
         protected ItemManager _itemManager;
         protected bool _aiPaused;
 
@@ -99,8 +98,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             SkinID = skinId;
 
             stats.LoadStats(CharData);
-
-            _charScriptEngine = game.ScriptEngine;
 
             // TODO: Centralize this instead of letting it lay in the initialization.
             if (collisionRadius > 0)
@@ -250,7 +247,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         /// </summary>
         public void LoadCharScript(ISpell spell = null)
         {
-            CharScript = _charScriptEngine.CreateObject<ICharScript>("CharScripts", $"CharScript{Model}") ?? new CharScriptEmpty();
+            CharScript = CSharpScriptEngine.CreateObjectStatic<ICharScript>("CharScripts", $"CharScript{Model}") ?? new CharScriptEmpty();
         }
 
         /// <summary>
@@ -1007,7 +1004,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 s.Update(diff);
             }
 
-            if(Inventory != null)
+            if (Inventory != null)
             {
                 Inventory.OnUpdate(diff);
             }
