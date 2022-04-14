@@ -23,7 +23,6 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
         public float AttackSpeedFlat { get; set; }
         public float HealthPerLevel { get; set; }
         public float ManaPerLevel { get; set; }
-        public float AdPerLevel { get; set; }
         public float ArmorPerLevel { get; set; }
         public float MagicResistPerLevel { get; set; }
         public float HealthRegenerationPerLevel { get; set; }
@@ -35,6 +34,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
         public IStat Armor { get; }
         public IStat ArmorPenetration { get; }
         public IStat AttackDamage { get; }
+        public IStat AttackDamagePerLevel { get; set; }
         public IStat AttackSpeedMultiplier { get; set; }
         public IStat CooldownReduction { get; }
         public IStat CriticalChance { get; }
@@ -90,6 +90,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
             Armor = new Stat();
             ArmorPenetration = new Stat();
             AttackDamage = new Stat();
+            AttackDamagePerLevel = new Stat();
             AttackSpeedMultiplier = new Stat(1.0f, 0, 0, 0, 0);
             CooldownReduction = new Stat();
             CriticalChance = new Stat();
@@ -115,7 +116,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
         public void LoadStats(ICharData charData)
         {
             AcquisitionRange.BaseValue = charData.AcquisitionRange;
-            AdPerLevel = charData.DamagePerLevel;
+            AttackDamagePerLevel.BaseValue = charData.DamagePerLevel;
             Armor.BaseValue = charData.Armor;
             ArmorPerLevel = charData.ArmorPerLevel;
             AttackDamage.BaseValue = charData.BaseDamage;
@@ -146,6 +147,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
             Armor.ApplyStatModifier(modifier.Armor);
             ArmorPenetration.ApplyStatModifier(modifier.ArmorPenetration);
             AttackDamage.ApplyStatModifier(modifier.AttackDamage);
+            AttackDamagePerLevel.ApplyStatModifier(modifier.AttackDamagePerLevel);
             AttackSpeedMultiplier.ApplyStatModifier(modifier.AttackSpeed);
             CooldownReduction.ApplyStatModifier(modifier.CooldownReduction);
             CriticalChance.ApplyStatModifier(modifier.CriticalChance);
@@ -224,7 +226,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
             StatsModifier statsLevelUp = new StatsModifier();
             statsLevelUp.HealthPoints.BaseValue = HealthPerLevel;
             statsLevelUp.ManaPoints.BaseValue = ManaPerLevel;
-            statsLevelUp.AttackDamage.BaseValue = AdPerLevel;
+            statsLevelUp.AttackDamage.BaseValue = AttackDamagePerLevel.Total;
             statsLevelUp.Armor.BaseValue = ArmorPerLevel;
             statsLevelUp.MagicResist.BaseValue = MagicResistPerLevel;
             statsLevelUp.HealthRegeneration.BaseValue = HealthRegenerationPerLevel;

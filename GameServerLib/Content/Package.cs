@@ -49,6 +49,7 @@ namespace LeagueSandbox.GameServer.Content
             InitializeContent();
             LoadPackage();
             LoadItems();
+            LoadTalents();
             LoadScripts();
         }
 
@@ -446,6 +447,18 @@ namespace LeagueSandbox.GameServer.Content
             catch (DirectoryNotFoundException)
             {
                 _logger.Debug($"Package: {PackageName} does not contain any items, skipping...");
+            }
+        }
+
+        private void LoadTalents()
+        {
+            try
+            {
+                TalentContentCollection.LoadMasteriesFrom($"{PackagePath}/Talents");
+            }
+            catch (DirectoryNotFoundException)
+            {
+                _logger.Debug($"Package: {PackageName} does not contain any Talents, skipping...");
             }
         }
 

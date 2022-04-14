@@ -3,7 +3,7 @@ using System.Linq;
 using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
 
-namespace LeagueSandbox.GameServer.Items
+namespace LeagueSandbox.GameServer.Inventory
 {
     public class Shop : IShop
     {

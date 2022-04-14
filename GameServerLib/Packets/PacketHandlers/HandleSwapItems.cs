@@ -1,7 +1,7 @@
 ﻿using GameServerCore.Packets.PacketDefinitions.Requests;
 using GameServerCore;
 using GameServerCore.Packets.Handlers;
-using LeagueSandbox.GameServer.Items;
+using LeagueSandbox.GameServer.Inventory;
 
 
 namespace LeagueSandbox.GameServer.Packets.PacketHandlers

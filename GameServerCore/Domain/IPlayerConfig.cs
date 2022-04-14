@@ -14,5 +14,6 @@
         int Icon { get; }
         string BlowfishKey { get; }
         IRuneCollection Runes { get; }
+        ITalentInventory Talents { get; }
     }
 }

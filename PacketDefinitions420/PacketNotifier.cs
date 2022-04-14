@@ -283,7 +283,15 @@ namespace PacketDefinitions420
                 client.Champion.RuneList.Runes.TryGetValue(i, out runeValue);
                 avatar.ItemIDs[i] = (uint)runeValue;
             }
-            // TODO: add talents
+
+            for (int i = 0; i < client.Champion.TalentInventory.Talents.Count; i++)
+            {
+                avatar.Talents[i] = new Talent
+                {
+                    Hash = HashString(client.Champion.TalentInventory.Talents[i].Name),
+                    Level = client.Champion.TalentInventory.Talents[i].Rank
+                };
+            }
 
             if (userId < 0)
             {

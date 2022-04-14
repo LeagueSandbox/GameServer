@@ -23,6 +23,7 @@ namespace LeagueSandbox.GameServer.Scripting.CSharp
     public class CSharpScriptEngine
     {
         private readonly ILog _logger;
+        private static readonly string _assemblyName = "CSharpScriptEngine_Compiler";
         private readonly List<Assembly> _scriptAssembly = new List<Assembly>();
         private readonly Dictionary<string, Type> _types = new Dictionary<string, Type>();
 
@@ -64,7 +65,6 @@ namespace LeagueSandbox.GameServer.Scripting.CSharp
                     treeList[i] = syntaxTree;
                 }
             });
-            string assemblyName = Path.GetRandomFileName();
 
             var references = new List<MetadataReference>();
             foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
@@ -84,7 +84,7 @@ namespace LeagueSandbox.GameServer.Scripting.CSharp
                 .WithOptimizationLevel(OptimizationLevel.Release).WithConcurrentBuild(true);
 
             var compilation = CSharpCompilation.Create(
-                assemblyName,
+                _assemblyName,
                 treeList,
                 references,
                 compilationOptions
@@ -159,6 +159,35 @@ namespace LeagueSandbox.GameServer.Scripting.CSharp
             return default;
         }
 
+        /// <summary>
+        /// Grabs the current compiler assembly and creates a script object given a script namespace and class name.
+        /// </summary>
+        public static T CreateObjectStatic<T>(string scriptNamespace, string scriptClass)
+        {
+            var assembly = AppDomain.CurrentDomain.GetAssemblies().FirstOrDefault(a => a.GetName().Name == _assemblyName);
+            if (assembly == null)
+            {
+                return default;
+            }
+
+            scriptNamespace = scriptNamespace.Replace(" ", "_");
+            scriptClass = scriptClass.Replace(" ", "_");
+            string fullClassName = scriptNamespace + "." + scriptClass;
+
+            var type = assembly.GetType(fullClassName, throwOnError: false);
+            if (type != null)
+            {
+                return (T)Activator.CreateInstance(type);
+            }
+
+            LoggerProvider.GetLogger().Warn($"Could not find script: {scriptNamespace}.{scriptClass}");
+            return default;
+        }
+
+
+        /// <summary>
+        /// Creates a script object given a script namespace and class name.
+        /// </summary>
         public T CreateObject<T>(string scriptNamespace, string scriptClass)
         {
             if (_scriptAssembly == null || _scriptAssembly.Count <= 0)

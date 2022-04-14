@@ -24,7 +24,6 @@ namespace LeagueSandbox.GameServer.Handlers
     {
         // Crucial Vars
         protected Game _game;
-        public CSharpScriptEngine _scriptEngine;
         public MapData _loadMapStructures;
         private readonly ILog _logger;
 
@@ -60,11 +59,10 @@ namespace LeagueSandbox.GameServer.Handlers
         public MapScriptHandler(Game game)
         {
             _game = game;
-            _scriptEngine = game.ScriptEngine;
             _logger = LoggerProvider.GetLogger();
             Id = _game.Config.GameConfig.Map;
 
-            MapScript = _scriptEngine.CreateObject<IMapScript>($"MapScripts.Map{Id}", $"{game.Config.GameConfig.GameMode}") ?? new EmptyMapScript();
+            MapScript = CSharpScriptEngine.CreateObjectStatic<IMapScript>($"MapScripts.Map{Id}", $"{game.Config.GameConfig.GameMode}") ?? new EmptyMapScript();
 
             if (MapScript.PlayerSpawnPoints != null && MapScript.MapScriptMetadata.OverrideSpawnPoints)
             {
