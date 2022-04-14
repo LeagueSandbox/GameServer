@@ -3736,15 +3736,20 @@ namespace PacketDefinitions420
         {
             if (u.Replication != null)
             {
-                var us = new UpdateStats(u.Replication, partial);
+                var us = new OnReplication(){
+                    SyncID = (uint)Environment.TickCount,
+                    ReplicationData = new List<ReplicationData>(1){
+                        u.Replication.GetData(partial)
+                    }
+                };
                 var channel = Channel.CHL_LOW_PRIORITY;
                 if(userId == 0)
                 {
-                    _packetHandlerManager.BroadcastPacketVision(u, us, channel, PacketFlags.Unsequenced);
+                    _packetHandlerManager.BroadcastPacketVision(u, us.GetBytes(), channel, PacketFlags.Unsequenced);
                 }
                 else
                 {
-                    _packetHandlerManager.SendPacket(userId, us, channel, PacketFlags.Unsequenced);
+                    _packetHandlerManager.SendPacket(userId, us.GetBytes(), channel, PacketFlags.Unsequenced);
                 }
             }
         }
@@ -3811,7 +3816,12 @@ namespace PacketDefinitions420
                 }
                 var healthbarPacket = ConstructEnterLocalVisibilityClientPacket(obj);
                 //TODO: try to include it to packets too?
-                var us = new UpdateStats(u.Replication, false);
+                var us = new OnReplication(){
+                    SyncID = (uint)Environment.TickCount,
+                    ReplicationData = new List<ReplicationData>(1){
+                        u.Replication.GetData(false)
+                    }
+                };
 
                 if(userId == 0)
                 {
