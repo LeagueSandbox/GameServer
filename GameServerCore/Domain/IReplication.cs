@@ -9,6 +9,6 @@ namespace GameServerCore.Domain
         bool Changed { get; }
         void MarkAsUnchanged();
         void Update();
-        ReplicationData GetData(bool partial = false);
+        ReplicationData GetData(bool partial = true);
     }
 }

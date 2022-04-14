@@ -86,7 +86,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
 
         public abstract void Update();
 
-        public ReplicationData GetData(bool partial = false)
+        public ReplicationData GetData(bool partial = true)
         {
             var data = new ReplicationData(){
                 UnitNetID = Owner.NetId
@@ -95,14 +95,13 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
             for (byte primaryId = 0; primaryId < 6; primaryId++)
             {
                 uint secondaryIdArray = 0;
+                List<byte> bytes = new List<byte>(8);
                 for (byte secondaryId = 0; secondaryId < 32; secondaryId++)
                 {
                     var rep = Values[primaryId, secondaryId];
                     if (rep != null && (!partial || rep.Changed))
                     {
                         secondaryIdArray |= 1u << secondaryId;
-
-                        List<byte> bytes = new List<byte>(8);
 
                         if (rep.IsFloat)
                         {
@@ -131,7 +130,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
                     }
                 }
             }
-            
+
             return data;
         }
     }

@@ -203,9 +203,6 @@ namespace LeagueSandbox.GameServer
                 obj.SetVisibleForPlayer(pid, shouldBeVisibleForPlayer);
                 obj.SetSpawnedForPlayer(pid);
 
-                obj.OnAdded();
-
-                // TODO: Move to OnAdded/OnSpawn.
                 if (obj is ILaneTurret turret)
                 {
                     foreach (var item in turret.Inventory)
@@ -225,7 +222,7 @@ namespace LeagueSandbox.GameServer
             {
                 if(u.Replication.Changed)
                 {
-                    _game.PacketNotifier.NotifyUpdatedStats(u, userId, true);
+                    _game.PacketNotifier.NotifyOnReplication(u, userId, true);
                 }
 
                 if (u.IsModelUpdated)
@@ -299,6 +296,7 @@ namespace LeagueSandbox.GameServer
                 {
                     _objects.Add(o.NetId, o);
                 }
+                o.OnAdded();
             }
         }
 
