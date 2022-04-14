@@ -15,7 +15,8 @@ namespace LeagueSandbox.GameServer.Content
             public object Id => MetaData["Id"];
         }
 
-        private static Dictionary<string, TalentCollectionEntry> _masteries = new Dictionary<string, TalentCollectionEntry>();
+        public static Dictionary<string, TalentCollectionEntry> _talents { get; private set; } = new Dictionary<string, TalentCollectionEntry>();
+
         public static void LoadMasteriesFrom(string directoryPath)
         {
             var files = Directory.GetFiles(directoryPath, "*.json", SearchOption.AllDirectories);
@@ -23,13 +24,18 @@ namespace LeagueSandbox.GameServer.Content
             {
                 string data = File.ReadAllText(file);
                 var collectionEntry = JsonConvert.DeserializeObject<TalentCollectionEntry>(data);
-                _masteries.Add(collectionEntry.Name, collectionEntry);
+                _talents.Add(collectionEntry.Name, collectionEntry);
             }
         }
 
-        public static byte GetMasteryMaxLevel(string mastery)
+        public static bool TalentIsValid(string talent)
         {
-            return _masteries[mastery].MaxLevel;
+            return _talents.ContainsKey(talent);
+        }
+
+        public static byte GetTalentMaxRank(string mastery)
+        {
+            return _talents[mastery].MaxLevel;
         }
     }
 }

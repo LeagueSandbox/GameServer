@@ -3,6 +3,7 @@ using GameServerCore.Domain.GameObjects;
 using GameServerCore.Scripting.CSharp;
 using LeagueSandbox.GameServer.GameObjects;
 using System.Collections.Generic;
+using static LeagueSandbox.GameServer.Content.TalentContentCollection;
 
 namespace LeagueSandbox.GameServer.Inventory
 {
@@ -16,9 +17,12 @@ namespace LeagueSandbox.GameServer.Inventory
             _game = game;
         }
 
-        public void Add(string masteryId, byte level)
+        public void Add(string talentId, byte level)
         {
-            Talents.Add(new Talent(_game, masteryId, level));
+            if (TalentIsValid(talentId))
+            {
+                Talents.Add(new Talent(_game, talentId, level));
+            }
         }
 
         public void Initialize(IObjAiBase owner)

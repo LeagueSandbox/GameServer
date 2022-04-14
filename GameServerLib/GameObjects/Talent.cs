@@ -13,7 +13,7 @@ namespace LeagueSandbox.GameServer.GameObjects
         public Talent(Game game, string name, byte level)
         {
             Name = name;
-            Rank = Math.Min(level, GetMasteryMaxLevel(name));
+            Rank = Math.Min(level, GetTalentMaxRank(name));
             Script = game.ScriptEngine.CreateObject<ITalentScript>("Talents", $"Talent_{name}") ?? new EmptyTalentScript();
         }
     }
