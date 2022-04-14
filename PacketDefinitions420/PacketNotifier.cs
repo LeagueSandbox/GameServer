@@ -9,7 +9,6 @@ using GameServerCore.Enums;
 using GameServerCore.NetInfo;
 using GameServerCore.Packets.Enums;
 using GameServerCore.Packets.Interfaces;
-using PacketDefinitions420.PacketDefinitions.S2C;
 using LeaguePackets.Game;
 using System;
 using System.Collections.Generic;

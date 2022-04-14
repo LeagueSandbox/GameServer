@@ -7,7 +7,6 @@ using GameServerCore.Packets.Handlers;
 using GameServerCore.Packets.PacketDefinitions;
 using LeaguePackets;
 using LeaguePackets.Game.Events;
-using PacketDefinitions420.PacketDefinitions.S2C;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
