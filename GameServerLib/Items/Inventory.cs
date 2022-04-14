@@ -17,14 +17,12 @@ namespace LeagueSandbox.GameServer.Items
         private const byte EXTRA_INVENTORY_SIZE = 7;
         private const byte RUNE_INVENTORY_SIZE = 30;
         private InventoryManager _owner;
-        private CSharpScriptEngine _scriptEngine;
         public Dictionary<int, IItemScript> ItemScripts = new Dictionary<int, IItemScript>();
         public IItem[] Items { get; }
 
-        public Inventory(InventoryManager owner, CSharpScriptEngine scriptEngine)
+        public Inventory(InventoryManager owner)
         {
             _owner = owner;
-            _scriptEngine = scriptEngine;
             Items = new IItem[BASE_INVENTORY_SIZE + EXTRA_INVENTORY_SIZE + RUNE_INVENTORY_SIZE];
 
         }
@@ -54,7 +52,7 @@ namespace LeagueSandbox.GameServer.Items
                 if (!ItemScripts.ContainsKey(item.ItemId))
                 {
                     //Loads the Script
-                    ItemScripts.Add(item.ItemId, _scriptEngine.CreateObject<IItemScript>("ItemPassives", $"ItemID_{item.ItemId}") ?? new ItemScriptEmpty());
+                    ItemScripts.Add(item.ItemId, CSharpScriptEngine.CreateObjectStatic<IItemScript>("ItemPassives", $"ItemID_{item.ItemId}") ?? new ItemScriptEmpty());
                     ItemScripts[item.ItemId].OnActivate(owner);
                 }
             }
@@ -212,7 +210,7 @@ namespace LeagueSandbox.GameServer.Items
                 if (!ItemScripts.ContainsKey(item.ItemId))
                 {
                     //Loads the Script
-                    ItemScripts.Add(item.ItemId, _scriptEngine.CreateObject<IItemScript>("ItemPassives", $"ItemID_{item.ItemId}") ?? new ItemScriptEmpty());
+                    ItemScripts.Add(item.ItemId, CSharpScriptEngine.CreateObjectStatic<IItemScript>("ItemPassives", $"ItemID_{item.ItemId}") ?? new ItemScriptEmpty());
                     ItemScripts[item.ItemId].OnActivate(owner);
                 }
             }

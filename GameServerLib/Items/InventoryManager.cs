@@ -15,10 +15,10 @@ namespace LeagueSandbox.GameServer.Items
         private readonly IPacketNotifier _packetNotifier;
         private readonly Inventory _inventory;
 
-        private InventoryManager(IPacketNotifier packetNotifier, CSharpScriptEngine scriptEngine)
+        private InventoryManager(IPacketNotifier packetNotifier)
         {
             _packetNotifier = packetNotifier;
-            _inventory = new Inventory(this, scriptEngine);
+            _inventory = new Inventory(this);
         }
 
         public KeyValuePair<IItem, bool> AddItem(IItemData itemData, IObjAiBase owner = null)
@@ -151,9 +151,9 @@ namespace LeagueSandbox.GameServer.Items
             return result;
         }
 
-        public static InventoryManager CreateInventory(IPacketNotifier packetNotifier, CSharpScriptEngine scriptEngine)
+        public static InventoryManager CreateInventory(IPacketNotifier packetNotifier)
         {
-            return new InventoryManager(packetNotifier, scriptEngine);
+            return new InventoryManager(packetNotifier);
         }
 
         public IEnumerator GetEnumerator()
