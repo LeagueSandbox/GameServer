@@ -519,7 +519,8 @@ namespace LeagueSandbox.GameServer.API
             bool revealStealthed = false,
             IAttackableUnit revealSpecificUnitOnly = null,
             float collisionArea = 0f,
-            IGameObject collisionOwner = null
+            IGameObject collisionOwner = null,
+            RegionType regionType = RegionType.Default
         )
         {
             var useCollision = false;
@@ -529,7 +530,7 @@ namespace LeagueSandbox.GameServer.API
             }
 
             // TODO: Implement revealSpecificUnitOnly
-            return new Region(_game, team, target.Position, collisionUnit: collisionOwner, visionTarget: target, giveVision: true, visionRadius: radius, revealStealth: revealStealthed, hasCollision: useCollision, collisionRadius: collisionArea, lifetime: duration);
+            return new Region(_game, team, target.Position, regionType, collisionOwner, revealSpecificUnitOnly, true, radius, revealStealthed, useCollision, collisionArea, duration);
         }
 
         /// <summary>
@@ -1075,6 +1076,11 @@ namespace LeagueSandbox.GameServer.API
         public static void PlaySound(string soundName, IAttackableUnit soundOwner)
         {
             _game.PacketNotifier.NotifyS2C_PlaySound(soundName, soundOwner);
+        }
+
+        public static void StopTargetingUnit(IAttackableUnit unit)
+        {
+            _game.ObjectManager.StopTargeting(unit);
         }
     }
 }

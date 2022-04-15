@@ -14,7 +14,6 @@ namespace Buffs
         {
             BuffType = BuffType.COMBAT_ENCHANCER,
             BuffAddType = BuffAddType.REPLACE_EXISTING,
-            IsHidden = false
         };
 
         public IStatsModifier StatsModifier { get; private set; }

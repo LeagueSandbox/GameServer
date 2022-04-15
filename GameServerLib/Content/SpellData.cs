@@ -200,7 +200,15 @@ namespace LeagueSandbox.GameServer.Content
         /// <returns>True/False.</returns>
         public bool IsValidTarget(IObjAiBase attacker, IAttackableUnit target, SpellDataFlags overrideFlags = 0)
         {
-            if (!target.Status.HasFlag(StatusFlags.Targetable))
+
+            bool overrideTargetable = false;
+            if (target is IObjAiBase obj && obj.CharData.IsUseable && Flags.HasFlag(SpellDataFlags.AffectUseable))
+            {
+                //TODO: Verify if we need a check for CharData.UsableByEnemy here too.
+                overrideTargetable = true;
+            }
+
+            if (!target.Status.HasFlag(StatusFlags.Targetable) && !overrideTargetable)
             {
                 return false;
             }

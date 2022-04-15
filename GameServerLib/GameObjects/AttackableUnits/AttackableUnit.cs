@@ -178,10 +178,10 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             Position = vec;
             _movementUpdated = true;
 
-            if(!IsPathEnded())
+            if (!IsPathEnded())
             {
                 // Reevaluate our current path to account for the starting position being changed.
-                if(repath)
+                if (repath)
                 {
                     List<Vector2> safePath = _game.Map.PathingHandler.GetPath(Position, _game.Map.NavigationGrid.GetClosestTerrainExit(Waypoints.Last(), PathfindingRadius));
 
@@ -717,7 +717,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             ApiEventManager.OnDeath.Publish(data);
             if (data.Unit is IObjAiBase obj)
             {
-                if(!(obj is IMonster))
+                if (!(obj is IMonster))
                 {
                     var champs = _game.ObjectManager.GetChampionsInRangeFromTeam(Position, _game.Map.MapScript.MapScriptMetadata.ExpRange, Team, true);
                     if (champs.Count > 0)
@@ -883,8 +883,11 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                         case StatusFlags.Targetable:
                         {
                             Stats.IsTargetable = enabled;
-                            // TODO: Verify.
-                            Stats.SetActionState(ActionState.TARGETABLE, enabled);
+                            // TODO: Refactor this.
+                            if (this is IObjAiBase obj && !obj.CharData.IsUseable)
+                            {
+                                Stats.SetActionState(ActionState.TARGETABLE, enabled);
+                            }
                             break;
                         }
                         case StatusFlags.Taunted:
@@ -983,8 +986,8 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         public void TeleportTo(Vector2 position, bool repath = false)
         {
             position = _game.Map.NavigationGrid.GetClosestTerrainExit(position, PathfindingRadius + 1.0f);
-            
-            if(repath)
+
+            if (repath)
             {
                 SetPosition(position, true);
             }
@@ -1371,7 +1374,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                     }
                     // TODO: Unload and reload all data of buff script here.
                 }
-            }    
+            }
         }
 
         /// <summary>

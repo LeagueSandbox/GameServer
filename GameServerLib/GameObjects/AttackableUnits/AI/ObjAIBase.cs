@@ -665,7 +665,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                         }
 
                         var newWaypoints = _game.Map.PathingHandler.GetPath(Position, targetPos);
-                        if (newWaypoints.Count > 1)
+                        if (newWaypoints != null && newWaypoints.Count > 1)
                         {
                             SetWaypoints(newWaypoints);
                         }
@@ -825,18 +825,22 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 return null;
             }
 
-            ISpell newSpell = new Spell.Spell(_game, this, name, slot);
-            ISpell existingSpell = Spells[slot];
+            ISpell toReturn = Spells[slot];
 
-            if (existingSpell != null)
+            if (name != Spells[slot].SpellName)
             {
-                Spells[slot].Deactivate();
+                toReturn = new Spell.Spell(_game, this, name, slot);
+
+                if (Spells[slot] != null)
+                {
+                    Spells[slot].Deactivate();
+                }
+
+                toReturn.SetLevel(Spells[slot].CastInfo.SpellLevel);
+
+                Spells[slot] = toReturn;
+                Stats.SetSpellEnabled(slot, enabled);
             }
-
-            newSpell.SetLevel(Spells[slot].CastInfo.SpellLevel);
-
-            Spells[slot] = newSpell;
-            Stats.SetSpellEnabled(slot, enabled);
 
             if (this is IChampion champion)
             {
@@ -849,7 +853,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 }
             }
 
-            return newSpell;
+            return toReturn;
         }
 
         /// <summary>
@@ -913,6 +917,32 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         public ISpell GetCastSpell()
         {
             return _castingSpell;
+        }
+
+        /// <summary>
+        /// Forces this unit to stop targeting the given unit.
+        /// Applies to attacks, spell casts, spell channels, and any queued spell casts.
+        /// </summary>
+        /// <param name="target"></param>
+        public void Untarget(IAttackableUnit target)
+        {
+            if (TargetUnit == target)
+            {
+                SetTargetUnit(null, true);
+            }
+
+            if (_castingSpell != null)
+            {
+                _castingSpell.RemoveTarget(target);
+            }
+            if (ChannelSpell != null)
+            {
+                ChannelSpell.RemoveTarget(target);
+            }
+            if (SpellToCast != null)
+            {
+                SpellToCast.RemoveTarget(target);
+            }
         }
 
         /// <summary>
@@ -1073,7 +1103,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                     CancelAutoAttack(!HasAutoAttacked, true);
                 }
             }
-            else if (TargetUnit.IsDead || !TargetUnit.Status.HasFlag(StatusFlags.Targetable) || !TargetUnit.IsVisibleByTeam(Team))
+            else if (TargetUnit.IsDead || (!TargetUnit.Status.HasFlag(StatusFlags.Targetable) && !CharData.IsUseable) || !TargetUnit.IsVisibleByTeam(Team))
             {
                 if (IsAttacking)
                 {
@@ -1174,9 +1204,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                         // Units outside of range are ignored.
                         else if (IsAttacking && AutoAttackSpell.CastInfo.Targets[0].Unit != TargetUnit && !(Vector2.Distance(TargetUnit.Position, Position) > (Stats.Range.Total + TargetUnit.CollisionRadius)))
                         {
-                            var tempTargets = new List<ICastTarget>(AutoAttackSpell.CastInfo.Targets);
-                            tempTargets[0] = new CastTarget(TargetUnit, tempTargets[0].HitResult);
-                            AutoAttackSpell.SetTargetUnits(tempTargets);
+                            AutoAttackSpell.SetCurrentTarget(TargetUnit);
                         }
                     }
                     else

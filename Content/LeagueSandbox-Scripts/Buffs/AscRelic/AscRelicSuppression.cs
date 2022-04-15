@@ -5,35 +5,36 @@ using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 using LeagueSandbox.GameServer.API;
 using GameServerCore.Scripting.CSharp;
 using LeagueSandbox.GameServer.Scripting.CSharp;
+using GameServerCore.Domain;
 using LeagueSandbox.GameServer.GameObjects.Stats;
 
 namespace Buffs
 {
-    internal class AscRespawn : IBuffGameScript
+    internal class AscRelicSuppression : IBuffGameScript
     {
         public IBuffScriptMetaData BuffMetaData { get; set; } = new BuffScriptMetaData
         {
-            BuffType = BuffType.INTERNAL,
-            BuffAddType = BuffAddType.REPLACE_EXISTING
+            BuffType = BuffType.AURA,
+            BuffAddType = BuffAddType.REPLACE_EXISTING,
         };
+
         public IStatsModifier StatsModifier { get; private set; } = new StatsModifier();
 
+        IBuff Buff;
         public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
-            if(unit is IObjAiBase obj && obj.Inventory != null)
-            {
-                AddBuff("AscTrinketStartingCD", 0.3f, 1, null, unit, obj);
-                ApiEventManager.OnResurrect.AddListener(this, obj, OnRespawn, false);
-            }
+            Buff = buff;
+            ApiEventManager.OnDeath.AddListener(this, unit, OnDeath, true);
         }
 
-        public void OnRespawn(IObjAiBase owner)
+        public void OnDeath(IDeathData deathData)
         {
-            owner.Spells[6 + (byte)SpellSlotType.InventorySlots].SetCooldown(0, true);
+            Buff.DeactivateBuff();
         }
 
         public void OnDeactivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
+            ApiEventManager.OnDeath.RemoveListener(this);
         }
 
         public void OnUpdate(float diff)

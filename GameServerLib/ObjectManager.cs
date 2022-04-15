@@ -262,6 +262,10 @@ namespace LeagueSandbox.GameServer
                     // Stop targeting an untargetable unit.
                     if (ai.TargetUnit != null && !ai.TargetUnit.Status.HasFlag(StatusFlags.Targetable))
                     {
+                        if(ai.TargetUnit is IObjAiBase aiTar && aiTar.CharData.IsUseable)
+                        {
+                            return;
+                        }
                         StopTargeting(ai.TargetUnit);
                     }
                 }
@@ -490,10 +494,7 @@ namespace LeagueSandbox.GameServer
                 var ai = u as IObjAiBase;
                 if (ai != null)
                 {
-                    if (ai.TargetUnit == target)
-                    {
-                        ai.SetTargetUnit(null, true);
-                    }
+                    ai.Untarget(target);
                 }
             }
         }
