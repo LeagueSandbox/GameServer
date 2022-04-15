@@ -25,6 +25,7 @@ using LeaguePackets;
 using LeaguePackets.LoadScreen;
 using LeaguePackets.Game.Events;
 using Channel = GameServerCore.Packets.Enums.Channel;
+using GameServerCore.Packets.Enums;
 
 namespace PacketDefinitions420
 {
@@ -2177,11 +2178,11 @@ namespace PacketDefinitions420
                 var channel = Channel.CHL_LOW_PRIORITY;
                 if(userId == 0)
                 {
-                    _packetHandlerManager.BroadcastPacketVision(u, us.GetBytes(), channel, PacketFlags.Unsequenced);
+                    _packetHandlerManager.BroadcastPacketVision(u, us.GetBytes(), channel, PacketFlags.UNSEQUENCED);
                 }
                 else
                 {
-                    _packetHandlerManager.SendPacket(userId, us.GetBytes(), channel, PacketFlags.Unsequenced);
+                    _packetHandlerManager.SendPacket(userId, us.GetBytes(), channel, PacketFlags.UNSEQUENCED);
                 }
             }
         }

@@ -6,18 +6,12 @@
 	</PropertyGroup>
 	
 	<ItemGroup>
-		<PackageReference Include="ENetSharpLeague" Version="1.2.1-beta" />
+		<PackageReference Include="LENet" Version="1.0.1" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\GameServerCore\GameServerCore.csproj" />
 		<ProjectReference Include="..\LeaguePackets\LeaguePackets\LeaguePackets.csproj" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<Reference Include="LENet, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-			<HintPath>..\LENet.dll</HintPath>
-		</Reference>
 	</ItemGroup>
 
 </Project>
