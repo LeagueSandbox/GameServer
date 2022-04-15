@@ -7,7 +7,7 @@ using GameServerCore.Enums;
 using GameServerCore.Scripting.CSharp;
 using LeaguePackets.Game.Events;
 using LeagueSandbox.GameServer.GameObjects.Stats;
-using LeagueSandbox.GameServer.Items;
+using LeagueSandbox.GameServer.Inventory;
 
 namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 {
@@ -57,7 +57,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             Lane = lane;
             ParentObject = mapObject;
             SetTeam(team);
-            Inventory = InventoryManager.CreateInventory(game.PacketNotifier, game.ScriptEngine);
+            Inventory = InventoryManager.CreateInventory(game.PacketNotifier);
             Replication = new ReplicationAiTurret(this);
         }
 

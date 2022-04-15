@@ -38,5 +38,24 @@ namespace GameServerCore.Domain.GameObjects.Spell
         Vector3 SpellCastLaunchPosition { get; set; }
         int AmmoUsed { get; set; }
         float AmmoRechargeTime { get; set; }
+
+        /// <summary>
+        /// Adds the specified unit to the list of CastTargets.
+        /// </summary>
+        /// <param name="target">Unit to add.</param>
+        void AddTarget(IAttackableUnit target);
+
+        /// <summary>
+        /// Removes the specified unit from the list of targets for this spell.
+        /// </summary>
+        /// <param name="target">Unit to remove.</param>
+        bool RemoveTarget(IAttackableUnit target);
+
+        /// <summary>
+        /// Sets the CastTarget of the given slot to the given unit.
+        /// </summary>
+        /// <param name="target">Unit to input.</param>
+        /// <param name="index">Index to set.</param>
+        void SetTarget(IAttackableUnit target, int index);
     }
 }

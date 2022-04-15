@@ -4,6 +4,7 @@ using GameServerCore.NetInfo;
 using LeagueSandbox.GameServer.Content;
 using LeagueSandbox.GameServer.GameObjects;
 using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
+using LeagueSandbox.GameServer.Inventory;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
@@ -14,12 +15,14 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
     {
         private readonly IPlayerManager _playerManager;
 
+        Game _game;
         public override string Command => "spawn";
         public override string Syntax => $"{Command} champblue [champion], champpurple [champion], minionsblue, minionspurple, regionblue [size, time], regionpurple [size, time]";
 
         public SpawnCommand(ChatCommandManager chatCommandManager, Game game)
             : base(chatCommandManager, game)
         {
+            _game = game;
             _playerManager = game.PlayerManager;
         }
 
@@ -145,6 +148,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
             var championPos = _playerManager.GetPeerInfo(userId).Champion.Position;
 
             var runesTemp = new RuneCollection();
+            var talents = new TalentInventory();
             var clientInfoTemp = new ClientInfo("", team, 0, 0, 0, model, new string[] { "SummonerHeal", "SummonerFlash" }, -1);
             uint num = (uint)_playerManager.GetPlayers(true).Count + 1;
             var playerTemp = new Tuple<uint, ClientInfo>(num, clientInfoTemp);
@@ -157,6 +161,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
                 0,
                 0, // Doesnt matter at this point
                 runesTemp,
+                talents,
                 clientInfoTemp,
                 team: team
             );
@@ -172,7 +177,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
             Game.PacketNotifier.NotifyAvatarInfo(clientInfoTemp);
             Game.ObjectManager.AddObject(c);
             Game.PacketNotifier.NotifyEnterLocalVisibilityClient(c, ignoreVision: true);
-            Game.PacketNotifier.NotifyUpdatedStats(c, partial: false);
+            Game.PacketNotifier.NotifyOnReplication(c, partial: false);
 
             c.Stats.SetSpellEnabled(13, true);
             c.Stats.SetSummonerSpellEnabled(0, true);

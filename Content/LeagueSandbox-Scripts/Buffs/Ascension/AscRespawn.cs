@@ -22,7 +22,7 @@ namespace Buffs
         {
             if(unit is IObjAiBase obj && obj.Inventory != null)
             {
-                AddBuff("AscTrinketStartingCD", 0.2f, 1, null, unit, obj);
+                AddBuff("AscTrinketStartingCD", 0.3f, 1, null, unit, obj);
                 ApiEventManager.OnResurrect.AddListener(this, obj, OnRespawn, false);
             }
         }

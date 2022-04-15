@@ -1,4 +1,5 @@
-﻿namespace GameServerCore.Domain
+﻿using LeaguePackets.Game.Common;
+namespace GameServerCore.Domain
 {
     public interface IReplication
     {
@@ -8,5 +9,6 @@
         bool Changed { get; }
         void MarkAsUnchanged();
         void Update();
+        ReplicationData GetData(bool partial = true);
     }
 }

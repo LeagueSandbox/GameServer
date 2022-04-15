@@ -41,5 +41,47 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
         public Vector3 SpellCastLaunchPosition { get; set; }
         public int AmmoUsed { get; set; }
         public float AmmoRechargeTime { get; set; }
+
+        /// <summary>
+        /// Adds the specified unit to the list of CastTargets.
+        /// </summary>
+        /// <param name="target">Unit to add.</param>
+        public void AddTarget(IAttackableUnit target)
+        {
+            Targets.Add(new CastTarget(target, CastTarget.GetHitResult(target, IsAutoAttack, Owner.IsNextAutoCrit)));
+        }
+
+        /// <summary>
+        /// Removes the specified unit from the list of targets for this spell.
+        /// </summary>
+        /// <param name="target">Unit to remove.</param>
+        public bool RemoveTarget(IAttackableUnit target)
+        {
+            if (!Targets.Exists(t => t.Unit == target))
+            {
+                return false;
+            }
+
+            Targets.RemoveAt(Targets.FindIndex(t => t.Unit == target));
+
+            return true;
+        }
+
+        /// <summary>
+        /// Sets the CastTarget of the given slot to the given unit.
+        /// An index outside the bounds of the list will be appended.
+        /// </summary>
+        /// <param name="target">Unit to input.</param>
+        /// <param name="index">Index to set.</param>
+        public void SetTarget(IAttackableUnit target, int index)
+        {
+            if (Targets.Count - 1 < index)
+            {
+                AddTarget(target);
+                return;
+            }
+
+            Targets[index] = new CastTarget(target, CastTarget.GetHitResult(target, IsAutoAttack, Owner.IsNextAutoCrit));
+        }
     }
 }

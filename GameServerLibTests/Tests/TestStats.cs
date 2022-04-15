@@ -47,7 +47,7 @@ namespace LeagueSandbox.GameServerTests.Tests
             Assert.AreEqual(0, stats.ManaPoints.BaseValue);
             Assert.AreEqual(0, stats.ManaRegeneration.BaseValue);
 
-            stats.AdPerLevel = 1;
+            stats.AttackDamagePerLevel.BaseValue = 1;
             stats.ArmorPerLevel = 2;
             stats.HealthPerLevel = 3;
             stats.HealthRegenerationPerLevel = 4;

@@ -53,8 +53,9 @@ namespace Buffs
             unit.Stats.CurrentHealth = unit.Stats.HealthPoints.Total;
             //TODO: Add Buff ToolTips updates here once we figure out why buffs don't show up in the Ascension gamemode
 
-            AddUnitPerceptionBubble(unit, 0f, 25000f, TeamId.TEAM_BLUE, true, unit);
-            AddUnitPerceptionBubble(unit, 0f, 25000f, TeamId.TEAM_PURPLE, true, unit);
+            //Unit Perception bubbles seems to be broken
+            AddUnitPerceptionBubble(unit, 0.0f, 25000f, TeamId.TEAM_BLUE, true, unit);
+            AddUnitPerceptionBubble(unit, 0.0f, 25000f, TeamId.TEAM_PURPLE, true, unit);
 
             //Note: The ascension applies a "MoveAway" knockback debuff on all enemies around.
             //The duration varies based on the distance (yet unknown) you were to whoever ascended. And the PathSpeedOverride and ParabolicGravity varies based on the duration.
@@ -75,6 +76,7 @@ namespace Buffs
                 NotifyWorldEvent(EventID.OnClearAscended);
             }
 
+            deathData.Unit.GetBuffWithName("AscBuffIcon").DeactivateBuff();
             thisBuff.DeactivateBuff();
         }
 

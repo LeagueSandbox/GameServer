@@ -203,7 +203,6 @@ namespace LeagueSandbox.GameServer
                 obj.SetVisibleForPlayer(pid, shouldBeVisibleForPlayer);
                 obj.SetSpawnedForPlayer(pid);
 
-                // TODO: Centralize this, should only be done once at start of game.
                 if (obj is ILaneTurret turret)
                 {
                     foreach (var item in turret.Inventory)
@@ -223,7 +222,7 @@ namespace LeagueSandbox.GameServer
             {
                 if(u.Replication.Changed)
                 {
-                    _game.PacketNotifier.NotifyUpdatedStats(u, userId, true);
+                    _game.PacketNotifier.NotifyOnReplication(u, userId, true);
                 }
 
                 if (u.IsModelUpdated)
@@ -263,6 +262,10 @@ namespace LeagueSandbox.GameServer
                     // Stop targeting an untargetable unit.
                     if (ai.TargetUnit != null && !ai.TargetUnit.Status.HasFlag(StatusFlags.Targetable))
                     {
+                        if(ai.TargetUnit is IObjAiBase aiTar && aiTar.CharData.IsUseable)
+                        {
+                            return;
+                        }
                         StopTargeting(ai.TargetUnit);
                     }
                 }
@@ -491,10 +494,7 @@ namespace LeagueSandbox.GameServer
                 var ai = u as IObjAiBase;
                 if (ai != null)
                 {
-                    if (ai.TargetUnit == target)
-                    {
-                        ai.SetTargetUnit(null, true);
-                    }
+                    ai.Untarget(target);
                 }
             }
         }

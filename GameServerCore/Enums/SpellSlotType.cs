@@ -9,9 +9,9 @@
         TempItemSlot = 14,
         RuneSlots = 15,
         ExtraSlots = 45,
-        RespawnSpellSlot = 60,
-        UseSpellSlot = 61,
-        PassiveSpellSlot = 62,
+        RespawnSpellSlot = 61,
+        UseSpellSlot = 62,
+        PassiveSpellSlot = 63,
         BasicAttackNormalSlots = 64,
         // TODO: Verify if we need this
         BasicAttackCriticalSlots = 73

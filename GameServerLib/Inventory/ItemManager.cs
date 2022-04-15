@@ -2,7 +2,7 @@
 using GameServerCore.Domain;
 using LeagueSandbox.GameServer.Content;
 
-namespace LeagueSandbox.GameServer.Items
+namespace LeagueSandbox.GameServer.Inventory
 {
     public class ItemManager
     {

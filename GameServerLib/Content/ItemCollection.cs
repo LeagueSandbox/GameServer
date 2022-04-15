@@ -60,13 +60,10 @@ namespace LeagueSandbox.GameServer.Content
         public static ItemContentCollection LoadItemsFrom(string directoryPath)
         {
             var result = new ItemContentCollection();
-            var itemDirectoryPaths = Directory.GetDirectories(directoryPath);
-            foreach (var location in itemDirectoryPaths)
+            var files = Directory.GetFiles(directoryPath, "*.json", SearchOption.AllDirectories);
+            foreach (var file in files)
             {
-                var path = location.Replace('\\', '/');
-                var itemName = path.Split('/').Last();
-                var itemDataPath = $"{path}/{itemName}.json";
-                result.AddFromPath(itemDataPath);
+                result.AddFromPath(file);
             }
 
             return result;

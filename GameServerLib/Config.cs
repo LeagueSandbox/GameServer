@@ -6,7 +6,11 @@ using System.Numerics;
 using System.Reflection;
 using GameServerCore.Domain;
 using GameServerCore.Enums;
+using LeagueSandbox.GameServer;
 using LeagueSandbox.GameServer.Content;
+using LeagueSandbox.GameServer.Inventory;
+using LeagueSandbox.GameServer.Logging;
+using log4net;
 using Newtonsoft.Json.Linq;
 
 namespace LeagueSandbox.GameServer
@@ -49,17 +53,7 @@ namespace LeagueSandbox.GameServer
 
         private void LoadConfig(Game game, string json)
         {
-            Players = new Dictionary<string, IPlayerConfig>();
-
             var data = JObject.Parse(json);
-
-            // Read the player configuration
-            var playerConfigurations = data.SelectToken("players");
-            foreach (var player in playerConfigurations)
-            {
-                var playerConfig = new PlayerConfig(player);
-                Players.Add($"player{playerConfig.PlayerID}", playerConfig);
-            }
 
             var gameInfo = data.SelectToken("gameInfo");
             SetGameFeatures(FeatureFlags.EnableCooldowns, (bool)gameInfo.SelectToken("COOLDOWNS_ENABLED"));
@@ -87,6 +81,16 @@ namespace LeagueSandbox.GameServer
 
             // Load data package
             ContentManager = ContentManager.LoadDataPackage(game, GameConfig.DataPackage, ContentPath);
+
+            Players = new Dictionary<string, IPlayerConfig>();
+
+            // Read the player configuration
+            var playerConfigurations = data.SelectToken("players");
+            foreach (var player in playerConfigurations)
+            {
+                var playerConfig = new PlayerConfig(player, game);
+                Players.Add($"player{playerConfig.PlayerID}", playerConfig);
+            }
         }
 
         private string GetContentPath()
@@ -225,7 +229,6 @@ public class GameConfig
     }
 }
 
-
 public class PlayerConfig : IPlayerConfig
 {
     public long PlayerID { get; private set; }
@@ -240,9 +243,12 @@ public class PlayerConfig : IPlayerConfig
     public int Icon { get; private set; }
     public string BlowfishKey { get; private set; }
     public IRuneCollection Runes { get; }
+    public ITalentInventory Talents { get; }
 
-    public PlayerConfig(JToken playerData)
+    public PlayerConfig(JToken playerData, Game game)
     {
+        ILog logger = LoggerProvider.GetLogger();
+
         PlayerID = (long)playerData.SelectToken("playerId");
         Rank = (string)playerData.SelectToken("rank");
         Name = (string)playerData.SelectToken("name");
@@ -255,36 +261,37 @@ public class PlayerConfig : IPlayerConfig
         Icon = (int)playerData.SelectToken("icon");
         BlowfishKey = (string)playerData.SelectToken("blowfishKey");
 
-        try
+        Runes = new RuneCollection();
+        var runes = playerData.SelectToken("runes");
+        if (runes != null)
         {
-            var runes = playerData.SelectToken("runes");
-            Runes = new RuneCollection();
-
             foreach (JProperty runeCategory in runes)
             {
                 Runes.Add(Convert.ToInt32(runeCategory.Name), Convert.ToInt32(runeCategory.Value));
             }
         }
-        catch (Exception)
+        else
         {
-            // no runes set in config
+            logger.Warn($"No runes found for player {PlayerID}!");
         }
-    }
 
-    public PlayerConfig(string name, string champion, long playerId = -1, string rank = "", string team = "BLUE", short skin = 0, string summoner1 = "SummonerHeal", string summoner2 = "SummonerFlash", short ribbon = 0, int icon = 0, string blowfishKey = "")
-    {
-        PlayerID = playerId;
-        Rank = rank;
-        Name = name;
-        Champion = champion;
-        Team = team;
-        Skin = skin;
-        Summoner1 = summoner1;
-        Summoner2 = summoner2;
-        Ribbon = ribbon;
-        Icon = icon;
-        BlowfishKey = blowfishKey;
-
-        Runes = new RuneCollection();
+        Talents = new TalentInventory();
+        var talents = playerData.SelectToken("talents");
+        if (talents != null)
+        {
+            foreach (JProperty talent in talents)
+            {
+                byte level = 1;
+                try
+                {
+                    level = talent.Value.Value<byte>();
+                }
+                catch
+                {
+                    logger.Warn($"Invalid Talent Rank for Talent {talent.Name}! Please use ranks between 1 and {byte.MaxValue}! Defaulting to Rank 1...");
+                }
+                Talents.Add(talent.Name, level);
+            }
+        }
     }
 }
