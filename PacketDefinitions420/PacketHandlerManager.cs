@@ -1,8 +1,7 @@
-﻿using ENet;
+﻿using LENet;
 using GameServerCore;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
-using GameServerCore.Packets.Enums;
 using GameServerCore.Packets.Handlers;
 using GameServerCore.Packets.PacketDefinitions;
 using LeaguePackets;
@@ -12,7 +11,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
+using Channel = GameServerCore.Packets.Enums.Channel;
 
 namespace PacketDefinitions420
 {
@@ -154,7 +153,7 @@ namespace PacketDefinitions420
             Debug.WriteLine("--------");
         }
 
-        public bool SendPacket(int playerId, byte[] source, Channel channelNo, PacketFlags flag = PacketFlags.Reliable)
+        public bool SendPacket(int playerId, byte[] source, Channel channelNo, PacketFlags flag = PacketFlags.RELIABLE)
         {
             // Sometimes we try to send packets to a user that doesn't exist (like in broadcast when not all players are connected).
             // TODO: fix casting
@@ -173,19 +172,19 @@ namespace PacketDefinitions420
                     temp = source;
                 }
 
-                return _peers[playerId].Send((byte)channelNo, temp);
+                return _peers[playerId].Send((byte)channelNo, new LENet.Packet(temp, flag)) == 0;
             }
             return false;
         }
 
-        public bool BroadcastPacket(byte[] data, Channel channelNo, PacketFlags flag = PacketFlags.Reliable)
+        public bool BroadcastPacket(byte[] data, Channel channelNo, PacketFlags flag = PacketFlags.RELIABLE)
         {
             if (data.Length >= 8)
             {
                 // send packet to all peers and save failed ones
-                List<KeyValuePair<long, Peer>> failedPeers = _peers.Where(x => !x.Value.Send((byte)channelNo, _blowfishes[x.Key].Encrypt(data))).ToList();
+                List<KeyValuePair<long, Peer>> failedPeers = _peers.Where(x => x.Value.Send((byte)channelNo, new LENet.Packet(_blowfishes[x.Key].Encrypt(data), flag)) < 0).ToList();
 
-                if(failedPeers.Count() > 0)
+                if (failedPeers.Count() > 0)
                 {
                     Debug.WriteLine($"Broadcasting packet failed for {failedPeers.Count()} peers.");
                     return false;
@@ -194,16 +193,15 @@ namespace PacketDefinitions420
             }
             else
             {
-                var packet = new ENet.Packet();
-                packet.Create(data);
-                _server.Broadcast((byte)channelNo, ref packet);
+                var packet = new LENet.Packet(data, flag);
+                _server.Broadcast((byte)channelNo, packet);
                 return true;
             }
         }
 
         // TODO: find a way with no need of player manager
         public bool BroadcastPacketTeam(TeamId team, byte[] data, Channel channelNo,
-            PacketFlags flag = PacketFlags.Reliable)
+            PacketFlags flag = PacketFlags.RELIABLE)
         {
             foreach (var ci in _playerManager.GetPlayers(true))
             {
@@ -217,13 +215,13 @@ namespace PacketDefinitions420
         }
 
         public bool BroadcastPacketVision(IGameObject o, Packet packet, Channel channelNo,
-            PacketFlags flag = PacketFlags.Reliable)
+            PacketFlags flag = PacketFlags.RELIABLE)
         {
             return BroadcastPacketVision(o, packet.GetBytes(), channelNo, flag);
         }
 
         public bool BroadcastPacketVision(IGameObject o, byte[] data, Channel channelNo,
-            PacketFlags flag = PacketFlags.Reliable)
+            PacketFlags flag = PacketFlags.RELIABLE)
         {
             foreach (int pid in o.VisibleForPlayers)
             {
@@ -296,9 +294,9 @@ namespace PacketDefinitions420
             return player.Champion.OnDisconnect();
         }
 
-        public bool HandlePacket(Peer peer, ENet.Packet packet, Channel channelId)
+        public bool HandlePacket(Peer peer, LENet.Packet packet, Channel channelId)
         {
-            var data = packet.GetBytes();
+            var data = packet.Data;
 
             // if channel id is HANDSHAKE we should initialize blowfish key and return
             if(channelId == Channel.CHL_HANDSHAKE)

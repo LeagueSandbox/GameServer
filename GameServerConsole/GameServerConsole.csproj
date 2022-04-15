@@ -15,7 +15,7 @@
 
   <ItemGroup>
     <PackageReference Include="CommandLineParser" Version="2.6.0" />
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
   </ItemGroup>
 
   <ItemGroup>
@@ -49,8 +49,8 @@
 	  <_SettingsTargetDirectory>$(TargetDir)Settings\</_SettingsTargetDirectory>
 	  <_LibSourceDirectory>$(SolutionDir)lib\.</_LibSourceDirectory>
 	  <_LibTargetDirectory>$(TargetDir)</_LibTargetDirectory>
-	  <_ENetSharpLeagueSourceDirectory>$([System.Environment]::GetFolderPath(SpecialFolder.UserProfile))\.nuget\packages\enetsharpleague\1.2.1-beta\lib\native\.</_ENetSharpLeagueSourceDirectory>
-	  <_ENetSharpLeagueTargetDirectory>$(TargetDir)</_ENetSharpLeagueTargetDirectory>
+	  <_LENetSourceDirectory>$([System.Environment]::GetFolderPath(SpecialFolder.UserProfile))\.nuget\packages\lenet\1.0.1\lib\netstandard2.0\.</_LENetSourceDirectory>
+	  <_LENetTargetDirectory>$(TargetDir)</_LENetTargetDirectory>
 	  <_IsMac>false</_IsMac>
 	  <_IsMac Condition="'$(OS)' == 'Unix' And Exists ('/Library/Frameworks')">true</_IsMac>
 	</PropertyGroup>
@@ -62,7 +62,7 @@
 	  <_CopyCommand Condition="'$(_IsMac)' == 'true'">cp -Rf</_CopyCommand>
 	</PropertyGroup>
     <Exec Command="$(_CopyCommand) &quot;$(_LibSourceDirectory)&quot; &quot;$(_LibTargetDirectory)&quot;" />
-    <Exec Command="$(_CopyCommand) &quot;$(_ENetSharpLeagueSourceDirectory)&quot; &quot;$(_ENetSharpLeagueTargetDirectory)&quot;" />
+    <Exec Command="$(_CopyCommand) &quot;$(_LENetSourceDirectory)&quot; &quot;$(_LENetTargetDirectory)&quot;" />
   </Target>
 
 </Project>

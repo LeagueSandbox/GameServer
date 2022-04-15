@@ -6,7 +6,7 @@
 	</PropertyGroup>
 	
 	<ItemGroup>
-		<PackageReference Include="ENetSharpLeague" Version="1.2.1-beta" />
+		<PackageReference Include="LENet" Version="1.0.1" />
 	</ItemGroup>
 
 	<ItemGroup>
