@@ -888,10 +888,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
                     CastInfo.Owner.SetChannelSpell(null);
                 }
 
-                CastInfo.Owner.UpdateMoveOrder(OrderType.Hold, true);
-
-                State = SpellState.STATE_COOLDOWN;
-                
+                CastInfo.Owner.UpdateMoveOrder(OrderType.Hold, true);                
                 // TODO: Find out how League calculates cooldown reduction for incomplete channels (assuming it isn't done in-script).
             }
 
