@@ -1665,8 +1665,8 @@ namespace PacketDefinitions420
                 BuffType = (byte)b.BuffType,
                 Count = (byte)b.StackCount,
                 IsHidden = b.IsHidden,
-                BuffNameHash = HashFunctions.HashString(b.Name),
-                PackageHash = HashFunctions.HashStringNorm(b.TargetUnit.Model),
+                BuffNameHash = HashString(b.Name),
+                PackageHash = b.TargetUnit.GetObjHash(),
                 RunningTime = b.TimeElapsed,
                 Duration = b.Duration,
             };
