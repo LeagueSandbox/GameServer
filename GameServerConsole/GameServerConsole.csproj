@@ -49,7 +49,7 @@
 	  <_SettingsTargetDirectory>$(TargetDir)Settings\</_SettingsTargetDirectory>
 	  <_LibSourceDirectory>$(SolutionDir)lib\.</_LibSourceDirectory>
 	  <_LibTargetDirectory>$(TargetDir)</_LibTargetDirectory>
-	  <_LENetSourceDirectory>$([System.Environment]::GetFolderPath(SpecialFolder.UserProfile))\.nuget\packages\lenet\1.0.1\lib\native\.</_LENetSourceDirectory>
+	  <_LENetSourceDirectory>$([System.Environment]::GetFolderPath(SpecialFolder.UserProfile))\.nuget\packages\lenet\1.0.1\lib\netstandard2.0\.</_LENetSourceDirectory>
 	  <_LENetTargetDirectory>$(TargetDir)</_LENetTargetDirectory>
 	  <_IsMac>false</_IsMac>
 	  <_IsMac Condition="'$(OS)' == 'Unix' And Exists ('/Library/Frameworks')">true</_IsMac>
