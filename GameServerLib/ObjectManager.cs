@@ -494,14 +494,7 @@ namespace LeagueSandbox.GameServer
                 var ai = u as IObjAiBase;
                 if (ai != null)
                 {
-                    if (ai.TargetUnit == target)
-                    {
-                        ai.SetTargetUnit(null, true);
-                    }
-                    if (ai.ChannelSpell != null &&  ai.ChannelSpell.CastInfo.Targets[0].Unit == target)
-                    {
-                        ai.ChannelSpell.StopChanneling(ChannelingStopCondition.Cancel, ChannelingStopSource.LostTarget);
-                    }
+                    ai.Untarget(target);
                 }
             }
         }

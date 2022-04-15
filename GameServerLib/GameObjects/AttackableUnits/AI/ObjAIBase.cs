@@ -920,6 +920,32 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         }
 
         /// <summary>
+        /// Forces this unit to stop targeting the given unit.
+        /// Applies to attacks, spell casts, spell channels, and any queued spell casts.
+        /// </summary>
+        /// <param name="target"></param>
+        public void Untarget(IAttackableUnit target)
+        {
+            if (TargetUnit == target)
+            {
+                SetTargetUnit(null, true);
+            }
+
+            if (_castingSpell != null)
+            {
+                _castingSpell.RemoveTarget(target);
+            }
+            if (ChannelSpell != null)
+            {
+                ChannelSpell.RemoveTarget(target);
+            }
+            if (SpellToCast != null)
+            {
+                SpellToCast.RemoveTarget(target);
+            }
+        }
+
+        /// <summary>
         /// Sets this AI's current target unit. This relates to both auto attacks as well as general spell targeting.
         /// </summary>
         /// <param name="target">Unit to target.</param>
@@ -1077,7 +1103,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                     CancelAutoAttack(!HasAutoAttacked, true);
                 }
             }
-            else if (TargetUnit.IsDead || (TargetUnit.Status.HasFlag(StatusFlags.Targetable) && !CharData.IsUseable)  || !TargetUnit.IsVisibleByTeam(Team))
+            else if (TargetUnit.IsDead || (!TargetUnit.Status.HasFlag(StatusFlags.Targetable) && !CharData.IsUseable) || !TargetUnit.IsVisibleByTeam(Team))
             {
                 if (IsAttacking)
                 {
@@ -1178,9 +1204,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                         // Units outside of range are ignored.
                         else if (IsAttacking && AutoAttackSpell.CastInfo.Targets[0].Unit != TargetUnit && !(Vector2.Distance(TargetUnit.Position, Position) > (Stats.Range.Total + TargetUnit.CollisionRadius)))
                         {
-                            var tempTargets = new List<ICastTarget>(AutoAttackSpell.CastInfo.Targets);
-                            tempTargets[0] = new CastTarget(TargetUnit, tempTargets[0].HitResult);
-                            AutoAttackSpell.SetTargetUnits(tempTargets);
+                            AutoAttackSpell.SetCurrentTarget(TargetUnit);
                         }
                     }
                     else

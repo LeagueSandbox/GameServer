@@ -183,6 +183,12 @@ namespace GameServerCore.Domain.GameObjects
         /// <returns>Spell that is being cast.</returns>
         ISpell GetCastSpell();
         /// <summary>
+        /// Forces this unit to stop targeting the given unit.
+        /// Applies to attacks, spell casts, spell channels, and any queued spell casts.
+        /// </summary>
+        /// <param name="target"></param>
+        void Untarget(IAttackableUnit target);
+        /// <summary>
         /// Sets this AI's current target unit. This relates to both auto attacks as well as general spell targeting.
         /// </summary>
         /// <param name="target">Unit to target.</param>
