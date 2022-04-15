@@ -226,9 +226,6 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
                     CastInfo.Owner.CancelAutoAttack(true);
                     return true;
                 }
-
-                ResetSpellCast();
-                return true;
             }
 
 
@@ -827,7 +824,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
 
                 if (spellTarget != null
                 && (!spellTarget.IsVisibleByTeam(CastInfo.Owner.Team)
-                || !spellTarget.Status.HasFlag(StatusFlags.Targetable)
+                || (!spellTarget.Status.HasFlag(StatusFlags.Targetable) && spellTarget is IObjAiBase obj && !obj.CharData.IsUseable)
                 || spellTarget.IsDead))
                 {
                     CastInfo.Owner.StopChanneling(ChannelingStopCondition.Cancel, ChannelingStopSource.LostTarget);
@@ -993,7 +990,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
 
         public void FinishChanneling()
         {
-            ApiEventManager.OnSpellPostChannel.Publish(this);
+            State = SpellState.STATE_COOLDOWN;
 
             if (CastInfo.Owner.ChannelSpell == this)
             {
@@ -1002,7 +999,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
 
             CastInfo.Owner.UpdateMoveOrder(OrderType.Hold, true);
 
-            State = SpellState.STATE_COOLDOWN;
+            ApiEventManager.OnSpellPostChannel.Publish(this);
 
             CurrentCooldown = GetCooldown();
 
