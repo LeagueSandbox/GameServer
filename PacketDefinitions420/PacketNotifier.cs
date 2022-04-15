@@ -1012,7 +1012,7 @@ namespace PacketDefinitions420
 
             if (particle.Caster != null && particle.Caster is IObjAiBase o)
             {
-                fxGroupData1.PackageHash =  HashStringNorm(o.Model);
+                fxGroupData1.PackageHash = o.GetObjHash();
             }
             else
             {
