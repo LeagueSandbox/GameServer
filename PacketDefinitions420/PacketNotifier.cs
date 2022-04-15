@@ -1012,7 +1012,7 @@ namespace PacketDefinitions420
 
             if (particle.Caster != null && particle.Caster is IObjAiBase o)
             {
-                fxGroupData1.PackageHash =  HashStringNorm(o.Model);
+                fxGroupData1.PackageHash = o.GetObjHash();
             }
             else
             {
@@ -1665,8 +1665,8 @@ namespace PacketDefinitions420
                 BuffType = (byte)b.BuffType,
                 Count = (byte)b.StackCount,
                 IsHidden = b.IsHidden,
-                BuffNameHash = HashFunctions.HashString(b.Name),
-                PackageHash = HashFunctions.HashStringNorm(b.TargetUnit.Model),
+                BuffNameHash = HashString(b.Name),
+                PackageHash = b.TargetUnit.GetObjHash(),
                 RunningTime = b.TimeElapsed,
                 Duration = b.Duration,
             };
