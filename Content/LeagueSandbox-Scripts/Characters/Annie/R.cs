@@ -48,8 +48,7 @@ namespace Spells
             var tibbers = CreatePet(owner, spell, new Vector2(spell.CastInfo.TargetPosition.X, spell.CastInfo.TargetPosition.Z), "Tibbers", "AnnieTibbers", "InfernalGuardian", 45.0f, owner.SkinID, showMinimapIfClone: false, isClone: false);
             (spell.CastInfo.Owner.GetSpell("InfernalGuardianGuide").Script as InfernalGuardianGuide).Tibbers = tibbers;
 
-            string particles = string.Empty;
-
+            string particles;
             switch (owner.SkinID)
             {
                 case 1:
