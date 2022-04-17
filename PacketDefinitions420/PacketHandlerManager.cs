@@ -135,11 +135,6 @@ namespace PacketDefinitions420
             return null;
         }
 
-        public bool SendPacket(int playerId, Packet packet, Channel channelNo, PacketFlags flags)
-        {
-            return SendPacket(playerId, packet.GetBytes(), channelNo, flags);
-        }
-
         private void PrintPacket(byte[] buffer, string str)
         {
             // FIXME: currently lock disabled, not needed?
@@ -212,12 +207,6 @@ namespace PacketDefinitions420
             }
 
             return true;
-        }
-
-        public bool BroadcastPacketVision(IGameObject o, Packet packet, Channel channelNo,
-            PacketFlags flag = PacketFlags.RELIABLE)
-        {
-            return BroadcastPacketVision(o, packet.GetBytes(), channelNo, flag);
         }
 
         public bool BroadcastPacketVision(IGameObject o, byte[] data, Channel channelNo,
@@ -294,7 +283,7 @@ namespace PacketDefinitions420
             return player.Champion.OnDisconnect();
         }
 
-        public bool HandlePacket(Peer peer, LENet.Packet packet, Channel channelId)
+        public bool HandlePacket(Peer peer, Packet packet, Channel channelId)
         {
             var data = packet.Data;
 
