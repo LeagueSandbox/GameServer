@@ -1083,9 +1083,23 @@ namespace LeagueSandbox.GameServer.API
             _game.ObjectManager.StopTargeting(unit);
         }
 
-        public static IPet CreatePet(IChampion owner, ISpell spell, Vector2 position, string name, string model, string buffName, float lifeTime, int skinId = 0, bool cloneInventory = true, bool showMinimapIfClone = true, bool disallowPlayerControl = false, bool doFade = false, bool isClone = true)
+        public static IPet CreatePet
+            (
+            IChampion owner,
+            ISpell spell,
+            Vector2 position,
+            string name, string
+            model, string buffName,
+            float lifeTime, int skinId = 0,
+            bool cloneInventory = true, bool
+            showMinimapIfClone = true,
+            bool disallowPlayerControl =
+            false, bool doFade = false,
+            bool isClone = true,
+            string aiScript = ""
+            )
         {
-            return new Pet(_game, owner, spell, position, name, model, buffName, lifeTime, skinId, cloneInventory, showMinimapIfClone, disallowPlayerControl, doFade, isClone);
+            return new Pet(_game, owner, spell, position, name, model, buffName, lifeTime, skinId, cloneInventory, showMinimapIfClone, disallowPlayerControl, doFade, isClone, aiScript);
         }
     }
 }
