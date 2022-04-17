@@ -164,7 +164,7 @@ namespace PacketDefinitions420
         {
             var rq = new NPC_IssueOrderReq();
             rq.Read(data);
-            var test = rq.MovementData.Waypoints.ConvertAll(PacketExtensions.WaypointToVector2);
+            var test = rq.MovementData.Waypoints.ConvertAll(WaypointToVector2);
             return new MovementRequest((OrderType)rq.OrderType, rq.Position, rq.TargetNetID, rq.MovementData.TeleportNetID, rq.MovementData.HasTeleportID, rq.MovementData.Waypoints.ConvertAll(WaypointToVector2));
         }
 
