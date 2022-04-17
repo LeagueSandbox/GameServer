@@ -540,7 +540,6 @@ namespace PacketDefinitions420
 
         public CHAR_SpawnPet ConstructSpawnPetPacket(IPet pet)
         {
-            //TODO: Find out why pet models aren't being updated based on skin
             var packet = new CHAR_SpawnPet
             {
                 OwnerNetID = pet.Owner.NetId,

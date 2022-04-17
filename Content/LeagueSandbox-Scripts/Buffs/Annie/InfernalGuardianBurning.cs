@@ -23,14 +23,14 @@ namespace Buffs
         IPet Pet;
         public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
-            if(unit is IPet pet)
+            if (unit is IPet pet)
             {
                 Pet = pet;
 
-                StatsModifier.Armor.FlatBonus = 20.0f * ownerSpell.CastInfo.SpellLevel;
-                StatsModifier.MagicResist.FlatBonus = 20.0f * ownerSpell.CastInfo.SpellLevel;
-                StatsModifier.AttackDamage.FlatBonus = 25.0f * ownerSpell.CastInfo.SpellLevel;
-                StatsModifier.HealthPoints.FlatBonus = 900.0f * ownerSpell.CastInfo.SpellLevel;
+                StatsModifier.Armor.FlatBonus = 20.0f * (ownerSpell.CastInfo.SpellLevel - 1);
+                StatsModifier.MagicResist.FlatBonus = 20.0f * (ownerSpell.CastInfo.SpellLevel - 1);
+                StatsModifier.AttackDamage.FlatBonus = 25.0f * (ownerSpell.CastInfo.SpellLevel - 1);
+                StatsModifier.HealthPoints.FlatBonus = 900.0f * (ownerSpell.CastInfo.SpellLevel - 1);
                 pet.AddStatModifier(StatsModifier);
                 pet.Stats.CurrentHealth = pet.Stats.HealthPoints.Total;
                 ExecuteTick();
@@ -42,7 +42,7 @@ namespace Buffs
 
             var targets = GetUnitsInRange(Pet.Position, 250.0f, true);
             targets.RemoveAll(x => x.Team == Pet.Team || x is IObjBuilding);
-            foreach(var target in targets)
+            foreach (var target in targets)
             {
                 target.TakeDamage(Pet.Owner, totalDamage, DamageType.DAMAGE_TYPE_MAGICAL, DamageSource.DAMAGE_SOURCE_SPELLAOE, false);
             }
@@ -55,10 +55,10 @@ namespace Buffs
         float timer = 1000.0f;
         public void OnUpdate(float diff)
         {
-            if(Pet != null)
+            if (Pet != null)
             {
                 timer -= diff;
-                if(timer <= 0.0f)
+                if (timer <= 0.0f)
                 {
                     ExecuteTick();
                     timer = 1000.0f;
