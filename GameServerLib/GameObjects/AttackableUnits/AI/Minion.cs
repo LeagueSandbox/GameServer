@@ -1,13 +1,7 @@
-﻿using System.Linq;
-using GameServerCore;
-using GameServerCore.Domain.GameObjects;
+﻿using GameServerCore.Domain.GameObjects;
 using LeagueSandbox.GameServer.GameObjects.Stats;
 using GameServerCore.Enums;
 using System.Numerics;
-using LeagueSandbox.GameServer.Logging;
-using GameServerCore.Scripting.CSharp;
-using System;
-using GameServerCore.Domain;
 
 namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 {

@@ -1,9 +1,6 @@
 ﻿using GameServerCore.Domain.GameObjects;
 using GameServerCore.Domain.GameObjects.Spell;
-using System;
-using System.Collections.Generic;
 using System.Numerics;
-using System.Text;
 
 namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 {
