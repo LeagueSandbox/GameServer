@@ -124,9 +124,24 @@ namespace Spells
         {
             if (Tibbers != null)
             {
-                //TODO: Find out how targetting works with this spell, as it seems it isn't a "TargetOrLocation" TargetingType spell, just "Area"
-                Tibbers.UpdateMoveOrder(OrderType.PetHardMove);
-                Tibbers.SetWaypoints(GetPath(Tibbers.Position, end));
+                //TODO: Validade all this section regarding Targeting enemies
+                var unitsInRage = GetUnitsInRange(end, 100.0f, true);
+                unitsInRage.RemoveAll(x => x.Team == spell.CastInfo.Owner.Team);
+                if (unitsInRage.Count > 0)
+                {
+                    Tibbers.UpdateMoveOrder(OrderType.PetHardAttack);
+                    Tibbers.SetTargetUnit(unitsInRage[0]);
+                    for(int i = 0; i < unitsInRage.Count; i++)
+                    {
+                        spell.CastInfo.SetTarget(unitsInRage[i], i);
+                    }
+                }
+                else
+                {
+                    Tibbers.SetTargetUnit(null, true);
+                    Tibbers.UpdateMoveOrder(OrderType.PetHardMove);
+                    Tibbers.SetWaypoints(GetPath(Tibbers.Position, end));
+                }
             }
         }
 

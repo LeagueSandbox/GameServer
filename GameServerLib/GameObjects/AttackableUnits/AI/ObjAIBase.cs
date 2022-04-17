@@ -954,6 +954,12 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         {
             TargetUnit = target;
 
+            if(target == null)
+            {
+                IsAttacking = false;
+                _game.PacketNotifier.NotifyNPC_InstantStop_Attack(this, false);
+            }
+
             if (networked)
             {
                 _game.PacketNotifier.NotifyAI_TargetS2C(this, target);
