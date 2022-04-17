@@ -166,7 +166,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
             }
             else
             {
-                ApiEventManager.OnSpellHit.Publish(CastInfo.Owner, this, u, p, s);
+                ApiEventManager.OnSpellHit.Publish(this, u, p, s);
                 ApiEventManager.OnBeingSpellHit.Publish(u, CastInfo.Owner, this, p, s);
             }
         }

@@ -18,10 +18,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         /// </summary>
         public IObjAiBase Owner { get; }
         /// <summary>
-        /// Whether or not this minion is considered a clone of its owner.
-        /// </summary>
-        public bool IsClone { get; protected set; }
-        /// <summary>
         /// Whether or not this minion should ignore collisions.
         /// </summary>
         public bool IgnoresCollision { get; protected set; }
@@ -33,10 +29,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         /// Whether or not this minion is a LaneMinion.
         /// </summary>
         public bool IsLaneMinion { get; protected set; }
-        /// <summary>
-        /// Whether or not this minion is considered a pet.
-        /// </summary>
-        public bool IsPet { get; protected set; }
         /// <summary>
         /// Whether or not this minion is targetable at all.
         /// </summary>
@@ -76,16 +68,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         {
             Name = name;
             Owner = owner;
-
-            IsPet = false;
-            if (Owner != null)
-            {
-                IsPet = true;
-                if (model == Owner.Model) // Placeholder, should be changed
-                {
-                    IsClone = true;
-                }
-            }
 
             IsLaneMinion = false;
             IsWard = isWard;

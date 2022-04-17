@@ -10,10 +10,13 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
     public class Pet : Minion, IPet
     {
         public IBuff CloneBuff { get; }
+        public ISpell SourceSpell { get; }
         public float LifeTime { get; }
         public bool CloneInventory { get; }
         public bool DoFade { get; }
-        public bool ShowMinimapIfClone { get; }
+        public bool ShowMinimapIconIfClone { get; }
+        public bool DisallowPlayerControl { get; }
+        public bool IsClone { get; }
         public Pet(
             Game game,
             IChampion owner,
@@ -23,28 +26,31 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             string model,
             string buffName,
             float lifeTime,
+            int skinId = 0,
             bool cloneInventory = true,
             bool showMinimapIfClone = true,
-            bool doFade = false
-            ) : base(game, owner, position, model, name, team: owner.Team)
+            bool disallowPlayerControl = false,
+            bool doFade = false,
+            bool isClone = true,
+            string aiScript = ""
+            ) : base(game, owner, position, model, name, team: owner.Team, skinId: skinId,aiScript: aiScript)
         {
-            CloneBuff = new Buff(game, buffName, lifeTime, 1, spell, owner, owner);
-            AddBuff(CloneBuff);
-            ShowMinimapIfClone = showMinimapIfClone;
-            DoFade = doFade;
+            SourceSpell = spell;
             LifeTime = lifeTime;
+            CloneBuff = new Buff(game, buffName, lifeTime, 1, spell, this, owner);
             CloneInventory = cloneInventory;
-            
-            //This actually seems to be handled on-script, since Tibbers has CloneInventory set as true, but doesn't actually clone the inventory
-            /*if (CloneInventory)
-            {
-                foreach(var item in owner.Inventory.GetAllItems())
-                {
-                    Inventory.AddItemToSlot(item.ItemData, this, owner.Inventory.GetItemSlot(item));
-                }
-            }*/
+            ShowMinimapIconIfClone = showMinimapIfClone;
+            DisallowPlayerControl = disallowPlayerControl;
+            DoFade = doFade;
+            IsClone = isClone;
+
             game.ObjectManager.AddObject(this);
         }
 
+        public override void OnAdded()
+        {
+            base.OnAdded();
+            AddBuff(CloneBuff);
+        }
     }
 }

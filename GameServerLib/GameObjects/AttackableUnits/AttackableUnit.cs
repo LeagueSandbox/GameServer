@@ -525,7 +525,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                 targetId = (int)_game.PlayerManager.GetClientInfoByChampion(targetChamp).PlayerId;
             }
             // Show damage text for owner of pet
-            if (attacker is IMinion attackerMinion && attackerMinion.IsPet && attackerMinion.Owner is IChampion)
+            if (attacker is IMinion attackerMinion && attackerMinion is IPet && attackerMinion.Owner is IChampion)
             {
                 attackerId = (int)_game.PlayerManager.GetClientInfoByChampion((IChampion)attackerMinion.Owner).PlayerId;
             }
@@ -655,7 +655,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                 targetId = (int)_game.PlayerManager.GetClientInfoByChampion(targetChamp).PlayerId;
             }
             // Show damage text for owner of pet
-            if (attacker is IMinion attackerMinion && attackerMinion.IsPet && attackerMinion.Owner is IChampion)
+            if (attacker is IMinion attackerMinion && attackerMinion is IPet && attackerMinion.Owner is IChampion)
             {
                 attackerId = (int)_game.PlayerManager.GetClientInfoByChampion((IChampion)attackerMinion.Owner).PlayerId;
             }

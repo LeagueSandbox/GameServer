@@ -589,7 +589,7 @@ namespace PacketDefinitions420
                     NotifyNPC_Hero_Die(deathData);
                     break;
                 case IMinion minion:
-                    if (minion.IsPet || minion.IsClone || minion is ILaneMinion)
+                    if (minion is IPet ||  minion is ILaneMinion)
                     {
                         NotifyS2C_NPC_Die_MapView(deathData);
                     }
@@ -3447,7 +3447,9 @@ namespace PacketDefinitions420
                 // Champions spawn a little differently 
                 case IChampion champion:
                     return null;
-
+                case IPet pet:
+                    return ConstructSpawnPetPacket(pet);
+                    break;
                 case IMonster monster:
                     return ConstructCreateNeutralPacket(monster, gameTime);
                 case ILaneMinion minion:
@@ -3460,6 +3462,37 @@ namespace PacketDefinitions420
             }
             // Generic object
             return ConstructEnterVisibilityClientPacket(o);
+        }
+
+        public CHAR_SpawnPet ConstructSpawnPetPacket(IPet pet)
+        {
+            var packet =  new CHAR_SpawnPet
+            {
+                OwnerNetID = pet.Owner.NetId,
+                NetNodeID = (byte)NetNodeID.Spawned,
+                Position = pet.GetPosition3D(),
+                CastSpellLevelPlusOne = pet.SourceSpell.CastInfo.SpellLevel,
+                Duration = pet.LifeTime,
+                TeamID = (uint)pet.Team,
+                DamageBonus = pet.DamageBonus,
+                HealthBonus = pet.HealthBonus,
+                Name = pet.Name,
+                Skin = pet.Model,
+                SkinID = pet.SkinID,
+                BuffName = pet.CloneBuff.Name,
+                CloneInventory = pet.CloneInventory,
+                ShowMinimapIconIfClone = pet.ShowMinimapIconIfClone,
+                DisallowPlayerControl = pet.DisallowPlayerControl,
+                DoFade = pet.DoFade,
+                SenderNetID = pet.NetId
+            };
+
+            if (pet.IsClone)
+            {
+                packet.CloneID = pet.Owner.NetId;
+            }
+
+            return packet;
         }
 
         /// <summary>

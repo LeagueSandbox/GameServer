@@ -1350,7 +1350,7 @@ namespace LeagueSandbox.GameServer.API
         {
             _listeners.RemoveAll((listener) => listener.Item1 == owner);
         }
-        public void Publish(IObjAiBase unit, ISpell spell, IAttackableUnit target, ISpellMissile p, ISpellSector s)
+        public void Publish(ISpell spell, IAttackableUnit target, ISpellMissile p, ISpellSector s)
         {
             var count = _listeners.Count;
 

@@ -605,7 +605,7 @@ namespace LeagueSandbox.GameServer.API
                     returnList.Add(u);
                 }
             }
-
+            returnList.OrderBy(unit => Vector2.DistanceSquared(unit.Position, targetPos));
             return returnList;
         }
 
@@ -1081,6 +1081,11 @@ namespace LeagueSandbox.GameServer.API
         public static void StopTargetingUnit(IAttackableUnit unit)
         {
             _game.ObjectManager.StopTargeting(unit);
+        }
+
+        public static IPet CreatePet(IChampion owner, ISpell spell, Vector2 position, string name, string model, string buffName, float lifeTime, int skinId = 0, bool cloneInventory = true, bool showMinimapIfClone = true, bool disallowPlayerControl = false, bool doFade = false, bool isClone = true)
+        {
+            return new Pet(_game, owner, spell, position, name, model, buffName, lifeTime, skinId, cloneInventory, showMinimapIfClone, disallowPlayerControl, doFade, isClone);
         }
     }
 }
