@@ -154,10 +154,7 @@ namespace PacketDefinitions420
 
                 if (a is IObjAiBase obj)
                 {
-                    if (a is IChampion c)
-                    {
-                        charStackData.SkinID = (uint)c.SkinID;
-                    }
+                    charStackData.SkinID = (uint)obj.SkinID;
                     if (obj.Inventory != null)
                     {
                         foreach (var item in obj.Inventory.GetAllItems())
@@ -527,7 +524,6 @@ namespace PacketDefinitions420
                     return null;
                 case IPet pet:
                     return ConstructSpawnPetPacket(pet);
-                    break;
                 case IMonster monster:
                     return ConstructCreateNeutralPacket(monster, gameTime);
                 case ILaneMinion minion:

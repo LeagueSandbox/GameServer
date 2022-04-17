@@ -1031,6 +1031,7 @@ namespace LeagueSandbox.GameServer.API
                 DeathDuration = duration
             };
         }
+
         /// <summary>
         /// Returns whether or not the designed team has vision over an unit or not
         /// </summary>
@@ -1041,6 +1042,7 @@ namespace LeagueSandbox.GameServer.API
         {
             return _game.ObjectManager.TeamHasVisionOn(team, unit);
         }
+
         /// <summary>
         /// Returns wether or not an unit is protected from attacks (Monstly used to check tower protection)
         /// </summary>
@@ -1050,6 +1052,7 @@ namespace LeagueSandbox.GameServer.API
         {
             return _game.ProtectionManager.IsProtectionActive(unit);
         }
+
         /// <summary>
         /// Gets a list of waypoints, which forms a path to the desired destination
         /// </summary>
@@ -1088,13 +1091,15 @@ namespace LeagueSandbox.GameServer.API
             IChampion owner,
             ISpell spell,
             Vector2 position,
-            string name, string
-            model, string buffName,
-            float lifeTime, int skinId = 0,
-            bool cloneInventory = true, bool
-            showMinimapIfClone = true,
-            bool disallowPlayerControl =
-            false, bool doFade = false,
+            string name, 
+            string model, 
+            string buffName,
+            float lifeTime,
+            int skinId = 0,
+            bool cloneInventory = true, 
+            bool showMinimapIfClone = true,
+            bool disallowPlayerControl =false, 
+            bool doFade = false,
             bool isClone = true,
             string aiScript = ""
             )

@@ -44,6 +44,10 @@ namespace Spells
 
         public void OnSpellCast(ISpell spell)
         {
+        }
+
+        public void OnSpellPostCast(ISpell spell)
+        {
             var owner = spell.CastInfo.Owner as IChampion;
             var tibbers = CreatePet(owner, spell, new Vector2(spell.CastInfo.TargetPosition.X, spell.CastInfo.TargetPosition.Z), "Tibbers", "AnnieTibbers", "InfernalGuardian", 45.0f, owner.SkinID, showMinimapIfClone: false, isClone: false);
             (spell.CastInfo.Owner.GetSpell("InfernalGuardianGuide").Script as InfernalGuardianGuide).Tibbers = tibbers;
@@ -72,10 +76,6 @@ namespace Spells
                 SingleTick = true,
                 Type = SectorType.Area
             });
-        }
-
-        public void OnSpellPostCast(ISpell spell)
-        {
         }
 
         public void TargetExecute(ISpell spell, IAttackableUnit target, ISpellMissile missile, ISpellSector sector)
