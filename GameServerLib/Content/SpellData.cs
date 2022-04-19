@@ -372,7 +372,6 @@ namespace LeagueSandbox.GameServer.Content
             AlternateName = file.GetString("SpellData", "AlternateName", name);
             AlwaysSnapFacing = file.GetBool("SpellData", "AlwaysSnapFacing", AlwaysSnapFacing);
             //AmmoCountHiddenInUI
-            AmmoRechargeTime = file.GetMultiFloat("SpellData", "AmmoRechargeTime", 6, AmmoRechargeTime[0]);
             float lastValidTime = 0;
             for (var i = 1; i <= 6 + 1; i++)
             {
