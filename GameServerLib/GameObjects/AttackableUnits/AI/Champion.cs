@@ -290,7 +290,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             }
         }
 
-        //TODO: Move this down to ObjAiBase
         public override bool LevelUp(bool force = false)
         {
             var stats = Stats;
