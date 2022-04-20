@@ -137,6 +137,7 @@ namespace GameServerCore.Domain.GameObjects
         /// </summary>
         void ResetAutoAttackSpell();
         ISpell LevelUpSpell(byte slot);
+        bool LevelUp(bool force = true);
         /// <summary>
         /// Sets this unit's auto attack spell that they will use when in range of their target (unless they are going to cast a spell first).
         /// </summary>

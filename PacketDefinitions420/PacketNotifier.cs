@@ -2068,23 +2068,21 @@ namespace PacketDefinitions420
         /// </summary>
         /// <param name="c">Champion which leveled up.</param>
         /// <param name="userId">UserId to send the packet to. If not specified or zero, the packet is broadcasted to all players that have vision of the specified unit.</param>
-        public void NotifyNPC_LevelUp(IChampion c, int userId = 0)
+        public void NotifyNPC_LevelUp(IObjAiBase obj)
         {
             var levelUp = new NPC_LevelUp()
             {
-                SenderNetID = c.NetId,
-                Level = c.Stats.Level,
-                // TODO: Typo :(
-                AveliablePoints = c.SkillPoints
+                SenderNetID = obj.NetId,
+                Level = obj.Stats.Level,
             };
-            if (userId == 0)
+
+            if(obj is IChampion ch)
             {
-                _packetHandlerManager.BroadcastPacketVision(c, levelUp.GetBytes(), Channel.CHL_S2C);
+                // TODO: Typo >:(
+                levelUp.AveliablePoints = ch.SkillPoints;
             }
-            else
-            {
-                _packetHandlerManager.SendPacket(userId, levelUp.GetBytes(), Channel.CHL_S2C);
-            }
+
+            _packetHandlerManager.BroadcastPacketVision(obj, levelUp.GetBytes(), Channel.CHL_S2C);
         }
 
         /// <summary>
@@ -2168,7 +2166,8 @@ namespace PacketDefinitions420
         {
             if (u.Replication != null)
             {
-                var us = new OnReplication(){
+                var us = new OnReplication()
+                {
                     SyncID = (uint)Environment.TickCount,
                     // TODO: Support multi-unit replication creation (perhaps via a separate function which takes in a list of units).
                     ReplicationData = new List<ReplicationData>(1){
@@ -2176,7 +2175,7 @@ namespace PacketDefinitions420
                     }
                 };
                 var channel = Channel.CHL_LOW_PRIORITY;
-                if(userId == 0)
+                if (userId == 0)
                 {
                     _packetHandlerManager.BroadcastPacketVision(u, us.GetBytes(), channel, PacketFlags.UNSEQUENCED);
                 }
@@ -3921,7 +3920,8 @@ namespace PacketDefinitions420
                 }
                 var healthbarPacket = ConstructEnterLocalVisibilityClientPacket(obj);
                 //TODO: try to include it to packets too?
-                var us = new OnReplication(){
+                var us = new OnReplication()
+                {
                     SyncID = (uint)Environment.TickCount,
                     ReplicationData = new List<ReplicationData>(1){
                         u.Replication.GetData(false)
