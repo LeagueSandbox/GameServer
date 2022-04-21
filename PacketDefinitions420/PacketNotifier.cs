@@ -2512,7 +2512,7 @@ namespace PacketDefinitions420
                     IsSummonerSpell = spell.SpellName.StartsWith("Summoner"),
                     SpellSlot = spell.CastInfo.SpellSlot,
                     CurrentAmmo = spell.CurrentAmmo,
-                    //This was the only value found on replays
+                    // TODO: Implement this. Example spell which uses it is Syndra R.
                     MaxAmmo = -1,
                     SenderNetID = spell.CastInfo.Owner.NetId
                 };

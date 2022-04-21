@@ -16,8 +16,13 @@ namespace Spells
         public ISpellScriptMetadata ScriptMetadata { get; private set; } = new SpellScriptMetadata()
         {
             PersistsThroughDeath = true,
+            IsNonDispellable = true,
             TriggersSpellCasts = true,
-            CooldownIsAffectedByCDR = false
+            CooldownIsAffectedByCDR = false,
+            SpellFXOverrideSkins = new string[]
+            {
+                "FireworksCorki"
+            }
         };
 
         public void OnActivate(IObjAiBase owner, ISpell spell)
@@ -36,7 +41,7 @@ namespace Spells
         {
             var owner = spell.CastInfo.Owner;
             FaceDirection(new Vector2(spell.CastInfo.TargetPosition.X, spell.CastInfo.TargetPosition.Z), owner, true);
-            var targetPos = GetPointFromUnit(spell.CastInfo.Owner, 1300.0f);
+            var targetPos = GetPointFromUnit(spell.CastInfo.Owner, spell.SpellData.CastRange[0]);
             SpellCast(owner, 1, SpellSlotType.ExtraSlots, owner.Position, targetPos, false, Vector2.Zero);
         }
 
@@ -70,7 +75,11 @@ namespace Spells
                 Type = MissileType.Circle
             },
             DoesntBreakShields = false,
-            TriggersSpellCasts = true
+            TriggersSpellCasts = false,
+            SpellFXOverrideSkins = new string[]
+            {
+                "FireworksCorki"
+            }
         };
 
 
