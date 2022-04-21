@@ -114,13 +114,21 @@ namespace LeagueSandbox.GameServer.GameObjects
 
         public override void OnAdded()
         {
-            base.OnAdded();
+            if (HasCollision)
+            {
+                _game.Map.CollisionHandler.AddObject(this);
+            }
+            _game.ObjectManager.AddVisionProvider(this, Team);
             RegisterVision();
         }
 
         public override void OnRemoved()
         {
-            base.OnRemoved();
+            if (HasCollision)
+            {
+                _game.Map.CollisionHandler.RemoveObject(this);
+            }
+            _game.ObjectManager.RemoveVisionProvider(this, Team);
             UnregisterVision();
         }
 
