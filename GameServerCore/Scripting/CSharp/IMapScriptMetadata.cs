@@ -1,4 +1,5 @@
-﻿using GameServerCore.Domain.GameObjects.Spell.Missile;
+﻿using GameServerCore.Domain;
+using GameServerCore.Domain.GameObjects.Spell.Missile;
 using GameServerCore.Domain.GameObjects.Spell.Sector;
 
 namespace GameServerCore.Scripting.CSharp
@@ -26,17 +27,9 @@ namespace GameServerCore.Scripting.CSharp
         /// </summary>
         string ExpCurveOverride { get; }
         /// <summary>
-        /// Max range where you can receive XP when a minion dies (Default: 1400.0f)
-        /// </summary>
-        float ExpRange { get; }
-        /// <summary>
         /// The ammount of gold a player should be rewarded for getting the first blood (Default: 100.0f)
         /// </summary>
         float FirstBloodExtraGold { get; }
-        /// <summary>
-        /// Time when all players should start generating gold (Default: 90 Seconds)
-        /// </summary>
-        float FirstGoldTime { get; }
         /// <summary>
         /// The level of all players at the start of the game (Default: 1)
         /// </summary>
@@ -49,10 +42,6 @@ namespace GameServerCore.Scripting.CSharp
         /// How Fast gold should be added for players in milliseconds (Default: 500.0f);
         /// </summary>
         float GoldTickSpeed { get;}
-        /// <summary>
-        /// Functionality still unknown, I thought it was used in ARAM, but it's map script sets it to 0 (Default: 1250.0f)
-        /// </summary>
-        float GoldRange { get; }
         /// <summary>
         /// Maximum level a player can reach (Default: 18)
         /// </summary>
@@ -78,8 +67,8 @@ namespace GameServerCore.Scripting.CSharp
         /// </summary>
         long SpawnInterval { get; set; }
         /// <summary>
-        /// Initial ammount of gold for all players (Default 475.0f)
+        /// Interface of variables related to AI units on the map, such as EXP share range or pet return radius.
         /// </summary>
-        float StartingGold { get; }
+        IAIVars AIVars { get; set; }
     }
 }

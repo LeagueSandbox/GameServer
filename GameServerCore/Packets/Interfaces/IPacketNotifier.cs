@@ -432,7 +432,7 @@ namespace GameServerCore.Packets.Interfaces
         /// </summary>
         /// <param name="c">Champion which leveled up.</param>
         /// <param name="userId">UserId to send the packet to. If not specified or zero, the packet is broadcasted to all players that have vision of the specified unit.</param>
-        void NotifyNPC_LevelUp(IChampion c, int userId = 0);
+        void NotifyNPC_LevelUp(IObjAiBase c);
         /// <summary>
         /// Sends a packet to the specified user that the spell in the specified slot has been upgraded (skill point added).
         /// </summary>
@@ -528,6 +528,7 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="showWindow">Whether or not to show a window before unpausing (delay).</param>
         void NotifyResumePacket(IChampion unpauser, ClientInfo player, bool isDelayed);
         void NotifyS2C_ActivateMinionCamp(IMonsterCamp monsterCamp);
+        void NotifyS2C_AmmoUpdate(ISpell spell);
         /// <summary>
         /// Sends a packet to all players with vision of the given chain missile that it has updated (unit/position).
         /// </summary>

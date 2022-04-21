@@ -26,7 +26,7 @@ namespace Buffs
         public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
             thisBuff = buff;
-            if(unit is IObjAiBase obj)
+            if (unit is IObjAiBase obj)
             {
                 AddBuff("AscBuffIcon", 25000.0f, 1, null, unit, obj);
             }
@@ -40,18 +40,6 @@ namespace Buffs
             AddParticleTarget(unit, unit, "AscForceBubble", unit, size: 3.3f);
 
             ApiEventManager.OnDeath.AddListener(unit, unit, OnDeath, true);
-
-            //TODO: Add 100% mana/energy cost reduction and 50% Health cost reduction
-            StatsModifier.HealthPoints.FlatBonus = 50.0f * unit.Stats.Level;
-            StatsModifier.AttackDamage.FlatBonus = 12.0f * unit.Stats.Level;
-            StatsModifier.AbilityPower.FlatBonus = 12.0f * unit.Stats.Level;
-            StatsModifier.ArmorPenetration.PercentBonus = 0.15f;
-            StatsModifier.MagicPenetration.PercentBonus = 0.15f;
-            StatsModifier.CooldownReduction.FlatBonus = 0.25f;
-            StatsModifier.Size.FlatBonus = 0.5f;
-            unit.AddStatModifier(StatsModifier);
-            unit.Stats.CurrentHealth = unit.Stats.HealthPoints.Total;
-            //TODO: Add Buff ToolTips updates here once we figure out why buffs don't show up in the Ascension gamemode
 
             //Unit Perception bubbles seems to be broken
             AddUnitPerceptionBubble(unit, 0.0f, 25000f, TeamId.TEAM_BLUE, true, unit);
@@ -69,7 +57,7 @@ namespace Buffs
             {
                 AddBuff("AscBuffTransfer", 5.7f, 1, null, deathData.Killer, xerath);
             }
-            else if(deathData.Unit is IChampion)
+            else if (deathData.Unit is IChampion)
             {
                 NotifyAscendant();
                 NotifyWorldEvent(EventID.OnStartGameMessage3, 8);

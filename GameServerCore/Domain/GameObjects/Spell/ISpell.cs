@@ -13,6 +13,8 @@ namespace GameServerCore.Domain.GameObjects.Spell
         /// General information about this spell when it is cast. Refer to CastInfo class.
         /// </summary>
         ICastInfo CastInfo { get; }
+        int CurrentAmmo { get; }
+        float CurrentAmmoCooldown { get; }
         /// <summary>
         /// Current cooldown of this spell.
         /// </summary>
@@ -125,6 +127,7 @@ namespace GameServerCore.Domain.GameObjects.Spell
         ISpellSector CreateSpellSector(ISectorParameters parameters);
 
         float GetCooldown();
+        float GetAmmoRechageTime();
 
         /// <summary>
         /// Gets the cast range for this spell (based on level).

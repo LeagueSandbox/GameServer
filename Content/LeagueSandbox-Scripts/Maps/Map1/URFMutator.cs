@@ -24,6 +24,7 @@ namespace MapScripts.Map1
 
         public override void OnMatchStart()
         {
+            base.OnMatchStart();
             foreach(var player in GetAllPlayers())
             {
                 //There are mentions to a "rewindcof" buff being loaded too, but it's functions are yet unknown

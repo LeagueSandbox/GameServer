@@ -38,6 +38,24 @@ namespace LeagueSandbox.GameServer.Inventory
             return KeyValuePair.Create(item, true);
         }
 
+        public KeyValuePair<IItem, bool> AddItemToSlot(IItemData itemData, IObjAiBase owner, byte slot)
+        {
+            var item = _inventory.SetItemToSlot(itemData, owner, slot);
+
+            if (item == null)
+            {
+                return KeyValuePair.Create(item, false);
+            }
+
+            if (owner is IChampion champion && item != null)
+            {
+                //This packet seems to break when buying more than 3 of one of the 250Gold elixirs
+                _packetNotifier.NotifyBuyItem((int)champion.GetPlayerId(), champion, item);
+            }
+
+            return KeyValuePair.Create(item, true);
+        }
+
         public IItem SetExtraItem(byte slot, IItemData item)
         {
             return _inventory.SetExtraItem(slot, item);

@@ -87,8 +87,6 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                     }
                     if (ownChamp)
                     {
-                        // Set available skill points
-                        _game.PacketNotifier.NotifyNPC_LevelUp(champ, userId);
                         // Set spell levels
                         foreach (var spell in champ.Spells)
                         {

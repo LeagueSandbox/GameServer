@@ -23,7 +23,7 @@ namespace Buffs
 
             if (owner != null)
             {
-                var qTwoSpell = owner.SetSpell("BlindMonkQTwo", 0, true, true);
+                var qTwoSpell = SetSpell(owner, "BlindMonkQTwo", SpellSlotType.SpellSlots, 0);
                 // TODO: Instead of doing this, simply make an API function for SetSpellSlotCooldown
                 qTwoSpell.SetCooldown(0, true);
 
@@ -46,7 +46,7 @@ namespace Buffs
                 float[] cdByLevel = { 7f, 6f, 5f, 4f, 3f };
                 var newCooldown = (MathF.Max(buff.TimeElapsed - 3.0f, 0f) + cdByLevel[ownerSpell.CastInfo.SpellLevel - 1]) * owner.Stats.CooldownReduction.Total;
 
-                var qTwoSpell = owner.SetSpell("BlindMonkQOne", 0, true, true);
+                var qTwoSpell = SetSpell(owner, "BlindMonkQOne", SpellSlotType.SpellSlots, 0);
                 // TODO: Instead of doing this, simply make an API function for SetSpellSlotCooldown
                 qTwoSpell.SetCooldown(newCooldown, true);
             }

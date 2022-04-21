@@ -9,9 +9,11 @@ namespace GameServerCore.Scripting.CSharp
         void OnActivate(IObjAiBase owner)
         {
         }
+
         void OnUpdate(float diff)
         {
         }
+
         void OnCallForHelp(IAttackableUnit attacker, IAttackableUnit victium)
         {
         }

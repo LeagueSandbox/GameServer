@@ -10,10 +10,6 @@ namespace GameServerCore.Domain.GameObjects
         /// </summary>
         IObjAiBase Owner { get; }
         /// <summary>
-        /// Whether or not this minion is considered a clone of its owner.
-        /// </summary>
-        bool IsClone { get; }
-        /// <summary>
         /// Whether or not this minion should ignore collisions.
         /// </summary>
         bool IgnoresCollision { get; }
@@ -25,10 +21,6 @@ namespace GameServerCore.Domain.GameObjects
         /// Whether or not this minion is a LaneMinion.
         /// </summary>
         bool IsLaneMinion { get; }
-        /// <summary>
-        /// Whether or not this minion is considered a pet.
-        /// </summary>
-        bool IsPet { get; }
         /// <summary>
         /// Whether or not this minion is targetable at all.
         /// </summary>
