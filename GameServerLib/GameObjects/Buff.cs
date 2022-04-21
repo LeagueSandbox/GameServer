@@ -119,6 +119,8 @@ namespace LeagueSandbox.GameServer.GameObjects
 
             BuffScript.OnDeactivate(TargetUnit, this, OriginSpell);
 
+            ApiEventManager.RemoveAllListenersForOwner(BuffScript);
+
             if (BuffScript.StatsModifier != null)
             {
                 TargetUnit.RemoveStatModifier(BuffScript.StatsModifier);

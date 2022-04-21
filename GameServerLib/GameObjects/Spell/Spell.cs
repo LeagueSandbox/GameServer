@@ -146,7 +146,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
             Script.OnActivate(CastInfo.Owner, this);
         }
 
-        public void ApplyEffects(IAttackableUnit u, ISpellMissile p = null, ISpellSector s = null)
+        public void ApplyEffects(IAttackableUnit u, ISpellMissile m = null, ISpellSector s = null)
         {
             if (SpellData.HaveHitEffect && !string.IsNullOrEmpty(SpellData.HitEffectName) && !CastInfo.IsAutoAttack && HasEmptyScript)
             {
@@ -166,8 +166,17 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
             }
             else
             {
-                ApiEventManager.OnSpellHit.Publish(CastInfo.Owner, this, u, p, s);
-                ApiEventManager.OnBeingSpellHit.Publish(u, CastInfo.Owner, this, p, s);
+                ApiEventManager.OnSpellHit.Publish(this, u, m, s);
+                if (m != null)
+                {
+                    ApiEventManager.OnSpellMissileHit.Publish(u, m);
+                }
+                if (s != null)
+                {
+                    ApiEventManager.OnSpellSectorHit.Publish(u, s);
+                }
+
+                ApiEventManager.OnBeingSpellHit.Publish(u, CastInfo.Owner, this, m, s);
             }
         }
 
@@ -211,7 +220,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
                 // Regular auto attacks can lose their target due to untargetability and distance.
                 if (CastInfo.IsAutoAttack
                 && (spellTarget != CastInfo.Owner.TargetUnit
-                || Vector2.Distance(spellTarget.Position, CastInfo.Owner.Position) > (CastInfo.Owner.Stats.Range.Total + spellTarget.CollisionRadius) // TODO: Verify
+                || Vector2.Distance(spellTarget.Position, CastInfo.Owner.Position) > (CastInfo.Owner.Stats.Range.Total + spellTarget.CollisionRadius) // TODO: Verify if edge-to-edge
                 || CastInfo.Owner.GetCastSpell() != null
                 || CastInfo.Owner.ChannelSpell != null))
                 {
@@ -397,8 +406,6 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
             {
                 CastInfo.Owner.SetTargetUnit(unit, true);
             }
-
-            CastInfo.Owner.UpdateMoveOrder(OrderType.TempCastSpell, true);
 
             Script.OnSpellPreCast(CastInfo.Owner, this, unit, start, end);
 
@@ -861,8 +868,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
             var castSpell = CastInfo.Owner.GetCastSpell();
             if (castSpell != null
             && !castSpell.SpellData.DoesntBreakChannels
-            && (order == OrderType.CastSpell
-            || order == OrderType.TempCastSpell))
+            && order == OrderType.CastSpell)
             {
                 CastInfo.Owner.StopChanneling(ChannelingStopCondition.Cancel, ChannelingStopSource.Casting);
                 return;

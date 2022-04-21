@@ -1,9 +1,7 @@
 ﻿using LENet;
 using GameServerCore;
-using GameServerCore.Packets.Enums;
 using GameServerCore.Packets.Handlers;
 using GameServerCore.Packets.PacketDefinitions;
-using LeaguePackets;
 using System;
 using System.Collections.Generic;
 using Channel = GameServerCore.Packets.Enums.Channel;

@@ -525,9 +525,9 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                 targetId = (int)_game.PlayerManager.GetClientInfoByChampion(targetChamp).PlayerId;
             }
             // Show damage text for owner of pet
-            if (attacker is IMinion attackerMinion && attackerMinion.IsPet && attackerMinion.Owner is IChampion)
+            if (attacker is IPet attackerPet && attackerPet.Owner is IChampion)
             {
-                attackerId = (int)_game.PlayerManager.GetClientInfoByChampion((IChampion)attackerMinion.Owner).PlayerId;
+                attackerId = (int)_game.PlayerManager.GetClientInfoByChampion((IChampion)attackerPet.Owner).PlayerId;
             }
 
             if (attacker.Team != Team)
@@ -655,7 +655,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                 targetId = (int)_game.PlayerManager.GetClientInfoByChampion(targetChamp).PlayerId;
             }
             // Show damage text for owner of pet
-            if (attacker is IMinion attackerMinion && attackerMinion.IsPet && attackerMinion.Owner is IChampion)
+            if (attacker is IMinion attackerMinion && attackerMinion is IPet && attackerMinion.Owner is IChampion)
             {
                 attackerId = (int)_game.PlayerManager.GetClientInfoByChampion((IChampion)attackerMinion.Owner).PlayerId;
             }
@@ -719,7 +719,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             {
                 if (!(obj is IMonster))
                 {
-                    var champs = _game.ObjectManager.GetChampionsInRangeFromTeam(Position, _game.Map.MapScript.MapScriptMetadata.ExpRange, Team, true);
+                    var champs = _game.ObjectManager.GetChampionsInRangeFromTeam(Position, _game.Map.MapScript.MapScriptMetadata.AIVars.EXPRadius, Team, true);
                     if (champs.Count > 0)
                     {
                         var expPerChamp = obj.Stats.ExpGivenOnDeath.Total / champs.Count;

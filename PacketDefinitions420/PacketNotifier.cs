@@ -48,8 +48,526 @@ namespace PacketDefinitions420
             _navGrid = navGrid;
         }
 
-        // TODO: Maybe clean up all the function parameters somehow?
+        AddRegion ConstructAddRegionPacket(IRegion region)
+        {
+            var regionPacket = new AddRegion
+            {
+                TeamID = (uint)region.Team,
+                // TODO: Find out what values this can be and make an enum for it (so far: -2 & -1 for turrets)
+                RegionType = region.Type,
+                ClientID = region.OwnerClientID,
+                // TODO: Verify (usually 0 for vision only?)
+                UnitNetID = 0,
+                // TODO: Verify (is usually different from UnitNetID in packets, may also be a remnant or for internal use)
+                BubbleNetID = region.VisionNetID,
+                VisionTargetNetID = region.VisionBindNetID,
+                Position = region.Position,
+                // For turrets, usually 25000.0 is used
+                TimeToLive = region.Lifetime,
+                // 88.4 for turrets
+                ColisionRadius = region.PathfindingRadius,
+                // 130.0 for turrets
+                GrassRadius = region.GrassRadius,
+                SizeMultiplier = region.Scale,
+                SizeAdditive = region.AdditionalSize,
 
+                HasCollision = region.HasCollision,
+                GrantVision = region.GrantVision,
+                RevealStealth = region.RevealsStealth,
+
+                BaseRadius = region.VisionRadius // 800.0 for turrets
+            };
+
+            if (region.CollisionUnit != null)
+            {
+                regionPacket.UnitNetID = region.CollisionUnit.NetId;
+            }
+
+            return regionPacket;
+        }
+
+        S2C_CreateNeutral ConstructCreateNeutralPacket(IMonster monster, float time)
+        {
+            return new S2C_CreateNeutral
+            {
+                SenderNetID = monster.NetId,
+                UniqueName = monster.Name,
+                Name = monster.Name,
+                SkinName = monster.Model,
+                FaceDirectionPosition = monster.Direction,
+                DamageBonus = monster.DamageBonus,
+                HealthBonus = monster.HealthBonus,
+                InitialLevel = monster.InitialLevel,
+                NetID = monster.NetId,
+                GroupPosition = monster.Camp.Position,
+                BuffSideTeamID = monster.Camp.SideTeamId,
+                Position = new Vector3(monster.Position.X, monster.GetHeight(), monster.Position.Y),
+                SpawnAnimationName = monster.SpawnAnimation,
+                AIscript = "",
+                //Seems to be the time it is supposed to spawn, not the time when it spawned, check this later
+                SpawnTime = time / 1000,
+                BehaviorTree = monster.AIScript.AIScriptMetaData.BehaviorTree,
+                RevealEvent = monster.Camp.RevealEvent,
+                GroupNumber = monster.Camp.CampIndex,
+                MinionRoamState = monster.AIScript.AIScriptMetaData.MinionRoamState,
+                SpawnDuration = monster.Camp.SpawnDuration,
+                TeamID = (uint)monster.Team,
+                NetNodeID = (byte)NetNodeID.Spawned
+            };
+        }
+
+        S2C_CreateTurret ConstructCreateTurretPacket(ILaneTurret turret)
+        {
+            var createTurret = new S2C_CreateTurret
+            {
+                SenderNetID = turret.NetId,
+                NetID = turret.NetId,
+                // Verify, taken from packets (does not seem to change)
+                NetNodeID = 64,
+                Name = turret.Name,
+                IsTargetable = turret.Stats.IsTargetable,
+                IsTargetableToTeamSpellFlags = (uint)turret.Stats.IsTargetableToTeam
+            };
+            return createTurret;
+        }
+
+        OnEnterVisibilityClient ConstructEnterVisibilityClientPacket(IGameObject o, bool isChampion = false, List<GamePacket> packets = null)
+        {
+            var itemDataList = new List<ItemData>();
+            var shields = new ShieldValues(); //TODO: Implement shields so this can be finished
+
+            var charStackDataList = new List<CharacterStackData>();
+            var charStackData = new CharacterStackData
+            {
+                SkinID = 0,
+                OverrideSpells = false,
+                ModelOnly = false,
+                ReplaceCharacterPackage = false,
+                ID = 0
+            };
+
+            var buffCountList = new List<KeyValuePair<byte, int>>();
+
+            if (o is IAttackableUnit a)
+            {
+                charStackData.SkinName = a.Model;
+
+                if (a is IObjAiBase obj)
+                {
+                    charStackData.SkinID = (uint)obj.SkinID;
+                    if (obj.Inventory != null)
+                    {
+                        foreach (var item in obj.Inventory.GetAllItems())
+                        {
+                            var itemData = item.ItemData;
+                            itemDataList.Add(new ItemData
+                            {
+                                ItemID = (uint)itemData.ItemId,
+                                ItemsInSlot = (byte)item.StackCount,
+                                Slot = obj.Inventory.GetItemSlot(item),
+                                //Unhardcode this when spell ammo gets introduced
+                                SpellCharges = 0
+                            });
+                        }
+                    }
+                }
+                buffCountList = new List<KeyValuePair<byte, int>>();
+                var tempBuffs = a.GetParentBuffs();
+
+                for (var i = 0; i < tempBuffs.Count; i++)
+                {
+                    var buff = tempBuffs.ElementAt(i).Value;
+                    buffCountList.Add(new KeyValuePair<byte, int>(buff.Slot, buff.StackCount));
+                }
+
+                // TODO: if (a.IsDashing), requires SpeedParams, add it to AttackableUnit so it can be accessed outside of initialization
+            }
+
+            charStackDataList.Add(charStackData);
+
+            var type = MovementDataType.Normal;
+            SpeedParams speeds = null;
+
+            if (o is IAttackableUnit u)
+            {
+                if (u.Waypoints.Count <= 1)
+                {
+                    type = MovementDataType.Stop;
+                }
+
+                if (u.MovementParameters != null)
+                {
+                    type = MovementDataType.WithSpeed;
+
+                    speeds = new SpeedParams
+                    {
+                        PathSpeedOverride = u.MovementParameters.PathSpeedOverride,
+                        ParabolicGravity = u.MovementParameters.ParabolicGravity,
+                        // TODO: Implement as parameter (ex: Aatrox Q).
+                        ParabolicStartPoint = u.MovementParameters.ParabolicStartPoint,
+                        Facing = u.MovementParameters.KeepFacingDirection,
+                        FollowNetID = u.MovementParameters.FollowNetID,
+                        FollowDistance = u.MovementParameters.FollowDistance,
+                        FollowBackDistance = u.MovementParameters.FollowBackDistance,
+                        FollowTravelTime = u.MovementParameters.FollowTravelTime
+                    };
+                }
+            }
+
+            var md = PacketExtensions.CreateMovementData(o, _navGrid, type, speeds, useTeleportID: true);
+
+            var enterVis = new OnEnterVisibilityClient
+            {
+                SenderNetID = o.NetId,
+                Items = itemDataList,
+                ShieldValues = shields,
+                CharacterDataStack = charStackDataList,
+                BuffCount = buffCountList,
+                LookAtPosition = new Vector3(1, 0, 0),
+                // TODO: Verify
+                IsHero = isChampion,
+                MovementData = md
+            };
+
+            if (packets != null)
+            {
+                enterVis.Packets = packets;
+            }
+
+            return enterVis;
+        }
+
+        FX_Create_Group ConstructFXCreateGroupPacket(IParticle particle)
+        {
+            uint bindNetID = 0;
+            uint targetNetID = 0;
+
+            if (particle.BindObject != null)
+            {
+                bindNetID = particle.BindObject.NetId;
+            }
+            if (particle.TargetObject != null)
+            {
+                targetNetID = particle.TargetObject.NetId;
+            }
+
+            var position = particle.GetPosition3D();
+
+            var ownerPos = position;
+            if (particle.Caster != null)
+            {
+                ownerPos = particle.Caster.GetPosition3D();
+            }
+
+            var fxPacket = new FX_Create_Group();
+            var fxDataList = new List<FXCreateData>();
+
+            var targetPos = particle.StartPosition;
+            if (particle.BindObject == null && particle.TargetObject == null)
+            {
+                targetPos = particle.EndPosition;
+            }
+
+            var targetHeight = _navGrid.GetHeightAtLocation(particle.StartPosition.X, particle.StartPosition.Y);
+            var higherValue = Math.Max(targetHeight, particle.GetHeight());
+
+            // TODO: implement option for multiple particles instead of hardcoding one
+            var fxData1 = new FXCreateData
+            {
+                NetAssignedNetID = particle.NetId,
+                CasterNetID = 0,
+                KeywordNetID = 0, // Not sure what this is
+
+                PositionX = (short)((position.X - _navGrid.MapWidth / 2) / 2),
+                PositionY = higherValue,
+                PositionZ = (short)((position.Z - _navGrid.MapHeight / 2) / 2),
+
+                TargetPositionX = (short)((targetPos.X - _navGrid.MapWidth / 2) / 2),
+                TargetPositionY = higherValue,
+                TargetPositionZ = (short)((targetPos.Y - _navGrid.MapHeight / 2) / 2),
+
+                OwnerPositionX = (short)((ownerPos.X - _navGrid.MapWidth / 2) / 2),
+                OwnerPositionY = ownerPos.Y,
+                OwnerPositionZ = (short)((ownerPos.Z - _navGrid.MapHeight / 2) / 2),
+
+                TimeSpent = particle.GetTimeAlive(),
+                ScriptScale = particle.Scale,
+                TargetNetID = targetNetID,
+                BindNetID = bindNetID
+            };
+
+            // TODO: Verify if there is more to this.
+            if (particle.FollowsGroundTilt)
+            {
+                fxData1.TargetPositionY = targetHeight;
+            }
+
+            if (particle.Caster != null)
+            {
+                fxData1.CasterNetID = particle.Caster.NetId;
+            }
+
+            if (particle.Direction.Length() <= 0)
+            {
+                fxData1.OrientationVector = Vector3.Zero;
+            }
+            else
+            {
+                fxData1.OrientationVector = particle.Direction;
+            }
+
+            fxDataList.Add(fxData1);
+
+            // TODO: implement option for multiple groups of particles instead of hardcoding one
+            var fxGroups = new List<FXCreateGroupData>();
+
+            var fxGroupData1 = new FXCreateGroupData
+            {
+                EffectNameHash = HashString(particle.Name),
+                Flags = (ushort)particle.Flags,
+                TargetBoneNameHash = HashString(particle.TargetBoneName),
+                BoneNameHash = HashString(particle.BoneName),
+
+                FXCreateData = fxDataList
+            };
+
+            if (particle.Caster != null && particle.Caster is IObjAiBase o)
+            {
+                fxGroupData1.PackageHash = o.GetObjHash();
+            }
+            else
+            {
+                fxGroupData1.PackageHash = 0; // TODO: Verify
+            }
+
+            fxGroups.Add(fxGroupData1);
+
+            fxPacket.FXCreateGroup = fxGroups;
+
+            return fxPacket;
+        }
+
+        Barrack_SpawnUnit ConstructLaneMinionSpawnedPacket(ILaneMinion m)
+        {
+            return new Barrack_SpawnUnit
+            {
+                SenderNetID = m.NetId,
+                ObjectID = m.NetId,
+                ObjectNodeID = 0x40, // TODO: check this
+                BarracksNetID = 0xFF000000 | Crc32Algorithm.Compute(Encoding.UTF8.GetBytes(m.BarracksName)),
+                WaveCount = 1, // TODO: Unhardcode
+                MinionType = (byte)m.MinionSpawnType,
+                DamageBonus = (short)m.DamageBonus,
+                HealthBonus = (short)m.HealthBonus,
+                MinionLevel = m.Stats.Level
+            };
+        }
+
+        SpawnMinionS2C ConstructMinionSpawnedPacket(IMinion minion)
+        {
+            var spawnPacket = new SpawnMinionS2C
+            {
+                SenderNetID = minion.NetId,
+                NetID = minion.NetId,
+                OwnerNetID = minion.NetId,
+                NetNodeID = (byte)NetNodeID.Spawned,
+                Position = minion.GetPosition3D(),
+                SkinID = minion.SkinID,
+                TeamID = (ushort)minion.Team,
+                IgnoreCollision = minion.IgnoresCollision,
+                IsWard = minion.IsWard,
+                IsLaneMinion = minion.IsLaneMinion,
+                IsBot = minion.IsBot,
+                IsTargetable = minion.IsTargetable,
+
+                IsTargetableToTeamSpellFlags = (uint)minion.Stats.IsTargetableToTeam,
+                VisibilitySize = minion.VisionRadius,
+                Name = minion.Name,
+                SkinName = minion.Model,
+                InitialLevel = (ushort)minion.InitialLevel,
+                OnlyVisibleToNetID = 0
+            };
+
+            if (minion.Owner != null)
+            {
+                spawnPacket.OwnerNetID = minion.Owner.NetId;
+            }
+
+            if (minion.VisibilityOwner != null)
+            {
+                spawnPacket.OnlyVisibleToNetID = minion.VisibilityOwner.NetId;
+            }
+
+            return spawnPacket;
+        }
+
+        MissileReplication ConstructMissileReplicationPacket(ISpellMissile m)
+        {
+            var castInfo = new CastInfo
+            {
+                SpellHash = m.CastInfo.SpellHash,
+                SpellNetID = m.CastInfo.SpellNetID,
+
+                SpellLevel = m.CastInfo.SpellLevel,
+                AttackSpeedModifier = m.CastInfo.AttackSpeedModifier,
+                CasterNetID = m.CastInfo.Owner.NetId,
+                // TODO: Implement spell chains?
+                SpellChainOwnerNetID = m.CastInfo.Owner.NetId,
+                PackageHash = m.CastInfo.PackageHash,
+                MissileNetID = m.CastInfo.MissileNetID,
+                // Not sure if we want to add height for these, but i did it anyway
+                TargetPosition = m.CastInfo.TargetPosition,
+                TargetPositionEnd = m.CastInfo.TargetPositionEnd,
+                DesignerCastTime = m.CastInfo.DesignerCastTime,
+                ExtraCastTime = m.CastInfo.ExtraCastTime,
+                DesignerTotalTime = m.CastInfo.DesignerTotalTime,
+
+                Cooldown = m.CastInfo.Cooldown,
+                StartCastTime = m.CastInfo.StartCastTime,
+
+                IsAutoAttack = m.CastInfo.IsAutoAttack,
+                IsSecondAutoAttack = m.CastInfo.IsSecondAutoAttack,
+                IsForceCastingOrChannel = m.CastInfo.IsForceCastingOrChannel,
+                IsOverrideCastPosition = m.CastInfo.IsOverrideCastPosition,
+                IsClickCasted = m.CastInfo.IsClickCasted,
+
+                SpellSlot = m.CastInfo.SpellSlot,
+                ManaCost = m.CastInfo.ManaCost,
+                SpellCastLaunchPosition = m.CastInfo.SpellCastLaunchPosition,
+                AmmoUsed = m.CastInfo.AmmoUsed,
+                AmmoRechargeTime = m.CastInfo.AmmoRechargeTime
+            };
+
+            if (m.CastInfo.Targets.Count > 0)
+            {
+                m.CastInfo.Targets.ForEach(t =>
+                {
+                    if (t.Unit != null)
+                    {
+                        castInfo.Targets.Add(new CastInfo.Target() { UnitNetID = t.Unit.NetId, HitResult = (byte)t.HitResult });
+                    }
+                    else
+                    {
+                        castInfo.Targets.Add(new CastInfo.Target() { UnitNetID = 0, HitResult = (byte)t.HitResult });
+                    }
+                });
+            }
+
+            var misPacket = new MissileReplication
+            {
+                SenderNetID = m.CastInfo.Owner.NetId,
+                Position = m.GetPosition3D(),
+                CasterPosition = m.CastInfo.Owner.GetPosition3D(),
+                // Not sure if we want to add height for these, but i did it anyway
+                Direction = m.Direction,
+                Velocity = m.Direction * m.GetSpeed(),
+                StartPoint = m.CastInfo.SpellCastLaunchPosition,
+                EndPoint = m.CastInfo.TargetPositionEnd,
+                // TODO: Verify
+                UnitPosition = m.CastInfo.Owner.GetPosition3D(),
+                TimeFromCreation = m.GetTimeSinceCreation(), // TODO: Unhardcode
+                Speed = m.GetSpeed(),
+                LifePercentage = 0f, // TODO: Unhardcode
+                //TODO: Implement time limited projectiles
+                TimedSpeedDelta = 0f, // TODO: Implement time limited projectiles for this
+                TimedSpeedDeltaTime = 0x7F7FFFFF, // Same as above (this value is from the SpawnProjectile packet, it is a placeholder)
+
+                Bounced = false, //TODO: Implement bouncing projectiles
+
+                CastInfo = castInfo
+            };
+
+            if (m is ISpellChainMissile chainMissile && chainMissile.ObjectsHit.Count > 0)
+            {
+                misPacket.Bounced = true;
+            }
+
+            return misPacket;
+        }
+
+        SpawnLevelPropS2C ConstructSpawnLevelPropPacket(ILevelProp levelProp, int userId = 0)
+        {
+            return new SpawnLevelPropS2C
+            {
+                NetID = levelProp.NetId,
+                NetNodeID = levelProp.NetNodeID,
+                SkinID = levelProp.SkinID,
+                Position = new Vector3(levelProp.Position.X, levelProp.Height, levelProp.Position.Y),
+                FacingDirection = levelProp.Direction,
+                PositionOffset = levelProp.PositionOffset,
+                Scale = levelProp.Scale,
+                TeamID = (ushort)levelProp.Team,
+                SkillLevel = levelProp.SkillLevel,
+                Rank = levelProp.Rank,
+                Type = levelProp.Type,
+                Name = levelProp.Name,
+                PropName = levelProp.Model
+            };
+        }
+
+        GamePacket ConstructSpawnPacket(IGameObject o, float gameTime = 0)
+        {
+            switch (o)
+            {
+                case ISpellMissile missile:
+                    return ConstructMissileReplicationPacket(missile);
+                case ILevelProp prop:
+                    return ConstructSpawnLevelPropPacket(prop);
+                case IRegion region:
+                    return ConstructAddRegionPacket(region);
+
+                case ILaneTurret turret:
+                    return ConstructCreateTurretPacket(turret);
+
+                // Champions spawn a little differently 
+                case IChampion champion:
+                    return null;
+                case IPet pet:
+                    return ConstructSpawnPetPacket(pet);
+                case IMonster monster:
+                    return ConstructCreateNeutralPacket(monster, gameTime);
+                case ILaneMinion minion:
+                    return ConstructLaneMinionSpawnedPacket(minion);
+                case IMinion minion:
+                    return ConstructMinionSpawnedPacket(minion);
+
+                case IParticle particle:
+                    return ConstructFXCreateGroupPacket(particle);
+            }
+            // Generic object
+            return ConstructEnterVisibilityClientPacket(o);
+        }
+
+        public CHAR_SpawnPet ConstructSpawnPetPacket(IPet pet)
+        {
+            var packet = new CHAR_SpawnPet
+            {
+                OwnerNetID = pet.Owner.NetId,
+                NetNodeID = (byte)NetNodeID.Spawned,
+                Position = pet.GetPosition3D(),
+                CastSpellLevelPlusOne = pet.SourceSpell.CastInfo.SpellLevel,
+                Duration = pet.LifeTime,
+                TeamID = (uint)pet.Team,
+                DamageBonus = pet.DamageBonus,
+                HealthBonus = pet.HealthBonus,
+                Name = pet.Name,
+                Skin = pet.Model,
+                SkinID = pet.SkinID,
+                BuffName = pet.CloneBuff.Name,
+                CloneInventory = pet.CloneInventory,
+                ShowMinimapIconIfClone = pet.ShowMinimapIconIfClone,
+                DisallowPlayerControl = pet.DisallowPlayerControl,
+                DoFade = pet.DoFade,
+                SenderNetID = pet.NetId
+            };
+
+            if (pet.IsClone)
+            {
+                packet.CloneID = pet.Owner.NetId;
+            }
+
+            return packet;
+        }
         /// <summary>
         /// Sends a packet to the specified user which is intended to creates a client-side debug object. *NOTE*: Has not been tested, function implementation may be incorrect.
         /// </summary>
@@ -157,44 +675,6 @@ namespace PacketDefinitions420
             }
 
             _packetHandlerManager.BroadcastPacketTeam(team, regionPacket.GetBytes(), Channel.CHL_S2C);
-        }
-
-        AddRegion ConstructAddRegionPacket(IRegion region)
-        {
-            var regionPacket = new AddRegion
-            {
-                TeamID = (uint)region.Team,
-                // TODO: Find out what values this can be and make an enum for it (so far: -2 & -1 for turrets)
-                RegionType = region.Type,
-                ClientID = region.OwnerClientID,
-                // TODO: Verify (usually 0 for vision only?)
-                UnitNetID = 0,
-                // TODO: Verify (is usually different from UnitNetID in packets, may also be a remnant or for internal use)
-                BubbleNetID = region.VisionNetID,
-                VisionTargetNetID = region.VisionBindNetID,
-                Position = region.Position,
-                // For turrets, usually 25000.0 is used
-                TimeToLive = region.Lifetime,
-                // 88.4 for turrets
-                ColisionRadius = region.PathfindingRadius,
-                // 130.0 for turrets
-                GrassRadius = region.GrassRadius,
-                SizeMultiplier = region.Scale,
-                SizeAdditive = region.AdditionalSize,
-
-                HasCollision = region.HasCollision,
-                GrantVision = region.GrantVision,
-                RevealStealth = region.RevealsStealth,
-
-                BaseRadius = region.VisionRadius // 800.0 for turrets
-            };
-
-            if (region.CollisionUnit != null)
-            {
-                regionPacket.UnitNetID = region.CollisionUnit.NetId;
-            }
-
-            return regionPacket;
         }
 
         /// <summary>
@@ -589,7 +1069,7 @@ namespace PacketDefinitions420
                     NotifyNPC_Hero_Die(deathData);
                     break;
                 case IMinion minion:
-                    if (minion.IsPet || minion.IsClone || minion is ILaneMinion)
+                    if (minion is IPet || minion is ILaneMinion)
                     {
                         NotifyS2C_NPC_Die_MapView(deathData);
                     }
@@ -737,115 +1217,6 @@ namespace PacketDefinitions420
             }
         }
 
-        OnEnterVisibilityClient ConstructEnterVisibilityClientPacket(IGameObject o, bool isChampion = false, List<GamePacket> packets = null)
-        {
-            var itemDataList = new List<ItemData>();
-            var shields = new ShieldValues(); //TODO: Implement shields so this can be finished
-
-            var charStackDataList = new List<CharacterStackData>();
-            var charStackData = new CharacterStackData
-            {
-                SkinID = 0,
-                OverrideSpells = false,
-                ModelOnly = false,
-                ReplaceCharacterPackage = false,
-                ID = 0
-            };
-
-            var buffCountList = new List<KeyValuePair<byte, int>>();
-
-            if (o is IAttackableUnit a)
-            {
-                charStackData.SkinName = a.Model;
-
-                if (a is IObjAiBase obj)
-                {
-                    if (a is IChampion c)
-                    {
-                        charStackData.SkinID = (uint)c.SkinID;
-                    }
-                    if (obj.Inventory != null)
-                    {
-                        foreach (var item in obj.Inventory.GetAllItems())
-                        {
-                            var itemData = item.ItemData;
-                            itemDataList.Add(new ItemData
-                            {
-                                ItemID = (uint)itemData.ItemId,
-                                ItemsInSlot = (byte)item.StackCount,
-                                Slot = obj.Inventory.GetItemSlot(item),
-                                //Unhardcode this when spell ammo gets introduced
-                                SpellCharges = 0
-                            });
-                        }
-                    }
-                }
-                buffCountList = new List<KeyValuePair<byte, int>>();
-                var tempBuffs = a.GetParentBuffs();
-
-                for (var i = 0; i < tempBuffs.Count; i++)
-                {
-                    var buff = tempBuffs.ElementAt(i).Value;
-                    buffCountList.Add(new KeyValuePair<byte, int>(buff.Slot, buff.StackCount));
-                }
-
-                // TODO: if (a.IsDashing), requires SpeedParams, add it to AttackableUnit so it can be accessed outside of initialization
-            }
-
-            charStackDataList.Add(charStackData);
-
-            var type = MovementDataType.Normal;
-            SpeedParams speeds = null;
-
-            if (o is IAttackableUnit u)
-            {
-                if (u.Waypoints.Count <= 1)
-                {
-                    type = MovementDataType.Stop;
-                }
-
-                if (u.MovementParameters != null)
-                {
-                    type = MovementDataType.WithSpeed;
-
-                    speeds = new SpeedParams
-                    {
-                        PathSpeedOverride = u.MovementParameters.PathSpeedOverride,
-                        ParabolicGravity = u.MovementParameters.ParabolicGravity,
-                        // TODO: Implement as parameter (ex: Aatrox Q).
-                        ParabolicStartPoint = u.MovementParameters.ParabolicStartPoint,
-                        Facing = u.MovementParameters.KeepFacingDirection,
-                        FollowNetID = u.MovementParameters.FollowNetID,
-                        FollowDistance = u.MovementParameters.FollowDistance,
-                        FollowBackDistance = u.MovementParameters.FollowBackDistance,
-                        FollowTravelTime = u.MovementParameters.FollowTravelTime
-                    };
-                }
-            }
-
-            var md = PacketExtensions.CreateMovementData(o, _navGrid, type, speeds, useTeleportID: true);
-
-            var enterVis = new OnEnterVisibilityClient
-            {
-                SenderNetID = o.NetId,
-                Items = itemDataList,
-                ShieldValues = shields,
-                CharacterDataStack = charStackDataList,
-                BuffCount = buffCountList,
-                LookAtPosition = new Vector3(1, 0, 0),
-                // TODO: Verify
-                IsHero = isChampion,
-                MovementData = md
-            };
-
-            if (packets != null)
-            {
-                enterVis.Packets = packets;
-            }
-
-            return enterVis;
-        }
-
         /// <summary>
         /// Sends a packet to either all players with vision of the specified object or the specified user. The packet details the data surrounding the specified GameObject that is required by players when a GameObject enters vision such as items, shields, skin, and movements.
         /// </summary>
@@ -913,116 +1284,6 @@ namespace PacketDefinitions420
             };
 
             _packetHandlerManager.BroadcastPacket(misPacket.GetBytes(), Channel.CHL_S2C);
-        }
-
-        FX_Create_Group ConstructFXCreateGroupPacket(IParticle particle)
-        {
-            uint bindNetID = 0;
-            uint targetNetID = 0;
-
-            if (particle.BindObject != null)
-            {
-                bindNetID = particle.BindObject.NetId;
-            }
-            if (particle.TargetObject != null)
-            {
-                targetNetID = particle.TargetObject.NetId;
-            }
-
-            var position = particle.GetPosition3D();
-
-            var ownerPos = position;
-            if (particle.Caster != null)
-            {
-                ownerPos = particle.Caster.GetPosition3D();
-            }
-
-            var fxPacket = new FX_Create_Group();
-            var fxDataList = new List<FXCreateData>();
-
-            var targetPos = particle.StartPosition;
-            if (particle.BindObject == null && particle.TargetObject == null)
-            {
-                targetPos = particle.EndPosition;
-            }
-
-            var targetHeight = _navGrid.GetHeightAtLocation(particle.StartPosition.X, particle.StartPosition.Y);
-            var higherValue = Math.Max(targetHeight, particle.GetHeight());
-
-            // TODO: implement option for multiple particles instead of hardcoding one
-            var fxData1 = new FXCreateData
-            {
-                NetAssignedNetID = particle.NetId,
-                CasterNetID = 0,
-                KeywordNetID = 0, // Not sure what this is
-
-                PositionX = (short)((position.X - _navGrid.MapWidth / 2) / 2),
-                PositionY = higherValue,
-                PositionZ = (short)((position.Z - _navGrid.MapHeight / 2) / 2),
-
-                TargetPositionX = (short)((targetPos.X - _navGrid.MapWidth / 2) / 2),
-                TargetPositionY = higherValue,
-                TargetPositionZ = (short)((targetPos.Y - _navGrid.MapHeight / 2) / 2),
-
-                OwnerPositionX = (short)((ownerPos.X - _navGrid.MapWidth / 2) / 2),
-                OwnerPositionY = ownerPos.Y,
-                OwnerPositionZ = (short)((ownerPos.Z - _navGrid.MapHeight / 2) / 2),
-
-                TimeSpent = particle.GetTimeAlive(),
-                ScriptScale = particle.Scale,
-                TargetNetID = targetNetID,
-                BindNetID = bindNetID
-            };
-
-            // TODO: Verify if there is more to this.
-            if (particle.FollowsGroundTilt)
-            {
-                fxData1.TargetPositionY = targetHeight;
-            }
-
-            if (particle.Caster != null)
-            {
-                fxData1.CasterNetID = particle.Caster.NetId;
-            }
-
-            if (particle.Direction.Length() <= 0)
-            {
-                fxData1.OrientationVector = Vector3.Zero;
-            }
-            else
-            {
-                fxData1.OrientationVector = particle.Direction;
-            }
-
-            fxDataList.Add(fxData1);
-
-            // TODO: implement option for multiple groups of particles instead of hardcoding one
-            var fxGroups = new List<FXCreateGroupData>();
-
-            var fxGroupData1 = new FXCreateGroupData
-            {
-                EffectNameHash = HashString(particle.Name),
-                Flags = (ushort)particle.Flags,
-                TargetBoneNameHash = HashString(particle.TargetBoneName),
-                BoneNameHash = HashString(particle.BoneName),
-
-                FXCreateData = fxDataList
-            };
-
-            if (particle.Caster != null && particle.Caster is IObjAiBase o)
-            {
-                fxGroupData1.PackageHash = o.GetObjHash();
-            }
-            else
-            {
-                fxGroupData1.PackageHash = 0; // TODO: Verify
-            }
-
-            fxGroups.Add(fxGroupData1);
-
-            fxPacket.FXCreateGroup = fxGroups;
-
-            return fxPacket;
         }
 
         /// <summary>
@@ -1221,22 +1482,6 @@ namespace PacketDefinitions420
             }
         }
 
-        Barrack_SpawnUnit ConstructLaneMinionSpawnedPacket(ILaneMinion m)
-        {
-            return new Barrack_SpawnUnit
-            {
-                SenderNetID = m.NetId,
-                ObjectID = m.NetId,
-                ObjectNodeID = 0x40, // TODO: check this
-                BarracksNetID = 0xFF000000 | Crc32Algorithm.Compute(Encoding.UTF8.GetBytes(m.BarracksName)),
-                WaveCount = 1, // TODO: Unhardcode
-                MinionType = (byte)m.MinionSpawnType,
-                DamageBonus = (short)m.DamageBonus,
-                HealthBonus = (short)m.HealthBonus,
-                MinionLevel = m.Stats.Level
-            };
-        }
-
         /// <summary>
         /// Sends a packet to all players detailing that the specified LaneMinion has spawned.
         /// </summary>
@@ -1350,45 +1595,6 @@ namespace PacketDefinitions420
             _packetHandlerManager.SendPacket(userId, teamRoster.GetBytes(), Channel.CHL_LOADING_SCREEN);
         }
 
-        SpawnMinionS2C ConstructMinionSpawnedPacket(IMinion minion)
-        {
-            var spawnPacket = new SpawnMinionS2C
-            {
-                SenderNetID = minion.NetId,
-                NetID = minion.NetId,
-                OwnerNetID = minion.NetId,
-                NetNodeID = (byte)NetNodeID.Spawned,
-                Position = minion.GetPosition3D(),
-                SkinID = minion.SkinID,
-                // CloneNetID, clones not yet implemented
-                TeamID = (ushort)minion.Team,
-                IgnoreCollision = minion.IgnoresCollision,
-                IsWard = minion.IsWard,
-                IsLaneMinion = minion.IsLaneMinion,
-                IsBot = minion.IsBot,
-                IsTargetable = minion.IsTargetable,
-
-                IsTargetableToTeamSpellFlags = (uint)minion.Stats.IsTargetableToTeam,
-                VisibilitySize = minion.VisionRadius,
-                Name = minion.Name,
-                SkinName = minion.Model,
-                InitialLevel = (ushort)minion.InitialLevel,
-                OnlyVisibleToNetID = 0
-            };
-
-            if (minion.Owner != null)
-            {
-                spawnPacket.OwnerNetID = minion.Owner.NetId;
-            }
-
-            if (minion.VisibilityOwner != null)
-            {
-                spawnPacket.OnlyVisibleToNetID = minion.VisibilityOwner.NetId;
-            }
-
-            return spawnPacket;
-        }
-
         /// <summary>
         /// Sends a packet to all players who have vision of the specified Minion detailing that it has spawned.
         /// </summary>
@@ -1398,90 +1604,6 @@ namespace PacketDefinitions420
         {
             var spawnPacket = ConstructMinionSpawnedPacket(minion);
             _packetHandlerManager.BroadcastPacketVision(minion, spawnPacket.GetBytes(), Channel.CHL_S2C);
-        }
-
-        MissileReplication ConstructMissileReplicationPacket(ISpellMissile m)
-        {
-            var castInfo = new CastInfo
-            {
-                SpellHash = m.CastInfo.SpellHash,
-                SpellNetID = m.CastInfo.SpellNetID,
-
-                SpellLevel = m.CastInfo.SpellLevel,
-                AttackSpeedModifier = m.CastInfo.AttackSpeedModifier,
-                CasterNetID = m.CastInfo.Owner.NetId,
-                // TODO: Implement spell chains?
-                SpellChainOwnerNetID = m.CastInfo.Owner.NetId,
-                PackageHash = m.CastInfo.PackageHash,
-                MissileNetID = m.CastInfo.MissileNetID,
-                // Not sure if we want to add height for these, but i did it anyway
-                TargetPosition = m.CastInfo.TargetPosition,
-                TargetPositionEnd = m.CastInfo.TargetPositionEnd,
-                DesignerCastTime = m.CastInfo.DesignerCastTime,
-                ExtraCastTime = m.CastInfo.ExtraCastTime,
-                DesignerTotalTime = m.CastInfo.DesignerTotalTime,
-
-                Cooldown = m.CastInfo.Cooldown,
-                StartCastTime = m.CastInfo.StartCastTime,
-
-                IsAutoAttack = m.CastInfo.IsAutoAttack,
-                IsSecondAutoAttack = m.CastInfo.IsSecondAutoAttack,
-                IsForceCastingOrChannel = m.CastInfo.IsForceCastingOrChannel,
-                IsOverrideCastPosition = m.CastInfo.IsOverrideCastPosition,
-                IsClickCasted = m.CastInfo.IsClickCasted,
-
-                SpellSlot = m.CastInfo.SpellSlot,
-                ManaCost = m.CastInfo.ManaCost,
-                SpellCastLaunchPosition = m.CastInfo.SpellCastLaunchPosition,
-                AmmoUsed = m.CastInfo.AmmoUsed,
-                AmmoRechargeTime = m.CastInfo.AmmoRechargeTime
-            };
-
-            if (m.CastInfo.Targets.Count > 0)
-            {
-                m.CastInfo.Targets.ForEach(t =>
-                {
-                    if (t.Unit != null)
-                    {
-                        castInfo.Targets.Add(new CastInfo.Target() { UnitNetID = t.Unit.NetId, HitResult = (byte)t.HitResult });
-                    }
-                    else
-                    {
-                        castInfo.Targets.Add(new CastInfo.Target() { UnitNetID = 0, HitResult = (byte)t.HitResult });
-                    }
-                });
-            }
-
-            var misPacket = new MissileReplication
-            {
-                SenderNetID = m.CastInfo.Owner.NetId,
-                Position = m.GetPosition3D(),
-                CasterPosition = m.CastInfo.Owner.GetPosition3D(),
-                // Not sure if we want to add height for these, but i did it anyway
-                Direction = m.Direction,
-                Velocity = m.Direction * m.GetSpeed(),
-                StartPoint = m.CastInfo.SpellCastLaunchPosition,
-                EndPoint = m.CastInfo.TargetPositionEnd,
-                // TODO: Verify
-                UnitPosition = m.CastInfo.Owner.GetPosition3D(),
-                TimeFromCreation = m.GetTimeSinceCreation(), // TODO: Unhardcode
-                Speed = m.GetSpeed(),
-                LifePercentage = 0f, // TODO: Unhardcode
-                //TODO: Implement time limited projectiles
-                TimedSpeedDelta = 0f, // TODO: Implement time limited projectiles for this
-                TimedSpeedDeltaTime = 0x7F7FFFFF, // Same as above (this value is from the SpawnProjectile packet, it is a placeholder)
-
-                Bounced = false, //TODO: Implement bouncing projectiles
-
-                CastInfo = castInfo
-            };
-
-            if (m is ISpellChainMissile chainMissile && chainMissile.ObjectsHit.Count > 0)
-            {
-                misPacket.Bounced = true;
-            }
-
-            return misPacket;
         }
 
         /// <summary>
@@ -2168,7 +2290,8 @@ namespace PacketDefinitions420
         {
             if (u.Replication != null)
             {
-                var us = new OnReplication(){
+                var us = new OnReplication()
+                {
                     SyncID = (uint)Environment.TickCount,
                     // TODO: Support multi-unit replication creation (perhaps via a separate function which takes in a list of units).
                     ReplicationData = new List<ReplicationData>(1){
@@ -2176,7 +2299,7 @@ namespace PacketDefinitions420
                     }
                 };
                 var channel = Channel.CHL_LOW_PRIORITY;
-                if(userId == 0)
+                if (userId == 0)
                 {
                     _packetHandlerManager.BroadcastPacketVision(u, us.GetBytes(), channel, PacketFlags.UNSEQUENCED);
                 }
@@ -2501,55 +2624,10 @@ namespace PacketDefinitions420
             _packetHandlerManager.BroadcastPacket(packet.GetBytes(), Channel.CHL_S2C);
         }
 
-        S2C_CreateNeutral ConstructCreateNeutralPacket(IMonster monster, float time)
-        {
-            return new S2C_CreateNeutral
-            {
-                SenderNetID = monster.NetId,
-                UniqueName = monster.Name,
-                Name = monster.Name,
-                SkinName = monster.Model,
-                FaceDirectionPosition = monster.Direction,
-                DamageBonus = monster.DamageBonus,
-                HealthBonus = monster.HealthBonus,
-                InitialLevel = monster.InitialLevel,
-                NetID = monster.NetId,
-                GroupPosition = monster.Camp.Position,
-                BuffSideTeamID = monster.Camp.SideTeamId,
-                Position = new Vector3(monster.Position.X, monster.GetHeight(), monster.Position.Y),
-                SpawnAnimationName = monster.SpawnAnimation,
-                AIscript = "",
-                //Seems to be the time it is supposed to spawn, not the time when it spawned, check this later
-                SpawnTime = time / 1000,
-                BehaviorTree = monster.AIScript.AIScriptMetaData.BehaviorTree,
-                RevealEvent = monster.Camp.RevealEvent,
-                GroupNumber = monster.Camp.CampIndex,
-                MinionRoamState = monster.AIScript.AIScriptMetaData.MinionRoamState,
-                SpawnDuration = monster.Camp.SpawnDuration,
-                TeamID = (uint)monster.Team,
-                NetNodeID = (byte)NetNodeID.Spawned
-            };
-        }
-
         public void NotifyS2C_CreateNeutral(IMonster monster, float time)
         {
             var packet = ConstructCreateNeutralPacket(monster, time);
             _packetHandlerManager.BroadcastPacket(packet.GetBytes(), Channel.CHL_S2C);
-        }
-
-        S2C_CreateTurret ConstructCreateTurretPacket(ILaneTurret turret)
-        {
-            var createTurret = new S2C_CreateTurret
-            {
-                SenderNetID = turret.NetId,
-                NetID = turret.NetId,
-                // Verify, taken from packets (does not seem to change)
-                NetNodeID = 64,
-                Name = turret.Name,
-                IsTargetable = turret.Stats.IsTargetable,
-                IsTargetableToTeamSpellFlags = (uint)turret.Stats.IsTargetableToTeam
-            };
-            return createTurret;
         }
 
         /// <summary>
@@ -3430,38 +3508,6 @@ namespace PacketDefinitions420
             }
         }
 
-        GamePacket ConstructSpawnPacket(IGameObject o, float gameTime = 0)
-        {
-            switch (o)
-            {
-                case ISpellMissile missile:
-                    return ConstructMissileReplicationPacket(missile);
-                case ILevelProp prop:
-                    return ConstructSpawnLevelPropPacket(prop);
-                case IRegion region:
-                    return ConstructAddRegionPacket(region);
-
-                case ILaneTurret turret:
-                    return ConstructCreateTurretPacket(turret);
-
-                // Champions spawn a little differently 
-                case IChampion champion:
-                    return null;
-
-                case IMonster monster:
-                    return ConstructCreateNeutralPacket(monster, gameTime);
-                case ILaneMinion minion:
-                    return ConstructLaneMinionSpawnedPacket(minion);
-                case IMinion minion:
-                    return ConstructMinionSpawnedPacket(minion);
-
-                case IParticle particle:
-                    return ConstructFXCreateGroupPacket(particle);
-            }
-            // Generic object
-            return ConstructEnterVisibilityClientPacket(o);
-        }
-
         /// <summary>
         /// Sends a packet to the specified player detailing that the spawning (of champions & buildings) that occurs at the start of the game has ended.
         /// </summary>
@@ -3470,26 +3516,6 @@ namespace PacketDefinitions420
         {
             var endSpawnPacket = new S2C_EndSpawn();
             _packetHandlerManager.SendPacket(userId, endSpawnPacket.GetBytes(), Channel.CHL_S2C);
-        }
-
-        SpawnLevelPropS2C ConstructSpawnLevelPropPacket(ILevelProp levelProp, int userId = 0)
-        {
-            return new SpawnLevelPropS2C
-            {
-                NetID = levelProp.NetId,
-                NetNodeID = levelProp.NetNodeID,
-                SkinID = levelProp.SkinID,
-                Position = new Vector3(levelProp.Position.X, levelProp.Height, levelProp.Position.Y),
-                FacingDirection = levelProp.Direction,
-                PositionOffset = levelProp.PositionOffset,
-                Scale = levelProp.Scale,
-                TeamID = (ushort)levelProp.Team,
-                SkillLevel = levelProp.SkillLevel,
-                Rank = levelProp.Rank,
-                Type = levelProp.Type,
-                Name = levelProp.Name,
-                PropName = levelProp.Model
-            };
         }
 
         /// <summary>
@@ -3921,7 +3947,8 @@ namespace PacketDefinitions420
                 }
                 var healthbarPacket = ConstructEnterLocalVisibilityClientPacket(obj);
                 //TODO: try to include it to packets too?
-                var us = new OnReplication(){
+                var us = new OnReplication()
+                {
                     SyncID = (uint)Environment.TickCount,
                     ReplicationData = new List<ReplicationData>(1){
                         u.Replication.GetData(false)

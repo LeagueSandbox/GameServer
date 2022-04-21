@@ -67,7 +67,7 @@ namespace Spells
             {
                 //spell.AddProjectile("YasuoQ3Mis", spell.CastInfo.Owner.Position, spell.CastInfo.Owner.Position, trueCoords);
                 //spell.CastInfo.Owner.SpellAnimation("SPELL1C");
-                (owner as IChampion).SetSpell("YasuoQW", 0, true);
+                SetSpell(owner, "YasuoQW", SpellSlotType.SpellSlots, 0);
                 AddParticleTarget(owner, owner, "Yasuo_Base_Q3_Hand", owner);
                 AddParticleTarget(owner, owner, "Yasuo_Base_Q3_cast_sound", owner);
             }

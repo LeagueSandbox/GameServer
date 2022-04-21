@@ -341,11 +341,18 @@ namespace LeagueSandbox.GameServer
         /// <summary>
         /// Gets a GameObject from the list of objects in ObjectManager that is identified by the specified NetID.
         /// </summary>
-        /// <param name="netId">NetID to check.</param>
-        /// <returns>GameObject instance that has the specified NetID.</returns>
+        /// <param name="id">NetID to check.</param>
+        /// <returns>GameObject instance that has the specified NetID. Null otherwise.</returns>
         public IGameObject GetObjectById(uint id)
         {
-            return _objects.GetValueOrDefault(id, null);
+            IGameObject obj = _objectsToAdd.Find(o => o.NetId == id);
+
+            if (obj == null)
+            {
+                obj = _objects.GetValueOrDefault(id, null);
+            }
+
+            return obj;
         }
 
         /// <summary>
