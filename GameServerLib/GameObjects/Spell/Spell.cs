@@ -86,6 +86,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
             _attackType = AttackType.ATTACK_TYPE_RADIAL;
 
             State = SpellState.STATE_READY;
+            CurrentAmmo = 1;
             CastInfo.Owner = owner;
             SpellName = spellName;
             CastInfo.SpellHash = (uint)GetId();
