@@ -40,7 +40,7 @@ namespace LeagueSandbox.GameServer.Handlers
         {
             // CollisionObjects can be any AI units, ObjBuildings, pure AttackableUnits, and pure GameObjects.
             // TODO: Implement static navgrid updates for turrets so we don't have to count them as collision objects.
-            return !(obj.IsToRemove() || obj is ILevelProp || obj is IParticle || obj is ISpellMissile || obj is IRegion) && obj.CollisionRadius > 0;
+            return !(obj.IsToRemove() || obj is ILevelProp || obj is IParticle || obj is ISpellMissile || obj is IRegion) && obj.CollisionRadius >= 0;
         }
 
         /// <summary>
@@ -57,7 +57,7 @@ namespace LeagueSandbox.GameServer.Handlers
 
         Circle GetBounds(IGameObject obj)
         {
-            return new Circle(obj.Position, obj.CollisionRadius);
+            return new Circle(obj.Position, Math.Max(0.5f, obj.CollisionRadius));
         }
 
         /// <summary>
