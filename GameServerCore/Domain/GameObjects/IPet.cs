@@ -12,5 +12,8 @@ namespace GameServerCore.Domain.GameObjects
         bool ShowMinimapIconIfClone { get; }
         bool DisallowPlayerControl { get; }
         bool IsClone { get; }
+
+        float GetReturnRadius();
+        void SetReturnRadius(float radius);
     }
 }

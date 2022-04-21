@@ -60,28 +60,73 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                     }
                 }
 
-                switch ((OrderType)req.OrderType)
+                var u = _game.ObjectManager.GetObjectById(req.TargetNetID) as IAttackableUnit;
+                var pet = champion.GetPet();
+
+                switch (req.OrderType)
                 {
-                    case OrderType.AttackTo:
-                        translatedWaypoints[0] = champion.Position;
-                        champion.UpdateMoveOrder(OrderType.AttackTo, true);
-                        champion.SetWaypoints(translatedWaypoints);
-                        break;
-                    case OrderType.Stop:
-                        champion.UpdateMoveOrder(OrderType.Stop, true);
-                        break;
-                    case OrderType.Taunt:
-                        champion.UpdateMoveOrder(OrderType.Taunt);
-                        return true;
-                    case OrderType.AttackMove:
-                        translatedWaypoints[0] = champion.Position;
-                        champion.UpdateMoveOrder(OrderType.AttackMove, true);
-                        champion.SetWaypoints(translatedWaypoints);
-                        break;
                     case OrderType.MoveTo:
                         translatedWaypoints[0] = champion.Position;
                         champion.UpdateMoveOrder(OrderType.MoveTo, true);
                         champion.SetWaypoints(translatedWaypoints);
+                        champion.SetTargetUnit(u);
+                        break;
+                    case OrderType.AttackTo:
+                        translatedWaypoints[0] = champion.Position;
+                        champion.UpdateMoveOrder(OrderType.AttackTo, true);
+                        champion.SetWaypoints(translatedWaypoints);
+                        champion.SetTargetUnit(u);
+                        break;
+                    case OrderType.PetHardAttack:
+                        if (pet != null)
+                        {
+                            List<Vector2> waypoints = _game.Map.PathingHandler.GetPath(pet.Position, nav.GetClosestTerrainExit(req.Position));
+                            pet.UpdateMoveOrder(OrderType.PetHardAttack, true);
+                            pet.SetWaypoints(waypoints);
+                            pet.SetTargetUnit(u, true);
+                        }
+                        break;
+                    case OrderType.PetHardMove:
+                        if (pet != null)
+                        {
+                            List<Vector2> waypoints = _game.Map.PathingHandler.GetPath(pet.Position, nav.GetClosestTerrainExit(req.Position));
+                            pet.UpdateMoveOrder(OrderType.PetHardMove, true);
+                            pet.SetWaypoints(waypoints);
+                            pet.SetTargetUnit(u, true);
+                        }
+                        break;
+                    case OrderType.AttackMove:
+                        translatedWaypoints[0] = champion.Position;
+                        champion.UpdateMoveOrder(OrderType.AttackMove, true);
+                        champion.SetWaypoints(translatedWaypoints);
+                        champion.SetTargetUnit(u);
+                        break;
+                    case OrderType.Taunt:
+                        champion.UpdateMoveOrder(OrderType.Taunt);
+                        return true;
+                    case OrderType.PetHardReturn:
+                        if (pet != null)
+                        {
+                            List<Vector2> waypoints = _game.Map.PathingHandler.GetPath(pet.Position, nav.GetClosestTerrainExit(req.Position));
+                            pet.UpdateMoveOrder(OrderType.PetHardReturn, true);
+                            pet.SetWaypoints(waypoints);
+                            pet.SetTargetUnit(u, true);
+                        }
+                        break;
+                    case OrderType.Stop:
+                        champion.UpdateMoveOrder(OrderType.Stop, true);
+                        break;
+                    case OrderType.PetHardStop:
+                        if (pet != null)
+                        {
+                            pet.UpdateMoveOrder(OrderType.PetHardStop, true);
+                        }
+                        break;
+                    case OrderType.Use:
+                        translatedWaypoints[0] = champion.Position;
+                        champion.UpdateMoveOrder(OrderType.Use, true);
+                        champion.SetWaypoints(translatedWaypoints);
+                        champion.SetTargetUnit(u);
                         break;
                 }
 
@@ -91,9 +136,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                 }
             }
 
-            var u = _game.ObjectManager.GetObjectById(req.TargetNetID) as IAttackableUnit;
-            champion.SetTargetUnit(u);
-
+            // TODO: Shouldn't be here.
             if (champion.SpellToCast != null)
             {
                 champion.SetSpellToCast(null, Vector2.Zero);

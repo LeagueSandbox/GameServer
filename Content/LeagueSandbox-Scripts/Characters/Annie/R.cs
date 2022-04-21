@@ -15,16 +15,15 @@ namespace Spells
     {
         public ISpellScriptMetadata ScriptMetadata => new SpellScriptMetadata()
         {
-            NotSingleTargetSpell = true,
             TriggersSpellCasts = true,
             IsDamagingSpell = true,
+            IsPetDurationBuff = true,
+            NotSingleTargetSpell = true,
             SpellDamageRatio = 0.5f,
-            IsPetDurationBuff = true
         };
 
         public void OnActivate(IObjAiBase owner, ISpell spell)
         {
-            ApiEventManager.OnSpellHit.AddListener(this, spell, OnSpellHit, false);
         }
 
         public void OnDeactivate(IObjAiBase owner, ISpell spell)
@@ -35,13 +34,6 @@ namespace Spells
         {
         }
 
-        public void OnSpellHit(ISpell spell, IAttackableUnit target, ISpellMissile missle, ISpellSector sector)
-        {
-            var Ap = spell.CastInfo.Owner.Stats.AbilityPower.Total * 0.8f;
-            var totalDamage = 50 + 125 * spell.CastInfo.SpellLevel + Ap;
-            target.TakeDamage(spell.CastInfo.Owner, totalDamage, DamageType.DAMAGE_TYPE_MAGICAL, DamageSource.DAMAGE_SOURCE_SPELLAOE, false);
-        }
-
         public void OnSpellCast(ISpell spell)
         {
         }
@@ -49,8 +41,27 @@ namespace Spells
         public void OnSpellPostCast(ISpell spell)
         {
             var owner = spell.CastInfo.Owner as IChampion;
-            var tibbers = CreatePet(owner, spell, new Vector2(spell.CastInfo.TargetPosition.X, spell.CastInfo.TargetPosition.Z), "Tibbers", "AnnieTibbers", "InfernalGuardian", 45.0f, owner.SkinID, showMinimapIfClone: false, isClone: false);
-            (spell.CastInfo.Owner.GetSpell("InfernalGuardianGuide").Script as InfernalGuardianGuide).Tibbers = tibbers;
+            var tibbers = CreatePet
+            (
+                owner,
+                spell,
+                new Vector2(spell.CastInfo.TargetPosition.X, spell.CastInfo.TargetPosition.Z),
+                "Tibbers",
+                "AnnieTibbers",
+                "InfernalGuardian",
+                45.0f,
+                owner.SkinID,
+                showMinimapIfClone: false,
+                isClone: false
+            );
+
+            var guideSpell = SetSpell(owner, "InfernalGuardianGuide", SpellSlotType.SpellSlots, 3);
+            (guideSpell.Script as InfernalGuardianGuide).Tibbers = tibbers;
+
+            AddBuff("InfernalGuardianBurning", 45.0f, 1, spell, tibbers, owner);
+            AddBuff("InfernalGuardianTimer", 45.0f, 1, spell, owner, owner);
+
+            // Pyromania stuff here
 
             string particles;
             switch (owner.SkinID)
@@ -70,16 +81,25 @@ namespace Spells
             }
             AddParticle(owner, null, particles, tibbers.Position);
 
-            spell.CreateSpellSector(new SectorParameters
+            var sector = spell.CreateSpellSector(new SectorParameters
             {
-                Length = 250.0f,
+                Length = spell.SpellData.CastRadius[0],
                 SingleTick = true,
                 Type = SectorType.Area
             });
+
+            ApiEventManager.OnSpellSectorHit.AddListener(this, sector, TargetExecute, false);
         }
 
-        public void TargetExecute(ISpell spell, IAttackableUnit target, ISpellMissile missile, ISpellSector sector)
+        public void TargetExecute(IAttackableUnit target, ISpellSector sector)
         {
+            var spell = sector.SpellOrigin;
+
+            // Pyromania stun here
+
+            var Ap = spell.CastInfo.Owner.Stats.AbilityPower.Total * 0.8f;
+            var totalDamage = 50 + 125 * spell.CastInfo.SpellLevel + Ap;
+            target.TakeDamage(spell.CastInfo.Owner, totalDamage, DamageType.DAMAGE_TYPE_MAGICAL, DamageSource.DAMAGE_SOURCE_SPELLAOE, false);
         }
 
         public void OnSpellChannel(ISpell spell)
@@ -124,7 +144,10 @@ namespace Spells
         {
             if (Tibbers != null)
             {
-                //TODO: Validade all this section regarding Targeting enemies
+                // likely AddBuff("PetCommandParticle") here (refer to preload for particles)
+                AddParticle(owner, null, "cursor_moveto", start);
+
+                //TODO: Instead of baking AI here, make a general Pet AI script and set it as the default AI for Pet class.
                 var unitsInRage = GetUnitsInRange(end, 100.0f, true);
                 unitsInRage.RemoveAll(x => x.Team == spell.CastInfo.Owner.Team);
                 if (unitsInRage.Count > 0)

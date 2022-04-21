@@ -16,12 +16,14 @@ namespace MapScripts.Map12
     {
         public IMapScriptMetadata MapScriptMetadata { get; set; } = new MapScriptMetadata
         {
-            StartingGold = 1375.0f,
             BaseGoldPerGoldTick = 1.7f,
             RecallSpellItemId = 2007,
             InitialLevel = 3,
-            ExpRange = 1250.0f,
-            GoldRange = 0.0f
+            AIVars = new AIVars
+            {
+                GoldRadius = 0.0f,
+                StartingGold = 1375.0f
+            }
         };
 
         public virtual IGlobalData GlobalData { get; set; } = new GlobalData();

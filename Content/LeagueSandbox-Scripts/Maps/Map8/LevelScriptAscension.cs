@@ -19,14 +19,16 @@ namespace MapScripts.Map8
         public IMapScriptMetadata MapScriptMetadata { get; set; } = new MapScriptMetadata
         {
             MinionSpawnEnabled = false,
-            StartingGold = 1300.0f,
             OverrideSpawnPoints = true,
             RecallSpellItemId = 2007,
             BaseGoldPerGoldTick = 5.0f,
-            FirstGoldTime = 45 * 1000,
             InitialLevel = 3,
-            ExpRange = 1250.0f,
-            GoldRange = 0.0f,
+            AIVars = new AIVars
+            {
+                GoldRadius = 0.0f,
+                StartingGold = 1300.0f,
+                AmbientGoldDelay = 45.0f
+            },
             NavGridOverride = "AIPathASCENSION",
             ExpCurveOverride = "ExpCurveASCENSION"
         };

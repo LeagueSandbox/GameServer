@@ -882,6 +882,34 @@ namespace LeagueSandbox.GameServer.API
             unit.SetStatus(status, enabled);
         }
 
+        /// <summary>
+        /// Sets the given spell slot of the given unit to the spell of the given name.
+        /// </summary>
+        /// <param name="target">Unit to set the spell for.</param>
+        /// <param name="newName">Name of the spell to place in the slot.</param>
+        /// <param name="slotType">Type of slot being used.</param>
+        /// <param name="slot">Index of the spell slot to change.</param>
+        /// <param name="fullReplace">Whether or not the spell should be entirely replaced, or just the name. Typically used for transformations.</param>
+        /// <returns>Newly created spell or existing spell with the given name. Null for failure.</returns>
+        public static ISpell SetSpell(IObjAiBase target, string newName, SpellSlotType slotType, int slot, bool fullReplace = false)
+        {
+            slot = ConvertAPISlot(slotType, slot);
+
+            if (slot == -1)
+            {
+                return null;
+            }
+
+            return target.SetSpell(newName, (byte)slot, true, fullReplace);
+        }
+
+        /// <summary>
+        /// Sets the targeting type of the spell in a given slot to a given targeting type.
+        /// </summary>
+        /// <param name="target">Unit to set the targeting type for.</param>
+        /// <param name="slotType">Type of slot being used.</param>
+        /// <param name="slot">Index of the spell slot to change.</param>
+        /// <param name="newType">Targeting type to set.</param>
         public static void SetTargetingType(IObjAiBase target, SpellSlotType slotType, int slot, TargetingType newType)
         {
             slot = ConvertAPISlot(slotType, slot);
@@ -1087,7 +1115,7 @@ namespace LeagueSandbox.GameServer.API
         }
 
         public static IPet CreatePet
-            (
+        (
             IChampion owner,
             ISpell spell,
             Vector2 position,
@@ -1101,10 +1129,25 @@ namespace LeagueSandbox.GameServer.API
             bool disallowPlayerControl =false, 
             bool doFade = false,
             bool isClone = true,
-            string aiScript = ""
-            )
+            string aiScript = "Pet"
+        )
         {
             return new Pet(_game, owner, spell, position, name, model, buffName, lifeTime, skinId, cloneInventory, showMinimapIfClone, disallowPlayerControl, doFade, isClone, aiScript);
+        }
+
+        public static float GetPetReturnRadius()
+        {
+            return _game.Map.MapScript.MapScriptMetadata.AIVars.DefaultPetReturnRadius;
+        }
+
+        public static float GetPetReturnRadius(IMinion minion)
+        {
+            if (minion is IPet pet)
+            {
+                return pet.GetReturnRadius();
+            }
+
+            return GetPetReturnRadius();
         }
     }
 }

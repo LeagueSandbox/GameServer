@@ -37,9 +37,9 @@ namespace GameServerCore
         /// <summary>
         /// Gets a GameObject from the list of objects in ObjectManager that is identified by the specified NetID.
         /// </summary>
-        /// <param name="netId">NetID to check.</param>
-        /// <returns>GameObject instance that has the specified NetID.</returns>
-        IGameObject GetObjectById(uint netId);
+        /// <param name="id">NetID to check.</param>
+        /// <returns>GameObject instance that has the specified NetID. Null otherwise.</returns>
+        IGameObject GetObjectById(uint id);
 
         /// <summary>
         /// Removes a GameObject from the dictionary of GameObjects in ObjectManager.

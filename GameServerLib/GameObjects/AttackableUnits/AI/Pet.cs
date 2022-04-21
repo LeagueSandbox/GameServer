@@ -6,6 +6,8 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 {
     public class Pet : Minion, IPet
     {
+        private float _returnRadius;
+
         public IBuff CloneBuff { get; }
         public ISpell SourceSpell { get; }
         public float LifeTime { get; }
@@ -29,9 +31,11 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             bool disallowPlayerControl = false,
             bool doFade = false,
             bool isClone = true,
-            string aiScript = ""
+            string aiScript = "Pet"
             ) : base(game, owner, position, model, name, team: owner.Team, skinId: skinId,aiScript: aiScript)
         {
+            _returnRadius = _game.Map.MapScript.MapScriptMetadata.AIVars.DefaultPetReturnRadius;
+
             SourceSpell = spell;
             LifeTime = lifeTime;
             CloneBuff = new Buff(game, buffName, lifeTime, 1, spell, this, owner);
@@ -48,6 +52,17 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         {
             base.OnAdded();
             AddBuff(CloneBuff);
+            Owner.SetPet(this);
+        }
+
+        public float GetReturnRadius()
+        {
+            return _returnRadius;
+        }
+
+        public void SetReturnRadius(float radius)
+        {
+            _returnRadius = radius;
         }
     }
 }
