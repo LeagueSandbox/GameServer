@@ -121,6 +121,7 @@ namespace LeagueSandbox.GameServer.GameObjects
         public virtual void OnAdded()
         {
             _game.Map.CollisionHandler.AddObject(this);
+            _game.ObjectManager.AddVisionProvider(this, Team);
         }
 
         /// <summary>
@@ -153,6 +154,7 @@ namespace LeagueSandbox.GameServer.GameObjects
         public virtual void OnRemoved()
         {
             _game.Map.CollisionHandler.RemoveObject(this);
+            _game.ObjectManager.RemoveVisionProvider(this, Team);
         }
 
         /// <summary>
@@ -246,7 +248,9 @@ namespace LeagueSandbox.GameServer.GameObjects
         /// <param name="team">TeamId.BLUE/PURPLE/NEUTRAL</param>
         public virtual void SetTeam(TeamId team)
         {
+            _game.ObjectManager.RemoveVisionProvider(this, Team);
             Team = team;
+            _game.ObjectManager.AddVisionProvider(this, Team);
             if (_game.IsRunning)
             {
                 _game.PacketNotifier.NotifySetTeam(this as IAttackableUnit);

@@ -123,25 +123,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             BuffList = new List<IBuff>();
         }
 
-        public override void OnAdded()
-        {
-            base.OnAdded();
-            _game.ObjectManager.AddVisionProvider(this, Team);
-        }
-
-        public override void OnRemoved()
-        {
-            base.OnRemoved();
-            _game.ObjectManager.RemoveVisionProvider(this, Team);
-        }
-
-        public override void SetTeam(TeamId team)
-        {
-            _game.ObjectManager.RemoveVisionProvider(this, Team);
-            base.SetTeam(team);
-            _game.ObjectManager.AddVisionProvider(this, Team);
-        }
-
         /// <summary>
         /// Gets the HashString for this unit's model. Used for packets so clients know what data to load.
         /// </summary>
