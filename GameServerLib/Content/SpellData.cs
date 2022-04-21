@@ -136,7 +136,7 @@ namespace LeagueSandbox.GameServer.Content
         public float MagicDamageCoefficient { get; set; }
         public float[] ManaCost { get; set; } = { 0, 0, 0, 0, 0, 0, 0 };
         //Map_X_EffectYLevelZAmmount
-        public int[] MaxAmmo { get; set; } = { 0, 0, 0, 0, 0, 0, 0 };
+        public int MaxAmmo { get; set; } = 1;
         //MaxGrowthRangeTextureName
         //MinimapIcon
         //MinimapIconDisplayFlag
@@ -372,7 +372,21 @@ namespace LeagueSandbox.GameServer.Content
             AlternateName = file.GetString("SpellData", "AlternateName", name);
             AlwaysSnapFacing = file.GetBool("SpellData", "AlwaysSnapFacing", AlwaysSnapFacing);
             //AmmoCountHiddenInUI
-            AmmoRechargeTime = file.GetMultiFloat("SpellData", "AmmoRechargeTime", 6, AmmoRechargeTime[0]);
+            float lastValidTime = 0;
+            for (var i = 1; i <= 6 + 1; i++)
+            {
+                float time = file.GetFloat("SpellData", $"AmmoRechargeTime{i}", 0);
+
+                if(time > 0)
+                {
+                    AmmoRechargeTime[i - 1] = time;
+                    lastValidTime = time;
+                }
+                else
+                {
+                    AmmoRechargeTime[i - 1] = lastValidTime;
+                }
+            }
             AmmoUsed = file.GetMultiInt("SpellData", "AmmoUsed", 6, AmmoUsed[0]);
             AnimationLeadOutName = file.GetString("SpellData", "AnimationLeadOutName", name);
             AnimationLoopName = file.GetString("SpellData", "AnimationLoopName", name);
@@ -469,7 +483,7 @@ namespace LeagueSandbox.GameServer.Content
             MagicDamageCoefficient = file.GetFloat("SpellData", "Coefficient2", MagicDamageCoefficient);
             ManaCost = file.GetMultiFloat("SpellData", "ManaCost", 6, ManaCost[0]);
             //Map_X_EffectYLevelZAmmount
-            MaxAmmo = file.GetMultiInt("SpellData", "MaxAmmo", 6, MaxAmmo[0]);
+            MaxAmmo = file.GetInt("SpellData", "MaxAmmo", MaxAmmo);
             //MaxGrowthRangeTextureName
             //MinimapIcon
             //MinimapIconDisplayFlag

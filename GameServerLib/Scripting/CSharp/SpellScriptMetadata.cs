@@ -9,34 +9,24 @@ namespace LeagueSandbox.GameServer.Scripting.CSharp
 {
     public class SpellScriptMetadata : ISpellScriptMetadata
     {
+        public int AmmoPerCharge { get; set; } = 1;
         public string AutoAuraBuffName { get; set; } = "";
-
         // TODO: Replace string with empty event class.
         public string AutoBuffActivateEvent { get; set; } = "";
-
         public float[] AutoCooldownByLevel { get; set; } = { 0.0f, 0.0f, 0.0f, 0.0f, 0.0f };
-
         public string AutoItemActivateEffect { get; set; } = "";
-
         /// <summary>
         /// Whether or not the caster should automatically face the end position of the spell.
         /// </summary>
         public bool AutoFaceDirection { get; set; } = true;
-
         public float[] AutoTargetDamageByLevel { get; set; } = { 0.0f, 0.0f, 0.0f, 0.0f, 0.0f };
-
         public float CastTime { get; set; } = 0.0f;
         public bool CastingBreaksStealth { get; set; } = false;
-
-        public IMissileParameters MissileParameters { get; set; } = null;
-
-        public ISectorParameters SectorParameters { get; set; } = null;
-
         /// <summary>
         /// Determines how how long the spell should be channeled (overrides content based channel duration). Triggers on channel (and post) if value is above 0.
         /// </summary>
         public float ChannelDuration { get; set; } = 0.0f;
-
+        public bool CooldownIsAffectedByCDR { get; set; } = true;
         public bool DoOnPreDamageInExpirationOrder { get; set; } = false;
         public bool DoesntBreakShields { get; set; } = false;
         // TODO: Find a use for this.
@@ -45,17 +35,15 @@ namespace LeagueSandbox.GameServer.Scripting.CSharp
         public bool IsDebugMode { get; set; } = false;
         public bool IsPetDurationBuff { get; set; } = false;
         public bool IsNonDispellable { get; set; } = false;
+        public IMissileParameters MissileParameters { get; set; } = null;
         public bool NotSingleTargetSpell { get; set; } = false;
-
         // Never appears below 2?
         public int OnPreDamagePriority { get; set; } = 0;
-
         public bool OverrideCooldownCheck { get; set; } = false;
         public bool PermeatesThroughDeath { get; set; } = false;
         public bool PersistsThroughDeath { get; set; } = false;
-
         public string PopupMessage1 { get; set; } = "";
-
+        public ISectorParameters SectorParameters { get; set; } = null;
         public float SetSpellDamageRatio { get; set; } = 0.0f;
         public float SpellDamageRatio { get; set; } = 0.0f;
 

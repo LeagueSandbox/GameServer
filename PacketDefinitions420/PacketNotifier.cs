@@ -2503,6 +2503,30 @@ namespace PacketDefinitions420
             _packetHandlerManager.BroadcastPacket(packet.GetBytes(), Channel.CHL_S2C);
         }
 
+        public void NotifyS2C_AmmoUpdate(ISpell spell)
+        {
+            if(spell.CastInfo.Owner is IChampion ch)
+            {
+                var packet = new S2C_AmmoUpdate
+                {
+                    IsSummonerSpell = spell.SpellName.StartsWith("Summoner"),
+                    SpellSlot = spell.CastInfo.SpellSlot,
+                    CurrentAmmo = spell.CurrentAmmo,
+                    // TODO: Implement this. Example spell which uses it is Syndra R.
+                    MaxAmmo = -1,
+                    SenderNetID = spell.CastInfo.Owner.NetId
+                };
+
+                if (spell.CurrentAmmo < spell.SpellData.MaxAmmo)
+                {
+                    packet.AmmoRecharge = spell.CurrentAmmoCooldown;
+                    packet.AmmoRechargeTotalTime = spell.GetAmmoRechageTime();
+                }
+
+              _packetHandlerManager.SendPacket((int)ch.GetPlayerId(), packet.GetBytes(), Channel.CHL_S2C);
+            }
+        }
+
         /// <summary>
         /// Sends a packet to all players with vision of the given chain missile that it has updated (unit/position).
         /// </summary>

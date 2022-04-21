@@ -12,6 +12,7 @@ using LeagueSandbox.GameServer.GameObjects.Spell.Sector;
 using LeagueSandbox.GameServer.GameObjects.Stats;
 using LeagueSandbox.GameServer.Packets;
 using LeagueSandbox.GameServer.Scripting.CSharp;
+using System;
 using System.Collections.Generic;
 using System.Numerics;
 
@@ -29,6 +30,8 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
         /// General information about this spell when it is cast. Refer to CastInfo class.
         /// </summary>
         public ICastInfo CastInfo { get; private set; } = new CastInfo();
+        public int CurrentAmmo { get; private set; }
+        public float CurrentAmmoCooldown { get; private set; }
         /// <summary>
         /// Current cooldown of this spell.
         /// </summary>
@@ -274,7 +277,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
             _attackType = AttackType.ATTACK_TYPE_RADIAL;
             var stats = CastInfo.Owner.Stats;
 
-            if ((SpellData.ManaCost[CastInfo.SpellLevel] * (1 - stats.SpellCostReduction) > stats.CurrentMana && !CastInfo.IsAutoAttack) || State != SpellState.STATE_READY)
+            if ((SpellData.ManaCost[CastInfo.SpellLevel] * (1 - stats.SpellCostReduction) > stats.CurrentMana && !CastInfo.IsAutoAttack) || State != SpellState.STATE_READY || CurrentAmmo <= 0)
             {
                 return false;
             }
@@ -340,7 +343,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
             else
             {
                 CastInfo.AmmoUsed = 1; // TODO: Verify
-                CastInfo.AmmoRechargeTime = CastInfo.Cooldown; // TODO: Verify
+                CastInfo.AmmoRechargeTime = CurrentAmmoCooldown; // TODO: Verify
             }
 
             // TODO: Account for multiple targets
@@ -381,7 +384,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
 
                 if (distance > castRange * castRange)
                 {
-                    CastInfo.Owner.SetSpellToCast(this, start);
+                    CastInfo.Owner.SetSpellToCast(this, end);
                     return false;
                 }
             }
@@ -501,6 +504,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
 
             if (!CastInfo.IsAutoAttack)
             {
+                CurrentAmmo--;
                 _game.PacketNotifier.NotifyNPC_CastSpellAns(this);
             }
 
@@ -613,7 +617,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
             else
             {
                 CastInfo.AmmoUsed = 1; // TODO: Verify
-                CastInfo.AmmoRechargeTime = CastInfo.Cooldown; // TODO: Verify
+                CastInfo.AmmoRechargeTime = CurrentCooldown; // TODO: Verify
             }
 
             // TODO: implement check for IsForceCastingOrChannel and IsOverrideCastPosition
@@ -891,7 +895,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
                     CastInfo.Owner.SetChannelSpell(null);
                 }
 
-                CastInfo.Owner.UpdateMoveOrder(OrderType.Hold, true);                
+                CastInfo.Owner.UpdateMoveOrder(OrderType.Hold, true);
                 // TODO: Find out how League calculates cooldown reduction for incomplete channels (assuming it isn't done in-script).
             }
 
@@ -1229,7 +1233,38 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
 
         public float GetCooldown()
         {
-            return _game.Config.GameFeatures.HasFlag(FeatureFlags.EnableCooldowns) ? SpellData.Cooldown[CastInfo.SpellLevel] * (1 - CastInfo.Owner.Stats.CooldownReduction.Total) : 0;
+            if (_game.Config.GameFeatures.HasFlag(FeatureFlags.EnableCooldowns))
+            {
+                var cd = SpellData.Cooldown[CastInfo.SpellLevel];
+                if (Script.ScriptMetadata.CooldownIsAffectedByCDR)
+                {
+                    cd *= 1 - CastInfo.Owner.Stats.CooldownReduction.Total;
+                }
+                return cd;
+            }
+
+            return 0.0f;
+        }
+
+        public float GetAmmoRechageTime()
+        {
+            var cd = SpellData.AmmoRechargeTime[CastInfo.SpellLevel - 1];
+
+            if (Script.ScriptMetadata.CooldownIsAffectedByCDR)
+            {
+                cd *= 1 - CastInfo.Owner.Stats.CooldownReduction.Total;
+            }
+
+            return cd;
+        }
+
+        public void AddAmmo(int ammount = 1)
+        {
+            CurrentAmmo = Math.Min(CurrentAmmo + ammount, SpellData.MaxAmmo);
+            CurrentAmmoCooldown = GetAmmoRechageTime();
+
+
+            _game.PacketNotifier.NotifyS2C_AmmoUpdate(this);
         }
 
         public float GetCurrentCastRange()
@@ -1496,55 +1531,64 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
             switch (State)
             {
                 case SpellState.STATE_READY:
-                {
-                    break;
-                }
-                case SpellState.STATE_CASTING:
-                {
-                    if (CastCancelCheck())
                     {
                         break;
                     }
-                    if (!CastInfo.IsAutoAttack && !CastInfo.UseAttackCastTime)
+                case SpellState.STATE_CASTING:
                     {
-                        CurrentCastTime -= diff / 1000.0f;
-                        if (CurrentCastTime <= 0)
+                        if (CastCancelCheck())
                         {
-                            FinishCasting();
-                            if (SpellData.ChannelDuration[CastInfo.SpellLevel] > 0 || Script.ScriptMetadata.ChannelDuration > 0)
+                            break;
+                        }
+                        if (!CastInfo.IsAutoAttack && !CastInfo.UseAttackCastTime)
+                        {
+                            CurrentCastTime -= diff / 1000.0f;
+                            if (CurrentCastTime <= 0)
                             {
-                                Channel();
+                                FinishCasting();
+                                if (SpellData.ChannelDuration[CastInfo.SpellLevel] > 0 || Script.ScriptMetadata.ChannelDuration > 0)
+                                {
+                                    Channel();
+                                }
                             }
                         }
-                    }
-                    else
-                    {
-                        CurrentDelayTime += diff / 1000.0f;
-                        if (CurrentDelayTime >= CastInfo.DesignerCastTime / CastInfo.AttackSpeedModifier)
+                        else
                         {
-                            FinishCasting();
+                            CurrentDelayTime += diff / 1000.0f;
+                            if (CurrentDelayTime >= CastInfo.DesignerCastTime / CastInfo.AttackSpeedModifier)
+                            {
+                                FinishCasting();
+                            }
                         }
+                        break;
                     }
-                    break;
-                }
                 case SpellState.STATE_COOLDOWN:
-                {
-                    CurrentCooldown -= diff / 1000.0f;
-                    if (CurrentCooldown < 0)
                     {
-                        State = SpellState.STATE_READY;
+                        CurrentCooldown -= diff / 1000.0f;
+                        if (CurrentCooldown < 0)
+                        {
+                            State = SpellState.STATE_READY;
+                        }
+                        break;
                     }
-                    break;
-                }
                 case SpellState.STATE_CHANNELING:
-                {
-                    CurrentChannelDuration -= diff / 1000.0f;
-                    ChannelCancelCheck();
-                    if (CurrentChannelDuration <= 0)
                     {
-                        FinishChanneling();
+                        CurrentChannelDuration -= diff / 1000.0f;
+                        ChannelCancelCheck();
+                        if (CurrentChannelDuration <= 0)
+                        {
+                            FinishChanneling();
+                        }
+                        break;
                     }
-                    break;
+            }
+            if (CurrentAmmo < SpellData.MaxAmmo && CastInfo.SpellLevel > 0)
+            {
+                CurrentAmmoCooldown -= diff / 1000.0f;
+
+                if (CurrentAmmoCooldown <= 0)
+                {
+                    AddAmmo(Script.ScriptMetadata.AmmoPerCharge);
                 }
             }
         }

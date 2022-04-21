@@ -528,6 +528,7 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="showWindow">Whether or not to show a window before unpausing (delay).</param>
         void NotifyResumePacket(IChampion unpauser, ClientInfo player, bool isDelayed);
         void NotifyS2C_ActivateMinionCamp(IMonsterCamp monsterCamp);
+        void NotifyS2C_AmmoUpdate(ISpell spell);
         /// <summary>
         /// Sends a packet to all players with vision of the given chain missile that it has updated (unit/position).
         /// </summary>
