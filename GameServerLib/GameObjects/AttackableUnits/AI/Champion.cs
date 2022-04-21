@@ -290,8 +290,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             }
         }
 
-        //TODO: Move this down to ObjAiBase
-        public bool LevelUp(bool force = false)
+        public override bool LevelUp(bool force = false)
         {
             var stats = Stats;
             var expMap = _game.Map.MapData.ExpCurve;
@@ -303,15 +302,12 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
             if (stats.Level < _game.Map.MapScript.MapScriptMetadata.MaxLevel && (stats.Level < 1 || (stats.Experience >= expMap[stats.Level - 1]))) //The - 1s is there because the XP files don't have level 1
             {
-                Stats.LevelUp();
                 Logger.Debug("Champion " + Model + " leveled up to " + stats.Level);
                 if (stats.Level <= 18)
                 {
                     SkillPoints++;
                 }
-                ApiEventManager.OnLevelUp.Publish(this);
-                _game.PacketNotifier.NotifyNPC_LevelUp(this);
-                _game.PacketNotifier.NotifyOnReplication(this, partial: false);
+                base.LevelUp(force);
 
                 return true;
             }

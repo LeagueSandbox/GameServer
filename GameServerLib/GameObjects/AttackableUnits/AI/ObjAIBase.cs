@@ -355,6 +355,15 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             return CharData.SpellsUpLevels[s.CastInfo.SpellSlot][s.CastInfo.SpellLevel] <= Stats.Level;
         }
 
+        public virtual bool LevelUp(bool force = true)
+        {
+            Stats.LevelUp();
+            _game.PacketNotifier.NotifyNPC_LevelUp(this);
+            _game.PacketNotifier.NotifyOnReplication(this, partial: false);
+            ApiEventManager.OnLevelUp.Publish(this);
+            return true;
+        }
+
         /// <summary>
         /// Classifies the given unit. Used for AI attack priority, such as turrets or minions. Known in League internally as "Call for help".
         /// </summary>

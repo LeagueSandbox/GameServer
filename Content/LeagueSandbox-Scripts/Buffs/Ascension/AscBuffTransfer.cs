@@ -38,16 +38,16 @@ namespace Buffs
                 NotifyAscendant(obj);
             }
 
-            //Using SetStatus temporarily due to: https://github.com/LeagueSandbox/GameServer/issues/1385
-            SetStatus(unit, StatusFlags.Targetable, false);
-            SetStatus(unit, StatusFlags.Stunned, true);
-            SetStatus(unit, StatusFlags.Invulnerable, true);
-
             unit.PauseAnimation(true);
 
             AddParticleTarget(unit, unit, "EggTimer", unit, buff.Duration, flags: (FXFlags)32);
             AddParticle(unit, unit, "AscTransferGlow", unit.Position, buff.Duration, flags: (FXFlags)32);
             AddParticle(unit, unit, "AscTurnToStone", unit.Position, buff.Duration, flags: (FXFlags)32);
+
+            //Using SetStatus temporarily due to: https://github.com/LeagueSandbox/GameServer/issues/1385
+            SetStatus(unit, StatusFlags.Targetable, false);
+            SetStatus(unit, StatusFlags.Stunned, true);
+            SetStatus(unit, StatusFlags.Invulnerable, true);
         }
 
         public void OnDeactivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
