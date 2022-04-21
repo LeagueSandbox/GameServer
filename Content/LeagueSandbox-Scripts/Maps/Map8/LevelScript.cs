@@ -17,14 +17,15 @@ namespace MapScripts.Map8
         public IMapScriptMetadata MapScriptMetadata { get; set; } = new MapScriptMetadata
         {
             MinionSpawnEnabled = false,
-            StartingGold = 1375.0f,
             OverrideSpawnPoints = true,
             RecallSpellItemId = 2005,
             BaseGoldPerGoldTick = 2.8f,
-            FirstGoldTime = 90.0f * 1000,
             InitialLevel = 3,
-            ExpRange = 1250.0f,
-            GoldRange = 0.0f
+            AIVars = new AIVars
+            {
+                GoldRadius = 0.0f,
+                StartingGold = 1375.0f
+            }
         };
 
         public virtual IGlobalData GlobalData { get; set; } = new GlobalData();

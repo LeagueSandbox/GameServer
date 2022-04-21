@@ -5,6 +5,7 @@ using GameServerCore.Scripting.CSharp;
 using LeagueSandbox.GameServer.API;
 using LeagueSandbox.GameServer.GameObjects.Stats;
 using LeagueSandbox.GameServer.Scripting.CSharp;
+using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 
 namespace Buffs
 {
@@ -24,7 +25,7 @@ namespace Buffs
             if (unit is IObjAiBase owner)
             {
                 Handler = (owner.GetBuffWithName("ZedWHandler").BuffScript as ZedWHandler);
-                var w2Spell = owner.SetSpell("ZedW2", 1, true);
+                var w2Spell = SetSpell(owner, "ZedW2", SpellSlotType.SpellSlots, 1);
                 ApiEventManager.OnSpellCast.AddListener(this, w2Spell, Handler.ShadowSwap);
             }
         }
@@ -36,7 +37,10 @@ namespace Buffs
                 unit.RemoveBuffsWithName("ZedWHandler");
             }
 
-            (unit as IObjAiBase).SetSpell("ZedShadowDash", 1, true);
+            if (unit is IObjAiBase ai)
+            {
+                SetSpell(ai, "ZedShadowDash", SpellSlotType.SpellSlots, 1);
+            }
         }
 
         public void OnUpdate(float diff)

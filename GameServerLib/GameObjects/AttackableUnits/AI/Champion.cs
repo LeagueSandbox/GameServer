@@ -59,7 +59,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             TalentInventory = talentInventory;
             Shop = GameServer.Inventory.Shop.CreateShop(this, game);
 
-            Stats.Gold = _game.Map.MapScript.MapScriptMetadata.StartingGold;
+            Stats.Gold = _game.Map.MapScript.MapScriptMetadata.AIVars.StartingGold;
             Stats.GoldPerGoldTick.BaseValue = _game.Map.MapScript.MapScriptMetadata.BaseGoldPerGoldTick;
             Stats.IsGeneratingGold = false;
 
@@ -209,7 +209,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                     goldTimer = _game.Map.MapScript.MapScriptMetadata.GoldTickSpeed;
                 }
             }
-            else if (!Stats.IsGeneratingGold && _game.GameTime >= _game.Map.MapScript.MapScriptMetadata.FirstGoldTime)
+            else if (!Stats.IsGeneratingGold && _game.GameTime >= _game.Map.MapScript.MapScriptMetadata.AIVars.AmbientGoldDelay * 1000f)
             {
                 Stats.IsGeneratingGold = true;
                 Logger.Debug("Generating Gold!");

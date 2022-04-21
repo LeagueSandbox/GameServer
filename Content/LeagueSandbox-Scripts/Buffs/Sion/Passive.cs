@@ -39,7 +39,7 @@ namespace Buffs
             {
                 if (champion != null)
                 {
-                    champion.SetSpell("SionPassiveSpeed", i, true);
+                    SetSpell(champion, "SionPassiveSpeed", SpellSlotType.SpellSlots, i, true);
                 }
             };
         }
@@ -51,7 +51,7 @@ namespace Buffs
             {
                 if (champion != null)
                 {
-                    champion.SetSpell(originalAbilities[i], i, true);
+                    SetSpell(champion, originalAbilities[i], SpellSlotType.SpellSlots, i, true);
                 }
             }
 

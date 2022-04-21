@@ -84,7 +84,7 @@ namespace CharScripts
                 }
 
                 StopAnimation(owner, "", false, true, true);
-                owner.SetSpell("KalistaPassiveDashSpellActual", (int)SpellSlotType.ExtraSlots, true);
+                SetSpell(owner, "KalistaPassiveDashSpellActual", SpellSlotType.ExtraSlots, 0);
                 //SpellCast(owner, 0, SpellSlotType.ExtraSlots, dashPos, dashPos, true, Vector2.Zero);
 
                 // KalistaPassiveDashSpellActual code below

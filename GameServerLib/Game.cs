@@ -22,9 +22,6 @@ using LeagueSandbox.GameServer.Packets.PacketHandlers;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Handlers;
 using LeagueSandbox.GameServer.Handlers;
-using LeaguePackets.Game;
-using LeaguePackets;
-using LeaguePackets.LoadScreen;
 using GameServerCore.Packets.PacketDefinitions;
 using GameServerCore.Packets.PacketDefinitions.Requests;
 

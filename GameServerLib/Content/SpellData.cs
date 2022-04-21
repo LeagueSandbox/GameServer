@@ -254,10 +254,10 @@ namespace LeagueSandbox.GameServer.Content
                                         && !useFlags.HasFlag(SpellDataFlags.IgnoreLaneMinion):
                             valid = true;
                             break;
-                        case IMinion m when (!m.IsPet && useFlags.HasFlag(SpellDataFlags.AffectNotPet))
-                                    || (m.IsPet && useFlags.HasFlag(SpellDataFlags.AffectUseable))
+                        case IMinion m when (!(m is IPet) && useFlags.HasFlag(SpellDataFlags.AffectNotPet))
+                                    || (m is IPet && useFlags.HasFlag(SpellDataFlags.AffectUseable))
                                     || (m.IsWard && useFlags.HasFlag(SpellDataFlags.AffectWards))
-                                    || (!m.IsClone && useFlags.HasFlag(SpellDataFlags.IgnoreClones))
+                                    || (!(m is IPet pet && pet.IsClone) && useFlags.HasFlag(SpellDataFlags.IgnoreClones))
                                     || (target.Team == attacker.Team && !useFlags.HasFlag(SpellDataFlags.IgnoreAllyMinion))
                                     || (target.Team != attacker.Team && target.Team != TeamId.TEAM_NEUTRAL && !useFlags.HasFlag(SpellDataFlags.IgnoreEnemyMinion))
                                     || useFlags.HasFlag(SpellDataFlags.AffectMinions):

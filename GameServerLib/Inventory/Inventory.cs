@@ -41,20 +41,7 @@ namespace LeagueSandbox.GameServer.Inventory
 
             if (owner != null)
             {
-                owner.Stats.AddModifier(item);
-
-                if (!string.IsNullOrEmpty(item.SpellName))
-                {
-                    owner.SetSpell(item.SpellName, (byte)(owner.Inventory.GetItemSlot(GetItem(item.SpellName)) + (byte)SpellSlotType.InventorySlots), true);
-                }
-
-                //Checks if the item's script was already loaded before
-                if (!ItemScripts.ContainsKey(item.ItemId))
-                {
-                    //Loads the Script
-                    ItemScripts.Add(item.ItemId, CSharpScriptEngine.CreateObjectStatic<IItemScript>("ItemPassives", $"ItemID_{item.ItemId}") ?? new ItemScriptEmpty());
-                    ItemScripts[item.ItemId].OnActivate(owner);
-                }
+                LoadOwnerStats(item, owner);
             }
 
             if (item.MaxStacks > 1)
@@ -63,6 +50,39 @@ namespace LeagueSandbox.GameServer.Inventory
             }
 
             return AddNewItem(item);
+        }
+
+        public IItem SetItemToSlot(IItemData item, IObjAiBase owner, byte slot)
+        {
+            if (item.ItemGroup.ToLower().Equals("relicbase"))
+            {
+                return AddTrinketItem(item, owner);
+            }
+
+            if (owner != null)
+            {
+                LoadOwnerStats(item, owner);
+            }
+
+            return SetItem(slot, item);
+        }
+
+        private void LoadOwnerStats(IItemData item, IObjAiBase owner)
+        {
+            owner.Stats.AddModifier(item);
+
+            if (!string.IsNullOrEmpty(item.SpellName))
+            {
+                owner.SetSpell(item.SpellName, (byte)(owner.Inventory.GetItemSlot(GetItem(item.SpellName)) + (byte)SpellSlotType.InventorySlots), true);
+            }
+
+            //Checks if the item's script was already loaded before
+            if (!ItemScripts.ContainsKey(item.ItemId))
+            {
+                //Loads the Script
+                ItemScripts.Add(item.ItemId, CSharpScriptEngine.CreateObjectStatic<IItemScript>("ItemPassives", $"ItemID_{item.ItemId}") ?? new ItemScriptEmpty());
+                ItemScripts[item.ItemId].OnActivate(owner);
+            }
         }
 
         public IItem SetExtraItem(byte slot, IItemData item)

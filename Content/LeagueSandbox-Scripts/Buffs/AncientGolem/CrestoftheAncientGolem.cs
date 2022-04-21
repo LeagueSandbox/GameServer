@@ -64,8 +64,7 @@ namespace Buffs
             }
             else if (killer == null)
             {
-                var pet = deathData.Killer as IMinion;
-                if (pet != null && pet.IsPet)
+                if (killer is IPet pet)
                 {
                     var petOwner = pet.Owner;
 
