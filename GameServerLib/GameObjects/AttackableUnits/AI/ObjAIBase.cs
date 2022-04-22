@@ -838,7 +838,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             {
                 // Use any existing spells before making a new one.
                 bool exists = false;
-                foreach(var spell in Spells.Values)
+                foreach (var spell in Spells.Values)
                 {
                     if (spell.SpellName == name)
                     {
@@ -858,10 +858,10 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                     }
 
                     toReturn.SetLevel(Spells[slot].CastInfo.SpellLevel);
-
-                    Spells[slot] = toReturn;
-                    Stats.SetSpellEnabled(slot, enabled);
                 }
+
+                Spells[slot] = toReturn;
+                Stats.SetSpellEnabled(slot, enabled);
             }
 
             if (this is IChampion champion)
