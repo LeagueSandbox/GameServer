@@ -3879,7 +3879,21 @@ namespace PacketDefinitions420
                 Damage = amount
             };
 
-            _packetHandlerManager.BroadcastPacket(damagePacket.GetBytes(), Channel.CHL_S2C);
+            if (isGlobal)
+            {
+                _packetHandlerManager.BroadcastPacket(damagePacket.GetBytes(), Channel.CHL_S2C);
+            }
+            else
+            {
+                if (sourceId > 0)
+                {
+                    _packetHandlerManager.SendPacket(sourceId, damagePacket.GetBytes(), Channel.CHL_S2C);
+                }
+                if (targetId > 0)
+                {
+                    _packetHandlerManager.SendPacket(targetId, damagePacket.GetBytes(), Channel.CHL_S2C);
+                }
+            }
         }
 
         /// <summary>
