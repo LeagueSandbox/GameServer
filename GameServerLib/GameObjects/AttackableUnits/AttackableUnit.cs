@@ -700,7 +700,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             {
                 if (!(obj is IMonster))
                 {
-                    var champs = _game.ObjectManager.GetChampionsInRangeFromTeam(Position, _game.Map.MapScript.MapScriptMetadata.AIVars.EXPRadius, Team, true);
+                    var champs = _game.ObjectManager.GetChampionsInRangeFromTeam(Position, _game.Map.MapScript.MapScriptMetadata.AIVars.EXPRadius, CustomConvert.GetEnemyTeam(Team), true);
                     if (champs.Count > 0)
                     {
                         var expPerChamp = obj.Stats.ExpGivenOnDeath.Total / champs.Count;
