@@ -15,10 +15,6 @@ namespace GameServerCore.Domain.GameObjects
         /// </summary>
         bool IsDead { get; }
         /// <summary>
-        /// Whether or not this Unit's model has been changeds this tick. Resets to False when the next tick update happens in ObjectManager.
-        /// </summary>
-        bool IsModelUpdated { get; set; }
-        /// <summary>
         /// Number of minions this Unit has killed. Unused besides in replication which is used for packets, refer to NotifyOnReplication in PacketNotifier.
         /// </summary>
         /// TODO: Verify if we want to move this to ObjAIBase since AttackableUnits cannot attack or kill anything.

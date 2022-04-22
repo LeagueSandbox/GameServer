@@ -128,10 +128,12 @@ namespace LeagueSandbox.GameServer
                 if (obj is IAttackableUnit u)
                 {
                     u.Replication.MarkAsUnchanged();
-                    u.IsModelUpdated = false;
                     u.ClearMovementUpdated();
                 }
             }
+
+            _game.PacketNotifier.NotifyOnReplication();
+            _game.PacketNotifier.NotifyWaypointGroup();
 
             _currentlyInUpdate = false;
         }
@@ -222,20 +224,12 @@ namespace LeagueSandbox.GameServer
             {
                 if(u.Replication.Changed)
                 {
-                    _game.PacketNotifier.NotifyOnReplication(u, userId, true);
-                }
-
-                if (u.IsModelUpdated)
-                {
-                    _game.PacketNotifier.NotifyS2C_ChangeCharacterData(u, userId);
+                    _game.PacketNotifier.HoldReplicationDataUntilOnReplicationNotification(u, userId, true);
                 }
 
                 if (u.IsMovementUpdated())
                 {
-                    // TODO: Verify which one we want to use. WaypointList does not require conversions, however WaypointGroup does (and it has TeleportID functionality).
-                    //_game.PacketNotifier.NotifyWaypointList(u);
-                    // TODO: Verify if we want to use TeleportID.
-                    _game.PacketNotifier.NotifyWaypointGroup(u, userId, false);
+                    _game.PacketNotifier.HoldMovementDataUntilWaypointGroupNotification(u, userId, false);
                 }
             }
         }

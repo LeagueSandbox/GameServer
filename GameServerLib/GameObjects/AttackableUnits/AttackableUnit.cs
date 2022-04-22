@@ -36,10 +36,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// </summary>
         public bool IsDead { get; protected set; }
         /// <summary>
-        /// Whether or not this Unit's model has been changeds this tick. Resets to False when the next tick update happens in ObjectManager.
-        /// </summary>
-        public bool IsModelUpdated { get; set; }
-        /// <summary>
         /// Number of minions this Unit has killed. Unused besides in replication which is used for packets, refer to NotifyOnReplication in PacketNotifier.
         /// </summary>
         /// TODO: Verify if we want to move this to ObjAIBase since AttackableUnits cannot attack or kill anything.
@@ -739,7 +735,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                 return false;
             }
             Model = model;
-            IsModelUpdated = true;
+            _game.PacketNotifier.NotifyS2C_ChangeCharacterData(this);
             return true;
         }
 

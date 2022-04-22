@@ -4045,6 +4045,77 @@ namespace PacketDefinitions420
             }
         }
 
+        private Dictionary<int, List<MovementDataNormal>> _heldMovementData = new Dictionary<int, List<MovementDataNormal>>();
+        public void HoldMovementDataUntilWaypointGroupNotification(IAttackableUnit u, int userId, bool useTeleportID = false)
+        {
+            var data = (MovementDataNormal)PacketExtensions.CreateMovementData(u, _navGrid, MovementDataType.Normal, useTeleportID: useTeleportID);
+            
+            List<MovementDataNormal> list = null;
+            if (!_heldMovementData.TryGetValue(userId, out list))
+            {
+                _heldMovementData[userId] = list = new List<MovementDataNormal>();
+            }
+            list.Add(data);
+        }
+
+        public void NotifyWaypointGroup()
+        {
+            foreach (var kv in _heldMovementData)
+            {
+                int userId = kv.Key;
+                var list = kv.Value;
+
+                if (list.Count > 0)
+                {
+                    var packet = new WaypointGroup
+                    {
+                        SenderNetID = 0,
+                        SyncID = Environment.TickCount,
+                        Movements = list
+                    };
+
+                    _packetHandlerManager.SendPacket(userId, packet.GetBytes(), Channel.CHL_LOW_PRIORITY);
+
+                    list.Clear();
+                }
+            }
+        }
+
+        private Dictionary<int, List<ReplicationData>> _heldReplicationData = new Dictionary<int, List<ReplicationData>>();
+        public void HoldReplicationDataUntilOnReplicationNotification(IAttackableUnit u, int userId, bool partial = true)
+        {
+            var data = u.Replication.GetData(partial);
+            
+            List<ReplicationData> list = null;
+            if (!_heldReplicationData.TryGetValue(userId, out list))
+            {
+                _heldReplicationData[userId] = list = new List<ReplicationData>();
+            }
+            list.Add(data);
+        }
+
+        public void NotifyOnReplication()
+        {
+            foreach (var kv in _heldReplicationData)
+            {
+                int userId = kv.Key;
+                var list = kv.Value;
+
+                if (list.Count > 0)
+                {
+                    var packet = new OnReplication()
+                    {
+                        SyncID = (uint)Environment.TickCount,
+                        ReplicationData = list
+                    };
+
+                    _packetHandlerManager.SendPacket(userId, packet.GetBytes(), Channel.CHL_LOW_PRIORITY, PacketFlags.UNSEQUENCED);
+
+                    list.Clear();
+                }
+            }
+        }
+
         /// <summary>
         /// Sends a packet to all players that have vision of the specified unit that it has made a movement.
         /// </summary>

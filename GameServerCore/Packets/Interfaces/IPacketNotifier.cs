@@ -933,6 +933,10 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="becameVisible">Whether or not the change was an entry into vision.</param>
         /// <param name="userId">UserId to send the packet to. If not specified or zero, the packet is broadcasted to the team.</param>
         void NotifyVisibilityChange(IGameObject obj, TeamId team, bool becameVisible, int userId = 0);
+        void HoldMovementDataUntilWaypointGroupNotification(IAttackableUnit u, int userId, bool useTeleportID = false);
+        void NotifyWaypointGroup();
+        void HoldReplicationDataUntilOnReplicationNotification(IAttackableUnit u, int userId, bool partial = true);
+        void NotifyOnReplication();
         /// <summary>
         /// Sends a packet to all players that have vision of the specified unit that it has made a movement.
         /// </summary>
