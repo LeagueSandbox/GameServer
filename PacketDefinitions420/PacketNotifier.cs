@@ -1813,7 +1813,6 @@ namespace PacketDefinitions420
         {
             var addGroupPacket = new NPC_BuffAddGroup
             {
-                SenderNetID = 0,
                 BuffType = (byte)buffType,
                 BuffNameHash = HashFunctions.HashString(buffName),
                 PackageHash = target.GetObjHash(), // TODO: Verify
@@ -1870,7 +1869,6 @@ namespace PacketDefinitions420
         {
             var removeGroupPacket = new NPC_BuffRemoveGroup
             {
-                SenderNetID = 0,
                 BuffNameHash = HashFunctions.HashString(buffName),
             };
             var entries = new List<BuffRemoveGroupEntry>();
@@ -1923,7 +1921,6 @@ namespace PacketDefinitions420
         {
             var replaceGroupPacket = new NPC_BuffReplaceGroup
             {
-                SenderNetID = 0,
                 RunningTime = runningtime,
                 Duration = duration
             };
@@ -1984,7 +1981,6 @@ namespace PacketDefinitions420
         {
             var updateGroupPacket = new NPC_BuffUpdateCountGroup
             {
-                SenderNetID = 0,
                 Duration = duration,
                 RunningTime = runningTime
             };
@@ -2319,8 +2315,7 @@ namespace PacketDefinitions420
         {
             var pg = new PausePacket
             {
-                //Check if sender ID should be the person that requested the pause or just 0
-                SenderNetID = 0,
+                //Check if SenderNetID should be the person that requested the pause or just 0
                 ClientID = (int)player.ClientId,
                 IsTournament = isTournament,
                 PauseTimeRemaining = seconds
@@ -2475,14 +2470,11 @@ namespace PacketDefinitions420
         {
             var resume = new ResumePacket
             {
+                SenderNetID = 0,
                 Delayed = isDelayed,
                 ClientID = (int)player.ClientId
             };
-            if (unpauser == null)
-            {
-                resume.SenderNetID = 0;
-            }
-            else
+            if (unpauser != null)
             {
                 resume.SenderNetID = unpauser.NetId;
             }
@@ -2494,7 +2486,6 @@ namespace PacketDefinitions420
         {
             var packet = new S2C_ActivateMinionCamp
             {
-                SenderNetID = 0,
                 Position = monsterCamp.Position,
                 CampIndex = monsterCamp.CampIndex,
                 SpawnDuration = monsterCamp.SpawnDuration,
@@ -2637,7 +2628,6 @@ namespace PacketDefinitions420
             var packet = new S2C_CreateMinionCamp
             {
                 Position = monsterCamp.Position,
-                SenderNetID = 0,
                 CampIndex = monsterCamp.CampIndex,
                 MinimapIcon = monsterCamp.MinimapIcon,
                 RevealAudioVOComponentEvent = monsterCamp.RevealEvent,
@@ -2678,7 +2668,7 @@ namespace PacketDefinitions420
         /// <param name="player"></param>
         public void NotifyS2C_DisableHUDForEndOfGame(Tuple<uint, ClientInfo> player)
         {
-            var disableHud = new S2C_DisableHUDForEndOfGame { SenderNetID = 0 };
+            var disableHud = new S2C_DisableHUDForEndOfGame();
             _packetHandlerManager.SendPacket((int)player.Item2.PlayerId, disableHud.GetBytes(), Channel.CHL_S2C);
         }
 
@@ -2847,7 +2837,6 @@ namespace PacketDefinitions420
         {
             var packet = new S2C_Neutral_Camp_Empty
             {
-                SenderNetID = 0,
                 KillerNetID = 0,
                 //Investigate what this does, from what i see on packets, my guess is a check if the enemy team had vision of the camp dying
                 DoPlayVO = true,
@@ -2935,7 +2924,6 @@ namespace PacketDefinitions420
             }
             var packet = new S2C_OnEventWorld
             {
-                SenderNetID = 0,
                 EventWorld = new EventWorld
                 {
                     Event = mapEvent,
@@ -3074,7 +3062,6 @@ namespace PacketDefinitions420
         {
             var response = new S2C_QueryStatusAns
             {
-                SenderNetID = 0,
                 Response = true
             };
             _packetHandlerManager.SendPacket(userId, response.GetBytes(), Channel.CHL_S2C);
@@ -3370,8 +3357,7 @@ namespace PacketDefinitions420
             var dm = new S2C_SystemMessage
             {
                 SourceNetID = 0,
-                //TODO: Ivestigate the cases where sender NetID is used
-                SenderNetID = 0,
+                //TODO: Ivestigate the cases where SenderNetID is used
                 Message = htmlDebugMessage
             };
             _packetHandlerManager.BroadcastPacket(dm.GetBytes(), Channel.CHL_S2C);
@@ -3387,8 +3373,7 @@ namespace PacketDefinitions420
             var dm = new S2C_SystemMessage
             {
                 SourceNetID = 0,
-                //TODO: Ivestigate the cases where sender NetID is used
-                SenderNetID = 0,
+                //TODO: Ivestigate the cases where SenderNetID is used
                 Message = message
             };
             _packetHandlerManager.SendPacket(userId, dm.GetBytes(), Channel.CHL_S2C);
@@ -3404,8 +3389,7 @@ namespace PacketDefinitions420
             var dm = new S2C_SystemMessage
             {
                 SourceNetID = 0,
-                //TODO: Ivestigate the cases where sender NetID is used
-                SenderNetID = 0,
+                //TODO: Ivestigate the cases where SenderNetID is used
                 Message = message
             };
             _packetHandlerManager.BroadcastPacketTeam(team, dm.GetBytes(), Channel.CHL_S2C);
@@ -3415,7 +3399,6 @@ namespace PacketDefinitions420
         {
             var packet = new S2C_UnitSetMinimapIcon
             {
-                SenderNetID = 0,
                 UnitNetID = unit.NetId,
                 IconCategory = iconCategory,
                 ChangeIcon = changeIcon,
@@ -3785,7 +3768,6 @@ namespace PacketDefinitions420
 
             var wpGroup = new WaypointGroup()
             {
-                SenderNetID = 0,
                 SyncID = Environment.TickCount,
                 Movements = new List<MovementDataNormal> { md }
             };
@@ -3923,7 +3905,6 @@ namespace PacketDefinitions420
         {
             var packet = new UpdateLevelPropS2C
             {
-                SenderNetID = 0,
                 UpdateLevelPropData = propData
             };
             _packetHandlerManager.BroadcastPacket(packet.GetBytes(), Channel.CHL_S2C);
@@ -4080,7 +4061,6 @@ namespace PacketDefinitions420
                 {
                     var packet = new WaypointGroup
                     {
-                        SenderNetID = 0,
                         SyncID = Environment.TickCount,
                         Movements = list
                     };
@@ -4149,7 +4129,6 @@ namespace PacketDefinitions420
             // TODO: Implement support for multiple movements.
             var packet = new WaypointGroup
             {
-                SenderNetID = 0,
                 SyncID = Environment.TickCount,
                 Movements = new List<MovementDataNormal>() { move }
             };
@@ -4195,7 +4174,6 @@ namespace PacketDefinitions420
 
             var speedWpGroup = new WaypointGroupWithSpeed
             {
-                SenderNetID = 0,
                 SyncID = u.SyncId,
                 // TOOD: Implement support for multiple speed-based movements (functionally known as dashes).
                 Movements = new List<MovementDataWithSpeed> { md }
