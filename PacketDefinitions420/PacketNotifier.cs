@@ -36,6 +36,8 @@ namespace PacketDefinitions420
     {
         private readonly IPacketHandlerManager _packetHandlerManager;
         private readonly INavigationGrid _navGrid;
+        private Dictionary<int, List<MovementDataNormal>> _heldMovementData = new Dictionary<int, List<MovementDataNormal>>();
+        private Dictionary<int, List<ReplicationData>> _heldReplicationData = new Dictionary<int, List<ReplicationData>>();
 
         /// <summary>
         /// Instantiation which preps PacketNotifier for packet sending.
@@ -2282,7 +2284,7 @@ namespace PacketDefinitions420
         /// </summary>
         /// <param name="u">Unit who's stats have been updated.</param>
         /// <param name="userId">UserId to send the packet to. If not specified or zero, the packet is broadcasted to all players that have vision of the specified unit.</param>
-        /// <param name="partial">Whether or not the packet should be counted as a partial update (whether the stats have actually changed or not). *NOTE*: Use case for this parameter is unknown.</param>
+        /// <param name="partial">Whether or not the packet should only include stats marked as changed.</param>
         /// TODO: Replace with LeaguePackets and preferably move all uses of this function to a central EventHandler class (if one is fully implemented).
         public void NotifyOnReplication(IAttackableUnit u, int userId = 0, bool partial = true)
         {
@@ -4046,7 +4048,12 @@ namespace PacketDefinitions420
             }
         }
 
-        private Dictionary<int, List<MovementDataNormal>> _heldMovementData = new Dictionary<int, List<MovementDataNormal>>();
+        /// <summary>
+        /// Creates a package and puts it in the queue that will be emptied with the NotifyWaypointGroup call.
+        /// </summary>
+        /// <param name="u">AttackableUnit that is moving.</param>
+        /// <param name="userId">UserId to send the packet to. If not specified or zero, the packet is broadcasted to all players that have vision of the specified unit.</param>
+        /// <param name="useTeleportID">Whether or not to teleport the unit to its current position in its path.</param>
         public void HoldMovementDataUntilWaypointGroupNotification(IAttackableUnit u, int userId, bool useTeleportID = false)
         {
             var data = (MovementDataNormal)PacketExtensions.CreateMovementData(u, _navGrid, MovementDataType.Normal, useTeleportID: useTeleportID);
@@ -4059,6 +4066,9 @@ namespace PacketDefinitions420
             list.Add(data);
         }
 
+        /// <summary>
+        /// Sends all packets queued by HoldMovementDataUntilWaypointGroupNotification and clears queue.
+        /// </summary>
         public void NotifyWaypointGroup()
         {
             foreach (var kv in _heldMovementData)
@@ -4082,7 +4092,12 @@ namespace PacketDefinitions420
             }
         }
 
-        private Dictionary<int, List<ReplicationData>> _heldReplicationData = new Dictionary<int, List<ReplicationData>>();
+        /// <summary>
+        /// Creates a package and puts it in the queue that will be emptied with the NotifyOnReplication call.
+        /// </summary>
+        /// <param name="u">Unit who's stats have been updated.</param>
+        /// <param name="userId">UserId to send the packet to. If not specified or zero, the packet is broadcasted to all players that have vision of the specified unit.</param>
+        /// <param name="partial">Whether or not the packet should only include stats marked as changed.</param>
         public void HoldReplicationDataUntilOnReplicationNotification(IAttackableUnit u, int userId, bool partial = true)
         {
             var data = u.Replication.GetData(partial);
@@ -4095,6 +4110,9 @@ namespace PacketDefinitions420
             list.Add(data);
         }
 
+        /// <summary>
+        /// Sends all packets queued by HoldReplicationDataUntilOnReplicationNotification and clears queue.
+        /// </summary>
         public void NotifyOnReplication()
         {
             foreach (var kv in _heldReplicationData)
