@@ -3783,7 +3783,8 @@ namespace PacketDefinitions420
 
             var wpGroup = new WaypointGroup()
             {
-                SyncID = unit.SyncId,
+                SenderNetID = 0,
+                SyncID = Environment.TickCount,
                 Movements = new List<MovementDataNormal> { md }
             };
 
@@ -4130,8 +4131,8 @@ namespace PacketDefinitions420
             // TODO: Implement support for multiple movements.
             var packet = new WaypointGroup
             {
-                SenderNetID = u.NetId,
-                SyncID = u.SyncId,
+                SenderNetID = 0,
+                SyncID = Environment.TickCount,
                 Movements = new List<MovementDataNormal>() { move }
             };
 
