@@ -36,6 +36,8 @@ namespace PacketDefinitions420
     {
         private readonly IPacketHandlerManager _packetHandlerManager;
         private readonly INavigationGrid _navGrid;
+        private Dictionary<int, List<MovementDataNormal>> _heldMovementData = new Dictionary<int, List<MovementDataNormal>>();
+        private Dictionary<int, List<ReplicationData>> _heldReplicationData = new Dictionary<int, List<ReplicationData>>();
 
         /// <summary>
         /// Instantiation which preps PacketNotifier for packet sending.
@@ -1811,7 +1813,6 @@ namespace PacketDefinitions420
         {
             var addGroupPacket = new NPC_BuffAddGroup
             {
-                SenderNetID = 0,
                 BuffType = (byte)buffType,
                 BuffNameHash = HashFunctions.HashString(buffName),
                 PackageHash = target.GetObjHash(), // TODO: Verify
@@ -1868,7 +1869,6 @@ namespace PacketDefinitions420
         {
             var removeGroupPacket = new NPC_BuffRemoveGroup
             {
-                SenderNetID = 0,
                 BuffNameHash = HashFunctions.HashString(buffName),
             };
             var entries = new List<BuffRemoveGroupEntry>();
@@ -1921,7 +1921,6 @@ namespace PacketDefinitions420
         {
             var replaceGroupPacket = new NPC_BuffReplaceGroup
             {
-                SenderNetID = 0,
                 RunningTime = runningtime,
                 Duration = duration
             };
@@ -1982,7 +1981,6 @@ namespace PacketDefinitions420
         {
             var updateGroupPacket = new NPC_BuffUpdateCountGroup
             {
-                SenderNetID = 0,
                 Duration = duration,
                 RunningTime = runningTime
             };
@@ -2282,7 +2280,7 @@ namespace PacketDefinitions420
         /// </summary>
         /// <param name="u">Unit who's stats have been updated.</param>
         /// <param name="userId">UserId to send the packet to. If not specified or zero, the packet is broadcasted to all players that have vision of the specified unit.</param>
-        /// <param name="partial">Whether or not the packet should be counted as a partial update (whether the stats have actually changed or not). *NOTE*: Use case for this parameter is unknown.</param>
+        /// <param name="partial">Whether or not the packet should only include stats marked as changed.</param>
         /// TODO: Replace with LeaguePackets and preferably move all uses of this function to a central EventHandler class (if one is fully implemented).
         public void NotifyOnReplication(IAttackableUnit u, int userId = 0, bool partial = true)
         {
@@ -2317,8 +2315,7 @@ namespace PacketDefinitions420
         {
             var pg = new PausePacket
             {
-                //Check if sender ID should be the person that requested the pause or just 0
-                SenderNetID = 0,
+                //Check if SenderNetID should be the person that requested the pause or just 0
                 ClientID = (int)player.ClientId,
                 IsTournament = isTournament,
                 PauseTimeRemaining = seconds
@@ -2473,14 +2470,11 @@ namespace PacketDefinitions420
         {
             var resume = new ResumePacket
             {
+                SenderNetID = 0,
                 Delayed = isDelayed,
                 ClientID = (int)player.ClientId
             };
-            if (unpauser == null)
-            {
-                resume.SenderNetID = 0;
-            }
-            else
+            if (unpauser != null)
             {
                 resume.SenderNetID = unpauser.NetId;
             }
@@ -2492,7 +2486,6 @@ namespace PacketDefinitions420
         {
             var packet = new S2C_ActivateMinionCamp
             {
-                SenderNetID = 0,
                 Position = monsterCamp.Position,
                 CampIndex = monsterCamp.CampIndex,
                 SpawnDuration = monsterCamp.SpawnDuration,
@@ -2635,7 +2628,6 @@ namespace PacketDefinitions420
             var packet = new S2C_CreateMinionCamp
             {
                 Position = monsterCamp.Position,
-                SenderNetID = 0,
                 CampIndex = monsterCamp.CampIndex,
                 MinimapIcon = monsterCamp.MinimapIcon,
                 RevealAudioVOComponentEvent = monsterCamp.RevealEvent,
@@ -2676,7 +2668,7 @@ namespace PacketDefinitions420
         /// <param name="player"></param>
         public void NotifyS2C_DisableHUDForEndOfGame(Tuple<uint, ClientInfo> player)
         {
-            var disableHud = new S2C_DisableHUDForEndOfGame { SenderNetID = 0 };
+            var disableHud = new S2C_DisableHUDForEndOfGame();
             _packetHandlerManager.SendPacket((int)player.Item2.PlayerId, disableHud.GetBytes(), Channel.CHL_S2C);
         }
 
@@ -2845,7 +2837,6 @@ namespace PacketDefinitions420
         {
             var packet = new S2C_Neutral_Camp_Empty
             {
-                SenderNetID = 0,
                 KillerNetID = 0,
                 //Investigate what this does, from what i see on packets, my guess is a check if the enemy team had vision of the camp dying
                 DoPlayVO = true,
@@ -2933,7 +2924,6 @@ namespace PacketDefinitions420
             }
             var packet = new S2C_OnEventWorld
             {
-                SenderNetID = 0,
                 EventWorld = new EventWorld
                 {
                     Event = mapEvent,
@@ -3072,7 +3062,6 @@ namespace PacketDefinitions420
         {
             var response = new S2C_QueryStatusAns
             {
-                SenderNetID = 0,
                 Response = true
             };
             _packetHandlerManager.SendPacket(userId, response.GetBytes(), Channel.CHL_S2C);
@@ -3368,8 +3357,7 @@ namespace PacketDefinitions420
             var dm = new S2C_SystemMessage
             {
                 SourceNetID = 0,
-                //TODO: Ivestigate the cases where sender NetID is used
-                SenderNetID = 0,
+                //TODO: Ivestigate the cases where SenderNetID is used
                 Message = htmlDebugMessage
             };
             _packetHandlerManager.BroadcastPacket(dm.GetBytes(), Channel.CHL_S2C);
@@ -3385,8 +3373,7 @@ namespace PacketDefinitions420
             var dm = new S2C_SystemMessage
             {
                 SourceNetID = 0,
-                //TODO: Ivestigate the cases where sender NetID is used
-                SenderNetID = 0,
+                //TODO: Ivestigate the cases where SenderNetID is used
                 Message = message
             };
             _packetHandlerManager.SendPacket(userId, dm.GetBytes(), Channel.CHL_S2C);
@@ -3402,8 +3389,7 @@ namespace PacketDefinitions420
             var dm = new S2C_SystemMessage
             {
                 SourceNetID = 0,
-                //TODO: Ivestigate the cases where sender NetID is used
-                SenderNetID = 0,
+                //TODO: Ivestigate the cases where SenderNetID is used
                 Message = message
             };
             _packetHandlerManager.BroadcastPacketTeam(team, dm.GetBytes(), Channel.CHL_S2C);
@@ -3413,7 +3399,6 @@ namespace PacketDefinitions420
         {
             var packet = new S2C_UnitSetMinimapIcon
             {
-                SenderNetID = 0,
                 UnitNetID = unit.NetId,
                 IconCategory = iconCategory,
                 ChangeIcon = changeIcon,
@@ -3783,7 +3768,7 @@ namespace PacketDefinitions420
 
             var wpGroup = new WaypointGroup()
             {
-                SyncID = unit.SyncId,
+                SyncID = Environment.TickCount,
                 Movements = new List<MovementDataNormal> { md }
             };
 
@@ -3920,7 +3905,6 @@ namespace PacketDefinitions420
         {
             var packet = new UpdateLevelPropS2C
             {
-                SenderNetID = 0,
                 UpdateLevelPropData = propData
             };
             _packetHandlerManager.BroadcastPacket(packet.GetBytes(), Channel.CHL_S2C);
@@ -4046,6 +4030,92 @@ namespace PacketDefinitions420
         }
 
         /// <summary>
+        /// Creates a package and puts it in the queue that will be emptied with the NotifyWaypointGroup call.
+        /// </summary>
+        /// <param name="u">AttackableUnit that is moving.</param>
+        /// <param name="userId">UserId to send the packet to. If not specified or zero, the packet is broadcasted to all players that have vision of the specified unit.</param>
+        /// <param name="useTeleportID">Whether or not to teleport the unit to its current position in its path.</param>
+        public void HoldMovementDataUntilWaypointGroupNotification(IAttackableUnit u, int userId, bool useTeleportID = false)
+        {
+            var data = (MovementDataNormal)PacketExtensions.CreateMovementData(u, _navGrid, MovementDataType.Normal, useTeleportID: useTeleportID);
+            
+            List<MovementDataNormal> list = null;
+            if (!_heldMovementData.TryGetValue(userId, out list))
+            {
+                _heldMovementData[userId] = list = new List<MovementDataNormal>();
+            }
+            list.Add(data);
+        }
+
+        /// <summary>
+        /// Sends all packets queued by HoldMovementDataUntilWaypointGroupNotification and clears queue.
+        /// </summary>
+        public void NotifyWaypointGroup()
+        {
+            foreach (var kv in _heldMovementData)
+            {
+                int userId = kv.Key;
+                var list = kv.Value;
+
+                if (list.Count > 0)
+                {
+                    var packet = new WaypointGroup
+                    {
+                        SyncID = Environment.TickCount,
+                        Movements = list
+                    };
+
+                    _packetHandlerManager.SendPacket(userId, packet.GetBytes(), Channel.CHL_LOW_PRIORITY);
+
+                    list.Clear();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Creates a package and puts it in the queue that will be emptied with the NotifyOnReplication call.
+        /// </summary>
+        /// <param name="u">Unit who's stats have been updated.</param>
+        /// <param name="userId">UserId to send the packet to. If not specified or zero, the packet is broadcasted to all players that have vision of the specified unit.</param>
+        /// <param name="partial">Whether or not the packet should only include stats marked as changed.</param>
+        public void HoldReplicationDataUntilOnReplicationNotification(IAttackableUnit u, int userId, bool partial = true)
+        {
+            var data = u.Replication.GetData(partial);
+            
+            List<ReplicationData> list = null;
+            if (!_heldReplicationData.TryGetValue(userId, out list))
+            {
+                _heldReplicationData[userId] = list = new List<ReplicationData>();
+            }
+            list.Add(data);
+        }
+
+        /// <summary>
+        /// Sends all packets queued by HoldReplicationDataUntilOnReplicationNotification and clears queue.
+        /// </summary>
+        public void NotifyOnReplication()
+        {
+            foreach (var kv in _heldReplicationData)
+            {
+                int userId = kv.Key;
+                var list = kv.Value;
+
+                if (list.Count > 0)
+                {
+                    var packet = new OnReplication()
+                    {
+                        SyncID = (uint)Environment.TickCount,
+                        ReplicationData = list
+                    };
+
+                    _packetHandlerManager.SendPacket(userId, packet.GetBytes(), Channel.CHL_LOW_PRIORITY, PacketFlags.UNSEQUENCED);
+
+                    list.Clear();
+                }
+            }
+        }
+
+        /// <summary>
         /// Sends a packet to all players that have vision of the specified unit that it has made a movement.
         /// </summary>
         /// <param name="u">AttackableUnit that is moving.</param>
@@ -4059,8 +4129,7 @@ namespace PacketDefinitions420
             // TODO: Implement support for multiple movements.
             var packet = new WaypointGroup
             {
-                SenderNetID = u.NetId,
-                SyncID = u.SyncId,
+                SyncID = Environment.TickCount,
                 Movements = new List<MovementDataNormal>() { move }
             };
 
@@ -4105,7 +4174,6 @@ namespace PacketDefinitions420
 
             var speedWpGroup = new WaypointGroupWithSpeed
             {
-                SenderNetID = 0,
                 SyncID = u.SyncId,
                 // TOOD: Implement support for multiple speed-based movements (functionally known as dashes).
                 Movements = new List<MovementDataWithSpeed> { md }
