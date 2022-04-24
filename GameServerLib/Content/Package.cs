@@ -28,11 +28,11 @@ namespace LeagueSandbox.GameServer.Content
         private readonly Dictionary<string, Dictionary<string, List<string>>> _content = new Dictionary<string, Dictionary<string, List<string>>>();
 
         private static readonly string[] ContentTypes = {
-            "Items",    // v
-            "Buffs",
+            "Items",
             "Maps",
-            "Spells",   // v
-            "Stats"     // v
+            "Spells",
+            "Stats",
+            "Talents"
         };
 
         public Package(string packagePath, Game game)
@@ -447,13 +447,13 @@ namespace LeagueSandbox.GameServer.Content
                             {
                                 case "Stats":
                                 {
-                                    _charData[name] = (new CharData(_logger)).Load(file);
+                                    _charData[name] = (new CharData()).Load(file);
                                     break;
                                 }
 
                                 case "Spells":
                                 {
-                                    _spellData[name] = (new SpellData(_logger)).Load(file);
+                                    _spellData[name] = (new SpellData()).Load(file);
                                     break;
                                 }
 
@@ -471,8 +471,6 @@ namespace LeagueSandbox.GameServer.Content
                         var fileName = Path.GetFileNameWithoutExtension(filePath);
                         if (fileName != null)
                         {
-                            //TODO: get rid of this
-                            System.Console.WriteLine($"_content[{contentType}][{fileName}] = {PackageName}");
                             _content[contentType][fileName] = new List<string> { PackageName };
                         }
                     }

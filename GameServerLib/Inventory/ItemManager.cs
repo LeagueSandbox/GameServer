@@ -30,8 +30,18 @@ namespace LeagueSandbox.GameServer.Inventory
 
         public void AddItemType(ItemData itemType)
         {
-            itemType.CreateRecipe(this);
             _itemTypes.Add(itemType.ItemId, itemType);
+            itemType.CreateRecipe(this);
+        }
+
+        public void AddItems(ItemContentCollection contentCollection)
+        {
+            foreach (var entry in contentCollection)
+            {
+                var itemType = (new ItemData()).Load(entry.Value);
+                _itemTypes.Add(entry.Key, itemType);
+                itemType.CreateRecipe(this);
+            }
         }
     }
 }

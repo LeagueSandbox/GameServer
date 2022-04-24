@@ -1,12 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text.RegularExpressions;
 using GameServerCore.Domain;
 using GameServerCore.Enums;
-using LeagueSandbox.GameServer.Logging;
-using log4net;
-using Newtonsoft.Json;
 
 namespace LeagueSandbox.GameServer.Content
 {
@@ -22,13 +16,6 @@ namespace LeagueSandbox.GameServer.Content
 
     public class CharData : ICharData
     {
-        private readonly ILog _logger;
-
-        public CharData(ILog logger)
-        {
-            _logger = logger;
-        }
-
         public IGlobalData GlobalCharData { get; private set; } = new GlobalData();
 
         public float AcquisitionRange { get; private set; } = 475;
@@ -98,11 +85,7 @@ namespace LeagueSandbox.GameServer.Content
 
         public CharData Load(ContentFile file)
         {
-            string name;
-            if (file == null || string.IsNullOrEmpty(name = file.Name))
-            {
-                return this;
-            }
+            string name = file.Name;
 
             AcquisitionRange = file.GetFloat("Data", "AcquisitionRange", AcquisitionRange);
             Armor = file.GetFloat("Data", "Armor", Armor);

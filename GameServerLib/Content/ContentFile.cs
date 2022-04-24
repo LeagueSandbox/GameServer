@@ -14,8 +14,6 @@ namespace LeagueSandbox.GameServer.Content
         public Dictionary<string, object> MetaData { get; set; }
             = new Dictionary<string, object>();
 
-        //TODO: move to Item/Char/Spell Data
-        public int Id => Convert.ToInt32(MetaData["Id"]);
         public string Name => Convert.ToString(MetaData["Name"]);
 
         private uint Hash(string section, string name)

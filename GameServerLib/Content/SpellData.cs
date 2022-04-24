@@ -1,9 +1,8 @@
-﻿using System.Numerics;
+﻿using System;
+using System.Numerics;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Domain.GameObjects.Spell;
 using GameServerCore.Enums;
-using LeagueSandbox.GameServer.Logging;
-using log4net;
 
 namespace LeagueSandbox.GameServer.Content
 {
@@ -20,13 +19,6 @@ namespace LeagueSandbox.GameServer.Content
 
     public class SpellData : ISpellData
     {
-        private readonly ILog _logger;
-
-        public SpellData(ILog logger)
-        {
-            _logger = logger;
-        }
-
         public string AfterEffectName { get; set; } = "";
         //AIEndOnly
         //AILifetime
@@ -343,11 +335,7 @@ namespace LeagueSandbox.GameServer.Content
 
         public SpellData Load(ContentFile file)
         {
-            string name;
-            if (file == null || string.IsNullOrEmpty(name = file.Name))
-            {
-                return this;
-            }
+            string name = file.Name;
 
             AfterEffectName = file.GetString("SpellData", "AfterEffectName", AfterEffectName);
             //AIEndOnly

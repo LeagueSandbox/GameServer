@@ -1,3 +1,4 @@
+using System;
 using GameServerCore.Domain;
 using LeagueSandbox.GameServer.Content;
 using LeagueSandbox.GameServer.GameObjects.Stats;
@@ -49,8 +50,9 @@ namespace LeagueSandbox.GameServer.Inventory
 
         public ItemData Load(ContentFile file)
         {
-            ItemId = file.Id;
             Name = file.Name;
+
+            ItemId = Convert.ToInt32(file.MetaData["Id"]);
             MaxStacks = file.GetInt("Data", "MaxStack");
             Price = file.GetInt("Data", "Price");
             ItemGroup = file.GetString("Data", "ItemGroup");

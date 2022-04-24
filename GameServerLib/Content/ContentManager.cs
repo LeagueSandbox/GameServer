@@ -145,7 +145,6 @@ namespace LeagueSandbox.GameServer.Content
             throw new ContentNotFoundException($"No map spawns found for map with id: {mapId}");
         }
 
-        //TODO: get rid of this
         public IContentFile GetContentFileFromJson(string contentType, string itemName, string subPath = null)
         {
             foreach (var dataPackage in _loadedPackages)
@@ -190,10 +189,7 @@ namespace LeagueSandbox.GameServer.Content
                 }
             }
 
-            //throw new ContentNotFoundException($"No Spell Data found with name: {spellName}");
-            _logger.Warn($"No Spell Data found with name: {spellName}");
-            //TODO: move logger arg to Load
-            return new SpellData(_logger);
+            throw new ContentNotFoundException($"No Spell Data found with name: {spellName}");
         }
 
         public ICharData GetCharData(string characterName)
@@ -208,10 +204,7 @@ namespace LeagueSandbox.GameServer.Content
                 }
             }
             
-            //throw new ContentNotFoundException($"No Character found with name: {characterName}");
-            _logger.Warn($"No Character found with name: {characterName}");
-            //TODO: move logger arg to Load
-            return new CharData(_logger);
+            throw new ContentNotFoundException($"No Character found with name: {characterName}");
         }
 
         private void GetDependenciesRecursively(List<string> resultList, string packageName, string contentPath)

@@ -15,6 +15,7 @@ using LeagueSandbox.GameServer.Scripting.CSharp;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
+using LeagueSandbox.GameServer.Content;
 
 namespace LeagueSandbox.GameServer.GameObjects.Spell
 {
@@ -102,7 +103,15 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
                 CastInfo.IsAutoAttack = true;
             }
 
-            SpellData = game.Config.ContentManager.GetSpellData(spellName);
+            try
+            {
+                SpellData = game.Config.ContentManager.GetSpellData(spellName);
+            }
+            catch (ContentNotFoundException)
+            {
+                SpellData = new SpellData();
+            }
+            
             //Checks if the spell is in the passive slot, so it doesn't try to load it twice under the "Spells" and "Passives" namespaces
             if (CastInfo.SpellSlot != (int)SpellSlotType.PassiveSpellSlot)
             {
