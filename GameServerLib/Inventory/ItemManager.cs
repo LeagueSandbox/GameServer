@@ -18,19 +18,9 @@ namespace LeagueSandbox.GameServer.Inventory
             return _itemTypes[itemId];
         }
 
-        public IItemData SafeGetItemType(int itemId, IItemData defaultValue)
-        {
-            if (!_itemTypes.ContainsKey(itemId))
-            {
-                return defaultValue;
-            }
-
-            return _itemTypes[itemId];
-        }
-
         public IItemData SafeGetItemType(int itemId)
         {
-            return SafeGetItemType(itemId, null);
+            return _itemTypes.GetValueOrDefault(itemId, null);
         }
 
         public void ResetItems()
@@ -38,13 +28,10 @@ namespace LeagueSandbox.GameServer.Inventory
             _itemTypes.Clear();
         }
 
-        public void AddItems(ItemContentCollection contentCollection)
+        public void AddItemType(ItemData itemType)
         {
-            foreach (var entry in contentCollection)
-            {
-                var itemType = ItemData.Load(this, entry.Value);
-                _itemTypes.Add(entry.Key, itemType);
-            }
+            itemType.CreateRecipe(this);
+            _itemTypes.Add(itemType.ItemId, itemType);
         }
     }
 }

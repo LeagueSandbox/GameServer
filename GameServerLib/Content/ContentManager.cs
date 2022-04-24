@@ -101,14 +101,14 @@ namespace LeagueSandbox.GameServer.Content
 
         public bool LoadScripts()
         {
-            List<bool> packageLoadingResults = new List<bool>();
+            bool packageLoadingResults = true;
 
             foreach (var dataPackage in _loadedPackages)
             {
-                packageLoadingResults.Add(dataPackage.LoadScripts());
+                packageLoadingResults = packageLoadingResults && dataPackage.LoadScripts();
             }
 
-            return packageLoadingResults.Contains(false);
+            return packageLoadingResults;
         }
 
         public MapData GetMapData(int mapId)
@@ -145,6 +145,7 @@ namespace LeagueSandbox.GameServer.Content
             throw new ContentNotFoundException($"No map spawns found for map with id: {mapId}");
         }
 
+        //TODO: get rid of this
         public IContentFile GetContentFileFromJson(string contentType, string itemName, string subPath = null)
         {
             foreach (var dataPackage in _loadedPackages)
@@ -189,7 +190,10 @@ namespace LeagueSandbox.GameServer.Content
                 }
             }
 
-            throw new ContentNotFoundException($"No Spell Data found with name: {spellName}");
+            //throw new ContentNotFoundException($"No Spell Data found with name: {spellName}");
+            _logger.Warn($"No Spell Data found with name: {spellName}");
+            //TODO: move logger arg to Load
+            return new SpellData(_logger);
         }
 
         public ICharData GetCharData(string characterName)
@@ -204,7 +208,10 @@ namespace LeagueSandbox.GameServer.Content
                 }
             }
             
-            throw new ContentNotFoundException($"No Character found with name: {characterName}");
+            //throw new ContentNotFoundException($"No Character found with name: {characterName}");
+            _logger.Warn($"No Character found with name: {characterName}");
+            //TODO: move logger arg to Load
+            return new CharData(_logger);
         }
 
         private void GetDependenciesRecursively(List<string> resultList, string packageName, string contentPath)

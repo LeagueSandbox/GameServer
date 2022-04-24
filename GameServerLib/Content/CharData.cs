@@ -22,13 +22,11 @@ namespace LeagueSandbox.GameServer.Content
 
     public class CharData : ICharData
     {
-        private readonly ContentManager _contentManager;
         private readonly ILog _logger;
 
-        public CharData(ContentManager contentManager)
+        public CharData(ILog logger)
         {
-            _contentManager = contentManager;
-            _logger = LoggerProvider.GetLogger();
+            _logger = logger;
         }
 
         public IGlobalData GlobalCharData { get; private set; } = new GlobalData();
@@ -98,24 +96,12 @@ namespace LeagueSandbox.GameServer.Content
         // TODO: Verify if we want this to be an array.
         public IPassiveData PassiveData { get; private set; } = new PassiveData();
 
-        public void Load(string name)
+        public CharData Load(ContentFile file)
         {
-            if (string.IsNullOrEmpty(name))
+            string name;
+            if (file == null || string.IsNullOrEmpty(name = file.Name))
             {
-                return;
-            }
-
-            var file = new ContentFile();
-            List<IPackage> packages;
-            try
-            {
-                file = (ContentFile)_contentManager.GetContentFileFromJson("Stats", name);
-                packages = new List<IPackage>(_contentManager.GetAllLoadedPackages());
-            }
-            catch (ContentNotFoundException exception)
-            {
-                _logger.Warn(exception.Message);
-                return;
+                return this;
             }
 
             AcquisitionRange = file.GetFloat("Data", "AcquisitionRange", AcquisitionRange);
@@ -291,6 +277,8 @@ namespace LeagueSandbox.GameServer.Content
                     }
                 }
             }
+
+            return this;
         }
     }
 }

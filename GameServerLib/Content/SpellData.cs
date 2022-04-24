@@ -20,13 +20,11 @@ namespace LeagueSandbox.GameServer.Content
 
     public class SpellData : ISpellData
     {
-        private readonly ContentManager _contentManager;
         private readonly ILog _logger;
 
-        public SpellData(ContentManager contentManager)
+        public SpellData(ILog logger)
         {
-            _contentManager = contentManager;
-            _logger = LoggerProvider.GetLogger();
+            _logger = logger;
         }
 
         public string AfterEffectName { get; set; } = "";
@@ -343,23 +341,12 @@ namespace LeagueSandbox.GameServer.Content
             TargetingType = newType;
         }
 
-        public void Load(string name)
+        public SpellData Load(ContentFile file)
         {
-            if (string.IsNullOrEmpty(name))
+            string name;
+            if (file == null || string.IsNullOrEmpty(name = file.Name))
             {
-                return;
-            }
-
-            var file = new ContentFile();
-            try
-            {
-                file = (ContentFile)_contentManager.GetContentFileFromJson("Spells", name);
-            }
-
-            catch (ContentNotFoundException exception)
-            {
-                _logger.Warn(exception.Message);
-                return;
+                return this;
             }
 
             AfterEffectName = file.GetString("SpellData", "AfterEffectName", AfterEffectName);
@@ -538,6 +525,8 @@ namespace LeagueSandbox.GameServer.Content
             UseChargeTargeting = file.GetBool("SpellData", "UseChargeTargeting", UseChargeTargeting);
             UseGlobalLineIndicator = file.GetBool("SpellData", "UseGlobalLineIndicator", UseGlobalLineIndicator);
             UseMinimapTargeting = file.GetBool("SpellData", "UseMinimapTargeting", UseMinimapTargeting);
+        
+            return this;
         }
     }
 }

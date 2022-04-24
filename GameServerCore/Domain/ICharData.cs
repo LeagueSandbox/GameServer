@@ -57,6 +57,5 @@ namespace GameServerCore.Domain
         int[] MaxLevels { get; }
         string[] ExtraSpells { get; }
         // TODO: Verify if we want this to be an array.
-        void Load(string name);
     }
 }
