@@ -21,31 +21,12 @@ namespace PacketDefinitions420
     {
 
         //SBLOCKS
-        private uint[] bf_s0;
-        private uint[] bf_s1;
-        private uint[] bf_s2;
-        private uint[] bf_s3;
+        private readonly uint[] bf_s0;
+        private readonly uint[] bf_s1;
+        private readonly uint[] bf_s2;
+        private readonly uint[] bf_s3;
 
-        private uint[] bf_P;
-
-        //KEY
-        private byte[] key;
-
-        //HALF-BLOCKS
-        private uint xl_par;
-        private uint xr_par;
-
-        // This is dumb as fuck
-        private object _blowfishLock = new object();
-
-        /// <summary>
-        /// Constructor for byte key
-        /// </summary>
-        /// <param name="cipherKey">Cipher key as a byte array</param>
-        public BlowFish(byte[] cipherKey)
-        {
-            SetupKey(cipherKey);
-        }
+        private readonly uint[] bf_P;
 
         /// <summary>
         /// Encrypts a byte array in ECB mode
@@ -54,10 +35,7 @@ namespace PacketDefinitions420
         /// <returns>Ciphertext bytes</returns>
         public byte[] Encrypt(byte[] pt)
         {
-            lock (_blowfishLock)
-            {
-                return Crypt_ECB(pt, false);
-            }
+            return Crypt_ECB(pt, false);
         }
 
         /// <summary>
@@ -67,19 +45,16 @@ namespace PacketDefinitions420
         /// <returns>Plaintext</returns>
         public byte[] Decrypt(byte[] ct)
         {
-            lock (_blowfishLock)
-            {
-                return Crypt_ECB(ct, true);
-            }
+            return Crypt_ECB(ct, true);
         }
 
         #region Cryptography
 
         /// <summary>
-        /// Sets up the S-blocks and the key
+        /// Constructor for byte key. Sets up the S-blocks
         /// </summary>
-        /// <param name="cipherKey">Block cipher key (1-448 bits)</param>
-        private void SetupKey(byte[] cipherKey)
+        /// <param name="cipherKey">Cipher key as a byte array block (1-448 bits)</param>
+        public BlowFish(byte[] cipherKey)
         {
             bf_P = SetupP();
             //set up the S blocks
@@ -88,7 +63,7 @@ namespace PacketDefinitions420
             bf_s2 = SetupS2();
             bf_s3 = SetupS3();
 
-            key = new byte[cipherKey.Length]; // 448 bits
+            byte[] key = new byte[cipherKey.Length]; // 448 bits
             if (cipherKey.Length > 56)
             {
                 throw new Exception("Key too long. 56 bytes required.");
@@ -103,38 +78,37 @@ namespace PacketDefinitions420
                 j = (j + 4) % cipherKey.Length;
             }
 
-            xl_par = 0;
-            xr_par = 0;
+            (uint, uint) par = (0, 0);
             for (var i = 0; i < 18; i += 2)
             {
-                encipher();
-                bf_P[i] = xl_par;
-                bf_P[i + 1] = xr_par;
+                par = encipher(par);
+                bf_P[i] = par.Item1;
+                bf_P[i + 1] = par.Item2;
             }
 
             for (var i = 0; i < 256; i += 2)
             {
-                encipher();
-                bf_s0[i] = xl_par;
-                bf_s0[i + 1] = xr_par;
+                par = encipher(par);
+                bf_s0[i] = par.Item1;
+                bf_s0[i + 1] = par.Item2;
             }
             for (var i = 0; i < 256; i += 2)
             {
-                encipher();
-                bf_s1[i] = xl_par;
-                bf_s1[i + 1] = xr_par;
+                par = encipher(par);
+                bf_s1[i] = par.Item1;
+                bf_s1[i + 1] = par.Item2;
             }
             for (var i = 0; i < 256; i += 2)
             {
-                encipher();
-                bf_s2[i] = xl_par;
-                bf_s2[i + 1] = xr_par;
+                par = encipher(par);
+                bf_s2[i] = par.Item1;
+                bf_s2[i + 1] = par.Item2;
             }
             for (var i = 0; i < 256; i += 2)
             {
-                encipher();
-                bf_s3[i] = xl_par;
-                bf_s3[i + 1] = xr_par;
+                par = encipher(par);
+                bf_s3[i] = par.Item1;
+                bf_s3[i + 1] = par.Item2;
             }
         }
 
@@ -146,105 +120,111 @@ namespace PacketDefinitions420
         /// <returns>(En/De)crypted data</returns>
         private byte[] Crypt_ECB(byte[] text, bool decrypt)
         {
-            var block = new byte[8];
-            var plainText = new byte[text.Length];
 
-            Buffer.BlockCopy(text, 0, plainText, 0, text.Length);
+            var result = new byte[text.Length];
 
-            var n = plainText.Length - plainText.Length % 8;
+            int d = text.Length % 8;
+            int n = text.Length - d;
+
             for (var i = 0; i < n; i += 8)
             {
-                Buffer.BlockCopy(plainText, i, block, 0, 8);
                 if (decrypt)
                 {
-                    BlockDecrypt(ref block);
+                    BlockDecrypt(text, result, i);
                 }
                 else
                 {
-                    BlockEncrypt(ref block);
+                    BlockEncrypt(text, result, i);
                 }
-                Buffer.BlockCopy(block, 0, plainText, i, 8);
             }
-            return plainText;
+
+            if(d != 0)
+            {
+                // Extra bytes are simply assigned as is.
+                Buffer.BlockCopy(text, n, result, n, d);
+            }
+
+            return result;
         }
 
         // a little hack for keycheck
         public long Decrypt(ulong key)
         {
-            lock (_blowfishLock)
-            {
-                var bytes = BitConverter.GetBytes(key);
-                BlockDecrypt(ref bytes);
-                return BitConverter.ToInt64(bytes, 0);
-            }
+            var bytes = BitConverter.GetBytes(key);
+            BlockDecrypt(bytes, bytes, 0);
+            return BitConverter.ToInt64(bytes, 0);
         }
 
         /// <summary>
         /// Encrypts a 64 bit block
         /// </summary>
         /// <param name="block">The 64 bit block to encrypt</param>
-        private void BlockEncrypt(ref byte[] block)
+        private void BlockEncrypt(byte[] block, byte[] result, int offset)
         {
-            SetBlock(block);
-            encipher();
-            GetBlock(ref block);
+            var par = SetBlock(block, offset);
+            par = encipher(par);
+            GetBlock(par, result, offset);
         }
 
         /// <summary>
         /// Decrypts a 64 bit block
         /// </summary>
         /// <param name="block">The 64 bit block to decrypt</param>
-        private void BlockDecrypt(ref byte[] block)
+        private void BlockDecrypt(byte[] block, byte[] result, int offset)
         {
-            SetBlock(block);
-            decipher();
-            GetBlock(ref block);
+            var par = SetBlock(block, offset);
+            par = decipher(par);
+            GetBlock(par, result, offset);
         }
 
         /// <summary>
         /// Splits the block into the two uint values
         /// </summary>
         /// <param name="block">the 64 bit block to setup</param>
-        private void SetBlock(byte[] block)
+        private (uint, uint) SetBlock(byte[] block, int offset)
         {
             var block1 = new byte[4];
             var block2 = new byte[4];
 
-            Buffer.BlockCopy(block, 0, block1, 0, 4);
-            Buffer.BlockCopy(block, 4, block2, 0, 4);
+            Buffer.BlockCopy(block, offset + 0, block1, 0, 4);
+            Buffer.BlockCopy(block, offset + 4, block2, 0, 4);
 
             //split the block
             //ToUInt32 requires the bytes in reverse order
             Array.Reverse(block1);
             Array.Reverse(block2);
 
-            xl_par = BitConverter.ToUInt32(block1, 0);
-            xr_par = BitConverter.ToUInt32(block2, 0);
+            uint xl_par = BitConverter.ToUInt32(block1, 0);
+            uint xr_par = BitConverter.ToUInt32(block2, 0);
+
+            return (xl_par, xr_par);
         }
 
         /// <summary>
         /// Converts the two uint values into a 64 bit block
         /// </summary>
         /// <param name="block">64 bit buffer to receive the block</param>
-        private void GetBlock(ref byte[] block)
+        private void GetBlock((uint, uint) par, byte[] result, int offset)
         {
-            var block1 = BitConverter.GetBytes(xl_par);
-            var block2 = BitConverter.GetBytes(xr_par);
+            var block1 = BitConverter.GetBytes(par.Item1);
+            var block2 = BitConverter.GetBytes(par.Item2);
 
             //GetBytes returns the bytes in reverse order
             Array.Reverse(block1);
             Array.Reverse(block2);
 
             //join the block
-            Buffer.BlockCopy(block1, 0, block, 0, 4);
-            Buffer.BlockCopy(block2, 0, block, 4, 4);
+            Buffer.BlockCopy(block1, 0, result, offset + 0, 4);
+            Buffer.BlockCopy(block2, 0, result, offset + 4, 4);
         }
 
         /// <summary>
         /// Runs the blowfish algorithm (standard 16 rounds)
         /// </summary>
-        private void encipher()
+        private (uint, uint) encipher((uint, uint) par)
         {
+            (uint xl_par, uint xr_par) = par;
+
             xl_par ^= bf_P[0];
             for (uint i = 0; i < 16; i += 2)
             {
@@ -257,13 +237,17 @@ namespace PacketDefinitions420
             var swap = xl_par;
             xl_par = xr_par;
             xr_par = swap;
+
+            return (xl_par, xr_par);
         }
 
         /// <summary>
         /// Runs the blowfish algorithm in reverse (standard 16 rounds)
         /// </summary>
-        private void decipher()
+        private (uint, uint) decipher((uint, uint) par)
         {
+            (uint xl_par, uint xr_par) = par;
+
             xl_par ^= bf_P[17];
             for (uint i = 16; i > 0; i -= 2)
             {
@@ -276,6 +260,8 @@ namespace PacketDefinitions420
             var swap = xl_par;
             xl_par = xr_par;
             xr_par = swap;
+
+            return (xl_par, xr_par);
         }
 
         /// <summary>
@@ -287,10 +273,17 @@ namespace PacketDefinitions420
         /// <returns></returns>
         private uint round(uint a, uint b, uint n)
         {
-            var x1 = bf_s0[wordByte0(b)] + bf_s1[wordByte1(b)] ^ bf_s2[wordByte2(b)];
-            var x2 = x1 + bf_s3[wordByte3(b)];
-            var x3 = x2 ^ bf_P[n];
-            return x3 ^ a;
+            byte b3 = (byte)(b & 0xFF);
+            b >>= 8;
+            byte b2 = (byte)(b & 0xFF);
+            b >>= 8;
+            byte b1 = (byte)(b & 0xFF);
+            b >>= 8;
+            byte b0 = (byte)(b & 0xFF);
+
+            var f = ((bf_s0[b0] + bf_s1[b1]) ^ bf_s2[b2]) + bf_s3[b3];
+
+            return f ^ bf_P[n] ^ a;
         }
 
         #endregion
@@ -504,33 +497,5 @@ namespace PacketDefinitions420
         }
 
         #endregion
-
-        #region Conversions
-
-        //gets the first byte in a uint
-        private byte wordByte0(uint w)
-        {
-            return (byte)(w / 256 / 256 / 256 % 256);
-        }
-
-        //gets the second byte in a uint
-        private byte wordByte1(uint w)
-        {
-            return (byte)(w / 256 / 256 % 256);
-        }
-
-        //gets the third byte in a uint
-        private byte wordByte2(uint w)
-        {
-            return (byte)(w / 256 % 256);
-        }
-
-        //gets the fourth byte in a uint
-        private byte wordByte3(uint w)
-        {
-            return (byte)(w % 256);
-        }
-        #endregion
     }
 }
-
