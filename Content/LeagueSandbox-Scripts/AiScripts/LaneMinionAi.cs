@@ -28,6 +28,23 @@ namespace AIScripts
         float localTime = 0f;
         bool callsForHelpMayBeCleared = false;
         bool followsWaypoints = true;
+
+        private bool hadTarget = false;
+        private bool TargetJustDied()
+        {
+            targetIsStillValid = IsValidTarget(LaneMinion.TargetUnit);
+            if(targetIsStillValid)
+            {
+                hadTarget = true;
+            }
+            else if(hadTarget)
+            {
+                hadTarget = false;
+                return true;
+            }
+            return false;
+        }
+
         public void OnActivate(IObjAiBase owner)
         {
             LaneMinion = owner as ILaneMinion;
@@ -63,15 +80,10 @@ namespace AIScripts
                     && (
                         //Quote: Their current attack target dies.
                         //       Minions who witness the death of their foe will check for a new valid target in their acquisition range.
-                        !(targetIsStillValid = IsValidTarget(LaneMinion.TargetUnit))
-                        || (
-                            !(
-                                //Quote: Call for Help.
-                                FoundNewTarget(true)
-                                // Found a new valid target, no need to check for autoattack timer
-                            )
-                            && minionActionTimer >= 250.0f
-                        )
+                        TargetJustDied()
+                        //Quote: Call for Help.
+                        || FoundNewTarget(true)
+                        || minionActionTimer >= 250.0f
                     )
                 ) {
                     OrderType nextBehaviour = ReevaluateBehavior(delta);
@@ -276,15 +288,17 @@ namespace AIScripts
                 }
                     
             }
-            
-            LaneMinion.CancelAutoAttack(false, true);
-            LaneMinion.SetTargetUnit(null, true);
 
             //Quote: Find a new valid target in the minion’s acquisition range to attack.
             //Quote: If multiple valid targets, prioritize based on “how hard is it for me to path there?”
             if (FoundNewTarget())
             {
                 return OrderType.AttackTo;
+            }
+            else if(LaneMinion.TargetUnit != null)
+            {
+                LaneMinion.CancelAutoAttack(false, true);
+                LaneMinion.SetTargetUnit(null, true);
             }
             
             //Quote: Check if near a target waypoint, if so change the target waypoint to the next in the line.
