@@ -22,13 +22,12 @@ namespace ItemSpells
 
         private void TargetExecute(IDamageData data)
         {
-            data.Target.TakeDamage(this._owner, _damage, DamageType.DAMAGE_TYPE_MAGICAL, DamageSource.DAMAGE_SOURCE_RAW, false);
+            data.Target.TakeDamage(_owner, _damage, DamageType.DAMAGE_TYPE_MAGICAL, DamageSource.DAMAGE_SOURCE_RAW, false);
         }
 
-
-        public void OnUpdate(float diff)
+        private void OnStatsUpdate(IAttackableUnit _unit, float _delta)
         {
-            float damage = 15 + (this._owner.Stats.AbilityPower.Total * 0.15f);
+            float damage = 15 + (_owner.Stats.AbilityPower.Total * 0.15f);
             if(_damage != damage)
             {
                 _damage = damage;
@@ -42,41 +41,12 @@ namespace ItemSpells
             _owner = owner;
             _spell = spell;
             ApiEventManager.OnHitUnit.AddListener(this, owner, TargetExecute, false);
+            ApiEventManager.OnUpdateStats.AddListener(this, owner, OnStatsUpdate, false);
         }
 
         public void OnDeactivate(IObjAiBase owner, ISpell spell)
         {
             ApiEventManager.OnHitUnit.RemoveListener(this, owner);
-        }
-
-        public void OnSpellPreCast(IObjAiBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
-        {
-
-        }
-
-        public void OnSpellCast(ISpell spell)
-        {
-
-        }
-
-        public void OnSpellPostCast(ISpell spell)
-        {
-
-        }
-
-        public void OnSpellChannel(ISpell spell)
-        {
-
-        }
-
-        public void OnSpellChannelCancel(ISpell spell, ChannelingStopSource reason)
-        {
-
-        }
-
-        public void OnSpellPostChannel(ISpell spell)
-        {
-            
         }
     }
 }

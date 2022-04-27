@@ -34,24 +34,13 @@ namespace Spells
             _owner = owner;
             _spell = spell;
             ApiEventManager.OnSpellHit.AddListener(this, spell, TargetExecute, false);
-        }
-
-        public void OnDeactivate(IObjAiBase owner, ISpell spell)
-        {
-        }
-
-        public void OnSpellPreCast(IObjAiBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
-        {
+            ApiEventManager.OnUpdateStats.AddListener(this, owner, OnStatsUpdate, false);
         }
 
         public void OnSpellCast(ISpell spell)
         {
             var owner = spell.CastInfo.Owner;
             AddParticleTarget(owner, owner, "Ezreal_bow_huge", owner, bone: "L_HAND");
-        }
-
-        public void OnSpellPostCast(ISpell spell)
-        {
         }
 
         public void TargetExecute(ISpell spell, IAttackableUnit target, ISpellMissile missile, ISpellSector sector)
@@ -67,19 +56,7 @@ namespace Spells
             }
         }
 
-        public void OnSpellChannel(ISpell spell)
-        {
-        }
-
-        public void OnSpellChannelCancel(ISpell spell, ChannelingStopSource reason)
-        {
-        }
-
-        public void OnSpellPostChannel(ISpell spell)
-        {
-        }
-
-        public void OnUpdate(float diff)
+        private void OnStatsUpdate(IAttackableUnit _unit, float diff)
         {
             float bonusAd = _owner.Stats.AttackDamage.Total - _owner.Stats.AttackDamage.BaseValue;
             if(_bonusAd != bonusAd)
