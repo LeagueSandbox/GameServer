@@ -144,6 +144,5 @@ namespace GameServerCore.Domain.GameObjects.Spell
             float attackMaximumDelay = 5.0f
         );
         void SetTargetingType(TargetingType newType);
-        void Load(string name);
     }
 }

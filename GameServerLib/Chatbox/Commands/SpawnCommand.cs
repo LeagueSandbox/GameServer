@@ -65,7 +65,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
 
                     try
                     {
-                        Game.Config.ContentManager.GetContentFileFromJson("Stats", championModel);
+                        Game.Config.ContentManager.GetCharData(championModel);
                     }
                     catch (ContentNotFoundException)
                     {

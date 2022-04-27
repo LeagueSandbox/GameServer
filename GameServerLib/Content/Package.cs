@@ -9,6 +9,7 @@ using Newtonsoft.Json.Linq;
 using LeagueSandbox.GameServer.Content.Navigation;
 using GameServerCore.Domain.GameObjects.Spell;
 using System.Numerics;
+using LeagueSandbox.GameServer.Inventory;
 
 namespace LeagueSandbox.GameServer.Content
 {
@@ -17,8 +18,9 @@ namespace LeagueSandbox.GameServer.Content
         public string PackagePath { get; private set; }
         public string PackageName { get; private set; }
 
-        private readonly Dictionary<string, ISpellData> _spellData = new Dictionary<string, ISpellData>();
-        private readonly Dictionary<string, ICharData> _charData = new Dictionary<string, ICharData>();
+        private readonly Dictionary<string, CharData> _charData = new Dictionary<string, CharData>();
+        private readonly Dictionary<string, SpellData> _spellData = new Dictionary<string, SpellData>();
+        private readonly Dictionary<string, ItemData> _itemData = new Dictionary<string, ItemData>();
 
         private readonly Game _game;
         private readonly ILog _logger;
@@ -26,12 +28,11 @@ namespace LeagueSandbox.GameServer.Content
         private readonly Dictionary<string, Dictionary<string, List<string>>> _content = new Dictionary<string, Dictionary<string, List<string>>>();
 
         private static readonly string[] ContentTypes = {
-            "Champions",
             "Items",
-            "Buffs",
             "Maps",
             "Spells",
-            "Stats"
+            "Stats",
+            "Talents"
         };
 
         public Package(string packagePath, Game game)
@@ -48,7 +49,6 @@ namespace LeagueSandbox.GameServer.Content
 
             InitializeContent();
             LoadPackage();
-            LoadItems();
             LoadTalents();
             LoadScripts();
         }
@@ -82,20 +82,24 @@ namespace LeagueSandbox.GameServer.Content
             }
 
             var filePath = $"{GetContentTypePath(contentType)}/{fileName}";
-            var fileText = File.ReadAllText(filePath);
+            
+            return GetContentFileFromJson(filePath);
+        }
 
-            IContentFile toReturnContentFile;
-
+        private ContentFile GetContentFileFromJson(string filePath)
+        {
+            var file = new ContentFile();
             try
             {
-                toReturnContentFile = JsonConvert.DeserializeObject<ContentFile>(fileText);
+                var fileText = File.ReadAllText(filePath);
+                file = JsonConvert.DeserializeObject<ContentFile>(fileText);
             }
-            catch (JsonSerializationException)
+            catch (System.Exception e)
             {
+                _logger.Warn(e.Message);
                 return null;
             }
-
-            return toReturnContentFile;
+            return file;
         }
 
         /// <summary>
@@ -323,7 +327,6 @@ namespace LeagueSandbox.GameServer.Content
             var contentType = "Maps";
             var toReturnMapSpawns = new Dictionary<string, JArray>();
 
-
             if (!_content.ContainsKey(contentType) || !_content[contentType].ContainsKey(mapName))
             {
                 return null;
@@ -376,26 +379,12 @@ namespace LeagueSandbox.GameServer.Content
 
         public ISpellData GetSpellData(string spellName)
         {
-            if (_spellData.ContainsKey(spellName))
-            {
-                return _spellData[spellName];
-            }
-
-            _spellData[spellName] = new SpellData(_game.Config.ContentManager);
-            _spellData[spellName].Load(spellName);
-            return _spellData[spellName];
+            return _spellData.GetValueOrDefault(spellName, null);
         }
 
         public ICharData GetCharData(string characterName)
         {
-            if (_charData.ContainsKey(characterName))
-            {
-                return _charData[characterName];
-            }
-
-            _charData[characterName] = new CharData(_game.Config.ContentManager);
-            _charData[characterName].Load(characterName);
-            return _charData[characterName];
+            return _charData.GetValueOrDefault(characterName, null);
         }
 
         public bool LoadScripts()
@@ -434,19 +423,58 @@ namespace LeagueSandbox.GameServer.Content
         {
             foreach (var contentType in ContentTypes)
             {
-                LoadData(contentType);
-            }
-        }
+                
+                var contentTypePath = GetContentTypePath(contentType);
 
-        private void LoadItems()
-        {
-            try
-            {
-                _game.ItemManager.AddItems(ItemContentCollection.LoadItemsFrom($"{PackagePath}/Items"));
-            }
-            catch (DirectoryNotFoundException)
-            {
-                _logger.Debug($"Package: {PackageName} does not contain any items, skipping...");
+                if (!Directory.Exists(contentTypePath))
+                {
+                    _logger.Debug($"Package {PackageName} does not contain {contentType}, skipping...");
+                    continue;
+                }
+
+                var fileList = Directory.EnumerateFiles(contentTypePath, "*.json", SearchOption.AllDirectories);
+
+                foreach (var filePath in fileList)
+                {
+                    if(contentType == "Stats" || contentType == "Spells" || contentType == "Items")
+                    {
+                        var file = GetContentFileFromJson(filePath);
+                        if(file != null)
+                        {
+                            var name = file.Name;
+
+                            switch(contentType)
+                            {
+                                case "Stats":
+                                {
+                                    _charData[name] = (new CharData()).Load(file);
+                                    break;
+                                }
+
+                                case "Spells":
+                                {
+                                    _spellData[name] = (new SpellData()).Load(file);
+                                    break;
+                                }
+
+                                case "Items":
+                                {
+                                    var itemData = (new ItemData()).Load(file);
+                                    _game.ItemManager.AddItemType(itemData);
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        var fileName = Path.GetFileNameWithoutExtension(filePath);
+                        if (fileName != null)
+                        {
+                            _content[contentType][fileName] = new List<string> { PackageName };
+                        }
+                    }
+                }
             }
         }
 
@@ -459,31 +487,6 @@ namespace LeagueSandbox.GameServer.Content
             catch (DirectoryNotFoundException)
             {
                 _logger.Debug($"Package: {PackageName} does not contain any Talents, skipping...");
-            }
-        }
-
-        private void LoadData(string contentType)
-        {
-            var contentTypePath = GetContentTypePath(contentType);
-
-            if (!Directory.Exists(contentTypePath))
-            {
-                _logger.Debug($"Package {PackageName} does not contain {contentType}, skipping...");
-                return;
-            }
-
-            var fileList = Directory.GetFiles(contentTypePath, "*.json", SearchOption.AllDirectories);
-
-            foreach (var jsonFile in fileList)
-            {
-                var fileName = Path.GetFileNameWithoutExtension(jsonFile);
-
-                if (fileName == null)
-                {
-                    continue;
-                }
-
-                _content[contentType][fileName] = new List<string> { PackageName };
             }
         }
 

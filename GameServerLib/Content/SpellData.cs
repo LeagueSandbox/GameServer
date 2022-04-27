@@ -1,9 +1,8 @@
-﻿using System.Numerics;
+﻿using System;
+using System.Numerics;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Domain.GameObjects.Spell;
 using GameServerCore.Enums;
-using LeagueSandbox.GameServer.Logging;
-using log4net;
 
 namespace LeagueSandbox.GameServer.Content
 {
@@ -20,15 +19,6 @@ namespace LeagueSandbox.GameServer.Content
 
     public class SpellData : ISpellData
     {
-        private readonly ContentManager _contentManager;
-        private readonly ILog _logger;
-
-        public SpellData(ContentManager contentManager)
-        {
-            _contentManager = contentManager;
-            _logger = LoggerProvider.GetLogger();
-        }
-
         public string AfterEffectName { get; set; } = "";
         //AIEndOnly
         //AILifetime
@@ -343,24 +333,9 @@ namespace LeagueSandbox.GameServer.Content
             TargetingType = newType;
         }
 
-        public void Load(string name)
+        public SpellData Load(ContentFile file)
         {
-            if (string.IsNullOrEmpty(name))
-            {
-                return;
-            }
-
-            var file = new ContentFile();
-            try
-            {
-                file = (ContentFile)_contentManager.GetContentFileFromJson("Spells", name);
-            }
-
-            catch (ContentNotFoundException exception)
-            {
-                _logger.Warn(exception.Message);
-                return;
-            }
+            string name = file.Name;
 
             AfterEffectName = file.GetString("SpellData", "AfterEffectName", AfterEffectName);
             //AIEndOnly
@@ -538,6 +513,8 @@ namespace LeagueSandbox.GameServer.Content
             UseChargeTargeting = file.GetBool("SpellData", "UseChargeTargeting", UseChargeTargeting);
             UseGlobalLineIndicator = file.GetBool("SpellData", "UseGlobalLineIndicator", UseGlobalLineIndicator);
             UseMinimapTargeting = file.GetBool("SpellData", "UseMinimapTargeting", UseMinimapTargeting);
+        
+            return this;
         }
     }
 }

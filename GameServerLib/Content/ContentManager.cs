@@ -101,14 +101,14 @@ namespace LeagueSandbox.GameServer.Content
 
         public bool LoadScripts()
         {
-            List<bool> packageLoadingResults = new List<bool>();
+            bool packageLoadingResults = true;
 
             foreach (var dataPackage in _loadedPackages)
             {
-                packageLoadingResults.Add(dataPackage.LoadScripts());
+                packageLoadingResults = packageLoadingResults && dataPackage.LoadScripts();
             }
 
-            return packageLoadingResults.Contains(false);
+            return packageLoadingResults;
         }
 
         public MapData GetMapData(int mapId)
