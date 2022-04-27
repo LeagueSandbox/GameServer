@@ -14,7 +14,7 @@ namespace ItemSpells
     {
         private IObjAiBase _owner;
         private ISpell _spell;
-        private float Damage = 0f;
+        private float _damage = 0f;
         public ISpellScriptMetadata ScriptMetadata { get; private set; } = new SpellScriptMetadata()
         {
             // TODO
@@ -22,16 +22,19 @@ namespace ItemSpells
 
         private void TargetExecute(IDamageData data)
         {
-            data.Target.TakeDamage(this._owner, Damage, DamageType.DAMAGE_TYPE_MAGICAL, DamageSource.DAMAGE_SOURCE_RAW, false);
+            data.Target.TakeDamage(this._owner, _damage, DamageType.DAMAGE_TYPE_MAGICAL, DamageSource.DAMAGE_SOURCE_RAW, false);
         }
 
 
         public void OnUpdate(float diff)
         {
-            Damage = 15 + (this._owner.Stats.AbilityPower.Total * 0.15f);
-
-            // Getting item slots is a bit of a mess right now. Maybe add a function in API to get?
-            SetSpellToolTipVar(_owner, 0, Damage, SpellbookType.SPELLBOOK_CHAMPION, _owner.Inventory.GetItemSlot(_owner.Inventory.GetItem("Malady")), SpellSlotType.InventorySlots);
+            float damage = 15 + (this._owner.Stats.AbilityPower.Total * 0.15f);
+            if(_damage != damage)
+            {
+                _damage = damage;
+                // Getting item slots is a bit of a mess right now. Maybe add a function in API to get?
+                SetSpellToolTipVar(_owner, 0, _damage, SpellbookType.SPELLBOOK_CHAMPION, _owner.Inventory.GetItemSlot(_owner.Inventory.GetItem("Malady")), SpellSlotType.InventorySlots);
+            }
         }
 
         public void OnActivate(IObjAiBase owner, ISpell spell)

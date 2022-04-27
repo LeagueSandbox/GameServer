@@ -21,6 +21,7 @@ namespace Spells
 
         private IObjAiBase _owner;
         private ISpell _spell;
+        private float _bonusAd = 0;
 
         public void OnActivate(IObjAiBase owner, ISpell spell)
         {
@@ -80,7 +81,12 @@ namespace Spells
 
         public void OnUpdate(float diff)
         {
-            SetSpellToolTipVar(_owner, 2, _owner.Stats.AttackDamage.Total * _spell.SpellData.AttackDamageCoefficient, SpellbookType.SPELLBOOK_CHAMPION, 0, SpellSlotType.SpellSlots);
+            float bonusAd = _owner.Stats.AttackDamage.Total * _spell.SpellData.AttackDamageCoefficient;
+            if(_bonusAd != bonusAd)
+            {
+                _bonusAd = bonusAd;
+                SetSpellToolTipVar(_owner, 2, bonusAd, SpellbookType.SPELLBOOK_CHAMPION, 0, SpellSlotType.SpellSlots);
+            }
         }
     }
 
