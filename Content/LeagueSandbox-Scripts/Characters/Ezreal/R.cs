@@ -27,30 +27,20 @@ namespace Spells
 
         private IObjAiBase _owner;
         private ISpell _spell;
+        private float _bonusAd = 0;
 
         public void OnActivate(IObjAiBase owner, ISpell spell)
         {
             _owner = owner;
             _spell = spell;
             ApiEventManager.OnSpellHit.AddListener(this, spell, TargetExecute, false);
-        }
-
-        public void OnDeactivate(IObjAiBase owner, ISpell spell)
-        {
-        }
-
-        public void OnSpellPreCast(IObjAiBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
-        {
+            ApiEventManager.OnUpdateStats.AddListener(this, owner, OnStatsUpdate, false);
         }
 
         public void OnSpellCast(ISpell spell)
         {
             var owner = spell.CastInfo.Owner;
             AddParticleTarget(owner, owner, "Ezreal_bow_huge", owner, bone: "L_HAND");
-        }
-
-        public void OnSpellPostCast(ISpell spell)
-        {
         }
 
         public void TargetExecute(ISpell spell, IAttackableUnit target, ISpellMissile missile, ISpellSector sector)
@@ -66,21 +56,14 @@ namespace Spells
             }
         }
 
-        public void OnSpellChannel(ISpell spell)
+        private void OnStatsUpdate(IAttackableUnit _unit, float diff)
         {
-        }
-
-        public void OnSpellChannelCancel(ISpell spell, ChannelingStopSource reason)
-        {
-        }
-
-        public void OnSpellPostChannel(ISpell spell)
-        {
-        }
-
-        public void OnUpdate(float diff)
-        {
-            SetSpellToolTipVar(_owner, 0, _owner.Stats.AttackDamage.Total - _owner.Stats.AttackDamage.BaseValue, SpellbookType.SPELLBOOK_CHAMPION, 3, SpellSlotType.SpellSlots);
+            float bonusAd = _owner.Stats.AttackDamage.Total - _owner.Stats.AttackDamage.BaseValue;
+            if(_bonusAd != bonusAd)
+            {
+                _bonusAd = bonusAd; 
+                SetSpellToolTipVar(_owner, 0, bonusAd, SpellbookType.SPELLBOOK_CHAMPION, 3, SpellSlotType.SpellSlots);
+            }
         }
     }
 }
