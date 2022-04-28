@@ -127,7 +127,7 @@ namespace LeagueSandbox.GameServer.GameObjects
             }
 
             ApiEventManager.OnBuffDeactivated.Publish(this);
-            ApiEventManager.OnUnitBuffDeactivated.Publish(this, TargetUnit);
+            ApiEventManager.OnUnitBuffDeactivated.Publish(TargetUnit, this);
         }
 
         public bool Elapsed()

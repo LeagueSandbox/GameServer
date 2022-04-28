@@ -51,7 +51,7 @@ namespace Buffs
                 ApiEventManager.OnSpellSectorHit.AddListener(this, burnSector, TargetExecute, false);
             }
         }
-        public void TargetExecute(IAttackableUnit target, ISpellSector sector)
+        public void TargetExecute(ISpellSector sector, IAttackableUnit target)
         {
             if (Pet != null && sector.Parameters.BindObject != null)
             {

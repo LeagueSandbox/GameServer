@@ -179,17 +179,17 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
             }
             else
             {
-                ApiEventManager.OnSpellHit.Publish(this, u, m, s);
+                ApiEventManager.OnSpellHit.Publish(this, (u, m, s));
                 if (m != null)
                 {
-                    ApiEventManager.OnSpellMissileHit.Publish(u, m);
+                    ApiEventManager.OnSpellMissileHit.Publish(m, u);
                 }
                 if (s != null)
                 {
-                    ApiEventManager.OnSpellSectorHit.Publish(u, s);
+                    ApiEventManager.OnSpellSectorHit.Publish(s, u);
                 }
 
-                ApiEventManager.OnBeingSpellHit.Publish(u, CastInfo.Owner, this, m, s);
+                ApiEventManager.OnBeingSpellHit.Publish(u, (this, m, s));
             }
         }
 
@@ -1145,7 +1145,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
 
             _game.ObjectManager.AddObject(p);
 
-            ApiEventManager.OnLaunchMissile.Publish(new KeyValuePair<IObjAiBase, ISpell>(CastInfo.Owner, this), p);
+            ApiEventManager.OnLaunchMissile.Publish(this, p);
 
             //_game.PacketNotifier.NotifyMissileReplication(p);
 
@@ -1226,7 +1226,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
 
             _game.ObjectManager.AddObject(s);
 
-            ApiEventManager.OnCreateSector.Publish(new KeyValuePair<IObjAiBase, ISpell>(CastInfo.Owner, this), s);
+            ApiEventManager.OnCreateSector.Publish(this, s);
 
             // TODO: Verify when NotifyForceCreateMissile should be used instead.
 
