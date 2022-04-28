@@ -91,7 +91,7 @@ namespace Spells
             ApiEventManager.OnSpellSectorHit.AddListener(this, sector, TargetExecute, false);
         }
 
-        public void TargetExecute(IAttackableUnit target, ISpellSector sector)
+        public void TargetExecute(ISpellSector sector, IAttackableUnit target)
         {
             var spell = sector.SpellOrigin;
 

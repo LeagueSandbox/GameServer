@@ -431,7 +431,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                 DamageType = type,
             };
 
-            ApiEventManager.OnPreTakeDamage.Publish(damageData);
+            ApiEventManager.OnPreTakeDamage.Publish(damageData.Target, damageData);
 
             switch (source)
             {
@@ -472,7 +472,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
 
             Stats.CurrentHealth = Math.Max(0.0f, Stats.CurrentHealth - postMitigationDamage);
 
-            ApiEventManager.OnTakeDamage.Publish(damageData);
+            ApiEventManager.OnTakeDamage.Publish(damageData.Target, damageData);
 
             if (!IsDead && Stats.CurrentHealth <= 0)
             {
@@ -561,7 +561,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             var source = damageData.DamageSource;
             var postMitigationDamage = damageData.PostMitigationdDamage;
 
-            ApiEventManager.OnPreTakeDamage.Publish(damageData);
+            ApiEventManager.OnPreTakeDamage.Publish(damageData.Target, damageData);
 
             switch (source)
             {
@@ -602,7 +602,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
 
             Stats.CurrentHealth = Math.Max(0.0f, Stats.CurrentHealth - postMitigationDamage);
 
-            ApiEventManager.OnTakeDamage.Publish(damageData);
+            ApiEventManager.OnTakeDamage.Publish(damageData.Target, damageData);
 
             if (!IsDead && Stats.CurrentHealth <= 0)
             {
@@ -691,7 +691,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
 
             SetToRemove();
 
-            ApiEventManager.OnDeath.Publish(data);
+            ApiEventManager.OnDeath.Publish(data.Unit, data);
             if (data.Unit is IObjAiBase obj)
             {
                 if (!(obj is IMonster))
@@ -1165,7 +1165,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// TODO: Probably needs a refactor to lessen thread usage. Make sure to stick very closely to the current method; just optimize it.
         public void AddBuff(IBuff b)
         {
-            if (ApiEventManager.OnAllowAddBuff.Publish(this, b.SourceUnit, b))
+            if (ApiEventManager.OnAllowAddBuff.Publish(this, (b.SourceUnit, b)))
             {
                 // If this is the first buff of this name to be added, then add it to the parent buffs list (regardless of its add type).
                 if (!ParentBuffs.ContainsKey(b.Name))

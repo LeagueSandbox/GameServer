@@ -35,7 +35,7 @@ namespace Buffs
                 SealSpellSlot(ai, SpellSlotType.SpellSlots, 1, SpellbookType.SPELLBOOK_CHAMPION, true);
                 ai.CancelAutoAttack(true);
 
-                ApiEventManager.OnLaunchMissile.AddListener(this, new System.Collections.Generic.KeyValuePair<IObjAiBase, ISpell>(ai, ai.AutoAttackSpell), OnLaunchMissile, false);
+                ApiEventManager.OnLaunchMissile.AddListener(this, ai.AutoAttackSpell, OnLaunchMissile, false);
             }
         }
 

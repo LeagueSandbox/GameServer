@@ -156,7 +156,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 return _game.Map.PlayerSpawnPoints[Team][teamSize][index];
             }
 
-            if (_game.Map.PlayerSpawnPoints[Team].ContainsKey(1) && _game.Map.PlayerSpawnPoints[Team][1][1] != null)
+            if (_game.Map.PlayerSpawnPoints[Team].ContainsKey(1) && _game.Map.PlayerSpawnPoints[Team][1].ContainsKey(1))
             {
                 return _game.Map.PlayerSpawnPoints[Team][1][1];
             }
@@ -317,7 +317,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
         public void OnKill(IDeathData deathData)
         {
-            ApiEventManager.OnKillUnit.Publish(deathData);
+            ApiEventManager.OnKillUnit.Publish(deathData.Killer, deathData);
 
             if (deathData.Unit is IMinion)
             {
@@ -354,7 +354,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             var mapScriptMetaData = mapScript.MapScriptMetadata;
             var mapData = _game.Map.MapData;
 
-            ApiEventManager.OnDeath.Publish(data);
+            ApiEventManager.OnDeath.Publish(data.Unit, data);
 
             RespawnTimer = _game.Map.MapData.DeathTimes[Stats.Level] * 1000.0f;
             ChampStats.Deaths += 1;
@@ -373,7 +373,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 return;
             }
 
-            ApiEventManager.OnKill.Publish(data);
+            ApiEventManager.OnKill.Publish(data.Killer, data);
 
             // TODO: Find out if we can unhardcode some of the fractions used here.
             var gold = mapScriptMetaData.ChampionBaseGoldValue;
@@ -468,7 +468,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 _game.PacketNotifier.NotifyDisplayFloatingText(new FloatingTextData(this, $"+{(int)points} Points", FloatTextType.Score, 1073741833), Team);
             }
 
-            ApiEventManager.OnIncrementChampionScore.Publish(scoreData);
+            ApiEventManager.OnIncrementChampionScore.Publish(scoreData.Owner, scoreData);
         }
     }
 }
