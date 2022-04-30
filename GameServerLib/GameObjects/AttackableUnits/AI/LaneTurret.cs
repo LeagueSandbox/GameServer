@@ -97,5 +97,17 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 base.AutoAttackHit(target);
             }
         }
+
+        protected override void OnSpawn(int userId, TeamId team, bool doVision)
+        {
+            base.OnSpawn(userId, team, doVision);
+            foreach (var item in Inventory)
+            {
+                if (item != null)
+                {
+                    _game.PacketNotifier.NotifyBuyItem(userId, this, item as IItem);
+                }
+            }
+        }
     }
 }

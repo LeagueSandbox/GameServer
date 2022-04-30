@@ -36,6 +36,9 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Missile
         /// </summary>
         public bool IsServerOnly { get; }
 
+        public override bool IsAffectedByFoW => true;
+        public override bool SpawnShouldBeHidden => true;
+
         public SpellMissile(
             Game game,
             int collisionRadius,

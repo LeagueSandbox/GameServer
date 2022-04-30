@@ -73,6 +73,9 @@ namespace LeagueSandbox.GameServer.GameObjects
         /// </summary>
         public FXFlags Flags { get; }
 
+        public override bool IsAffectedByFoW => true;
+        public override bool SpawnShouldBeHidden => true;
+
         /// <summary>
         /// Prepares the Particle, setting up the information required for networking it to clients.
         /// This particle will spawn and stay on the specified GameObject target.

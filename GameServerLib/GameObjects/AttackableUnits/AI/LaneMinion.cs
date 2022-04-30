@@ -19,6 +19,8 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         public string BarracksName { get; }
         public MinionSpawnType MinionSpawnType { get; }
 
+        public override bool SpawnShouldBeHidden => false;
+
         public LaneMinion(
             Game game,
             MinionSpawnType spawnType,

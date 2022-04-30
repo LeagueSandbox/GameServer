@@ -92,6 +92,9 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// </summary>
         public IForceMovementParameters MovementParameters { get; protected set; }
 
+        public override bool IsAffectedByFoW => true;
+        public override bool SpawnShouldBeHidden => true;
+
         public AttackableUnit(
             Game game,
             string model,
@@ -271,6 +274,24 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                 }
                 SetPosition(exit, false);
             }
+        }
+
+        protected override void OnSync(int userId, TeamId team)
+        {
+            if (Replication.Changed)
+            {
+                _game.PacketNotifier.HoldReplicationDataUntilOnReplicationNotification(this, userId, true);
+            }
+            if (IsMovementUpdated())
+            {
+                _game.PacketNotifier.HoldMovementDataUntilWaypointGroupNotification(this, userId, false);
+            }
+        }
+
+        public override void OnAfterSync()
+        {
+            Replication.MarkAsUnchanged();
+            ClearMovementUpdated();
         }
 
         /// <summary>

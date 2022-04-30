@@ -44,6 +44,16 @@ namespace GameServerCore.Domain.GameObjects
         /// Radius of the circle which is used for vision; detecting if objects are visible given terrain, and if so, networked to the player (or team) that owns this game object.
         /// </summary>
         float VisionRadius { get; }
+        /// <summary>
+        /// Whether the object should be hidden by the fog of war.
+        /// </summary>
+        bool IsAffectedByFoW { get; }
+        /// <summary>
+        /// If an object is to be hidden by the fog of war,
+        /// should the object's spawn notification be sent only when the object comes into view,
+        /// not as soon as possible.
+        /// </summary>
+        bool SpawnShouldBeHidden { get; }
 
         /// <summary>
         /// Called by ObjectManager after AddObject (usually right after instatiation of GameObject).
@@ -105,6 +115,24 @@ namespace GameServerCore.Domain.GameObjects
         void OnCollision(IGameObject collider, bool isTerrain = false);
 
         /// <summary>
+        /// Called by ObjectManager after the Update function has been called on all objects.
+        /// Designed to be used by AI to determine the target. 
+        /// </summary>
+        void LateUpdate(float diff);
+        /// <summary>
+        /// Called by the ObjectManager after vision has been computed for this object and a particular player.
+        /// </summary>
+        void Sync(int userId, TeamId team, bool visible, bool forceSpawn = false);
+        /// <summary>
+        /// Called by ObjectManager after the Sync function has been called on all objects.
+        /// </summary>
+        void OnAfterSync();
+        /// <summary>
+        /// Called by HandleSpawn class after the player has reconnected.
+        /// </summary>
+        void OnReconnect(int userId, TeamId team);
+
+        /// <summary>
         /// Sets the object's team.
         /// </summary>
         /// <param name="team">TeamId.BLUE/PURPLE/NEUTRAL</param>
@@ -128,7 +156,7 @@ namespace GameServerCore.Domain.GameObjects
         /// <param name="team">A team which could have vision of this object.</param>
         /// <param name="visible">New value.</param>
         void SetVisibleByTeam(TeamId team, bool visible = true);
-        
+                
         /// <summary>
         /// Whether or not the object is visible for the specified player.
         /// <summary>
