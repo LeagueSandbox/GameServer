@@ -39,6 +39,8 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         /// </summary>
         public IRegion BubbleRegion { get; private set; }
 
+        public override bool IsAffectedByFoW => false;
+
         public BaseTurret(
             Game game,
             string name,

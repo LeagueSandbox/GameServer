@@ -68,11 +68,6 @@ namespace LeagueSandbox.GameServer
             }
         }
 
-        bool IsAffectedByVision(IGameObject obj)
-        {
-            return obj is IParticle || obj is IAttackableUnit || obj is ISpellMissile;
-        }
-
         /// <summary>
         /// Function called every tick of the game.
         /// </summary>
@@ -105,7 +100,7 @@ namespace LeagueSandbox.GameServer
 
             foreach (var obj in _objects.Values)
             {
-                LateUpdate(obj, diff);
+                obj.LateUpdate(diff);
             }
 
             foreach (var obj in _objectsToAdd)
@@ -125,11 +120,7 @@ namespace LeagueSandbox.GameServer
                     UpdateVisionSpawnAndSync(obj, kv.Item2);
                 }
 
-                if (obj is IAttackableUnit u)
-                {
-                    u.Replication.MarkAsUnchanged();
-                    u.ClearMovementUpdated();
-                }
+                obj.OnAfterSync();
             }
 
             _game.PacketNotifier.NotifyOnReplication();
@@ -151,6 +142,24 @@ namespace LeagueSandbox.GameServer
             {
                 UpdateVisionSpawnAndSync(obj, kv.Item2, forceSpawn: true);
             }
+
+            obj.OnAfterSync();
+        }
+
+        public void OnReconnect(int userId, TeamId team)
+        {
+            foreach (IGameObject obj in _objects.Values)
+            {
+                obj.OnReconnect(userId, team);
+            }
+        }
+
+        public void SpawnObjects(ClientInfo clientInfo)
+        {
+            foreach (IGameObject obj in _objects.Values)
+            {
+                UpdateVisionSpawnAndSync(obj, clientInfo, forceSpawn: true);
+            }
         }
 
         /// <summary>
@@ -158,13 +167,10 @@ namespace LeagueSandbox.GameServer
         /// </summary>
         void UpdateTeamsVision(IGameObject obj)
         {
-            if (IsAffectedByVision(obj))
-            {
                 foreach (var team in Teams)
                 {
-                    obj.SetVisibleByTeam(team, TeamHasVisionOn(team, obj));
+                    obj.SetVisibleByTeam(team, !obj.IsAffectedByFoW || TeamHasVisionOn(team, obj));
                 }
-            }
         }
 
         /// <summary>
@@ -177,93 +183,13 @@ namespace LeagueSandbox.GameServer
             IChampion champion = clientInfo.Champion;
             
             bool nearSighted = champion.Status.HasFlag(StatusFlags.NearSighted);
-            bool isAffectedByVision = IsAffectedByVision(obj);
-            bool shouldBeVisibleForPlayer = !isAffectedByVision || (
+            bool shouldBeVisibleForPlayer = !obj.IsAffectedByFoW || (
                 nearSighted ?
                     UnitHasVisionOn(champion, obj) :
                     obj.IsVisibleByTeam(champion.Team)
             );
             
-            if (!forceSpawn && obj.IsSpawnedForPlayer(pid))
-            {
-                if (isAffectedByVision && (obj.IsVisibleForPlayer(pid) != shouldBeVisibleForPlayer))
-                {
-                    _game.PacketNotifier.NotifyVisibilityChange(obj, team, shouldBeVisibleForPlayer, pid);
-                    obj.SetVisibleForPlayer(pid, shouldBeVisibleForPlayer);
-                }
-                else if(shouldBeVisibleForPlayer)
-                {
-                    Sync(obj, pid);
-                }
-            }
-            else if (shouldBeVisibleForPlayer || !(
-                //bool spawnShouldBeHidden = 
-                obj is IParticle || obj is ISpellMissile || (obj is IMinion && !(obj is ILaneMinion))
-            ))
-            {
-                _game.PacketNotifier.NotifySpawn(obj, team, pid, _game.GameTime, shouldBeVisibleForPlayer);
-                obj.SetVisibleForPlayer(pid, shouldBeVisibleForPlayer);
-                obj.SetSpawnedForPlayer(pid);
-
-                if (obj is ILaneTurret turret)
-                {
-                    foreach (var item in turret.Inventory)
-                    {
-                        if (item != null)
-                        {
-                            _game.PacketNotifier.NotifyBuyItem(pid, turret, item as IItem);
-                        }
-                    }
-                }
-            }
-        }
-
-        void Sync(IGameObject obj, int userId = 0)
-        {
-            if (obj is IAttackableUnit u)
-            {
-                if(u.Replication.Changed)
-                {
-                    _game.PacketNotifier.HoldReplicationDataUntilOnReplicationNotification(u, userId, true);
-                }
-
-                if (u.IsMovementUpdated())
-                {
-                    _game.PacketNotifier.HoldMovementDataUntilWaypointGroupNotification(u, userId, false);
-                }
-            }
-        }
-
-        void LateUpdate(IGameObject obj, float diff)
-        {
-            if (obj is IAttackableUnit u)
-            {
-                if (u is IObjAiBase ai)
-                {
-                    var tempBuffs = new List<IBuff>(ai.GetBuffs());
-                    for (int i = tempBuffs.Count - 1; i >= 0; i--)
-                    {
-                        if (tempBuffs[i].Elapsed())
-                        {
-                            ai.RemoveBuff(tempBuffs[i]);
-                        }
-                        else
-                        {
-                            tempBuffs[i].Update(diff);
-                        }
-                    }
-
-                    // Stop targeting an untargetable unit.
-                    if (ai.TargetUnit != null && !ai.TargetUnit.Status.HasFlag(StatusFlags.Targetable))
-                    {
-                        if(ai.TargetUnit is IObjAiBase aiTar && aiTar.CharData.IsUseable)
-                        {
-                            return;
-                        }
-                        StopTargeting(ai.TargetUnit);
-                    }
-                }
-            }
+            obj.Sync(pid, team, shouldBeVisibleForPlayer, forceSpawn);
         }
 
         /// <summary>
@@ -359,6 +285,11 @@ namespace LeagueSandbox.GameServer
         {
             if (o != null)
             {
+                if(!o.IsAffectedByFoW)
+                {
+                    return true;
+                }
+
                 foreach (var p in _visionProviders[team])
                 {
                     if (UnitHasVisionOn(p, o))
@@ -367,15 +298,14 @@ namespace LeagueSandbox.GameServer
                     }
                 }
             }
-
             return false;
         }
 
         bool UnitHasVisionOn(IGameObject observer, IGameObject tested)
         {
-            if(tested is IBaseTurret || tested is IObjBuilding)
+            if(!tested.IsAffectedByFoW)
             {
-                //return true;
+                return true;
             }
 
             if(tested is IParticle particle)

@@ -1064,6 +1064,9 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         public override void Update(float diff)
         {
             base.Update(diff);
+            
+            UpdateBuffs(diff);
+            
             CharScript.OnUpdate(diff);
             if (!_aiPaused)
             {
@@ -1093,7 +1096,33 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 SetPet(null);
             }
         }
-
+        void UpdateBuffs(float diff)
+        {
+            var tempBuffs = new List<IBuff>(GetBuffs());
+            for (int i = tempBuffs.Count - 1; i >= 0; i--)
+            {
+                if (tempBuffs[i].Elapsed())
+                {
+                    RemoveBuff(tempBuffs[i]);
+                }
+                else
+                {
+                    tempBuffs[i].Update(diff);
+                }
+            }
+        }
+        public override void LateUpdate(float diff)
+        {            
+            // Stop targeting an untargetable unit.
+            if (TargetUnit != null && !TargetUnit.Status.HasFlag(StatusFlags.Targetable))
+            {
+                if(TargetUnit is IObjAiBase aiTar && aiTar.CharData.IsUseable)
+                {
+                    return;
+                }
+                Untarget(TargetUnit);
+            }
+        }
         public override void TakeDamage(IAttackableUnit attacker, float damage, DamageType type, DamageSource source, DamageResultType damageText)
         {
             base.TakeDamage(attacker, damage, type, source, damageText);

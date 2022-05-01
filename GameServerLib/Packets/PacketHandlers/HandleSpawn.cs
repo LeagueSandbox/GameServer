@@ -108,24 +108,14 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                 }
             }
 
-            var objects = _game.ObjectManager.GetObjects();
-            foreach (var obj in objects.Values)
+            var om = _game.ObjectManager as ObjectManager;
+            if (_game.IsRunning)
             {
-                if (!(obj is IChampion))
-                {
-                    if (_game.IsRunning)
-                    {
-                        if (obj.IsSpawnedForPlayer(userId))
-                        {
-                            bool isVisibleForPlayer = obj.IsVisibleForPlayer(userId);
-                            _game.PacketNotifier.NotifySpawn(obj, userInfo.Team, userId, _game.GameTime, isVisibleForPlayer);
-                        }
-                    }
-                    else
-                    {
-                        (_game.ObjectManager as ObjectManager).UpdateVisionSpawnAndSync(obj, userInfo, forceSpawn: true);
-                    }
-                }
+                om.OnReconnect(userId, userInfo.Team);
+            }
+            else
+            {
+                om.SpawnObjects(userInfo);
             }
 
             _game.PacketNotifier.NotifySpawnEnd(userId);

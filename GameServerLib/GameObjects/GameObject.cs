@@ -81,6 +81,9 @@ namespace LeagueSandbox.GameServer.GameObjects
         /// </summary>
         public float VisionRadius { get; protected set; }
 
+        public virtual bool IsAffectedByFoW => false;
+        public virtual bool SpawnShouldBeHidden => false;
+
         /// <summary>
         /// Instantiation of an object which represents the base class for all objects in League of Legends.
         /// </summary>
@@ -129,6 +132,10 @@ namespace LeagueSandbox.GameServer.GameObjects
         /// </summary>
         /// <param name="diff">Number of milliseconds that passed before this tick occurred.</param>
         public virtual void Update(float diff)
+        {
+        }
+
+        public virtual void LateUpdate(float diff)
         {
         }
 
@@ -242,6 +249,68 @@ namespace LeagueSandbox.GameServer.GameObjects
             }
         }
 
+        protected virtual void OnSpawn(int userId, TeamId team, bool doVision)
+        {
+            _game.PacketNotifier.NotifySpawn(this, team, userId, _game.GameTime, doVision);
+        }
+
+        protected virtual void OnEnterVision(int userId, TeamId team)
+        {
+            _game.PacketNotifier.NotifyVisibilityChange(this, team, true, userId);
+        }
+
+        protected virtual void OnSync(int userId, TeamId team)
+        {
+        }
+
+        protected virtual void OnLeaveVision(int userId, TeamId team)
+        {
+            _game.PacketNotifier.NotifyVisibilityChange(this, team, false, userId);
+        }
+
+        public virtual void Sync(int userId, TeamId team, bool visible, bool forceSpawn = false)
+        {
+            visible = visible || !IsAffectedByFoW;
+
+            if (!forceSpawn && IsSpawnedForPlayer(userId))
+            {
+                if (IsAffectedByFoW && (IsVisibleForPlayer(userId) != visible))
+                {
+                    if(visible)
+                    {
+                        OnEnterVision(userId, team);
+                    }
+                    else
+                    {
+                        OnLeaveVision(userId, team);
+                    }
+                    SetVisibleForPlayer(userId, visible);
+                }
+                else if(visible)
+                {
+                    OnSync(userId, team);
+                }
+            }
+            else if (visible || !SpawnShouldBeHidden)
+            {
+                OnSpawn(userId, team, visible);
+                SetVisibleForPlayer(userId, visible);
+                SetSpawnedForPlayer(userId);
+            }
+        }
+
+        public virtual void OnAfterSync()
+        {
+        }
+
+        public virtual void OnReconnect(int userId, TeamId team)
+        {
+            if(IsSpawnedForPlayer(userId))
+            {
+                OnSpawn(userId, team, IsVisibleForPlayer(userId));
+            }
+        }
+
         /// <summary>
         /// Sets the object's team.
         /// </summary>
@@ -263,7 +332,7 @@ namespace LeagueSandbox.GameServer.GameObjects
         /// <param name="team">A team which could have vision of this object.</param>
         public bool IsVisibleByTeam(TeamId team)
         {
-            return _visibleByTeam[team];
+            return !IsAffectedByFoW || _visibleByTeam[team];
         }
 
         /// <summary>
@@ -283,7 +352,7 @@ namespace LeagueSandbox.GameServer.GameObjects
         /// <param name="userId">The player in relation to which the value is obtained</param>
         public bool IsVisibleForPlayer(int userId)
         {
-            return _visibleForPlayers.GetValueOrDefault(userId, false);
+            return !IsAffectedByFoW || _visibleForPlayers.GetValueOrDefault(userId, false);
         }
 
         /// <summary>
