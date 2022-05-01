@@ -291,7 +291,7 @@ namespace LeagueSandbox.GameServer.GameObjects
                     OnSync(userId, team);
                 }
             }
-            else if (visible || !SpawnShouldBeHidden)
+            else if (forceSpawn || visible || !SpawnShouldBeHidden)
             {
                 OnSpawn(userId, team, visible);
                 SetVisibleForPlayer(userId, visible);

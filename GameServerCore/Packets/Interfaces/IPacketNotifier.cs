@@ -544,7 +544,8 @@ namespace GameServerCore.Packets.Interfaces
         /// </summary>
         /// <param name="clientInfo">Information about the client which had their hero created.</param>
         /// <param name="userId">User to send the packet to. Set to -1 to broadcast.</param>
-        void NotifyS2C_CreateHero(ClientInfo clientInfo, int userId = -1);
+        /// <param name="doVision">Whether or not to package the packets into a vision packet.</param>
+        void NotifyS2C_CreateHero(ClientInfo clientInfo, int userId = -1, bool doVision = false);
         void NotifyS2C_CreateMinionCamp(IMonsterCamp monsterCamp);
         void NotifyS2C_CreateNeutral(IMonster monster, float time);
         /// <summary>
@@ -808,7 +809,7 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="userId">UserId to send the packet to.</param>
         /// <param name="gameTime">Time elapsed since the start of the game</param>
         /// <param name="doVision">Whether or not to package the packets into a vision packet.</param>
-        void NotifySpawn(IGameObject obj, TeamId team, int userId, float gameTime, bool doVision = true);
+        void NotifySpawn(IGameObject obj, TeamId team, int userId, float gameTime, bool doVision = false);
         /// <summary>
         /// Sends a packet to the specified player detailing that the spawning (of champions & buildings) that occurs at the start of the game has ended.
         /// </summary>
