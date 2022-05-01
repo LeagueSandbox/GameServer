@@ -66,6 +66,8 @@ namespace LeagueSandbox.GameServer.Players
             c.StopMovement();
             c.UpdateMoveOrder(OrderType.Stop);
 
+            _game.ObjectManager.AddObject(c);
+
             player.Champion = c;
             var pair = new Tuple<uint, ClientInfo> ((uint)player.PlayerId, player);
             _players.Add(pair);

@@ -173,18 +173,8 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
             c.UpdateMoveOrder(OrderType.Stop);
             c.LevelUp();
 
-            Game.PacketNotifier.NotifyS2C_CreateHero(clientInfoTemp);
-            Game.PacketNotifier.NotifyAvatarInfo(clientInfoTemp);
             Game.ObjectManager.AddObject(c);
-            Game.PacketNotifier.NotifyEnterLocalVisibilityClient(c, ignoreVision: true);
-            Game.PacketNotifier.NotifyOnReplication(c, partial: false);
-
-            c.Stats.SetSpellEnabled(13, true);
-            c.Stats.SetSummonerSpellEnabled(0, true);
-            c.Stats.SetSummonerSpellEnabled(1, true);
-
-            Game.PacketNotifier.NotifyEnterVisibilityClient(c, 0, true, true);
-
+            
             ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.INFO, "Spawned Bot" + clientInfoTemp.Name + " as " + c.Model + " with NetID: " + c.NetId + ".");
         }
 
