@@ -25,7 +25,6 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             _networkIdManager = game.NetworkIdManager;
         }
 
-        private bool _firstSpawn = true;
         public override bool HandlePacket(int userId, SpawnRequest req)
         {
             _logger.Debug("Spawning map");
