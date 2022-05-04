@@ -187,36 +187,16 @@ namespace PacketDefinitions420
 
             charStackDataList.Add(charStackData);
 
-            var type = MovementDataType.Normal;
-            SpeedParams speeds = null;
+            MovementData md;
 
-            if (o is IAttackableUnit u)
+            if (o is IAttackableUnit u && u.Waypoints.Count > 1)
             {
-                if (u.Waypoints.Count <= 1)
-                {
-                    type = MovementDataType.Stop;
-                }
-
-                if (u.MovementParameters != null)
-                {
-                    type = MovementDataType.WithSpeed;
-
-                    speeds = new SpeedParams
-                    {
-                        PathSpeedOverride = u.MovementParameters.PathSpeedOverride,
-                        ParabolicGravity = u.MovementParameters.ParabolicGravity,
-                        // TODO: Implement as parameter (ex: Aatrox Q).
-                        ParabolicStartPoint = u.MovementParameters.ParabolicStartPoint,
-                        Facing = u.MovementParameters.KeepFacingDirection,
-                        FollowNetID = u.MovementParameters.FollowNetID,
-                        FollowDistance = u.MovementParameters.FollowDistance,
-                        FollowBackDistance = u.MovementParameters.FollowBackDistance,
-                        FollowTravelTime = u.MovementParameters.FollowTravelTime
-                    };
-                }
+                md = PacketExtensions.CreateMovementDataWithSpeedIfPossible(u, _navGrid, useTeleportID: true);
             }
-
-            var md = PacketExtensions.CreateMovementData(o, _navGrid, type, speeds, useTeleportID: true);
+            else
+            {
+                md = PacketExtensions.CreateMovementDataStop(o);
+            }
 
             var enterVis = new OnEnterVisibilityClient
             {
@@ -4034,7 +4014,7 @@ namespace PacketDefinitions420
         /// <param name="useTeleportID">Whether or not to teleport the unit to its current position in its path.</param>
         public void HoldMovementDataUntilWaypointGroupNotification(IAttackableUnit u, int userId, bool useTeleportID = false)
         {
-            var data = (MovementDataNormal)PacketExtensions.CreateMovementData(u, _navGrid, MovementDataType.Normal, useTeleportID: useTeleportID);
+            var data = PacketExtensions.CreateMovementDataNormal(u, _navGrid, useTeleportID);
             
             List<MovementDataNormal> list = null;
             if (!_heldMovementData.TryGetValue(userId, out list))
@@ -4120,8 +4100,7 @@ namespace PacketDefinitions420
         /// <param name="useTeleportID">Whether or not to teleport the unit to its current position in its path.</param>
         public void NotifyWaypointGroup(IAttackableUnit u, int userId = 0, bool useTeleportID = false)
         {
-            // TODO: Verify if casts correctly
-            var move = (MovementDataNormal)PacketExtensions.CreateMovementData(u, _navGrid, MovementDataType.Normal, useTeleportID: useTeleportID);
+            var move = PacketExtensions.CreateMovementDataNormal(u, _navGrid, useTeleportID);
 
             // TODO: Implement support for multiple movements.
             var packet = new WaypointGroup
@@ -4153,21 +4132,7 @@ namespace PacketDefinitions420
         )
         {
             // TODO: Implement Dash class and house a List of these with waypoints.
-            var speeds = new SpeedParams
-            {
-                PathSpeedOverride = u.MovementParameters.PathSpeedOverride,
-                ParabolicGravity = u.MovementParameters.ParabolicGravity,
-                // TODO: Implement as parameter (ex: Aatrox Q).
-                ParabolicStartPoint = u.MovementParameters.ParabolicStartPoint,
-                Facing = u.MovementParameters.KeepFacingDirection,
-                FollowNetID = u.MovementParameters.FollowNetID,
-                FollowDistance = u.MovementParameters.FollowDistance,
-                FollowBackDistance = u.MovementParameters.FollowBackDistance,
-                FollowTravelTime = u.MovementParameters.FollowTravelTime
-            };
-
-            // TODO: Verify if cast works.
-            var md = (MovementDataWithSpeed)PacketExtensions.CreateMovementData(u, _navGrid, MovementDataType.WithSpeed, speeds);
+            var md = PacketExtensions.CreateMovementDataWithSpeed(u, _navGrid);
 
             var speedWpGroup = new WaypointGroupWithSpeed
             {
