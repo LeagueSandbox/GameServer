@@ -11,6 +11,7 @@ using LeagueSandbox.GameServer.Content.Navigation;
 using GameServerCore.Domain.GameObjects.Spell;
 using System.Numerics;
 using LeagueSandbox.GameServer.Inventory;
+using LeagueSandbox.GameServer.Scripting.CSharp;
 
 namespace LeagueSandbox.GameServer.Content
 {

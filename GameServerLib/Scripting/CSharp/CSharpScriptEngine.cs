@@ -14,6 +14,14 @@ using GameServerCore.Enums;
 
 namespace LeagueSandbox.GameServer.Scripting.CSharp
 {
+    public enum CompilationStatus
+    {
+        Default = 0,
+        Compiled = 1,
+        SomeCompiled = 2,
+        NoneCompiled = 3,
+        NoScripts = 4
+    }
     public class CSharpScriptEngine
     {
         private readonly ILog _logger;
