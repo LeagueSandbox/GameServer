@@ -423,7 +423,7 @@ namespace LeagueSandbox.GameServer.Content
                     {
                         _logger.Debug($"{PackageName} does not have C# scripts, skipping...");
                         _hasScripts = false;
-                        return false;
+                        return true;
                     }
                 default:
                     {

@@ -118,10 +118,7 @@ namespace LeagueSandbox.GameServer.Content
 
             foreach (var dataPackage in _loadedPackages)
             {
-                if (dataPackage.HasScripts())
-                {
-                    packageLoadingResults = packageLoadingResults && dataPackage.LoadScripts();
-                }
+                packageLoadingResults = packageLoadingResults && dataPackage.LoadScripts();
             }
 
             return packageLoadingResults;
