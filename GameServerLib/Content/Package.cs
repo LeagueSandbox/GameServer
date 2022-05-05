@@ -2,6 +2,7 @@
 using System.IO;
 using GameServerCore.Content;
 using GameServerCore.Domain;
+using GameServerCore.Enums;
 using log4net;
 using LeagueSandbox.GameServer.Logging;
 using Newtonsoft.Json;
@@ -10,6 +11,7 @@ using LeagueSandbox.GameServer.Content.Navigation;
 using GameServerCore.Domain.GameObjects.Spell;
 using System.Numerics;
 using LeagueSandbox.GameServer.Inventory;
+using LeagueSandbox.GameServer.Scripting.CSharp;
 
 namespace LeagueSandbox.GameServer.Content
 {
@@ -34,6 +36,8 @@ namespace LeagueSandbox.GameServer.Content
             "Stats",
             "Talents"
         };
+
+        private bool _hasScripts = false;
 
         public Package(string packagePath, Game game)
         {
@@ -82,7 +86,7 @@ namespace LeagueSandbox.GameServer.Content
             }
 
             var filePath = $"{GetContentTypePath(contentType)}/{fileName}";
-            
+
             return GetContentFileFromJson(filePath);
         }
 
@@ -387,30 +391,39 @@ namespace LeagueSandbox.GameServer.Content
             return _charData.GetValueOrDefault(characterName, null);
         }
 
+        public bool HasScripts()
+        {
+            return _hasScripts;
+        }
+
         public bool LoadScripts()
         {
             var scriptLoadResult = _game.ScriptEngine.LoadSubDirectoryScripts(PackagePath);
             switch (scriptLoadResult)
             {
-                case Scripting.CSharp.CompilationStatus.Compiled:
+                case CompilationStatus.Compiled:
                     {
                         _logger.Debug($"Loaded all C# scripts from package: {PackageName}");
+                        _hasScripts = true;
                         return true;
                     }
-                case Scripting.CSharp.CompilationStatus.SomeCompiled:
+                case CompilationStatus.SomeCompiled:
                     {
                         _logger.Debug($"Loaded some C# scripts from package: {PackageName}");
+                        _hasScripts = true;
                         return true;
                     }
-                case Scripting.CSharp.CompilationStatus.NoneCompiled:
+                case CompilationStatus.NoneCompiled:
                     {
                         _logger.Debug($"{PackageName} failed to compile all C# scripts...");
+                        _hasScripts = true;
                         return false;
                     }
-                case Scripting.CSharp.CompilationStatus.NoScripts:
+                case CompilationStatus.NoScripts:
                     {
                         _logger.Debug($"{PackageName} does not have C# scripts, skipping...");
-                        return false;
+                        _hasScripts = false;
+                        return true;
                     }
                 default:
                     {
@@ -423,7 +436,7 @@ namespace LeagueSandbox.GameServer.Content
         {
             foreach (var contentType in ContentTypes)
             {
-                
+
                 var contentTypePath = GetContentTypePath(contentType);
 
                 if (!Directory.Exists(contentTypePath))
@@ -436,33 +449,33 @@ namespace LeagueSandbox.GameServer.Content
 
                 foreach (var filePath in fileList)
                 {
-                    if(contentType == "Stats" || contentType == "Spells" || contentType == "Items")
+                    if (contentType == "Stats" || contentType == "Spells" || contentType == "Items")
                     {
                         var file = GetContentFileFromJson(filePath);
-                        if(file != null)
+                        if (file != null)
                         {
                             var name = file.Name;
 
-                            switch(contentType)
+                            switch (contentType)
                             {
                                 case "Stats":
-                                {
-                                    _charData[name] = (new CharData()).Load(file);
-                                    break;
-                                }
+                                    {
+                                        _charData[name] = (new CharData()).Load(file);
+                                        break;
+                                    }
 
                                 case "Spells":
-                                {
-                                    _spellData[name] = (new SpellData()).Load(file);
-                                    break;
-                                }
+                                    {
+                                        _spellData[name] = (new SpellData()).Load(file);
+                                        break;
+                                    }
 
                                 case "Items":
-                                {
-                                    var itemData = (new ItemData()).Load(file);
-                                    _game.ItemManager.AddItemType(itemData);
-                                    break;
-                                }
+                                    {
+                                        var itemData = (new ItemData()).Load(file);
+                                        _game.ItemManager.AddItemType(itemData);
+                                        break;
+                                    }
                             }
                         }
                     }

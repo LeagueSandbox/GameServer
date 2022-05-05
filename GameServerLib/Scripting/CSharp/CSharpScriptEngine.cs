@@ -10,15 +10,17 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Emit;
 using System.Numerics;
+using GameServerCore.Enums;
 
 namespace LeagueSandbox.GameServer.Scripting.CSharp
 {
     public enum CompilationStatus
     {
-        Compiled = 0,
-        SomeCompiled = 1,
-        NoneCompiled = 2,
-        NoScripts = 3
+        Default = 0,
+        Compiled = 1,
+        SomeCompiled = 2,
+        NoneCompiled = 3,
+        NoScripts = 4
     }
     public class CSharpScriptEngine
     {
