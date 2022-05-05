@@ -29,7 +29,7 @@ namespace LeagueSandbox.GameServer.Content
             ContentPath = contentPath;
 
             _loadedPackages = new List<Package>();
-            _dataPackageNames = new List<string>{dataPackageName};
+            _dataPackageNames = new List<string> { dataPackageName };
 
             _logger = LoggerProvider.GetLogger();
         }
@@ -99,13 +99,29 @@ namespace LeagueSandbox.GameServer.Content
             return $"{ContentPath}/{packageName}";
         }
 
+        public bool HasScripts()
+        {
+            foreach (var dataPackage in _loadedPackages)
+            {
+                if (dataPackage.HasScripts())
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         public bool LoadScripts()
         {
             bool packageLoadingResults = true;
 
             foreach (var dataPackage in _loadedPackages)
             {
-                packageLoadingResults = packageLoadingResults && dataPackage.LoadScripts();
+                if (dataPackage.HasScripts())
+                {
+                    packageLoadingResults = packageLoadingResults && dataPackage.LoadScripts();
+                }
             }
 
             return packageLoadingResults;
@@ -203,13 +219,13 @@ namespace LeagueSandbox.GameServer.Content
                     return toReturnCharData;
                 }
             }
-            
+
             throw new ContentNotFoundException($"No Character found with name: {characterName}");
         }
 
         private void GetDependenciesRecursively(List<string> resultList, string packageName, string contentPath)
         {
-            foreach(var dependency in GetDependenciesFromPackage(packageName, contentPath))
+            foreach (var dependency in GetDependenciesFromPackage(packageName, contentPath))
             {
                 if (!resultList.Contains(dependency))
                 {

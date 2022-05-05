@@ -10,16 +10,10 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Emit;
 using System.Numerics;
+using GameServerCore.Enums;
 
 namespace LeagueSandbox.GameServer.Scripting.CSharp
 {
-    public enum CompilationStatus
-    {
-        Compiled = 0,
-        SomeCompiled = 1,
-        NoneCompiled = 2,
-        NoScripts = 3
-    }
     public class CSharpScriptEngine
     {
         private readonly ILog _logger;

@@ -8,6 +8,7 @@ namespace GameServerCore.Domain
         string PackageName { get; }
         string PackagePath { get; }
         void LoadPackage(string packageName);
+        bool HasScripts();
         bool LoadScripts();
         IContentFile GetContentFileFromJson(string contentType, string itemName, string subPath = null);
         INavigationGrid GetNavigationGrid(int mapId);
