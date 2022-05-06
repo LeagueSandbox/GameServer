@@ -61,7 +61,7 @@ namespace MapScripts.Map11
             });
 
             //Dragon
-            var dragon = CreateJungleCamp(new Vector3(9866.14846f, 60.0f, 4414.01403f), 6, 0, "Dragon", 143.5f * 1000, revealEvent: 43, spawnDuration: 6.5f);
+            var dragon = CreateJungleCamp(new Vector3(9866.14846f, 60.0f, 4414.01403f), 6, TeamId.TEAM_UNKNOWN, "Dragon", 143.5f * 1000, revealEvent: 43, spawnDuration: 6.5f);
             MonsterCamps.Add(dragon, new List<IMonster>
             {
                 CreateJungleMonster("Dragon6.1.1", "SRU_Dragon", new Vector2(9866.14846f, 4414.01403f), new Vector3(10517.62846f, -67.0f, 5171.98403f), dragon, spawnAnimation: "spawn", aiScript: "BasicJungleMonsterAi")
@@ -113,7 +113,7 @@ namespace MapScripts.Map11
             });
 
             //Baron
-            var baron = CreateJungleCamp(new Vector3(5007.123577f, 60.0f, 10471.445944f), 12, 0, "Baron", 1191.5f * 1000, revealEvent: 42, spawnDuration: 8.5f);
+            var baron = CreateJungleCamp(new Vector3(5007.123577f, 60.0f, 10471.445944f), 12, TeamId.TEAM_UNKNOWN, "Baron", 1191.5f * 1000, revealEvent: 42, spawnDuration: 8.5f);
             MonsterCamps.Add(baron, new List<IMonster>
             {
                 CreateJungleMonster("SRU_Baron12.1.1", "SRU_Baron", new Vector2(5007.123577f, 10471.445944f), new Vector3(4736.05846f, -71.0f, 10107.98403f), baron, spawnAnimation: "spawn", aiScript: "BasicJungleMonsterAi"),
@@ -121,28 +121,28 @@ namespace MapScripts.Map11
             });
 
             //Blue Side Gromp
-            var blueGreatGromp = CreateJungleCamp(new Vector3(2090.62846f, 60.0f, 8427.98403f), 13, 0, "LesserCamp", 111.8f * 1000, spawnDuration: 3.2f);
+            var blueGreatGromp = CreateJungleCamp(new Vector3(2090.62846f, 60.0f, 8427.98403f), 13, TeamId.TEAM_UNKNOWN, "LesserCamp", 111.8f * 1000, spawnDuration: 3.2f);
             MonsterCamps.Add(blueGreatGromp, new List<IMonster>
             {
                 CreateJungleMonster("SRU_Gromp13.1.1", "SRU_Gromp", new Vector2(2090.62846f, 8427.98403f), new Vector3(2338.01846f, 51.7773f, 8448.13403f), blueGreatGromp, spawnAnimation: "spawn", aiScript: "BasicJungleMonsterAi")
             });
 
             //Red Side Gromp
-            var redGreatGromp = CreateJungleCamp(new Vector3(12703.62846f, 60.0f, 6443.98403f), 14, 0, "LesserCamp", 111.8f * 1000, spawnDuration: 3.2f);
+            var redGreatGromp = CreateJungleCamp(new Vector3(12703.62846f, 60.0f, 6443.98403f), 14, TeamId.TEAM_UNKNOWN, "LesserCamp", 111.8f * 1000, spawnDuration: 3.2f);
             MonsterCamps.Add(redGreatGromp, new List<IMonster>
             {
                 CreateJungleMonster("SRU_Gromp14.1.1", "SRU_Gromp", new Vector2(12703.62846f, 6443.98403f), new Vector3(12323.82846f, 55.5656f, 6272.77403f), redGreatGromp, spawnAnimation: "spawn", aiScript: "BasicJungleMonsterAi")
             });
 
             //Dragon pit Scuttle Crab
-            var dragScuttle = CreateJungleCamp(new Vector3(10500.0f, 60.0f, 5170.0f), 15, 0, "LesserCamp", 147.8f * 1000, spawnDuration: 2.2f);
+            var dragScuttle = CreateJungleCamp(new Vector3(10500.0f, 60.0f, 5170.0f), 15, TeamId.TEAM_UNKNOWN, "LesserCamp", 147.8f * 1000, spawnDuration: 2.2f);
             MonsterCamps.Add(dragScuttle, new List<IMonster>
             {
                 CreateJungleMonster("Sru_Crab15.1.1", "Sru_Crab", new Vector2(10500.0f, 5170.0f), new Vector3(9830.0f, 0.0f, 5780.0f), dragScuttle, spawnAnimation: "crab_hide")
             });
 
             //Baron pit Scuttle Crab
-            var baronScuttle = CreateJungleCamp(new Vector3(4400.0f, 60.0f, 9600.0f), 16, 0, "LesserCamp", 147.8f * 1000, spawnDuration: 2.2f);
+            var baronScuttle = CreateJungleCamp(new Vector3(4400.0f, 60.0f, 9600.0f), 16, TeamId.TEAM_UNKNOWN, "LesserCamp", 147.8f * 1000, spawnDuration: 2.2f);
             MonsterCamps.Add(baronScuttle, new List<IMonster>
             {
                 CreateJungleMonster("Sru_Crab16.1.1", "Sru_Crab", new Vector2(4400.0f, 9600.0f), new Vector3(5240.0f, 0.0f, 8950.0f), baronScuttle, spawnAnimation: "crab_hide")

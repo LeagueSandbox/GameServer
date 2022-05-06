@@ -59,7 +59,7 @@ namespace MapScripts.Map1
             });
 
             //Dragon
-            var dragon = CreateJungleCamp(new Vector3(9459.52f, 60.0f, 4193.03f), 6, 0, "Dragon", 150.0f * 1000);
+            var dragon = CreateJungleCamp(new Vector3(9459.52f, 60.0f, 4193.03f), 6, TeamId.TEAM_UNKNOWN, "Dragon", 150.0f * 1000);
             MonsterCamps.Add(dragon, new List<IMonster>
             {
                 CreateJungleMonster("Dragon6.1.1", "Dragon", new Vector2(9459.52f, 4193.03f), new Vector3(9622.0f, -69.0f, 4490.0f), dragon, aiScript: "BasicJungleMonsterAi")
@@ -111,7 +111,7 @@ namespace MapScripts.Map1
             });
 
             //Baron
-            var baron = CreateJungleCamp(new Vector3(4600.495f, 60.0f, 10250.462f), 12, 0, "Baron", 900.0f * 1000);
+            var baron = CreateJungleCamp(new Vector3(4600.495f, 60.0f, 10250.462f), 12, TeamId.TEAM_UNKNOWN, "Baron", 900.0f * 1000);
             MonsterCamps.Add(baron, new List<IMonster>
             {
                 CreateJungleMonster("Worm12.1.1", "Worm", new Vector2(4600.495f, 10250.462f), new Vector3(4329.43f, -71.0f, 9887.0f), baron, aiScript: "BasicJungleMonsterAi")

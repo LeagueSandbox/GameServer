@@ -527,7 +527,7 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="unpauser">Unit that unpaused the game.</param>
         /// <param name="showWindow">Whether or not to show a window before unpausing (delay).</param>
         void NotifyResumePacket(IChampion unpauser, ClientInfo player, bool isDelayed);
-        void NotifyS2C_ActivateMinionCamp(IMonsterCamp monsterCamp);
+        void NotifyS2C_ActivateMinionCamp(IMonsterCamp monsterCamp, int userId = 0);
         void NotifyS2C_AmmoUpdate(ISpell spell);
         /// <summary>
         /// Sends a packet to all players with vision of the given chain missile that it has updated (unit/position).
@@ -546,7 +546,7 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="userId">User to send the packet to. Set to -1 to broadcast.</param>
         /// <param name="doVision">Whether or not to package the packets into a vision packet.</param>
         void NotifyS2C_CreateHero(ClientInfo clientInfo, int userId = -1, bool doVision = false);
-        void NotifyS2C_CreateMinionCamp(IMonsterCamp monsterCamp);
+        void NotifyS2C_CreateMinionCamp(IMonsterCamp monsterCamp, int userId = 0);
         void NotifyS2C_CreateNeutral(IMonster monster, float time);
         /// <summary>
         /// Sends a packet to either all players or the specified player detailing that the specified LaneTurret has spawned.
@@ -608,7 +608,7 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="startFromCurretPosition">Wheter or not it starts from current position</param>
         /// <param name="unlockCamera">Whether or not the camera is unlocked</param>
         void NotifyS2C_MoveCameraToPoint(Tuple<uint, ClientInfo> player, Vector3 startPosition, Vector3 endPosition, float travelTime = 0, bool startFromCurretPosition = true, bool unlockCamera = false);
-        void NotifyS2C_Neutral_Camp_Empty(IMonsterCamp monsterCamp, IDeathData deathData = null);
+        void NotifyS2C_Neutral_Camp_Empty(IMonsterCamp monsterCamp, IDeathData deathData = null, int userId = 0);
         /// <summary>
         /// Sends a packet to all players detailing that the specified unit has been killed by the specified killer.
         /// </summary>

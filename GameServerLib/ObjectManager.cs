@@ -91,17 +91,14 @@ namespace LeagueSandbox.GameServer
                     RemoveObject(obj);
                 }
             }
-            
+
             foreach (var obj in _objectsToRemove)
             {
                 _objects.Remove(obj.NetId);
             }
             _objectsToRemove.Clear();
 
-            foreach (var obj in _objects.Values)
-            {
-                obj.LateUpdate(diff);
-            }
+            int oldObjectsCount = _objects.Count;
 
             foreach (var obj in _objectsToAdd)
             {
@@ -110,10 +107,15 @@ namespace LeagueSandbox.GameServer
             _objectsToAdd.Clear();
 
             var players = _game.PlayerManager.GetPlayers(includeBots: false);
-            
+
+            int i = 0;
             foreach (IGameObject obj in _objects.Values)
             {
                 UpdateTeamsVision(obj);
+                if(i++ < oldObjectsCount)
+                {
+                    obj.LateUpdate(diff);
+                }
 
                 foreach (var kv in players)
                 {
@@ -167,10 +169,10 @@ namespace LeagueSandbox.GameServer
         /// </summary>
         void UpdateTeamsVision(IGameObject obj)
         {
-                foreach (var team in Teams)
-                {
-                    obj.SetVisibleByTeam(team, !obj.IsAffectedByFoW || TeamHasVisionOn(team, obj));
-                }
+            foreach (var team in Teams)
+            {
+                obj.SetVisibleByTeam(team, !obj.IsAffectedByFoW || TeamHasVisionOn(team, obj));
+            }
         }
 
         /// <summary>
@@ -181,14 +183,14 @@ namespace LeagueSandbox.GameServer
             int pid = (int)clientInfo.PlayerId;
             TeamId team = clientInfo.Team;
             IChampion champion = clientInfo.Champion;
-            
+
             bool nearSighted = champion.Status.HasFlag(StatusFlags.NearSighted);
             bool shouldBeVisibleForPlayer = !obj.IsAffectedByFoW || (
                 nearSighted ?
                     UnitHasVisionOn(champion, obj) :
                     obj.IsVisibleByTeam(champion.Team)
             );
-            
+
             obj.Sync(pid, team, shouldBeVisibleForPlayer, forceSpawn);
         }
 

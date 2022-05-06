@@ -22,9 +22,10 @@ namespace LeagueSandbox.GameServer.GameObjects
         // Function Vars
         protected bool _toRemove;
         protected bool _movementUpdated;
-        private Dictionary<TeamId, bool> _visibleByTeam;
-        private HashSet<int> _spawnedForPlayers = new HashSet<int>();
-        private Dictionary<int, bool> _visibleForPlayers = new Dictionary<int, bool>();
+
+        protected Dictionary<TeamId, bool> _visibleByTeam;
+        protected HashSet<int> _spawnedForPlayers = new HashSet<int>();
+        protected Dictionary<int, bool> _visibleForPlayers = new Dictionary<int, bool>();
         /// <summary>
         /// A set of players with vision of this GameObject.
         /// Can be iterated through.
@@ -291,7 +292,7 @@ namespace LeagueSandbox.GameServer.GameObjects
                     OnSync(userId, team);
                 }
             }
-            else if (forceSpawn || visible || !SpawnShouldBeHidden)
+            else if (visible || !SpawnShouldBeHidden)
             {
                 OnSpawn(userId, team, visible);
                 SetVisibleForPlayer(userId, visible);
@@ -307,7 +308,7 @@ namespace LeagueSandbox.GameServer.GameObjects
         {
             if(IsSpawnedForPlayer(userId))
             {
-                OnSpawn(userId, team, IsVisibleForPlayer(userId));
+                Sync(userId, team, IsVisibleForPlayer(userId), true);
             }
         }
 
@@ -393,10 +394,10 @@ namespace LeagueSandbox.GameServer.GameObjects
         public virtual void TeleportTo(float x, float y)
         {
             var position = _game.Map.NavigationGrid.GetClosestTerrainExit(new Vector2(x, y), PathfindingRadius + 1.0f);
-            
+
             SetPosition(position);
 
-            // TODO: Find a suitable function for this. Maybe modify NotifyWaypointGroup to accept simple objects. 
+            // TODO: Find a suitable function for this. Maybe modify NotifyWaypointGroup to accept simple objects.
             _game.PacketNotifier.NotifyEnterVisibilityClient(this);
             _movementUpdated = false;
         }
