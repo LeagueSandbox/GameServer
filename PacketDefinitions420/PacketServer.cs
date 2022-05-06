@@ -47,23 +47,22 @@ namespace PacketDefinitions420
                 var key = Convert.FromBase64String(rawKey.Value);
                 if (key.Length <= 0)
                 {
-                   
                     throw new Exception($"Invalid blowfish key supplied({ key })");
                 }
                 blowfishes.Add(rawKey.Key, new BlowFish(key));
             }
 
             PacketHandlerManager = new PacketHandlerManager(blowfishes, _server, game, netReq, netResp);
-            
+
         }
 
         /// <summary>
         /// The core networking loop which fires for connections, received packets, and disconnects.
         /// </summary>
-        public void NetLoop(int timeout = 0)
+        public void NetLoop(uint timeout = 0)
         {
             var enetEvent = new Event();
-            while (_server.HostService(enetEvent, 8) > 0)
+            while (_server.HostService(enetEvent, timeout) > 0)
             {
                 switch (enetEvent.Type)
                 {

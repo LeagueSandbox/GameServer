@@ -186,7 +186,7 @@ namespace LeagueSandbox.GameServer
         /// </summary>
         public void InitializePacketHandlers()
         {
-            // maybe use reflection, the problem is that Register is generic and so it needs to know its type at 
+            // maybe use reflection, the problem is that Register is generic and so it needs to know its type at
             // compile time, maybe just use interface and in runetime figure out the type - and again there is
             // a problem with passing generic delegate to non-generic function, if we try to only constraint the
             // argument to interface ICoreRequest we will get an error cause our generic handlers use generic type
@@ -294,7 +294,7 @@ namespace LeagueSandbox.GameServer
         /// </summary>
         public void GameLoop()
         {
-            int timeout = (int)REFRESH_RATE;
+            uint timeout = (uint)REFRESH_RATE;
 
             Stopwatch lastMapDurationWatch = new Stopwatch();
             lastMapDurationWatch.Start();
@@ -350,7 +350,7 @@ namespace LeagueSandbox.GameServer
                         Update((float)sinceLastMapTime);
                     }
                     sinceLastMapTime = lastMapDurationWatch.Elapsed.TotalMilliseconds;
-                    timeout = (int)Math.Max(0, REFRESH_RATE - sinceLastMapTime);
+                    timeout = (uint)Math.Max(0, REFRESH_RATE - sinceLastMapTime);
                 }
             }
         }
