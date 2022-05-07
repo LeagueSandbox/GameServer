@@ -2462,7 +2462,7 @@ namespace PacketDefinitions420
             _packetHandlerManager.SendPacket((int)player.PlayerId, resume.GetBytes(), Channel.CHL_S2C);
         }
 
-        public void NotifyS2C_ActivateMinionCamp(IMonsterCamp monsterCamp)
+        public void NotifyS2C_ActivateMinionCamp(IMonsterCamp monsterCamp, int userId = 0)
         {
             var packet = new S2C_ActivateMinionCamp
             {
@@ -2471,7 +2471,14 @@ namespace PacketDefinitions420
                 SpawnDuration = monsterCamp.SpawnDuration,
                 TimerType = monsterCamp.TimerType
             };
-            _packetHandlerManager.BroadcastPacket(packet.GetBytes(), Channel.CHL_S2C);
+            if (userId <= 0)
+            {
+                _packetHandlerManager.BroadcastPacket(packet.GetBytes(), Channel.CHL_S2C);
+            }
+            else
+            {
+                _packetHandlerManager.SendPacket(userId, packet.GetBytes(), Channel.CHL_S2C);
+            }
         }
 
         public void NotifyS2C_AmmoUpdate(ISpell spell)
@@ -2600,7 +2607,7 @@ namespace PacketDefinitions420
             }
         }
 
-        public void NotifyS2C_CreateMinionCamp(IMonsterCamp monsterCamp)
+        public void NotifyS2C_CreateMinionCamp(IMonsterCamp monsterCamp, int userId = 0)
         {
             var packet = new S2C_CreateMinionCamp
             {
@@ -2612,7 +2619,14 @@ namespace PacketDefinitions420
                 Expire = monsterCamp.Expire,
                 TimerType = monsterCamp.TimerType
             };
-            _packetHandlerManager.BroadcastPacket(packet.GetBytes(), Channel.CHL_S2C);
+            if (userId <= 0)
+            {
+                _packetHandlerManager.BroadcastPacket(packet.GetBytes(), Channel.CHL_S2C);
+            }
+            else
+            {
+                _packetHandlerManager.SendPacket(userId, packet.GetBytes(), Channel.CHL_S2C);
+            }
         }
 
         public void NotifyS2C_CreateNeutral(IMonster monster, float time)
@@ -2810,7 +2824,7 @@ namespace PacketDefinitions420
 
             _packetHandlerManager.SendPacket((int)player.Item2.PlayerId, cam.GetBytes(), Channel.CHL_S2C);
         }
-        public void NotifyS2C_Neutral_Camp_Empty(IMonsterCamp monsterCamp, IDeathData deathData = null)
+        public void NotifyS2C_Neutral_Camp_Empty(IMonsterCamp monsterCamp, IDeathData deathData = null, int userId = 0)
         {
             var packet = new S2C_Neutral_Camp_Empty
             {
@@ -2826,7 +2840,14 @@ namespace PacketDefinitions420
             {
                 packet.KillerNetID = deathData.Killer.NetId;
             }
-            _packetHandlerManager.BroadcastPacket(packet.GetBytes(), Channel.CHL_S2C);
+            if (userId <= 0)
+            {
+                _packetHandlerManager.BroadcastPacket(packet.GetBytes(), Channel.CHL_S2C);
+            }
+            else
+            {
+                _packetHandlerManager.SendPacket(userId, packet.GetBytes(), Channel.CHL_S2C);
+            }
         }
 
         /// <summary>

@@ -19,6 +19,5 @@ namespace GameServerCore.Domain
         float RespawnTimer { get; set; }
         List<IMonster> Monsters { get; }
         IMonster AddMonster(IMonster monster);
-        void NotifyCampActivation();
     }
 }

@@ -68,7 +68,7 @@ namespace MapScripts.Map10
             });
 
             //Center of the Map Health Pack
-            var healthPack = CreateJungleCamp(new Vector3(7711.15f, 60.0f, 6722.67f), groupNumber: 7, teamSideOfTheMap: 0, campTypeIcon: "HealthPack", 115.0f * 1000);
+            var healthPack = CreateJungleCamp(new Vector3(7711.15f, 60.0f, 6722.67f), groupNumber: 7, teamSideOfTheMap: TeamId.TEAM_UNKNOWN, campTypeIcon: "HealthPack", 115.0f * 1000);
             MonsterCamps.Add(healthPack, new List<IMonster>
             {
                 CreateJungleMonster("TT_Relic7.1.1", "TT_Relic", new Vector2(7711.15f, 6722.67f), new Vector3(7711.15f, -112.716f, 6322.67f), healthPack)
@@ -76,7 +76,7 @@ namespace MapScripts.Map10
 
             //Vilemaw
             //TODO: VIle maw needs it's own Special A.I Script, for now it'll be just a dummy.
-            var spiderBoss = CreateJungleCamp(new Vector3(7711.15f, 60.0f, 10080.0f), groupNumber: 8, teamSideOfTheMap: 0, campTypeIcon: "Epic", 600.0f * 1000);
+            var spiderBoss = CreateJungleCamp(new Vector3(7711.15f, 60.0f, 10080.0f), groupNumber: 8, teamSideOfTheMap: TeamId.TEAM_UNKNOWN, campTypeIcon: "Epic", 600.0f * 1000);
             MonsterCamps.Add(spiderBoss, new List<IMonster>
             {
                 CreateJungleMonster("TT_Spiderboss8.1.1", "TT_Spiderboss", new Vector2(7711.15f, 10080.0f), new Vector3(7726.41f, -108.603f, 9234.69f), spiderBoss)

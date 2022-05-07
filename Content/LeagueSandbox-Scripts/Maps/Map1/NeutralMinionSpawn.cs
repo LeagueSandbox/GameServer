@@ -59,7 +59,7 @@ namespace MapScripts.Map1
             });
 
             //Dragon
-            var dragon = CreateJungleCamp(new Vector3(9459.52f, 60.0f, 4193.03f), 6, 0, "Dragon", 150.0f * 1000);
+            var dragon = CreateJungleCamp(new Vector3(9459.52f, 60.0f, 4193.03f), 6, TeamId.TEAM_UNKNOWN, "Dragon", 150.0f * 1000);
             MonsterCamps.Add(dragon, new List<IMonster>
             {
                 CreateJungleMonster("Dragon6.1.1", "Dragon", new Vector2(9459.52f, 4193.03f), new Vector3(9622.0f, -69.0f, 4490.0f), dragon, aiScript: "BasicJungleMonsterAi")
@@ -111,21 +111,21 @@ namespace MapScripts.Map1
             });
 
             //Baron
-            var baron = CreateJungleCamp(new Vector3(4600.495f, 60.0f, 10250.462f), 12, 0, "Baron", 900.0f * 1000);
+            var baron = CreateJungleCamp(new Vector3(4600.495f, 60.0f, 10250.462f), 12, TeamId.TEAM_UNKNOWN, "Baron", 900.0f * 1000);
             MonsterCamps.Add(baron, new List<IMonster>
             {
                 CreateJungleMonster("Worm12.1.1", "Worm", new Vector2(4600.495f, 10250.462f), new Vector3(4329.43f, -71.0f, 9887.0f), baron, aiScript: "BasicJungleMonsterAi")
             });
 
             //Blue Side GreatWraith (Old gromp)
-            var blueGreatGromp = CreateJungleCamp(new Vector3(1684.0f, 60.0f, 8207.0f), 13, TeamId.TEAM_BLUE, "LesserCamp", 125.0f * 1000);
+            var blueGreatGromp = CreateJungleCamp(new Vector3(1684.0f, 60.0f, 8207.0f), 13, TeamId.TEAM_UNKNOWN, "LesserCamp", 125.0f * 1000);
             MonsterCamps.Add(blueGreatGromp, new List<IMonster>
             {
                 CreateJungleMonster("GreatWraith13.1.1", "GreatWraith", new Vector2(1684.0f, 8207.0f), new Vector3(2300.0f, 53.0f, 9720.0f), blueGreatGromp, aiScript: "BasicJungleMonsterAi")
             });
 
             //Red Side GreatWraith (Old gromp)
-            var redGreatGromp = CreateJungleCamp(new Vector3(12337.0f, 60.0f, 6263.0f), 14, TeamId.TEAM_BLUE, "LesserCamp", 125.0f * 1000);
+            var redGreatGromp = CreateJungleCamp(new Vector3(12337.0f, 60.0f, 6263.0f), 14, TeamId.TEAM_UNKNOWN, "LesserCamp", 125.0f * 1000);
             MonsterCamps.Add(redGreatGromp, new List<IMonster>
             {
                 CreateJungleMonster("GreatWraith14.1.1", "GreatWraith", new Vector2(12337.0f, 6263.0f), new Vector3(11826.0f, 52.0f, 4788.0f), redGreatGromp, aiScript: "BasicJungleMonsterAi")

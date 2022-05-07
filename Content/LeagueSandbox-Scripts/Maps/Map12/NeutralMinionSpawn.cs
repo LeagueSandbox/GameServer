@@ -24,7 +24,7 @@ namespace MapScripts.Map12
             for(byte i = 1; i <= _champPositions.Length; i++)
             {
                 Vector3 pos = _champPositions[i - 1];
-                var camp = CreateJungleCamp(pos, i, TeamId.TEAM_NEUTRAL, "HealthPack", 190.0f * 1000f);
+                var camp = CreateJungleCamp(pos, i, TeamId.TEAM_UNKNOWN, "HealthPack", 190.0f * 1000f);
                 var monster = CreateJungleMonster(
                     $"HA_AP_HealthRelic{i}.1.1", "HA_AP_HealthRelic",
                     new Vector2(pos.X, pos.Z), Vector3.Zero,
