@@ -134,7 +134,7 @@ namespace PacketDefinitions420
             {
                 currentWaypoints.RemoveRange(1, currentWaypoints.Count - count);
             }
-            
+
             return currentWaypoints.ConvertAll(v => Vector2ToWaypoint(TranslateToCenteredCoordinates(v, grid)));
 
         }

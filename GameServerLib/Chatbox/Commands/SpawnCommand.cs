@@ -135,7 +135,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
             const int X = 400;
             foreach (var minion in minions)
             {
-                minion.SetPosition(championPos.X + random.Next(-X, X), championPos.Y + random.Next(-X, X));
+                minion.SetPosition(championPos + new Vector2(random.Next(-X, X), random.Next(-X, X)), false);
                 minion.PauseAi(true);
                 minion.StopMovement();
                 minion.UpdateMoveOrder(OrderType.Hold);
@@ -174,14 +174,14 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
             c.LevelUp();
 
             Game.ObjectManager.AddObject(c);
-            
+
             ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.INFO, "Spawned Bot" + clientInfoTemp.Name + " as " + c.Model + " with NetID: " + c.NetId + ".");
         }
 
         public void SpawnRegionForTeam(TeamId team, int userId, float radius = 250.0f, float lifetime = -1.0f)
         {
             var championPos = _playerManager.GetPeerInfo(userId).Champion.Position;
-            API.ApiFunctionManager.AddPosPerceptionBubble(new Vector2(championPos.X, championPos.Y), radius, lifetime, team, true);
+            API.ApiFunctionManager.AddPosPerceptionBubble(championPos, radius, lifetime, team, true);
         }
     }
 }

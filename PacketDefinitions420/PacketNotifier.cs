@@ -501,7 +501,7 @@ namespace PacketDefinitions420
                 case ILaneTurret turret:
                     return ConstructCreateTurretPacket(turret);
 
-                // Champions spawn a little differently 
+                // Champions spawn a little differently
                 case IChampion champion:
                     return null;
                 case IPet pet:
@@ -2337,7 +2337,7 @@ namespace PacketDefinitions420
             var cr = new HeroReincarnateAlive
             {
                 SenderNetID = c.NetId,
-                Position = new Vector2(c.Position.X, c.Position.Y),
+                Position = c.Position,
                 PARValue = parToRestore
             };
             _packetHandlerManager.BroadcastPacket(cr.GetBytes(), Channel.CHL_S2C);
@@ -2654,7 +2654,7 @@ namespace PacketDefinitions420
         }
 
         /// <summary>
-        /// Disables the U.I when the game ends 
+        /// Disables the U.I when the game ends
         /// </summary>
         /// <param name="player"></param>
         public void NotifyS2C_DisableHUDForEndOfGame(Tuple<uint, ClientInfo> player)
@@ -4036,7 +4036,7 @@ namespace PacketDefinitions420
         public void HoldMovementDataUntilWaypointGroupNotification(IAttackableUnit u, int userId, bool useTeleportID = false)
         {
             var data = PacketExtensions.CreateMovementDataNormal(u, _navGrid, useTeleportID);
-            
+
             List<MovementDataNormal> list = null;
             if (!_heldMovementData.TryGetValue(userId, out list))
             {
@@ -4079,7 +4079,7 @@ namespace PacketDefinitions420
         public void HoldReplicationDataUntilOnReplicationNotification(IAttackableUnit u, int userId, bool partial = true)
         {
             var data = u.Replication.GetData(partial);
-            
+
             List<ReplicationData> list = null;
             if (!_heldReplicationData.TryGetValue(userId, out list))
             {

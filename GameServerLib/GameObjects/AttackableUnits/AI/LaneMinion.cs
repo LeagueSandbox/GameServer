@@ -39,7 +39,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             PathingWaypoints = mainWaypoints;
             _aiPaused = false;
 
-            SetPosition(position.X, position.Y);
+            SetPosition(position);
 
             StopMovement();
 

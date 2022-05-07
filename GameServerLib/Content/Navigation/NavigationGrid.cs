@@ -504,7 +504,7 @@ namespace LeagueSandbox.GameServer.Content.Navigation
         private List<NavigationGridCell> GetAllCellsInRange(Vector2 origin, float radius, bool translate = true)
         {
             List<NavigationGridCell> cells = new List<NavigationGridCell>();
-            
+
             float stepX = radius;
             float stepY = radius;
             Vector2 trueOrigin = origin;
@@ -638,8 +638,8 @@ namespace LeagueSandbox.GameServer.Content.Navigation
 
         bool IsVisible(NavigationGridCell cell)
         {
-            return cell != null 
-                && (!cell.HasFlag(NavigationGridCellFlags.NOT_PASSABLE) 
+            return cell != null
+                && (!cell.HasFlag(NavigationGridCellFlags.NOT_PASSABLE)
                 || cell.HasFlag(NavigationGridCellFlags.SEE_THROUGH)
                 || cell.HasFlag(NavigationGridCellFlags.HAS_GLOBAL_VISION));
         }
@@ -679,7 +679,7 @@ namespace LeagueSandbox.GameServer.Content.Navigation
             {
                 float reguestedHeightX = (location.X - this.MinGridPosition.X) / this.SampledHeightsDistance.X;
                 float requestedHeightY = (location.Y - this.MinGridPosition.Z) / this.SampledHeightsDistance.Y;
-                
+
                 int sampledHeight1IndexX = (int)reguestedHeightX;
                 int sampledHeight1IndexY = (int)requestedHeightY;
                 int sampledHeight2IndexX;
@@ -787,7 +787,7 @@ namespace LeagueSandbox.GameServer.Content.Navigation
 
             for (i = 0; i < il; i++)
             {
-                
+
                 //TODO: Implement methods for maps whose NavGrids don't use SEE_THROUGH flags for buildings
                 if (checkWalkable)
                 {
@@ -796,7 +796,7 @@ namespace LeagueSandbox.GameServer.Content.Navigation
                         break;
                     }
                 }
-                
+
                 if (checkVisible)
                 {
                     var cell = GetCell((short)origin.X, (short)origin.Y);
