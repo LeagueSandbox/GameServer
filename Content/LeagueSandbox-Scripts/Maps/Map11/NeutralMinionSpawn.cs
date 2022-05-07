@@ -25,7 +25,7 @@ namespace MapScripts.Map11
             });
 
             //Blue side Wolfs
-            var blueWolves = CreateJungleCamp(new Vector3(3780.6284f, 60.0f, 6443.984f), 2, TeamId.TEAM_BLUE, "LesserCamp", 114.34f * 1000, spawnDuration: 0.66f);
+            var blueWolves = CreateJungleCamp(new Vector3(3780.6284f, 60.0f, 6443.984f), 2, TeamId.TEAM_UNKNOWN, "LesserCamp", 114.34f * 1000, spawnDuration: 0.66f);
             MonsterCamps.Add(blueWolves, new List<IMonster>
             {
                 CreateJungleMonster("SRU_Murkwolf2.1.1", "SRU_Murkwolf", new Vector2(3780.6284f, 6443.984f), new Vector3(3700.62846f, 46.0f, 6385.98403f), blueWolves, spawnAnimation: "Spawn", aiScript: "BasicJungleMonsterAi"),
@@ -34,7 +34,7 @@ namespace MapScripts.Map11
             });
 
             //Blue Side Wraiths
-            var blueWraiths = CreateJungleCamp(new Vector3(6706.67846f, 60.0f, 5521.04403f), 3, TeamId.TEAM_BLUE, "LesserCamp", 114.0f * 1000, spawnDuration: 1.0f);
+            var blueWraiths = CreateJungleCamp(new Vector3(6706.67846f, 60.0f, 5521.04403f), 3, TeamId.TEAM_UNKNOWN, "LesserCamp", 114.0f * 1000, spawnDuration: 1.0f);
             MonsterCamps.Add(blueWraiths, new List<IMonster>
             {
                 CreateJungleMonster("SRU_Razorbeak3.1.1", "SRU_Razorbeak", new Vector2(6706.67846f, 5521.04403f), new Vector3(6958.62846f, 48.0f, 5460.98403f), blueWraiths, spawnAnimation: "Spawn", aiScript: "BasicJungleMonsterAi"),
@@ -53,7 +53,7 @@ namespace MapScripts.Map11
             });
             
             //Blue Side Golems
-            var blueGolems = CreateJungleCamp(new Vector3(8323.470745f, 60.0f, 2754.947409f), 5, TeamId.TEAM_BLUE, "LesserCamp", 114.14f * 1000, spawnDuration: 0.86f);
+            var blueGolems = CreateJungleCamp(new Vector3(8323.470745f, 60.0f, 2754.947409f), 5, TeamId.TEAM_UNKNOWN, "LesserCamp", 114.14f * 1000, spawnDuration: 0.86f);
             MonsterCamps.Add(blueGolems, new List<IMonster>
             {
                 CreateJungleMonster("SRU_KrugMini5.1.1", "SRU_KrugMini", new Vector2(8323.471f, 2754.9475f), new Vector3(8319.62846f, 45.0f, 2641.98403f), blueGolems, spawnAnimation: "spawn", aiScript: "BasicJungleMonsterAi"),
@@ -77,7 +77,7 @@ namespace MapScripts.Map11
             });
 
             //Red side Wolfs
-            var redWolves = CreateJungleCamp(new Vector3(11008.151898f, 60.0f, 8387.408346f), 8, TeamId.TEAM_PURPLE, "LesserCamp", 114.34f * 1000, spawnDuration: 0.66f);
+            var redWolves = CreateJungleCamp(new Vector3(11008.151898f, 60.0f, 8387.408346f), 8, TeamId.TEAM_UNKNOWN, "LesserCamp", 114.34f * 1000, spawnDuration: 0.66f);
             MonsterCamps.Add(redWolves, new List<IMonster>
             {
                 CreateJungleMonster("SRU_Murkwolf8.1.1", "SRU_Murkwolf", new Vector2(11008.151898f, 8387.408346f), new Vector3(11127.62846f, 53.0f, 8502.98403f), redWolves, spawnAnimation: "Spawn", aiScript: "BasicJungleMonsterAi"),
@@ -86,7 +86,7 @@ namespace MapScripts.Map11
             });
 
             //Red Side Wraiths
-            var redWraiths = CreateJungleCamp(new Vector3(7986.996624f, 60.0f, 9471.389059f), 9, TeamId.TEAM_PURPLE, "LesserCamp", 114.33f * 1000, spawnDuration: 0.67f);
+            var redWraiths = CreateJungleCamp(new Vector3(7986.996624f, 60.0f, 9471.389059f), 9, TeamId.TEAM_UNKNOWN, "LesserCamp", 114.33f * 1000, spawnDuration: 0.67f);
             MonsterCamps.Add(redWraiths, new List<IMonster>
             {
                 CreateJungleMonster("SRU_Razorbeak9.1.1", "SRU_Razorbeak", new Vector2(7986.996624f, 9471.389059f), new Vector3(7901.62846f, 46.0f, 9479.98403f), redWraiths, spawnAnimation: "North_Spawn", aiScript: "BasicJungleMonsterAi"),
@@ -105,7 +105,7 @@ namespace MapScripts.Map11
             });
 
             //Red Side Krugs
-            var redGolems = CreateJungleCamp(new Vector3(6317.092327f, 60.0f, 12146.457663f), 11, TeamId.TEAM_PURPLE, "LesserCamp", 114.14f * 1000, spawnDuration: 0.86f);
+            var redGolems = CreateJungleCamp(new Vector3(6317.092327f, 60.0f, 12146.457663f), 11, TeamId.TEAM_UNKNOWN, "LesserCamp", 114.14f * 1000, spawnDuration: 0.86f);
             MonsterCamps.Add(redGolems, new List<IMonster>
             {
                 CreateJungleMonster("SRU_KrugMini11.1.1", "SRU_KrugMini", new Vector2(6317.092327f, 12146.457663f), new Vector3(6365.62846f, 30.0f, 12226.98403f), redGolems, spawnAnimation: "spawn", aiScript: "BasicJungleMonsterAi"),
