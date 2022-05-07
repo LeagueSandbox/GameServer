@@ -11,6 +11,17 @@ namespace GameServerLib.GameObjects
 {
     public class MonsterCamp : GameObject, IMonsterCamp
     {
+        private TeamId[] _playerTeams = new TeamId[] { TeamId.TEAM_BLUE, TeamId.TEAM_PURPLE };
+        private Dictionary<TeamId, bool> _teamSawLastDeath = new Dictionary<TeamId, bool>{
+            { TeamId.TEAM_BLUE, true },
+            { TeamId.TEAM_PURPLE, true },
+        };
+        private Dictionary<TeamId, bool> _isAliveForTeam = new Dictionary<TeamId, bool>{
+            { TeamId.TEAM_BLUE, false },
+            { TeamId.TEAM_PURPLE, false },
+        };
+        private Dictionary<int, bool> _isAliveForPlayer = new Dictionary<int, bool>();
+
         public byte CampIndex { get; set; }
         public new Vector3 Position { get; set; }
         public byte SideTeamId { get; set; }
@@ -25,17 +36,6 @@ namespace GameServerLib.GameObjects
         public List<IMonster> Monsters { get; set; } = new List<IMonster>();
 
         public override bool IsAffectedByFoW => true;
-
-        private TeamId[] _playerTeams = new TeamId[]{ TeamId.TEAM_BLUE, TeamId.TEAM_PURPLE };
-        private Dictionary<TeamId, bool> _teamSawLastDeath = new Dictionary<TeamId, bool>{
-            { TeamId.TEAM_BLUE, true },
-            { TeamId.TEAM_PURPLE, true },
-        };
-        private Dictionary<TeamId, bool> _isAliveForTeam = new Dictionary<TeamId, bool>{
-            { TeamId.TEAM_BLUE, false },
-            { TeamId.TEAM_PURPLE, false },
-        };
-        private Dictionary<int, bool> _isAliveForPlayer = new Dictionary<int, bool>();
 
         public MonsterCamp(
             Game game, Vector3 position, byte groupNumber, TeamId teamSideOfTheMap,
@@ -71,14 +71,14 @@ namespace GameServerLib.GameObjects
 
             bool isAliveForTeam = _isAliveForTeam[team];
             bool isAliveForPlayer = _isAliveForPlayer.GetValueOrDefault(userId, false);
-            if(
+            if
+            (
                 (forceSpawn && isAliveForPlayer) // Reconnect
-                || (
-                    isAliveForPlayer != isAliveForTeam
-                    && !_game.PlayerManager.GetPeerInfo(userId).Champion.Status
-                        .HasFlag(StatusFlags.NearSighted)
-                )
-            ) {
+                || (isAliveForPlayer != isAliveForTeam
+                    // TODO: Handle based on vision radius, not status (also handle null peer info)
+                    && !_game.PlayerManager.GetPeerInfo(userId).Champion.Status.HasFlag(StatusFlags.NearSighted))
+            )
+            {
                 if(_isAliveForPlayer[userId] = isAliveForTeam)
                 {
                     _game.PacketNotifier.NotifyS2C_ActivateMinionCamp(this, userId);
@@ -144,7 +144,8 @@ namespace GameServerLib.GameObjects
                 IsAlive = false;
                 foreach(TeamId team in _playerTeams)
                 {
-                    if(_teamSawLastDeath[team] = (monster.IsVisibleByTeam(team) || IsVisibleByTeam(team)))
+                    _teamSawLastDeath[team] = monster.IsVisibleByTeam(team) || IsVisibleByTeam(team);
+                    if (_teamSawLastDeath[team])
                     {
                         _isAliveForTeam[team] = false;
                     }
