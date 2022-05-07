@@ -230,7 +230,7 @@ namespace LeagueSandbox.GameServer.GameObjects
         /// <param name="o">An object that could be colliding with this object.</param>
         public virtual bool IsCollidingWith(IGameObject o)
         {
-            return Vector2.DistanceSquared(new Vector2(Position.X, Position.Y), o.Position) < (CollisionRadius + o.CollisionRadius) * (CollisionRadius + o.CollisionRadius);
+            return Vector2.DistanceSquared(Position, o.Position) < (CollisionRadius + o.CollisionRadius) * (CollisionRadius + o.CollisionRadius);
         }
 
         /// <summary>
@@ -393,10 +393,10 @@ namespace LeagueSandbox.GameServer.GameObjects
         public virtual void TeleportTo(float x, float y)
         {
             var position = _game.Map.NavigationGrid.GetClosestTerrainExit(new Vector2(x, y), PathfindingRadius + 1.0f);
-            
+
             SetPosition(position);
 
-            // TODO: Find a suitable function for this. Maybe modify NotifyWaypointGroup to accept simple objects. 
+            // TODO: Find a suitable function for this. Maybe modify NotifyWaypointGroup to accept simple objects.
             _game.PacketNotifier.NotifyEnterVisibilityClient(this);
             _movementUpdated = false;
         }

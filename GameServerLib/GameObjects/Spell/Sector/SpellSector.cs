@@ -165,7 +165,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Sector
         public virtual void Move(float diff)
         {
             // current position
-            var cur = new Vector2(Position.X, Position.Y);
+            var cur = Position;
             var next = GetTargetPosition();
 
             // If we are not bound to an object

@@ -37,8 +37,8 @@ namespace Spells
         {
             var owner = spell.CastInfo.Owner;
             var target = spell.CastInfo.Targets[0].Unit;
-            var current = new Vector2(owner.Position.X, owner.Position.Y);
-            var to = Vector2.Normalize(new Vector2(target.Position.X, target.Position.Y) - current);
+            var current = owner.Position;
+            var to = Vector2.Normalize(target.Position - current);
             var range = to * 800;
 
             var trueCoords = current + range;

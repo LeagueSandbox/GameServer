@@ -41,8 +41,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
                 _playerManager.GetPeerInfo(userId).Champion.Team
             );
             c.SetPosition(
-                _playerManager.GetPeerInfo(userId).Champion.Position.X,
-                _playerManager.GetPeerInfo(userId).Champion.Position.Y
+                _playerManager.GetPeerInfo(userId).Champion.Position
             );
 
             c.ChangeModel(split[1]); // trigger the "modelUpdate" proc

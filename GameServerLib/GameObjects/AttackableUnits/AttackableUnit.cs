@@ -512,7 +512,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
 
             int attackerId = 0, targetId = 0;
 
-            // todo: check if damage dealt by disconnected players cause anything bad 
+            // todo: check if damage dealt by disconnected players cause anything bad
             if (attacker is IChampion attackerChamp)
             {
                 attackerId = (int)_game.PlayerManager.GetClientInfoByChampion(attackerChamp).PlayerId;
@@ -642,7 +642,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
 
             int attackerId = 0, targetId = 0;
 
-            // todo: check if damage dealt by disconnected players cause anything bad 
+            // todo: check if damage dealt by disconnected players cause anything bad
             if (attacker is IChampion attackerChamp)
             {
                 attackerId = (int)_game.PlayerManager.GetClientInfoByChampion(attackerChamp).PlayerId;
@@ -1008,7 +1008,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         public virtual bool Move(float diff)
         {
             // current -> next positions
-            var cur = new Vector2(Position.X, Position.Y);
+            var cur = Position;
             var next = CurrentWaypoint.Value;
 
             var goingTo = next - cur;
@@ -1061,7 +1061,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             Position = nextPos;
 
             // (X, Y) have now moved to the next position
-            cur = new Vector2(Position.X, Position.Y);
+            cur = Position;
 
             // Check if we reached the next waypoint
             // REVIEW (of previous code): (deltaMovement * 2) being used here is problematic; if the server lags, the diff will be much greater than the usual values

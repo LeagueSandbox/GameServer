@@ -29,7 +29,7 @@ namespace Spells
 
         public void OnSpellPreCast(IObjAiBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
         {
-            var current = new Vector2(owner.Position.X, owner.Position.Y);
+            var current = owner.Position;
             var dist = Vector2.Distance(current, start);
 
             FaceDirection(start, owner, true);

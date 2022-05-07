@@ -37,7 +37,7 @@ namespace Spells
 
         public void OnSpellPostCast(ISpell spell)
         {
-            var current = new Vector2(spell.CastInfo.Owner.Position.X, spell.CastInfo.Owner.Position.Y);
+            var current = spell.CastInfo.Owner.Position;
             var spellPos = new Vector2(spell.CastInfo.TargetPosition.X, spell.CastInfo.TargetPosition.Z);
             var to = Vector2.Normalize(spellPos - current);
             var range = to * 1000;

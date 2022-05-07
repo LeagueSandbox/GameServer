@@ -39,7 +39,7 @@ namespace Spells
         public void OnSpellPostCast(ISpell spell)
         {
             var owner = spell.CastInfo.Owner;
-            var current = new Vector2(owner.Position.X, owner.Position.Y);
+            var current = owner.Position;
             var spellPos = new Vector2(spell.CastInfo.TargetPosition.X, spell.CastInfo.TargetPosition.Z);
             var dist = Vector2.Distance(current, spellPos);
 

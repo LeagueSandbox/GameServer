@@ -236,7 +236,7 @@ namespace LeagueSandbox.GameServer.API
         /// <returns>Vector2 point.</returns>
         public static Vector2 GetPointFromUnit(IGameObject obj, float distance, float offsetAngle = 0)
         {
-            Vector2 pos = new Vector2(obj.Position.X, obj.Position.Y);
+            Vector2 pos = obj.Position;
             Vector2 dir = new Vector2(obj.Direction.X, obj.Direction.Z);
             if (offsetAngle != 0)
             {
@@ -508,7 +508,7 @@ namespace LeagueSandbox.GameServer.API
         /// <param name="revealStealthed">Whether or not the perception bubble should reveal stealthed units while they are in range.</param>
         /// <param name="revealSpecificUnitOnly">Specific unit to reveal. Perception bubble will not reveal any other units when used. *NOTE* Currently does nothing.</param>
         /// <param name="collisionArea">Area around the perception bubble where units are not allowed to move into.</param>
-        /// 
+        ///
         /// <returns>New Region instance.</returns>
         public static IRegion AddUnitPerceptionBubble
         (
@@ -1119,14 +1119,14 @@ namespace LeagueSandbox.GameServer.API
             IChampion owner,
             ISpell spell,
             Vector2 position,
-            string name, 
-            string model, 
+            string name,
+            string model,
             string buffName,
             float lifeTime,
             int skinId = 0,
-            bool cloneInventory = true, 
+            bool cloneInventory = true,
             bool showMinimapIfClone = true,
-            bool disallowPlayerControl =false, 
+            bool disallowPlayerControl =false,
             bool doFade = false,
             bool isClone = true,
             string aiScript = "Pet"

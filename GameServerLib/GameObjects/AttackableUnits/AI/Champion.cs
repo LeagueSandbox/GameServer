@@ -127,7 +127,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             var peerInfo = _game.PlayerManager.GetClientInfoByChampion(this);
             _game.PacketNotifier.NotifyS2C_CreateHero(peerInfo, userId, doVision);
             _game.PacketNotifier.NotifyAvatarInfo(peerInfo, userId);
-            
+
             bool ownChamp = peerInfo.PlayerId == userId;
             if (ownChamp)
             {
@@ -141,7 +141,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                     var castInfo = spell.Value.CastInfo;
                     if (castInfo.SpellLevel > 0)
                     {
-                        // NotifyNPC_UpgradeSpellAns has no effect here 
+                        // NotifyNPC_UpgradeSpellAns has no effect here
                         _game.PacketNotifier.NotifyS2C_SetSpellLevel(userId, NetId, castInfo.SpellSlot, castInfo.SpellLevel);
 
                         float currentCD = spell.Value.CurrentCooldown;
@@ -295,7 +295,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         public void Respawn()
         {
             var spawnPos = GetRespawnPosition();
-            SetPosition(spawnPos.X, spawnPos.Y);
+            SetPosition(spawnPos);
             float parToRestore = 0;
             // TODO: Find a better way to do this, perhaps through scripts. Otherwise, make sure all types are accounted for.
             if (Stats.ParType == PrimaryAbilityResourceType.MANA || Stats.ParType == PrimaryAbilityResourceType.Energy || Stats.ParType == PrimaryAbilityResourceType.Wind)

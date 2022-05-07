@@ -245,11 +245,11 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
                     var wpTarget = _userChampion.Waypoints[waypoint];
 
                     // Makes the arrow point to the next waypoint
-                    var to = Vector2.Normalize(new Vector2(wpTarget.X, wpTarget.Y) - current);
+                    var to = Vector2.Normalize(wpTarget - current);
                     if (_userChampion.Waypoints.Count - 1 > waypoint)
                     {
                         var nextTargetWp = _userChampion.Waypoints[waypoint + 1];
-                        to = Vector2.Normalize(new Vector2(nextTargetWp.X, nextTargetWp.Y) - _userChampion.Waypoints[waypoint]);
+                        to = Vector2.Normalize(nextTargetWp - _userChampion.Waypoints[waypoint]);
                     }
                     var direction = new Vector3(to.X, 0, to.Y);
 
@@ -342,11 +342,11 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
                         var wpTarget = champion.Waypoints[waypoint];
 
                         // Makes the arrow point to the next waypoint
-                        var to = Vector2.Normalize(new Vector2(wpTarget.X, wpTarget.Y) - current);
+                        var to = Vector2.Normalize(wpTarget - current);
                         if (champion.Waypoints.Count - 1 > waypoint)
                         {
                             var nextTargetWp = champion.Waypoints[waypoint + 1];
-                            to = Vector2.Normalize(new Vector2(nextTargetWp.X, nextTargetWp.Y) - champion.Waypoints[waypoint]);
+                            to = Vector2.Normalize(nextTargetWp - champion.Waypoints[waypoint]);
                         }
                         var direction = new Vector3(to.X, 0, to.Y);
 
@@ -438,11 +438,11 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
                             var wpTarget = minion.Waypoints[waypoint];
 
                             // Makes the arrow point to the next waypoint
-                            var to = Vector2.Normalize(new Vector2(wpTarget.X, wpTarget.Y) - current);
+                            var to = Vector2.Normalize(wpTarget - current);
                             if (minion.Waypoints.Count - 1 > waypoint)
                             {
                                 var nextTargetWp = minion.Waypoints[waypoint + 1];
-                                to = Vector2.Normalize(new Vector2(nextTargetWp.X, nextTargetWp.Y) - minion.Waypoints[waypoint]);
+                                to = Vector2.Normalize(nextTargetWp - minion.Waypoints[waypoint]);
                             }
                             var direction = new Vector3(to.X, 0, to.Y);
 
@@ -541,7 +541,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
                             var wpTarget = missile.GetTargetPosition();
 
                             // Makes the arrow point to the target
-                            var to = Vector2.Normalize(new Vector2(wpTarget.X, wpTarget.Y) - current);
+                            var to = Vector2.Normalize(wpTarget - current);
 
                             var direction = new Vector3(to.X, 0, to.Y);
                             var arrowparticle = new Particle(_game, null, null, wpTarget, "DebugArrow_green.troy", 0.5f, "", "", 0, direction, false, 0.1f);

@@ -56,7 +56,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Missile
             SpellOrigin = originSpell;
 
             CastInfo = castInfo;
-            
+
             // TODO: Implement full support for multiple targets.
             if (castInfo.Targets[0].Unit != null)
             {
@@ -126,7 +126,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Missile
         public virtual void Move(float diff)
         {
             // current position
-            var cur = new Vector2(Position.X, Position.Y);
+            var cur = Position;
 
             var next = GetTargetPosition();
 
@@ -159,7 +159,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Missile
             Position = new Vector2(Position.X + xx, Position.Y + yy);
 
             // (X, Y) has moved to the next position
-            cur = new Vector2(Position.X, Position.Y);
+            cur = Position;
 
             // Check if we reached the target position/destination.
             // REVIEW (of previous code): (deltaMovement * 2) being used here is problematic; if the server lags, the diff will be much greater than the usual values
@@ -223,7 +223,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Missile
         /// </summary>
         /// <returns>Vector2 position of target. Vector2(float.NaN, float.NaN) if projectile has no target.</returns>
         public Vector2 GetTargetPosition()
-        { 
+        {
             if (TargetUnit != null)
             {
                 return TargetUnit.Position;

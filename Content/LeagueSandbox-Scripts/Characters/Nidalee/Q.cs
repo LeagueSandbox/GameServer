@@ -50,7 +50,7 @@ namespace Spells
         {
             var ap = owner.Stats.AbilityPower.Total;
             var basedamage = 25 + spell.CastInfo.SpellLevel * 55 + ap;
-            var hitcoords = new Vector2(missile.Position.X, missile.Position.Y);
+            var hitcoords = missile.Position;
             var distance = Math.Sqrt(Math.Pow(castcoords.X - hitcoords.X, 2) + Math.Pow(castcoords.Y - hitcoords.Y, 2));
             if (Math.Abs(distance) <= 525f)
             {
