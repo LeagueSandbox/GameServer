@@ -33,6 +33,11 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         internal const float DETECT_RANGE = 475.0f;
 
         /// <summary>
+        /// Variable containing all data about the AI's current character such as base health, base mana, whether or not they are melee, base movespeed, per level stats, etc.
+        /// </summary>
+        /// TODO: Move to AttackableUnit as it relates to stats.
+        public ICharData CharData { get; }
+        /// <summary>
         /// Whether or not this Unit is dead. Refer to TakeDamage() and Die().
         /// </summary>
         public bool IsDead { get; protected set; }
@@ -109,8 +114,9 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
 
         {
             Logger = LoggerProvider.GetLogger();
-            Stats = stats;
             Model = model;
+            CharData = _game.Config.ContentManager.GetCharData(Model);
+            Stats = stats;
             Waypoints = new List<Vector2> { Position };
             CurrentWaypoint = new KeyValuePair<int, Vector2>(1, Position);
             Status = StatusFlags.CanAttack | StatusFlags.CanCast | StatusFlags.CanMove | StatusFlags.CanMoveEver | StatusFlags.Targetable;
@@ -914,7 +920,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                         {
                             Stats.IsTargetable = enabled;
                             // TODO: Refactor this.
-                            if (this is IObjAiBase obj && !obj.CharData.IsUseable)
+                            if (CharData.IsUseable)
                             {
                                 Stats.SetActionState(ActionState.TARGETABLE, enabled);
                             }

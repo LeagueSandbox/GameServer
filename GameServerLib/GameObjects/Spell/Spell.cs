@@ -849,7 +849,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
 
                 if (spellTarget != null
                 && (!spellTarget.IsVisibleByTeam(CastInfo.Owner.Team)
-                || (!spellTarget.Status.HasFlag(StatusFlags.Targetable) && spellTarget is IObjAiBase obj && !obj.CharData.IsUseable)
+                || (!spellTarget.Status.HasFlag(StatusFlags.Targetable) && spellTarget.CharData.IsUseable)
                 || spellTarget.IsDead))
                 {
                     CastInfo.Owner.StopChanneling(ChannelingStopCondition.Cancel, ChannelingStopSource.LostTarget);

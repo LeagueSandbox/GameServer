@@ -26,10 +26,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             var champion = _playerManager.GetPeerInfo(userId).Champion;
             var target = _game.ObjectManager.GetObjectById(req.TargetNetID) as IAttackableUnit;
 
-            if (target is IObjAiBase obj)
-            {
-                champion.SetSpell(obj.CharData.HeroUseSpell, (byte)SpellSlotType.UseSpellSlot, true);
-            }
+            champion.SetSpell(target.CharData.HeroUseSpell, (byte)SpellSlotType.UseSpellSlot, true);
 
             var s = champion.GetSpell((byte)SpellSlotType.UseSpellSlot);
             var ownerCastingSpell = champion.GetCastSpell();
