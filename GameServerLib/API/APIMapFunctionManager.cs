@@ -8,6 +8,7 @@ using GameServerLib.GameObjects.AttackableUnits;
 using LeaguePackets.Game.Common;
 using LeagueSandbox.GameServer.GameObjects;
 using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits.Buildings;
 using LeagueSandbox.GameServer.GameObjects.AttackableUnits.Buildings.AnimatedBuildings;
 using LeagueSandbox.GameServer.Handlers;
 using LeagueSandbox.GameServer.Logging;
@@ -175,7 +176,7 @@ namespace LeagueSandbox.GameServer.API
             string name, string model, Vector2 position, uint netId = 0,
             TeamId team = TeamId.TEAM_NEUTRAL, int skinId = 0, bool ignoreCollision = false,
             bool isTargetable = false, bool isWard = false, string aiScript = "", int damageBonus = 0,
-            int healthBonus = 0, int initialLevel = 1, bool instantNotifyBroadcast = false)
+            int healthBonus = 0, int initialLevel = 1)
         {
             return new Minion(_game, null, position, model, name, netId, team, skinId, ignoreCollision, isTargetable, isWard, null, aiScript, damageBonus, healthBonus, initialLevel);
         }
@@ -234,19 +235,6 @@ namespace LeagueSandbox.GameServer.API
         )
         {
             return new Monster(_game, name, model, position, faceDirection, monsterCamp, team, netId, spawnAnimation, isTargetable, ignoresCollision, aiScript, damageBonus, healthBonus, initialLevel);
-        }
-
-        /// <summary>
-        /// Set an unit's icon on minimap
-        /// </summary>
-        /// <param name="unit"></param>
-        /// <param name="iconCategory"></param>
-        /// <param name="changeIcon"></param>
-        /// <param name="borderCategory"></param>
-        /// <param name="changeBorder"></param>
-        public static void SetMinimapIcon(IAttackableUnit unit, string iconCategory = "", bool changeIcon = false, string borderCategory = "", bool changeBorder = false, string borderScriptName = "")
-        {
-            _game.PacketNotifier.NotifyS2C_UnitSetMinimapIcon(unit, iconCategory, changeIcon, borderCategory, changeBorder, borderScriptName);
         }
 
         /// <summary>

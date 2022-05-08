@@ -514,7 +514,11 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
 
             if (!CastInfo.IsAutoAttack)
             {
-                CurrentAmmo--;
+                if(SpellData.MaxAmmo > 1)
+                {
+                    CurrentAmmo--;
+                }
+
                 _game.PacketNotifier.NotifyNPC_CastSpellAns(this);
             }
 

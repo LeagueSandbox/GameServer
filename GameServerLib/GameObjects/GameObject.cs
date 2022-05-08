@@ -348,6 +348,23 @@ namespace LeagueSandbox.GameServer.GameObjects
         }
 
         /// <summary>
+        /// List of all teams that has vision of this object
+        /// </summary>
+        /// <returns></returns>
+        public List<TeamId> TeamsWithVision()
+        {
+            List<TeamId> toReturn = new List<TeamId>();
+            foreach(var team in _visibleByTeam.Keys)
+            {
+                if (_visibleByTeam[team])
+                {
+                    toReturn.Add(team);
+                }
+            }
+            return toReturn;
+        }
+
+        /// <summary>
         /// Whether or not the object is visible for the specified player.
         /// <summary>
         /// <param name="userId">The player in relation to which the value is obtained</param>

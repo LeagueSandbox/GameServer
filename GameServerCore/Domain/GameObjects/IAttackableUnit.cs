@@ -54,7 +54,7 @@ namespace GameServerCore.Domain.GameObjects
         /// Resets when reaching byte.MaxValue (255).
         /// </summary>
         byte TeleportID { get; set; }
-
+        IIconInfo IconInfo { get; }
         /// <summary>
         /// Gets the HashString for this unit's model. Used for packets so clients know what data to load.
         /// </summary>
@@ -282,5 +282,6 @@ namespace GameServerCore.Domain.GameObjects
         /// First string is the animation to override, second string is the animation to play in place of the first.
         /// <param name="animPairs">Dictionary of animations to set.</param>
         void SetAnimStates(Dictionary<string, string> animPairs);
+        void UpdateIcon();
     }
 }

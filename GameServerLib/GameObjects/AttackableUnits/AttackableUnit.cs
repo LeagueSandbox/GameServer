@@ -9,6 +9,7 @@ using GameServerCore.Domain.GameObjects;
 using GameServerCore.Domain.GameObjects.Spell.Missile;
 using GameServerCore.Domain.GameObjects.Spell.Sector;
 using GameServerCore.Enums;
+using GameServerLib.Content;
 using GameServerLib.GameObjects.AttackableUnits;
 using LeagueSandbox.GameServer.API;
 using LeagueSandbox.GameServer.Logging;
@@ -91,7 +92,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// Parameters of any forced movements (dashes) this unit is performing.
         /// </summary>
         public IForceMovementParameters MovementParameters { get; protected set; }
-
+        public IIconInfo IconInfo { get; }
         public override bool IsAffectedByFoW => true;
         public override bool SpawnShouldBeHidden => true;
 
@@ -120,6 +121,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             BuffSlots = new IBuff[256];
             ParentBuffs = new Dictionary<string, IBuff>();
             BuffList = new List<IBuff>();
+            IconInfo = new IconInfo(this);
         }
 
         /// <summary>
@@ -273,6 +275,36 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                     exit = _game.Map.NavigationGrid.GetClosestTerrainExit(exit, PathfindingRadius + 1.0f);
                 }
                 SetPosition(exit, false);
+            }
+        }
+
+        protected override void OnSpawn(int userId, TeamId team, bool doVision)
+        {
+            base.OnSpawn(userId, team, doVision);
+            UpdateIconVision(team);
+        }
+        protected override void OnEnterVision(int userId, TeamId team)
+        {
+            base.OnEnterVision(userId, team);
+            UpdateIconVision(team);
+        }
+
+        public void UpdateIconVision(TeamId team)
+        {
+            if (!IconInfo.TeamsNotified.Contains(team))
+            {
+                IconInfo.AddNotifiedTeam(team);
+                _game.PacketNotifier.NotifyS2C_UnitSetMinimapIcon(this, team);
+            }
+        }
+
+        public void UpdateIcon()
+        {
+            IconInfo.TeamsNotified.Clear();
+            _game.PacketNotifier.NotifyS2C_UnitSetMinimapIcon(this);
+            foreach(TeamId team in TeamsWithVision())
+            {
+                IconInfo.TeamsNotified.Add(team);
             }
         }
 
