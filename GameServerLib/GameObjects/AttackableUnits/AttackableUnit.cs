@@ -33,9 +33,8 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         internal const float DETECT_RANGE = 475.0f;
 
         /// <summary>
-        /// Variable containing all data about the AI's current character such as base health, base mana, whether or not they are melee, base movespeed, per level stats, etc.
+        /// Variable containing all data about the this unit's current character such as base health, base mana, whether or not they are melee, base movespeed, per level stats, etc.
         /// </summary>
-        /// TODO: Move to AttackableUnit as it relates to stats.
         public ICharData CharData { get; }
         /// <summary>
         /// Whether or not this Unit is dead. Refer to TakeDamage() and Die().
