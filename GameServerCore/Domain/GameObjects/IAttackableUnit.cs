@@ -58,6 +58,10 @@ namespace GameServerCore.Domain.GameObjects
         /// Resets when reaching byte.MaxValue (255).
         /// </summary>
         byte TeleportID { get; set; }
+        /// <summary>
+        /// Information about this object's icon on the minimap.
+        /// </summary>
+        /// TODO: Move this to GameObject.
         IIconInfo IconInfo { get; }
         /// <summary>
         /// Gets the HashString for this unit's model. Used for packets so clients know what data to load.
