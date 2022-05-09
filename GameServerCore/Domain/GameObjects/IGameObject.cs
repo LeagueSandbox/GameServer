@@ -156,10 +156,10 @@ namespace GameServerCore.Domain.GameObjects
         /// <param name="team">A team which could have vision of this object.</param>
         /// <param name="visible">New value.</param>
         void SetVisibleByTeam(TeamId team, bool visible = true);
+        
         /// <summary>
-        /// List of all teams that has vision of this object
+        /// Gets a list of all teams that have vision of this object.
         /// </summary>
-        /// <returns></returns>
         List<TeamId> TeamsWithVision();
         /// <summary>
         /// Whether or not the object is visible for the specified player.
