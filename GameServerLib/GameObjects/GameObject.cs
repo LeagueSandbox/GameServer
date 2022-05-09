@@ -348,9 +348,8 @@ namespace LeagueSandbox.GameServer.GameObjects
         }
 
         /// <summary>
-        /// List of all teams that has vision of this object
+        /// Gets a list of all teams that have vision of this object.
         /// </summary>
-        /// <returns></returns>
         public List<TeamId> TeamsWithVision()
         {
             List<TeamId> toReturn = new List<TeamId>();
