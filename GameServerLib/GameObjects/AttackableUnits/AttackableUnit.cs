@@ -96,6 +96,10 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// Parameters of any forced movements (dashes) this unit is performing.
         /// </summary>
         public IForceMovementParameters MovementParameters { get; protected set; }
+        /// <summary>
+        /// Information about this object's icon on the minimap.
+        /// </summary>
+        /// TODO: Move this to GameObject.
         public IIconInfo IconInfo { get; }
         public override bool IsAffectedByFoW => true;
         public override bool SpawnShouldBeHidden => true;
