@@ -161,6 +161,7 @@ namespace GameServerCore.Domain.GameObjects
         /// Gets a list of all teams that have vision of this object.
         /// </summary>
         List<TeamId> TeamsWithVision();
+        
         /// <summary>
         /// Whether or not the object is visible for the specified player.
         /// <summary>
