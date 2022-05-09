@@ -81,8 +81,8 @@ namespace MapScripts.Map8
             foreach (var infoPoint in _mapObjects[GameObjectTypes.InfoPoint])
             {
                 var position = new Vector2(infoPoint.CentralPoint.X, infoPoint.CentralPoint.Z);
-                NotifySpawnBroadcast(AddPosPerceptionBubble(position, 500.0f, 25000.0f, TeamId.TEAM_BLUE, false));
-                NotifySpawnBroadcast(AddPosPerceptionBubble(position, 500.0f, 25000.0f, TeamId.TEAM_PURPLE, false));
+                AddPosPerceptionBubble(position, 500.0f, 25000.0f, TeamId.TEAM_BLUE, false);
+                AddPosPerceptionBubble(position, 500.0f, 25000.0f, TeamId.TEAM_PURPLE, false);
 
                 if (infoPoint.Name == "Info_PointA" || infoPoint.Name == "Info_PointB")
                 {
@@ -103,7 +103,7 @@ namespace MapScripts.Map8
         public static void CreateTeleportPoint(Vector2 position, TeamId team, string mapIcon)
         {
             var point = CreateMinion("AscWarpIcon", "AscWarpIcon", position, team: team, ignoreCollision: false, isTargetable: false);
-            SetMinimapIcon(point, mapIcon, true);
+            point.IconInfo.SwapIcon(mapIcon, true);
             TeleportPlates.Add(point);
             point.PauseAi(true);
         }

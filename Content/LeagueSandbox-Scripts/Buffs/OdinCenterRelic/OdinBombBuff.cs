@@ -64,7 +64,7 @@ namespace Buffs
                 iconCategory = "CenterRelicRight";
             }
 
-            SetMinimapIcon(unit, iconCategory, true);
+            unit.IconInfo.SwapIcon(iconCategory, true);
         }
         public void OnDeath(IDeathData deathData)
         {

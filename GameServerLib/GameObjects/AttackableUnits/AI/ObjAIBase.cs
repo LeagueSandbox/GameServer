@@ -40,11 +40,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         /// </summary>
         public ISpell ChannelSpell { get; protected set; }
         /// <summary>
-        /// Variable containing all data about the AI's current character such as base health, base mana, whether or not they are melee, base movespeed, per level stats, etc.
-        /// </summary>
-        /// TODO: Move to AttackableUnit as it relates to stats.
-        public ICharData CharData { get; }
-        /// <summary>
         /// The ID of the skin this unit should use for its model.
         /// </summary>
         public int SkinID { get; set; }
@@ -90,8 +85,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             base(game, model, stats, collisionRadius, position, visionRadius, netId, team)
         {
             _itemManager = game.ItemManager;
-
-            CharData = _game.Config.ContentManager.GetCharData(Model);
 
             SkinID = skinId;
 
@@ -1116,7 +1109,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             // Stop targeting an untargetable unit.
             if (TargetUnit != null && !TargetUnit.Status.HasFlag(StatusFlags.Targetable))
             {
-                if(TargetUnit is IObjAiBase aiTar && aiTar.CharData.IsUseable)
+                if(TargetUnit.CharData.IsUseable)
                 {
                     return;
                 }
@@ -1179,7 +1172,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                     CancelAutoAttack(!HasAutoAttacked, true);
                 }
             }
-            else if (TargetUnit.IsDead || (!TargetUnit.Status.HasFlag(StatusFlags.Targetable) && TargetUnit is IObjAiBase obj && !obj.CharData.IsUseable) || !TargetUnit.IsVisibleByTeam(Team))
+            else if (TargetUnit.IsDead || (!TargetUnit.Status.HasFlag(StatusFlags.Targetable) && TargetUnit.CharData.IsUseable) || !TargetUnit.IsVisibleByTeam(Team))
             {
                 if (IsAttacking)
                 {

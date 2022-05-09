@@ -9,6 +9,7 @@ using GameServerCore.Domain.GameObjects;
 using GameServerCore.Domain.GameObjects.Spell.Missile;
 using GameServerCore.Domain.GameObjects.Spell.Sector;
 using GameServerCore.Enums;
+using GameServerLib.Content;
 using GameServerLib.GameObjects.AttackableUnits;
 using LeagueSandbox.GameServer.API;
 using LeagueSandbox.GameServer.Logging;
@@ -31,6 +32,10 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         //TODO: Find out where this variable came from and if it can be unhardcoded
         internal const float DETECT_RANGE = 475.0f;
 
+        /// <summary>
+        /// Variable containing all data about the this unit's current character such as base health, base mana, whether or not they are melee, base movespeed, per level stats, etc.
+        /// </summary>
+        public ICharData CharData { get; }
         /// <summary>
         /// Whether or not this Unit is dead. Refer to TakeDamage() and Die().
         /// </summary>
@@ -91,7 +96,11 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// Parameters of any forced movements (dashes) this unit is performing.
         /// </summary>
         public IForceMovementParameters MovementParameters { get; protected set; }
-
+        /// <summary>
+        /// Information about this object's icon on the minimap.
+        /// </summary>
+        /// TODO: Move this to GameObject.
+        public IIconInfo IconInfo { get; }
         public override bool IsAffectedByFoW => true;
         public override bool SpawnShouldBeHidden => true;
 
@@ -108,8 +117,9 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
 
         {
             Logger = LoggerProvider.GetLogger();
-            Stats = stats;
             Model = model;
+            CharData = _game.Config.ContentManager.GetCharData(Model);
+            Stats = stats;
             Waypoints = new List<Vector2> { Position };
             CurrentWaypoint = new KeyValuePair<int, Vector2>(1, Position);
             Status = StatusFlags.CanAttack | StatusFlags.CanCast | StatusFlags.CanMove | StatusFlags.CanMoveEver | StatusFlags.Targetable;
@@ -120,6 +130,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             BuffSlots = new IBuff[256];
             ParentBuffs = new Dictionary<string, IBuff>();
             BuffList = new List<IBuff>();
+            IconInfo = new IconInfo(this);
         }
 
         /// <summary>
@@ -273,6 +284,36 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                     exit = _game.Map.NavigationGrid.GetClosestTerrainExit(exit, PathfindingRadius + 1.0f);
                 }
                 SetPosition(exit, false);
+            }
+        }
+
+        protected override void OnSpawn(int userId, TeamId team, bool doVision)
+        {
+            base.OnSpawn(userId, team, doVision);
+            UpdateIconVision(team);
+        }
+        protected override void OnEnterVision(int userId, TeamId team)
+        {
+            base.OnEnterVision(userId, team);
+            UpdateIconVision(team);
+        }
+
+        public void UpdateIconVision(TeamId team)
+        {
+            if (!IconInfo.TeamsNotified.Contains(team))
+            {
+                IconInfo.AddNotifiedTeam(team);
+                _game.PacketNotifier.NotifyS2C_UnitSetMinimapIcon(this, team);
+            }
+        }
+
+        public void UpdateIcon()
+        {
+            IconInfo.TeamsNotified.Clear();
+            _game.PacketNotifier.NotifyS2C_UnitSetMinimapIcon(this);
+            foreach(TeamId team in TeamsWithVision())
+            {
+                IconInfo.TeamsNotified.Add(team);
             }
         }
 
@@ -882,7 +923,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                         {
                             Stats.IsTargetable = enabled;
                             // TODO: Refactor this.
-                            if (this is IObjAiBase obj && !obj.CharData.IsUseable)
+                            if (CharData.IsUseable)
                             {
                                 Stats.SetActionState(ActionState.TARGETABLE, enabled);
                             }

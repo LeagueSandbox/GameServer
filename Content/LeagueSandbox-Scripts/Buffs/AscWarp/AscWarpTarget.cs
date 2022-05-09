@@ -22,17 +22,17 @@ namespace Buffs
         IParticle p1;
         public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
-            SetMinimapIcon(unit, changeBorder: true, borderCategory: "Teleport", borderScriptName: "ascwarptarget");
-            SetMinimapIcon(unit, "NoIcon", true);
+            unit.IconInfo.SwapBorder("Teleport", true, "ascwarptarget");
+            unit.IconInfo.SwapIcon("NoIcon", true);
             p1 = AddParticleTarget(buff.SourceUnit, null, "global_asc_teleport_target", unit, -1);
         }
 
         public void OnDeactivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
             RemoveParticle(p1);
-            SetMinimapIcon(unit, changeBorder: true);
+            unit.IconInfo.SwapBorder("", true);
             TeleportTo(buff.SourceUnit, unit.Position.X, unit.Position.Y);
-            if(buff.SourceUnit is IChampion ch)
+            if (buff.SourceUnit is IChampion ch)
             {
                 TeleportCamera(ch, new Vector3(unit.Position.X, unit.GetHeight(), unit.Position.Y));
             }

@@ -51,6 +51,8 @@ namespace AIScripts
                 {
                     if (monster.Position != initialPosition)
                     {
+                        //This causes EXTREME lag when monsters spawn
+                        //TODO: Find a better way to do this
                         ResetCamp();
                     }
                     else if (monster.Direction != initialFacingDirection)

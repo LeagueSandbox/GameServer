@@ -21,11 +21,6 @@ namespace GameServerCore.Domain.GameObjects
         /// </summary>
         ISpell ChannelSpell { get; }
         /// <summary>
-        /// Variable containing all data about the AI's current character such as base health, base mana, whether or not they are melee, base movespeed, per level stats, etc.
-        /// </summary>
-        /// TODO: Move to AttackableUnit as it relates to stats..
-        ICharData CharData { get; }
-        /// <summary>
         /// An unit's A.I Script
         /// </summary>
         IAIScript AIScript { get; }

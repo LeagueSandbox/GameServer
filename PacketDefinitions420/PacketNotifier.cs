@@ -2176,7 +2176,7 @@ namespace PacketDefinitions420
                 Level = obj.Stats.Level,
             };
 
-            if(obj is IChampion ch)
+            if (obj is IChampion ch)
             {
                 // TODO: Typo >:(
                 levelUp.AveliablePoints = ch.SkillPoints;
@@ -2483,7 +2483,7 @@ namespace PacketDefinitions420
 
         public void NotifyS2C_AmmoUpdate(ISpell spell)
         {
-            if(spell.CastInfo.Owner is IChampion ch)
+            if (spell.CastInfo.Owner is IChampion ch)
             {
                 var packet = new S2C_AmmoUpdate
                 {
@@ -2501,7 +2501,7 @@ namespace PacketDefinitions420
                     packet.AmmoRechargeTotalTime = spell.GetAmmoRechageTime();
                 }
 
-              _packetHandlerManager.SendPacket((int)ch.GetPlayerId(), packet.GetBytes(), Channel.CHL_S2C);
+                _packetHandlerManager.SendPacket((int)ch.GetPlayerId(), packet.GetBytes(), Channel.CHL_S2C);
             }
         }
 
@@ -3393,18 +3393,34 @@ namespace PacketDefinitions420
             _packetHandlerManager.BroadcastPacketTeam(team, dm.GetBytes(), Channel.CHL_S2C);
         }
 
-        public void NotifyS2C_UnitSetMinimapIcon(IAttackableUnit unit, string iconCategory = "", bool changeIcon = false, string borderCategory = "", bool changeBorder = false, string borderScriptName = "")
+        public void NotifyS2C_UnitSetMinimapIcon(IAttackableUnit unit, TeamId team)
         {
             var packet = new S2C_UnitSetMinimapIcon
             {
                 UnitNetID = unit.NetId,
-                IconCategory = iconCategory,
-                ChangeIcon = changeIcon,
-                BorderCategory = borderCategory,
-                ChangeBorder = changeBorder,
-                BorderScriptName = borderScriptName
+                IconCategory = unit.IconInfo.IconCategory,
+                ChangeIcon = unit.IconInfo.ChangeIcon,
+                BorderCategory = unit.IconInfo.BorderCategory,
+                ChangeBorder = unit.IconInfo.ChangeBorder,
+                BorderScriptName = unit.IconInfo.BorderScriptName
             };
-            _packetHandlerManager.BroadcastPacket(packet.GetBytes(), Channel.CHL_S2C);
+
+            _packetHandlerManager.BroadcastPacketTeam(team, packet.GetBytes(), Channel.CHL_S2C);
+        }
+
+        public void NotifyS2C_UnitSetMinimapIcon(IAttackableUnit unit)
+        {
+            var packet = new S2C_UnitSetMinimapIcon
+            {
+                UnitNetID = unit.NetId,
+                IconCategory = unit.IconInfo.IconCategory,
+                ChangeIcon = unit.IconInfo.ChangeIcon,
+                BorderCategory = unit.IconInfo.BorderCategory,
+                ChangeBorder = unit.IconInfo.ChangeBorder,
+                BorderScriptName = unit.IconInfo.BorderScriptName
+            };
+
+            _packetHandlerManager.BroadcastPacketVision(unit, packet.GetBytes(), Channel.CHL_S2C);
         }
 
         /// <summary>

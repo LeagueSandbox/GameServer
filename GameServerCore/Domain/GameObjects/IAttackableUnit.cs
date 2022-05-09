@@ -11,6 +11,10 @@ namespace GameServerCore.Domain.GameObjects
     public interface IAttackableUnit : IGameObject
     {
         /// <summary>
+        /// Variable containing all data about this unit's current character such as base health, base mana, whether or not they are melee, base movespeed, per level stats, etc.
+        /// </summary>
+        ICharData CharData { get; }
+        /// <summary>
         /// Whether or not this Unit is dead. Refer to TakeDamage() and Die().
         /// </summary>
         bool IsDead { get; }
@@ -54,7 +58,11 @@ namespace GameServerCore.Domain.GameObjects
         /// Resets when reaching byte.MaxValue (255).
         /// </summary>
         byte TeleportID { get; set; }
-
+        /// <summary>
+        /// Information about this object's icon on the minimap.
+        /// </summary>
+        /// TODO: Move this to GameObject.
+        IIconInfo IconInfo { get; }
         /// <summary>
         /// Gets the HashString for this unit's model. Used for packets so clients know what data to load.
         /// </summary>
@@ -282,5 +290,6 @@ namespace GameServerCore.Domain.GameObjects
         /// First string is the animation to override, second string is the animation to play in place of the first.
         /// <param name="animPairs">Dictionary of animations to set.</param>
         void SetAnimStates(Dictionary<string, string> animPairs);
+        void UpdateIcon();
     }
 }
