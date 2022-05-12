@@ -61,6 +61,8 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             SetTeam(team);
             Inventory = InventoryManager.CreateInventory(game.PacketNotifier);
             Replication = new ReplicationAiTurret(this);
+
+            game.Map.NavigationGrid.StaticObjects.Add(this);
         }
 
 

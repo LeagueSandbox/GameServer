@@ -31,15 +31,31 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             if (champion.MovementParameters == null)
             {
                 // Last waypoint position
+                if(req.Waypoints.Count <= 0)
+                {
+                    return false;
+                }
+                Vector2 dest = TranslateFromCenteredCoordinates(req.Waypoints[req.Waypoints.Count - 1]);
+                List<Vector2> translatedWaypoints = //new List<Vector2>(2){ champion.Position, dest };/*
+                _game.Map.PathingHandler.GetPath(champion.Position, dest);//*/
+                
+                if (translatedWaypoints == null)
+                {
+                    return false;
+                }
+
+                /*
                 List<Vector2> translatedWaypoints = req.Waypoints.ConvertAll(TranslateFromCenteredCoordinates);
                 var lastindex = 0;
                 if (!(translatedWaypoints.Count - 1 < 0))
                 {
                     lastindex = translatedWaypoints.Count - 1;
                 }
+                */
 
                 var nav = _game.Map.NavigationGrid;
-
+                
+                /*
                 foreach (Vector2 wp in translatedWaypoints)
                 {
                     if (!_game.Map.PathingHandler.IsWalkable(wp))
@@ -59,6 +75,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                         break;
                     }
                 }
+                */
 
                 var u = _game.ObjectManager.GetObjectById(req.TargetNetID) as IAttackableUnit;
                 var pet = champion.GetPet();
@@ -128,11 +145,6 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                         champion.SetWaypoints(translatedWaypoints);
                         champion.SetTargetUnit(u);
                         break;
-                }
-
-                if (translatedWaypoints == null)
-                {
-                    return false;
                 }
             }
 

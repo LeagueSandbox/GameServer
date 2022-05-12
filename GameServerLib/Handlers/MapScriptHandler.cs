@@ -83,6 +83,7 @@ namespace LeagueSandbox.GameServer.Handlers
         public void Update(float diff)
         {
             CollisionHandler.Update();
+            NavigationGrid.Update();
             PathingHandler.Update(diff);
             MapScript.Update(diff);
 

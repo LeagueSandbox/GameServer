@@ -9,6 +9,7 @@ using Vector2 = System.Numerics.Vector2;
 using System.Numerics;
 using GameServerLib.Extensions;
 using GameServerCore.Enums;
+using LeagueSandbox.GameServer.GameObjects;
 
 namespace LeagueSandbox.GameServer.Content.Navigation
 {
@@ -176,6 +177,74 @@ namespace LeagueSandbox.GameServer.Content.Navigation
             }
         }
 
+        uint occupanceUpdateCounter = 0;
+        public List<IGameObject> StaticObjects { get; private set; } = new List<IGameObject>();
+        public void Update()
+        {
+            occupanceUpdateCounter++;
+            foreach(var obj in StaticObjects)
+            {
+                Vector2 r = Vector2.One * obj.PathfindingRadius;
+                Vector2 p1 = TranslateToNavGrid(obj.Position - r);
+                Vector2 p2 = TranslateToNavGrid(obj.Position + r);
+                for(short x = (short)p1.X; x < p2.X; x++)
+                {
+                    for(short y = (short)p1.Y; y < p2.Y; y++)
+                    {
+                        float occupance = ComputeOccupance(x, y, obj);
+                        
+                        var cell = GetCell(x, y);
+                        cell.Occupance = Math.Min(1, GetOccupance(cell) + occupance);
+                        cell.OccupanceUpdateCounter = occupanceUpdateCounter;
+                    }
+                }
+            }
+        }
+
+        //TODO: find better metric
+        float ComputeOccupance(float x, float y, IGameObject obj)
+        {
+            Vector2 cellSize = Vector2.One / new Vector2(
+                TranslationMaxGridPosition.X,
+                TranslationMaxGridPosition.Z
+            );
+            float cellDiagonal = Vector2.Distance(Vector2.Zero, cellSize);
+            float r = obj.PathfindingRadius;
+            float r2 = r*r;
+
+            Vector2 corner = TranslateFrmNavigationGrid(new Vector2(x, y));
+            float d1 = Vector2.DistanceSquared(obj.Position, corner);
+            float d2 = Vector2.DistanceSquared(obj.Position, new Vector2(corner.X + cellSize.X, corner.Y));
+            float d3 = Vector2.DistanceSquared(obj.Position, new Vector2(corner.X, corner.Y + cellSize.Y));
+            float d4 = Vector2.DistanceSquared(obj.Position, corner + cellSize);
+
+            float occupance = 0;
+            float farest = Math.Max(Math.Max(d1, d2), Math.Max(d3, d4));
+            if(farest <= r2)
+            {
+                occupance = 1;
+            }
+            else
+            {
+                float nearest = Math.Min(Math.Min(d1, d2), Math.Min(d3, d4));
+                if(nearest < r2)
+                {
+                    farest = (float)Math.Sqrt(farest);
+                    occupance = (farest - r) / cellDiagonal;
+                }
+            }
+            return occupance;
+        }
+
+        float GetOccupance(NavigationGridCell cell)
+        {
+            if(cell.OccupanceUpdateCounter == occupanceUpdateCounter)
+            {
+                return cell.Occupance;
+            }
+            return 0;
+        }
+
         /// <summary>
         /// Finds a path of waypoints, which are aligned by the cells of the navgrid (A* method), that lead to a set destination.
         /// </summary>
@@ -237,13 +306,16 @@ namespace LeagueSandbox.GameServer.Content.Navigation
                             continue;
                         }
 
-                        // not walkable - skip
-                        if (distanceThreshold != 0 && !IsWalkable(neighborCell.Locator.X, neighborCell.Locator.Y, distanceThreshold, false))
+                        //TODO: Include occupance in cost calculation
+                        ///*
+                        if(GetOccupance(cell) > .95f)
                         {
                             closedList.Add(neighborCell.ID, neighborCell);
                             continue;
-                        }
-                        else if (neighborCell.HasFlag(NavigationGridCellFlags.NOT_PASSABLE) || neighborCell.HasFlag(NavigationGridCellFlags.SEE_THROUGH))
+                        }//*/
+
+                        // not walkable - skip
+                        if (!IsWalkable(neighborCell.Locator.X, neighborCell.Locator.Y, distanceThreshold, false))
                         {
                             closedList.Add(neighborCell.ID, neighborCell);
                             continue;
@@ -254,8 +326,14 @@ namespace LeagueSandbox.GameServer.Content.Navigation
                         npath.Push(neighborCell);
 
                         // add 1 for every cell used
-                        priorityQueue.Enqueue(npath, currentCost + 1 + neighborCell.Heuristic + neighborCell.ArrivalCost + neighborCell.AdditionalCost
-                            + NavigationGridCell.Distance(neighborCell, goal));
+                        priorityQueue.Enqueue(
+                            npath,
+                            currentCost + 1
+                            + neighborCell.Heuristic
+                            + neighborCell.ArrivalCost
+                            + neighborCell.AdditionalCost
+                            + NavigationGridCell.Distance(neighborCell, goal)
+                        );
 
                         closedList.Add(neighborCell.ID, neighborCell);
                     }
@@ -269,7 +347,8 @@ namespace LeagueSandbox.GameServer.Content.Navigation
 
                 var pathList = new List<NavigationGridCell>(path);
                 pathList.Reverse();
-                pathList = SmoothPath(pathList);
+                //TODO: Consider static objects
+                //pathList = SmoothPath(pathList);
 
                 // removes the first point
                 pathList.RemoveAt(0);
@@ -563,6 +642,13 @@ namespace LeagueSandbox.GameServer.Content.Navigation
             return IsWalkable(new Vector2(x, y), checkRadius, translate);
         }
 
+        bool IsWalkable(NavigationGridCell cell)
+        {
+            return cell != null
+                && !cell.HasFlag(NavigationGridCellFlags.NOT_PASSABLE)
+                && !cell.HasFlag(NavigationGridCellFlags.SEE_THROUGH);
+        }
+
         /// <summary>
         /// Whether or not the cell at the given position can be pathed on.
         /// </summary>
@@ -583,7 +669,7 @@ namespace LeagueSandbox.GameServer.Content.Navigation
 
                 NavigationGridCell cell = GetCell((short)vector.X, (short)vector.Y);
 
-                return cell != null && !cell.HasFlag(NavigationGridCellFlags.NOT_PASSABLE) && !cell.HasFlag(NavigationGridCellFlags.SEE_THROUGH);
+                return cell != null && IsWalkable(cell);
             }
 
             List<NavigationGridCell> cells = GetAllCellsInRange(coords, checkRadius, translate);
@@ -593,9 +679,9 @@ namespace LeagueSandbox.GameServer.Content.Navigation
                 return false;
             }
 
-            foreach (NavigationGridCell c in cells)
+            foreach (NavigationGridCell cell in cells)
             {
-                if (c == null || c.HasFlag(NavigationGridCellFlags.NOT_PASSABLE) || c.HasFlag(NavigationGridCellFlags.SEE_THROUGH))
+                if (cell == null || !IsWalkable(cell))
                 {
                     return false;
                 }
@@ -932,8 +1018,19 @@ namespace LeagueSandbox.GameServer.Content.Navigation
                         new Vector2((short)Math.Floor(x1), (short)Math.Floor(y1)),
                     };
 
+                    bool exists = false;
+                    foreach(Vector2 v in vertices)
+                    {
+                        var cell = GetCell((short)v.X, (short)v.Y);
+                        if(/*GetOccupance(cell) != 1 &&*/ IsWalkable(cell))
+                        {
+                            exists = true;
+                            break;
+                        }
+                    }
+
                     // if none are walkable, then the path is blocked.
-                    if (!vertices.Exists(v => IsWalkable(v, 0, false)))
+                    if (!exists)
                     {
                         return true;
                     }
