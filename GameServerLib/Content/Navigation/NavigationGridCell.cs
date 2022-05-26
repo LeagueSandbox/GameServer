@@ -156,5 +156,11 @@ namespace LeagueSandbox.GameServer.Content.Navigation
         {
             return NavigationGridLocator.Distance(a.Locator, b.Locator);
         }
+
+        public int BecomesUnwalkableStartingFromRadius = int.MaxValue;
+        public bool IsWalkable(int radius = 0)
+        {
+            return radius < BecomesUnwalkableStartingFromRadius;
+        }
     }
 }
