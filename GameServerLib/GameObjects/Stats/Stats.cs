@@ -49,7 +49,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
         public IStat MagicPenetration { get; }
         public IStat ManaPoints { get; }
         public IStat ManaRegeneration { get; }
-        public IStat MoveSpeed { get; }
+        public IStatSpeed MoveSpeed { get; }
         public IStat Range { get; }
         public IStat Size { get; }
         public IStat SpellVamp { get; }
@@ -105,7 +105,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
             MagicPenetration = new Stat();
             ManaPoints = new Stat();
             ManaRegeneration = new Stat();
-            MoveSpeed = new Stat();
+            MoveSpeed = new StatSpeed();
             Range = new Stat();
             Size = new Stat(1.0f, 0, 0, 0, 0);
             SpellVamp = new Stat();
