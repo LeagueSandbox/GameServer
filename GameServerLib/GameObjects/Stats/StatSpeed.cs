@@ -16,6 +16,8 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
             set => _slowResist = value;
         }
 
+        public float TotalRaw => BaseValue + FlatBonus;
+
         public override float Total
         {
             get
@@ -46,13 +48,13 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
 
                 if (Slows.Count > 0)
                 {
+                    //Only takes into account the highest slow
                     speed *= 1 - (Slows.Max(z => z) * (1 - SlowResist));
                 }
 
                 return speed;
             }
         }
-        public float TotalRaw => BaseValue + FlatBonus;
 
         public override bool ApplyStatModifier(IStatModifier statModifier)
         {
