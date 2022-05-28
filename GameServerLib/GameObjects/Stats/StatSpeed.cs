@@ -75,6 +75,11 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
                 Slows.Add(statModifier.PercentBonus);
             }
 
+            if(statModifier is StatModifierSpeed speed)
+            {
+                SlowResist += speed.SlowResist;
+            }
+
             return true;
         }
 
@@ -95,6 +100,11 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
             else
             {
                 Slows.Remove(statModifier.PercentBonus);
+            }
+
+            if (statModifier is StatModifierSpeed speed)
+            {
+                SlowResist -= speed.SlowResist;
             }
 
             return true;
