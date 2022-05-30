@@ -35,7 +35,7 @@ namespace Buffs
             ApiEventManager.OnMoveEnd.AddListener(this, unit, OnMoveEnd, true);
             ApiEventManager.OnMoveSuccess.AddListener(this, unit, OnMoveSuccess, true);
 
-            var dashSpeed = 1350f + owner.Stats.MoveSpeed.Total;
+            var dashSpeed = 1350f + owner.GetTrueMoveSpeed();
 
             ForceMovement(owner, target, "", dashSpeed, 0f, Vector2.Distance(target.Position, owner.Position), 0f, -1f, movementOrdersType: ForceMovementOrdersType.CANCEL_ORDER);
 

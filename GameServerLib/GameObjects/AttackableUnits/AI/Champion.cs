@@ -115,7 +115,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             {
                 var runeItem = _itemManager.GetItemType(rune.Value);
                 var newRune = Inventory.SetExtraItem(runeItemSlot, runeItem);
-                Stats.AddModifier(runeItem);
+                AddStatModifier(runeItem);
                 runeItemSlot++;
             }
             Stats.SetSummonerSpellEnabled(0, true);

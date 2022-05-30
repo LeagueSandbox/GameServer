@@ -42,7 +42,7 @@ namespace GameServerCore.Domain.GameObjects
         IStat MagicPenetration { get; }
         IStat ManaPoints { get; }
         IStat ManaRegeneration { get; }
-        IStatSpeed MoveSpeed { get; }
+        IStat MoveSpeed { get; }
         IStat Range { get; }
         IStat Size { get; }
         IStat SpellVamp { get; }
@@ -56,7 +56,8 @@ namespace GameServerCore.Domain.GameObjects
         float CurrentMana { get; set; }
         bool IsGeneratingGold { get; set; }
         float SpellCostReduction { get; }
-
+        float SlowResistPercent { get; set; }
+        float MultiplicativeSpeedBonus { get; set; }
         void AddModifier(IStatsModifier modifier);
         void RemoveModifier(IStatsModifier modifier);
         void LevelUp();

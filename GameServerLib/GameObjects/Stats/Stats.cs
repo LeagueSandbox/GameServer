@@ -49,7 +49,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
         public IStat MagicPenetration { get; }
         public IStat ManaPoints { get; }
         public IStat ManaRegeneration { get; }
-        public IStatSpeed MoveSpeed { get; }
+        public IStat MoveSpeed { get; }
         public IStat Range { get; }
         public IStat Size { get; }
         public IStat SpellVamp { get; }
@@ -60,7 +60,8 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
         public byte Level { get; set; }
         public float Experience { get; set; }
         public float Points { get; set; }
-
+        public float SlowResistPercent { get; set; }
+        public float MultiplicativeSpeedBonus { get; set; }
         private float _currentHealth;
         public float CurrentHealth
         {
@@ -105,7 +106,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
             MagicPenetration = new Stat();
             ManaPoints = new Stat();
             ManaRegeneration = new Stat();
-            MoveSpeed = new StatSpeed();
+            MoveSpeed = new Stat();
             Range = new Stat();
             Size = new Stat(1.0f, 0, 0, 0, 0);
             SpellVamp = new Stat();
@@ -165,6 +166,8 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
             Size.ApplyStatModifier(modifier.Size);
             SpellVamp.ApplyStatModifier(modifier.SpellVamp);
             Tenacity.ApplyStatModifier(modifier.Tenacity);
+            SlowResistPercent += modifier.SlowResistPercent;
+            MultiplicativeSpeedBonus += modifier.MultiplicativeSpeedBonus;
         }
 
         public void RemoveModifier(IStatsModifier modifier)
@@ -190,6 +193,8 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
             Size.RemoveStatModifier(modifier.Size);
             SpellVamp.RemoveStatModifier(modifier.SpellVamp);
             Tenacity.RemoveStatModifier(modifier.Tenacity);
+            SlowResistPercent -= modifier.SlowResistPercent;
+            MultiplicativeSpeedBonus -= modifier.MultiplicativeSpeedBonus;
         }
 
         public float GetTotalAttackSpeed()

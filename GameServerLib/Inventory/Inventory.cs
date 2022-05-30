@@ -69,7 +69,7 @@ namespace LeagueSandbox.GameServer.Inventory
 
         private void LoadOwnerStats(IItemData item, IObjAiBase owner)
         {
-            owner.Stats.AddModifier(item);
+            owner.AddStatModifier(item);
 
             if (!string.IsNullOrEmpty(item.SpellName))
             {
@@ -148,7 +148,7 @@ namespace LeagueSandbox.GameServer.Inventory
 
                 if (owner != null)
                 {
-                    owner.Stats.RemoveModifier(Items[slot].ItemData);
+                    owner.RemoveStatModifier(Items[slot].ItemData);
                 }
 
                 Items[slot] = null;
@@ -160,7 +160,7 @@ namespace LeagueSandbox.GameServer.Inventory
                         ItemScripts[itemID].OnDeactivate(owner);
                         if (ItemScripts[itemID].StatsModifier != null)
                         {
-                            owner.Stats.RemoveModifier(ItemScripts[itemID].StatsModifier);
+                            owner.RemoveStatModifier(ItemScripts[itemID].StatsModifier);
                         }
                     }
                     ItemScripts.Remove(itemID);

@@ -21,10 +21,12 @@
         IStatModifier MagicResist { get; }
         IStatModifier ManaPoints { get; }
         IStatModifier ManaRegeneration { get; }
-        IStatModifierSpeed MoveSpeed { get; }
+        IStatModifier MoveSpeed { get; }
         IStatModifier Range { get; }
         IStatModifier Size { get; }
         IStatModifier SpellVamp { get; }
         IStatModifier Tenacity { get; }
+        public float MultiplicativeSpeedBonus { get; }
+        public float SlowResistPercent { get; }
     }
 }
