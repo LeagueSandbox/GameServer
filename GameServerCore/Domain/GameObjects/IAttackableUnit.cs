@@ -224,6 +224,7 @@ namespace GameServerCore.Domain.GameObjects
         /// </summary>
         /// <returns>Float units/sec.</returns>
         float GetMoveSpeed();
+        float GetTrueMoveSpeed();
         /// <summary>
         /// Teleports this unit to the given position, and optionally repaths from the new position.
         /// </summary>

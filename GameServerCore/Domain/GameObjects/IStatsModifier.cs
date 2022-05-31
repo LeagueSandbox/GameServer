@@ -26,5 +26,7 @@
         IStatModifier Size { get; }
         IStatModifier SpellVamp { get; }
         IStatModifier Tenacity { get; }
+        float MultiplicativeSpeedBonus { get; }
+        float SlowResistPercent { get; }
     }
 }

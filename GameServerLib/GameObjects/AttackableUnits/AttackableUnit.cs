@@ -81,6 +81,10 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// TODO: Move to AttackableUnit.
         private List<IBuff> BuffList { get; }
         /// <summary>
+        /// List of all slows applied to this unit
+        /// </summary>
+        private List<float> _slows = new List<float>();
+        /// <summary>
         /// Waypoints that make up the path a game object is walking in.
         /// </summary>
         public List<Vector2> Waypoints { get; protected set; }
@@ -311,7 +315,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         {
             IconInfo.TeamsNotified.Clear();
             _game.PacketNotifier.NotifyS2C_UnitSetMinimapIcon(this);
-            foreach(TeamId team in TeamsWithVision())
+            foreach (TeamId team in TeamsWithVision())
             {
                 IconInfo.TeamsNotified.Add(team);
             }
@@ -455,6 +459,12 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// <param name="statModifier">Modifier to add.</param>
         public void AddStatModifier(IStatsModifier statModifier)
         {
+            if (statModifier.MoveSpeed.PercentBonus < 0)
+            {
+                _slows.Add(statModifier.MoveSpeed.PercentBonus);
+                statModifier.MoveSpeed.PercentBonus = 0;
+            }
+
             Stats.AddModifier(statModifier);
         }
 
@@ -464,6 +474,12 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// <param name="statModifier">Stat modifier instance to remove.</param>
         public void RemoveStatModifier(IStatsModifier statModifier)
         {
+            if (statModifier.MoveSpeed.PercentBonus < 0)
+            {
+                _slows.Remove(statModifier.MoveSpeed.PercentBonus);
+                statModifier.MoveSpeed.PercentBonus = 0;
+            }
+
             Stats.RemoveModifier(statModifier);
         }
 
@@ -812,7 +828,34 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                 return MovementParameters.PathSpeedOverride;
             }
 
-            return Stats.MoveSpeed.Total;
+            return GetTrueMoveSpeed();
+        }
+
+        public float GetTrueMoveSpeed()
+        {
+            float speed = Stats.MoveSpeed.Total;
+            if (speed > 490)
+            {
+                speed = speed * 0.5f + 230;
+            }
+            else if (speed >= 415)
+            {
+                speed = speed * 0.8f + 83;
+            }
+            else if (speed < 220)
+            {
+                speed = speed * 0.5f + 110;
+            }
+
+            speed = speed * (1 + Stats.MoveSpeed.PercentBonus) * (1 + Stats.MultiplicativeSpeedBonus);
+
+            if (_slows.Count > 0)
+            {
+                //Only takes into account the highest slow
+                speed *= 1 - (_slows.Max(z => z) * (1 - Stats.SlowResistPercent));
+            }
+
+            return speed;
         }
 
         /// <summary>

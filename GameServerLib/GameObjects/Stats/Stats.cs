@@ -60,7 +60,8 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
         public byte Level { get; set; }
         public float Experience { get; set; }
         public float Points { get; set; }
-
+        public float SlowResistPercent { get; set; }
+        public float MultiplicativeSpeedBonus { get; set; }
         private float _currentHealth;
         public float CurrentHealth
         {
@@ -165,6 +166,8 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
             Size.ApplyStatModifier(modifier.Size);
             SpellVamp.ApplyStatModifier(modifier.SpellVamp);
             Tenacity.ApplyStatModifier(modifier.Tenacity);
+            SlowResistPercent += modifier.SlowResistPercent;
+            MultiplicativeSpeedBonus += modifier.MultiplicativeSpeedBonus;
         }
 
         public void RemoveModifier(IStatsModifier modifier)
@@ -190,6 +193,8 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
             Size.RemoveStatModifier(modifier.Size);
             SpellVamp.RemoveStatModifier(modifier.SpellVamp);
             Tenacity.RemoveStatModifier(modifier.Tenacity);
+            SlowResistPercent -= modifier.SlowResistPercent;
+            MultiplicativeSpeedBonus -= modifier.MultiplicativeSpeedBonus;
         }
 
         public float GetTotalAttackSpeed()

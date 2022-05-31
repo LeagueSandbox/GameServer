@@ -66,7 +66,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
             }
         }
 
-        public float Total => ((BaseValue + BaseBonus) * (1 + PercentBaseBonus) + FlatBonus) * (1 + PercentBonus);
+        public virtual float Total => ((BaseValue + BaseBonus) * (1 + PercentBaseBonus) + FlatBonus) * (1 + PercentBonus);
 
         public Stat(float baseValue, float baseBonus, float percentBaseBonus, float flatBonus, float percentBonus)
         {
@@ -83,7 +83,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
 
         }
 
-        public bool ApplyStatModifier(IStatModifier statModifier)
+        public virtual bool ApplyStatModifier(IStatModifier statModifier)
         {
             if (!statModifier.StatModified)
             {
@@ -98,7 +98,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
             return true;
         }
 
-        public bool RemoveStatModifier(IStatModifier statModifier)
+        public virtual bool RemoveStatModifier(IStatModifier statModifier)
         {
             if (!statModifier.StatModified)
             {

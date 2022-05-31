@@ -29,5 +29,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
         public IStatModifier Size { get; } = new StatModifier();
         public IStatModifier SpellVamp { get; } = new StatModifier();
         public IStatModifier Tenacity { get; } = new StatModifier();
+        public float MultiplicativeSpeedBonus { get; set; }
+        public float SlowResistPercent { get; set; }
     }
 }

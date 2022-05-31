@@ -2,7 +2,7 @@
 
 namespace GameServerCore.Domain.GameObjects
 {
-    public interface IStats: IUpdate
+    public interface IStats : IUpdate
     {
         ulong SpellsEnabled { get; }
         ulong SummonerSpellsEnabled { get; }
@@ -56,17 +56,18 @@ namespace GameServerCore.Domain.GameObjects
         float CurrentMana { get; set; }
         bool IsGeneratingGold { get; set; }
         float SpellCostReduction { get; }
-        
+        float SlowResistPercent { get; set; }
+        float MultiplicativeSpeedBonus { get; set; }
         void AddModifier(IStatsModifier modifier);
         void RemoveModifier(IStatsModifier modifier);
         void LevelUp();
-        
+
         float GetTotalAttackSpeed();
         bool GetActionState(ActionState state);
         bool GetSpellEnabled(byte id);
         float GetPostMitigationDamage(float damage, DamageType type, IAttackableUnit attacker);
         bool GetSummonerSpellEnabled(byte id);
-        
+
         void SetActionState(ActionState state, bool enabled);
         void SetSpellEnabled(byte id, bool enabled);
         void SetSummonerSpellEnabled(byte id, bool enabled);
