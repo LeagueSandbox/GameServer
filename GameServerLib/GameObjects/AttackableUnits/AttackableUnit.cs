@@ -63,8 +63,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// Resets when reaching byte.MaxValue (255).
         /// </summary>
         public byte TeleportID { get; set; }
-        private float trueSpeed;
-
         /// <summary>
         /// Array of buff slots which contains all parent buffs (oldest buff of a given name) applied to this AI.
         /// Maximum of 256 slots, hard limit due to packets.
@@ -85,7 +83,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// <summary>
         /// List of all slows applied to this unit
         /// </summary>
-        private List<float> Slows = new List<float>();
+        private List<float> _slows = new List<float>();
         /// <summary>
         /// Waypoints that make up the path a game object is walking in.
         /// </summary>
@@ -427,29 +425,29 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             switch (type)
             {
                 case DamageType.DAMAGE_TYPE_PHYSICAL:
+                {
+                    if (Status.HasFlag(StatusFlags.PhysicalImmune))
                     {
-                        if (Status.HasFlag(StatusFlags.PhysicalImmune))
-                        {
-                            return false;
-                        }
-                        break;
+                        return false;
                     }
+                    break;
+                }
                 case DamageType.DAMAGE_TYPE_MAGICAL:
+                {
+                    if (Status.HasFlag(StatusFlags.MagicImmune))
                     {
-                        if (Status.HasFlag(StatusFlags.MagicImmune))
-                        {
-                            return false;
-                        }
-                        break;
+                        return false;
                     }
+                    break;
+                }
                 case DamageType.DAMAGE_TYPE_MIXED:
+                {
+                    if (Status.HasFlag(StatusFlags.MagicImmune) || Status.HasFlag(StatusFlags.PhysicalImmune))
                     {
-                        if (Status.HasFlag(StatusFlags.MagicImmune) || Status.HasFlag(StatusFlags.PhysicalImmune))
-                        {
-                            return false;
-                        }
-                        break;
+                        return false;
                     }
+                    break;
+                }
             }
 
             return true;
@@ -463,7 +461,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         {
             if (statModifier.MoveSpeed.PercentBonus < 0)
             {
-                Slows.Add(statModifier.MoveSpeed.PercentBonus);
+                _slows.Add(statModifier.MoveSpeed.PercentBonus);
                 statModifier.MoveSpeed.PercentBonus = 0;
             }
 
@@ -478,7 +476,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         {
             if (statModifier.MoveSpeed.PercentBonus < 0)
             {
-                Slows.Remove(statModifier.MoveSpeed.PercentBonus);
+                _slows.Remove(statModifier.MoveSpeed.PercentBonus);
                 statModifier.MoveSpeed.PercentBonus = 0;
             }
 
@@ -851,10 +849,10 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
 
             speed = speed * (1 + Stats.MoveSpeed.PercentBonus) * (1 + Stats.MultiplicativeSpeedBonus);
 
-            if (Slows.Count > 0)
+            if (_slows.Count > 0)
             {
                 //Only takes into account the highest slow
-                speed *= 1 - (Slows.Max(z => z) * (1 - Stats.SlowResistPercent));
+                speed *= 1 - (_slows.Max(z => z) * (1 - Stats.SlowResistPercent));
             }
 
             return speed;
@@ -887,98 +885,98 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                     {
                         // CallForHelpSuppressor
                         case StatusFlags.CanAttack:
-                            {
-                                Stats.SetActionState(ActionState.CAN_ATTACK, enabled);
-                                break;
-                            }
+                        {
+                            Stats.SetActionState(ActionState.CAN_ATTACK, enabled);
+                            break;
+                        }
                         case StatusFlags.CanCast:
-                            {
-                                Stats.SetActionState(ActionState.CAN_CAST, enabled);
-                                break;
-                            }
+                        {
+                            Stats.SetActionState(ActionState.CAN_CAST, enabled);
+                            break;
+                        }
                         case StatusFlags.CanMove:
-                            {
-                                Stats.SetActionState(ActionState.CAN_MOVE, enabled);
-                                break;
-                            }
+                        {
+                            Stats.SetActionState(ActionState.CAN_MOVE, enabled);
+                            break;
+                        }
                         case StatusFlags.CanMoveEver:
-                            {
-                                Stats.SetActionState(ActionState.CAN_NOT_MOVE, !enabled);
-                                break;
-                            }
+                        {
+                            Stats.SetActionState(ActionState.CAN_NOT_MOVE, !enabled);
+                            break;
+                        }
                         case StatusFlags.Charmed:
-                            {
-                                Stats.SetActionState(ActionState.CHARMED, enabled);
-                                break;
-                            }
+                        {
+                            Stats.SetActionState(ActionState.CHARMED, enabled);
+                            break;
+                        }
                         // DisableAmbientGold
                         case StatusFlags.Feared:
-                            {
-                                Stats.SetActionState(ActionState.FEARED, enabled);
-                                // TODO: Verify
-                                Stats.SetActionState(ActionState.IS_FLEEING, enabled);
-                                break;
-                            }
+                        {
+                            Stats.SetActionState(ActionState.FEARED, enabled);
+                            // TODO: Verify
+                            Stats.SetActionState(ActionState.IS_FLEEING, enabled);
+                            break;
+                        }
                         case StatusFlags.ForceRenderParticles:
-                            {
-                                Stats.SetActionState(ActionState.FORCE_RENDER_PARTICLES, enabled);
-                                break;
-                            }
+                        {
+                            Stats.SetActionState(ActionState.FORCE_RENDER_PARTICLES, enabled);
+                            break;
+                        }
                         // GhostProof
                         case StatusFlags.Ghosted:
-                            {
-                                Stats.SetActionState(ActionState.IS_GHOSTED, enabled);
-                                break;
-                            }
+                        {
+                            Stats.SetActionState(ActionState.IS_GHOSTED, enabled);
+                            break;
+                        }
                         // IgnoreCallForHelp
                         // Immovable
                         // Invulnerable
                         // MagicImmune
                         case StatusFlags.NearSighted:
-                            {
-                                Stats.SetActionState(ActionState.IS_NEAR_SIGHTED, enabled);
-                                break;
-                            }
+                        {
+                            Stats.SetActionState(ActionState.IS_NEAR_SIGHTED, enabled);
+                            break;
+                        }
                         // Netted
                         case StatusFlags.NoRender:
-                            {
-                                Stats.SetActionState(ActionState.NO_RENDER, enabled);
-                                break;
-                            }
+                        {
+                            Stats.SetActionState(ActionState.NO_RENDER, enabled);
+                            break;
+                        }
                         // PhysicalImmune
                         case StatusFlags.RevealSpecificUnit:
-                            {
-                                Stats.SetActionState(ActionState.REVEAL_SPECIFIC_UNIT, enabled);
-                                break;
-                            }
+                        {
+                            Stats.SetActionState(ActionState.REVEAL_SPECIFIC_UNIT, enabled);
+                            break;
+                        }
                         // Rooted
                         // Silenced
                         case StatusFlags.Sleep:
-                            {
-                                Stats.SetActionState(ActionState.IS_ASLEEP, enabled);
-                                break;
-                            }
+                        {
+                            Stats.SetActionState(ActionState.IS_ASLEEP, enabled);
+                            break;
+                        }
                         case StatusFlags.Stealthed:
-                            {
-                                Stats.SetActionState(ActionState.STEALTHED, enabled);
-                                break;
-                            }
+                        {
+                            Stats.SetActionState(ActionState.STEALTHED, enabled);
+                            break;
+                        }
                         // SuppressCallForHelp
                         case StatusFlags.Targetable:
+                        {
+                            Stats.IsTargetable = enabled;
+                            // TODO: Refactor this.
+                            if (CharData.IsUseable)
                             {
-                                Stats.IsTargetable = enabled;
-                                // TODO: Refactor this.
-                                if (CharData.IsUseable)
-                                {
-                                    Stats.SetActionState(ActionState.TARGETABLE, enabled);
-                                }
-                                break;
+                                Stats.SetActionState(ActionState.TARGETABLE, enabled);
                             }
+                            break;
+                        }
                         case StatusFlags.Taunted:
-                            {
-                                Stats.SetActionState(ActionState.TAUNTED, enabled);
-                                break;
-                            }
+                        {
+                            Stats.SetActionState(ActionState.TAUNTED, enabled);
+                            break;
+                        }
                     }
                 }
             }
