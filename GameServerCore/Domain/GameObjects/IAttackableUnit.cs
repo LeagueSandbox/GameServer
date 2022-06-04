@@ -224,7 +224,17 @@ namespace GameServerCore.Domain.GameObjects
         /// </summary>
         /// <returns>Float units/sec.</returns>
         float GetMoveSpeed();
+        /// <summary>
+        /// Returns the true movespeed of an unit
+        /// </summary>
+        /// <returns></returns>
         float GetTrueMoveSpeed();
+        /// <summary>
+        /// Manual call to calculate an unit's true speed
+        /// Ideally it won't be used much, just when manually setting base stats of an unit on-spawn.
+        /// Lane Minions would probably use this as they seem to have a lot of manually-set stats.
+        /// </summary>
+        void CalculateTrueMoveSpeed();
         /// <summary>
         /// Teleports this unit to the given position, and optionally repaths from the new position.
         /// </summary>

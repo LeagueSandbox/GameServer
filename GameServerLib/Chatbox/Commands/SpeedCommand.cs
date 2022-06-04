@@ -1,4 +1,6 @@
 ﻿using GameServerCore;
+using GameServerCore.Domain.GameObjects;
+using LeagueSandbox.GameServer.GameObjects.Stats;
 
 namespace LeagueSandbox.GameServer.Chatbox.Commands
 {
@@ -26,7 +28,9 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
 
             if (float.TryParse(split[1], out var speed))
             {
-                _playerManager.GetPeerInfo(userId).Champion.Stats.MoveSpeed.FlatBonus += speed;
+                IStatsModifier stat = new StatsModifier();
+                stat.MoveSpeed.FlatBonus = speed;
+                _playerManager.GetPeerInfo(userId).Champion.AddStatModifier(stat);
             }
             else
             {
