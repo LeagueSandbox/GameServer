@@ -838,9 +838,12 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             return GetTrueMoveSpeed();
         }
 
+        /// <summary>
+        /// Processes the unit's move speed
+        /// </summary>
         public void CalculateTrueMoveSpeed()
         {
-            float speed = Stats.MoveSpeed.Total;
+            float speed = Stats.MoveSpeed.BaseValue + Stats.MoveSpeed.FlatBonus;
             if (speed > 490.0f)
             {
                 speed = speed * 0.5f + 230.0f;
@@ -859,7 +862,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             if (_slows.Count > 0)
             {
                 //Only takes into account the highest slow
-                speed *= 1 - (_slows.Max(z => z) * (1 - Stats.SlowResistPercent));
+                speed *= 1 + _slows.Max(z => z) * (1 - Stats.SlowResistPercent);
             }
 
             _trueMoveSpeed = speed;
@@ -868,6 +871,12 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         public float GetTrueMoveSpeed()
         {
             return _trueMoveSpeed;
+        }
+
+        public void ClearSlows()
+        {
+            _slows.Clear();
+            CalculateTrueMoveSpeed();
         }
 
         /// <summary>

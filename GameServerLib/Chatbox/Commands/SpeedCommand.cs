@@ -9,7 +9,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
         private readonly IPlayerManager _playerManager;
 
         public override string Command => "speed";
-        public override string Syntax => $"{Command} speed";
+        public override string Syntax => $"{Command} parameter [p (percent), f (flat)] speed";
 
         public SpeedCommand(ChatCommandManager chatCommandManager, Game game)
             : base(chatCommandManager, game)
@@ -26,13 +26,26 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
                 ShowSyntax();
             }
 
-            if (float.TryParse(split[1], out var speed))
+            try
             {
                 IStatsModifier stat = new StatsModifier();
-                stat.MoveSpeed.FlatBonus = speed;
+
+                switch (split[1])
+                {
+                    case "p":
+                        stat.MoveSpeed.PercentBonus = float.Parse(split[2]) / 100;
+                        break;
+                    case "f":
+                        stat.MoveSpeed.FlatBonus = float.Parse(split[2]);
+                        break;
+                    default:
+                        ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.ERROR, "Incorrect parameter");
+                        break;
+                }
+
                 _playerManager.GetPeerInfo(userId).Champion.AddStatModifier(stat);
             }
-            else
+            catch
             {
                 ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.ERROR, "Incorrect parameter");
             }
