@@ -74,6 +74,9 @@ namespace GameServerCore.Content
         /// </summary>
         Vector2 MiddleOfMap { get; }
 
+        List<IGameObject> StaticObjects { get; }
+        void Update();
+
         /// <summary>
         /// Finds a path of waypoints, which are aligned by the cells of the navgrid (A* method), that lead to a set destination.
         /// </summary>

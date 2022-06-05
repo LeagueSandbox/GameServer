@@ -43,6 +43,8 @@ namespace LeagueSandbox.GameServer.Content.Navigation
         public float RefHintWeight { get; private set; } = 0.5f;
         public short ArrivalDirection { get; private set; } = 9;
         public short[] RefHintNode { get; private set; } = new short[2] { -32768, -32768 };
+        public float Occupance = 0;
+        public uint OccupanceUpdateCounter = 0;
 
         private NavigationGridCell() { }
 

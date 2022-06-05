@@ -12,6 +12,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.Buildings
             Vector2 position = new Vector2(), int visionRadius = 0, uint netId = 0, TeamId team = TeamId.TEAM_BLUE) :
             base(game, model, stats, collisionRadius, position, visionRadius, netId, team)
         {
+            game.Map.NavigationGrid.StaticObjects.Add(this);
         }
     }
 }
