@@ -1,0 +1,24 @@
+﻿using GameServerCore;
+
+namespace LeagueSandbox.GameServer.Chatbox.Commands
+{
+    public class ClearSlowCommand : ChatCommandBase
+    {
+        private readonly IPlayerManager _playerManager;
+
+        public override string Command => "clearslows";
+        public override string Syntax => $"{Command}";
+
+        public ClearSlowCommand(ChatCommandManager chatCommandManager, Game game)
+            : base(chatCommandManager, game)
+        {
+            _playerManager = game.PlayerManager;
+        }
+
+        public override void Execute(int userId, bool hasReceivedArguments, string arguments = "")
+        {
+            _playerManager.GetPeerInfo(userId).Champion.ClearSlows();
+            ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.INFO, "Your slows have been cleared!");
+        }
+    }
+}
