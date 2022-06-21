@@ -1126,13 +1126,13 @@ namespace LeagueSandbox.GameServer.API
             int skinId = 0,
             bool cloneInventory = true,
             bool showMinimapIfClone = true,
-            bool disallowPlayerControl =false,
+            bool disallowPlayerControl = false,
             bool doFade = false,
             bool isClone = true,
             string aiScript = "Pet"
         )
         {
-            return new Pet(_game, owner, spell, position, name, model, buffName, lifeTime, skinId, cloneInventory, showMinimapIfClone, disallowPlayerControl, doFade, isClone, aiScript);
+            return new Pet(_game, owner, spell, position, name, model, buffName, lifeTime, skinId, null, cloneInventory, showMinimapIfClone, disallowPlayerControl, doFade, isClone, aiScript);
         }
 
         public static float GetPetReturnRadius()

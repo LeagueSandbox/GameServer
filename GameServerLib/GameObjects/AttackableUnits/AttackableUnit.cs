@@ -115,19 +115,30 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         public AttackableUnit(
             Game game,
             string model,
-            IStats stats,
             int collisionRadius = 40,
             Vector2 position = new Vector2(),
             int visionRadius = 0,
             uint netId = 0,
-            TeamId team = TeamId.TEAM_NEUTRAL
+            TeamId team = TeamId.TEAM_NEUTRAL,
+            IStats stats = null
         ) : base(game, position, collisionRadius, collisionRadius, visionRadius, netId, team)
 
         {
             Logger = LoggerProvider.GetLogger();
             Model = model;
+
             CharData = _game.Config.ContentManager.GetCharData(Model);
-            Stats = stats;
+            if (stats == null)
+            {
+                var charStats = new Stats.Stats();
+                charStats.LoadStats(CharData);
+                Stats = charStats;
+            }
+            else
+            {
+                Stats = stats;
+            }
+
             Waypoints = new List<Vector2> { Position };
             CurrentWaypoint = new KeyValuePair<int, Vector2>(1, Position);
             Status = StatusFlags.CanAttack | StatusFlags.CanCast | StatusFlags.CanMove | StatusFlags.CanMoveEver | StatusFlags.Targetable;

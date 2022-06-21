@@ -26,6 +26,7 @@ namespace LeagueSandbox.GameServer.GameObjects
             string spawnAnimation = "",
             bool isTargetable = true,
             bool ignoresCollision = false,
+            IStats stats = null,
             string aiScript = "",
             int damageBonus = 0,
             int healthBonus = 0,
@@ -34,7 +35,7 @@ namespace LeagueSandbox.GameServer.GameObjects
             (
                 game, null, position, model, name,
                 netId, team, 0, ignoresCollision, isTargetable,
-                false ,null, aiScript, damageBonus, healthBonus, initialLevel
+                false, null, stats, aiScript, damageBonus, healthBonus, initialLevel
             )
         {
             Camp = monsterCamp;

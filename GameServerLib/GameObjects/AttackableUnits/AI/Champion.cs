@@ -50,8 +50,9 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                         ITalentInventory talentInventory,
                         ClientInfo clientInfo,
                         uint netId = 0,
-                        TeamId team = TeamId.TEAM_BLUE)
-            : base(game, model, new Stats.Stats(), 30, new Vector2(), 1200, clientInfo.SkinNo, netId, team)
+                        TeamId team = TeamId.TEAM_BLUE,
+                        IStats stats = null)
+            : base(game, model, 30, new Vector2(), 1200, clientInfo.SkinNo, netId, team, stats)
         {
             _playerId = playerId;
             _playerTeamSpecialId = playerTeamSpecialId;

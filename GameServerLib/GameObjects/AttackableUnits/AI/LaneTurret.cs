@@ -20,8 +20,9 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             uint netId = 0,
             LaneID lane = LaneID.NONE,
             MapObject mapObject = default,
+            IStats stats = null,
             string aiScript = ""
-        ) : base(game, name, model, position, team, netId, lane, mapObject, aiScript: aiScript)
+        ) : base(game, name, model, position, team, netId, lane, mapObject, stats: stats, aiScript: aiScript)
         {
             Type = type;
 
