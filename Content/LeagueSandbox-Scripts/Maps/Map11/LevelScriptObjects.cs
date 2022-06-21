@@ -314,21 +314,18 @@ namespace MapScripts.Map11
             var redTopInhibtorTurret = CreateLaneTurret("Turret_T2_L_01_A", "SRUAP_Turret_Chaos3", new Vector2(10481.091f, 13650.535f), TeamId.TEAM_PURPLE, TurretType.INHIBITOR_TURRET, LaneID.TOP, LaneTurretAI);
             TurretList[TeamId.TEAM_PURPLE][LaneID.TOP].AddRange(new List<ILaneTurret> { { redTopOuterTurret }, { redTopInnerTurret }, { redTopInhibtorTurret } });
 
-            //Inhibitor Stats
-            var inhibitorStats = new Stats();
-            inhibitorStats.HealthPoints.BaseValue = 4000.0f;
-            inhibitorStats.CurrentHealth = inhibitorStats.HealthPoints.BaseValue;
+
 
             //Blue Team Inhibitors
-            InhibitorList[TeamId.TEAM_BLUE][LaneID.TOP] = CreateInhibitor("Barracks_T1_L1", "SRUAP_OrderInhibitor", new Vector2(1171.8285f, 3571.784f), TeamId.TEAM_BLUE, LaneID.TOP, 214, 0, inhibitorStats);
-            InhibitorList[TeamId.TEAM_BLUE][LaneID.MIDDLE] = CreateInhibitor("Barracks_T1_C1", "SRUAP_OrderInhibitor", new Vector2(3203.0286f, 3208.784f), TeamId.TEAM_BLUE, LaneID.MIDDLE, 214, 0, inhibitorStats);
-            InhibitorList[TeamId.TEAM_BLUE][LaneID.BOTTOM] = CreateInhibitor("Barracks_T1_R1", "SRUAP_OrderInhibitor", new Vector2(3452.5286f, 1236.884f), TeamId.TEAM_BLUE, LaneID.BOTTOM, 214, 0, inhibitorStats);
+            CreateInhib("Barracks_T1_L1", "SRUAP_OrderInhibitor", new Vector2(1171.8285f, 3571.784f), TeamId.TEAM_BLUE, LaneID.TOP);
+            CreateInhib("Barracks_T1_C1", "SRUAP_OrderInhibitor", new Vector2(3203.0286f, 3208.784f), TeamId.TEAM_BLUE, LaneID.MIDDLE);
+            CreateInhib("Barracks_T1_R1", "SRUAP_OrderInhibitor", new Vector2(3452.5286f, 1236.884f), TeamId.TEAM_BLUE, LaneID.BOTTOM);
 
 
             //Red Team Inhibitors
-            InhibitorList[TeamId.TEAM_PURPLE][LaneID.TOP] = CreateInhibitor("Barracks_T2_L1", "SRUAP_ChaosInhibitor", new Vector2(11261.665f, 13676.563f), TeamId.TEAM_PURPLE, LaneID.TOP, 214, 0, inhibitorStats);
-            InhibitorList[TeamId.TEAM_PURPLE][LaneID.MIDDLE] = CreateInhibitor("Barracks_T2_C1", "SRUAP_ChaosInhibitor", new Vector2(11598.124f, 11667.8125f), TeamId.TEAM_PURPLE, LaneID.MIDDLE, 214, 0, inhibitorStats);
-            InhibitorList[TeamId.TEAM_PURPLE][LaneID.BOTTOM] = CreateInhibitor("Barracks_T2_R1", "SRUAP_ChaosInhibitor", new Vector2(13604.601f, 11316.011f), TeamId.TEAM_PURPLE, LaneID.BOTTOM, 214, 0, inhibitorStats);
+            CreateInhib("Barracks_T2_L1", "SRUAP_ChaosInhibitor", new Vector2(11261.665f, 13676.563f), TeamId.TEAM_PURPLE, LaneID.TOP);
+            CreateInhib("Barracks_T2_C1", "SRUAP_ChaosInhibitor", new Vector2(11598.124f, 11667.8125f), TeamId.TEAM_PURPLE, LaneID.MIDDLE);
+            CreateInhib("Barracks_T2_R1", "SRUAP_ChaosInhibitor", new Vector2(13604.601f, 11316.011f), TeamId.TEAM_PURPLE, LaneID.BOTTOM);
 
             //Nexus Stats
             var nexusStats = new Stats();
@@ -381,6 +378,14 @@ namespace MapScripts.Map11
                     AddObject(turret);
                 }
             }
+        }
+
+        public static void CreateInhib(string name, string model, Vector2 position, TeamId team, LaneID laneID)
+        {
+            var inhibitorStats = new Stats();
+            inhibitorStats.HealthPoints.BaseValue = 4000.0f;
+            inhibitorStats.CurrentHealth = inhibitorStats.HealthPoints.BaseValue;
+            InhibitorList[team][laneID] = CreateInhibitor(name, model, position, team, laneID, 214, 0, inhibitorStats);
         }
 
         static void LoadProtection()
