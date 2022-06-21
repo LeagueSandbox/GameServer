@@ -242,6 +242,9 @@ namespace MapScripts.Map12
             {
                 var teamId = nexusObj.GetTeamID();
                 var position = new Vector2(nexusObj.CentralPoint.X, nexusObj.CentralPoint.Z);
+                var nexusStats = new Stats();
+                nexusStats.HealthPoints.BaseValue = 5500.0f;
+                nexusStats.CurrentHealth = nexusStats.HealthPoints.BaseValue;
 
                 var nexus = CreateNexus(nexusObj.Name, NexusModels[teamId], position, teamId, 353, 1700);
                 ApiEventManager.OnDeath.AddListener(nexus, nexus, OnNexusDeath, true);
@@ -254,12 +257,13 @@ namespace MapScripts.Map12
                 var teamId = inhibitorObj.GetTeamID();
                 var lane = inhibitorObj.GetLaneID();
                 var position = new Vector2(inhibitorObj.CentralPoint.X, inhibitorObj.CentralPoint.Z);
+                var inhibitorStats = new Stats();
+                inhibitorStats.HealthPoints.BaseValue = 4000.0f;
+                inhibitorStats.CurrentHealth = inhibitorStats.HealthPoints.BaseValue;
 
                 var inhibitor = CreateInhibitor(inhibitorObj.Name, InhibitorModels[teamId], position, teamId, lane, 214, 0);
                 ApiEventManager.OnDeath.AddListener(inhibitor, inhibitor, OnInhibitorDeath, false);
                 inhibitor.RespawnTime = 300.0f;
-                inhibitor.Stats.CurrentHealth = 4000.0f;
-                inhibitor.Stats.HealthPoints.BaseValue = 4000.0f;
                 InhibitorList.Add(teamId, inhibitor);
                 AddObject(inhibitor);
             }

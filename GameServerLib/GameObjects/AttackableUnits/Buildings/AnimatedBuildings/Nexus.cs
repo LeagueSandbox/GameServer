@@ -18,13 +18,10 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.Buildings.Animate
             uint netId = 0
         ) : base(game, model, collisionRadius, position, visionRadius, netId, team, stats)
         {
-            Stats.CurrentHealth = 5500;
-            Stats.HealthPoints.BaseValue = 5500;
         }
 
         public override void SetToRemove()
         {
-
         }
     }
 }

@@ -67,9 +67,9 @@ namespace LeagueSandbox.GameServer.API
         /// <param name="nexusRadius"></param>
         /// <param name="sightRange"></param>
         /// <returns></returns>
-        public static INexus CreateNexus(string name, string model, Vector2 position, TeamId team, int nexusRadius, int sightRange)
+        public static INexus CreateNexus(string name, string model, Vector2 position, TeamId team, int nexusRadius, int sightRange, IStats stats = null)
         {
-            return new Nexus(_game, model, team, nexusRadius, position, sightRange, null, Crc32Algorithm.Compute(Encoding.UTF8.GetBytes(name)) | 0xFF000000);
+            return new Nexus(_game, model, team, nexusRadius, position, sightRange, stats, Crc32Algorithm.Compute(Encoding.UTF8.GetBytes(name)) | 0xFF000000);
         }
 
         /// <summary>
@@ -83,9 +83,9 @@ namespace LeagueSandbox.GameServer.API
         /// <param name="inhibRadius"></param>
         /// <param name="sightRange"></param>
         /// <returns></returns>
-        public static IInhibitor CreateInhibitor(string name, string model, Vector2 position, TeamId team, LaneID lane, int inhibRadius, int sightRange)
+        public static IInhibitor CreateInhibitor(string name, string model, Vector2 position, TeamId team, LaneID lane, int inhibRadius, int sightRange, IStats stats = null)
         {
-            return new Inhibitor(_game, model, lane, team, inhibRadius, position, sightRange, null, Crc32Algorithm.Compute(Encoding.UTF8.GetBytes(name)) | 0xFF000000);
+            return new Inhibitor(_game, model, lane, team, inhibRadius, position, sightRange, stats, Crc32Algorithm.Compute(Encoding.UTF8.GetBytes(name)) | 0xFF000000);
         }
 
         public static MapObject CreateLaneMinionSpawnPos(string name, Vector3 position)

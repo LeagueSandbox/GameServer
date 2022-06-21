@@ -275,8 +275,11 @@ namespace MapScripts.Map10
             {
                 var teamId = nexusObj.GetTeamID();
                 var position = new Vector2(nexusObj.CentralPoint.X, nexusObj.CentralPoint.Z);
+                var nexusStats = new Stats();
+                nexusStats.HealthPoints.BaseValue = 5500.0f;
+                nexusStats.CurrentHealth = nexusStats.HealthPoints.BaseValue;
 
-                var nexus = CreateNexus(nexusObj.Name, NexusModels[teamId], position, teamId, 353, 1700);
+                var nexus = CreateNexus(nexusObj.Name, NexusModels[teamId], position, teamId, 353, 1700, nexusStats);
                 ApiEventManager.OnDeath.AddListener(nexus, nexus, OnNexusDeath, true);
                 NexusList.Add(nexus);
                 AddObject(nexus);
@@ -287,12 +290,13 @@ namespace MapScripts.Map10
                 var teamId = inhibitorObj.GetTeamID();
                 var lane = inhibitorObj.GetLaneID();
                 var position = new Vector2(inhibitorObj.CentralPoint.X, inhibitorObj.CentralPoint.Z);
+                var inhibitorStats = new Stats();
+                inhibitorStats.HealthPoints.BaseValue = 4000.0f;
+                inhibitorStats.CurrentHealth = inhibitorStats.HealthPoints.BaseValue;
 
-                var inhibitor = CreateInhibitor(inhibitorObj.Name, InhibitorModels[teamId], position, teamId, lane, 214, 0);
+                var inhibitor = CreateInhibitor(inhibitorObj.Name, InhibitorModels[teamId], position, teamId, lane, 214, 0, inhibitorStats);
                 ApiEventManager.OnDeath.AddListener(inhibitor, inhibitor, OnInhibitorDeath, false);
                 inhibitor.RespawnTime = 240.0f;
-                inhibitor.Stats.CurrentHealth = 4000.0f;
-                inhibitor.Stats.HealthPoints.BaseValue = 4000.0f;
                 InhibitorList[teamId][lane] = inhibitor;
                 AddObject(inhibitor);
             }
