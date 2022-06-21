@@ -327,13 +327,9 @@ namespace MapScripts.Map11
             CreateInhib("Barracks_T2_C1", "SRUAP_ChaosInhibitor", new Vector2(11598.124f, 11667.8125f), TeamId.TEAM_PURPLE, LaneID.MIDDLE);
             CreateInhib("Barracks_T2_R1", "SRUAP_ChaosInhibitor", new Vector2(13604.601f, 11316.011f), TeamId.TEAM_PURPLE, LaneID.BOTTOM);
 
-            //Nexus Stats
-            var nexusStats = new Stats();
-            nexusStats.HealthPoints.BaseValue = 5500.0f;
-            nexusStats.CurrentHealth = nexusStats.HealthPoints.BaseValue;
-
             //Create Nexus
-            NexusList = new List<INexus> { { CreateNexus("HQ_T1", "SRUAP_OrderNexus", new Vector2(1551.3535f, 1659.627f), TeamId.TEAM_BLUE, 353, 1700, nexusStats) }, { CreateNexus("HQ_T2", "SRUAP_ChaosNexus", new Vector2(13142.73f, 12964.941f), TeamId.TEAM_PURPLE, 353, 1700, nexusStats) } };
+            CreateNex("HQ_T1", "SRUAP_OrderNexus", new Vector2(1551.3535f, 1659.627f), TeamId.TEAM_BLUE);
+            CreateNex("HQ_T2", "SRUAP_ChaosNexus", new Vector2(13142.73f, 12964.941f), TeamId.TEAM_PURPLE);
 
             foreach (var team in InhibitorList.Keys)
             {
@@ -386,6 +382,15 @@ namespace MapScripts.Map11
             inhibitorStats.HealthPoints.BaseValue = 4000.0f;
             inhibitorStats.CurrentHealth = inhibitorStats.HealthPoints.BaseValue;
             InhibitorList[team][laneID] = CreateInhibitor(name, model, position, team, laneID, 214, 0, inhibitorStats);
+        }
+
+        public static void CreateNex(string name, string model, Vector2 position, TeamId team)
+        {
+            var nexusStats = new Stats();
+            nexusStats.HealthPoints.BaseValue = 5500.0f;
+            nexusStats.CurrentHealth = nexusStats.HealthPoints.BaseValue;
+
+            NexusList.Add(CreateNexus(name, model, position, team, 353, 1700, nexusStats));
         }
 
         static void LoadProtection()
