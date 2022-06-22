@@ -111,7 +111,7 @@ namespace GameServerLib.GameObjects
             (
                 _game, monster.Name, monster.Model, monster.Position,
                 monster.Direction, this, monster.Team, 0,
-                monster.SpawnAnimation, monster.IsTargetable, monster.IgnoresCollision, aiscript,
+                monster.SpawnAnimation, monster.IsTargetable, monster.IgnoresCollision, null, aiscript,
                 monster.DamageBonus, monster.HealthBonus, monster.InitialLevel
             );
             while(campMonster.Stats.Level < monster.InitialLevel)

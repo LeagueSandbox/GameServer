@@ -20,7 +20,7 @@ namespace MapScripts.Map11
         public static Dictionary<LaneID, List<Vector2>> MinionPaths = new Dictionary<LaneID, List<Vector2>> { { LaneID.TOP, new List<Vector2>() }, { LaneID.BOTTOM, new List<Vector2>() } };
         public static Dictionary<TeamId, bool> AllInhibitorsAreDead = new Dictionary<TeamId, bool> { { TeamId.TEAM_BLUE, false }, { TeamId.TEAM_PURPLE, false } };
         static Dictionary<TeamId, Dictionary<IInhibitor, float>> DeadInhibitors = new Dictionary<TeamId, Dictionary<IInhibitor, float>> { { TeamId.TEAM_BLUE, new Dictionary<IInhibitor, float>() }, { TeamId.TEAM_PURPLE, new Dictionary<IInhibitor, float>() } };
-        static List<INexus> NexusList = new List<INexus>();
+        static List<INexus> NexusList;
         static string LaneTurretAI = "TurretAI";
 
         static Dictionary<TeamId, Dictionary<LaneID, List<ILaneTurret>>> TurretList = new Dictionary<TeamId, Dictionary<LaneID, List<ILaneTurret>>>
@@ -314,19 +314,22 @@ namespace MapScripts.Map11
             var redTopInhibtorTurret = CreateLaneTurret("Turret_T2_L_01_A", "SRUAP_Turret_Chaos3", new Vector2(10481.091f, 13650.535f), TeamId.TEAM_PURPLE, TurretType.INHIBITOR_TURRET, LaneID.TOP, LaneTurretAI);
             TurretList[TeamId.TEAM_PURPLE][LaneID.TOP].AddRange(new List<ILaneTurret> { { redTopOuterTurret }, { redTopInnerTurret }, { redTopInhibtorTurret } });
 
+
+
             //Blue Team Inhibitors
-            InhibitorList[TeamId.TEAM_BLUE][LaneID.TOP] = CreateInhibitor("Barracks_T1_L1", "SRUAP_OrderInhibitor", new Vector2(1171.8285f, 3571.784f), TeamId.TEAM_BLUE, LaneID.TOP, 214, 0);
-            InhibitorList[TeamId.TEAM_BLUE][LaneID.MIDDLE] = CreateInhibitor("Barracks_T1_C1", "SRUAP_OrderInhibitor", new Vector2(3203.0286f, 3208.784f), TeamId.TEAM_BLUE, LaneID.MIDDLE, 214, 0);
-            InhibitorList[TeamId.TEAM_BLUE][LaneID.BOTTOM] = CreateInhibitor("Barracks_T1_R1", "SRUAP_OrderInhibitor", new Vector2(3452.5286f, 1236.884f), TeamId.TEAM_BLUE, LaneID.BOTTOM, 214, 0);
+            CreateInhib("Barracks_T1_L1", "SRUAP_OrderInhibitor", new Vector2(1171.8285f, 3571.784f), TeamId.TEAM_BLUE, LaneID.TOP);
+            CreateInhib("Barracks_T1_C1", "SRUAP_OrderInhibitor", new Vector2(3203.0286f, 3208.784f), TeamId.TEAM_BLUE, LaneID.MIDDLE);
+            CreateInhib("Barracks_T1_R1", "SRUAP_OrderInhibitor", new Vector2(3452.5286f, 1236.884f), TeamId.TEAM_BLUE, LaneID.BOTTOM);
 
 
             //Red Team Inhibitors
-            InhibitorList[TeamId.TEAM_PURPLE][LaneID.TOP] = CreateInhibitor("Barracks_T2_L1", "SRUAP_ChaosInhibitor", new Vector2(11261.665f, 13676.563f), TeamId.TEAM_PURPLE, LaneID.TOP, 214, 0);
-            InhibitorList[TeamId.TEAM_PURPLE][LaneID.MIDDLE] = CreateInhibitor("Barracks_T2_C1", "SRUAP_ChaosInhibitor", new Vector2(11598.124f, 11667.8125f), TeamId.TEAM_PURPLE, LaneID.MIDDLE, 214, 0);
-            InhibitorList[TeamId.TEAM_PURPLE][LaneID.BOTTOM] = CreateInhibitor("Barracks_T2_R1", "SRUAP_ChaosInhibitor", new Vector2(13604.601f, 11316.011f), TeamId.TEAM_PURPLE, LaneID.BOTTOM, 214, 0);
+            CreateInhib("Barracks_T2_L1", "SRUAP_ChaosInhibitor", new Vector2(11261.665f, 13676.563f), TeamId.TEAM_PURPLE, LaneID.TOP);
+            CreateInhib("Barracks_T2_C1", "SRUAP_ChaosInhibitor", new Vector2(11598.124f, 11667.8125f), TeamId.TEAM_PURPLE, LaneID.MIDDLE);
+            CreateInhib("Barracks_T2_R1", "SRUAP_ChaosInhibitor", new Vector2(13604.601f, 11316.011f), TeamId.TEAM_PURPLE, LaneID.BOTTOM);
 
             //Create Nexus
-            NexusList.AddRange(new List<INexus> { { CreateNexus("HQ_T1", "SRUAP_OrderNexus", new Vector2(1551.3535f, 1659.627f), TeamId.TEAM_BLUE, 353, 1700) }, { CreateNexus("HQ_T2", "SRUAP_ChaosNexus", new Vector2(13142.73f, 12964.941f), TeamId.TEAM_PURPLE, 353, 1700) } });
+            CreateNex("HQ_T1", "SRUAP_OrderNexus", new Vector2(1551.3535f, 1659.627f), TeamId.TEAM_BLUE);
+            CreateNex("HQ_T2", "SRUAP_ChaosNexus", new Vector2(13142.73f, 12964.941f), TeamId.TEAM_PURPLE);
 
             foreach (var team in InhibitorList.Keys)
             {
@@ -334,8 +337,6 @@ namespace MapScripts.Map11
                 {
                     ApiEventManager.OnDeath.AddListener(inhibitor, inhibitor, OnInhibitorDeath, false);
                     inhibitor.RespawnTime = 300.0f;
-                    inhibitor.Stats.CurrentHealth = 4000.0f;
-                    inhibitor.Stats.HealthPoints.BaseValue = 4000.0f;
                 }
             }
             foreach (var nexus in NexusList)
@@ -373,6 +374,23 @@ namespace MapScripts.Map11
                     AddObject(turret);
                 }
             }
+        }
+
+        public static void CreateInhib(string name, string model, Vector2 position, TeamId team, LaneID laneID)
+        {
+            var inhibitorStats = new Stats();
+            inhibitorStats.HealthPoints.BaseValue = 4000.0f;
+            inhibitorStats.CurrentHealth = inhibitorStats.HealthPoints.BaseValue;
+            InhibitorList[team][laneID] = CreateInhibitor(name, model, position, team, laneID, 214, 0, inhibitorStats);
+        }
+
+        public static void CreateNex(string name, string model, Vector2 position, TeamId team)
+        {
+            var nexusStats = new Stats();
+            nexusStats.HealthPoints.BaseValue = 5500.0f;
+            nexusStats.CurrentHealth = nexusStats.HealthPoints.BaseValue;
+
+            NexusList.Add(CreateNexus(name, model, position, team, 353, 1700, nexusStats));
         }
 
         static void LoadProtection()

@@ -30,8 +30,9 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             string model,
             uint netId = 0,
             TeamId team = TeamId.TEAM_BLUE,
+            IStats stats = null,
             string AiScript = ""
-        ) : base(game, null, new Vector2(), model, model, netId, team, aiScript: AiScript)
+        ) : base(game, null, new Vector2(), model, model, netId, team, stats: stats, aiScript: AiScript)
         {
             IsLaneMinion = true;
             MinionSpawnType = spawnType;

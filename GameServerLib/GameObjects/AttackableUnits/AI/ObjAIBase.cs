@@ -80,15 +80,13 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         public ICharScript CharScript { get; private set; }
         public bool IsBot { get; set; }
         public IAIScript AIScript { get; protected set; }
-        public ObjAiBase(Game game, string model, Stats.Stats stats, int collisionRadius = 0,
-            Vector2 position = new Vector2(), int visionRadius = 0, int skinId = 0, uint netId = 0, TeamId team = TeamId.TEAM_NEUTRAL, string aiScript = "") :
-            base(game, model, stats, collisionRadius, position, visionRadius, netId, team)
+        public ObjAiBase(Game game, string model, int collisionRadius = 0,
+            Vector2 position = new Vector2(), int visionRadius = 0, int skinId = 0, uint netId = 0, TeamId team = TeamId.TEAM_NEUTRAL, IStats stats = null, string aiScript = "") :
+            base(game, model, collisionRadius, position, visionRadius, netId, team, stats)
         {
             _itemManager = game.ItemManager;
 
             SkinID = skinId;
-
-            stats.LoadStats(CharData);
 
             // TODO: Centralize this instead of letting it lay in the initialization.
             if (collisionRadius > 0)
@@ -127,8 +125,8 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 VisionRadius = 1100;
             }
 
-            Stats.CurrentMana = stats.ManaPoints.Total;
-            Stats.CurrentHealth = stats.HealthPoints.Total;
+            Stats.CurrentMana = Stats.ManaPoints.Total;
+            Stats.CurrentHealth = Stats.HealthPoints.Total;
 
             SpellToCast = null;
 
@@ -1057,9 +1055,9 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         public override void Update(float diff)
         {
             base.Update(diff);
-            
+
             UpdateBuffs(diff);
-            
+
             CharScript.OnUpdate(diff);
             if (!_aiPaused)
             {
@@ -1105,11 +1103,11 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             }
         }
         public override void LateUpdate(float diff)
-        {            
+        {
             // Stop targeting an untargetable unit.
             if (TargetUnit != null && !TargetUnit.Status.HasFlag(StatusFlags.Targetable))
             {
-                if(TargetUnit.CharData.IsUseable)
+                if (TargetUnit.CharData.IsUseable)
                 {
                     return;
                 }

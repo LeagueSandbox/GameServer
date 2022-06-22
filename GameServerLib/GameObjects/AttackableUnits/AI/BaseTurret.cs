@@ -51,8 +51,9 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             LaneID lane = LaneID.NONE,
             MapObject mapObject = default,
             int skinId = 0,
+            IStats stats = null,
             string aiScript = ""
-        ) : base(game, model, new Stats.Stats(), position: position, visionRadius: 800, skinId: skinId, netId: netId, team: team, aiScript: aiScript)
+        ) : base(game, model, position: position, visionRadius: 800, skinId: skinId, netId: netId, team: team, stats: stats, aiScript: aiScript)
         {
             ParentNetId = Crc32Algorithm.Compute(Encoding.UTF8.GetBytes(name)) | 0xFF000000;
             Name = name;

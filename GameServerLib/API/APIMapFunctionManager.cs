@@ -67,9 +67,9 @@ namespace LeagueSandbox.GameServer.API
         /// <param name="nexusRadius"></param>
         /// <param name="sightRange"></param>
         /// <returns></returns>
-        public static INexus CreateNexus(string name, string model, Vector2 position, TeamId team, int nexusRadius, int sightRange)
+        public static INexus CreateNexus(string name, string model, Vector2 position, TeamId team, int nexusRadius, int sightRange, IStats stats = null)
         {
-            return new Nexus(_game, model, team, nexusRadius, position, sightRange, Crc32Algorithm.Compute(Encoding.UTF8.GetBytes(name)) | 0xFF000000);
+            return new Nexus(_game, model, team, nexusRadius, position, sightRange, stats, Crc32Algorithm.Compute(Encoding.UTF8.GetBytes(name)) | 0xFF000000);
         }
 
         /// <summary>
@@ -83,9 +83,9 @@ namespace LeagueSandbox.GameServer.API
         /// <param name="inhibRadius"></param>
         /// <param name="sightRange"></param>
         /// <returns></returns>
-        public static IInhibitor CreateInhibitor(string name, string model, Vector2 position, TeamId team, LaneID lane, int inhibRadius, int sightRange)
+        public static IInhibitor CreateInhibitor(string name, string model, Vector2 position, TeamId team, LaneID lane, int inhibRadius, int sightRange, IStats stats = null)
         {
-            return new Inhibitor(_game, model, lane, team, inhibRadius, position, sightRange, Crc32Algorithm.Compute(Encoding.UTF8.GetBytes(name)) | 0xFF000000);
+            return new Inhibitor(_game, model, lane, team, inhibRadius, position, sightRange, stats, Crc32Algorithm.Compute(Encoding.UTF8.GetBytes(name)) | 0xFF000000);
         }
 
         public static MapObject CreateLaneMinionSpawnPos(string name, Vector3 position)
@@ -109,7 +109,7 @@ namespace LeagueSandbox.GameServer.API
         /// <returns></returns>
         public static ILaneTurret CreateLaneTurret(string name, string model, Vector2 position, TeamId team, TurretType turretType, LaneID lane, string aiScript, MapObject mapObject = default, uint netId = 0)
         {
-            return new LaneTurret(_game, name, model, position, team, turretType, netId, lane, mapObject, aiScript);
+            return new LaneTurret(_game, name, model, position, team, turretType, netId, lane, mapObject, null, aiScript);
         }
 
         /// <summary>
@@ -141,7 +141,7 @@ namespace LeagueSandbox.GameServer.API
                 return;
             }
 
-            var m = new LaneMinion(_game, list[minionNo], position, barracksName, waypoints, _map.MapScript.MinionModels[team][list[minionNo]], 0, team, _map.MapScript.LaneMinionAI);
+            var m = new LaneMinion(_game, list[minionNo], position, barracksName, waypoints, _map.MapScript.MinionModels[team][list[minionNo]], 0, team, null, _map.MapScript.LaneMinionAI);
             _game.ObjectManager.AddObject(m);
         }
 
@@ -164,10 +164,10 @@ namespace LeagueSandbox.GameServer.API
         public static IMinion CreateMinion(
             string name, string model, Vector2 position, IObjAiBase owner = null, uint netId = 0,
             TeamId team = TeamId.TEAM_NEUTRAL, int skinId = 0, bool ignoreCollision = false,
-            bool isTargetable = false, bool isWard = false,string aiScript = "", int damageBonus = 0,
+            bool isTargetable = false, bool isWard = false, string aiScript = "", int damageBonus = 0,
             int healthBonus = 0, int initialLevel = 1)
         {
-            var m = new Minion(_game, owner, position, model, name, netId, team, skinId, ignoreCollision, isTargetable, isWard, null, aiScript, damageBonus, healthBonus, initialLevel);
+            var m = new Minion(_game, owner, position, model, name, netId, team, skinId, ignoreCollision, isTargetable, isWard, null, null, aiScript, damageBonus, healthBonus, initialLevel);
             _game.ObjectManager.AddObject(m);
             return m;
         }
@@ -178,7 +178,7 @@ namespace LeagueSandbox.GameServer.API
             bool isTargetable = false, bool isWard = false, string aiScript = "", int damageBonus = 0,
             int healthBonus = 0, int initialLevel = 1)
         {
-            return new Minion(_game, null, position, model, name, netId, team, skinId, ignoreCollision, isTargetable, isWard, null, aiScript, damageBonus, healthBonus, initialLevel);
+            return new Minion(_game, null, position, model, name, netId, team, skinId, ignoreCollision, isTargetable, isWard, null, null, aiScript, damageBonus, healthBonus, initialLevel);
         }
 
         /// <summary>
@@ -234,7 +234,7 @@ namespace LeagueSandbox.GameServer.API
             int damageBonus = 0, int healthBonus = 0, int initialLevel = 1
         )
         {
-            return new Monster(_game, name, model, position, faceDirection, monsterCamp, team, netId, spawnAnimation, isTargetable, ignoresCollision, aiScript, damageBonus, healthBonus, initialLevel);
+            return new Monster(_game, name, model, position, faceDirection, monsterCamp, team, netId, spawnAnimation, isTargetable, ignoresCollision, null, aiScript, damageBonus, healthBonus, initialLevel);
         }
 
         /// <summary>

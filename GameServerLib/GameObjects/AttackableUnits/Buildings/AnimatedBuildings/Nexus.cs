@@ -14,16 +14,14 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.Buildings.Animate
             int collisionRadius = 40,
             Vector2 position = new Vector2(),
             int visionRadius = 0,
+            IStats stats = null,
             uint netId = 0
-        ) : base(game, model, new Stats.Stats(), collisionRadius, position, visionRadius, netId, team)
+        ) : base(game, model, collisionRadius, position, visionRadius, netId, team, stats)
         {
-            Stats.CurrentHealth = 5500;
-            Stats.HealthPoints.BaseValue = 5500;
         }
 
         public override void SetToRemove()
         {
-
         }
     }
 }

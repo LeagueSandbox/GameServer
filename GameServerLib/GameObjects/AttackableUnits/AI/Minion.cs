@@ -54,11 +54,12 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             bool targetable = true,
             bool isWard = false,
             IObjAiBase visibilityOwner = null,
+            IStats stats = null,
             string aiScript = "",
             int damageBonus = 0,
             int healthBonus = 0,
             int initialLevel = 1
-        ) : base(game, model, new Stats.Stats(), 40, position, 1100, skinId, netId, team, aiScript)
+        ) : base(game, model, 40, position, 1100, skinId, netId, team, stats, aiScript)
         {
             Name = name;
             Owner = owner;
