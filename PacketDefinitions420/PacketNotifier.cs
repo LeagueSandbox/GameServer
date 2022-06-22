@@ -61,8 +61,8 @@ namespace PacketDefinitions420
                 // TODO: Verify (usually 0 for vision only?)
                 UnitNetID = 0,
                 // TODO: Verify (is usually different from UnitNetID in packets, may also be a remnant or for internal use)
-                BubbleNetID = region.VisionNetID,
-                VisionTargetNetID = region.VisionBindNetID,
+                BubbleNetID = region.NetId,
+                VisionTargetNetID = 0,
                 Position = region.Position,
                 // For turrets, usually 25000.0 is used
                 TimeToLive = region.Lifetime,
@@ -83,6 +83,11 @@ namespace PacketDefinitions420
             if (region.CollisionUnit != null)
             {
                 regionPacket.UnitNetID = region.CollisionUnit.NetId;
+            }
+
+            if(region.VisionTarget != null)
+            {
+                regionPacket.VisionTargetNetID = region.VisionTarget.NetId;
             }
 
             return regionPacket;

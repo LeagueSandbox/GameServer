@@ -447,7 +447,7 @@ namespace LeagueSandbox.GameServer.API
             int skinId = 0,
             bool ignoreCollision = false,
             bool targetable = true,
-             bool isWard = false,
+            bool isWard = false,
             SpellDataFlags targetingFlags = 0,
             IObjAiBase visibilityOwner = null,
             bool isVisible = true,
@@ -475,27 +475,29 @@ namespace LeagueSandbox.GameServer.API
         /// <param name="revealStealthed">Whether or not the perception bubble should reveal stealthed units while they are in range.</param>
         /// <param name="revealSpecificUnitOnly">Specific unit to reveal. Perception bubble will not reveal any other units when used. *NOTE* Currently does nothing.</param>
         /// <param name="collisionArea">Area around the perception bubble where units are not allowed to move into.</param>
+        ///
         /// <returns>New Region instance.</returns>
         public static IRegion AddPosPerceptionBubble
         (
             Vector2 position,
             float radius,
-            float duration = -1f,
+            float duration,
             TeamId team = TeamId.TEAM_NEUTRAL,
             bool revealStealthed = false,
             IAttackableUnit revealSpecificUnitOnly = null,
             float collisionArea = 0f,
-            IGameObject collisionOwner = null
+            RegionType regionType = RegionType.Default
         )
         {
-            var useCollision = false;
-            if (collisionArea > 0)
-            {
-                useCollision = true;
-            }
-
-            // TODO: Implement revealSpecificUnitOnly
-            return new Region(_game, team, position, collisionUnit: collisionOwner, giveVision: true, visionRadius: radius, revealStealth: revealStealthed, hasCollision: useCollision, collisionRadius: collisionArea, lifetime: duration);
+            return new Region
+            (
+                _game, team, position, regionType,
+                visionTarget: revealSpecificUnitOnly,
+                visionRadius: radius,
+                revealStealth: revealStealthed,
+                collisionRadius: collisionArea,
+                lifetime: duration
+            );
         }
 
         /// <summary>
@@ -514,23 +516,24 @@ namespace LeagueSandbox.GameServer.API
         (
             IAttackableUnit target,
             float radius,
-            float duration = -1f,
+            float duration,
             TeamId team = TeamId.TEAM_NEUTRAL,
             bool revealStealthed = false,
             IAttackableUnit revealSpecificUnitOnly = null,
             float collisionArea = 0f,
-            IGameObject collisionOwner = null,
             RegionType regionType = RegionType.Default
         )
         {
-            var useCollision = false;
-            if (collisionArea > 0)
-            {
-                useCollision = true;
-            }
-
-            // TODO: Implement revealSpecificUnitOnly
-            return new Region(_game, team, target.Position, regionType, collisionOwner, revealSpecificUnitOnly, true, radius, revealStealthed, useCollision, collisionArea, duration);
+            return new Region
+            (
+                _game, team, target.Position, regionType,
+                collisionUnit: target,
+                visionTarget: revealSpecificUnitOnly,
+                visionRadius: radius,
+                revealStealth: revealStealthed,
+                collisionRadius: collisionArea,
+                lifetime: duration
+            );
         }
 
         /// <summary>
