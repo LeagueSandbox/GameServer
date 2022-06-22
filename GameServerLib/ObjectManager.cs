@@ -310,7 +310,14 @@ namespace LeagueSandbox.GameServer
                 return true;
             }
 
-            if(tested is IParticle particle)
+            if(observer is IRegion region)
+            {
+                if(region.VisionTarget != null && region.VisionTarget != tested)
+                {
+                    return false;
+                }
+            }
+            else if(tested is IParticle particle)
             {
                 // Default behaviour
                 if(particle.SpecificTeam == TeamId.TEAM_NEUTRAL)

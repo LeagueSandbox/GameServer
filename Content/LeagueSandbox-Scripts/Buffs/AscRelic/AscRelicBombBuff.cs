@@ -23,8 +23,8 @@ namespace Buffs
         IParticle p1;
         public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
-            AddUnitPerceptionBubble(unit, 800.0f, 25000.0f, TeamId.TEAM_BLUE, false, null, 38.08f, collisionOwner: unit);
-            AddUnitPerceptionBubble(unit, 800.0f, 25000.0f, TeamId.TEAM_PURPLE, false, null, 38.08f, collisionOwner: unit);
+            AddUnitPerceptionBubble(unit, 800.0f, 25000.0f, TeamId.TEAM_BLUE, false, null, 38.08f);
+            AddUnitPerceptionBubble(unit, 800.0f, 25000.0f, TeamId.TEAM_PURPLE, false, null, 38.08f);
             p1 = AddParticleTarget(unit, unit, "Asc_RelicPrism_Sand", unit, -1.0f, 1.0f ,direction: new Vector3(0.0f, 0.0f, -1.0f), flags: (FXFlags)304);
             AddParticleTarget(unit, unit, "Asc_relic_Sand_buf", unit, -1.0f, flags: (FXFlags)32);
             unit.IconInfo.SwapIcon("Relic", true);

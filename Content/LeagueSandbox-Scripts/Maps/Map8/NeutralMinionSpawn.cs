@@ -140,8 +140,8 @@ namespace MapScripts.Map8
         {
             var crystal = CreateMinion("OdinCenterRelic", "OdinCenterRelic", Position, team: Team);
 
-            Regions.Add(AddUnitPerceptionBubble(crystal, 350.0f, 25000.0f, TeamId.TEAM_BLUE, collisionArea: 38.08f, collisionOwner: crystal));
-            Regions.Add(AddUnitPerceptionBubble(crystal, 350.0f, 25000.0f, TeamId.TEAM_PURPLE, collisionArea: 38.08f, collisionOwner: crystal));
+            Regions.Add(AddUnitPerceptionBubble(crystal, 350.0f, 25000.0f, TeamId.TEAM_BLUE, collisionArea: 38.08f));
+            Regions.Add(AddUnitPerceptionBubble(crystal, 350.0f, 25000.0f, TeamId.TEAM_PURPLE, collisionArea: 38.08f));
 
             ApiEventManager.OnDeath.AddListener(crystal, crystal, OnCrystalDeath, true);
             IsDead = false;

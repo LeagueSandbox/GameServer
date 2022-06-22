@@ -17,9 +17,8 @@ namespace LeagueSandbox.GameServer.GameObjects
 
         public int Type { get; }
         public IGameObject CollisionUnit { get; }
+        public IGameObject VisionTarget { get; }
         public int OwnerClientID { get; }
-        public uint VisionNetID { get; }
-        public uint VisionBindNetID { get; }
         /// <summary>
         /// Total game-time that this region should exist for
         /// </summary>
@@ -62,10 +61,8 @@ namespace LeagueSandbox.GameServer.GameObjects
             RegionType type = RegionType.Default,
             IGameObject collisionUnit = null,
             IGameObject visionTarget = null,
-            bool giveVision = false,
             float visionRadius = 0,
             bool revealStealth = false,
-            bool hasCollision = false,
             float collisionRadius = 0,
             float grassRadius = 0,
             float scale = 1.0f,
@@ -76,24 +73,13 @@ namespace LeagueSandbox.GameServer.GameObjects
         {
             Type = (int)type;
             CollisionUnit = collisionUnit;
+            VisionTarget = visionTarget;
             OwnerClientID = clientId;
-            VisionNetID = _game.NetworkIdManager.GetNewNetId();
-            if (visionTarget != null)
-            {
-                VisionBindNetID = visionTarget.NetId;
-            }
 
             Lifetime = lifetime;
             GrassRadius = grassRadius;
             Scale = scale;
             AdditionalSize = addedSize;
-            HasCollision = hasCollision;
-            GrantVision = giveVision;
-
-            if (!GrantVision)
-            {
-                VisionRadius = 0;
-            }
 
             if (Scale > 0)
             {
@@ -106,6 +92,9 @@ namespace LeagueSandbox.GameServer.GameObjects
                 PathfindingRadius += AdditionalSize;
                 VisionRadius += AdditionalSize;
             }
+
+            HasCollision = PathfindingRadius > 0;
+            GrantVision = VisionRadius > 0;
 
             RevealsStealth = revealStealth;
 
@@ -174,15 +163,17 @@ namespace LeagueSandbox.GameServer.GameObjects
         /// <param name="diff">Number of milliseconds since this tick occurred.</param>
         public override void Update(float diff)
         {
-            if (Lifetime == -1f)
+            if (CollisionUnit != null)
             {
-                return;
+                Position = CollisionUnit.Position;
             }
-
-            _currentTime += diff / 1000.0f;
-            if (_currentTime >= Lifetime)
+            if (Lifetime > 0)
             {
-                SetToRemove();
+                _currentTime += diff / 1000.0f;
+                if (_currentTime >= Lifetime)
+                {
+                    SetToRemove();
+                }
             }
         }
 

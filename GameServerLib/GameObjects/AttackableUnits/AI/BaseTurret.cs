@@ -92,7 +92,17 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             _game.ObjectManager.AddTurret(this);
 
             // TODO: Handle this via map script for LaneTurret and via CharScript for AzirTurret.
-            BubbleRegion = new Region(_game, Team, Position, RegionType.Default, this, this, true, 800f, true, true, PathfindingRadius, lifetime: 25000.0f);
+            BubbleRegion = new Region
+            (
+                _game, Team, Position,
+                RegionType.Unknown2,
+                collisionUnit: this,
+                visionTarget: null,
+                visionRadius: 800f,
+                revealStealth: true,
+                collisionRadius: PathfindingRadius,
+                lifetime: 25000.0f
+            );
         }
 
         public override void OnCollision(IGameObject collider, bool isTerrain = false)

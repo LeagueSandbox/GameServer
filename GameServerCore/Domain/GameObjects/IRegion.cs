@@ -10,9 +10,8 @@ namespace GameServerCore.Domain.GameObjects
     {
         int Type { get; }
         IGameObject CollisionUnit { get; }
+        IGameObject VisionTarget { get; }
         int OwnerClientID { get; }
-        uint VisionNetID { get; }
-        uint VisionBindNetID { get; }
         /// <summary>
         /// Total game-time that this region should exist for
         /// </summary>
