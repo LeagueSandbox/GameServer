@@ -36,10 +36,8 @@ namespace LeagueSandbox.GameServer.GameObjects
         /// Script instance for this buff. Casting to a specific buff class gives access its functions and variables.
         /// </summary>
         public IBuffGameScript BuffScript { get; private set; }
-        /// <summary>
-        /// All status effects applied by this buff.
-        /// </summary>
-        public Dictionary<StatusFlags, bool> StatusEffects { get; private set; }
+        public StatusFlags StatusEffectsToEnable { get; private set; }
+        public StatusFlags StatusEffectsToDisable { get; private set; }
         /// <summary>
         /// Used to update player buff tool tip values.
         /// </summary>
@@ -91,7 +89,6 @@ namespace LeagueSandbox.GameServer.GameObjects
             SourceUnit = from;
             TimeElapsed = 0;
             TargetUnit = onto;
-            StatusEffects = new Dictionary<StatusFlags, bool>();
 
             ToolTipData = new ToolTipData(TargetUnit, null, this);
         }
@@ -142,21 +139,15 @@ namespace LeagueSandbox.GameServer.GameObjects
 
         public void SetStatusEffect(StatusFlags flag, bool enabled)
         {
-            // Loop over all possible status flags and assign them individually to the dictionary
-            for (int i = 0; i < 30; i++)
+            if(enabled)
             {
-                StatusFlags currentFlag = (StatusFlags)(1 << i);
-
-                if (flag.HasFlag(currentFlag))
-                {
-                    if (StatusEffects.ContainsKey(currentFlag))
-                    {
-                        StatusEffects[currentFlag] = enabled;
-                        continue;
-                    }
-
-                    StatusEffects.Add(currentFlag, enabled);
-                }
+                StatusEffectsToEnable |= flag;
+                StatusEffectsToDisable &= ~flag;
+            }
+            else
+            {
+                StatusEffectsToDisable |= flag;
+                StatusEffectsToEnable &= ~flag;
             }
         }
 
@@ -192,18 +183,16 @@ namespace LeagueSandbox.GameServer.GameObjects
 
         public void Update(float diff)
         {
-            if (_infiniteDuration)
+            if (!_infiniteDuration)
             {
-                return;
-            }
-
-            TimeElapsed += diff / 1000.0f;
-            if (Math.Abs(Duration) > Extensions.COMPARE_EPSILON)
-            {
-                BuffScript?.OnUpdate(diff);
-                if (TimeElapsed >= Duration)
+                TimeElapsed += diff / 1000.0f;
+                if (Math.Abs(Duration) > Extensions.COMPARE_EPSILON)
                 {
-                    DeactivateBuff();
+                    BuffScript?.OnUpdate(diff);
+                    if (TimeElapsed >= Duration)
+                    {
+                        DeactivateBuff();
+                    }
                 }
             }
         }

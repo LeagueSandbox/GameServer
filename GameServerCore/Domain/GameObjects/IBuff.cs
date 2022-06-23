@@ -52,9 +52,13 @@ namespace GameServerCore.Domain.GameObjects
         /// </summary>
         IBuffGameScript BuffScript { get; }
         /// <summary>
-        /// All status effects applied by this buff.
+        /// All status effects enabled by this buff.
         /// </summary>
-        Dictionary<StatusFlags, bool> StatusEffects { get; }
+        StatusFlags StatusEffectsToEnable { get; }
+        /// <summary>
+        /// All status effects disabled by this buff.
+        /// </summary>
+        StatusFlags StatusEffectsToDisable { get; }
         /// <summary>
         /// Used to update player buff tool tip values.
         /// </summary>
