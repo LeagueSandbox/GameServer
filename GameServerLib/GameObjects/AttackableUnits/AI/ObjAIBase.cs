@@ -1056,8 +1056,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         {
             base.Update(diff);
 
-            UpdateBuffs(diff);
-
             CharScript.OnUpdate(diff);
             if (!_aiPaused)
             {
@@ -1087,21 +1085,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 SetPet(null);
             }
         }
-        void UpdateBuffs(float diff)
-        {
-            var tempBuffs = new List<IBuff>(GetBuffs());
-            for (int i = tempBuffs.Count - 1; i >= 0; i--)
-            {
-                if (tempBuffs[i].Elapsed())
-                {
-                    RemoveBuff(tempBuffs[i]);
-                }
-                else
-                {
-                    tempBuffs[i].Update(diff);
-                }
-            }
-        }
+        
         public override void LateUpdate(float diff)
         {
             // Stop targeting an untargetable unit.

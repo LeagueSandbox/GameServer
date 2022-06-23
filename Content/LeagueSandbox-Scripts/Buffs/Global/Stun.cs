@@ -21,14 +21,12 @@ namespace Buffs
 
         public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
-            //Change this back to buff.SetStatusEffect when it's removal get's fixed
-            SetStatus(unit, StatusFlags.Stunned, true);
+            buff.SetStatusEffect(StatusFlags.Stunned, true);
             stun = AddParticleTarget(ownerSpell.CastInfo.Owner, unit, "LOC_Stun", unit, buff.Duration, bone: "head");
         }
 
         public void OnDeactivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
-            SetStatus(unit, StatusFlags.Stunned, false);
             RemoveParticle(stun);
         }
 

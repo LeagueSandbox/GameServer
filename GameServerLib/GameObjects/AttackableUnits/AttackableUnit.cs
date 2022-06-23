@@ -98,9 +98,9 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// Status effects enabled on this unit. Refer to StatusFlags enum.
         /// </summary>
         public StatusFlags Status { get; protected set; }
-        StatusFlags _statusBeforeApplyingBuffEfects = 0;
-        StatusFlags _buffEffectsToEnable = 0;
-        StatusFlags _buffEffectsToDisable = 0;
+        private StatusFlags _statusBeforeApplyingBuffEfects = 0;
+        private StatusFlags _buffEffectsToEnable = 0;
+        private StatusFlags _buffEffectsToDisable = 0;
 
         /// <summary>
         /// Parameters of any forced movements (dashes) this unit is performing.
@@ -143,7 +143,11 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
 
             Waypoints = new List<Vector2> { Position };
             CurrentWaypoint = new KeyValuePair<int, Vector2>(1, Position);
-            Status = StatusFlags.CanAttack | StatusFlags.CanCast | StatusFlags.CanMove | StatusFlags.CanMoveEver | StatusFlags.Targetable;
+            SetStatus(
+                StatusFlags.CanAttack | StatusFlags.CanCast     |
+                StatusFlags.CanMove   | StatusFlags.CanMoveEver |
+                StatusFlags.Targetable, true
+            );
             MovementParameters = null;
             Stats.AttackSpeedMultiplier.BaseValue = 1.0f;
 
@@ -219,6 +223,8 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
 
         public override void Update(float diff)
         {
+            UpdateBuffs(diff);
+
             // TODO: Rework stat management.
             _statUpdateTimer += diff;
             while (_statUpdateTimer >= 500)
@@ -257,8 +263,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                 Die(_death);
                 _death = null;
             }
-
-            ApplyBuffEffects();
         }
 
         /// <summary>
@@ -907,7 +911,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             {
                 _statusBeforeApplyingBuffEfects &= ~status;
             }
-            Status = (Status & ~_buffEffectsToDisable) | _buffEffectsToEnable;
+            Status = (_statusBeforeApplyingBuffEfects & ~_buffEffectsToDisable) | _buffEffectsToEnable;
             UpdateActionState(status, enabled);
         }
     
@@ -1056,15 +1060,27 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             }
         }
         
-        void ApplyBuffEffects()
+        void UpdateBuffs(float diff)
         {
             // Combine the status effects of all the buffs
             _buffEffectsToEnable = 0;
             _buffEffectsToDisable = 0;
-            foreach (IBuff buff in GetBuffs())
+
+            var tempBuffs = new List<IBuff>(GetBuffs());
+            for (int i = tempBuffs.Count - 1; i >= 0; i--)
             {
-                _buffEffectsToEnable |= buff.StatusEffectsToEnable;
-                _buffEffectsToDisable |= buff.StatusEffectsToDisable;
+                IBuff buff = tempBuffs[i];
+                if (buff.Elapsed())
+                {
+                    RemoveBuff(buff);
+                }
+                else
+                {
+                    buff.Update(diff);
+
+                    _buffEffectsToEnable |= buff.StatusEffectsToEnable;
+                    _buffEffectsToDisable |= buff.StatusEffectsToDisable;
+                }
             }
 
             // If the effect should be enabled, it overrides disable.
@@ -1489,12 +1505,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// <returns>True/False.</returns>
         public bool HasBuff(IBuff buff)
         {
-            if (BuffList == null)
-            {
-                return false;
-            }
-
-            return !(BuffList.Find(b => b == buff) == null);
+            return BuffList != null && BuffList.Find(b => b == buff) != null;
         }
 
         /// <summary>
@@ -1504,12 +1515,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// <returns>True/False.</returns>
         public bool HasBuff(string buffName)
         {
-            if (BuffList == null)
-            {
-                return false;
-            }
-
-            return !(BuffList.Find(b => b.IsBuffSame(buffName)) == null);
+            return BuffList != null && BuffList.Find(b => b.IsBuffSame(buffName)) != null;
         }
 
         /// <summary>
@@ -1519,12 +1525,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// <returns>True/False.</returns>
         public bool HasBuffType(BuffType type)
         {
-            if (BuffList == null)
-            {
-                return false;
-            }
-
-            return !(BuffList.Find(b => b.BuffType == type) == null);
+            return BuffList != null && BuffList.Find(b => b.BuffType == type) != null;
         }
 
         /// <summary>
