@@ -1,3 +1,4 @@
+using System;
 using System.Numerics;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Domain.GameObjects.Spell;
@@ -55,7 +56,7 @@ namespace Spells
 
             if (target != null)
             {
-                if (!(target is IBaseTurret))
+                if (!(target is IBaseTurret) && !(target is IInhibitor) && !(target is INexus))
                 {
                     FaceDirection(target.Position, owner, true);
                     SpellCast(owner, 1, SpellSlotType.ExtraSlots, true, target, trueCoords);
