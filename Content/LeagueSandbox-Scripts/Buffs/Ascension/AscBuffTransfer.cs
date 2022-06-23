@@ -44,18 +44,13 @@ namespace Buffs
             AddParticle(unit, unit, "AscTransferGlow", unit.Position, buff.Duration, flags: (FXFlags)32);
             AddParticle(unit, unit, "AscTurnToStone", unit.Position, buff.Duration, flags: (FXFlags)32);
 
-            //Using SetStatus temporarily due to: https://github.com/LeagueSandbox/GameServer/issues/1385
-            SetStatus(unit, StatusFlags.Targetable, false);
-            SetStatus(unit, StatusFlags.Stunned, true);
-            SetStatus(unit, StatusFlags.Invulnerable, true);
+            buff.SetStatusEffect(StatusFlags.Targetable, false);
+            buff.SetStatusEffect(StatusFlags.Stunned, true);
+            buff.SetStatusEffect(StatusFlags.Invulnerable, true);
         }
 
         public void OnDeactivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
-            SetStatus(unit, StatusFlags.Targetable, true);
-            SetStatus(unit, StatusFlags.Stunned, false);
-            SetStatus(unit, StatusFlags.Invulnerable, false);
-
             unit.PauseAnimation(false);
 
             AddParticleTarget(unit, unit, "CassPetrifyMiss_tar", unit, size: 3.0f);

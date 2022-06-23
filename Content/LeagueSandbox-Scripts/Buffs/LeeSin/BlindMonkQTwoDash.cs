@@ -43,7 +43,8 @@ namespace Buffs
             // Flags: Blend false, Lock true, Loop true
             PlayAnimation(owner, "Spell1b", 0f, flags: AnimationFlags.Lock);
             toRemove = false;
-            SetStatus(owner, StatusFlags.Ghosted, true);
+
+            buff.SetStatusEffect(StatusFlags.Ghosted, true);
         }
 
         public void OnMoveEnd(IAttackableUnit unit)
@@ -84,7 +85,6 @@ namespace Buffs
             RemoveParticle(selfParticle);
             // Flags: Blend true
             // UnlockAnimation(true, unit);
-            SetStatus(owner, StatusFlags.Ghosted, false);
         }
 
         public void OnUpdate(float diff)

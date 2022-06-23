@@ -67,18 +67,15 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// Array of buff slots which contains all parent buffs (oldest buff of a given name) applied to this AI.
         /// Maximum of 256 slots, hard limit due to packets.
         /// </summary>
-        /// TODO: Move to AttackableUnit.
         private IBuff[] BuffSlots { get; }
         /// <summary>
         /// Dictionary containing all parent buffs (oldest buff of a given name). Used for packets and assigning stacks if a buff of the same name is added.
         /// </summary>
-        /// TODO: Move to AttackableUnit.
         private Dictionary<string, IBuff> ParentBuffs { get; }
         /// <summary>
         /// List of all buffs applied to this AI. Used for easier indexing of buffs.
         /// </summary>
         /// TODO: Verify if we can remove this in favor of BuffSlots while keeping the functions which allow for easy accessing of individual buff instances.
-        /// TODO: Move to AttackableUnit.
         private List<IBuff> BuffList { get; }
         /// <summary>
         /// List of all slows applied to this unit
@@ -96,10 +93,15 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// Index of the waypoint in the list of waypoints that the object is currently on.
         /// </summary>
         public KeyValuePair<int, Vector2> CurrentWaypoint { get; protected set; }
+        
         /// <summary>
         /// Status effects enabled on this unit. Refer to StatusFlags enum.
         /// </summary>
         public StatusFlags Status { get; protected set; }
+        private StatusFlags _statusBeforeApplyingBuffEfects = 0;
+        private StatusFlags _buffEffectsToEnable = 0;
+        private StatusFlags _buffEffectsToDisable = 0;
+
         /// <summary>
         /// Parameters of any forced movements (dashes) this unit is performing.
         /// </summary>
@@ -141,7 +143,11 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
 
             Waypoints = new List<Vector2> { Position };
             CurrentWaypoint = new KeyValuePair<int, Vector2>(1, Position);
-            Status = StatusFlags.CanAttack | StatusFlags.CanCast | StatusFlags.CanMove | StatusFlags.CanMoveEver | StatusFlags.Targetable;
+            SetStatus(
+                StatusFlags.CanAttack | StatusFlags.CanCast     |
+                StatusFlags.CanMove   | StatusFlags.CanMoveEver |
+                StatusFlags.Targetable, true
+            );
             MovementParameters = null;
             Stats.AttackSpeedMultiplier.BaseValue = 1.0f;
 
@@ -217,6 +223,8 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
 
         public override void Update(float diff)
         {
+            UpdateBuffs(diff);
+
             // TODO: Rework stat management.
             _statUpdateTimer += diff;
             while (_statUpdateTimer >= 500)
@@ -255,8 +263,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                 Die(_death);
                 _death = null;
             }
-
-            UpdateStatus();
         }
 
         /// <summary>
@@ -897,6 +903,20 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// <param name="enabled">Whether or not to enable the flag.</param>
         public void SetStatus(StatusFlags status, bool enabled)
         {
+            if (enabled)
+            {
+                _statusBeforeApplyingBuffEfects |= status;
+            }
+            else
+            {
+                _statusBeforeApplyingBuffEfects &= ~status;
+            }
+            Status = (_statusBeforeApplyingBuffEfects & ~_buffEffectsToDisable) | _buffEffectsToEnable;
+            UpdateActionState(status, enabled);
+        }
+    
+        void UpdateActionState(StatusFlags status, bool enabled)
+        {
             // Loop over all possible status flags and set them individually.
             for (int i = 0; i < Enum.GetNames(typeof(StatusFlags)).Length - 1; i++)
             {
@@ -904,15 +924,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
 
                 if (status.HasFlag(currentFlag))
                 {
-                    if (enabled)
-                    {
-                        Status |= currentFlag;
-                    }
-                    else
-                    {
-                        Status &= ~currentFlag;
-                    }
-
                     switch (currentFlag)
                     {
                         // CallForHelpSuppressor
@@ -1048,39 +1059,35 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                 Stats.SetActionState(ActionState.CAN_NOT_ATTACK, false);
             }
         }
-
-        public void UpdateStatus()
+        
+        void UpdateBuffs(float diff)
         {
             // Combine the status effects of all the buffs
-            Dictionary<StatusFlags, bool> finalEffects = new Dictionary<StatusFlags, bool>();
-            foreach (IBuff buff in GetBuffs())
+            _buffEffectsToEnable = 0;
+            _buffEffectsToDisable = 0;
+
+            var tempBuffs = new List<IBuff>(GetBuffs());
+            for (int i = tempBuffs.Count - 1; i >= 0; i--)
             {
-                foreach (KeyValuePair<StatusFlags, bool> effect in buff.StatusEffects)
+                IBuff buff = tempBuffs[i];
+                if (buff.Elapsed())
                 {
-                    if (finalEffects.ContainsKey(effect.Key))
-                    {
-                        // If the effect should be enabled, it overrides disable.
-                        if (finalEffects[effect.Key])
-                        {
-                            continue;
-                        }
-                        else
-                        {
-                            finalEffects[effect.Key] = effect.Value;
-                        }
-                    }
-                    else
-                    {
-                        finalEffects.Add(effect.Key, effect.Value);
-                    }
+                    RemoveBuff(buff);
+                }
+                else
+                {
+                    buff.Update(diff);
+
+                    _buffEffectsToEnable |= buff.StatusEffectsToEnable;
+                    _buffEffectsToDisable |= buff.StatusEffectsToDisable;
                 }
             }
 
+            // If the effect should be enabled, it overrides disable.
+            _buffEffectsToDisable &= ~_buffEffectsToEnable;
+
             // Set the status effects of this unit.
-            foreach (KeyValuePair<StatusFlags, bool> effect in finalEffects)
-            {
-                SetStatus(effect.Key, effect.Value);
-            }
+            SetStatus(StatusFlags.None, true);
         }
 
         /// <summary>
@@ -1498,12 +1505,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// <returns>True/False.</returns>
         public bool HasBuff(IBuff buff)
         {
-            if (BuffList == null)
-            {
-                return false;
-            }
-
-            return !(BuffList.Find(b => b == buff) == null);
+            return BuffList != null && BuffList.Find(b => b == buff) != null;
         }
 
         /// <summary>
@@ -1513,12 +1515,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// <returns>True/False.</returns>
         public bool HasBuff(string buffName)
         {
-            if (BuffList == null)
-            {
-                return false;
-            }
-
-            return !(BuffList.Find(b => b.IsBuffSame(buffName)) == null);
+            return BuffList != null && BuffList.Find(b => b.IsBuffSame(buffName)) != null;
         }
 
         /// <summary>
@@ -1528,12 +1525,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// <returns>True/False.</returns>
         public bool HasBuffType(BuffType type)
         {
-            if (BuffList == null)
-            {
-                return false;
-            }
-
-            return !(BuffList.Find(b => b.BuffType == type) == null);
+            return BuffList != null && BuffList.Find(b => b.BuffType == type) != null;
         }
 
         /// <summary>
