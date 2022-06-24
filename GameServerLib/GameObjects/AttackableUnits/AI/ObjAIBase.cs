@@ -1098,18 +1098,12 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 Untarget(TargetUnit);
             }
         }
-        public override void TakeDamage(IAttackableUnit attacker, float damage, DamageType type, DamageSource source, DamageResultType damageText)
-        {
-            base.TakeDamage(attacker, damage, type, source, damageText);
-            OnTakeDamage(attacker);
-        }
+
         public override void TakeDamage(IDamageData damageData, DamageResultType damageText)
         {
             base.TakeDamage(damageData, damageText);
-            OnTakeDamage(damageData.Attacker);
-        }
-        void OnTakeDamage(IAttackableUnit attacker)
-        {
+            
+            var attacker = damageData.Attacker;
             var objects = _game.ObjectManager.GetObjects();
             foreach (var it in objects)
             {

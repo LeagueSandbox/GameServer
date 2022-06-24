@@ -125,6 +125,8 @@ namespace LeagueSandbox.GameServer
 
         internal FileSystemWatcher ScriptsHotReloadWatcher { get; private set; }
 
+        public float StartTime { get; private set; }
+
         /// <summary>
         /// Instantiates all game managers and handlers.
         /// </summary>
@@ -414,6 +416,7 @@ namespace LeagueSandbox.GameServer
         public void Start()
         {
             IsRunning = true;
+            StartTime = GameTime;
             Map.MapScript.OnMatchStart();
         }
 

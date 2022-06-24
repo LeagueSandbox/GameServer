@@ -42,6 +42,8 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
         public override bool SpawnShouldBeHidden => false;
 
+        public List<EventHistoryEntry> EventHistory { get; } = new List<EventHistoryEntry>();
+
         public Champion(Game game,
                         string model,
                         uint playerId,
@@ -487,18 +489,49 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
             _game.PacketNotifier.NotifyS2C_OnEventWorld(worldEvent, NetId);
 
-            _game.PacketNotifier.NotifyDeath(data);
+            _game.PacketNotifier.NotifyNPC_Hero_Die(data);
             //CORE_INFO("After: getGoldFromChamp: %f Killer: %i Victim: %i", gold, cKiller.killDeathCounter,this.killDeathCounter);
 
             _game.ObjectManager.StopTargeting(this);
         }
 
-        public override void TakeDamage(IAttackableUnit attacker, float damage, DamageType type, DamageSource source, bool isCrit)
+        public override void TakeDamage(IDamageData damageData, DamageResultType damageText)
         {
-            base.TakeDamage(attacker, damage, type, source, isCrit);
+            base.TakeDamage(damageData, damageText);
+
+            var entry = new EventHistoryEntry();
+            entry.Timestamp = (_game.GameTime - _game.StartTime) / 1000f;
+            entry.Count = 1; //TODO: stack?
+            entry.Source = damageData.Attacker.NetId;
+            var e = new OnDamageGiven();
+            entry.Event = e;
+            if(damageData.DamageType == DamageType.DAMAGE_TYPE_MAGICAL)
+            {
+                e.MagicalDamage = damageData.Damage;
+            }
+            else if(damageData.DamageType == DamageType.DAMAGE_TYPE_PHYSICAL)
+            {
+                e.PhysicalDamage = damageData.Damage;
+            }
+            else if(damageData.DamageType == DamageType.DAMAGE_TYPE_TRUE)
+            {
+                e.TrueDamage = damageData.Damage;
+            }
+            //TODO: handle mixed damage?
+
+            e.ScriptNameHash = 3730113793; // Hash
+            e.EventSource = 2; // ??
+            e.Unknown = 0; // ??
+            e.SourceObjectNetID = 0; // ??
+            e.ParentScriptNameHash = 2969284; // Hash
+            e.ParentCasterNetID = damageData.Attacker.NetId;
+            e.Bitfield = 0; // ??
+            e.OtherNetID = this.NetId;
+
+            EventHistory.Add(entry);
 
             _championHitFlagTimer = 15 * 1000; //15 seconds timer, so when you get executed the last enemy champion who hit you gets the gold
-            _playerHitId = attacker.NetId;
+            _playerHitId = damageData.Attacker.NetId;
             //CORE_INFO("15 second execution timer on you. Do not get killed by a minion, turret or monster!");
         }
 

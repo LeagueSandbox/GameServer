@@ -515,23 +515,65 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// <param name="type">Whether the damage is physical, magical, or true.</param>
         /// <param name="source">What the damage came from: attack, spell, summoner spell, or passive.</param>
         /// <param name="damageText">Type of damage the damage text should be.</param>
-        public virtual void TakeDamage(IAttackableUnit attacker, float damage, DamageType type, DamageSource source,
-            DamageResultType damageText)
+        public void TakeDamage(IAttackableUnit attacker, float damage, DamageType type, DamageSource source, DamageResultType damageText)
         {
-            float regain = 0;
-            var attackerStats = attacker.Stats;
-            float postMitigationDamage = Stats.GetPostMitigationDamage(damage, type, attacker);
-
             IDamageData damageData = new DamageData
             {
                 IsAutoAttack = source == DamageSource.DAMAGE_SOURCE_ATTACK,
                 Attacker = attacker,
                 Target = this,
                 Damage = damage,
-                PostMitigationdDamage = postMitigationDamage,
+                PostMitigationdDamage = Stats.GetPostMitigationDamage(damage, type, attacker),
                 DamageSource = source,
                 DamageType = type,
             };
+            this.TakeDamage(damageData, damageText);
+        }
+
+        /// <summary>
+        /// Applies damage to this unit.
+        /// </summary>
+        /// <param name="attacker">Unit that is dealing the damage.</param>
+        /// <param name="damage">Amount of damage to deal.</param>
+        /// <param name="type">Whether the damage is physical, magical, or true.</param>
+        /// <param name="source">What the damage came from: attack, spell, summoner spell, or passive.</param>
+        /// <param name="isCrit">Whether or not the damage text should be shown as a crit.</param>
+        public void TakeDamage(IAttackableUnit attacker, float damage, DamageType type, DamageSource source, bool isCrit)
+        {
+            var text = DamageResultType.RESULT_NORMAL;
+            if (isCrit)
+            {
+                text = DamageResultType.RESULT_CRITICAL;
+            }
+            this.TakeDamage(attacker, damage, type, source, text);
+        }
+
+        public void TakeDamage(IDamageData damageData, bool isCrit)
+        {
+            var text = DamageResultType.RESULT_NORMAL;
+            if (isCrit)
+            {
+                text = DamageResultType.RESULT_CRITICAL;
+            }
+            this.TakeDamage(damageData, text);
+        }
+
+        /// <summary>
+        /// Applies damage to this unit.
+        /// </summary>
+        /// <param name="attacker">Unit that is dealing the damage.</param>
+        /// <param name="damage">Amount of damage to deal.</param>
+        /// <param name="type">Whether the damage is physical, magical, or true.</param>
+        /// <param name="source">What the damage came from: attack, spell, summoner spell, or passive.</param>
+        /// <param name="damageText">Type of damage the damage text should be.</param>
+        public virtual void TakeDamage(IDamageData damageData, DamageResultType damageText)
+        {
+            float regain = 0;
+            var attacker = damageData.Attacker;
+            var attackerStats = damageData.Attacker.Stats;
+            var type = damageData.DamageType;
+            var source = damageData.DamageSource;
+            var postMitigationDamage = damageData.PostMitigationdDamage;
 
             ApiEventManager.OnPreTakeDamage.Publish(damageData.Target, damageData);
 
@@ -624,148 +666,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                     attackerStats.CurrentHealth + regain * postMitigationDamage
                 );
             }
-        }
-
-        /// <summary>
-        /// Applies damage to this unit.
-        /// </summary>
-        /// <param name="attacker">Unit that is dealing the damage.</param>
-        /// <param name="damage">Amount of damage to deal.</param>
-        /// <param name="type">Whether the damage is physical, magical, or true.</param>
-        /// <param name="source">What the damage came from: attack, spell, summoner spell, or passive.</param>
-        /// <param name="isCrit">Whether or not the damage text should be shown as a crit.</param>
-        public virtual void TakeDamage(IAttackableUnit attacker, float damage, DamageType type, DamageSource source, bool isCrit)
-        {
-            var text = DamageResultType.RESULT_NORMAL;
-
-            if (isCrit)
-            {
-                text = DamageResultType.RESULT_CRITICAL;
-            }
-
-            TakeDamage(attacker, damage, type, source, text);
-        }
-
-        /// <summary>
-        /// Applies damage to this unit.
-        /// </summary>
-        /// <param name="attacker">Unit that is dealing the damage.</param>
-        /// <param name="damage">Amount of damage to deal.</param>
-        /// <param name="type">Whether the damage is physical, magical, or true.</param>
-        /// <param name="source">What the damage came from: attack, spell, summoner spell, or passive.</param>
-        /// <param name="damageText">Type of damage the damage text should be.</param>
-        public virtual void TakeDamage(IDamageData damageData, DamageResultType damageText)
-        {
-            float regain = 0;
-            var attacker = damageData.Attacker;
-            var attackerStats = damageData.Attacker.Stats;
-            var type = damageData.DamageType;
-            var source = damageData.DamageSource;
-            var postMitigationDamage = damageData.PostMitigationdDamage;
-
-            ApiEventManager.OnPreTakeDamage.Publish(damageData.Target, damageData);
-
-            switch (source)
-            {
-                case DamageSource.DAMAGE_SOURCE_RAW:
-                    break;
-                case DamageSource.DAMAGE_SOURCE_INTERNALRAW:
-                    break;
-                case DamageSource.DAMAGE_SOURCE_PERIODIC:
-                    break;
-                case DamageSource.DAMAGE_SOURCE_PROC:
-                    break;
-                case DamageSource.DAMAGE_SOURCE_REACTIVE:
-                    break;
-                case DamageSource.DAMAGE_SOURCE_ONDEATH:
-                    break;
-                case DamageSource.DAMAGE_SOURCE_SPELL:
-                    regain = attackerStats.SpellVamp.Total;
-                    break;
-                case DamageSource.DAMAGE_SOURCE_ATTACK:
-                    regain = attackerStats.LifeSteal.Total;
-                    break;
-                case DamageSource.DAMAGE_SOURCE_DEFAULT:
-                    break;
-                case DamageSource.DAMAGE_SOURCE_SPELLAOE:
-                    break;
-                case DamageSource.DAMAGE_SOURCE_SPELLPERSIST:
-                    break;
-                case DamageSource.DAMAGE_SOURCE_PET:
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(source), source, null);
-            }
-
-            if (!CanTakeDamage(type))
-            {
-                return;
-            }
-
-            Stats.CurrentHealth = Math.Max(0.0f, Stats.CurrentHealth - postMitigationDamage);
-
-            ApiEventManager.OnTakeDamage.Publish(damageData.Target, damageData);
-
-            if (!IsDead && Stats.CurrentHealth <= 0)
-            {
-                IsDead = true;
-                _death = new DeathData
-                {
-                    BecomeZombie = false, // TODO: Unhardcode
-                    DieType = 0, // TODO: Unhardcode
-                    Unit = this,
-                    Killer = attacker,
-                    DamageType = type,
-                    DamageSource = source,
-                    DeathDuration = 0 // TODO: Unhardcode
-                };
-            }
-
-            int attackerId = 0, targetId = 0;
-
-            // todo: check if damage dealt by disconnected players cause anything bad
-            if (attacker is IChampion attackerChamp)
-            {
-                attackerId = (int)_game.PlayerManager.GetClientInfoByChampion(attackerChamp).PlayerId;
-            }
-
-            if (this is IChampion targetChamp)
-            {
-                targetId = (int)_game.PlayerManager.GetClientInfoByChampion(targetChamp).PlayerId;
-            }
-            // Show damage text for owner of pet
-            if (attacker is IMinion attackerMinion && attackerMinion is IPet && attackerMinion.Owner is IChampion)
-            {
-                attackerId = (int)_game.PlayerManager.GetClientInfoByChampion((IChampion)attackerMinion.Owner).PlayerId;
-            }
-
-            if (attacker.Team != Team)
-            {
-                _game.PacketNotifier.NotifyUnitApplyDamage(attacker, this, postMitigationDamage, type, damageText,
-                    _game.Config.IsDamageTextGlobal, attackerId, targetId);
-            }
-
-            // Get health from lifesteal/spellvamp
-            if (regain > 0)
-            {
-                attackerStats.CurrentHealth = Math.Min
-                (
-                    attackerStats.HealthPoints.Total,
-                    attackerStats.CurrentHealth + regain * postMitigationDamage
-                );
-            }
-        }
-
-        public void TakeDamage(IDamageData damageData, bool isCrit)
-        {
-            var text = DamageResultType.RESULT_NORMAL;
-
-            if (isCrit)
-            {
-                text = DamageResultType.RESULT_CRITICAL;
-            }
-
-            TakeDamage(damageData, text);
         }
 
         /// <summary>
