@@ -97,10 +97,11 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// <summary>
         /// Status effects enabled on this unit. Refer to StatusFlags enum.
         /// </summary>
-        public StatusFlags Status { get; protected set; }
+        public StatusFlags Status { get; private set; }
         private StatusFlags _statusBeforeApplyingBuffEfects = 0;
         private StatusFlags _buffEffectsToEnable = 0;
         private StatusFlags _buffEffectsToDisable = 0;
+        private StatusFlags _dashEffectsToDisable = 0;
 
         /// <summary>
         /// Parameters of any forced movements (dashes) this unit is performing.
@@ -911,120 +912,64 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             {
                 _statusBeforeApplyingBuffEfects &= ~status;
             }
-            Status = (_statusBeforeApplyingBuffEfects & ~_buffEffectsToDisable) | _buffEffectsToEnable;
-            UpdateActionState(status, enabled);
+            Status = (
+                (
+                    _statusBeforeApplyingBuffEfects
+                    & ~_buffEffectsToDisable
+                )
+                | _buffEffectsToEnable
+            )
+            & ~_dashEffectsToDisable;
+
+            UpdateActionState();
         }
     
-        void UpdateActionState(StatusFlags status, bool enabled)
+        void UpdateActionState()
         {
-            // Loop over all possible status flags and set them individually.
-            for (int i = 0; i < Enum.GetNames(typeof(StatusFlags)).Length - 1; i++)
-            {
-                StatusFlags currentFlag = (StatusFlags)(1 << i);
+            // CallForHelpSuppressor
+            Stats.SetActionState(ActionState.CAN_ATTACK, Status.HasFlag(StatusFlags.CanAttack));
+            Stats.SetActionState(ActionState.CAN_CAST, Status.HasFlag(StatusFlags.CanCast));
+            Stats.SetActionState(ActionState.CAN_MOVE, Status.HasFlag(StatusFlags.CanMove));
+            Stats.SetActionState(ActionState.CAN_NOT_MOVE, !Status.HasFlag(StatusFlags.CanMoveEver));
+            Stats.SetActionState(ActionState.CHARMED, Status.HasFlag(StatusFlags.Charmed));
+            // DisableAmbientGold
+            
+            bool feared = Status.HasFlag(StatusFlags.Feared);
+            Stats.SetActionState(ActionState.FEARED, feared);
+            // TODO: Verify
+            Stats.SetActionState(ActionState.IS_FLEEING, feared);
+            
+            Stats.SetActionState(ActionState.FORCE_RENDER_PARTICLES, Status.HasFlag(StatusFlags.ForceRenderParticles));
+            // GhostProof
+            Stats.SetActionState(ActionState.IS_GHOSTED, Status.HasFlag(StatusFlags.Ghosted));
+            // IgnoreCallForHelp
+            // Immovable
+            // Invulnerable
+            // MagicImmune
+            Stats.SetActionState(ActionState.IS_NEAR_SIGHTED, Status.HasFlag(StatusFlags.NearSighted));
+            // Netted
+            Stats.SetActionState(ActionState.NO_RENDER, Status.HasFlag(StatusFlags.NoRender));
+            // PhysicalImmune
+            Stats.SetActionState(ActionState.REVEAL_SPECIFIC_UNIT, Status.HasFlag(StatusFlags.RevealSpecificUnit));
+            // Rooted
+            // Silenced
+            Stats.SetActionState(ActionState.IS_ASLEEP, Status.HasFlag(StatusFlags.Sleep));
+            Stats.SetActionState(ActionState.STEALTHED, Status.HasFlag(StatusFlags.Stealthed));
+            // SuppressCallForHelp
 
-                if (status.HasFlag(currentFlag))
-                {
-                    switch (currentFlag)
-                    {
-                        // CallForHelpSuppressor
-                        case StatusFlags.CanAttack:
-                        {
-                            Stats.SetActionState(ActionState.CAN_ATTACK, enabled);
-                            break;
-                        }
-                        case StatusFlags.CanCast:
-                        {
-                            Stats.SetActionState(ActionState.CAN_CAST, enabled);
-                            break;
-                        }
-                        case StatusFlags.CanMove:
-                        {
-                            Stats.SetActionState(ActionState.CAN_MOVE, enabled);
-                            break;
-                        }
-                        case StatusFlags.CanMoveEver:
-                        {
-                            Stats.SetActionState(ActionState.CAN_NOT_MOVE, !enabled);
-                            break;
-                        }
-                        case StatusFlags.Charmed:
-                        {
-                            Stats.SetActionState(ActionState.CHARMED, enabled);
-                            break;
-                        }
-                        // DisableAmbientGold
-                        case StatusFlags.Feared:
-                        {
-                            Stats.SetActionState(ActionState.FEARED, enabled);
-                            // TODO: Verify
-                            Stats.SetActionState(ActionState.IS_FLEEING, enabled);
-                            break;
-                        }
-                        case StatusFlags.ForceRenderParticles:
-                        {
-                            Stats.SetActionState(ActionState.FORCE_RENDER_PARTICLES, enabled);
-                            break;
-                        }
-                        // GhostProof
-                        case StatusFlags.Ghosted:
-                        {
-                            Stats.SetActionState(ActionState.IS_GHOSTED, enabled);
-                            break;
-                        }
-                        // IgnoreCallForHelp
-                        // Immovable
-                        // Invulnerable
-                        // MagicImmune
-                        case StatusFlags.NearSighted:
-                        {
-                            Stats.SetActionState(ActionState.IS_NEAR_SIGHTED, enabled);
-                            break;
-                        }
-                        // Netted
-                        case StatusFlags.NoRender:
-                        {
-                            Stats.SetActionState(ActionState.NO_RENDER, enabled);
-                            break;
-                        }
-                        // PhysicalImmune
-                        case StatusFlags.RevealSpecificUnit:
-                        {
-                            Stats.SetActionState(ActionState.REVEAL_SPECIFIC_UNIT, enabled);
-                            break;
-                        }
-                        // Rooted
-                        // Silenced
-                        case StatusFlags.Sleep:
-                        {
-                            Stats.SetActionState(ActionState.IS_ASLEEP, enabled);
-                            break;
-                        }
-                        case StatusFlags.Stealthed:
-                        {
-                            Stats.SetActionState(ActionState.STEALTHED, enabled);
-                            break;
-                        }
-                        // SuppressCallForHelp
-                        case StatusFlags.Targetable:
-                        {
-                            Stats.IsTargetable = enabled;
-                            // TODO: Refactor this.
-                            if (CharData.IsUseable)
-                            {
-                                Stats.SetActionState(ActionState.TARGETABLE, enabled);
-                            }
-                            break;
-                        }
-                        case StatusFlags.Taunted:
-                        {
-                            Stats.SetActionState(ActionState.TAUNTED, enabled);
-                            break;
-                        }
-                    }
-                }
+            bool targetable = Status.HasFlag(StatusFlags.Targetable);
+            Stats.IsTargetable = targetable;
+            // TODO: Refactor this.
+            if (CharData.IsUseable)
+            {
+                Stats.SetActionState(ActionState.TARGETABLE, targetable);
             }
 
-            if (!Status.HasFlag(StatusFlags.CanMove)
+            Stats.SetActionState(ActionState.TAUNTED, Status.HasFlag(StatusFlags.Taunted));
+
+            Stats.SetActionState(
+                ActionState.CAN_NOT_MOVE,
+                !Status.HasFlag(StatusFlags.CanMove)
                 || Status.HasFlag(StatusFlags.Charmed)
                 || Status.HasFlag(StatusFlags.Feared)
                 || Status.HasFlag(StatusFlags.Immovable)
@@ -1033,31 +978,21 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                 || Status.HasFlag(StatusFlags.Sleep)
                 || Status.HasFlag(StatusFlags.Stunned)
                 || Status.HasFlag(StatusFlags.Suppressed)
-                || Status.HasFlag(StatusFlags.Taunted))
-            {
-                Stats.SetActionState(ActionState.CAN_NOT_MOVE, true);
-            }
-            else if (Stats.GetActionState(ActionState.CAN_NOT_MOVE))
-            {
-                Stats.SetActionState(ActionState.CAN_NOT_MOVE, false);
-            }
+                || Status.HasFlag(StatusFlags.Taunted)
+            );
 
-            if (!(Status.HasFlag(StatusFlags.CanAttack)
-                    && !Status.HasFlag(StatusFlags.Charmed)
-                    && !Status.HasFlag(StatusFlags.Disarmed)
-                    && !Status.HasFlag(StatusFlags.Feared)
-                    // TODO: Verify
-                    && !Status.HasFlag(StatusFlags.Pacified)
-                    && !Status.HasFlag(StatusFlags.Sleep)
-                    && !Status.HasFlag(StatusFlags.Stunned)
-                    && !Status.HasFlag(StatusFlags.Suppressed)))
-            {
-                Stats.SetActionState(ActionState.CAN_NOT_ATTACK, true);
-            }
-            else if (Stats.GetActionState(ActionState.CAN_NOT_ATTACK))
-            {
-                Stats.SetActionState(ActionState.CAN_NOT_ATTACK, false);
-            }
+            Stats.SetActionState(
+                ActionState.CAN_NOT_ATTACK, 
+                !Status.HasFlag(StatusFlags.CanAttack)
+                || Status.HasFlag(StatusFlags.Charmed)
+                || Status.HasFlag(StatusFlags.Disarmed)
+                || Status.HasFlag(StatusFlags.Feared)
+                // TODO: Verify
+                || Status.HasFlag(StatusFlags.Pacified)
+                || Status.HasFlag(StatusFlags.Sleep)
+                || Status.HasFlag(StatusFlags.Stunned)
+                || Status.HasFlag(StatusFlags.Suppressed)
+            );
         }
         
         void UpdateBuffs(float diff)
@@ -1066,10 +1001,9 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             _buffEffectsToEnable = 0;
             _buffEffectsToDisable = 0;
 
-            var tempBuffs = new List<IBuff>(GetBuffs());
-            for (int i = tempBuffs.Count - 1; i >= 0; i--)
+            var tempBuffs = new List<IBuff>(BuffList);
+            foreach (IBuff buff in tempBuffs)
             {
-                IBuff buff = tempBuffs[i];
                 if (buff.Elapsed())
                 {
                     RemoveBuff(buff);
@@ -1505,7 +1439,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// <returns>True/False.</returns>
         public bool HasBuff(IBuff buff)
         {
-            return BuffList != null && BuffList.Find(b => b == buff) != null;
+            return BuffList != null && BuffList.Contains(buff);
         }
 
         /// <summary>
@@ -1574,11 +1508,12 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// <returns>Parent buff instance.</returns>
         public IBuff GetBuffWithName(string name)
         {
-            lock (_buffsLock)
+            //lock (_buffsLock)
             {
-                if (ParentBuffs.ContainsKey(name))
+                IBuff buff;
+                if (ParentBuffs.TryGetValue(name, out buff))
                 {
-                    return ParentBuffs[name];
+                    return buff;
                 }
                 return null;
             }
@@ -1609,7 +1544,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// <returns>List of buff instances.</returns>
         public List<IBuff> GetBuffsWithName(string buffName)
         {
-            lock (_buffsLock)
+            //lock (_buffsLock)
             {
                 return BuffList.FindAll(b => b.IsBuffSame(buffName));
             }
@@ -1628,7 +1563,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                 return;
             }
 
-            lock (_buffsLock)
+            //lock (_buffsLock)
             {
                 // If the buff is supposed to be a single stackable buff with a timer = Duration * StackCount, and their are more than one already present.
                 if (b.BuffAddType == BuffAddType.STACKS_AND_CONTINUE && b.StackCount > 1)
@@ -1715,7 +1650,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                     }
 
                     RemoveBuff(b.Name, true);
-                    BuffList.RemoveAll(buff => buff.Elapsed());
+
                     if (!b.IsHidden)
                     {
                         _game.PacketNotifier.NotifyNPC_BuffRemove2(b);
@@ -1741,13 +1676,14 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// <param name="b">Internal buff name to remove.</param>
         private void RemoveBuff(string b, bool removeSlot)
         {
-            if (removeSlot && ParentBuffs[b] != null)
+            IBuff parentBuff = ParentBuffs[b];
+            if (removeSlot && parentBuff != null)
             {
-                RemoveBuffSlot(ParentBuffs[b]);
+                RemoveBuffSlot(parentBuff);
             }
-            lock (_buffsLock)
+            //lock (_buffsLock)
             {
-                BuffList.Remove(ParentBuffs[b]);
+                BuffList.Remove(parentBuff);
                 ParentBuffs.Remove(b);
             }
         }
@@ -1759,11 +1695,15 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// <param name="buffName">Internal buff name to remove.</param>
         public void RemoveBuffsWithName(string buffName)
         {
-            lock (_buffsLock)
+            //lock (_buffsLock)
             {
-                BuffList.FindAll(b =>
-                b.IsBuffSame(buffName)).ForEach(b =>
-                b.DeactivateBuff());
+                foreach (IBuff b in BuffList)
+                {
+                    if(b.IsBuffSame(buffName))
+                    {
+                        b.DeactivateBuff();
+                    }
+                }
             }
         }
 
@@ -1829,8 +1769,14 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// TODO: Implement ForcedMovement methods and enumerators to handle different kinds of dashes.
         public virtual void SetDashingState(bool state, MoveStopReason reason = MoveStopReason.Finished)
         {
+            _dashEffectsToDisable = 0;
+            if(state)
+            {
+                _dashEffectsToDisable = MovementParameters.SetStatus;
+            }
+
             // TODO: Implement this as a parameter.
-            SetStatus(MovementParameters.SetStatus, !state);
+            SetStatus(StatusFlags.None, true);
 
             if (MovementParameters != null && state == false)
             {
