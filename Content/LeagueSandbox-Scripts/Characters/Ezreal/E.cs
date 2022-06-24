@@ -32,6 +32,7 @@ namespace Spells
 
         public void OnActivate(IObjAiBase owner, ISpell spell)
         {
+            ApiEventManager.OnSpellHit.AddListener(this, spell, TargetExecute, false);
         }
 
         public void OnDeactivate(IObjAiBase owner, ISpell spell)
@@ -87,8 +88,8 @@ namespace Spells
         public void OnSpellPostChannel(ISpell spell)
         {
         }
-
-        public void OnUpdate(float diff)
+        
+        public void TargetExecute(ISpell spell, IAttackableUnit target, ISpellMissile missile, ISpellSector sector)
         {
             if (_owner == null || _sector == null) 
                 return;
@@ -110,6 +111,10 @@ namespace Spells
                 
             }
             _sector.ObjectsHit.Clear();
+        }
+
+        public void OnUpdate(float diff)
+        {
         }
     }
     public class EzrealArcaneShiftMissile : ISpellScript
