@@ -6,7 +6,6 @@ using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using GameServerCore.Domain.GameObjects.Spell.Missile;
 using LeagueSandbox.GameServer.API;
-using System.Collections.Generic;
 using GameServerCore.Scripting.CSharp;
 using GameServerCore.Domain.GameObjects.Spell.Sector;
 
@@ -14,17 +13,26 @@ namespace Spells
 {
     public class EzrealArcaneShift : ISpellScript
     {
+        private IObjAiBase _owner;
+        private ISpell _spell;
+        private ISpellSector _sector;
+
+        private const float CAST_RANGE = 475;
+        
+        private const string CAST_PARTICLE = "Ezreal_arcaneshift_cas";
+        private const string CAST_FLASH_PARTICLE = "Ezreal_arcaneshift_flash";
+
         public ISpellScriptMetadata ScriptMetadata => new SpellScriptMetadata()
         {
             CastingBreaksStealth = true,
             DoesntBreakShields = true,
             TriggersSpellCasts = true,
             IsDamagingSpell = true,
-            NotSingleTargetSpell = true
         };
 
         public void OnActivate(IObjAiBase owner, ISpell spell)
         {
+            ApiEventManager.OnSpellHit.AddListener(this, spell, TargetExecute, false);
         }
 
         public void OnDeactivate(IObjAiBase owner, ISpell spell)
@@ -41,31 +49,32 @@ namespace Spells
 
         public void OnSpellPostCast(ISpell spell)
         {
-            var owner = spell.CastInfo.Owner;
-            var startPos = owner.Position;
-            var trueCoords = new Vector2(spell.CastInfo.TargetPosition.X, spell.CastInfo.TargetPosition.Z);
+            _owner = spell.CastInfo.Owner;
+            _spell = spell;
+            var startPos = _owner.Position;
+            var trueCoords = new Vector2(_spell.CastInfo.TargetPosition.X, _spell.CastInfo.TargetPosition.Z);
 
             var to = trueCoords - startPos;
-            if (to.Length() > 475)
+            if (to.Length() > CAST_RANGE)
             {
-                trueCoords = GetPointFromUnit(owner, 475f);
+                trueCoords = GetPointFromUnit(_owner, CAST_RANGE);
             }
 
-            var target = GetClosestUnitInRange(owner, 750f, true);
-
-            if (target != null)
+            var sectorParams = new SectorParameters
             {
-                if (!(target is IBaseTurret))
-                {
-                    FaceDirection(target.Position, owner, true);
-                    SpellCast(owner, 1, SpellSlotType.ExtraSlots, true, target, trueCoords);
-                }
-            }
+                Length = CAST_RANGE,
+                Type = SectorType.Area,
+                SingleTick = true,
+                CanHitSameTarget = false,
+                CanHitSameTargetConsecutively = false,
+                MaximumHits = 0
+            };
+            _sector = _spell.CreateSpellSector(sectorParams);
 
-            AddParticle(owner, null, "Ezreal_arcaneshift_cas", startPos);
-            AddParticleTarget(owner, owner, "Ezreal_arcaneshift_flash", owner);
+            AddParticle(_owner, null, CAST_PARTICLE, startPos);
+            AddParticleTarget(_owner, _owner, CAST_FLASH_PARTICLE, _owner);
 
-            TeleportTo(owner, trueCoords.X, trueCoords.Y);
+            TeleportTo(_owner, trueCoords.X, trueCoords.Y);
         }
 
         public void OnSpellChannel(ISpell spell)
@@ -78,6 +87,30 @@ namespace Spells
 
         public void OnSpellPostChannel(ISpell spell)
         {
+        }
+        
+        public void TargetExecute(ISpell spell, IAttackableUnit target, ISpellMissile missile, ISpellSector sector)
+        {
+            if (_owner == null || _sector == null) 
+                return;
+            
+            if (_sector.ObjectsHit.Count == 0)
+                return;
+            
+            _sector.ExecuteTick();
+            
+            foreach (var targetObj in _sector.ObjectsHit)
+            {
+                var targetUnit = targetObj as IAttackableUnit;
+                if (targetUnit == null)
+                    continue;
+                    
+                var castPosition = new Vector2(_spell.CastInfo.TargetPosition.X, _spell.CastInfo.TargetPosition.Z);
+                SpellCast(_owner, 1, SpellSlotType.ExtraSlots, true, targetUnit, castPosition);
+                break;
+                
+            }
+            _sector.ObjectsHit.Clear();
         }
 
         public void OnUpdate(float diff)
