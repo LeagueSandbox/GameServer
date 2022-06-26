@@ -1,4 +1,0 @@
-namespace GameServerCore.Scripting.CSharp
-{
-    
-}

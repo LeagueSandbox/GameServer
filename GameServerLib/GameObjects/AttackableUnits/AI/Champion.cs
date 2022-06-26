@@ -579,7 +579,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
         public override void TakeDamage(IDamageData damageData, DamageResultType damageText, IEventSource sourceScript = null)
         {
-            base.TakeDamage(damageData, damageText);
+            base.TakeDamage(damageData, damageText, sourceScript);
 
             _championHitFlagTimer = 15 * 1000; //15 seconds timer, so when you get executed the last enemy champion who hit you gets the gold
             _playerHitId = damageData.Attacker.NetId;

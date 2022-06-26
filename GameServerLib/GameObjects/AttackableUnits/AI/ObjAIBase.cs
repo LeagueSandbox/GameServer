@@ -81,7 +81,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         public ICharScript CharScript { get; private set; }
         public bool IsBot { get; set; }
         public IAIScript AIScript { get; protected set; }
-        public uint AIScriptNameHash { get; private set; }
         public ObjAiBase(Game game, string model, int collisionRadius = 0,
             Vector2 position = new Vector2(), int visionRadius = 0, int skinId = 0, uint netId = 0, TeamId team = TeamId.TEAM_NEUTRAL, IStats stats = null, string aiScript = "") :
             base(game, model, collisionRadius, position, visionRadius, netId, team, stats)
@@ -215,7 +214,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 IsMelee = true;
             }
 
-            AIScriptNameHash = HashString(aiScript);
             AIScript = game.ScriptEngine.CreateObject<IAIScript>($"AIScripts", aiScript) ?? new EmptyAIScript();
             AIScript.OnActivate(this);
         }

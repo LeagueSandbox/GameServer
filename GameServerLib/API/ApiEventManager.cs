@@ -236,7 +236,7 @@ namespace LeagueSandbox.GameServer.API
 
                         if (listener.Item4)
                         {
-                            _listeners.RemoveAt(i);
+                            _listeners.Remove(listener);
                         }
                     }
                 }
@@ -263,7 +263,7 @@ namespace LeagueSandbox.GameServer.API
 
                         if (listener.Item4)
                         {
-                            _listeners.RemoveAt(i);
+                            _listeners.Remove(listener);
                         }
                     }
                 }
