@@ -1546,7 +1546,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                 {
                     b.DecrementStackCount();
 
-                    IBuff tempBuff = new Buff(_game, b.Name, b.Duration, b.StackCount, b.OriginSpell, b.TargetUnit, b.SourceUnit, b.IsBuffInfinite());
+                    IBuff tempBuff = new Buff(_game, b.Name, b.Duration, b.StackCount, b.OriginSpell, b.TargetUnit, b.SourceUnit, b.IsBuffInfinite(), b.ParentScript);
 
                     RemoveBuff(b.Name, true);
 

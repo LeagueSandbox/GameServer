@@ -71,8 +71,7 @@ namespace Spells
             {
                 healthGain *= 0.5f;
             }
-            var newHealth = target.Stats.CurrentHealth + healthGain;
-            target.Stats.CurrentHealth = Math.Min(newHealth, target.Stats.HealthPoints.Total);
+            target.TakeHeal(owner, healthGain, spell);
             AddBuff("HealSpeed", 1.0f, 1, spell, target, owner);
             AddBuff("HealCheck", 35.0f, 1, spell, target, owner);
         }

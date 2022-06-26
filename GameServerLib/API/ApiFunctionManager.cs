@@ -6,6 +6,7 @@ using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Domain.GameObjects.Spell;
 using GameServerCore.Enums;
+using GameServerCore.Scripting.CSharp;
 using GameServerLib.GameObjects.AttackableUnits;
 using LeagueSandbox.GameServer.GameObjects;
 using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
@@ -269,13 +270,13 @@ namespace LeagueSandbox.GameServer.API
         /// <param name="from">Owner of the buff.</param>
         /// <param name="infiniteduration">Whether or not the buff should last forever.</param>
         /// <returns>New buff instance.</returns>
-        public static IBuff AddBuff(string buffName, float duration, byte stacks, ISpell originspell, IAttackableUnit onto, IObjAiBase from, bool infiniteduration = false)
+        public static IBuff AddBuff(string buffName, float duration, byte stacks, ISpell originspell, IAttackableUnit onto, IObjAiBase from, bool infiniteduration = false, IEventSource parent = null)
         {
             IBuff buff;
 
             try
             {
-                buff = new Buff(_game, buffName, duration, stacks, originspell, onto, from, infiniteduration);
+                buff = new Buff(_game, buffName, duration, stacks, originspell, onto, from, infiniteduration, parent);
             }
             catch (ArgumentException exception)
             {

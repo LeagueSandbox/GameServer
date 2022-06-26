@@ -425,6 +425,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             if (cKiller == null)
             {
                 _game.PacketNotifier.NotifyNPC_Hero_Die(data);
+                EventHistory.Clear();
                 return;
             }
 
@@ -491,9 +492,10 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
             _game.PacketNotifier.NotifyS2C_OnEventWorld(worldEvent, NetId);
 
-            _game.PacketNotifier.NotifyNPC_Hero_Die(data);
             //CORE_INFO("After: getGoldFromChamp: %f Killer: %i Victim: %i", gold, cKiller.killDeathCounter,this.killDeathCounter);
-
+            _game.PacketNotifier.NotifyNPC_Hero_Die(data);
+            EventHistory.Clear();
+            
             _game.ObjectManager.StopTargeting(this);
         }
 
@@ -520,11 +522,18 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                     e.ScriptNameHash = sourceScript.ScriptNameHash;
                     e.ParentScriptNameHash = sourceScript.ParentScript.ScriptNameHash;
                 }
+                else if(b.OriginSpell != null)
+                {
+                    e.ScriptNameHash = sourceScript.ScriptNameHash;
+                    e.ParentScriptNameHash = (uint)b.OriginSpell.GetId();
+                }
 
                 e.EventSource = 0; // ?
                 e.Unknown = 0; // ?
                 e.SourceObjectNetID = 0;
                 e.Bitfield = 0; // ?
+
+                EventHistory.Add(entry);
 
                 return true;
             }

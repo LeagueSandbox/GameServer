@@ -166,9 +166,6 @@ namespace PacketDefinitions420
                 {
                     temp = source;
                 }
-
-                Console.WriteLine($"<- {(GamePacketID)source[0]}");
-
                 return _peers[playerId].Send((byte)channelNo, new LENet.Packet(temp, flag)) == 0;
             }
             return false;
@@ -191,9 +188,6 @@ namespace PacketDefinitions420
             else
             {
                 var packet = new LENet.Packet(data, flag);
-
-                Console.WriteLine($"<- {(GamePacketID)data[0]}");
-
                 _server.Broadcast((byte)channelNo, packet);
                 return true;
             }
@@ -232,17 +226,11 @@ namespace PacketDefinitions420
             if (channelId == Channel.CHL_COMMUNICATION || channelId == Channel.CHL_LOADING_SCREEN)
             {
                 var loadScreenPacketId = (LoadScreenPacketID)reader.ReadByte();
-                
-                Console.WriteLine($"-> {loadScreenPacketId}");
-
                 convertor = GetConvertor(loadScreenPacketId);
             }
             else
             {
                 var gamePacketId = (GamePacketID)reader.ReadByte();
-
-                Console.WriteLine($"-> {gamePacketId}");
-
                 convertor = GetConvertor(gamePacketId, channelId);
 
                 switch (gamePacketId)

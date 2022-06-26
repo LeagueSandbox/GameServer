@@ -2147,20 +2147,17 @@ namespace PacketDefinitions420
         {
             var history = new NPC_Die_EventHistory();
             history.KillerNetID = killerNetID;
-            float firstTimestamp = ch.EventHistory[0].Timestamp;
-            float lastTimestamp = ch.EventHistory[ch.EventHistory.Count - 1].Timestamp;
-            history.Duration = lastTimestamp - firstTimestamp; // ?
-            history.EventSourceType = 0; // always zero?
-            
-            ch.EventHistory.Reverse(); //TODO: Move to Champion or NPC_Die_EventHistory
-
+            history.Duration = 0;
+            if(ch.EventHistory.Count > 0)
+            {
+                float firstTimestamp = ch.EventHistory[0].Timestamp;
+                float lastTimestamp = ch.EventHistory[ch.EventHistory.Count - 1].Timestamp;
+                history.Duration = lastTimestamp - firstTimestamp; // ?
+            }
+            history.EventSourceType = 0; //TODO: Confirm that it is always zero
             history.Entries = ch.EventHistory;
             
-            Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(history));
-
             _packetHandlerManager.SendPacket((int)ch.GetPlayerId(), history.GetBytes(), Channel.CHL_S2C);
-            
-            ch.EventHistory.Clear(); //TODO: Move to Champion
         }
         /// <summary>
         /// Sends a packet to all players with vision of the specified AttackableUnit detailing that the attacker has abrubtly stopped their attack (can be a spell or auto attack, although internally AAs are also spells).
