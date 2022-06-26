@@ -1,6 +1,7 @@
-﻿using GameServerCore.Enums;
+﻿using System.Numerics;
 using System.Collections.Generic;
-using System.Numerics;
+using GameServerCore.Enums;
+using GameServerCore.Domain.GameObjects.Spell;
 
 namespace GameServerCore.Domain.GameObjects
 {
@@ -111,26 +112,15 @@ namespace GameServerCore.Domain.GameObjects
         /// </summary>
         /// <param name="statModifier">Stat modifier instance to remove.</param>
         void RemoveStatModifier(IStatsModifier statModifier);
-        /// <summary>
-        /// Applies damage to this unit.
-        /// </summary>
-        /// <param name="attacker">Unit that is dealing the damage.</param>
-        /// <param name="damage">Amount of damage to deal.</param>
-        /// <param name="type">Whether the damage is physical, magical, or true.</param>
-        /// <param name="source">What the damage came from: attack, spell, summoner spell, or passive.</param>
-        /// <param name="damageText">Type of damage the damage text should be.</param>
+
+        void TakeHeal(IObjAiBase originObj, float amount);
+        void TakeHeal(ISpell originSpell, float amount);
+        void TakeHeal(IBuff originBuff, float amount);
+
         void TakeDamage(IAttackableUnit attacker, float damage, DamageType type, DamageSource source, DamageResultType damageText);
-        /// <summary>
-        /// Applies damage to this unit.
-        /// </summary>
-        /// <param name="attacker">Unit that is dealing the damage.</param>
-        /// <param name="damage">Amount of damage to deal.</param>
-        /// <param name="type">Whether the damage is physical, magical, or true.</param>
-        /// <param name="source">What the damage came from: attack, spell, summoner spell, or passive.</param>
-        /// <param name="isCrit">Whether or not the damage text should be shown as a crit.</param>
-        void TakeDamage(IAttackableUnit attacker, float damage, DamageType type, DamageSource source, bool isCrit);
-        void TakeDamage(IDamageData damageData, DamageResultType damageText);
-        void TakeDamage(IDamageData damageData, bool isCrit);
+        void TakeDamage(ISpell attackerSpell, float damage, DamageType type, DamageSource source, DamageResultType damageText);
+        void TakeDamage(IBuff attackerBuff, float damage, DamageType type, DamageSource source, DamageResultType damageText);
+        
         /// <summary>
         /// Whether or not this unit is currently calling for help. Unimplemented.
         /// </summary>
@@ -154,7 +144,7 @@ namespace GameServerCore.Domain.GameObjects
         /// </summary>
         /// <param name="b">Buff instance to add.</param>
         /// TODO: Probably needs a refactor to lessen thread usage. Make sure to stick very closely to the current method; just optimize it.
-        void AddBuff(IBuff b);
+        bool AddBuff(IBuff b);
         /// <summary>
         /// Whether or not this unit has the given buff instance.
         /// </summary>

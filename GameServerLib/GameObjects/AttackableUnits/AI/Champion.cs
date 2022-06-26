@@ -12,6 +12,7 @@ using LeagueSandbox.GameServer.API;
 using LeaguePackets.Game.Events;
 using System;
 using GameServerLib.GameObjects.AttackableUnits;
+using static GameServerCore.Content.HashFunctions;
 
 namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 {
@@ -495,16 +496,70 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             _game.ObjectManager.StopTargeting(this);
         }
 
+        public override bool AddBuff(IBuff b)
+        {
+            if(base.AddBuff(b))
+            {
+                var entry = new EventHistoryEntry();
+                entry.Timestamp = _game.GameTime / 1000f; // ?
+                entry.Count = 1; //TODO: stack?
+                entry.Source = b.OriginSpell.CastInfo.Owner.NetId;
+                var e = new OnBuff();
+                entry.Event = e;
+
+                e.ScriptNameHash = HashString(b.Name);
+                e.EventSource = 0;
+                e.Unknown = 0;
+                e.SourceObjectNetID = 0;
+                e.ParentScriptNameHash = (uint)b.OriginSpell.GetId();
+                e.ParentCasterNetID = entry.Source;
+                e.Bitfield = 0;
+
+                return true;
+            }
+            return false;
+        }
+
+        protected override void TakeHeal(float amount, IObjAiBase originObj, ISpell originSpell = null, IBuff originBuff = null)
+        {
+            base.TakeHeal(amount, originSpell, originBuff);
+
+            var entry = new EventHistoryEntry();
+            entry.Timestamp = _game.GameTime / 1000f; // ?
+            entry.Count = 1; //TODO: stack?
+            entry.Source = originSpell.CastInfo.Owner.NetId;
+            var e = new OnCastHeal();
+            entry.Event = e;
+
+            e.ScriptNameHash = 1;
+            if(originBuff != null)
+            {
+                e.ScriptNameHash = HashString(originBuff.Name);
+            }
+            e.EventSource = 0; // ?
+            e.Unknown = 0; // ?
+            e.SourceObjectNetID = 0;
+            e.HealAmmount = amount;
+            e.ParentScriptNameHash = (uint)originSpell.GetId();
+            e.ParentCasterNetID = entry.Source;
+            e.Bitfield = 0; // ?
+        }
+
         public override void TakeDamage(IDamageData damageData, DamageResultType damageText)
         {
             base.TakeDamage(damageData, damageText);
 
+            _championHitFlagTimer = 15 * 1000; //15 seconds timer, so when you get executed the last enemy champion who hit you gets the gold
+            _playerHitId = damageData.Attacker.NetId;
+            //CORE_INFO("15 second execution timer on you. Do not get killed by a minion, turret or monster!");
+
             var entry = new EventHistoryEntry();
-            entry.Timestamp = (_game.GameTime - _game.StartTime) / 1000f;
+            entry.Timestamp = _game.GameTime / 1000f; // ?
             entry.Count = 1; //TODO: stack?
             entry.Source = damageData.Attacker.NetId;
             var e = new OnDamageGiven();
             entry.Event = e;
+
             if(damageData.DamageType == DamageType.DAMAGE_TYPE_MAGICAL)
             {
                 e.MagicalDamage = damageData.Damage;
@@ -519,20 +574,16 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             }
             //TODO: handle mixed damage?
 
-            e.ScriptNameHash = 3730113793; // Hash
-            e.EventSource = 2; // ??
-            e.Unknown = 0; // ??
+            e.ScriptNameHash = 1; // Hash
+            e.EventSource = 0; // ??
+            e.Unknown = 4; // ??
             e.SourceObjectNetID = 0; // ??
-            e.ParentScriptNameHash = 2969284; // Hash
-            e.ParentCasterNetID = damageData.Attacker.NetId;
+            e.ParentScriptNameHash = 1; // Hash
+            e.ParentCasterNetID = entry.Source;
             e.Bitfield = 0; // ??
             e.OtherNetID = this.NetId;
 
             EventHistory.Add(entry);
-
-            _championHitFlagTimer = 15 * 1000; //15 seconds timer, so when you get executed the last enemy champion who hit you gets the gold
-            _playerHitId = damageData.Attacker.NetId;
-            //CORE_INFO("15 second execution timer on you. Do not get killed by a minion, turret or monster!");
         }
 
         public void UpdateSkin(int skinNo)

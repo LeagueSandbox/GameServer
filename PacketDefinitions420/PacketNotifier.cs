@@ -2152,10 +2152,12 @@ namespace PacketDefinitions420
             history.Duration = lastTimestamp - firstTimestamp; // ?
             history.EventSourceType = 0; // always zero?
             
-            Console.WriteLine($"EVENTS COUNT: {ch.EventHistory.Count}");
             ch.EventHistory.Reverse(); //TODO: Move to Champion or NPC_Die_EventHistory
 
             history.Entries = ch.EventHistory;
+            
+            Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(history));
+
             _packetHandlerManager.SendPacket((int)ch.GetPlayerId(), history.GetBytes(), Channel.CHL_S2C);
             
             ch.EventHistory.Clear(); //TODO: Move to Champion
