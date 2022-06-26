@@ -113,10 +113,10 @@ namespace GameServerCore.Domain.GameObjects
         /// <param name="statModifier">Stat modifier instance to remove.</param>
         void RemoveStatModifier(IStatsModifier statModifier);
 
-        void TakeHeal(IObjAiBase caster, float amount, IEventSource sourceScript = null);
+        void TakeHeal(IAttackableUnit caster, float amount, IEventSource sourceScript = null);
 
-        void TakeDamage(IObjAiBase attacker, float damage, DamageType type, DamageSource source, DamageResultType damageText, IEventSource sourceScript = null);
-        void TakeDamage(IObjAiBase attacker, float damage, DamageType type, DamageSource source, bool isCrit, IEventSource sourceScript = null);
+        void TakeDamage(IAttackableUnit attacker, float damage, DamageType type, DamageSource source, DamageResultType damageText, IEventSource sourceScript = null);
+        void TakeDamage(IAttackableUnit attacker, float damage, DamageType type, DamageSource source, bool isCrit, IEventSource sourceScript = null);
         void TakeDamage(IDamageData damageData, DamageResultType damageText, IEventSource sourceScript = null);
         void TakeDamage(IDamageData damageData, bool isCrit, IEventSource sourceScript = null);
 

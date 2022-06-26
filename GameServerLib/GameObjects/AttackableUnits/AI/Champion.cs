@@ -531,9 +531,14 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             return false;
         }
 
-        public override void TakeHeal(IObjAiBase caster, float amount, IEventSource sourceScript = null)
+        public override void TakeHeal(IAttackableUnit caster, float amount, IEventSource sourceScript = null)
         {
             base.TakeHeal(caster, amount, sourceScript);
+
+            if(sourceScript == null)
+            {
+                return;
+            }
 
             var entry = new EventHistoryEntry();
             entry.Timestamp = _game.GameTime / 1000f; // ?
@@ -570,6 +575,11 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             _championHitFlagTimer = 15 * 1000; //15 seconds timer, so when you get executed the last enemy champion who hit you gets the gold
             _playerHitId = damageData.Attacker.NetId;
             //CORE_INFO("15 second execution timer on you. Do not get killed by a minion, turret or monster!");
+
+            if(sourceScript == null)
+            {
+                return;
+            }
 
             var entry = new EventHistoryEntry();
             entry.Timestamp = _game.GameTime / 1000f; // ?

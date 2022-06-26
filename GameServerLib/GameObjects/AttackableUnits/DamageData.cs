@@ -17,7 +17,7 @@ namespace GameServerLib.GameObjects.AttackableUnits
         /// <summary>
         /// Unit that inflicted the damage.
         /// </summary>
-        public IObjAiBase Attacker { get; set; }
+        public IAttackableUnit Attacker { get; set; }
         /// <summary>
         /// Type of damage received.
         /// </summary>
