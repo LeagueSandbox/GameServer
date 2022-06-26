@@ -17,7 +17,7 @@ namespace GameServerCore.Domain
         /// <summary>
         /// Unit that inflicted the damage.
         /// </summary>
-        IAttackableUnit Attacker { get; }
+        IObjAiBase Attacker { get; }
         /// <summary>
         /// Type of damage received.
         /// </summary>

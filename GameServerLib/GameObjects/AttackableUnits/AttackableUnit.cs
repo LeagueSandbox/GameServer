@@ -543,6 +543,14 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             TakeDamage(damage, type, source, damageText, attackerBuff.OriginSpell.CastInfo.Owner, attackerBuff.OriginSpell, attackerBuff);
         }
 
+        /// <summary>
+        /// Applies damage to this unit.
+        /// </summary>
+        /// <param name="attacker">Unit that is dealing the damage.</param>
+        /// <param name="damage">Amount of damage to deal.</param>
+        /// <param name="type">Whether the damage is physical, magical, or true.</param>
+        /// <param name="source">What the damage came from: attack, spell, summoner spell, or passive.</param>
+        /// <param name="damageText">Type of damage the damage text should be.</param>
         private void TakeDamage(float damage, DamageType type, DamageSource source, DamageResultType damageText, IAttackableUnit attacker, ISpell attackerSpell = null, IBuff attackerBuff = null)
         {
             IDamageData damageData = new DamageData
@@ -556,6 +564,33 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                 DamageType = type,
             };
             this.TakeDamage(damageData, damageText, attackerSpell, attackerBuff);
+        }
+
+        DamageResultType Bool2Crit(bool isCrit)
+        {
+            if (isCrit)
+            {
+                return DamageResultType.RESULT_CRITICAL;
+            }
+            return DamageResultType.RESULT_NORMAL;
+        }
+
+        /// <summary>
+        /// Applies damage to this unit.
+        /// </summary>
+        /// <param name="attacker">Unit that is dealing the damage.</param>
+        /// <param name="damage">Amount of damage to deal.</param>
+        /// <param name="type">Whether the damage is physical, magical, or true.</param>
+        /// <param name="source">What the damage came from: attack, spell, summoner spell, or passive.</param>
+        /// <param name="isCrit">Whether or not the damage text should be shown as a crit.</param>
+        public void TakeDamage(IAttackableUnit attacker, float damage, DamageType type, DamageSource source, bool isCrit)
+        {
+            this.TakeDamage(attacker, damage, type, source, Bool2Crit(isCrit));
+        }
+
+        public void TakeDamage(IDamageData damageData, bool isCrit)
+        {
+            this.TakeDamage(damageData, Bool2Crit(isCrit));
         }
 
         /// <summary>

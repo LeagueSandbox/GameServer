@@ -120,7 +120,11 @@ namespace GameServerCore.Domain.GameObjects
         void TakeDamage(IAttackableUnit attacker, float damage, DamageType type, DamageSource source, DamageResultType damageText);
         void TakeDamage(ISpell attackerSpell, float damage, DamageType type, DamageSource source, DamageResultType damageText);
         void TakeDamage(IBuff attackerBuff, float damage, DamageType type, DamageSource source, DamageResultType damageText);
-        
+        void TakeDamage(IAttackableUnit attacker, float damage, DamageType type, DamageSource source, bool isCrit);
+        //void TakeDamage(ISpell attackerSpell, float damage, DamageType type, DamageSource source, bool isCrit);
+        //void TakeDamage(IBuff attackerBuff, float damage, DamageType type, DamageSource source, bool isCrit);
+        void TakeDamage(IDamageData damageData, bool isCrit);
+
         /// <summary>
         /// Whether or not this unit is currently calling for help. Unimplemented.
         /// </summary>

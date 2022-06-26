@@ -522,7 +522,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
         protected override void TakeHeal(float amount, IObjAiBase originObj, ISpell originSpell = null, IBuff originBuff = null)
         {
-            base.TakeHeal(amount, originSpell, originBuff);
+            base.TakeHeal(amount, originObj, originSpell, originBuff);
 
             var entry = new EventHistoryEntry();
             entry.Timestamp = _game.GameTime / 1000f; // ?
@@ -545,7 +545,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             e.Bitfield = 0; // ?
         }
 
-        public override void TakeDamage(IDamageData damageData, DamageResultType damageText)
+        protected override void TakeDamage(IDamageData damageData, DamageResultType damageText, ISpell originSpell = null, IBuff originBuff = null)
         {
             base.TakeDamage(damageData, damageText);
 
@@ -574,14 +574,25 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             }
             //TODO: handle mixed damage?
 
-            e.ScriptNameHash = 1; // Hash
+            e.ParentCasterNetID = entry.Source;
+            e.OtherNetID = this.NetId;
+
+            e.ScriptNameHash = 1;
+            e.ParentScriptNameHash = damageData.Attacker.AIScriptNameHash;
+            if(originBuff != null && originSpell != null)
+            {
+                e.ScriptNameHash = HashString(originBuff.Name); // Hash
+                e.ParentScriptNameHash = (uint)originSpell.GetId(); // Hash
+            }
+            else if(originSpell != null)
+            {
+                e.ScriptNameHash = (uint)originSpell.GetId();
+            }
+
             e.EventSource = 0; // ??
             e.Unknown = 4; // ??
             e.SourceObjectNetID = 0; // ??
-            e.ParentScriptNameHash = 1; // Hash
-            e.ParentCasterNetID = entry.Source;
             e.Bitfield = 0; // ??
-            e.OtherNetID = this.NetId;
 
             EventHistory.Add(entry);
         }
