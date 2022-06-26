@@ -15,6 +15,7 @@ using LeagueSandbox.GameServer.API;
 using LeagueSandbox.GameServer.Logging;
 using log4net;
 using GameServerCore.Domain.GameObjects.Spell;
+using GameServerCore.Scripting.CSharp;
 
 namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
 {
@@ -508,39 +509,9 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             CalculateTrueMoveSpeed();
         }
 
-        public void TakeHeal(IObjAiBase originObj, float amount)
-        {
-            TakeHeal(amount, originObj, null, null);
-        }
-
-        public void TakeHeal(ISpell originSpell, float amount)
-        {
-            TakeHeal(amount, originSpell.CastInfo.Owner, originSpell, null);
-        }
-
-        public void TakeHeal(IBuff originBuff, float amount)
-        {
-            TakeHeal(amount, originBuff.OriginSpell.CastInfo.Owner, originBuff.OriginSpell, originBuff);
-        }
-
-        protected virtual void TakeHeal(float amount, IObjAiBase originObj, ISpell originSpell = null, IBuff buff = null)
+        public virtual void TakeHeal(IObjAiBase caster, float amount, IEventSource sourceScript = null)
         {
             Stats.CurrentHealth = Math.Clamp(Stats.CurrentHealth + amount, 0, Stats.HealthPoints.Total);
-        }
-
-        public void TakeDamage(IAttackableUnit attacker, float damage, DamageType type, DamageSource source, DamageResultType damageText)
-        {
-            TakeDamage(damage, type, source, damageText, attacker, null, null);
-        }
-
-        public void TakeDamage(ISpell attackerSpell, float damage, DamageType type, DamageSource source, DamageResultType damageText)
-        {
-            TakeDamage(damage, type, source, damageText, attackerSpell.CastInfo.Owner, attackerSpell, null);
-        }
-
-        public void TakeDamage(IBuff attackerBuff, float damage, DamageType type, DamageSource source, DamageResultType damageText)
-        {
-            TakeDamage(damage, type, source, damageText, attackerBuff.OriginSpell.CastInfo.Owner, attackerBuff.OriginSpell, attackerBuff);
         }
 
         /// <summary>
@@ -551,7 +522,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// <param name="type">Whether the damage is physical, magical, or true.</param>
         /// <param name="source">What the damage came from: attack, spell, summoner spell, or passive.</param>
         /// <param name="damageText">Type of damage the damage text should be.</param>
-        private void TakeDamage(float damage, DamageType type, DamageSource source, DamageResultType damageText, IAttackableUnit attacker, ISpell attackerSpell = null, IBuff attackerBuff = null)
+        public void TakeDamage(IObjAiBase attacker, float damage, DamageType type, DamageSource source, DamageResultType damageText, IEventSource sourceScript = null)
         {
             IDamageData damageData = new DamageData
             {
@@ -563,7 +534,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                 DamageSource = source,
                 DamageType = type,
             };
-            this.TakeDamage(damageData, damageText, attackerSpell, attackerBuff);
+            this.TakeDamage(damageData, damageText, sourceScript);
         }
 
         DamageResultType Bool2Crit(bool isCrit)
@@ -583,12 +554,12 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// <param name="type">Whether the damage is physical, magical, or true.</param>
         /// <param name="source">What the damage came from: attack, spell, summoner spell, or passive.</param>
         /// <param name="isCrit">Whether or not the damage text should be shown as a crit.</param>
-        public void TakeDamage(IAttackableUnit attacker, float damage, DamageType type, DamageSource source, bool isCrit)
+        public void TakeDamage(IObjAiBase attacker, float damage, DamageType type, DamageSource source, bool isCrit, IEventSource sourceScript = null)
         {
-            this.TakeDamage(attacker, damage, type, source, Bool2Crit(isCrit));
+            TakeDamage(attacker, damage, type, source, Bool2Crit(isCrit), sourceScript);
         }
 
-        public void TakeDamage(IDamageData damageData, bool isCrit)
+        public void TakeDamage(IDamageData damageData, bool isCrit, IEventSource sourceScript)
         {
             this.TakeDamage(damageData, Bool2Crit(isCrit));
         }
@@ -601,7 +572,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// <param name="type">Whether the damage is physical, magical, or true.</param>
         /// <param name="source">What the damage came from: attack, spell, summoner spell, or passive.</param>
         /// <param name="damageText">Type of damage the damage text should be.</param>
-        protected virtual void TakeDamage(IDamageData damageData, DamageResultType damageText, ISpell originSpell = null, IBuff originBuff = null)
+        public virtual void TakeDamage(IDamageData damageData, DamageResultType damageText, IEventSource sourceScript = null)
         {
             float regain = 0;
             var attacker = damageData.Attacker;

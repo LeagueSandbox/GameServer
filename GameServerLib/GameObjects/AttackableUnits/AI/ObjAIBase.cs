@@ -1102,9 +1102,9 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             }
         }
 
-        protected override void TakeDamage(IDamageData damageData, DamageResultType damageText, ISpell originSpell = null, IBuff originBuff = null)
+        public override void TakeDamage(IDamageData damageData, DamageResultType damageText, IEventSource sourceScript = null)
         {
-            base.TakeDamage(damageData, damageText);
+            base.TakeDamage(damageData, damageText, sourceScript);
             
             var attacker = damageData.Attacker;
             var objects = _game.ObjectManager.GetObjects();

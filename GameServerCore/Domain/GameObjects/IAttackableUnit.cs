@@ -1,7 +1,7 @@
 ﻿using System.Numerics;
 using System.Collections.Generic;
 using GameServerCore.Enums;
-using GameServerCore.Domain.GameObjects.Spell;
+using GameServerCore.Scripting.CSharp;
 
 namespace GameServerCore.Domain.GameObjects
 {
@@ -113,17 +113,12 @@ namespace GameServerCore.Domain.GameObjects
         /// <param name="statModifier">Stat modifier instance to remove.</param>
         void RemoveStatModifier(IStatsModifier statModifier);
 
-        void TakeHeal(IObjAiBase originObj, float amount);
-        void TakeHeal(ISpell originSpell, float amount);
-        void TakeHeal(IBuff originBuff, float amount);
+        void TakeHeal(IObjAiBase caster, float amount, IEventSource sourceScript = null);
 
-        void TakeDamage(IAttackableUnit attacker, float damage, DamageType type, DamageSource source, DamageResultType damageText);
-        void TakeDamage(ISpell attackerSpell, float damage, DamageType type, DamageSource source, DamageResultType damageText);
-        void TakeDamage(IBuff attackerBuff, float damage, DamageType type, DamageSource source, DamageResultType damageText);
-        void TakeDamage(IAttackableUnit attacker, float damage, DamageType type, DamageSource source, bool isCrit);
-        //void TakeDamage(ISpell attackerSpell, float damage, DamageType type, DamageSource source, bool isCrit);
-        //void TakeDamage(IBuff attackerBuff, float damage, DamageType type, DamageSource source, bool isCrit);
-        void TakeDamage(IDamageData damageData, bool isCrit);
+        void TakeDamage(IObjAiBase attacker, float damage, DamageType type, DamageSource source, DamageResultType damageText, IEventSource sourceScript = null);
+        void TakeDamage(IObjAiBase attacker, float damage, DamageType type, DamageSource source, bool isCrit, IEventSource sourceScript = null);
+        void TakeDamage(IDamageData damageData, DamageResultType damageText, IEventSource sourceScript = null);
+        void TakeDamage(IDamageData damageData, bool isCrit, IEventSource sourceScript = null);
 
         /// <summary>
         /// Whether or not this unit is currently calling for help. Unimplemented.

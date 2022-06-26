@@ -2,12 +2,11 @@
 using GameServerCore.Domain.GameObjects.Spell.Sector;
 using GameServerCore.Enums;
 using GameServerCore.Scripting.CSharp;
-using System.Collections.Generic;
 using System.Numerics;
 
 namespace GameServerCore.Domain.GameObjects.Spell
 {
-    public interface ISpell: IUpdate
+    public interface ISpell: IUpdate, IEventSource
     {
         /// <summary>
         /// General information about this spell when it is cast. Refer to CastInfo class.

@@ -13,6 +13,7 @@ using LeaguePackets.Game.Events;
 using System;
 using GameServerLib.GameObjects.AttackableUnits;
 using static GameServerCore.Content.HashFunctions;
+using GameServerCore.Scripting.CSharp;
 
 namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 {
@@ -507,45 +508,62 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 var e = new OnBuff();
                 entry.Event = e;
 
-                e.ScriptNameHash = HashString(b.Name);
-                e.EventSource = 0;
-                e.Unknown = 0;
-                e.SourceObjectNetID = 0;
-                e.ParentScriptNameHash = (uint)b.OriginSpell.GetId();
                 e.ParentCasterNetID = entry.Source;
-                e.Bitfield = 0;
+                e.OtherNetID = this.NetId;
+
+                IEventSource sourceScript = b;
+
+                e.ScriptNameHash = 1;
+                e.ParentScriptNameHash = sourceScript.ScriptNameHash;
+                if(sourceScript.ParentScript != null)
+                {
+                    e.ScriptNameHash = sourceScript.ScriptNameHash;
+                    e.ParentScriptNameHash = sourceScript.ParentScript.ScriptNameHash;
+                }
+
+                e.EventSource = 0; // ?
+                e.Unknown = 0; // ?
+                e.SourceObjectNetID = 0;
+                e.Bitfield = 0; // ?
 
                 return true;
             }
             return false;
         }
 
-        protected override void TakeHeal(float amount, IObjAiBase originObj, ISpell originSpell = null, IBuff originBuff = null)
+        public override void TakeHeal(IObjAiBase caster, float amount, IEventSource sourceScript = null)
         {
-            base.TakeHeal(amount, originObj, originSpell, originBuff);
+            base.TakeHeal(caster, amount, sourceScript);
 
             var entry = new EventHistoryEntry();
             entry.Timestamp = _game.GameTime / 1000f; // ?
             entry.Count = 1; //TODO: stack?
-            entry.Source = originSpell.CastInfo.Owner.NetId;
+            entry.Source = caster.NetId;
             var e = new OnCastHeal();
             entry.Event = e;
 
+            e.HealAmmount = amount;
+
+            e.ParentCasterNetID = entry.Source;
+            e.OtherNetID = this.NetId;
+
             e.ScriptNameHash = 1;
-            if(originBuff != null)
+            e.ParentScriptNameHash = sourceScript.ScriptNameHash;
+            if(sourceScript.ParentScript != null)
             {
-                e.ScriptNameHash = HashString(originBuff.Name);
+                e.ScriptNameHash = sourceScript.ScriptNameHash;
+                e.ParentScriptNameHash = sourceScript.ParentScript.ScriptNameHash;
             }
+
             e.EventSource = 0; // ?
             e.Unknown = 0; // ?
             e.SourceObjectNetID = 0;
-            e.HealAmmount = amount;
-            e.ParentScriptNameHash = (uint)originSpell.GetId();
-            e.ParentCasterNetID = entry.Source;
             e.Bitfield = 0; // ?
+
+            EventHistory.Add(entry);
         }
 
-        protected override void TakeDamage(IDamageData damageData, DamageResultType damageText, ISpell originSpell = null, IBuff originBuff = null)
+        public override void TakeDamage(IDamageData damageData, DamageResultType damageText, IEventSource sourceScript = null)
         {
             base.TakeDamage(damageData, damageText);
 
@@ -578,20 +596,16 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             e.OtherNetID = this.NetId;
 
             e.ScriptNameHash = 1;
-            e.ParentScriptNameHash = damageData.Attacker.AIScriptNameHash;
-            if(originBuff != null && originSpell != null)
+            e.ParentScriptNameHash = sourceScript.ScriptNameHash;
+            if(sourceScript.ParentScript != null)
             {
-                e.ScriptNameHash = HashString(originBuff.Name); // Hash
-                e.ParentScriptNameHash = (uint)originSpell.GetId(); // Hash
-            }
-            else if(originSpell != null)
-            {
-                e.ScriptNameHash = (uint)originSpell.GetId();
+                e.ScriptNameHash = sourceScript.ScriptNameHash;
+                e.ParentScriptNameHash = sourceScript.ParentScript.ScriptNameHash;
             }
 
             e.EventSource = 0; // ??
-            e.Unknown = 4; // ??
-            e.SourceObjectNetID = 0; // ??
+            e.Unknown = 0; // ??
+            e.SourceObjectNetID = 0;
             e.Bitfield = 0; // ??
 
             EventHistory.Add(entry);

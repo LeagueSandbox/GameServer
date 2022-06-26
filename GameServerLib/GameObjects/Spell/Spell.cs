@@ -16,6 +16,7 @@ using System;
 using System.Collections.Generic;
 using System.Numerics;
 using LeagueSandbox.GameServer.Content;
+using static GameServerCore.Content.HashFunctions;
 
 namespace LeagueSandbox.GameServer.GameObjects.Spell
 {
@@ -69,6 +70,9 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
         /// Script instance assigned to this spell.
         /// </summary>
         public ISpellScript Script { get; private set; }
+
+        public uint ScriptNameHash { get; private set; }
+        public IEventSource ParentScript => null;
         /// <summary>
         /// Whether or not the script for this spell is the default empty script.
         /// </summary>
@@ -123,7 +127,9 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
             {
                 owner.LoadCharScript(this);
             }
-
+            
+            ScriptNameHash = HashString(SpellName);
+            
             ToolTipData = new ToolTipData(owner, this);
         }
 

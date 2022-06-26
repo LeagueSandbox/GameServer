@@ -1,6 +1,6 @@
 ﻿namespace GameServerCore.Scripting.CSharp
 {
-    public interface ITalent
+    public interface ITalent: IEventSource
     {
         string Name { get; }
         byte Rank { get; }

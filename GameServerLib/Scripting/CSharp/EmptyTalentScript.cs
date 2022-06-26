@@ -1,5 +1,4 @@
 using GameServerCore.Domain.GameObjects;
-using LeagueSandbox.GameServer.Scripting.CSharp;
 
 namespace GameServerCore.Scripting.CSharp
 {

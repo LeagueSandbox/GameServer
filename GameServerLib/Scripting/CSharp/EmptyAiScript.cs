@@ -5,10 +5,13 @@ namespace GameServerCore.Scripting.CSharp
 {
     public class EmptyAIScript : IAIScript
     {
+
         public IAIScriptMetaData AIScriptMetaData { get; set; } = new AIScriptMetaData();
+
         public void OnActivate(IObjAiBase owner)
         {
         }
+
         public void OnUpdate(float diff)
         {
         }
