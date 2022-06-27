@@ -499,64 +499,19 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             _game.ObjectManager.StopTargeting(this);
         }
 
-        public override bool AddBuff(IBuff b)
+        private T CreateEventForHistory<T>(IAttackableUnit source, IEventSource sourceScript) where T: ArgsForClient, new()
         {
-            if(base.AddBuff(b))
+            if(source == null || sourceScript == null)
             {
-                var entry = new EventHistoryEntry();
-                entry.Timestamp = _game.GameTime / 1000f; // ?
-                entry.Count = 1; //TODO: stack?
-                entry.Source = b.OriginSpell.CastInfo.Owner.NetId;
-                var e = new OnBuff();
-                entry.Event = e;
-
-                e.ParentCasterNetID = entry.Source;
-                e.OtherNetID = this.NetId;
-
-                IEventSource sourceScript = b;
-
-                e.ScriptNameHash = 1;
-                e.ParentScriptNameHash = sourceScript.ScriptNameHash;
-                if(sourceScript.ParentScript != null)
-                {
-                    e.ScriptNameHash = sourceScript.ScriptNameHash;
-                    e.ParentScriptNameHash = sourceScript.ParentScript.ScriptNameHash;
-                }
-                else if(b.OriginSpell != null)
-                {
-                    e.ScriptNameHash = sourceScript.ScriptNameHash;
-                    e.ParentScriptNameHash = (uint)b.OriginSpell.GetId();
-                }
-
-                e.EventSource = 0; // ?
-                e.Unknown = 0; // ?
-                e.SourceObjectNetID = 0;
-                e.Bitfield = 0; // ?
-
-                EventHistory.Add(entry);
-
-                return true;
-            }
-            return false;
-        }
-
-        public override void TakeHeal(IAttackableUnit caster, float amount, IEventSource sourceScript = null)
-        {
-            base.TakeHeal(caster, amount, sourceScript);
-
-            if(sourceScript == null)
-            {
-                return;
+                return null;
             }
 
             var entry = new EventHistoryEntry();
             entry.Timestamp = _game.GameTime / 1000f; // ?
             entry.Count = 1; //TODO: stack?
-            entry.Source = caster.NetId;
-            var e = new OnCastHeal();
-            entry.Event = e;
-
-            e.HealAmmount = amount;
+            entry.Source = source.NetId;
+            var e = new T();
+            entry.Event = (IEvent)e;
 
             e.ParentCasterNetID = entry.Source;
             e.OtherNetID = this.NetId;
@@ -568,6 +523,11 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 e.ScriptNameHash = sourceScript.ScriptNameHash;
                 e.ParentScriptNameHash = sourceScript.ParentScript.ScriptNameHash;
             }
+            else if(sourceScript is IBuff b && b.OriginSpell != null)
+            {
+                e.ScriptNameHash = sourceScript.ScriptNameHash;
+                e.ParentScriptNameHash = (uint)b.OriginSpell.GetId();
+            }
 
             e.EventSource = 0; // ?
             e.Unknown = 0; // ?
@@ -575,6 +535,29 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             e.Bitfield = 0; // ?
 
             EventHistory.Add(entry);
+
+            return e;
+        }
+
+        public override bool AddBuff(IBuff b)
+        {
+            if(base.AddBuff(b))
+            {
+                CreateEventForHistory<OnBuff>(b.SourceUnit, b);
+                return true;
+            }
+            return false;
+        }
+
+        public override void TakeHeal(IAttackableUnit caster, float amount, IEventSource sourceScript = null)
+        {
+            base.TakeHeal(caster, amount, sourceScript);
+
+            var e = CreateEventForHistory<OnCastHeal>(caster, sourceScript);
+            if(e != null)
+            {
+                e.HealAmmount = amount;
+            }
         }
 
         public override void TakeDamage(IDamageData damageData, DamageResultType damageText, IEventSource sourceScript = null)
@@ -585,49 +568,23 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             _playerHitId = damageData.Attacker.NetId;
             //CORE_INFO("15 second execution timer on you. Do not get killed by a minion, turret or monster!");
 
-            if(sourceScript == null)
+            var e = CreateEventForHistory<OnDamageGiven>(damageData.Attacker, sourceScript);
+            if(e != null)
             {
-                return;
+                if(damageData.DamageType == DamageType.DAMAGE_TYPE_MAGICAL)
+                {
+                    e.MagicalDamage = damageData.Damage;
+                }
+                else if(damageData.DamageType == DamageType.DAMAGE_TYPE_PHYSICAL)
+                {
+                    e.PhysicalDamage = damageData.Damage;
+                }
+                else if(damageData.DamageType == DamageType.DAMAGE_TYPE_TRUE)
+                {
+                    e.TrueDamage = damageData.Damage;
+                }
+                //TODO: handle mixed damage?
             }
-
-            var entry = new EventHistoryEntry();
-            entry.Timestamp = _game.GameTime / 1000f; // ?
-            entry.Count = 1; //TODO: stack?
-            entry.Source = damageData.Attacker.NetId;
-            var e = new OnDamageGiven();
-            entry.Event = e;
-
-            if(damageData.DamageType == DamageType.DAMAGE_TYPE_MAGICAL)
-            {
-                e.MagicalDamage = damageData.Damage;
-            }
-            else if(damageData.DamageType == DamageType.DAMAGE_TYPE_PHYSICAL)
-            {
-                e.PhysicalDamage = damageData.Damage;
-            }
-            else if(damageData.DamageType == DamageType.DAMAGE_TYPE_TRUE)
-            {
-                e.TrueDamage = damageData.Damage;
-            }
-            //TODO: handle mixed damage?
-
-            e.ParentCasterNetID = entry.Source;
-            e.OtherNetID = this.NetId;
-
-            e.ScriptNameHash = 1;
-            e.ParentScriptNameHash = sourceScript.ScriptNameHash;
-            if(sourceScript.ParentScript != null)
-            {
-                e.ScriptNameHash = sourceScript.ScriptNameHash;
-                e.ParentScriptNameHash = sourceScript.ParentScript.ScriptNameHash;
-            }
-
-            e.EventSource = 0; // ??
-            e.Unknown = 0; // ??
-            e.SourceObjectNetID = 0;
-            e.Bitfield = 0; // ??
-
-            EventHistory.Add(entry);
         }
 
         public void UpdateSkin(int skinNo)
