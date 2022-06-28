@@ -1,4 +1,5 @@
-﻿using GameServerCore.Domain.GameObjects;
+﻿using GameServerCore.Domain;
+using GameServerCore.Domain.GameObjects;
 using LeaguePackets.Game.Events;
 using LeagueSandbox.GameServer.Logging;
 using log4net;
@@ -92,6 +93,37 @@ namespace LeagueSandbox.GameServer.API
             ApiMapFunctionManager.NotifyAscendant();
         }
 
+        public static void AnnounceKillDragon(IDeathData data)
+        {
+            var killDragon = new OnKillDragon()
+            {
+                //TODO: Figure out all the parameters, their values look random(?).
+                //All Map11 replays have the same values in this event besides OtherNetId.
+                OtherNetID = data.Unit.NetId
+            };
+            _game.PacketNotifier.NotifyS2C_OnEventWorld(killDragon, data.Killer);
+        }
+
+        public static void AnnounceKillWorm(IDeathData data)
+        {
+            var killDragon = new OnKillWorm()
+            {
+                //TODO: Figure out all the parameters, their values look random(?).
+                OtherNetID = data.Unit.NetId
+            };
+            _game.PacketNotifier.NotifyS2C_OnEventWorld(killDragon, data.Killer);
+        }
+
+        public static void AnnounceKillSpiderBoss(IDeathData data)
+        {
+            var killDragon = new OnKillSpiderBoss()
+            {
+                //Couldn't find a replay with this event, but i assume it should follow the same logic as the other 2.
+                OtherNetID = data.Unit.NetId
+            };
+            _game.PacketNotifier.NotifyS2C_OnEventWorld(killDragon, data.Killer);
+        }
+
         public static void AnnounceMinionAscended(IMinion minion)
         {
             _game.PacketNotifier.NotifyS2C_OnEventWorld(new OnMinionAscended() { OtherNetID = minion.NetId }, minion);
@@ -109,35 +141,36 @@ namespace LeagueSandbox.GameServer.API
 
         public static void AnnounceStartGameMessage(int message, int map = 0)
         {
-            IEventEmptyHistory annoucement;
+            IEvent annoucement;
             switch (message)
             {
                 case 1:
-                    annoucement = new OnStartGameMessage1() { MapNumber = map };
+                    annoucement = new OnStartGameMessage1();
                     break;
                 case 2:
-                    annoucement = new OnStartGameMessage2() { MapNumber = map };
+                    annoucement = new OnStartGameMessage2();
                     break;
                 case 3:
-                    annoucement = new OnStartGameMessage3() { MapNumber = map };
+                    annoucement = new OnStartGameMessage3();
                     break;
                 case 4:
-                    annoucement = new OnStartGameMessage4() { MapNumber = map };
+                    annoucement = new OnStartGameMessage4();
                     break;
                 case 5:
-                    annoucement = new OnStartGameMessage5() { MapNumber = map };
+                    annoucement = new OnStartGameMessage5();
                     break;
                 default:
                     _logger.Warn($"Announcement with Id {message} doesn't exist! Please use numbers between 1 and 5");
                     return;
             }
+            (annoucement as ArgsGlobalMessageGeneric).MapNumber = map;
 
             _game.PacketNotifier.NotifyS2C_OnEventWorld(annoucement);
         }
 
         public static void AnnounceVictoryPointThreshold(ILaneTurret turret, int index)
         {
-            IEventEmptyHistory pointThreshHold;
+            IEvent pointThreshHold;
             switch (index)
             {
                 case 1:
