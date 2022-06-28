@@ -2745,15 +2745,15 @@ namespace PacketDefinitions420
         /// <param name="playerNetId">NetID to send the packet to.</param>
         /// <param name="targetNetId">NetID of the target referenced by the tip.</param>
         /// TODO: tipCommand should be a lib/core enum that gets translated into a league version specific packet enum as it may change over time.
-        public void NotifyS2C_HandleTipUpdatep(int userId, string title, string text, string imagePath, byte tipCommand, uint playerNetId, uint targetNetId)
+        public void NotifyS2C_HandleTipUpdate(int userId, string title, string text, string imagePath, byte tipCommand, uint playerNetId, uint targetNetId)
         {
             var packet = new S2C_HandleTipUpdate
             {
                 SenderNetID = playerNetId,
                 TipCommand = tipCommand,
                 TipImagePath = imagePath,
-                TipName = title,
-                TipOther = text,
+                TipName = text,
+                TipOther = title,
                 TipID = targetNetId
             };
             _packetHandlerManager.SendPacket(userId, packet.GetBytes(), Channel.CHL_S2C);
