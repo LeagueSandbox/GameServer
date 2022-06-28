@@ -1,7 +1,4 @@
-﻿using GameServerCore.Domain;
-using GameServerCore.Domain.GameObjects;
-using GameServerCore.Domain.GameObjects.Spell;
-using System.Numerics;
+﻿using GameServerCore.Domain.GameObjects;
 
 namespace GameServerCore.Scripting.CSharp
 {
@@ -9,10 +6,16 @@ namespace GameServerCore.Scripting.CSharp
     {
         IStatsModifier StatsModifier { get; }
 
-        void OnActivate(IObjAiBase owner);
+        void OnActivate(IObjAiBase owner)
+        {
+        }
 
-        void OnDeactivate(IObjAiBase owner);
+        void OnDeactivate(IObjAiBase owner)
+        {
+        }
 
-        void OnUpdate(float diff);
+        void OnUpdate(float diff)
+        {
+        }
     }
 }

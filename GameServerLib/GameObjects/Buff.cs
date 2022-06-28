@@ -7,9 +7,9 @@ using LeagueSandbox.GameServer.Scripting.CSharp;
 using LeagueSandbox.GameServer.GameObjects.Other;
 using LeagueSandbox.GameServer.API;
 using GameServerCore.Scripting.CSharp;
-using System.Collections.Generic;
 using GameServerCore.Domain;
 using LeagueSandbox.GameServer.GameObjects.Stats;
+using static GameServerCore.Content.HashFunctions;
 
 namespace LeagueSandbox.GameServer.GameObjects
 {
@@ -36,6 +36,9 @@ namespace LeagueSandbox.GameServer.GameObjects
         /// Script instance for this buff. Casting to a specific buff class gives access its functions and variables.
         /// </summary>
         public IBuffGameScript BuffScript { get; private set; }
+        public uint ScriptNameHash { get; private set; }
+        public IEventSource ParentScript { get; private set; }
+
         public StatusFlags StatusEffectsToEnable { get; private set; }
         public StatusFlags StatusEffectsToDisable { get; private set; }
         /// <summary>
@@ -43,7 +46,7 @@ namespace LeagueSandbox.GameServer.GameObjects
         /// </summary>
         public IToolTipData ToolTipData { get; protected set; }
 
-        public Buff(Game game, string buffName, float duration, int stacks, ISpell originSpell, IAttackableUnit onto, IObjAiBase from, bool infiniteDuration = false)
+        public Buff(Game game, string buffName, float duration, int stacks, ISpell originSpell, IAttackableUnit onto, IObjAiBase from, bool infiniteDuration = false, IEventSource parent = null)
         {
             if (duration < 0)
             {
@@ -55,7 +58,9 @@ namespace LeagueSandbox.GameServer.GameObjects
             _remove = false;
             Name = buffName;
 
+            ParentScript = parent;
             LoadScript();
+            ScriptNameHash = HashString(Name);
 
             BuffAddType = BuffScript.BuffMetaData.BuffAddType;
             if (BuffAddType == (BuffAddType.STACKS_AND_RENEWS | BuffAddType.STACKS_AND_CONTINUE | BuffAddType.STACKS_AND_OVERLAPS) && BuffScript.BuffMetaData.MaxStacks < 2)

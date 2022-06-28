@@ -3,16 +3,15 @@ using System.Collections.Generic;
 using System.Numerics;
 using GameServerCore.Content;
 using GameServerCore.Domain;
-using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
-using LeaguePackets.Game.Common;
+using GameServerCore.Scripting.CSharp;
 
 namespace GameServerCore.Handlers
 {
     /// <summary>
     /// Contains all map related game settings such as collision handler, navigation grid, announcer events, and map properties. Doubles as a Handler/Manager for all MapScripts.
     /// </summary>
-    public interface IMapScriptHandler : IUpdate
+    public interface IMapScriptHandler : IUpdate, IEventSource
     {
         /// <summary>
         /// Unique identifier for the Map (ex: 1 = Old SR, 11 = New SR)

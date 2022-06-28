@@ -1,6 +1,5 @@
 ﻿using GameServerCore.Domain.GameObjects;
 using GameServerCore.Domain.GameObjects.Spell;
-using GameServerCore.Enums;
 
 namespace GameServerCore.Scripting.CSharp
 {
@@ -9,8 +8,14 @@ namespace GameServerCore.Scripting.CSharp
         IBuffScriptMetaData BuffMetaData { get; }
         IStatsModifier StatsModifier { get; }
 
-        void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell);
-        void OnDeactivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell);
-        void OnUpdate(float diff);
+        void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
+        {
+        }
+        void OnDeactivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
+        {
+        }
+        void OnUpdate(float diff)
+        {
+        }
     }
 }

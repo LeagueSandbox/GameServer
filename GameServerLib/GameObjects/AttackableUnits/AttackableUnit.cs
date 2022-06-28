@@ -14,6 +14,7 @@ using GameServerLib.GameObjects.AttackableUnits;
 using LeagueSandbox.GameServer.API;
 using LeagueSandbox.GameServer.Logging;
 using log4net;
+using GameServerCore.Scripting.CSharp;
 
 namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
 {
@@ -508,6 +509,11 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             CalculateTrueMoveSpeed();
         }
 
+        public virtual void TakeHeal(IAttackableUnit caster, float amount, IEventSource sourceScript = null)
+        {
+            Stats.CurrentHealth = Math.Clamp(Stats.CurrentHealth + amount, 0, Stats.HealthPoints.Total);
+        }
+
         /// <summary>
         /// Applies damage to this unit.
         /// </summary>
@@ -516,23 +522,64 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// <param name="type">Whether the damage is physical, magical, or true.</param>
         /// <param name="source">What the damage came from: attack, spell, summoner spell, or passive.</param>
         /// <param name="damageText">Type of damage the damage text should be.</param>
-        public virtual void TakeDamage(IAttackableUnit attacker, float damage, DamageType type, DamageSource source,
-            DamageResultType damageText)
+        public void TakeDamage(IAttackableUnit attacker, float damage, DamageType type, DamageSource source, DamageResultType damageText, IEventSource sourceScript = null)
         {
-            float regain = 0;
-            var attackerStats = attacker.Stats;
-            float postMitigationDamage = Stats.GetPostMitigationDamage(damage, type, attacker);
-
             IDamageData damageData = new DamageData
             {
                 IsAutoAttack = source == DamageSource.DAMAGE_SOURCE_ATTACK,
                 Attacker = attacker,
                 Target = this,
                 Damage = damage,
-                PostMitigationdDamage = postMitigationDamage,
+                PostMitigationdDamage = Stats.GetPostMitigationDamage(damage, type, attacker),
                 DamageSource = source,
                 DamageType = type,
             };
+            this.TakeDamage(damageData, damageText, sourceScript);
+        }
+
+        DamageResultType Bool2Crit(bool isCrit)
+        {
+            if (isCrit)
+            {
+                return DamageResultType.RESULT_CRITICAL;
+            }
+            return DamageResultType.RESULT_NORMAL;
+        }
+
+        /// <summary>
+        /// Applies damage to this unit.
+        /// </summary>
+        /// <param name="attacker">Unit that is dealing the damage.</param>
+        /// <param name="damage">Amount of damage to deal.</param>
+        /// <param name="type">Whether the damage is physical, magical, or true.</param>
+        /// <param name="source">What the damage came from: attack, spell, summoner spell, or passive.</param>
+        /// <param name="isCrit">Whether or not the damage text should be shown as a crit.</param>
+        public void TakeDamage(IAttackableUnit attacker, float damage, DamageType type, DamageSource source, bool isCrit, IEventSource sourceScript = null)
+        {
+            TakeDamage(attacker, damage, type, source, Bool2Crit(isCrit), sourceScript);
+        }
+
+        public void TakeDamage(IDamageData damageData, bool isCrit, IEventSource sourceScript)
+        {
+            this.TakeDamage(damageData, Bool2Crit(isCrit));
+        }
+
+        /// <summary>
+        /// Applies damage to this unit.
+        /// </summary>
+        /// <param name="attacker">Unit that is dealing the damage.</param>
+        /// <param name="damage">Amount of damage to deal.</param>
+        /// <param name="type">Whether the damage is physical, magical, or true.</param>
+        /// <param name="source">What the damage came from: attack, spell, summoner spell, or passive.</param>
+        /// <param name="damageText">Type of damage the damage text should be.</param>
+        public virtual void TakeDamage(IDamageData damageData, DamageResultType damageText, IEventSource sourceScript = null)
+        {
+            float regain = 0;
+            var attacker = damageData.Attacker;
+            var attackerStats = damageData.Attacker.Stats;
+            var type = damageData.DamageType;
+            var source = damageData.DamageSource;
+            var postMitigationDamage = damageData.PostMitigationdDamage;
 
             ApiEventManager.OnPreTakeDamage.Publish(damageData.Target, damageData);
 
@@ -625,148 +672,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                     attackerStats.CurrentHealth + regain * postMitigationDamage
                 );
             }
-        }
-
-        /// <summary>
-        /// Applies damage to this unit.
-        /// </summary>
-        /// <param name="attacker">Unit that is dealing the damage.</param>
-        /// <param name="damage">Amount of damage to deal.</param>
-        /// <param name="type">Whether the damage is physical, magical, or true.</param>
-        /// <param name="source">What the damage came from: attack, spell, summoner spell, or passive.</param>
-        /// <param name="isCrit">Whether or not the damage text should be shown as a crit.</param>
-        public virtual void TakeDamage(IAttackableUnit attacker, float damage, DamageType type, DamageSource source, bool isCrit)
-        {
-            var text = DamageResultType.RESULT_NORMAL;
-
-            if (isCrit)
-            {
-                text = DamageResultType.RESULT_CRITICAL;
-            }
-
-            TakeDamage(attacker, damage, type, source, text);
-        }
-
-        /// <summary>
-        /// Applies damage to this unit.
-        /// </summary>
-        /// <param name="attacker">Unit that is dealing the damage.</param>
-        /// <param name="damage">Amount of damage to deal.</param>
-        /// <param name="type">Whether the damage is physical, magical, or true.</param>
-        /// <param name="source">What the damage came from: attack, spell, summoner spell, or passive.</param>
-        /// <param name="damageText">Type of damage the damage text should be.</param>
-        public virtual void TakeDamage(IDamageData damageData, DamageResultType damageText)
-        {
-            float regain = 0;
-            var attacker = damageData.Attacker;
-            var attackerStats = damageData.Attacker.Stats;
-            var type = damageData.DamageType;
-            var source = damageData.DamageSource;
-            var postMitigationDamage = damageData.PostMitigationdDamage;
-
-            ApiEventManager.OnPreTakeDamage.Publish(damageData.Target, damageData);
-
-            switch (source)
-            {
-                case DamageSource.DAMAGE_SOURCE_RAW:
-                    break;
-                case DamageSource.DAMAGE_SOURCE_INTERNALRAW:
-                    break;
-                case DamageSource.DAMAGE_SOURCE_PERIODIC:
-                    break;
-                case DamageSource.DAMAGE_SOURCE_PROC:
-                    break;
-                case DamageSource.DAMAGE_SOURCE_REACTIVE:
-                    break;
-                case DamageSource.DAMAGE_SOURCE_ONDEATH:
-                    break;
-                case DamageSource.DAMAGE_SOURCE_SPELL:
-                    regain = attackerStats.SpellVamp.Total;
-                    break;
-                case DamageSource.DAMAGE_SOURCE_ATTACK:
-                    regain = attackerStats.LifeSteal.Total;
-                    break;
-                case DamageSource.DAMAGE_SOURCE_DEFAULT:
-                    break;
-                case DamageSource.DAMAGE_SOURCE_SPELLAOE:
-                    break;
-                case DamageSource.DAMAGE_SOURCE_SPELLPERSIST:
-                    break;
-                case DamageSource.DAMAGE_SOURCE_PET:
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(source), source, null);
-            }
-
-            if (!CanTakeDamage(type))
-            {
-                return;
-            }
-
-            Stats.CurrentHealth = Math.Max(0.0f, Stats.CurrentHealth - postMitigationDamage);
-
-            ApiEventManager.OnTakeDamage.Publish(damageData.Target, damageData);
-
-            if (!IsDead && Stats.CurrentHealth <= 0)
-            {
-                IsDead = true;
-                _death = new DeathData
-                {
-                    BecomeZombie = false, // TODO: Unhardcode
-                    DieType = 0, // TODO: Unhardcode
-                    Unit = this,
-                    Killer = attacker,
-                    DamageType = type,
-                    DamageSource = source,
-                    DeathDuration = 0 // TODO: Unhardcode
-                };
-            }
-
-            int attackerId = 0, targetId = 0;
-
-            // todo: check if damage dealt by disconnected players cause anything bad
-            if (attacker is IChampion attackerChamp)
-            {
-                attackerId = (int)_game.PlayerManager.GetClientInfoByChampion(attackerChamp).PlayerId;
-            }
-
-            if (this is IChampion targetChamp)
-            {
-                targetId = (int)_game.PlayerManager.GetClientInfoByChampion(targetChamp).PlayerId;
-            }
-            // Show damage text for owner of pet
-            if (attacker is IMinion attackerMinion && attackerMinion is IPet && attackerMinion.Owner is IChampion)
-            {
-                attackerId = (int)_game.PlayerManager.GetClientInfoByChampion((IChampion)attackerMinion.Owner).PlayerId;
-            }
-
-            if (attacker.Team != Team)
-            {
-                _game.PacketNotifier.NotifyUnitApplyDamage(attacker, this, postMitigationDamage, type, damageText,
-                    _game.Config.IsDamageTextGlobal, attackerId, targetId);
-            }
-
-            // Get health from lifesteal/spellvamp
-            if (regain > 0)
-            {
-                attackerStats.CurrentHealth = Math.Min
-                (
-                    attackerStats.HealthPoints.Total,
-                    attackerStats.CurrentHealth + regain * postMitigationDamage
-                );
-            }
-        }
-
-        public void TakeDamage(IDamageData damageData, bool isCrit)
-        {
-            var text = DamageResultType.RESULT_NORMAL;
-
-            if (isCrit)
-            {
-                text = DamageResultType.RESULT_CRITICAL;
-            }
-
-            TakeDamage(damageData, text);
         }
 
         /// <summary>
@@ -1241,7 +1146,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// </summary>
         /// <param name="b">Buff instance to add.</param>
         /// TODO: Probably needs a refactor to lessen thread usage. Make sure to stick very closely to the current method; just optimize it.
-        public void AddBuff(IBuff b)
+        public virtual bool AddBuff(IBuff b)
         {
             if (ApiEventManager.OnAllowAddBuff.Publish(this, (b.SourceUnit, b)))
             {
@@ -1253,18 +1158,20 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                     {
                         var buff = GetBuffsWithName(b.Name)[0];
                         ParentBuffs.Add(b.Name, buff);
-                        return;
                     }
-                    // If there is no other buffs of this name, make it the parent and add it normally.
-                    ParentBuffs.Add(b.Name, b);
-                    BuffList.Add(b);
-                    // Add the buff to the visual hud.
-                    if (!b.IsHidden)
+                    else
                     {
-                        _game.PacketNotifier.NotifyNPC_BuffAdd2(b);
+                        // If there is no other buffs of this name, make it the parent and add it normally.
+                        ParentBuffs.Add(b.Name, b);
+                        BuffList.Add(b);
+                        // Add the buff to the visual hud.
+                        if (!b.IsHidden)
+                        {
+                            _game.PacketNotifier.NotifyNPC_BuffAdd2(b);
+                        }
+                        // Activate the buff for BuffScripts
+                        b.ActivateBuff();
                     }
-                    // Activate the buff for BuffScripts
-                    b.ActivateBuff();
                 }
                 // If the buff is supposed to replace any existing buff instances of the same name
                 else if (b.BuffAddType == BuffAddType.REPLACE_EXISTING)
@@ -1333,15 +1240,15 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                                 _game.PacketNotifier.NotifyNPC_BuffUpdateCount(ParentBuffs[b.Name], ParentBuffs[b.Name].Duration, ParentBuffs[b.Name].TimeElapsed);
                             }
                         }
-
-                        return;
                     }
-
-                    ParentBuffs[b.Name].IncrementStackCount();
-
-                    if (!b.IsHidden)
+                    else
                     {
-                        _game.PacketNotifier.NotifyNPC_BuffUpdateCount(ParentBuffs[b.Name], ParentBuffs[b.Name].Duration - ParentBuffs[b.Name].TimeElapsed, ParentBuffs[b.Name].TimeElapsed);
+                        ParentBuffs[b.Name].IncrementStackCount();
+
+                        if (!b.IsHidden)
+                        {
+                            _game.PacketNotifier.NotifyNPC_BuffUpdateCount(ParentBuffs[b.Name], ParentBuffs[b.Name].Duration - ParentBuffs[b.Name].TimeElapsed, ParentBuffs[b.Name].TimeElapsed);
+                        }
                     }
                 }
                 // If the buff is supposed to be applied alongside any existing buff instances of the same name.
@@ -1377,30 +1284,31 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                             }
                         }
                         b.ActivateBuff();
-
-                        return;
                     }
-                    // If we haven't hit the max stack count (usually 254).
-                    BuffList.Add(b);
-
-                    // Increment the number of stacks on the parent buff, which is the buff instance which is used for packets.
-                    ParentBuffs[b.Name].IncrementStackCount();
-
-                    // Increment the number of stacks on every buff of the same name (so if any of them become the parent, there is no problem).
-                    GetBuffsWithName(b.Name).ForEach(buff => buff.SetStacks(ParentBuffs[b.Name].StackCount));
-
-                    if (!b.IsHidden)
+                    else
                     {
-                        if (b.BuffType == BuffType.COUNTER)
+                        // If we haven't hit the max stack count (usually 254).
+                        BuffList.Add(b);
+
+                        // Increment the number of stacks on the parent buff, which is the buff instance which is used for packets.
+                        ParentBuffs[b.Name].IncrementStackCount();
+
+                        // Increment the number of stacks on every buff of the same name (so if any of them become the parent, there is no problem).
+                        GetBuffsWithName(b.Name).ForEach(buff => buff.SetStacks(ParentBuffs[b.Name].StackCount));
+
+                        if (!b.IsHidden)
                         {
-                            _game.PacketNotifier.NotifyNPC_BuffUpdateNumCounter(ParentBuffs[b.Name]);
+                            if (b.BuffType == BuffType.COUNTER)
+                            {
+                                _game.PacketNotifier.NotifyNPC_BuffUpdateNumCounter(ParentBuffs[b.Name]);
+                            }
+                            else
+                            {
+                                _game.PacketNotifier.NotifyNPC_BuffUpdateCount(b, b.Duration, b.TimeElapsed);
+                            }
                         }
-                        else
-                        {
-                            _game.PacketNotifier.NotifyNPC_BuffUpdateCount(b, b.Duration, b.TimeElapsed);
-                        }
+                        b.ActivateBuff();
                     }
-                    b.ActivateBuff();
                 }
                 // If the buff is supposed to add a stack to any existing buffs of the same name and refresh their timer.
                 // Essentially the method is: have one parent buff which has the stacks, and just refresh its time, this means no overlapping buff instances, but functionally it is the same.
@@ -1429,7 +1337,9 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                     }
                     // TODO: Unload and reload all data of buff script here.
                 }
+                return true;
             }
+            return false;
         }
 
         /// <summary>
@@ -1562,7 +1472,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             {
                 b.DecrementStackCount();
 
-                IBuff tempBuff = new Buff(_game, b.Name, b.Duration, b.StackCount, b.OriginSpell, b.TargetUnit, b.SourceUnit, b.IsBuffInfinite());
+                IBuff tempBuff = new Buff(_game, b.Name, b.Duration, b.StackCount, b.OriginSpell, b.TargetUnit, b.SourceUnit, b.IsBuffInfinite(), b.ParentScript);
 
                 RemoveBuff(b.Name, true);
 

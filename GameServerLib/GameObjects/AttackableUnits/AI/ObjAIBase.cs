@@ -12,6 +12,7 @@ using LeagueSandbox.GameServer.API;
 using LeagueSandbox.GameServer.Inventory;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using System.Activities.Presentation.View;
+using static GameServerCore.Content.HashFunctions;
 
 namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 {
@@ -1098,18 +1099,12 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 Untarget(TargetUnit);
             }
         }
-        public override void TakeDamage(IAttackableUnit attacker, float damage, DamageType type, DamageSource source, DamageResultType damageText)
+
+        public override void TakeDamage(IDamageData damageData, DamageResultType damageText, IEventSource sourceScript = null)
         {
-            base.TakeDamage(attacker, damage, type, source, damageText);
-            OnTakeDamage(attacker);
-        }
-        public override void TakeDamage(IDamageData damageData, DamageResultType damageText)
-        {
-            base.TakeDamage(damageData, damageText);
-            OnTakeDamage(damageData.Attacker);
-        }
-        void OnTakeDamage(IAttackableUnit attacker)
-        {
+            base.TakeDamage(damageData, damageText, sourceScript);
+            
+            var attacker = damageData.Attacker;
             var objects = _game.ObjectManager.GetObjects();
             foreach (var it in objects)
             {

@@ -24,7 +24,7 @@ namespace Buffs
         public void OnDeactivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
             var champion = unit as IChampion;
-            champion.Respawn();//Implement a custom spawn position function later
+            champion.Respawn(); //Implement a custom spawn position function later
             SetStatus(unit, StatusFlags.Targetable, true);
             AddBuff("SionPassive", 60f, 1, ownerSpell, unit, champion);
         }

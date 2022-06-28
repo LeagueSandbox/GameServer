@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace GameServerCore.Domain.GameObjects
 {
-    public interface IBuff : IStackable, IUpdate
+    public interface IBuff : IStackable, IUpdate, IEventSource
     {       
         /// <summary>
         /// How this buff should be added and treated when adding new buffs of the same name.

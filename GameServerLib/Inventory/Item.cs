@@ -1,5 +1,7 @@
 using GameServerCore.Domain;
+using GameServerCore.Scripting.CSharp;
 using LeagueSandbox.GameServer.GameObjects.Other;
+using static GameServerCore.Content.HashFunctions;
 
 namespace LeagueSandbox.GameServer.Inventory
 {
@@ -7,7 +9,6 @@ namespace LeagueSandbox.GameServer.Inventory
     {
         public int TotalPrice => ItemData.TotalPrice;
         public IItemData ItemData { get; }
-
 
         private Item(IItemData data)
         {

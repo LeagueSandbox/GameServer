@@ -1,4 +1,6 @@
 ﻿using GameServerCore.Enums;
+using System.Collections.Generic;
+using LeaguePackets.Game.Events;
 
 namespace GameServerCore.Domain.GameObjects
 {
@@ -13,6 +15,7 @@ namespace GameServerCore.Domain.GameObjects
         ITalentInventory TalentInventory { get; }
         IChampionStats ChampStats { get; }
         byte SkillPoints { get; set; }
+        List<EventHistoryEntry> EventHistory { get; }
 
         // basic
         void AddGold(IAttackableUnit source, float gold, bool notify = true);

@@ -2120,22 +2120,44 @@ namespace PacketDefinitions420
         /// <param name="goldFromKill">Amount of gold the killer received.</param>
         public void NotifyNPC_Hero_Die(IDeathData deathData)
         {
-            NotifyS2C_UpdateDeathTimer(deathData.Unit as IChampion);
+            var champ = deathData.Unit as IChampion;
+
+            NotifyS2C_UpdateDeathTimer(champ);
+
+            uint killerNetID = deathData.Killer.NetId;
 
             var cd = new NPC_Hero_Die
             {
                 SenderNetID = deathData.Unit.NetId,
                 DeathData = new DeathData
                 {
-                    KillerNetID = deathData.Killer.NetId,
+                    KillerNetID = killerNetID,
                     DieType = deathData.DieType,
                     DamageType = (byte)deathData.DamageType,
                     DamageSource = (byte)deathData.DamageSource,
                     BecomeZombie = deathData.BecomeZombie,
-                    DeathDuration = (deathData.Unit as IChampion).RespawnTimer / 1000f
+                    DeathDuration = champ.RespawnTimer / 1000f
                 }
             };
             _packetHandlerManager.BroadcastPacket(cd.GetBytes(), Channel.CHL_S2C);
+
+            NotifyNPC_Die_EventHistory(champ, killerNetID);
+        }
+        public void NotifyNPC_Die_EventHistory(IChampion ch, uint killerNetID = 0)
+        {
+            var history = new NPC_Die_EventHistory();
+            history.KillerNetID = killerNetID;
+            history.Duration = 0;
+            if(ch.EventHistory.Count > 0)
+            {
+                float firstTimestamp = ch.EventHistory[0].Timestamp;
+                float lastTimestamp = ch.EventHistory[ch.EventHistory.Count - 1].Timestamp;
+                history.Duration = lastTimestamp - firstTimestamp; // ?
+            }
+            history.EventSourceType = 0; //TODO: Confirm that it is always zero
+            history.Entries = ch.EventHistory;
+            
+            _packetHandlerManager.SendPacket((int)ch.GetPlayerId(), history.GetBytes(), Channel.CHL_S2C);
         }
         /// <summary>
         /// Sends a packet to all players with vision of the specified AttackableUnit detailing that the attacker has abrubtly stopped their attack (can be a spell or auto attack, although internally AAs are also spells).
@@ -3875,7 +3897,7 @@ namespace PacketDefinitions420
         {
             var damagePacket = new UnitApplyDamage
             {
-                SenderNetID = source.NetId,
+                SenderNetID = target.NetId,
                 DamageResultType = (byte)damagetext,
                 DamageType = (byte)type,
                 TargetNetID = target.NetId,
