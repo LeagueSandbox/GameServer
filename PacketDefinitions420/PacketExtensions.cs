@@ -69,34 +69,6 @@ namespace PacketDefinitions420
             // mapSize contains the real center point coordinates, meaning width/2, height/2
             return new Vector2((vector.X - grid.MiddleOfMap.X) / 2, (vector.Y - grid.MiddleOfMap.Y) / 2);
         }
-        public static IEventEmptyHistory GetAnnouncementID(GameServerCore.Enums.EventID Event, int mapId = 0)
-        {
-            var worldEvent = (EventID)(byte)Event;
-            switch (worldEvent)
-            {
-                case EventID.OnStartGameMessage1:
-                    return new OnStartGameMessage1 { MapNumber = mapId };
-                case EventID.OnStartGameMessage2:
-                    return new OnStartGameMessage2 { MapNumber = mapId };
-                case EventID.OnStartGameMessage3:
-                    return new OnStartGameMessage3 { MapNumber = mapId };
-                case EventID.OnStartGameMessage4:
-                    return new OnStartGameMessage4 { MapNumber = mapId };
-                case EventID.OnStartGameMessage5:
-                    return new OnStartGameMessage5 { MapNumber = mapId };
-                case EventID.OnMinionsSpawn:
-                    return new OnMinionsSpawn();
-                case EventID.OnNexusCrystalStart:
-                    return new OnNexusCrystalStart();
-                case EventID.OnMinionAscended:
-                    return new OnMinionAscended();
-                case EventID.OnChampionAscended:
-                    return new OnChampionAscended();
-                case EventID.OnClearAscended:
-                    return new OnClearAscended();
-            }
-            return null;
-        }
 
         /// <summary>
         /// Creates the MovementDataStop.

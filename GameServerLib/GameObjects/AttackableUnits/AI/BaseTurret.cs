@@ -78,7 +78,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 GoldGiven = 0.0f,
                 OtherNetID = data.Killer.NetId
             };
-            _game.PacketNotifier.NotifyS2C_OnEventWorld(announce, NetId);
+            _game.PacketNotifier.NotifyOnEvent(announce, this);
 
             base.Die(data);
         }

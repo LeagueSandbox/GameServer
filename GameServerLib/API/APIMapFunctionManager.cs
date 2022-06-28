@@ -4,11 +4,9 @@ using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
 using GameServerCore.Packets.Enums;
 using GameServerLib.GameObjects;
-using GameServerLib.GameObjects.AttackableUnits;
 using LeaguePackets.Game.Common;
 using LeagueSandbox.GameServer.GameObjects;
 using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
-using LeagueSandbox.GameServer.GameObjects.AttackableUnits.Buildings;
 using LeagueSandbox.GameServer.GameObjects.AttackableUnits.Buildings.AnimatedBuildings;
 using LeagueSandbox.GameServer.Handlers;
 using LeagueSandbox.GameServer.Logging;
@@ -33,7 +31,7 @@ namespace LeagueSandbox.GameServer.API
         /// Also assigns the debug logger.
         /// </summary>
         /// <param name="game">Game instance to set.</param>
-        internal static void SetMap(Game game, MapScriptHandler mapScriptHandler)
+        internal static void SetGame(Game game, MapScriptHandler mapScriptHandler)
         {
             _game = game;
             _map = mapScriptHandler;
@@ -134,14 +132,14 @@ namespace LeagueSandbox.GameServer.API
         /// <param name="minionNo"></param>
         /// <param name="barracksName"></param>
         /// <param name="waypoints"></param>
-        public static void CreateLaneMinion(List<MinionSpawnType> list, Vector2 position, TeamId team, int minionNo, string barracksName, List<Vector2> waypoints)
+        public static void CreateLaneMinion(List<MinionSpawnType> list, Vector2 position, TeamId team, int minionNo, string barracksName, List<Vector2> waypoints, string laneMinionAi)
         {
             if (list.Count <= minionNo)
             {
                 return;
             }
 
-            var m = new LaneMinion(_game, list[minionNo], position, barracksName, waypoints, _map.MapScript.MinionModels[team][list[minionNo]], 0, team, null, _map.MapScript.LaneMinionAI);
+            var m = new LaneMinion(_game, list[minionNo], position, barracksName, waypoints, _map.MapScript.MinionModels[team][list[minionNo]], 0, team, null, laneMinionAi);
             _game.ObjectManager.AddObject(m);
         }
 
@@ -318,16 +316,6 @@ namespace LeagueSandbox.GameServer.API
         public static void SetGameFeatures(FeatureFlags featureFlag, bool isEnabled)
         {
             _game.Config.SetGameFeatures(featureFlag, isEnabled);
-        }
-
-        /// <summary>
-        /// Announces an event
-        /// </summary>
-        /// <param name="Event"></param>
-        /// <param name="mapId"></param>
-        public static void NotifyWorldEvent(EventID Event, int mapId = 0, uint sourceNetId = 0)
-        {
-            _game.PacketNotifier.NotifyS2C_OnEventWorld(PacketExtensions.GetAnnouncementID(Event, mapId), sourceNetId);
         }
 
         /// <summary>

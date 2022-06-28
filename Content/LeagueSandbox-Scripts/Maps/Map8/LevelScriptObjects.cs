@@ -12,12 +12,12 @@ namespace MapScripts.Map8
     {
         private static Dictionary<GameObjectTypes, List<MapObject>> _mapObjects;
 
-        static Dictionary<byte, IMinion> InfoPoints = new Dictionary<byte, IMinion>();
+        static List<InfoPoint> InfoPoints = new List<InfoPoint>();
         public static Dictionary<TeamId, IFountain> FountainList = new Dictionary<TeamId, IFountain>();
         static Dictionary<TeamId, List<ILaneTurret>> TurretList = new Dictionary<TeamId, List<ILaneTurret>> { { TeamId.TEAM_BLUE, new List<ILaneTurret>() }, { TeamId.TEAM_PURPLE, new List<ILaneTurret>() } };
 
-        static string LaneTurretAI = "TurretAI";
-
+        //Turret netIds are used for the capture point announcements
+        static Dictionary<TeamId, ILaneTurret> AnnouncementUnits = new Dictionary<TeamId, ILaneTurret>();
         public static Dictionary<TeamId, string> TowerModels { get; set; } = new Dictionary<TeamId, string>
         {
             {TeamId.TEAM_BLUE, "OdinOrderTurretShrine" },
@@ -37,9 +37,9 @@ namespace MapScripts.Map8
         {
             LoadShops();
 
-            foreach (var index in InfoPoints.Keys)
+            foreach (var infoPoint in InfoPoints)
             {
-                NotifyHandleCapturePointUpdate(index, InfoPoints[index].NetId, 0, 0, CapturePointUpdateCommand.AttachToObject);
+                NotifyHandleCapturePointUpdate(infoPoint.Index, infoPoint.Point.NetId, 0, 0, CapturePointUpdateCommand.AttachToObject);
             }
         }
 
@@ -74,20 +74,40 @@ namespace MapScripts.Map8
             {
                 var teamId = turretObj.GetTeamID();
                 var position = new Vector2(turretObj.CentralPoint.X, turretObj.CentralPoint.Z);
-                var fountainTurret = CreateLaneTurret(turretObj.Name + "_A", TowerModels[teamId], position, teamId, TurretType.FOUNTAIN_TURRET, LaneID.NONE, LaneTurretAI, turretObj);
+                var fountainTurret = CreateLaneTurret(turretObj.Name + "_A", TowerModels[teamId], position, teamId, TurretType.FOUNTAIN_TURRET, LaneID.NONE, "TurretAI", turretObj);
                 TurretList[teamId].Add(fountainTurret);
+
+                if (!fountainTurret.Name.Contains('1'))
+                {
+                    AnnouncementUnits.Add(fountainTurret.Team, fountainTurret);
+                }
+
                 AddObject(fountainTurret);
             }
 
             byte pointIndex = 0;
             foreach (var infoPoint in _mapObjects[GameObjectTypes.InfoPoint])
             {
-                var point = CreateMinion("OdinNeutralGuardian", "OdinNeutralGuardian", new Vector2(infoPoint.CentralPoint.X, infoPoint.CentralPoint.Z), ignoreCollision: true);
-                AddUnitPerceptionBubble(point, 800.0f, 25000.0f, TeamId.TEAM_BLUE, true, collisionArea: 120.0f);
-                point.PauseAi(true);
-                InfoPoints.Add(pointIndex, point);
+                InfoPoints.Add(new InfoPoint(new Vector2(infoPoint.CentralPoint.X, infoPoint.CentralPoint.Z), pointIndex, infoPoint.Name[infoPoint.Name.Length - 1]));
                 pointIndex++;
             }
+        }
+    }
+
+    class InfoPoint
+    {
+        public IMinion Point;
+        public char Id;
+        public byte Index;
+        public InfoPoint(Vector2 position, byte index, char id)
+        {
+            Point = CreateMinion("OdinNeutralGuardian", "OdinNeutralGuardian", position, ignoreCollision: true);
+            Point.PauseAi(true);
+            AddUnitPerceptionBubble(Point, 800.0f, 25000.0f, TeamId.TEAM_BLUE, true, collisionArea: 120.0f);
+            AddUnitPerceptionBubble(Point, 800.0f, 25000.0f, TeamId.TEAM_PURPLE, true, collisionArea: 120.0f);
+
+            Id = id;
+            Index = index;
         }
     }
 }

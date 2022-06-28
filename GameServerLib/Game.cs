@@ -157,6 +157,8 @@ namespace LeagueSandbox.GameServer
             ObjectManager = new ObjectManager(this);
             ProtectionManager = new ProtectionManager(this);
             Map = new MapScriptHandler(this);
+            ApiAnnouncements.SetGame(this);
+            ApiMapFunctionManager.SetGame(this, Map as MapScriptHandler);
             ApiFunctionManager.SetGame(this);
             ApiEventManager.SetGame(this);
             IsRunning = false;
