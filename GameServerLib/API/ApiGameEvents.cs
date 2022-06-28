@@ -5,7 +5,7 @@ using log4net;
 
 namespace LeagueSandbox.GameServer.API
 {
-    public static class ApiAnnouncements
+    public static class ApiGameEvents
     {
         private static Game _game;
         private static ILog _logger;

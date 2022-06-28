@@ -8,7 +8,7 @@ using GameServerCore.Scripting.CSharp;
 using LeagueSandbox.GameServer.Content;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using static LeagueSandbox.GameServer.API.ApiMapFunctionManager;
-using static LeagueSandbox.GameServer.API.ApiAnnouncements;
+using static LeagueSandbox.GameServer.API.ApiGameEvents;
 
 namespace MapScripts.Map10
 {

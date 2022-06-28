@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Numerics;
 using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
@@ -9,7 +8,7 @@ using LeagueSandbox.GameServer.Scripting.CSharp;
 using GameServerCore.Scripting.CSharp;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 using static LeagueSandbox.GameServer.API.ApiMapFunctionManager;
-using static LeagueSandbox.GameServer.API.ApiAnnouncements;
+using static LeagueSandbox.GameServer.API.ApiGameEvents;
 using LeagueSandbox.GameServer.API;
 
 namespace MapScripts.Map8
