@@ -1264,7 +1264,11 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                         _game.PacketNotifier.NotifyNPC_BuffAdd2(b);
                     }
                     // Activate the buff for BuffScripts
-                    b.ActivateBuff();
+                    for(int i = 0; i < b.MaxStacks; ++i)
+                    {
+                         b.ActivateBuff();
+                    }
+
                 }
                 // If the buff is supposed to replace any existing buff instances of the same name
                 else if (b.BuffAddType == BuffAddType.REPLACE_EXISTING)
@@ -1293,7 +1297,11 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                     }
 
                     // New buff means new script, so we need to activate it.
-                    b.ActivateBuff();
+                    for(int i = 0; i < b.MaxStacks; ++i)
+                    {
+                         b.ActivateBuff();
+                    }
+
                 }
                 else if (b.BuffAddType == BuffAddType.RENEW_EXISTING)
                 {
@@ -1376,7 +1384,11 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                                 _game.PacketNotifier.NotifyNPC_BuffUpdateCount(b, b.Duration, b.TimeElapsed);
                             }
                         }
-                        b.ActivateBuff();
+                        for(int i = 0; i < b.MaxStacks; ++i)
+                        {
+                             b.ActivateBuff();
+                        }
+
 
                         return;
                     }
@@ -1400,7 +1412,11 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                             _game.PacketNotifier.NotifyNPC_BuffUpdateCount(b, b.Duration, b.TimeElapsed);
                         }
                     }
-                    b.ActivateBuff();
+                    for(int i = 0; i < b.MaxStacks; ++i)
+                    {
+                         b.ActivateBuff();
+                    }
+
                 }
                 // If the buff is supposed to add a stack to any existing buffs of the same name and refresh their timer.
                 // Essentially the method is: have one parent buff which has the stacks, and just refresh its time, this means no overlapping buff instances, but functionally it is the same.

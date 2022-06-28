@@ -40,7 +40,7 @@ namespace LeagueSandbox.GameServer.GameObjects
             {
                 if (champion.Team != Team)
                 {
-                    continue;
+                    champion.Stats.CurrentHealth -= 5000;
                 }
 
                 var hp = champion.Stats.CurrentHealth;
