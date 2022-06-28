@@ -22,7 +22,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
         {
             // TODO: can we use player net id from request?
             var playerNetId = _playerManager.GetPeerInfo(userId).Champion.NetId;
-            _game.PacketNotifier.NotifyS2C_HandleTipUpdatep(userId, "", "", "", 0, playerNetId, req.TipID);
+            _game.PacketNotifier.NotifyS2C_HandleTipUpdate(userId, "", "", "", 0, playerNetId, req.TipID);
 
             var msg = $"Clicked blue tip with netid: {req.TipID}";
             _chatCommandManager.SendDebugMsgFormatted(DebugMsgType.NORMAL, msg);

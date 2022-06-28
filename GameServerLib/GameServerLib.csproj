@@ -21,4 +21,10 @@
     <ProjectReference Include="..\QuadTree\QuadTree.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+      <AssemblyAttribute Include="LeagueSandbox.GameServer.BuildDateTimeAttribute">
+          <_Parameter1>$([System.String]::Concat($([System.DateTime]::UtcNow.ToString("G")), " UTC"))</_Parameter1>
+      </AssemblyAttribute>
+  </ItemGroup>
+
 </Project>
