@@ -238,25 +238,26 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
 
             Replication.Update();
 
-            if (Waypoints.Count > 1 && CanMove())
-            {
-                Move(diff);
-            }
-
-            // Prevents edge cases where a movement command is performed in the same tick as a ForceMovement.
-            // TODO: Perhaps just make a check for MovementParameters in ObjectManager.Sync, and send WaypointGroupWithSpeed instead.
-            if (IsMovementUpdated() && !CanChangeWaypoints())
-            {
-                _movementUpdated = false;
-            }
-
-            if (MovementParameters != null && MovementParameters.FollowNetID > 0)
+            if (MovementParameters != null)
             {
                 MovementParameters.SetTimeElapsed(MovementParameters.ElapsedTime + diff);
-                if (MovementParameters.ElapsedTime >= MovementParameters.FollowTravelTime && MovementParameters.FollowTravelTime >= 0)
+                if(
+                    MovementParameters.FollowNetID > 0
+                    && MovementParameters.FollowTravelTime > 0
+                    && MovementParameters.ElapsedTime >= MovementParameters.FollowTravelTime
+                )
                 {
                     SetDashingState(false);
                 }
+                else
+                {
+                    DashMove(diff);
+                }
+            }
+            else
+            if (MovementParameters == null && Waypoints.Count > 1 && CanMove())
+            {
+                Move(diff);
             }
 
             if (IsDead && _death != null)
@@ -296,10 +297,17 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             {
                 ApiEventManager.OnCollision.Publish(this, collider);
 
-                if (MovementParameters != null || Status.HasFlag(StatusFlags.Ghosted)
-                    || (collider is IAttackableUnit unit &&
-                    (unit.MovementParameters != null || unit.Status.HasFlag(StatusFlags.Ghosted))))
-                {
+                if (
+                    MovementParameters != null
+                    || Status.HasFlag(StatusFlags.Ghosted)
+                    || (
+                        collider is IAttackableUnit unit
+                        && (
+                            unit.MovementParameters != null
+                            || unit.Status.HasFlag(StatusFlags.Ghosted)
+                        )
+                    )
+                ) {
                     return;
                 }
 
@@ -352,7 +360,14 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             }
             if (IsMovementUpdated())
             {
-                _game.PacketNotifier.HoldMovementDataUntilWaypointGroupNotification(this, userId, false);
+                if(MovementParameters != null)
+                {
+                //    _game.PacketNotifier.HoldMovementDataUntilWaypointGroupNotification(this, userId, false);
+                }
+                else
+                {
+                    _game.PacketNotifier.HoldMovementDataUntilWaypointGroupNotification(this, userId, false);
+                }
             }
         }
 
@@ -420,8 +435,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// <returns></returns>
         public virtual bool CanMove()
         {
-            // Only case where AttackableUnit should move is if it is forced.
-            return MovementParameters != null;
+            return true;
         }
 
         /// <summary>
@@ -429,8 +443,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// </summary>
         public virtual bool CanChangeWaypoints()
         {
-            // Only case where we can change waypoints is if we are being forced to move towards a target.
-            return MovementParameters != null && MovementParameters.FollowNetID != 0;
+            return MovementParameters == null;
         }
 
         /// <summary>
@@ -1057,6 +1070,68 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             _movementUpdated = false;
         }
 
+        void DashMove(float delta)
+        {
+            var MP = MovementParameters as ForceMovementParameters;
+
+            float speed = MP.PathSpeedOverride * 0.001f;
+            float maxDist = speed * delta;
+
+            uint id = MP.FollowNetID;
+            if(id > 0)
+            {
+                if(!MP.FlewOverUnit)
+                {
+                    IGameObject unitToFollow = _game.ObjectManager.GetObjectById(id);
+                    Vector2 dir = unitToFollow.Position - Position;
+                    float dist = dir.Length();
+                    float summaryRadius = PathfindingRadius + unitToFollow.PathfindingRadius;
+                    if(MP.FollowBackDistance <= 0)
+                    {
+                        // Stop in front of the unit
+                        dist -= summaryRadius;
+                    }
+                    Vector2 normDir = MP.Direction = dir / dist;
+                    Console.WriteLine($"{maxDist} >= {dist} ?");
+                    if(maxDist >= dist)
+                    {
+                        Console.WriteLine($"{MP.FollowBackDistance} > 0 ?");
+                        if(MP.FollowBackDistance > 0)
+                        {
+                            Console.WriteLine("FLEW OVER UNIT");
+                            MP.FlewOverUnit = true;
+                            MP.FollowBackDistance = Math.Max(
+                                MP.FollowBackDistance, summaryRadius
+                            );
+                            Position = unitToFollow.Position;
+                            maxDist -= dist;
+                        }
+                        else
+                        {
+                            Position += normDir * dist;
+                            SetDashingState(false);
+                        }
+                    }
+                    else
+                    {
+                        Position += normDir * maxDist;
+                    }
+                }
+                
+                // Continue moving in the direction
+                if(MP.FlewOverUnit)
+                {
+                    float dist = MP.FollowBackDistance - MP.OverpassedDistance;
+                    Vector2 normDir = MP.Direction;
+                    Position += normDir * Math.Min(dist, maxDist);
+                    if(maxDist >= dist)
+                    {
+                        SetDashingState(false);
+                    }
+                }
+            }
+        }
+
         /// <summary>
         /// Moves this unit to its specified waypoints, updating its position along the way.
         /// </summary>
@@ -1080,12 +1155,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
 
             Direction = new Vector3(dirTemp.X, 0.0f, dirTemp.Y);
 
-            //TODO: Turns in the direction of travel automatically, no need to call.
-            if (MovementParameters != null && !MovementParameters.KeepFacingDirection)
-            {
-                FaceDirection(Direction, false);
-            }
-
             var moveSpeed = GetMoveSpeed();
 
             var distSqr = MathF.Abs(Vector2.DistanceSquared(cur, next));
@@ -1102,18 +1171,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             var yy = Direction.Z * deltaMovement;
 
             Vector2 nextPos = new Vector2(Position.X + xx, Position.Y + yy);
-            // TODO: Implement ForceMovementType so this specifically applies to dashes that can't move past walls.
-            if (MovementParameters == null)
-            {
-                // Prevent moving past obstacles. TODO: Verify if works at high speeds.
-                // TODO: Implement range based (CollisionRadius) pathfinding so we don't keep getting stuck because of IsAnythingBetween.
-                // TODO: After the above, implement repathing if our position within the next tick or two will intersect with another GameObject.
-                KeyValuePair<bool, Vector2> pathBlocked = _game.Map.NavigationGrid.IsAnythingBetween(Position, nextPos);
-                if (pathBlocked.Key)
-                {
-                    nextPos = _game.Map.NavigationGrid.GetClosestTerrainExit(pathBlocked.Value, PathfindingRadius + 1.0f);
-                }
-            }
 
             Position = nextPos;
 
@@ -1129,12 +1186,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                 if (nextIndex >= Waypoints.Count)
                 {
                     ResetWaypoints();
-
-                    if (MovementParameters != null)
-                    {
-                        SetDashingState(false);
-                        return true;
-                    }
 
                     return true;
                 }
@@ -1188,8 +1239,12 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             // Dashes are excluded as their paths should be set before being applied.
             // TODO: Find out the specific cases where we shouldn't be able to set our waypoints. Perhaps CC?
             // Setting waypoints during auto attacks is allowed.
-            if (newWaypoints == null || newWaypoints.Count <= 1 || newWaypoints[0] != Position || !CanChangeWaypoints())
-            {
+            if (
+                newWaypoints == null
+                || newWaypoints.Count <= 1
+                || newWaypoints[0] != Position
+                || !CanChangeWaypoints()
+            ) {
                 return;
             }
 
@@ -1704,7 +1759,14 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// TODO: Find a good way to grab these variables from spell data.
         /// TODO: Verify if we should count Dashing as a form of Crowd Control.
         /// TODO: Implement Dash class which houses these parameters, then have that as the only parameter to this function (and other Dash-based functions).
-        public void DashToLocation(Vector2 endPos, float dashSpeed, string animation = "", float leapGravity = 0.0f, bool keepFacingLastDirection = true, bool consideredCC = true)
+        public void DashToLocation(
+            Vector2 endPos,
+            float dashSpeed,
+            string animation = "",
+            float leapGravity = 0,
+            bool keepFacingLastDirection = true,
+            bool consideredCC = true
+        )
         {
             var newCoords = _game.Map.NavigationGrid.GetClosestTerrainExit(endPos, PathfindingRadius + 1.0f);
 
@@ -1728,7 +1790,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
 
             if (consideredCC)
             {
-                MovementParameters.SetStatus = StatusFlags.CanAttack | StatusFlags.CanCast | StatusFlags.CanMove;
+            //    MovementParameters.SetStatus = StatusFlags.CanAttack | StatusFlags.CanCast | StatusFlags.CanMove;
             }
 
             SetDashingState(true);
@@ -1759,16 +1821,16 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             {
                 _dashEffectsToDisable = MovementParameters.SetStatus;
             }
-
-            // TODO: Implement this as a parameter.
             SetStatus(StatusFlags.None, true);
 
             if (MovementParameters != null && state == false)
             {
                 MovementParameters = null;
 
+                ///*
                 var animPairs = new Dictionary<string, string> { { "RUN", "" } };
                 SetAnimStates(animPairs);
+                //*/
 
                 ApiEventManager.OnMoveEnd.Publish(this);
 

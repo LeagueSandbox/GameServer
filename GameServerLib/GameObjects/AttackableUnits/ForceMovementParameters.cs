@@ -13,7 +13,11 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// <summary>
         /// Amount of time passed since the unit started dashing.
         /// </summary>
-        public float ElapsedTime { get; set; }
+        public float ElapsedTime { get; set; } = 0;
+        public float PassedDistance { get; set; } = 0;
+        public bool FlewOverUnit { get; set; } = false;
+        public Vector2 Direction { get; set; }
+        public float OverpassedDistance { get; set; } = 0;
         /// <summary>
         /// Speed to use for the movement.
         /// </summary>
@@ -51,6 +55,11 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         public void SetTimeElapsed(float time)
         {
             ElapsedTime = time;
+        }
+
+        public void SetDistancePassed(float dist)
+        {
+            PassedDistance = dist;
         }
     }
 }
