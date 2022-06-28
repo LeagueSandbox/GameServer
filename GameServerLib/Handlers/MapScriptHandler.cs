@@ -51,6 +51,7 @@ namespace LeagueSandbox.GameServer.Handlers
 
         public Dictionary<TeamId, Dictionary<int, Dictionary<int, Vector2>>> PlayerSpawnPoints { get; set; } = new Dictionary<TeamId, Dictionary<int, Dictionary<int, Vector2>>>();
 
+        //Consider moving this to MapScripts(?)
         public readonly Dictionary<TeamId, SurrenderHandler> Surrenders = new Dictionary<TeamId, SurrenderHandler>();
 
         /// <summary>
@@ -75,8 +76,6 @@ namespace LeagueSandbox.GameServer.Handlers
             {
                 PlayerSpawnPoints = _game.Config.GetMapSpawns();
             }
-
-            SetMap(game, this);
         }
 
         /// <summary>

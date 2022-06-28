@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Numerics;
 using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
@@ -9,6 +8,7 @@ using LeagueSandbox.GameServer.Scripting.CSharp;
 using GameServerCore.Scripting.CSharp;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 using static LeagueSandbox.GameServer.API.ApiMapFunctionManager;
+using static LeagueSandbox.GameServer.API.ApiGameEvents;
 
 namespace MapScripts.Map8
 {
@@ -211,26 +211,26 @@ namespace MapScripts.Map8
         {
             if (time >= 90.0f * 1000)
             {
-                NotifyWorldEvent(EventID.OnNexusCrystalStart, 0);
+                AnnouceNexusCrystalStart();
                 AllAnnouncementsAnnounced = true;
 
             }
             if (time >= 80.0f * 1000 && !AnnouncedEvents.Contains(EventID.OnStartGameMessage2))
             {
-                // The Battle Has Beguns!
-                NotifyWorldEvent(EventID.OnStartGameMessage2, 8);
+                // The Battle Has Begun!
+                AnnounceStartGameMessage(2, 8);
                 AnnouncedEvents.Add(EventID.OnStartGameMessage2);
             }
             else if (time >= 50.0f * 1000 && !AnnouncedEvents.Contains(EventID.OnStartGameMessage1))
             {
                 // The battle will begin in 30 seconds!
-                NotifyWorldEvent(EventID.OnStartGameMessage1, 8);
+                AnnounceStartGameMessage(1, 8);
                 AnnouncedEvents.Add(EventID.OnStartGameMessage1);
             }
             else if (time >= 30.0f * 1000 && !AnnouncedEvents.Contains(EventID.OnStartGameMessage3))
             {
                 // Welcome to the Crystal Scar!
-                NotifyWorldEvent(EventID.OnStartGameMessage3, 8);
+                AnnounceStartGameMessage(3, 8);
                 AnnouncedEvents.Add(EventID.OnStartGameMessage3);
             }
         }
@@ -356,42 +356,6 @@ namespace MapScripts.Map8
                 }
                 AnimationsNotified.Add("Close1");
             }
-        }
-
-        //Here you setup the conditions of which wave will be spawned
-        public Tuple<int, List<MinionSpawnType>> MinionWaveToSpawn(float gameTime, int cannonMinionCount, bool isInhibitorDead, bool areAllInhibitorsDead)
-        {
-            var cannonMinionTimestamps = new List<Tuple<long, int>>
-            {
-                new Tuple<long, int>(0, 2),
-                new Tuple<long, int>(20 * 60 * 1000, 1),
-                new Tuple<long, int>(35 * 60 * 1000, 0)
-            };
-            var cannonMinionCap = 2;
-
-            foreach (var timestamp in cannonMinionTimestamps)
-            {
-                if (gameTime >= timestamp.Item1)
-                {
-                    cannonMinionCap = timestamp.Item2;
-                }
-            }
-            var list = "RegularMinionWave";
-            if (cannonMinionCount >= cannonMinionCap)
-            {
-                list = "CannonMinionWave";
-            }
-
-            if (isInhibitorDead)
-            {
-                list = "SuperMinionWave";
-            }
-
-            if (areAllInhibitorsDead)
-            {
-                list = "DoubleSuperMinionWave";
-            }
-            return new Tuple<int, List<MinionSpawnType>>(cannonMinionCap, MinionWaveTypes[list]);
         }
     }
 }

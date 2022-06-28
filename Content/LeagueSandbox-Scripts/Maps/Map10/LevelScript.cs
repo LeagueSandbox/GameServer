@@ -8,6 +8,7 @@ using GameServerCore.Scripting.CSharp;
 using LeagueSandbox.GameServer.Content;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using static LeagueSandbox.GameServer.API.ApiMapFunctionManager;
+using static LeagueSandbox.GameServer.API.ApiGameEvents;
 
 namespace MapScripts.Map10
 {
@@ -157,27 +158,27 @@ namespace MapScripts.Map10
             if (time >= 180.0f * 1000)
             {
                 //The Altars have unlocked!
-                NotifyWorldEvent(EventID.OnStartGameMessage4, 10);
+                AnnounceStartGameMessage(4, 10);
                 AllAnnouncementsAnnounced = true;
             }
             else if (time >= 150.0f * 1000 && !AnnouncedEvents.Contains(EventID.OnStartGameMessage2))
             {
                 // The Altars will unlock in 30 seconds
-                NotifyWorldEvent(EventID.OnStartGameMessage2, 10);
+                AnnounceStartGameMessage(2, 10);
                 AnnouncedEvents.Add(EventID.OnStartGameMessage2);
 
             }
             else if (time >= 75.0f * 1000 && !AnnouncedEvents.Contains(EventID.OnStartGameMessage3))
             {
                 // Minions have Spawned
-                NotifyWorldEvent(EventID.OnStartGameMessage3, 10);
-                NotifyWorldEvent(EventID.OnNexusCrystalStart, 0);
+                AnnounceStartGameMessage(3, 10);
+                AnnouceNexusCrystalStart();
                 AnnouncedEvents.Add(EventID.OnStartGameMessage3);
             }
             else if (time >= 30.0f * 1000 && !AnnouncedEvents.Contains(EventID.OnStartGameMessage1))
             {
                 // Welcome to the Twisted Tree Line!
-                NotifyWorldEvent(EventID.OnStartGameMessage1, 10);
+                AnnounceStartGameMessage(1, 10);
                 AnnouncedEvents.Add(EventID.OnStartGameMessage1);
             }
         }
@@ -243,7 +244,7 @@ namespace MapScripts.Map10
                     }
 
                     waypoint.Add(new Vector2(opposedBarrack.CentralPoint.X, opposedBarrack.CentralPoint.Z));
-                    CreateLaneMinion(spawnWave.Item2, position, team, _minionNumber, barrack.Name, waypoint);
+                    CreateLaneMinion(spawnWave.Item2, position, team, _minionNumber, barrack.Name, waypoint, LaneMinionAI);
                 }
             }
 

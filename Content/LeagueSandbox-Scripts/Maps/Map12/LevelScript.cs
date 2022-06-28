@@ -9,6 +9,7 @@ using LeagueSandbox.GameServer.Content;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using static LeagueSandbox.GameServer.API.ApiMapFunctionManager;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
+using static LeagueSandbox.GameServer.API.ApiGameEvents;
 
 namespace MapScripts.Map12
 {
@@ -185,14 +186,14 @@ namespace MapScripts.Map12
             if (time >= 60.0f * 1000)
             {
                 // Minions have spawned
-                NotifyWorldEvent(EventID.OnMinionsSpawn, 0);
-                NotifyWorldEvent(EventID.OnNexusCrystalStart, 0);
+                AnnounceMinionsSpawn();
+                AnnouceNexusCrystalStart();
                 AllAnnouncementsAnnounced = true;
             }
             else if (time >= 30.0f * 1000 && !AnnouncedEvents.Contains(EventID.OnStartGameMessage1))
             {
                 // Welcome to the Howling Abyss
-                NotifyWorldEvent(EventID.OnStartGameMessage1, 12);
+                AnnounceStartGameMessage(1, 12);
                 AnnouncedEvents.Add(EventID.OnStartGameMessage1);
             }
         }
@@ -254,7 +255,7 @@ namespace MapScripts.Map12
                     }
 
                     waypoint.Add(new Vector2(opposedBarrack.CentralPoint.X, opposedBarrack.CentralPoint.Z));
-                    CreateLaneMinion(spawnWave.Item2, position, team, _minionNumber, barrack.Name, waypoint);
+                    CreateLaneMinion(spawnWave.Item2, position, team, _minionNumber, barrack.Name, waypoint, LaneMinionAI);
                 }
             }
 

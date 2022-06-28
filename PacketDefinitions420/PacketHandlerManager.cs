@@ -273,7 +273,7 @@ namespace PacketDefinitions420
             if (peerInfo != null)
             {
                 var annoucement = new OnLeave { OtherNetID = peerInfo.Champion.NetId };
-                _game.PacketNotifier.NotifyS2C_OnEventWorld(annoucement, peerInfo.Champion.NetId);
+                _game.PacketNotifier.NotifyS2C_OnEventWorld(annoucement, peerInfo.Champion);
                 peerInfo.IsDisconnected = true;
             }
             

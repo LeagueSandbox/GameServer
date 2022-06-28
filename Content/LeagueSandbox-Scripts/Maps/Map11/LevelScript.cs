@@ -8,6 +8,7 @@ using LeagueSandbox.GameServer.Content;
 using GameServerCore.Scripting.CSharp;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using static LeagueSandbox.GameServer.API.ApiMapFunctionManager;
+using static LeagueSandbox.GameServer.API.ApiGameEvents;
 
 namespace MapScripts.Map11
 {
@@ -205,20 +206,20 @@ namespace MapScripts.Map11
             if (time >= 90.0f * 1000)
             {
                 // Minions have spawned
-                NotifyWorldEvent(EventID.OnMinionsSpawn, 0);
-                NotifyWorldEvent(EventID.OnNexusCrystalStart, 0);
+                AnnounceMinionsSpawn();
+                AnnouceNexusCrystalStart();
                 AllAnnouncementsAnnounced = true;
             }
             else if (time >= 60.0f * 1000 && !AnnouncedEvents.Contains(EventID.OnStartGameMessage2))
             {
                 // 30 seconds until minions spawn
-                NotifyWorldEvent(EventID.OnStartGameMessage2, 11);
+                AnnounceStartGameMessage(2, 11);
                 AnnouncedEvents.Add(EventID.OnStartGameMessage2);
             }
             else if (time >= 30.0f * 1000 && !AnnouncedEvents.Contains(EventID.OnStartGameMessage1))
             {
                 // Welcome to Summoners Rift
-                NotifyWorldEvent(EventID.OnStartGameMessage1, 11);
+                AnnounceStartGameMessage(1, 11);
                 AnnouncedEvents.Add(EventID.OnStartGameMessage1);
             }
         }
@@ -281,7 +282,7 @@ namespace MapScripts.Map11
                     waypoint.Reverse();
                 }
 
-                CreateLaneMinion(spawnWave.Item2, position, barrackTeam, _minionNumber, barrack.Value.Name, waypoint);
+                CreateLaneMinion(spawnWave.Item2, position, barrackTeam, _minionNumber, barrack.Value.Name, waypoint, LaneMinionAI);
             }
 
             if (_minionNumber < 8)

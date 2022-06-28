@@ -448,15 +448,11 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 DeathSpree++;
             }
 
-            if (mapScript.HasFirstBloodHappened)
-            {
-                var onKill = new OnChampionKill { OtherNetID = NetId };
-                _game.PacketNotifier.NotifyS2C_OnEventWorld(onKill, data.Killer.NetId);
-            }
-            else
+            if (!mapScript.HasFirstBloodHappened)
             {
                 gold += mapScript.MapScriptMetadata.FirstBloodExtraGold;
                 mapScript.HasFirstBloodHappened = true;
+
             }
 
             var EXP = (mapData.ExpCurve[Stats.Level - 1]) * mapData.BaseExpMultiple;
@@ -471,16 +467,39 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 EXP += EXPDiff;
             }
 
-            cKiller.AddGold(this, gold);
-            cKiller.AddExperience(EXP);
-
-            var worldEvent = new OnChampionDie
+            /*foreach(var unit in data.Assists)
             {
-                GoldGiven = gold,
-                OtherNetID = data.Killer.NetId,
-                AssistCount = 0
-                //Todo: implement assists when an assist system gets implemented
+                var deathAssist = new OnDeathAssist
+                {
+                    AtTime = _game.GameTime,
+                    PhysicalDamage = 0.0f,
+                    MagicalDamage = 0.0f,
+                    TrueDamage = 0.0f,
+                    PercentageOfAssist = 1 / data.AssistCount,
+                    OrginalGoldReward = gold,
+                    KillerNetID = data.Killer.NetId,
+                    OtherNetID = data.Unit.NetId
+                };
+                _game.PacketNotifier.NotifyOnEvent(deathAssist, unit.NetId)
+            }*/
+
+            var championDie = new OnChampionDie 
+            { 
+                OtherNetID = data.Killer.NetId, 
+                GoldGiven = gold, 
+                //TODO: Implement Assists here;
             };
+
+            var championKill = new OnChampionKill
+            {
+                OtherNetID = data.Unit.NetId
+            };
+
+            _game.PacketNotifier.NotifyOnEvent(championDie, this);
+            _game.PacketNotifier.NotifyOnEvent(championKill, data.Killer);
+
+            cKiller.AddExperience(EXP);
+            cKiller.AddGold(this, gold);
 
             cKiller.GoldFromMinions = 0;
             cKiller.ChampStats.Kills++;
@@ -490,7 +509,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             KillSpree = 0;
             DeathSpree++;
 
-            _game.PacketNotifier.NotifyS2C_OnEventWorld(worldEvent, NetId);
+            //Remove all buffs that should be removed on death here.
 
             //CORE_INFO("After: getGoldFromChamp: %f Killer: %i Victim: %i", gold, cKiller.killDeathCounter,this.killDeathCounter);
             _game.PacketNotifier.NotifyNPC_Hero_Die(data);

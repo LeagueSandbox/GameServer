@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Numerics;
 using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
@@ -9,8 +8,8 @@ using LeagueSandbox.GameServer.Scripting.CSharp;
 using GameServerCore.Scripting.CSharp;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 using static LeagueSandbox.GameServer.API.ApiMapFunctionManager;
+using static LeagueSandbox.GameServer.API.ApiGameEvents;
 using LeagueSandbox.GameServer.API;
-using System.Linq;
 
 namespace MapScripts.Map8
 {
@@ -112,7 +111,7 @@ namespace MapScripts.Map8
             AddPosPerceptionBubble(new Vector2(6930.0f, 6443.0f), 550.0f, 25000, TeamId.TEAM_BLUE);
             AddPosPerceptionBubble(new Vector2(6930.0f, 6443.0f), 550.0f, 25000, TeamId.TEAM_PURPLE);
 
-            NotifyWorldEvent(EventID.OnClearAscended);
+            AnnounceClearAscended();
             NotifyAscendant();
 
             foreach (var champion in GetAllChampions())
@@ -146,15 +145,15 @@ namespace MapScripts.Map8
             TeamScores[team] += scoreData.Points;
             NotifyGameScore(team, TeamScores[team]);
 
-            if(TeamScores[team] >= 200)
+            if (TeamScores[team] >= 200)
             {
-                foreach(var player in GetAllPlayersFromTeam(team))
+                foreach (var player in GetAllPlayersFromTeam(team))
                 {
                     AddBuff("AscRespawn", 5.7f, 1, null, player, player);
                 }
 
                 var losingTeam = TeamId.TEAM_BLUE;
-                if(team == TeamId.TEAM_BLUE)
+                if (team == TeamId.TEAM_BLUE)
                 {
                     losingTeam = TeamId.TEAM_PURPLE;
                 }
@@ -183,20 +182,20 @@ namespace MapScripts.Map8
         bool allAnnouncementsAnnounced = false;
         public void Announcements(float gametime)
         {
-            if(gametime >= 90.0f * 1000 && notificationCounter == 2)
+            if (gametime >= 90.0f * 1000 && notificationCounter == 2)
             {
-                NotifyWorldEvent(EventID.OnNexusCrystalStart);
-                allAnnouncementsAnnounced=true;
+                AnnouceNexusCrystalStart();
+                allAnnouncementsAnnounced = true;
             }
-            else if(gametime >= 45.5f * 1000 && notificationCounter == 1)
+            else if (gametime >= 45.5f * 1000 && notificationCounter == 1)
             {
-                NotifyWorldEvent(EventID.OnStartGameMessage2, 8);
+                AnnounceStartGameMessage(2, 8);
                 notificationCounter++;
 
             }
-            else if(gametime >= 15.5f * 1000 && notificationCounter == 0)
+            else if (gametime >= 15.5f * 1000 && notificationCounter == 0)
             {
-                NotifyWorldEvent(EventID.OnStartGameMessage1, 8);
+                AnnounceStartGameMessage(1, 8);
                 notificationCounter++;
             }
         }

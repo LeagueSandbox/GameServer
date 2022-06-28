@@ -20,7 +20,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
         {
             var peerinfo = _playerManager.GetPeerInfo(userId);
             var annoucement = new OnQuit { OtherNetID = peerinfo.Champion.NetId };
-            _game.PacketNotifier.NotifyS2C_OnEventWorld(annoucement, peerinfo.Champion.NetId);
+            _game.PacketNotifier.NotifyS2C_OnEventWorld(annoucement, peerinfo.Champion);
             peerinfo.IsDisconnected = true;
 
             return true;

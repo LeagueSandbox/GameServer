@@ -3,6 +3,7 @@ using GameServerCore.Enums;
 using GameServerCore.Domain.GameObjects.Spell;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 using static LeagueSandbox.GameServer.API.ApiMapFunctionManager;
+using static LeagueSandbox.GameServer.API.ApiGameEvents;
 using GameServerCore.Scripting.CSharp;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 
@@ -26,14 +27,14 @@ namespace Buffs
 
             if (unit is IObjAiBase obj)
             {
-                if (unit is IChampion)
+                if (unit is IChampion ch)
                 {
-                    NotifyWorldEvent(EventID.OnChampionAscended, sourceNetId: unit.NetId);
+                    AnnounceChampionAscended(ch);
 
                 }
-                else if (unit is IMonster)
+                else if (unit is IMonster mo)
                 {
-                    NotifyWorldEvent(EventID.OnMinionAscended);
+                    AnnounceMinionAscended(mo);
                 }
                 NotifyAscendant(obj);
             }

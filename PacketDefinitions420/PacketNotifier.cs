@@ -1428,7 +1428,7 @@ namespace PacketDefinitions420
                         AssistCount = 0
                         //TODO: Inplement assists when an assist system gets put in place
                     };
-                    NotifyS2C_OnEventWorld(annoucementDeath, inhibitor.NetId);
+                    NotifyS2C_OnEventWorld(annoucementDeath, inhibitor);
 
                     NotifyBuilding_Die(deathData);
 
@@ -1438,7 +1438,7 @@ namespace PacketDefinitions420
                     {
                         OtherNetID = inhibitor.NetId
                     };
-                    NotifyS2C_OnEventWorld(annoucementRespawn, inhibitor.NetId);
+                    NotifyS2C_OnEventWorld(annoucementRespawn, inhibitor);
                     break;
             }
             NotifyDampenerSwitchStates(inhibitor);
@@ -2936,12 +2936,27 @@ namespace PacketDefinitions420
             }
         }
 
+        public void NotifyOnEvent(IEvent gameEvent, IAttackableUnit sender = null)
+        {
+            var packet = new OnEvent
+            {
+                Event = gameEvent
+            };
+
+            if(sender != null)
+            {
+                packet.SenderNetID = sender.NetId;
+            }
+
+            _packetHandlerManager.BroadcastPacket(packet.GetBytes(), Channel.CHL_S2C);
+        }
+
         /// <summary>
         /// Sends a packet to all players that announces a specified message (ex: "Minions have spawned.")
         /// </summary>
         /// <param name="eventId">Id of the event to happen.</param>
         /// <param name="sourceNetID">Not yet know it's use.</param>
-        public void NotifyS2C_OnEventWorld(IEvent mapEvent, uint sourceNetId = 0)
+        public void NotifyS2C_OnEventWorld(IEvent mapEvent, IAttackableUnit source = null)
         {
             if (mapEvent == null)
             {
@@ -2952,9 +2967,14 @@ namespace PacketDefinitions420
                 EventWorld = new EventWorld
                 {
                     Event = mapEvent,
-                    Source = sourceNetId
                 }
             };
+
+            if(source != null)
+            {
+                packet.EventWorld.Source = source.NetId;
+            }
+
             _packetHandlerManager.BroadcastPacket(packet.GetBytes(), Channel.CHL_S2C);
         }
 
@@ -3853,8 +3873,6 @@ namespace PacketDefinitions420
         {
             var xp = new UnitAddEXP
             {
-                // TODO: Verify if this is correct. Usually 0.
-                SenderNetID = champion.NetId,
                 TargetNetID = champion.NetId,
                 ExpAmmount = experience
             };

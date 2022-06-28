@@ -2,7 +2,7 @@ using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
 using GameServerCore.Domain.GameObjects.Spell;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
-using static LeagueSandbox.GameServer.API.ApiMapFunctionManager;
+using static LeagueSandbox.GameServer.API.ApiGameEvents;
 using LeagueSandbox.GameServer.API;
 using GameServerCore.Scripting.CSharp;
 using LeagueSandbox.GameServer.Scripting.CSharp;
@@ -23,6 +23,8 @@ namespace Buffs
         IParticle p1;
         IParticle p2;
         IBuff thisBuff;
+        IRegion r1;
+        IRegion r2;
         public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
             thisBuff = buff;
@@ -42,8 +44,8 @@ namespace Buffs
             ApiEventManager.OnDeath.AddListener(unit, unit, OnDeath, true);
 
             //Unit Perception bubbles seems to be broken
-            AddUnitPerceptionBubble(unit, 0.0f, 25000f, TeamId.TEAM_BLUE, true, unit);
-            AddUnitPerceptionBubble(unit, 0.0f, 25000f, TeamId.TEAM_PURPLE, true, unit);
+            r1 = AddUnitPerceptionBubble(unit, 0.0f, 25000f, TeamId.TEAM_BLUE, true, unit);
+            r2 = AddUnitPerceptionBubble(unit, 0.0f, 25000f, TeamId.TEAM_PURPLE, true, unit);
 
             //Note: The ascension applies a "MoveAway" knockback debuff on all enemies around.
             //The duration varies based on the distance (yet unknown) you were to whoever ascended. And the PathSpeedOverride and ParabolicGravity varies based on the duration.
@@ -59,9 +61,8 @@ namespace Buffs
             }
             else if (deathData.Unit is IChampion)
             {
-                NotifyAscendant();
-                NotifyWorldEvent(EventID.OnStartGameMessage3, 8);
-                NotifyWorldEvent(EventID.OnClearAscended);
+                AnnounceStartGameMessage(3, 8);
+                AnnounceClearAscended();
             }
 
             deathData.Unit.GetBuffWithName("AscBuffIcon").DeactivateBuff();
@@ -72,6 +73,8 @@ namespace Buffs
         {
             RemoveParticle(p1);
             RemoveParticle(p2);
+            r1.SetToRemove();
+            r2.SetToRemove();
             unit.PauseAnimation(false);
         }
 
