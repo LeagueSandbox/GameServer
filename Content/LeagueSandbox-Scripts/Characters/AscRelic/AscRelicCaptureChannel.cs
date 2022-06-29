@@ -7,6 +7,7 @@ using LeagueSandbox.GameServer.API;
 using GameServerCore.Scripting.CSharp;
 using GameServerCore.Enums;
 using GameServerCore.Domain;
+using System.Collections.Generic;
 
 namespace Spells
 {
@@ -82,6 +83,7 @@ namespace Spells
             if (spell.CastInfo.Targets[0].Unit != null)
             {
                 var crystal = spell.CastInfo.Targets[0].Unit;
+                //I Suspect that the condition that actually kills the crystal is it running out of mana, have to investigate further.
                 crystal.Die(CreateDeathData(false, 0, crystal, crystal, DamageType.DAMAGE_TYPE_TRUE, DamageSource.DAMAGE_SOURCE_INTERNALRAW, 0.0f));
 
                 if (spell.CastInfo.Owner is IChampion ch)
@@ -95,31 +97,21 @@ namespace Spells
 
         public void StopChannel()
         {
-            var relicSupression = Target.GetBuffWithName("AscRelicSuppression");
-            var orderSupression = Target.GetBuffWithName("OdinBombSuppressionOrder");
-            var chaosSupression = Target.GetBuffWithName("OdinBombSuppressionChaos");
-            var captureChannel = Spell.CastInfo.Owner.GetBuffWithName("AscRelicCaptureChannel");
-            var odinChannelVision = Spell.CastInfo.Owner.GetBuffWithName("OdinChannelVision");
+            List<IBuff> buffs = new List<IBuff>
+            {
+                Target.GetBuffWithName("AscRelicSuppression"),
+                Target.GetBuffWithName("OdinBombSuppressionOrder"),
+                Target.GetBuffWithName("OdinBombSuppressionChaos"),
+                Spell.CastInfo.Owner.GetBuffWithName("AscRelicCaptureChannel"),
+                Spell.CastInfo.Owner.GetBuffWithName("OdinChannelVision")
+            };
 
-            if (relicSupression != null)
+            foreach(var buff in buffs)
             {
-                relicSupression.DeactivateBuff();
-            }
-            if (orderSupression != null)
-            {
-                orderSupression.DeactivateBuff();
-            }
-            if (chaosSupression != null)
-            {
-                chaosSupression.DeactivateBuff();
-            }
-            if (captureChannel != null)
-            {
-                captureChannel.DeactivateBuff();
-            }
-            if (odinChannelVision != null)
-            {
-                odinChannelVision.DeactivateBuff();
+                if (buff != null)
+                {
+                    buff.DeactivateBuff();
+                }
             }
 
             Owner.StopAnimation("", true, true);

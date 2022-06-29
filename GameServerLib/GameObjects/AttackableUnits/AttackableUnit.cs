@@ -865,7 +865,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             bool targetable = Status.HasFlag(StatusFlags.Targetable);
             Stats.IsTargetable = targetable;
             // TODO: Refactor this.
-            if (CharData.IsUseable)
+            if (!CharData.IsUseable)
             {
                 Stats.SetActionState(ActionState.TARGETABLE, targetable);
             }
