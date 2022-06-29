@@ -25,7 +25,7 @@ namespace Buffs
         IParticle p1;
         IRegion r1;
         IRegion r2;
-        float windUpTime;
+        float windUpTime = 1500.0f;
         bool castWindUp = false;
         public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
@@ -33,10 +33,9 @@ namespace Buffs
             Spell = ownerSpell;
             Owner = buff.SourceUnit;
             Target = ownerSpell.CastInfo.Targets[0].Unit;
+            castWindUp = true;
 
             p1 = AddParticleTarget(buff.SourceUnit, buff.SourceUnit, "OdinCaptureBeam", Target, 1.5f, 1, "buffbone_glb_channel_loc", "spine", flags: (FXFlags)32);
-            windUpTime = 1500.0f;
-            castWindUp = true;
             r1 = AddUnitPerceptionBubble(unit, 0.0f, buff.Duration, TeamId.TEAM_BLUE, true, unit);
             r2 = AddUnitPerceptionBubble(unit, 0.0f, buff.Duration, TeamId.TEAM_PURPLE, true, unit);
         }
