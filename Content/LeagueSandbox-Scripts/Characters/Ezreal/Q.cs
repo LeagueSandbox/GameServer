@@ -8,6 +8,7 @@ using LeagueSandbox.GameServer.API;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using System.Numerics;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
+using static GameServerCore.Content.HashFunctions;
 
 namespace Spells
 {
@@ -39,10 +40,8 @@ namespace Spells
         public void OnSpellPostCast(ISpell spell)
         {
             var owner = spell.CastInfo.Owner as IChampion;
-            var ownerSkinID = owner.SkinID;
             var targetPos = new Vector2(spell.CastInfo.TargetPosition.X, spell.CastInfo.TargetPosition.Z);
-            var ownerPos = owner.Position;
-            var distance = Vector2.Distance(ownerPos, targetPos);
+            var distance = Vector2.Distance(owner.Position, targetPos);
             FaceDirection(targetPos, owner);
 
             if (distance > 1200.0)
@@ -50,7 +49,7 @@ namespace Spells
                 targetPos = GetPointFromUnit(owner, 1150.0f);
             }
 
-            if (ownerSkinID == 5)
+            if (owner.SkinID == 5)
             {
                 SpellCast(owner, 3, SpellSlotType.ExtraSlots, targetPos, targetPos, false, Vector2.Zero);
             }
@@ -69,6 +68,10 @@ namespace Spells
                 SetSpellToolTipVar(_owner, 2, bonusAd, SpellbookType.SPELLBOOK_CHAMPION, 0, SpellSlotType.SpellSlots);
             }
         }
+    }
+
+    public class EzrealMysticShotPulseMissile: EzrealMysticShotMissile
+    {
     }
 
     public class EzrealMysticShotMissile : ISpellScript
@@ -96,7 +99,20 @@ namespace Spells
             var ad = owner.Stats.AttackDamage.Total * spell.SpellData.AttackDamageCoefficient;
             var ap = owner.Stats.AbilityPower.Total * spell.SpellData.MagicDamageCoefficient;
             var damage = 15 + spell.CastInfo.SpellLevel * 20 + ad + ap;
-            target.TakeDamage(owner, damage, DamageType.DAMAGE_TYPE_PHYSICAL, DamageSource.DAMAGE_SOURCE_ATTACK, false);
+            
+            IEventSource source; // The hash of the current script name does not match the replays.
+            //                      But this is not a problem as long as the parent skill name hash matches.
+            //IEventSource source = new EventSource(spell.ScriptNameHash, HashString("EzrealMysticShot"));
+            if (owner.SkinID == 5)
+            {
+                source = new EventSource(266740993, HashString("EzrealMysticShot"));
+            }
+            else
+            {
+                source = new EventSource(3693728257, HashString("EzrealMysticShot"));
+            }
+            System.Console.WriteLine($"Q {source.ScriptNameHash} {source?.ParentScript.ScriptNameHash}");
+            target.TakeDamage(owner, damage, DamageType.DAMAGE_TYPE_PHYSICAL, DamageSource.DAMAGE_SOURCE_ATTACK, false, source);
 
             for (byte i = 0; i < 4; i++)
             {

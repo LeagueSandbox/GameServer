@@ -2146,13 +2146,14 @@ namespace PacketDefinitions420
         public void NotifyNPC_Die_EventHistory(IChampion ch, uint killerNetID = 0)
         {
             var history = new NPC_Die_EventHistory();
+            history.SenderNetID = ch.NetId;
             history.KillerNetID = killerNetID;
             history.Duration = 0;
             if(ch.EventHistory.Count > 0)
             {
                 float firstTimestamp = ch.EventHistory[0].Timestamp;
                 float lastTimestamp = ch.EventHistory[ch.EventHistory.Count - 1].Timestamp;
-                history.Duration = lastTimestamp - firstTimestamp; // ?
+                history.Duration = lastTimestamp - firstTimestamp;
             }
             history.EventSourceType = 0; //TODO: Confirm that it is always zero
             history.Entries = ch.EventHistory;
