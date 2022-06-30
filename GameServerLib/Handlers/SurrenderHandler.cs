@@ -71,7 +71,8 @@ namespace LeagueSandbox.GameServer.Handlers
             }
             _votes[who] = vote;
             Tuple<int, int> voteCounts = GetVoteCounts();
-            int total = _game.PlayerManager.GetPlayers().Count;
+            var players = _game.PlayerManager.GetPlayers(false);
+            int total = players.Count;
 
             _log.Info($"Champion {who.Model} voted {vote}. Currently {voteCounts.Item1} yes votes, {voteCounts.Item2} no votes, with {total} total players");
 
@@ -80,9 +81,9 @@ namespace LeagueSandbox.GameServer.Handlers
             if (voteCounts.Item1 >= total - 1)
             {
                 IsSurrenderActive = false;
-                foreach (var p in _game.PlayerManager.GetPlayers(true))
+                foreach (var p in players)
                 {
-                    _game.PacketNotifier.NotifyTeamSurrenderStatus(p.ClientId, Team, SurrenderReason.SurrenderAgreed, (byte)voteCounts.Item1, (byte)voteCounts.Item2); // TOOD: fix id casting
+                    _game.PacketNotifier.NotifyTeamSurrenderStatus(p.ClientId, Team, SurrenderReason.SurrenderAgreed, (byte)voteCounts.Item1, (byte)voteCounts.Item2);
                 }
 
                 toEnd = true;
@@ -95,8 +96,14 @@ namespace LeagueSandbox.GameServer.Handlers
             {
                 IsSurrenderActive = false;
                 Tuple<int, int> count = GetVoteCounts();
-                foreach (var p in _game.PlayerManager.GetPlayers().Where(kv => kv.Team == Team))
-                    _game.PacketNotifier.NotifyTeamSurrenderStatus(p.ClientId, Team, SurrenderReason.VoteWasNoSurrender, (byte)count.Item1, (byte)count.Item2); // TODO: fix id casting
+                var players = _game.PlayerManager.GetPlayers(false);
+                foreach (var p in players)
+                {
+                    if(p.Team == Team)
+                    {
+                        _game.PacketNotifier.NotifyTeamSurrenderStatus(p.ClientId, Team, SurrenderReason.VoteWasNoSurrender, (byte)count.Item1, (byte)count.Item2);
+                    }
+                }
             }
 
             if (toEnd)

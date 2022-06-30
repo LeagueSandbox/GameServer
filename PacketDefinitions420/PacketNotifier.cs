@@ -758,7 +758,7 @@ namespace PacketDefinitions420
                 };
             }
 
-            if (userId <= 0)
+            if (userId < 0)
             {
                 _packetHandlerManager.BroadcastPacket(avatar.GetBytes(), Channel.CHL_S2C);
                 return;
@@ -1011,7 +1011,7 @@ namespace PacketDefinitions420
             {
                 cdPacket.IsSummonerSpell = true; // TODO: Verify functionality
             }
-            if (userId <= 0)
+            if (userId < 0)
             {
                 _packetHandlerManager.BroadcastPacketVision(u, cdPacket.GetBytes(), Channel.CHL_S2C);
             }
@@ -1129,7 +1129,7 @@ namespace PacketDefinitions420
                 Message = floatTextData.Message
             };
 
-            if (userId <= 0)
+            if (userId < 0)
             {
                 if (team != 0)
                 {
@@ -1187,7 +1187,7 @@ namespace PacketDefinitions420
         {
             var enterLocalVis = ConstructEnterLocalVisibilityClientPacket(o);
 
-            if (userId <= 0)
+            if (userId < 0)
             {
                 if (ignoreVision)
                 {
@@ -1218,7 +1218,7 @@ namespace PacketDefinitions420
 
             var enterVis = ConstructEnterVisibilityClientPacket(o, isChampion, packets);
 
-            if (userId != -1)
+            if (userId >= 0)
             {
                 _packetHandlerManager.SendPacket(userId, enterVis.GetBytes(), Channel.CHL_S2C);
                 NotifyEnterLocalVisibilityClient(o, userId, ignoreVision);
@@ -1282,7 +1282,7 @@ namespace PacketDefinitions420
         {
             var fxPacket = ConstructFXCreateGroupPacket(particle);
 
-            if (userId <= 0)
+            if (userId < 0)
             {
                 // Broadcast only to specific team.
                 if (particle.SpecificTeam != TeamId.TEAM_NEUTRAL)
@@ -1379,7 +1379,7 @@ namespace PacketDefinitions420
                 fxVisPacket.VisibilityTeam = 1;
             }
 
-            if (userId <= 0)
+            if (userId < 0)
             {
                 _packetHandlerManager.BroadcastPacketTeam(team, fxVisPacket.GetBytes(), Channel.CHL_S2C);
             }
@@ -1399,7 +1399,7 @@ namespace PacketDefinitions420
             {
                 EnablePause = true
             };
-            if (userId <= 0)
+            if (userId < 0)
             {
                 _packetHandlerManager.BroadcastPacket(start.GetBytes(), Channel.CHL_S2C);
             }
@@ -1510,7 +1510,7 @@ namespace PacketDefinitions420
                 SenderNetID = o.NetId
             };
 
-            if (userId != -1)
+            if (userId >= 0)
             {
                 _packetHandlerManager.SendPacket(userId, leaveLocalVis.GetBytes(), Channel.CHL_S2C);
                 return;
@@ -1533,7 +1533,7 @@ namespace PacketDefinitions420
                 SenderNetID = o.NetId
             };
 
-            if (userId != -1)
+            if (userId >= 0)
             {
                 _packetHandlerManager.SendPacket(userId, leaveVis.GetBytes(), Channel.CHL_S2C);
             }
@@ -1647,7 +1647,7 @@ namespace PacketDefinitions420
                 }
             };
 
-            if (userId <= 0)
+            if (userId < 0)
             {
                 _packetHandlerManager.BroadcastPacketVision(obj, newCharData.GetBytes(), Channel.CHL_S2C);
             }
@@ -2146,14 +2146,13 @@ namespace PacketDefinitions420
         public void NotifyNPC_Die_EventHistory(IChampion ch, uint killerNetID = 0)
         {
             var history = new NPC_Die_EventHistory();
-            history.SenderNetID = ch.NetId;
             history.KillerNetID = killerNetID;
             history.Duration = 0;
             if(ch.EventHistory.Count > 0)
             {
                 float firstTimestamp = ch.EventHistory[0].Timestamp;
                 float lastTimestamp = ch.EventHistory[ch.EventHistory.Count - 1].Timestamp;
-                history.Duration = lastTimestamp - firstTimestamp;
+                history.Duration = lastTimestamp - firstTimestamp; // ?
             }
             history.EventSourceType = 0; //TODO: Confirm that it is always zero
             history.Entries = ch.EventHistory;
@@ -2303,7 +2302,7 @@ namespace PacketDefinitions420
                     }
                 };
                 var channel = Channel.CHL_LOW_PRIORITY;
-                if (userId <= 0)
+                if (userId < 0)
                 {
                     _packetHandlerManager.BroadcastPacketVision(u, us.GetBytes(), channel, PacketFlags.UNSEQUENCED);
                 }
@@ -2470,7 +2469,7 @@ namespace PacketDefinitions420
         }
 
         /// <summary>
-        /// Sends a packet to all players detailing that the game has been unpaused.
+        /// Sends a packet to player detailing that the game has been unpaused.
         /// </summary>
         /// <param name="unpauser">Unit that unpaused the game.</param>
         /// <param name="showWindow">Whether or not to show a window before unpausing (delay).</param>
@@ -2499,7 +2498,7 @@ namespace PacketDefinitions420
                 SpawnDuration = monsterCamp.SpawnDuration,
                 TimerType = monsterCamp.TimerType
             };
-            if (userId <= 0)
+            if (userId < 0)
             {
                 _packetHandlerManager.BroadcastPacket(packet.GetBytes(), Channel.CHL_S2C);
             }
@@ -2625,7 +2624,7 @@ namespace PacketDefinitions420
             {
                 NotifyEnterTeamVision(champion, 0, userId, heroPacket);
             }
-            else if (userId <= 0)
+            else if (userId < 0)
             {
                 _packetHandlerManager.BroadcastPacket(heroPacket.GetBytes(), Channel.CHL_S2C);
             }
@@ -2647,7 +2646,7 @@ namespace PacketDefinitions420
                 Expire = monsterCamp.Expire,
                 TimerType = monsterCamp.TimerType
             };
-            if (userId <= 0)
+            if (userId < 0)
             {
                 _packetHandlerManager.BroadcastPacket(packet.GetBytes(), Channel.CHL_S2C);
             }
@@ -2672,7 +2671,7 @@ namespace PacketDefinitions420
         {
             var createTurret = ConstructCreateTurretPacket(turret);
 
-            if (userId != -1)
+            if (userId >= 0)
             {
                 _packetHandlerManager.SendPacket(userId, createTurret.GetBytes(), Channel.CHL_S2C);
                 return;
@@ -2868,7 +2867,7 @@ namespace PacketDefinitions420
             {
                 packet.KillerNetID = deathData.Killer.NetId;
             }
-            if (userId <= 0)
+            if (userId < 0)
             {
                 _packetHandlerManager.BroadcastPacket(packet.GetBytes(), Channel.CHL_S2C);
             }
@@ -2926,7 +2925,7 @@ namespace PacketDefinitions420
         {
             var enterTeamVis = ConstructOnEnterTeamVisibilityPacket(o, team);
 
-            if (userId <= 0)
+            if (userId < 0)
             {
                 // TODO: Verify if we should use BroadcastPacketTeam instead.
                 _packetHandlerManager.BroadcastPacket(enterTeamVis.GetBytes(), Channel.CHL_S2C);
@@ -2998,7 +2997,7 @@ namespace PacketDefinitions420
                 leaveTeamVis.VisibilityTeam = 1;
             }
 
-            if (userId <= 0)
+            if (userId < 0)
             {
                 // TODO: Verify if we should use BroadcastPacketTeam instead.
                 _packetHandlerManager.BroadcastPacket(leaveTeamVis.GetBytes(), Channel.CHL_S2C);
@@ -3207,7 +3206,7 @@ namespace PacketDefinitions420
                 BotCountOrder = 0,
                 BotCountChaos = 0
             };
-            if (userId <= 0)
+            if (userId < 0)
             {
                 _packetHandlerManager.BroadcastPacket(start.GetBytes(), Channel.CHL_S2C);
             }
@@ -3596,7 +3595,7 @@ namespace PacketDefinitions420
         {
             var spawnPacket = ConstructSpawnLevelPropPacket(levelProp);
 
-            if (userId != -1)
+            if (userId >= 0)
             {
                 _packetHandlerManager.SendPacket(userId, spawnPacket.GetBytes(), Channel.CHL_S2C);
             }
@@ -4043,7 +4042,7 @@ namespace PacketDefinitions420
                     }
                 };
 
-                if (userId <= 0)
+                if (userId < 0)
                 {
                     _packetHandlerManager.BroadcastPacketTeam(team, visibilityPacket.GetBytes(), Channel.CHL_S2C);
                     _packetHandlerManager.BroadcastPacketTeam(team, healthbarPacket.GetBytes(), Channel.CHL_S2C);
@@ -4070,7 +4069,7 @@ namespace PacketDefinitions420
                         packet = ConstructOnEnterTeamVisibilityPacket(obj, team); // Generic visibility packet
                     }
                 };
-                if (userId <= 0)
+                if (userId < 0)
                 {
                     _packetHandlerManager.BroadcastPacketTeam(team, packet.GetBytes(), Channel.CHL_S2C);
                 }
@@ -4200,7 +4199,7 @@ namespace PacketDefinitions420
                 Movements = new List<MovementDataNormal>() { move }
             };
 
-            if (userId <= 0)
+            if (userId < 0)
             {
                 _packetHandlerManager.BroadcastPacketVision(u, packet.GetBytes(), Channel.CHL_LOW_PRIORITY);
             }

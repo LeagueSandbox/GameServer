@@ -48,12 +48,14 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                     _game.IncrementReadyPlayers();
                 }
 
+                var players = _playerManager.GetPlayers(false);
+
                 // Only one packet enter here
-                if (_game.PlayersReady == _playerManager.GetPlayers().Count)
+                if (_game.PlayersReady == players.Count)
                 {
                     _game.PacketNotifier.NotifyGameStart();
 
-                    foreach (var player in _playerManager.GetPlayers())
+                    foreach (var player in players)
                     {
                         if (player.ClientId == userId && !player.IsMatchingVersion)
                         {

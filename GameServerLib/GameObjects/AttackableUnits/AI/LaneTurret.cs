@@ -57,7 +57,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                     champion.AddGold(this, globalGold);
                 }
 
-                foreach (var player in _game.PlayerManager.GetPlayers())
+                foreach (var player in _game.PlayerManager.GetPlayers(true))
                 {
                     var champion = player.Champion;
                     if (player.Team != Team)
@@ -72,7 +72,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             }
             else
             {
-                foreach (var player in _game.PlayerManager.GetPlayers())
+                foreach (var player in _game.PlayerManager.GetPlayers(true))
                 {
                     var champion = player.Champion;
                     if (player.Team != Team)

@@ -199,7 +199,7 @@ namespace PacketDefinitions420
         public bool BroadcastPacketTeam(TeamId team, byte[] data, Channel channelNo,
             PacketFlags flag = PacketFlags.RELIABLE)
         {
-            foreach (var ci in _playerManager.GetPlayers(true))
+            foreach (var ci in _playerManager.GetPlayers(false))
             {
                 if (ci.Team == team)
                 {
@@ -255,6 +255,11 @@ namespace PacketDefinitions420
 
         public bool HandleDisconnect(Peer peer)
         {
+            if(peer == null)
+            {
+                return true;
+            }
+
             int clientId = ((int)peer.UserData) - 1;
             var peerInfo = _game.PlayerManager.GetPeerInfo(clientId);
             if (peerInfo == null)

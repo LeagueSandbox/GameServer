@@ -437,7 +437,7 @@ namespace LeagueSandbox.GameServer
                 return;
             }
             IsPaused = true;
-            foreach (var player in PlayerManager.GetPlayers())
+            foreach (var player in PlayerManager.GetPlayers(false))
             {
                 PacketNotifier.NotifyPausePacket(player, (int)PauseTimeLeft, true);
             }
