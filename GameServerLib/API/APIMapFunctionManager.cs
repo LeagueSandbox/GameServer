@@ -386,8 +386,8 @@ namespace LeagueSandbox.GameServer.API
         public static void NotifySpawnBroadcast(IGameObject obj)
         {
             //Just a workaround for our current vision problem.
-            _game.PacketNotifier.NotifySpawn(obj, TeamId.TEAM_PURPLE, 0, _game.GameTime, true);
-            _game.PacketNotifier.NotifySpawn(obj, TeamId.TEAM_BLUE, 0, _game.GameTime, true);
+            _game.PacketNotifier.NotifySpawn(obj, TeamId.TEAM_PURPLE, -1, _game.GameTime, true);
+            _game.PacketNotifier.NotifySpawn(obj, TeamId.TEAM_BLUE, -1, _game.GameTime, true);
         }
 
         public static void AddObject(IGameObject obj)
@@ -405,7 +405,7 @@ namespace LeagueSandbox.GameServer.API
             var players = _game.PlayerManager.GetPlayers(true);
             foreach (var player in players)
             {
-                average += player.Item2.Champion.Stats.Level / players.Count;
+                average += player.Champion.Stats.Level / players.Count;
             }
             return (int)average;
         }

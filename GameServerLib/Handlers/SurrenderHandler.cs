@@ -82,7 +82,7 @@ namespace LeagueSandbox.GameServer.Handlers
                 IsSurrenderActive = false;
                 foreach (var p in _game.PlayerManager.GetPlayers(true))
                 {
-                    _game.PacketNotifier.NotifyTeamSurrenderStatus((int)p.Item1, Team, SurrenderReason.SurrenderAgreed, (byte)voteCounts.Item1, (byte)voteCounts.Item2); // TOOD: fix id casting
+                    _game.PacketNotifier.NotifyTeamSurrenderStatus(p.ClientId, Team, SurrenderReason.SurrenderAgreed, (byte)voteCounts.Item1, (byte)voteCounts.Item2); // TOOD: fix id casting
                 }
 
                 toEnd = true;
@@ -95,8 +95,8 @@ namespace LeagueSandbox.GameServer.Handlers
             {
                 IsSurrenderActive = false;
                 Tuple<int, int> count = GetVoteCounts();
-                foreach (var p in _game.PlayerManager.GetPlayers().Where(kv => kv.Item2.Team == Team))
-                    _game.PacketNotifier.NotifyTeamSurrenderStatus((int)p.Item1, Team, SurrenderReason.VoteWasNoSurrender, (byte)count.Item1, (byte)count.Item2); // TODO: fix id casting
+                foreach (var p in _game.PlayerManager.GetPlayers().Where(kv => kv.Team == Team))
+                    _game.PacketNotifier.NotifyTeamSurrenderStatus(p.ClientId, Team, SurrenderReason.VoteWasNoSurrender, (byte)count.Item1, (byte)count.Item2); // TODO: fix id casting
             }
 
             if (toEnd)

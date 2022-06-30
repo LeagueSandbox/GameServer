@@ -15,7 +15,7 @@ namespace PacketDefinitions420
         bool BroadcastPacketVision(IGameObject o, byte[] data, Channel channelNo, PacketFlags flag = PacketFlags.RELIABLE);
         bool HandlePacket(Peer peer, byte[] data, Channel channelId);
         bool HandlePacket(Peer peer, Packet packet, Channel channelId);
-        bool SendPacket(int playerId, byte[] source, Channel channelNo, PacketFlags flag = PacketFlags.RELIABLE);
+        bool SendPacket(int userId, byte[] source, Channel channelNo, PacketFlags flag = PacketFlags.RELIABLE);
         bool HandleDisconnect(Peer peer);
     }
 }

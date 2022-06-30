@@ -472,7 +472,7 @@ namespace PacketDefinitions420
             return misPacket;
         }
 
-        SpawnLevelPropS2C ConstructSpawnLevelPropPacket(ILevelProp levelProp, int userId = 0)
+        SpawnLevelPropS2C ConstructSpawnLevelPropPacket(ILevelProp levelProp, int userId = -1)
         {
             return new SpawnLevelPropS2C
             {
@@ -647,7 +647,7 @@ namespace PacketDefinitions420
                 {
                     regionPacket.VisionTargetNetID = clientInfo.Champion.NetId;
                 }
-                regionPacket.ClientID = (int)clientInfo.ClientId;
+                regionPacket.ClientID = clientInfo.ClientId;
             }
 
             if (obj != null)
@@ -996,7 +996,7 @@ namespace PacketDefinitions420
         /// <param name="currentCd">Amount of time the spell has already been on cooldown (if applicable).</param>
         /// <param name="totalCd">Maximum amount of time the spell's cooldown can be.</param>
         /// <param name="userId">UserId to send the packet to. If not specified or zero, the packet is broadcasted to all players that have vision of the specified unit.</param>
-        public void NotifyCHAR_SetCooldown(IObjAiBase u, byte slotId, float currentCd, float totalCd, int userId = 0)
+        public void NotifyCHAR_SetCooldown(IObjAiBase u, byte slotId, float currentCd, float totalCd, int userId = -1)
         {
             var cdPacket = new CHAR_SetCooldown
             {
@@ -1119,7 +1119,7 @@ namespace PacketDefinitions420
         /// <param name="textType">Type of text to display. Refer to FloatTextType</param>
         /// <param name="userId">User to send to. 0 = sends to all in vision.</param>
         /// <param name="param">Optional parameters for the text. Untested, function unknown.</param>
-        public void NotifyDisplayFloatingText(IFloatingTextData floatTextData, TeamId team = 0, int userId = 0)
+        public void NotifyDisplayFloatingText(IFloatingTextData floatTextData, TeamId team = 0, int userId = -1)
         {
             var textPacket = new DisplayFloatingText
             {
@@ -1183,7 +1183,7 @@ namespace PacketDefinitions420
         /// <param name="o">GameObject coming into vision.</param>
         /// <param name="userId">UserId to send the packet to. If not specified or zero, the packet is broadcasted to all players that have vision of the specified unit.</param>
         /// <param name="ignoreVision">Optionally ignore vision checks when sending this packet and broadcast it to all players instead.</param>
-        public void NotifyEnterLocalVisibilityClient(IGameObject o, int userId = 0, bool ignoreVision = false)
+        public void NotifyEnterLocalVisibilityClient(IGameObject o, int userId = -1, bool ignoreVision = false)
         {
             var enterLocalVis = ConstructEnterLocalVisibilityClientPacket(o);
 
@@ -1213,12 +1213,12 @@ namespace PacketDefinitions420
         /// <param name="ignoreVision">Optionally ignore vision checks when sending this packet.</param>
         /// <param name="packets">Takes in a list of packets to send alongside this vision packet.</param>
         /// TODO: Incomplete implementation.
-        public void NotifyEnterVisibilityClient(IGameObject o, int userId = 0, bool isChampion = false, bool ignoreVision = false, List<GamePacket> packets = null)
+        public void NotifyEnterVisibilityClient(IGameObject o, int userId = -1, bool isChampion = false, bool ignoreVision = false, List<GamePacket> packets = null)
         {
 
             var enterVis = ConstructEnterVisibilityClientPacket(o, isChampion, packets);
 
-            if (userId != 0)
+            if (userId != -1)
             {
                 _packetHandlerManager.SendPacket(userId, enterVis.GetBytes(), Channel.CHL_S2C);
                 NotifyEnterLocalVisibilityClient(o, userId, ignoreVision);
@@ -1278,7 +1278,7 @@ namespace PacketDefinitions420
         /// </summary>
         /// <param name="particle">Particle to network.</param>
         /// <param name="userId">User to send the packet to.</param>
-        public void NotifyFXCreateGroup(IParticle particle, int userId = 0)
+        public void NotifyFXCreateGroup(IParticle particle, int userId = -1)
         {
             var fxPacket = ConstructFXCreateGroupPacket(particle);
 
@@ -1365,7 +1365,7 @@ namespace PacketDefinitions420
             NotifyFXLeaveTeamVisibility(particle, team, 0);
         }
 
-        public void NotifyFXLeaveTeamVisibility(IParticle particle, TeamId team, int userId = 0)
+        public void NotifyFXLeaveTeamVisibility(IParticle particle, TeamId team, int userId = -1)
         {
             var fxVisPacket = new S2C_FX_OnLeaveTeamVisibility
             {
@@ -1393,7 +1393,7 @@ namespace PacketDefinitions420
         /// Sends a packet to all players detailing that the game has started. Sent when all players have finished loading.
         /// </summary>
         /// <param name="userId">UserId to send the packet to. If not specified or zero, the packet is broadcasted to all players.</param>
-        public void NotifyGameStart(int userId = 0)
+        public void NotifyGameStart(int userId = -1)
         {
             var start = new S2C_StartGame
             {
@@ -1465,7 +1465,7 @@ namespace PacketDefinitions420
             }
             else
             {
-                _packetHandlerManager.SendPacket((int)playerId, keyCheck.GetBytes(), Channel.CHL_HANDSHAKE);
+                _packetHandlerManager.SendPacket(clientID, keyCheck.GetBytes(), Channel.CHL_HANDSHAKE);
             }
         }
 
@@ -1503,14 +1503,14 @@ namespace PacketDefinitions420
         /// <param name="team">TeamId to send the packet to; BLUE/PURPLE/NEUTRAL.</param>
         /// <param name="userId">User to send the packet to.</param>
         /// TODO: Verify where this should be used.
-        public void NotifyLeaveLocalVisibilityClient(IGameObject o, TeamId team, int userId = 0)
+        public void NotifyLeaveLocalVisibilityClient(IGameObject o, TeamId team, int userId = -1)
         {
             var leaveLocalVis = new OnLeaveLocalVisibilityClient
             {
                 SenderNetID = o.NetId
             };
 
-            if (userId != 0)
+            if (userId != -1)
             {
                 _packetHandlerManager.SendPacket(userId, leaveLocalVis.GetBytes(), Channel.CHL_S2C);
                 return;
@@ -1526,14 +1526,14 @@ namespace PacketDefinitions420
         /// <param name="team">TeamId to send the packet to; BLUE/PURPLE/NEUTRAL.</param>
         /// <param name="userId">User to send the packet to (if applicable).</param>
         /// TODO: Verify where this should be used.
-        public void NotifyLeaveVisibilityClient(IGameObject o, TeamId team, int userId = 0)
+        public void NotifyLeaveVisibilityClient(IGameObject o, TeamId team, int userId = -1)
         {
             var leaveVis = new OnLeaveVisibilityClient
             {
                 SenderNetID = o.NetId
             };
 
-            if (userId != 0)
+            if (userId != -1)
             {
                 _packetHandlerManager.SendPacket(userId, leaveVis.GetBytes(), Channel.CHL_S2C);
             }
@@ -1550,7 +1550,7 @@ namespace PacketDefinitions420
         /// </summary>
         /// <param name="userId">User to send the packet to.</param>
         /// <param name="players">Client info of all players in the loading screen.</param>
-        public void NotifyLoadScreenInfo(int userId, List<Tuple<uint, ClientInfo>> players)
+        public void NotifyLoadScreenInfo(int userId, List<ClientInfo> players)
         {
             uint orderSizeCurrent = 0;
             uint chaosSizeCurrent = 0;
@@ -1563,15 +1563,15 @@ namespace PacketDefinitions420
 
             foreach (var player in players)
             {
-                if (player.Item2.Team == TeamId.TEAM_BLUE)
+                if (player.Team == TeamId.TEAM_BLUE)
                 {
-                    teamRoster.OrderMembers[orderSizeCurrent] = player.Item2.PlayerId;
+                    teamRoster.OrderMembers[orderSizeCurrent] = player.PlayerId;
                     orderSizeCurrent++;
                 }
                 // TODO: Verify if it is ok to allow neutral
                 else
                 {
-                    teamRoster.ChaosMembers[chaosSizeCurrent] = player.Item2.PlayerId;
+                    teamRoster.ChaosMembers[chaosSizeCurrent] = player.PlayerId;
                     chaosSizeCurrent++;
                 }
             }
@@ -1619,7 +1619,7 @@ namespace PacketDefinitions420
                 Position = position
             };
 
-            _packetHandlerManager.SendPacket((int)target.GetPlayerId(), packet.GetBytes(), Channel.CHL_S2C);
+            _packetHandlerManager.SendPacket(target.ClientId, packet.GetBytes(), Channel.CHL_S2C);
         }
         /// <summary>
         /// Sends a packet to all players that updates the specified unit's model.
@@ -1630,7 +1630,7 @@ namespace PacketDefinitions420
         /// <param name="modelOnly">Wether or not it's only the model that it's being changed(?). I don't really know what's this for</param>
         /// <param name="overrideSpells">Wether or not the user's spells should be overriden, i assume it would be used for things like Nidalee or Elise.</param>
         /// <param name="replaceCharacterPackage">Unknown.</param>
-        public void NotifyS2C_ChangeCharacterData(IAttackableUnit obj, int userId = 0, uint skinID = 0, bool modelOnly = true, bool overrideSpells = false, bool replaceCharacterPackage = false)
+        public void NotifyS2C_ChangeCharacterData(IAttackableUnit obj, int userId = -1, uint skinID = 0, bool modelOnly = true, bool overrideSpells = false, bool replaceCharacterPackage = false)
         {
             var newCharData = new S2C_ChangeCharacterData
             {
@@ -2158,7 +2158,7 @@ namespace PacketDefinitions420
             history.EventSourceType = 0; //TODO: Confirm that it is always zero
             history.Entries = ch.EventHistory;
             
-            _packetHandlerManager.SendPacket((int)ch.GetPlayerId(), history.GetBytes(), Channel.CHL_S2C);
+            _packetHandlerManager.SendPacket(ch.ClientId, history.GetBytes(), Channel.CHL_S2C);
         }
         /// <summary>
         /// Sends a packet to all players with vision of the specified AttackableUnit detailing that the attacker has abrubtly stopped their attack (can be a spell or auto attack, although internally AAs are also spells).
@@ -2290,7 +2290,7 @@ namespace PacketDefinitions420
         /// <param name="userId">UserId to send the packet to. If not specified or zero, the packet is broadcasted to all players that have vision of the specified unit.</param>
         /// <param name="partial">Whether or not the packet should only include stats marked as changed.</param>
         /// TODO: Replace with LeaguePackets and preferably move all uses of this function to a central EventHandler class (if one is fully implemented).
-        public void NotifyOnReplication(IAttackableUnit u, int userId = 0, bool partial = true)
+        public void NotifyOnReplication(IAttackableUnit u, int userId = -1, bool partial = true)
         {
             if (u.Replication != null)
             {
@@ -2324,12 +2324,12 @@ namespace PacketDefinitions420
             var pg = new PausePacket
             {
                 //Check if SenderNetID should be the person that requested the pause or just 0
-                ClientID = (int)player.ClientId,
+                ClientID = player.ClientId,
                 IsTournament = isTournament,
                 PauseTimeRemaining = seconds
             };
             //I Assumed that, since the packet requires idividual client IDs, that it also sends the packets individually, by useing the SendPacket Channel, double check if that's valid.
-            _packetHandlerManager.SendPacket((int)player.PlayerId, pg.GetBytes(), Channel.CHL_S2C);
+            _packetHandlerManager.SendPacket(player.ClientId, pg.GetBytes(), Channel.CHL_S2C);
         }
 
         /// <summary>
@@ -2439,16 +2439,16 @@ namespace PacketDefinitions420
         /// </summary>
         /// <param name="userId">User to send the packet to.</param>
         /// <param name="player">Player information to send.</param>
-        public void NotifyRequestRename(int userId, Tuple<uint, ClientInfo> player)
+        public void NotifyRequestRename(int userId, ClientInfo player)
         {
             var loadName = new RequestRename
             {
-                PlayerID = player.Item2.PlayerId,
-                PlayerName = player.Item2.Name,
+                PlayerID = player.PlayerId,
+                PlayerName = player.Name,
                 // Most packets show a large default value (in place of what you would expect to be 0)
                 // Seems to be randomized per-game and used for every RequestRename packet during that game.
                 // So, using this SkinNo may be incorrect.
-                SkinID = player.Item2.SkinNo,
+                SkinID = player.SkinNo,
             };
             _packetHandlerManager.SendPacket(userId, loadName.GetBytes(), Channel.CHL_LOADING_SCREEN);
         }
@@ -2458,13 +2458,13 @@ namespace PacketDefinitions420
         /// </summary>
         /// <param name="userId">User to send the packet to.</param>
         /// <param name="player">Player information to send.</param>
-        public void NotifyRequestReskin(int userId, Tuple<uint, ClientInfo> player)
+        public void NotifyRequestReskin(int userId, ClientInfo player)
         {
             var loadChampion = new RequestReskin
             {
-                PlayerID = player.Item2.PlayerId,
-                SkinID = player.Item2.SkinNo,
-                SkinName = player.Item2.Champion.Model
+                PlayerID = player.PlayerId,
+                SkinID = player.SkinNo,
+                SkinName = player.Champion.Model
             };
             _packetHandlerManager.SendPacket(userId, loadChampion.GetBytes(), Channel.CHL_LOADING_SCREEN);
         }
@@ -2480,17 +2480,17 @@ namespace PacketDefinitions420
             {
                 SenderNetID = 0,
                 Delayed = isDelayed,
-                ClientID = (int)player.ClientId
+                ClientID = player.ClientId
             };
             if (unpauser != null)
             {
                 resume.SenderNetID = unpauser.NetId;
             }
 
-            _packetHandlerManager.SendPacket((int)player.PlayerId, resume.GetBytes(), Channel.CHL_S2C);
+            _packetHandlerManager.SendPacket(player.ClientId, resume.GetBytes(), Channel.CHL_S2C);
         }
 
-        public void NotifyS2C_ActivateMinionCamp(IMonsterCamp monsterCamp, int userId = 0)
+        public void NotifyS2C_ActivateMinionCamp(IMonsterCamp monsterCamp, int userId = -1)
         {
             var packet = new S2C_ActivateMinionCamp
             {
@@ -2529,7 +2529,7 @@ namespace PacketDefinitions420
                     packet.AmmoRechargeTotalTime = spell.GetAmmoRechageTime();
                 }
 
-                _packetHandlerManager.SendPacket((int)ch.GetPlayerId(), packet.GetBytes(), Channel.CHL_S2C);
+                _packetHandlerManager.SendPacket(ch.ClientId, packet.GetBytes(), Channel.CHL_S2C);
             }
         }
 
@@ -2605,7 +2605,7 @@ namespace PacketDefinitions420
             var heroPacket = new S2C_CreateHero()
             {
                 NetID = champion.NetId,
-                ClientID = (int)clientInfo.ClientId,
+                ClientID = clientInfo.ClientId,
                 // NetNodeID,
                 // For bots (0 = Beginner, 1 = Intermediate)
                 SkillLevel = 0,
@@ -2635,7 +2635,7 @@ namespace PacketDefinitions420
             }
         }
 
-        public void NotifyS2C_CreateMinionCamp(IMonsterCamp monsterCamp, int userId = 0)
+        public void NotifyS2C_CreateMinionCamp(IMonsterCamp monsterCamp, int userId = -1)
         {
             var packet = new S2C_CreateMinionCamp
             {
@@ -2668,11 +2668,11 @@ namespace PacketDefinitions420
         /// </summary>
         /// <param name="turret">LaneTurret that spawned.</param>
         /// <param name="userId">User to send the packet to.</param>
-        public void NotifyS2C_CreateTurret(ILaneTurret turret, int userId = 0)
+        public void NotifyS2C_CreateTurret(ILaneTurret turret, int userId = -1)
         {
             var createTurret = ConstructCreateTurretPacket(turret);
 
-            if (userId != 0)
+            if (userId != -1)
             {
                 _packetHandlerManager.SendPacket(userId, createTurret.GetBytes(), Channel.CHL_S2C);
                 return;
@@ -2685,10 +2685,10 @@ namespace PacketDefinitions420
         /// Disables the U.I when the game ends
         /// </summary>
         /// <param name="player"></param>
-        public void NotifyS2C_DisableHUDForEndOfGame(Tuple<uint, ClientInfo> player)
+        public void NotifyS2C_DisableHUDForEndOfGame(ClientInfo player)
         {
             var disableHud = new S2C_DisableHUDForEndOfGame();
-            _packetHandlerManager.SendPacket((int)player.Item2.PlayerId, disableHud.GetBytes(), Channel.CHL_S2C);
+            _packetHandlerManager.SendPacket(player.ClientId, disableHud.GetBytes(), Channel.CHL_S2C);
         }
 
         /// <summary>
@@ -2835,11 +2835,11 @@ namespace PacketDefinitions420
         /// <param name="travelTime">The time the camera will have to travel the given distance</param>
         /// <param name="startFromCurretPosition">Wheter or not it starts from current position</param>
         /// <param name="unlockCamera">Whether or not the camera is unlocked</param>
-        public void NotifyS2C_MoveCameraToPoint(Tuple<uint, ClientInfo> player, Vector3 startPosition, Vector3 endPosition, float travelTime = 0, bool startFromCurretPosition = true, bool unlockCamera = false)
+        public void NotifyS2C_MoveCameraToPoint(ClientInfo player, Vector3 startPosition, Vector3 endPosition, float travelTime = 0, bool startFromCurretPosition = true, bool unlockCamera = false)
         {
             var cam = new S2C_MoveCameraToPoint
             {
-                SenderNetID = player.Item2.Champion.NetId,
+                SenderNetID = player.Champion.NetId,
                 StartFromCurrentPosition = startFromCurretPosition,
                 UnlockCamera = unlockCamera,
                 TravelTime = travelTime,
@@ -2850,9 +2850,9 @@ namespace PacketDefinitions420
                 cam.StartPosition = startPosition;
             }
 
-            _packetHandlerManager.SendPacket((int)player.Item2.PlayerId, cam.GetBytes(), Channel.CHL_S2C);
+            _packetHandlerManager.SendPacket(player.ClientId, cam.GetBytes(), Channel.CHL_S2C);
         }
-        public void NotifyS2C_Neutral_Camp_Empty(IMonsterCamp monsterCamp, IDeathData deathData = null, int userId = 0)
+        public void NotifyS2C_Neutral_Camp_Empty(IMonsterCamp monsterCamp, IDeathData deathData = null, int userId = -1)
         {
             var packet = new S2C_Neutral_Camp_Empty
             {
@@ -2922,7 +2922,7 @@ namespace PacketDefinitions420
         /// </summary>
         /// <param name="o">GameObject coming into vision.</param>
         /// <param name="userId">User to send the packet to.</param>
-        public void NotifyS2C_OnEnterTeamVisibility(IGameObject o, TeamId team, int userId = 0)
+        public void NotifyS2C_OnEnterTeamVisibility(IGameObject o, TeamId team, int userId = -1)
         {
             var enterTeamVis = ConstructOnEnterTeamVisibilityPacket(o, team);
 
@@ -2985,7 +2985,7 @@ namespace PacketDefinitions420
         /// </summary>
         /// <param name="o">GameObject going out of vision.</param>
         /// <param name="userId">User to send the packet to.</param>
-        public void NotifyS2C_OnLeaveTeamVisibility(IGameObject o, TeamId team, int userId = 0)
+        public void NotifyS2C_OnLeaveTeamVisibility(IGameObject o, TeamId team, int userId = -1)
         {
             var leaveTeamVis = new S2C_OnLeaveTeamVisibility()
             {
@@ -3199,7 +3199,7 @@ namespace PacketDefinitions420
         /// Sends a packet to the specified player detailing that the game has started the spawning GameObjects that occurs at the start of the game.
         /// </summary>
         /// <param name="userId">User to send the packet to.</param>
-        public void NotifyS2C_StartSpawn(int userId = 0)
+        public void NotifyS2C_StartSpawn(int userId = -1)
         {
             var start = new S2C_StartSpawn
             {
@@ -3592,11 +3592,11 @@ namespace PacketDefinitions420
         /// </summary>
         /// <param name="levelProp">LevelProp that has spawned.</param>
         /// <param name="userId">User to send the packet to.</param>
-        public void NotifySpawnLevelPropS2C(ILevelProp levelProp, int userId = 0)
+        public void NotifySpawnLevelPropS2C(ILevelProp levelProp, int userId = -1)
         {
             var spawnPacket = ConstructSpawnLevelPropPacket(levelProp);
 
-            if (userId != 0)
+            if (userId != -1)
             {
                 _packetHandlerManager.SendPacket(userId, spawnPacket.GetBytes(), Channel.CHL_S2C);
             }
@@ -3676,7 +3676,7 @@ namespace PacketDefinitions420
         /// <param name="version">Version of the player being checked.</param>
         /// <param name="gameMode">String of the internal name of the gamemode being played.</param>
         /// <param name="mapId">ID of the map being played.</param>
-        public void NotifySynchVersion(int userId, List<Tuple<uint, ClientInfo>> players, string version, string gameMode, int mapId)
+        public void NotifySynchVersion(int userId, List<ClientInfo> players, string version, string gameMode, int mapId)
         {
             var syncVersion = new SynchVersionS2C
             {
@@ -3731,30 +3731,38 @@ namespace PacketDefinitions420
 
             for (int i = 0; i < players.Count; i++)
             {
-                syncVersion.PlayerInfo[i] = new PlayerLoadInfo
+                var info = new PlayerLoadInfo
                 {
-                    PlayerID = players[i].Item2.PlayerId,
+                    PlayerID = players[i].PlayerId,
                     // TODO: Change to players[i].Item2.SummonerLevel
                     SummonorLevel = 30,
-                    SummonorSpell1 = HashString(players[i].Item2.SummonerSkills[0]),
-                    SummonorSpell2 = HashString(players[i].Item2.SummonerSkills[1]),
+                    SummonorSpell1 = HashString(players[i].SummonerSkills[0]),
+                    SummonorSpell2 = HashString(players[i].SummonerSkills[1]),
                     // TODO
                     Bitfield = 0,
-                    TeamId = (uint)players[i].Item2.Team,
-                    // TODO: Change to players[i].Item2.Champion.Model + "Bot" (if players[i].Item2.IsBot)
+                    TeamId = (uint)players[i].Team,
                     BotName = "",
-                    // TODO: Change to players[i].Item2.Champion.Model (if players[i].Item2.IsBot)
                     BotSkinName = "",
-                    EloRanking = players[i].Item2.Rank,
-                    // TODO: Change to players[i].Item2.SkinNo (if players[i].Item2.IsBot)
+                    EloRanking = players[i].Rank,
                     BotSkinID = 0,
-                    // TODO: Change to players[i].Item2.BotDifficulty (if players[i].Item2.IsBot)
                     BotDifficulty = 0,
-                    ProfileIconId = players[i].Item2.Icon,
+                    ProfileIconId = players[i].Icon,
                     // TODO: Unhardcode these two.
                     AllyBadgeID = 0,
                     EnemyBadgeID = 0
                 };
+
+                /*
+                if(players[i].IsBot)
+                {
+                    info.BotName = players[i].Champion.Model + "Bot";
+                    info.BotSkinName = players[i].Champion.Model;
+                    info.BotSkinID = players[i].SkinNo;
+                    info.BotDifficulty = players[i].BotDifficulty;
+                }
+                */
+
+                syncVersion.PlayerInfo[i] = info;
             }
 
             // TODO: syncVersion.Mutators
@@ -3898,7 +3906,7 @@ namespace PacketDefinitions420
                 SourceNetID = died.NetId,
                 GoldAmmount = gold
             };
-            _packetHandlerManager.SendPacket((int)c.GetPlayerId(), ag.GetBytes(), Channel.CHL_S2C);
+            _packetHandlerManager.SendPacket(c.ClientId, ag.GetBytes(), Channel.CHL_S2C);
         }
 
         /// <summary>
@@ -3996,7 +4004,7 @@ namespace PacketDefinitions420
         /// <param name="team">Team which is affected by this visibility change.</param>
         /// <param name="becameVisible">Whether or not the change was an entry into vision.</param>
         /// <param name="userId">UserId to send the packet to. If not specified or zero, the packet is broadcasted to the team.</param>
-        public void NotifyVisibilityChange(IGameObject obj, TeamId team, bool becameVisible = true, int userId = 0)
+        public void NotifyVisibilityChange(IGameObject obj, TeamId team, bool becameVisible = true, int userId = -1)
         {
             if (becameVisible)
             {
@@ -4011,7 +4019,7 @@ namespace PacketDefinitions420
         /// <summary>
         /// Sends a notification that the object has entered the team's scope and fully synchronizes its state.
         /// </summary>
-        void NotifyEnterTeamVision(IGameObject obj, TeamId team, int userId = 0, GamePacket spawnPacket = null)
+        void NotifyEnterTeamVision(IGameObject obj, TeamId team, int userId = -1, GamePacket spawnPacket = null)
         {
             if (obj is IAttackableUnit u)
             {
@@ -4073,7 +4081,7 @@ namespace PacketDefinitions420
             }
         }
 
-        void NotifyLeaveTeamVision(IGameObject obj, TeamId team, int userId = 0)
+        void NotifyLeaveTeamVision(IGameObject obj, TeamId team, int userId = -1)
         {
             if (obj is IParticle p)
             {
@@ -4181,7 +4189,7 @@ namespace PacketDefinitions420
         /// <param name="u">AttackableUnit that is moving.</param>
         /// <param name="userId">UserId to send the packet to. If not specified or zero, the packet is broadcasted to all players that have vision of the specified unit.</param>
         /// <param name="useTeleportID">Whether or not to teleport the unit to its current position in its path.</param>
-        public void NotifyWaypointGroup(IAttackableUnit u, int userId = 0, bool useTeleportID = false)
+        public void NotifyWaypointGroup(IAttackableUnit u, int userId = -1, bool useTeleportID = false)
         {
             var move = PacketExtensions.CreateMovementDataNormal(u, _navGrid, useTeleportID);
 
@@ -4330,7 +4338,7 @@ namespace PacketDefinitions420
                 SenderNetID = client.Champion.NetId,
                 SyncID = request.SyncID,
             };
-            _packetHandlerManager.SendPacket((int)client.PlayerId, answer.GetBytes(), Channel.CHL_S2C, PacketFlags.NONE);
+            _packetHandlerManager.SendPacket(client.ClientId, answer.GetBytes(), Channel.CHL_S2C, PacketFlags.NONE);
         }
     }
 }

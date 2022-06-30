@@ -681,7 +681,7 @@ namespace LeagueSandbox.GameServer.API
             var toreturn = new List<IChampion>();
             foreach (var player in _game.PlayerManager.GetPlayers(true))
             {
-                toreturn.Add(player.Item2.Champion);
+                toreturn.Add(player.Champion);
             }
             return toreturn;
         }
@@ -931,7 +931,7 @@ namespace LeagueSandbox.GameServer.API
             {
                 _game.PacketNotifier.NotifyChangeSlotSpellData
                 (
-                    (int)_game.PlayerManager.GetClientInfoByChampion(champion).PlayerId,
+                    _game.PlayerManager.GetClientInfoByChampion(champion).ClientId,
                     target,
                     (byte)slot,
                     ChangeSlotSpellDataType.TargetingType,

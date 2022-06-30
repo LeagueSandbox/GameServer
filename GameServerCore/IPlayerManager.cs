@@ -8,10 +8,11 @@ namespace GameServerCore
 {
     public interface IPlayerManager
     {
-        void AddPlayer(KeyValuePair<string, IPlayerConfig> p);
-        void AddPlayer(Tuple<uint, ClientInfo> p);
+        void AddPlayer(IPlayerConfig config);
+        void AddPlayer(ClientInfo info);
+        ClientInfo GetPeerInfo(int userId);
+        ClientInfo GetClientInfoByPlayerId(long playerId);
         ClientInfo GetClientInfoByChampion(IChampion champ);
-        ClientInfo GetPeerInfo(long playerId);
-        List<Tuple<uint, ClientInfo>> GetPlayers(bool includeBots = false);
+        List<ClientInfo> GetPlayers(bool includeBots = false);
     }
 }

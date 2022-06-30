@@ -644,17 +644,17 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             // todo: check if damage dealt by disconnected players cause anything bad
             if (attacker is IChampion attackerChamp)
             {
-                attackerId = (int)_game.PlayerManager.GetClientInfoByChampion(attackerChamp).PlayerId;
+                attackerId = _game.PlayerManager.GetClientInfoByChampion(attackerChamp).ClientId;
             }
 
             if (this is IChampion targetChamp)
             {
-                targetId = (int)_game.PlayerManager.GetClientInfoByChampion(targetChamp).PlayerId;
+                targetId = _game.PlayerManager.GetClientInfoByChampion(targetChamp).ClientId;
             }
             // Show damage text for owner of pet
             if (attacker is IPet attackerPet && attackerPet.Owner is IChampion)
             {
-                attackerId = (int)_game.PlayerManager.GetClientInfoByChampion((IChampion)attackerPet.Owner).PlayerId;
+                attackerId = _game.PlayerManager.GetClientInfoByChampion((IChampion)attackerPet.Owner).ClientId;
             }
 
             if (attacker.Team != Team)

@@ -176,7 +176,7 @@ namespace LeagueSandbox.GameServer
             _logger.Info("Add players");
             foreach (var p in Config.Players)
             {
-                _logger.Info("Player " + p.Value.Name + " Added: " + p.Value.Champion);
+                _logger.Info("Player " + p.Name + " Added: " + p.Champion);
                 ((PlayerManager)PlayerManager).AddPlayer(p);
             }
 
@@ -330,10 +330,10 @@ namespace LeagueSandbox.GameServer
 
                             // Pure water framing
                             var players = PlayerManager.GetPlayers();
-                            var unpauser = players[0].Item2.Champion;
+                            var unpauser = players[0].Champion;
                             foreach (var player in players)
                             {
-                                PacketNotifier.NotifyResumePacket(unpauser, player.Item2, false);
+                                PacketNotifier.NotifyResumePacket(unpauser, player, false);
                             }
                             Unpause();
                         }
@@ -439,7 +439,7 @@ namespace LeagueSandbox.GameServer
             IsPaused = true;
             foreach (var player in PlayerManager.GetPlayers())
             {
-                PacketNotifier.NotifyPausePacket(player.Item2, (int)PauseTimeLeft, true);
+                PacketNotifier.NotifyPausePacket(player, (int)PauseTimeLeft, true);
             }
         }
 

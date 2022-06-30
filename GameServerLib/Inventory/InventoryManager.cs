@@ -33,7 +33,7 @@ namespace LeagueSandbox.GameServer.Inventory
             if (owner is IChampion champion && item != null)
             {
                 //This packet seems to break when buying more than 3 of one of the 250Gold elixirs
-                _packetNotifier.NotifyBuyItem((int)champion.GetPlayerId(), champion, item);
+                _packetNotifier.NotifyBuyItem(champion.ClientId, champion, item);
             }
             return KeyValuePair.Create(item, true);
         }
@@ -50,7 +50,7 @@ namespace LeagueSandbox.GameServer.Inventory
             if (owner is IChampion champion && item != null)
             {
                 //This packet seems to break when buying more than 3 of one of the 250Gold elixirs
-                _packetNotifier.NotifyBuyItem((int)champion.GetPlayerId(), champion, item);
+                _packetNotifier.NotifyBuyItem(champion.ClientId, champion, item);
             }
 
             return KeyValuePair.Create(item, true);

@@ -15,8 +15,8 @@ namespace LeagueSandbox.GameServer.Players
         private NetworkIdManager _networkIdManager;
         private Game _game;
 
-        private List<Tuple<uint, ClientInfo>> _players = new List<Tuple<uint, ClientInfo>>();
-        private Dictionary<TeamId, uint> _userIdsPerTeam = new Dictionary<TeamId, uint>
+        private List<ClientInfo> _players = new List<ClientInfo>();
+        private Dictionary<TeamId, int> _userIdsPerTeam = new Dictionary<TeamId, int>
         {
             { TeamId.TEAM_BLUE, 0 },
             { TeamId.TEAM_PURPLE, 0 }
@@ -28,80 +28,80 @@ namespace LeagueSandbox.GameServer.Players
             _networkIdManager = game.NetworkIdManager;
         }
 
-        private TeamId GetTeamIdFromConfig(IPlayerConfig p)
-        {
-            if (p.Team.ToLower().Equals("blue"))
-            {
-                return TeamId.TEAM_BLUE;
-            }
-
-            return TeamId.TEAM_PURPLE;
-        }
-
-        public void AddPlayer(KeyValuePair<string, IPlayerConfig> p)
+        public void AddPlayer(IPlayerConfig config)
         {
             var summonerSkills = new[]
             {
-                p.Value.Summoner1,
-                p.Value.Summoner2
+                config.Summoner1,
+                config.Summoner2
             };
-            var teamId = GetTeamIdFromConfig(p.Value);
-            var player = new ClientInfo(
-                p.Value.Rank,
+            var teamId = config.Team;
+            var info = new ClientInfo(
+                config.Rank,
                 teamId,
-                p.Value.Ribbon,
-                p.Value.Icon,
-                p.Value.Skin,
-                p.Value.Name,
+                config.Ribbon,
+                config.Icon,
+                config.Skin,
+                config.Name,
                 summonerSkills,
-                p.Value.PlayerID // same as StartClient.bat
+                config.PlayerID
             );
             
-            player.ClientId = (uint)_players.Count;
+            info.ClientId = _players.Count;
+            _userIdsPerTeam[teamId]++;
 
-            var c = new Champion(_game, p.Value.Champion, (uint)player.PlayerId, _userIdsPerTeam[teamId]++, p.Value.Runes, p.Value.Talents, player, 0, teamId);
+            var c = new Champion(
+                _game,
+                config.Champion,
+                config.Runes,
+                config.Talents,
+                info,
+                0,
+                teamId
+            );
 
-            var pos = c.GetSpawnPosition((int)_userIdsPerTeam[teamId]);
+            var pos = c.GetSpawnPosition(_userIdsPerTeam[teamId]);
             c.SetPosition(pos, false);
             c.StopMovement();
             c.UpdateMoveOrder(OrderType.Stop);
 
             _game.ObjectManager.AddObject(c);
 
-            player.Champion = c;
-            var pair = new Tuple<uint, ClientInfo> ((uint)player.PlayerId, player);
-            _players.Add(pair);
+            info.Champion = c;
+            _players.Add(info);
         }
 
-        public void AddPlayer(Tuple<uint, ClientInfo> p)
+        public void AddPlayer(ClientInfo info)
         {
-            _players.Add(p);
+            info.ClientId = _players.Count;
+            _players.Add(info);
         }
 
         // GetPlayerFromPeer
-        public ClientInfo GetPeerInfo(long playerId)
+        public ClientInfo GetPeerInfo(int clientId)
         {
-            foreach (var player in _players)
+            if (0 <= clientId && clientId < _players.Count)
             {
-                if (player.Item2.PlayerId == playerId)
-                {
-                    return player.Item2;
-                }
+                return _players[clientId];
             }
-
             return null;
+        }
+
+        public ClientInfo GetClientInfoByPlayerId(long playerId)
+        {
+            return _players.Find(c => c.PlayerId == playerId);
         }
 
         public ClientInfo GetClientInfoByChampion(IChampion champ)
         {
-            return GetPlayers(true).Find(c => c.Item2.Champion == champ).Item2;
+            return _players.Find(c => c.Champion == champ);
         }
 
-        public List<Tuple<uint, ClientInfo>> GetPlayers(bool includeBots = true)
+        public List<ClientInfo> GetPlayers(bool includeBots = true)
         {
             if (!includeBots)
             {
-                return _players.FindAll(c => !c.Item2.Champion.IsBot);
+                return _players.FindAll(c => !c.Champion.IsBot);
             }
 
             return _players;

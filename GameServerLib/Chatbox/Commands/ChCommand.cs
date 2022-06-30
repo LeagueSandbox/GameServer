@@ -32,8 +32,6 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
             var c = new Champion(
                 Game,
                 split[1],
-                (uint)_playerManager.GetPeerInfo(userId).PlayerId,
-                0, // Doesnt matter at this point
                 currentChampion.RuneList,
                 currentChampion.TalentInventory,
                 _playerManager.GetClientInfoByChampion(currentChampion),

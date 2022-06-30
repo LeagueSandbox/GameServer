@@ -157,7 +157,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
             DrawAttackableUnit(_userChampion, userId);
         }
 
-        void DrawAttackableUnit(IAttackableUnit u, int userId = 0)
+        void DrawAttackableUnit(IAttackableUnit u, int userId = -1)
         {
             // Arbitrary ratio is required for the DebugCircle particle to look accurate
             var circlesize = _debugCircleScale * u.PathfindingRadius;
