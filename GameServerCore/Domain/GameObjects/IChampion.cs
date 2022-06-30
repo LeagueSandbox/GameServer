@@ -6,6 +6,7 @@ namespace GameServerCore.Domain.GameObjects
 {
     public interface IChampion : IObjAiBase
     {
+        int ClientId { get; }
         IShop Shop { get; }
         float RespawnTimer { get; }
         int DeathSpree { get; set; }
@@ -20,9 +21,7 @@ namespace GameServerCore.Domain.GameObjects
         // basic
         void AddGold(IAttackableUnit source, float gold, bool notify = true);
         void UpdateSkin(int skinNo);
-        uint GetPlayerId();
         void AddExperience(float experience, bool notify = true);
-        bool LevelUp(bool force = false);
         void Recall();
         void Respawn();
         bool OnDisconnect();

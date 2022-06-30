@@ -858,7 +858,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
             if (this is IChampion champion)
             {
-                int userId = (int)_game.PlayerManager.GetClientInfoByChampion(champion).PlayerId;
+                int userId = _game.PlayerManager.GetClientInfoByChampion(champion).ClientId;
                 // TODO: Verify if this is all that is needed.
                 _game.PacketNotifier.NotifyChangeSlotSpellData(userId, champion, slot, ChangeSlotSpellDataType.SpellName, slot == 4 || slot == 5, newName: name);
                 if (networkOld)
@@ -1008,8 +1008,9 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
             if (this is IChampion champion)
             {
-                _game.PacketNotifier.NotifyS2C_SetSpellData((int)_game.PlayerManager.GetClientInfoByChampion(champion).PlayerId, NetId, slot2Name, slot1);
-                _game.PacketNotifier.NotifyS2C_SetSpellData((int)_game.PlayerManager.GetClientInfoByChampion(champion).PlayerId, NetId, slot1Name, slot2);
+                int clientId = _game.PlayerManager.GetClientInfoByChampion(champion).ClientId;
+                _game.PacketNotifier.NotifyS2C_SetSpellData(clientId, NetId, slot2Name, slot1);
+                _game.PacketNotifier.NotifyS2C_SetSpellData(clientId, NetId, slot1Name, slot2);
             }
         }
 

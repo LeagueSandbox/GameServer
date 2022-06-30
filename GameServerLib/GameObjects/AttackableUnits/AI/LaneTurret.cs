@@ -59,8 +59,8 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
                 foreach (var player in _game.PlayerManager.GetPlayers())
                 {
-                    var champion = player.Item2.Champion;
-                    if (player.Item2.Team != Team)
+                    var champion = player.Champion;
+                    if (player.Team != Team)
                     {
                         if (!championsInRange.Contains(champion))
                         {
@@ -72,10 +72,10 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             }
             else
             {
-                foreach (var player in _game.PlayerManager.GetPlayers().FindAll(x => x.Item2.Team != Team))
+                foreach (var player in _game.PlayerManager.GetPlayers())
                 {
-                    var champion = player.Item2.Champion;
-                    if (player.Item2.Team != Team)
+                    var champion = player.Champion;
+                    if (player.Team != Team)
                     {
                         {
                             champion.AddGold(champion, globalGold);

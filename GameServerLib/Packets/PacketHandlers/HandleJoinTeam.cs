@@ -20,7 +20,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             var players = _playerManager.GetPlayers(true);
             uint version = uint.Parse(Config.VERSION.ToString().Replace(".", string.Empty));
 
-            // Builds team info e.g. first UserId set on Blue has PlayerId 0
+            // Builds team info e.g. first UserId set on Blue has ClientId 0
             // increment by 1 for each added player
             _game.PacketNotifier.NotifyLoadScreenInfo(userId, players);
 
@@ -33,9 +33,9 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                 _game.PacketNotifier.NotifyRequestReskin(userId, player);
 
                 // Let other players know we loaded in.
-                if (player.Item1 == userId)
+                if (player.ClientId == userId)
                 {
-                    _game.PacketNotifier.NotifyKeyCheck((int)player.Item2.ClientId, player.Item2.PlayerId, version, broadcast: true);
+                    _game.PacketNotifier.NotifyKeyCheck(player.ClientId, player.PlayerId, version, broadcast: true);
                 }
             }
 

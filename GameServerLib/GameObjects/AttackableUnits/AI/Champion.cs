@@ -23,12 +23,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         /// <summary>
         /// Player number ordered by the config file.
         /// </summary>
-        private uint _playerId;
-        /// <summary>
-        /// Player number in the team ordered by the config file.
-        /// Used in nowhere but to set spawnpoint at the game start.
-        /// </summary>
-        private uint _playerTeamSpecialId;
+        public int ClientId { get; private set; }
         private uint _playerHitId;
         private List<IToolTipData> _tipsChanged;
         public IShop Shop { get; protected set; }
@@ -48,8 +43,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
         public Champion(Game game,
                         string model,
-                        uint playerId,
-                        uint playerTeamSpecialId,
                         IRuneCollection runeList,
                         ITalentInventory talentInventory,
                         ClientInfo clientInfo,
@@ -58,8 +51,8 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                         IStats stats = null)
             : base(game, model, 30, new Vector2(), 1200, clientInfo.SkinNo, netId, team, stats)
         {
-            _playerId = playerId;
-            _playerTeamSpecialId = playerTeamSpecialId;
+            //TODO: Champion.ClientInfo?
+            ClientId = clientInfo.ClientId;
             RuneList = runeList;
 
             Inventory = InventoryManager.CreateInventory(game.PacketNotifier);
@@ -85,7 +78,8 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
             _tipsChanged = new List<IToolTipData>();
 
-            if (clientInfo.PlayerId == -1)
+            //TODO: check this
+            if (clientInfo.ClientId == -1)
             {
                 IsBot = true;
             }
@@ -98,11 +92,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             {
                 _game.PacketNotifier.NotifyUnitAddGold(this, source, gold);
             }
-        }
-
-        private string GetPlayerIndex()
-        {
-            return $"player{_playerId}";
         }
 
         public override void OnAdded()
@@ -133,7 +122,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             _game.PacketNotifier.NotifyS2C_CreateHero(peerInfo, userId, doVision);
             _game.PacketNotifier.NotifyAvatarInfo(peerInfo, userId);
 
-            bool ownChamp = peerInfo.PlayerId == userId;
+            bool ownChamp = peerInfo.ClientId == userId;
             if (ownChamp)
             {
                 // Buy blue pill
@@ -168,38 +157,15 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
         public int GetTeamSize()
         {
-            var blueTeamSize = 0;
-            var purpTeamSize = 0;
-
-            foreach (var player in _game.Config.Players.Values)
+            var teamSize = 0;
+            foreach (var player in _game.Config.Players)
             {
-                if (player.Team.ToLower().Equals("blue"))
+                if (player.Team == Team)
                 {
-                    blueTeamSize++;
-                }
-                else
-                {
-                    purpTeamSize++;
+                    teamSize++;
                 }
             }
-
-            var playerIndex = GetPlayerIndex();
-            if (_game.Config.Players.ContainsKey(playerIndex))
-            {
-                switch (_game.Config.Players[playerIndex].Team.ToLower())
-                {
-                    case "blue":
-                        return blueTeamSize;
-                    default:
-                        return purpTeamSize;
-                }
-            }
-
-            return 0;
-        }
-        public uint GetPlayerId()
-        {
-            return _playerId;
+            return teamSize;
         }
 
         public Vector2 GetSpawnPosition(int index)

@@ -39,14 +39,8 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                 _logger.Debug("Accepted client version (" + req.Version + ") from client = " + req.ClientID + " & PlayerID = " + userId);
             }
 
-            foreach (var player in _playerManager.GetPlayers())
-            {
-                if (player.Item1 == userId)
-                {
-                    player.Item2.IsMatchingVersion = versionMatch;
-                    break;
-                }
-            }
+            var info = _playerManager.GetPeerInfo(userId);
+            info.IsMatchingVersion = versionMatch;
 
             _game.PacketNotifier.NotifySynchVersion(userId, _playerManager.GetPlayers(), Config.VERSION_STRING, _game.Config.GameConfig.GameMode,
                mapId);

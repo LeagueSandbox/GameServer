@@ -405,7 +405,7 @@ namespace LeagueSandbox.GameServer.API
             var players = _game.PlayerManager.GetPlayers(true);
             foreach (var player in players)
             {
-                average += player.Item2.Champion.Stats.Level / players.Count;
+                average += player.Champion.Stats.Level / players.Count;
             }
             return (int)average;
         }

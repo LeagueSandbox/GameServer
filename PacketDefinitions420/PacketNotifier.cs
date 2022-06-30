@@ -647,7 +647,7 @@ namespace PacketDefinitions420
                 {
                     regionPacket.VisionTargetNetID = clientInfo.Champion.NetId;
                 }
-                regionPacket.ClientID = (int)clientInfo.ClientId;
+                regionPacket.ClientID = clientInfo.ClientId;
             }
 
             if (obj != null)
@@ -1465,7 +1465,7 @@ namespace PacketDefinitions420
             }
             else
             {
-                _packetHandlerManager.SendPacket((int)playerId, keyCheck.GetBytes(), Channel.CHL_HANDSHAKE);
+                _packetHandlerManager.SendPacket(clientID, keyCheck.GetBytes(), Channel.CHL_HANDSHAKE);
             }
         }
 
@@ -1550,7 +1550,7 @@ namespace PacketDefinitions420
         /// </summary>
         /// <param name="userId">User to send the packet to.</param>
         /// <param name="players">Client info of all players in the loading screen.</param>
-        public void NotifyLoadScreenInfo(int userId, List<Tuple<uint, ClientInfo>> players)
+        public void NotifyLoadScreenInfo(int userId, List<ClientInfo> players)
         {
             uint orderSizeCurrent = 0;
             uint chaosSizeCurrent = 0;
@@ -1563,15 +1563,15 @@ namespace PacketDefinitions420
 
             foreach (var player in players)
             {
-                if (player.Item2.Team == TeamId.TEAM_BLUE)
+                if (player.Team == TeamId.TEAM_BLUE)
                 {
-                    teamRoster.OrderMembers[orderSizeCurrent] = player.Item2.PlayerId;
+                    teamRoster.OrderMembers[orderSizeCurrent] = player.PlayerId;
                     orderSizeCurrent++;
                 }
                 // TODO: Verify if it is ok to allow neutral
                 else
                 {
-                    teamRoster.ChaosMembers[chaosSizeCurrent] = player.Item2.PlayerId;
+                    teamRoster.ChaosMembers[chaosSizeCurrent] = player.PlayerId;
                     chaosSizeCurrent++;
                 }
             }
@@ -1619,7 +1619,7 @@ namespace PacketDefinitions420
                 Position = position
             };
 
-            _packetHandlerManager.SendPacket((int)target.GetPlayerId(), packet.GetBytes(), Channel.CHL_S2C);
+            _packetHandlerManager.SendPacket(target.ClientId, packet.GetBytes(), Channel.CHL_S2C);
         }
         /// <summary>
         /// Sends a packet to all players that updates the specified unit's model.
@@ -2157,7 +2157,7 @@ namespace PacketDefinitions420
             history.EventSourceType = 0; //TODO: Confirm that it is always zero
             history.Entries = ch.EventHistory;
             
-            _packetHandlerManager.SendPacket((int)ch.GetPlayerId(), history.GetBytes(), Channel.CHL_S2C);
+            _packetHandlerManager.SendPacket(ch.ClientId, history.GetBytes(), Channel.CHL_S2C);
         }
         /// <summary>
         /// Sends a packet to all players with vision of the specified AttackableUnit detailing that the attacker has abrubtly stopped their attack (can be a spell or auto attack, although internally AAs are also spells).
@@ -2323,12 +2323,12 @@ namespace PacketDefinitions420
             var pg = new PausePacket
             {
                 //Check if SenderNetID should be the person that requested the pause or just 0
-                ClientID = (int)player.ClientId,
+                ClientID = player.ClientId,
                 IsTournament = isTournament,
                 PauseTimeRemaining = seconds
             };
             //I Assumed that, since the packet requires idividual client IDs, that it also sends the packets individually, by useing the SendPacket Channel, double check if that's valid.
-            _packetHandlerManager.SendPacket((int)player.PlayerId, pg.GetBytes(), Channel.CHL_S2C);
+            _packetHandlerManager.SendPacket(player.ClientId, pg.GetBytes(), Channel.CHL_S2C);
         }
 
         /// <summary>
@@ -2438,16 +2438,16 @@ namespace PacketDefinitions420
         /// </summary>
         /// <param name="userId">User to send the packet to.</param>
         /// <param name="player">Player information to send.</param>
-        public void NotifyRequestRename(int userId, Tuple<uint, ClientInfo> player)
+        public void NotifyRequestRename(int userId, ClientInfo player)
         {
             var loadName = new RequestRename
             {
-                PlayerID = player.Item2.PlayerId,
-                PlayerName = player.Item2.Name,
+                PlayerID = player.PlayerId,
+                PlayerName = player.Name,
                 // Most packets show a large default value (in place of what you would expect to be 0)
                 // Seems to be randomized per-game and used for every RequestRename packet during that game.
                 // So, using this SkinNo may be incorrect.
-                SkinID = player.Item2.SkinNo,
+                SkinID = player.SkinNo,
             };
             _packetHandlerManager.SendPacket(userId, loadName.GetBytes(), Channel.CHL_LOADING_SCREEN);
         }
@@ -2457,13 +2457,13 @@ namespace PacketDefinitions420
         /// </summary>
         /// <param name="userId">User to send the packet to.</param>
         /// <param name="player">Player information to send.</param>
-        public void NotifyRequestReskin(int userId, Tuple<uint, ClientInfo> player)
+        public void NotifyRequestReskin(int userId, ClientInfo player)
         {
             var loadChampion = new RequestReskin
             {
-                PlayerID = player.Item2.PlayerId,
-                SkinID = player.Item2.SkinNo,
-                SkinName = player.Item2.Champion.Model
+                PlayerID = player.PlayerId,
+                SkinID = player.SkinNo,
+                SkinName = player.Champion.Model
             };
             _packetHandlerManager.SendPacket(userId, loadChampion.GetBytes(), Channel.CHL_LOADING_SCREEN);
         }
@@ -2479,14 +2479,14 @@ namespace PacketDefinitions420
             {
                 SenderNetID = 0,
                 Delayed = isDelayed,
-                ClientID = (int)player.ClientId
+                ClientID = player.ClientId
             };
             if (unpauser != null)
             {
                 resume.SenderNetID = unpauser.NetId;
             }
 
-            _packetHandlerManager.SendPacket((int)player.PlayerId, resume.GetBytes(), Channel.CHL_S2C);
+            _packetHandlerManager.SendPacket(player.ClientId, resume.GetBytes(), Channel.CHL_S2C);
         }
 
         public void NotifyS2C_ActivateMinionCamp(IMonsterCamp monsterCamp, int userId = 0)
@@ -2528,7 +2528,7 @@ namespace PacketDefinitions420
                     packet.AmmoRechargeTotalTime = spell.GetAmmoRechageTime();
                 }
 
-                _packetHandlerManager.SendPacket((int)ch.GetPlayerId(), packet.GetBytes(), Channel.CHL_S2C);
+                _packetHandlerManager.SendPacket(ch.ClientId, packet.GetBytes(), Channel.CHL_S2C);
             }
         }
 
@@ -2604,7 +2604,7 @@ namespace PacketDefinitions420
             var heroPacket = new S2C_CreateHero()
             {
                 NetID = champion.NetId,
-                ClientID = (int)clientInfo.ClientId,
+                ClientID = clientInfo.ClientId,
                 // NetNodeID,
                 // For bots (0 = Beginner, 1 = Intermediate)
                 SkillLevel = 0,
@@ -2684,10 +2684,10 @@ namespace PacketDefinitions420
         /// Disables the U.I when the game ends
         /// </summary>
         /// <param name="player"></param>
-        public void NotifyS2C_DisableHUDForEndOfGame(Tuple<uint, ClientInfo> player)
+        public void NotifyS2C_DisableHUDForEndOfGame(ClientInfo player)
         {
             var disableHud = new S2C_DisableHUDForEndOfGame();
-            _packetHandlerManager.SendPacket((int)player.Item2.PlayerId, disableHud.GetBytes(), Channel.CHL_S2C);
+            _packetHandlerManager.SendPacket(player.ClientId, disableHud.GetBytes(), Channel.CHL_S2C);
         }
 
         /// <summary>
@@ -2834,11 +2834,11 @@ namespace PacketDefinitions420
         /// <param name="travelTime">The time the camera will have to travel the given distance</param>
         /// <param name="startFromCurretPosition">Wheter or not it starts from current position</param>
         /// <param name="unlockCamera">Whether or not the camera is unlocked</param>
-        public void NotifyS2C_MoveCameraToPoint(Tuple<uint, ClientInfo> player, Vector3 startPosition, Vector3 endPosition, float travelTime = 0, bool startFromCurretPosition = true, bool unlockCamera = false)
+        public void NotifyS2C_MoveCameraToPoint(ClientInfo player, Vector3 startPosition, Vector3 endPosition, float travelTime = 0, bool startFromCurretPosition = true, bool unlockCamera = false)
         {
             var cam = new S2C_MoveCameraToPoint
             {
-                SenderNetID = player.Item2.Champion.NetId,
+                SenderNetID = player.Champion.NetId,
                 StartFromCurrentPosition = startFromCurretPosition,
                 UnlockCamera = unlockCamera,
                 TravelTime = travelTime,
@@ -2849,7 +2849,7 @@ namespace PacketDefinitions420
                 cam.StartPosition = startPosition;
             }
 
-            _packetHandlerManager.SendPacket((int)player.Item2.PlayerId, cam.GetBytes(), Channel.CHL_S2C);
+            _packetHandlerManager.SendPacket(player.ClientId, cam.GetBytes(), Channel.CHL_S2C);
         }
         public void NotifyS2C_Neutral_Camp_Empty(IMonsterCamp monsterCamp, IDeathData deathData = null, int userId = 0)
         {
@@ -3675,7 +3675,7 @@ namespace PacketDefinitions420
         /// <param name="version">Version of the player being checked.</param>
         /// <param name="gameMode">String of the internal name of the gamemode being played.</param>
         /// <param name="mapId">ID of the map being played.</param>
-        public void NotifySynchVersion(int userId, List<Tuple<uint, ClientInfo>> players, string version, string gameMode, int mapId)
+        public void NotifySynchVersion(int userId, List<ClientInfo> players, string version, string gameMode, int mapId)
         {
             var syncVersion = new SynchVersionS2C
             {
@@ -3730,30 +3730,38 @@ namespace PacketDefinitions420
 
             for (int i = 0; i < players.Count; i++)
             {
-                syncVersion.PlayerInfo[i] = new PlayerLoadInfo
+                var info = new PlayerLoadInfo
                 {
-                    PlayerID = players[i].Item2.PlayerId,
+                    PlayerID = players[i].PlayerId,
                     // TODO: Change to players[i].Item2.SummonerLevel
                     SummonorLevel = 30,
-                    SummonorSpell1 = HashString(players[i].Item2.SummonerSkills[0]),
-                    SummonorSpell2 = HashString(players[i].Item2.SummonerSkills[1]),
+                    SummonorSpell1 = HashString(players[i].SummonerSkills[0]),
+                    SummonorSpell2 = HashString(players[i].SummonerSkills[1]),
                     // TODO
                     Bitfield = 0,
-                    TeamId = (uint)players[i].Item2.Team,
-                    // TODO: Change to players[i].Item2.Champion.Model + "Bot" (if players[i].Item2.IsBot)
+                    TeamId = (uint)players[i].Team,
                     BotName = "",
-                    // TODO: Change to players[i].Item2.Champion.Model (if players[i].Item2.IsBot)
                     BotSkinName = "",
-                    EloRanking = players[i].Item2.Rank,
-                    // TODO: Change to players[i].Item2.SkinNo (if players[i].Item2.IsBot)
+                    EloRanking = players[i].Rank,
                     BotSkinID = 0,
-                    // TODO: Change to players[i].Item2.BotDifficulty (if players[i].Item2.IsBot)
                     BotDifficulty = 0,
-                    ProfileIconId = players[i].Item2.Icon,
+                    ProfileIconId = players[i].Icon,
                     // TODO: Unhardcode these two.
                     AllyBadgeID = 0,
                     EnemyBadgeID = 0
                 };
+
+                /*
+                if(players[i].IsBot)
+                {
+                    info.BotName = players[i].Champion.Model + "Bot";
+                    info.BotSkinName = players[i].Champion.Model;
+                    info.BotSkinID = players[i].SkinNo;
+                    info.BotDifficulty = players[i].BotDifficulty;
+                }
+                */
+
+                syncVersion.PlayerInfo[i] = info;
             }
 
             // TODO: syncVersion.Mutators
@@ -3897,7 +3905,7 @@ namespace PacketDefinitions420
                 SourceNetID = died.NetId,
                 GoldAmmount = gold
             };
-            _packetHandlerManager.SendPacket((int)c.GetPlayerId(), ag.GetBytes(), Channel.CHL_S2C);
+            _packetHandlerManager.SendPacket(c.ClientId, ag.GetBytes(), Channel.CHL_S2C);
         }
 
         /// <summary>
@@ -4329,7 +4337,7 @@ namespace PacketDefinitions420
                 SenderNetID = client.Champion.NetId,
                 SyncID = request.SyncID,
             };
-            _packetHandlerManager.SendPacket((int)client.PlayerId, answer.GetBytes(), Channel.CHL_S2C, PacketFlags.NONE);
+            _packetHandlerManager.SendPacket(client.ClientId, answer.GetBytes(), Channel.CHL_S2C, PacketFlags.NONE);
         }
     }
 }

@@ -26,7 +26,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             if (req.TimeLastClient > req.TimeLastServer)
             {
                 var peerInfo = _playerManager.GetPeerInfo(userId);
-                var msg = $"Player {peerInfo.PlayerId} sent an invalid heartbeat - Timestamp error (diff: {diff})";
+                var msg = $"Client {peerInfo.ClientId} sent an invalid heartbeat - Timestamp error (diff: {diff})";
                 _logger.Warn(msg);
             }
 

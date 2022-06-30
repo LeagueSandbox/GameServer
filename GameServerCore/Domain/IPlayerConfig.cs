@@ -1,4 +1,6 @@
-﻿namespace GameServerCore.Domain
+﻿using GameServerCore.Enums;
+
+namespace GameServerCore.Domain
 {
     public interface IPlayerConfig
     {
@@ -6,7 +8,7 @@
         string Rank { get; }
         string Name { get; }
         string Champion { get; }
-        string Team { get; }
+        TeamId Team { get; }
         short Skin { get; }
         string Summoner1 { get; }
         string Summoner2 { get; }

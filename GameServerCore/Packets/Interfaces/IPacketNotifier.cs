@@ -211,8 +211,8 @@ namespace GameServerCore.Packets.Interfaces
         /// Sends a packet to, optionally, a specified player, all players with vision of the particle, or all players (given the particle is set as globally visible).
         /// </summary>
         /// <param name="particle">Particle to network.</param>
-        /// <param name="playerId">User to send the packet to.</param>
-        void NotifyFXCreateGroup(IParticle particle, int playerId = 0);
+        /// <param name="userId">User to send the packet to.</param>
+        void NotifyFXCreateGroup(IParticle particle, int userId = 0);
         /// <summary>
         /// Sends a packet to the specified team detailing that the specified Particle has become visible.
         /// </summary>
@@ -283,7 +283,7 @@ namespace GameServerCore.Packets.Interfaces
         /// </summary>
         /// <param name="userId">User to send the packet to.</param>
         /// <param name="players">Client info of all players in the loading screen.</param>
-        void NotifyLoadScreenInfo(int userId, List<Tuple<uint, ClientInfo>> players);
+        void NotifyLoadScreenInfo(int userId, List<ClientInfo> players);
         /// <summary>
         /// Optionally sends a packet to all players who have vision of the specified Minion detailing that it has spawned.
         /// </summary>
@@ -514,13 +514,13 @@ namespace GameServerCore.Packets.Interfaces
         /// </summary>
         /// <param name="userId">User to send the packet to.</param>
         /// <param name="player">Player information to send.</param>
-        void NotifyRequestRename(int userId, Tuple<uint, ClientInfo> player);
+        void NotifyRequestRename(int userId, ClientInfo player);
         /// <summary>
         /// Sends a packet to the specified player detailing skin information of all specified players on the loading screen.
         /// </summary>
         /// <param name="userId">User to send the packet to.</param>
         /// <param name="player">Player information to send.</param>
-        void NotifyRequestReskin(int userId, Tuple<uint, ClientInfo> player);
+        void NotifyRequestReskin(int userId, ClientInfo player);
         /// <summary>
         /// Sends a packet to all players detailing that the game has been unpaused.
         /// </summary>
@@ -558,7 +558,7 @@ namespace GameServerCore.Packets.Interfaces
         /// Disables the UI for ther end of the game
         /// </summary>
         /// <param name="player">Player for the UI to be disabled</param>
-        void NotifyS2C_DisableHUDForEndOfGame(Tuple<uint, ClientInfo> player);
+        void NotifyS2C_DisableHUDForEndOfGame(ClientInfo player);
         /// <summary>
         /// Sends packets to all players notifying the result of a match (Victory or defeat)
         /// </summary>
@@ -607,7 +607,7 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="travelTime">The time the camera will have to travel the given distance</param>
         /// <param name="startFromCurretPosition">Wheter or not it starts from current position</param>
         /// <param name="unlockCamera">Whether or not the camera is unlocked</param>
-        void NotifyS2C_MoveCameraToPoint(Tuple<uint, ClientInfo> player, Vector3 startPosition, Vector3 endPosition, float travelTime = 0, bool startFromCurretPosition = true, bool unlockCamera = false);
+        void NotifyS2C_MoveCameraToPoint(ClientInfo player, Vector3 startPosition, Vector3 endPosition, float travelTime = 0, bool startFromCurretPosition = true, bool unlockCamera = false);
         void NotifyS2C_Neutral_Camp_Empty(IMonsterCamp monsterCamp, IDeathData deathData = null, int userId = 0);
         /// <summary>
         /// Sends a packet to all players detailing that the specified unit has been killed by the specified killer.
@@ -849,7 +849,7 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="version">Version of the player being checked.</param>
         /// <param name="gameMode">String of the internal name of the gamemode being played.</param>
         /// <param name="mapId">ID of the map being played.</param>
-        void NotifySynchVersion(int userId, List<Tuple<uint, ClientInfo>> players, string version, string gameMode, int mapId);
+        void NotifySynchVersion(int userId, List<ClientInfo> players, string version, string gameMode, int mapId);
         /// <summary>
         /// Sends a packet to the specified player detailing the status (results) of a surrender vote that was called for and ended.
         /// </summary>

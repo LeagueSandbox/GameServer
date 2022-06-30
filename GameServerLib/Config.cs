@@ -22,7 +22,7 @@ namespace LeagueSandbox.GameServer
     /// </summary>
     public class Config
     {
-        public Dictionary<string, IPlayerConfig> Players { get; private set; }
+        public List<IPlayerConfig> Players { get; private set; }
         public GameConfig GameConfig { get; private set; }
         public ContentManager ContentManager { get; private set; }
         public FeatureFlags GameFeatures { get; private set; }
@@ -82,14 +82,14 @@ namespace LeagueSandbox.GameServer
             // Load data package
             ContentManager = ContentManager.LoadDataPackage(game, GameConfig.DataPackage, ContentPath);
 
-            Players = new Dictionary<string, IPlayerConfig>();
+            Players = new List<IPlayerConfig>();
 
             // Read the player configuration
             var playerConfigurations = data.SelectToken("players");
             foreach (var player in playerConfigurations)
             {
                 var playerConfig = new PlayerConfig(player, game);
-                Players.Add($"player{playerConfig.PlayerID}", playerConfig);
+                Players.Add(playerConfig);
             }
         }
 
@@ -235,7 +235,7 @@ public class PlayerConfig : IPlayerConfig
     public string Rank { get; private set; }
     public string Name { get; private set; }
     public string Champion { get; private set; }
-    public string Team { get; private set; }
+    public TeamId Team { get; private set; }
     public short Skin { get; private set; }
     public string Summoner1 { get; private set; }
     public string Summoner2 { get; private set; }
@@ -253,7 +253,13 @@ public class PlayerConfig : IPlayerConfig
         Rank = (string)playerData.SelectToken("rank");
         Name = (string)playerData.SelectToken("name");
         Champion = (string)playerData.SelectToken("champion");
-        Team = (string)playerData.SelectToken("team");
+
+        Team = TeamId.TEAM_PURPLE;
+        if (((string)playerData.SelectToken("team")).ToLower().Equals("blue"))
+        {
+            Team = TeamId.TEAM_BLUE;
+        }
+        
         Skin = (short)playerData.SelectToken("skin");
         Summoner1 = (string)playerData.SelectToken("summoner1");
         Summoner2 = (string)playerData.SelectToken("summoner2");

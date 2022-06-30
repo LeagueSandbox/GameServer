@@ -1454,7 +1454,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
             {
                 _game.PacketNotifier.NotifyChangeSlotSpellData
                 (
-                    (int)_game.PlayerManager.GetClientInfoByChampion(champion).PlayerId,
+                    _game.PlayerManager.GetClientInfoByChampion(champion).ClientId,
                     champion,
                     (byte)CastInfo.SpellSlot,
                     ChangeSlotSpellDataType.Range,
@@ -1507,7 +1507,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
 
             if (CastInfo.Owner is IChampion champion)
             {
-                _game.PacketNotifier.NotifyS2C_SetSpellLevel((int)_game.PlayerManager.GetClientInfoByChampion(champion).PlayerId, champion.NetId, CastInfo.SpellSlot, toLevel);
+                _game.PacketNotifier.NotifyS2C_SetSpellLevel(_game.PlayerManager.GetClientInfoByChampion(champion).ClientId, champion.NetId, CastInfo.SpellSlot, toLevel);
             }
         }
 
@@ -1524,7 +1524,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
             if (CastInfo.Owner is IChampion ch)
             {
                 var clientInfo = _game.PlayerManager.GetClientInfoByChampion(ch);
-                _game.PacketNotifier.NotifyS2C_UpdateSpellToggle((int)clientInfo.PlayerId, this);
+                _game.PacketNotifier.NotifyS2C_UpdateSpellToggle(clientInfo.ClientId, this);
             }
         }
 

@@ -6,7 +6,7 @@ namespace GameServerCore.NetInfo
     public class ClientInfo
     {
         public long PlayerId { get; private set; }
-        public uint ClientId { get; set; }
+        public int ClientId { get; set; }
         public bool IsMatchingVersion { get; set; }
         public bool IsDisconnected { get; set; }
         public bool IsStartedClient { get; set; }

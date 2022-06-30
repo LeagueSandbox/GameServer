@@ -119,7 +119,7 @@ namespace LeagueSandbox.GameServer
 
                 foreach (var kv in players)
                 {
-                    UpdateVisionSpawnAndSync(obj, kv.Item2);
+                    UpdateVisionSpawnAndSync(obj, kv);
                 }
 
                 obj.OnAfterSync();
@@ -142,7 +142,7 @@ namespace LeagueSandbox.GameServer
             var players = _game.PlayerManager.GetPlayers(includeBots: false);
             foreach (var kv in players)
             {
-                UpdateVisionSpawnAndSync(obj, kv.Item2, forceSpawn: true);
+                UpdateVisionSpawnAndSync(obj, kv, forceSpawn: true);
             }
 
             obj.OnAfterSync();
@@ -180,7 +180,7 @@ namespace LeagueSandbox.GameServer
         /// </summary>
         public void UpdateVisionSpawnAndSync(IGameObject obj, ClientInfo clientInfo, bool forceSpawn = false)
         {
-            int pid = (int)clientInfo.PlayerId;
+            int cid = clientInfo.ClientId;
             TeamId team = clientInfo.Team;
             IChampion champion = clientInfo.Champion;
 
@@ -191,7 +191,7 @@ namespace LeagueSandbox.GameServer
                     obj.IsVisibleByTeam(champion.Team)
             );
 
-            obj.Sync(pid, team, shouldBeVisibleForPlayer, forceSpawn);
+            obj.Sync(cid, team, shouldBeVisibleForPlayer, forceSpawn);
         }
 
         /// <summary>
