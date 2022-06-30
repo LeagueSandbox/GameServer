@@ -340,7 +340,6 @@ namespace LeagueSandbox.GameServer.API
         public static void EndGame(TeamId losingTeam, Vector3 finalCameraPosition, float endGameTimer = 5000.0f, bool moveCamera = true, float cameraTimer = 3.0f, bool disableUI = true, IDeathData deathData = null)
         {
             //TODO: check if mapScripts should handle this directly
-            var players = _game.PlayerManager.GetPlayers();
 
             if (deathData != null)
             {
@@ -352,6 +351,7 @@ namespace LeagueSandbox.GameServer.API
                 _game.PacketNotifier.NotifyS2C_SetGreyscaleEnabledWhenDead(false);
             }
 
+            var players = _game.PlayerManager.GetPlayers(false);
             foreach (var player in players)
             {
                 if (disableUI)

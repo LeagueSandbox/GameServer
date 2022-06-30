@@ -27,23 +27,23 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             var mapId = _game.Config.GameConfig.Map;
             _logger.Debug("Current map: " + mapId);
 
-            var versionMatch = true;
+            var info = _playerManager.GetPeerInfo(userId);
+            var versionMatch = req.Version == Config.VERSION_STRING;
+            info.IsMatchingVersion = versionMatch;
+
             // Version might be an invalid value, currently it trusts the client
-            if (req.Version != Config.VERSION_STRING)
+            if (!versionMatch)
             {
-                versionMatch = false;
                 _logger.Warn($"Client's version ({req.Version}) does not match server's {Config.VERSION}");
             }
             else
             {
-                _logger.Debug("Accepted client version (" + req.Version + ") from client = " + req.ClientID + " & PlayerID = " + userId);
+                _logger.Debug("Accepted client version (" + req.Version + ") from client = " + req.ClientID + " & PlayerID = " + info.PlayerId);
             }
 
-            var info = _playerManager.GetPeerInfo(userId);
-            info.IsMatchingVersion = versionMatch;
-
-            _game.PacketNotifier.NotifySynchVersion(userId, _playerManager.GetPlayers(), Config.VERSION_STRING, _game.Config.GameConfig.GameMode,
-               mapId);
+            _game.PacketNotifier.NotifySynchVersion(
+                userId, _playerManager.GetPlayers(), Config.VERSION_STRING, _game.Config.GameConfig.GameMode, mapId
+            );
 
             return true;
         }

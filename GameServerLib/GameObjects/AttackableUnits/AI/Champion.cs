@@ -78,8 +78,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
             _tipsChanged = new List<IToolTipData>();
 
-            //TODO: check this
-            if (clientInfo.ClientId == -1)
+            if (clientInfo.PlayerId == -1)
             {
                 IsBot = true;
             }
