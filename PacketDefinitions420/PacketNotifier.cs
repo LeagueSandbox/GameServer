@@ -4169,10 +4169,7 @@ namespace PacketDefinitions420
         /// </summary>
         /// <param name="u">Unit that is dashing.</param>
         /// TODO: Implement ForceMovement class which houses these parameters, then have that as the only parameter to this function (and other Dash-based functions).
-        public void NotifyWaypointGroupWithSpeed
-        (
-            IAttackableUnit u
-        )
+        public void NotifyWaypointGroupWithSpeed(IAttackableUnit u)
         {
             // TODO: Implement Dash class and house a List of these with waypoints.
             var md = PacketExtensions.CreateMovementDataWithSpeed(u, _navGrid);
@@ -4183,13 +4180,6 @@ namespace PacketDefinitions420
                 // TOOD: Implement support for multiple speed-based movements (functionally known as dashes).
                 Movements = new List<MovementDataWithSpeed> { md }
             };
-
-            Console.WriteLine(
-                Newtonsoft.Json.JsonConvert.SerializeObject(
-                    speedWpGroup,
-                    Newtonsoft.Json.Formatting.Indented
-                )
-            );
 
             _packetHandlerManager.BroadcastPacketVision(u, speedWpGroup.GetBytes(), Channel.CHL_S2C);
         }

@@ -37,7 +37,7 @@ namespace Buffs
 
             var dashSpeed = 1350f + owner.GetTrueMoveSpeed();
 
-            ForceMovement(owner, target, "", dashSpeed, 2000f, 0, 150, 0, movementOrdersType: ForceMovementOrdersType.CANCEL_ORDER);
+            ForceMovement(owner, target, "", dashSpeed, 2000f, 0, 0, 0, movementOrdersType: ForceMovementOrdersType.CANCEL_ORDER);
 
             selfParticle = AddParticleTarget(owner, owner, "blindMonk_Q_resonatingStrike_mis", owner, flags: 0);
             // Flags: Blend false, Lock true, Loop true

@@ -92,7 +92,11 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// <summary>
         /// Index of the waypoint in the list of waypoints that the object is currently on.
         /// </summary>
-        public KeyValuePair<int, Vector2> CurrentWaypoint { get; protected set; }
+        public Vector2 CurrentWaypoint
+        {
+            get { return Waypoints[CurrentWaypointKey]; }
+        }
+        public int CurrentWaypointKey { get; protected set; }
         
         /// <summary>
         /// Status effects enabled on this unit. Refer to StatusFlags enum.
@@ -143,7 +147,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             }
 
             Waypoints = new List<Vector2> { Position };
-            CurrentWaypoint = new KeyValuePair<int, Vector2>(1, Position);
+            CurrentWaypointKey = 1;
             SetStatus(
                 StatusFlags.CanAttack | StatusFlags.CanCast     |
                 StatusFlags.CanMove   | StatusFlags.CanMoveEver |
@@ -238,26 +242,15 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
 
             Replication.Update();
 
+            float timeRemaining = diff;
             if (MovementParameters != null)
             {
-                MovementParameters.SetTimeElapsed(MovementParameters.ElapsedTime + diff);
-                if(
-                    MovementParameters.FollowNetID > 0
-                    && MovementParameters.FollowTravelTime > 0
-                    && MovementParameters.ElapsedTime >= MovementParameters.FollowTravelTime
-                )
-                {
-                    SetDashingState(false);
-                }
-                else
-                {
-                    DashMove(diff);
-                }
+                timeRemaining = DashMove(diff);
             }
-            else
+
             if (MovementParameters == null && Waypoints.Count > 1 && CanMove())
             {
-                Move(diff);
+                Move(timeRemaining);
             }
 
             if (IsDead && _death != null)
@@ -1070,66 +1063,52 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             _movementUpdated = false;
         }
 
-        void DashMove(float delta)
+        float DashMove(float maxTime)
         {
-            var MP = MovementParameters as ForceMovementParameters;
-
-            float speed = MP.PathSpeedOverride * 0.001f;
-            float maxDist = speed * delta;
-
-            uint id = MP.FollowNetID;
-            if(id > 0)
+            var MP = MovementParameters;
+            Vector2 dir;
+            float dist;
+            float time = float.PositiveInfinity;
+            if(MP.FollowNetID > 0)
             {
-                if(!MP.FlewOverUnit)
+                IGameObject unitToFollow = _game.ObjectManager.GetObjectById(MP.FollowNetID);
+                dir = unitToFollow.Position - Position;
+                dist = dir.Length() - (PathfindingRadius + unitToFollow.PathfindingRadius);
+                if(MP.FollowDistance > 0)
                 {
-                    IGameObject unitToFollow = _game.ObjectManager.GetObjectById(id);
-                    Vector2 dir = unitToFollow.Position - Position;
-                    float dist = dir.Length();
-                    float summaryRadius = PathfindingRadius + unitToFollow.PathfindingRadius;
-                    if(MP.FollowBackDistance <= 0)
-                    {
-                        // Stop in front of the unit
-                        dist -= summaryRadius;
-                    }
-                    Vector2 normDir = MP.Direction = dir / dist;
-                    Console.WriteLine($"{maxDist} >= {dist} ?");
-                    if(maxDist >= dist)
-                    {
-                        Console.WriteLine($"{MP.FollowBackDistance} > 0 ?");
-                        if(MP.FollowBackDistance > 0)
-                        {
-                            Console.WriteLine("FLEW OVER UNIT");
-                            MP.FlewOverUnit = true;
-                            MP.FollowBackDistance = Math.Max(
-                                MP.FollowBackDistance, summaryRadius
-                            );
-                            Position = unitToFollow.Position;
-                            maxDist -= dist;
-                        }
-                        else
-                        {
-                            Position += normDir * dist;
-                            SetDashingState(false);
-                        }
-                    }
-                    else
-                    {
-                        Position += normDir * maxDist;
-                    }
+                    dist = Math.Min(dist, MP.FollowDistance - MP.PassedDistance);
                 }
-                
-                // Continue moving in the direction
-                if(MP.FlewOverUnit)
+                if(MP.FollowTravelTime > 0)
                 {
-                    float dist = MP.FollowBackDistance - MP.OverpassedDistance;
-                    Vector2 normDir = MP.Direction;
-                    Position += normDir * Math.Min(dist, maxDist);
-                    if(maxDist >= dist)
-                    {
-                        SetDashingState(false);
-                    }
+                    time = MP.FollowTravelTime - MP.ElapsedTime;
                 }
             }
+            else
+            {
+                dir = Waypoints[1] - Position;
+                dist = dir.Length();
+            }
+
+            float speed = MP.PathSpeedOverride * 0.001f;
+            float maxDist = speed * Math.Min(time, maxTime);
+
+            Position += dir / dist * Math.Min(dist, maxDist);
+
+            if(maxDist >= dist)
+            {
+                SetDashingState(false);
+                return (maxDist - dist) / speed;
+            }
+            MP.PassedDistance += maxDist;
+
+            if(maxTime >= time)
+            {
+                SetDashingState(false);
+                return maxTime - time;
+            }
+            MP.ElapsedTime += maxTime;
+            
+            return 0;
         }
 
         /// <summary>
@@ -1137,78 +1116,37 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// </summary>
         /// <param name="diff">The amount of milliseconds the unit is supposed to move</param>
         /// TODO: Implement interpolation (assuming all other desync related issues are already fixed).
-        public virtual bool Move(float diff)
+        public virtual bool Move(float delta)
         {
-            // current -> next positions
-            var cur = Position;
-            var next = CurrentWaypoint.Value;
-
-            var goingTo = next - cur;
-
-            var dirTemp = Vector2.Normalize(goingTo);
-
-            // usually doesn't happen
-            if (float.IsNaN(dirTemp.X) || float.IsNaN(dirTemp.Y))
+            if(CurrentWaypointKey < Waypoints.Count)
             {
-                dirTemp = new Vector2(0, 0);
-            }
+                float speed = GetMoveSpeed() * 0.001f;
+                var maxDist = speed * delta;
 
-            Direction = new Vector3(dirTemp.X, 0.0f, dirTemp.Y);
-
-            var moveSpeed = GetMoveSpeed();
-
-            var distSqr = MathF.Abs(Vector2.DistanceSquared(cur, next));
-
-            var deltaMovement = moveSpeed * 0.001f * diff;
-
-            // Prevent moving past the next waypoint.
-            if (deltaMovement * deltaMovement > distSqr)
-            {
-                deltaMovement = MathF.Sqrt(distSqr);
-            }
-
-            var xx = Direction.X * deltaMovement;
-            var yy = Direction.Z * deltaMovement;
-
-            Vector2 nextPos = new Vector2(Position.X + xx, Position.Y + yy);
-
-            Position = nextPos;
-
-            // (X, Y) have now moved to the next position
-            cur = Position;
-
-            // Check if we reached the next waypoint
-            // REVIEW (of previous code): (deltaMovement * 2) being used here is problematic; if the server lags, the diff will be much greater than the usual values
-            if ((cur - next).LengthSquared() < MOVEMENT_EPSILON * MOVEMENT_EPSILON)
-            {
-                var nextIndex = CurrentWaypoint.Key + 1;
-                // stop moving because we have reached our last waypoint
-                if (nextIndex >= Waypoints.Count)
+                while(true)
                 {
-                    ResetWaypoints();
+                    var dir = CurrentWaypoint - Position;
+                    var dist = dir.Length();
 
-                    return true;
-                }
-                // start moving to our next waypoint
-                else
-                {
-                    CurrentWaypoint = new KeyValuePair<int, Vector2>(nextIndex, Waypoints[nextIndex]);
+                    if(maxDist < dist)
+                    {
+                        Position += dir / dist * maxDist;
+                        return true;
+                    }
+                    else
+                    {
+                        Position = CurrentWaypoint;
+                        maxDist -= dist;
+
+                        CurrentWaypointKey++;
+                        if(CurrentWaypointKey == Waypoints.Count || maxDist == 0)
+                        {
+                            return true;
+                        }
+                    }
                 }
             }
-
-            return true;
-        }
-
-        /// <summary>
-        /// Returns the next waypoint. If all waypoints have been reached then this returns a -inf Vector2
-        /// </summary>
-        public Vector2 GetNextWaypoint()
-        {
-            if (CurrentWaypoint.Key < Waypoints.Count)
-            {
-                return CurrentWaypoint.Value;
-            }
-            return new Vector2(float.NegativeInfinity, float.NegativeInfinity);
+            return false;
         }
 
         /// <summary>
@@ -1217,7 +1155,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         public void ResetWaypoints()
         {
             Waypoints = new List<Vector2> { Position };
-            CurrentWaypoint = new KeyValuePair<int, Vector2>(1, Position);
+            CurrentWaypointKey = 1;
         }
 
         /// <summary>
@@ -1225,7 +1163,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// </summary>
         public bool IsPathEnded()
         {
-            return CurrentWaypoint.Key >= Waypoints.Count;
+            return CurrentWaypointKey >= Waypoints.Count;
         }
 
         /// <summary>
@@ -1253,7 +1191,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                 _movementUpdated = true;
             }
             Waypoints = newWaypoints;
-            CurrentWaypoint = new KeyValuePair<int, Vector2>(1, Waypoints[1]);
+            CurrentWaypointKey = 1;
         }
 
         /// <summary>
@@ -1826,6 +1764,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             if (MovementParameters != null && state == false)
             {
                 MovementParameters = null;
+                ResetWaypoints();
 
                 ///*
                 var animPairs = new Dictionary<string, string> { { "RUN", "" } };

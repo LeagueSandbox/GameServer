@@ -191,7 +191,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
                     }
                 }
 
-                for (int waypoint = u.CurrentWaypoint.Key; waypoint < u.Waypoints.Count; waypoint++)
+                for (int waypoint = u.CurrentWaypointKey; waypoint < u.Waypoints.Count; waypoint++)
                 {
                     var current = u.Waypoints[waypoint - 1];
 

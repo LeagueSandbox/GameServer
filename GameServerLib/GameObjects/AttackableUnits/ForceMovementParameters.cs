@@ -15,9 +15,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// </summary>
         public float ElapsedTime { get; set; } = 0;
         public float PassedDistance { get; set; } = 0;
-        public bool FlewOverUnit { get; set; } = false;
-        public Vector2 Direction { get; set; }
-        public float OverpassedDistance { get; set; } = 0;
         /// <summary>
         /// Speed to use for the movement.
         /// </summary>
@@ -51,15 +48,5 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// Maximum amount of time to follow the FollowNetID.
         /// </summary>
         public float FollowTravelTime { get; set; }
-
-        public void SetTimeElapsed(float time)
-        {
-            ElapsedTime = time;
-        }
-
-        public void SetDistancePassed(float dist)
-        {
-            PassedDistance = dist;
-        }
     }
 }
