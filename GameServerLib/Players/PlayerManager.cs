@@ -87,6 +87,11 @@ namespace LeagueSandbox.GameServer.Players
             return null;
         }
 
+        public ClientInfo GetClientInfoByPlayerId(long playerId)
+        {
+            return _players.Find(c => c.PlayerId == playerId);
+        }
+
         public ClientInfo GetClientInfoByChampion(IChampion champ)
         {
             return _players.Find(c => c.Champion == champ);

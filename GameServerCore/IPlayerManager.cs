@@ -10,8 +10,9 @@ namespace GameServerCore
     {
         void AddPlayer(IPlayerConfig config);
         void AddPlayer(ClientInfo info);
-        ClientInfo GetClientInfoByChampion(IChampion champ);
         ClientInfo GetPeerInfo(int userId);
+        ClientInfo GetClientInfoByPlayerId(long playerId);
+        ClientInfo GetClientInfoByChampion(IChampion champ);
         List<ClientInfo> GetPlayers(bool includeBots = false);
     }
 }

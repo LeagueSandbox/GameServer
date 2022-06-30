@@ -23,8 +23,6 @@ namespace GameServerCore.Packets.Handlers
         // every message (bridge->server or server->bridge) pass should pass here
         public bool OnMessage<T>(int userId, T req) where T: MessageType
         {
-            Console.WriteLine($"MESSAGE FROM {userId}");
-
             var handlerList = _handlers[req.GetType()];
             bool success = true;
             foreach (MessageHandler<T> handler in handlerList)

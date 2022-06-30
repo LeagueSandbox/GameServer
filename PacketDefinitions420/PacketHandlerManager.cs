@@ -136,20 +136,20 @@ namespace PacketDefinitions420
         private void PrintPacket(byte[] buffer, string str)
         {
             // FIXME: currently lock disabled, not needed?
-            Debug.Write(str);
+            Console.Write(str);
             foreach (var b in buffer)
             {
-                Debug.Write(b.ToString("X2") + " ");
+                Console.Write(b.ToString("X2") + " ");
             }
 
-            Debug.WriteLine("");
-            Debug.WriteLine("--------");
+            Console.WriteLine("");
+            Console.WriteLine("--------");
         }
 
         public bool SendPacket(int userId, byte[] source, Channel channelNo, PacketFlags flag = PacketFlags.RELIABLE)
         {
             // Sometimes we try to send packets to a user that doesn't exist (like in broadcast when not all players are connected).
-            if (0 <= userId && userId < _peers.Length)
+            if (0 <= userId && userId < _peers.Length && _peers[userId] != null)
             {
                 byte[] temp;
                 if (source.Length >= 8)
@@ -174,7 +174,7 @@ namespace PacketDefinitions420
                 int failedPeers = 0;
                 for(int i = 0; i < _peers.Length; i++)
                 {
-                    if(_peers[i].Send((byte)channelNo, new LENet.Packet(_blowfishes[i].Encrypt(data), flag)) < 0)
+                    if(_peers[i] != null && _peers[i].Send((byte)channelNo, new LENet.Packet(_blowfishes[i].Encrypt(data), flag)) < 0)
                     {
                         failedPeers++;
                     }
@@ -182,7 +182,7 @@ namespace PacketDefinitions420
 
                 if (failedPeers > 0)
                 {
-                    Debug.WriteLine($"Broadcasting packet failed for {failedPeers} peers.");
+                    Console.WriteLine($"Broadcasting packet failed for {failedPeers} peers.");
                     return false;
                 }
                 return true;
@@ -229,20 +229,20 @@ namespace PacketDefinitions420
             {
                 var loadScreenPacketId = (LoadScreenPacketID)reader.ReadByte();
                 convertor = GetConvertor(loadScreenPacketId);
-                Console.Write($"load -> {loadScreenPacketId}");
+                //Console.WriteLine($"load -> {loadScreenPacketId}");
             }
             else
             {
                 var gamePacketId = (GamePacketID)reader.ReadByte();
                 convertor = GetConvertor(gamePacketId, channelId);
-                Console.Write($"game -> {gamePacketId}");
+                //Console.WriteLine($"game -> {gamePacketId}");
             }
 
             reader.Close();
 
             if (convertor != null)
             {
-                int clientId = (int)peer.UserData;
+                int clientId = (int)peer.UserData - 1;
                 dynamic req = convertor(data);
                 _netReq.OnMessage(clientId, req);
                 return true;
@@ -254,11 +254,11 @@ namespace PacketDefinitions420
 
         public bool HandleDisconnect(Peer peer)
         {
-            int clientId = (int)peer.UserData;
+            int clientId = (int)peer.UserData - 1;
             var peerInfo = _game.PlayerManager.GetPeerInfo(clientId);
             if (peerInfo == null)
             {
-                Debug.WriteLine($"prevented double disconnect of {clientId}");
+                Console.WriteLine($"prevented double disconnect of {clientId}");
                 return true;
             }
             
@@ -282,7 +282,7 @@ namespace PacketDefinitions420
             // every packet that is not blowfish go here
             if (data.Length >= 8)
             {
-                int clientId = (int)peer.UserData;
+                int clientId = (int)peer.UserData - 1;
                 data = _blowfishes[clientId].Decrypt(data);
             }
 
@@ -293,48 +293,46 @@ namespace PacketDefinitions420
         {
             var request = PacketReader.ReadKeyCheckRequest(data);
 
-            if (!(0 <= request.ClientID && request.ClientID < _blowfishes.Length))
+            var peerInfo = _playerManager.GetClientInfoByPlayerId(request.PlayerID);
+            if (peerInfo == null)
             {
-                Debug.WriteLine($"Client ID {request.ClientID} is invalid.");
+                Console.WriteLine($"Player ID {request.PlayerID} is invalid.");
                 return false;
             }
 
-            long playerID = _blowfishes[request.ClientID].Decrypt(request.CheckSum);
+            if(_peers[peerInfo.ClientId] != null && !peerInfo.IsDisconnected)
+            {
+                Console.WriteLine($"Player {request.PlayerID} is already connected. Request from {peer.Address.IPEndPoint.Address.ToString()}.");
+                return false;
+            }
+
+            long playerID = _blowfishes[peerInfo.ClientId].Decrypt(request.CheckSum);
             if(request.PlayerID != playerID)
             {
-                Debug.WriteLine($"Blowfish key is wrong!");
-                return false;
-            }
-
-            var peerInfo = _playerManager.GetPeerInfo(request.ClientID);
-            // The ClientID has already been checked, so the peerInfo should not be null
-            if(!peerInfo.IsDisconnected)
-            {
-                Debug.WriteLine($"Client {request.ClientID} is already connected. Request from {peer.Address.ToString()}.");
+                Console.WriteLine($"Blowfish key is wrong!");
                 return false;
             }
 
             peerInfo.IsStartedClient = true;
 
-            Debug.WriteLine("Connected client No " + request.ClientID);      
+            Console.WriteLine("Connected client No " + peerInfo.ClientId);      
 
-            peer.UserData = (int)request.ClientID;
-            _peers[request.ClientID] = peer;
-
-            var response = new KeyCheckPacket
-            {
-                ClientID = request.ClientID,
-                PlayerID = request.PlayerID,
-                VersionNumber = request.VersionNo,
-                Action = 0,
-                CheckSum = request.CheckSum
-            };
+            peer.UserData = (int)peerInfo.ClientId + 1;
+            _peers[peerInfo.ClientId] = peer;
 
             bool result = true;
             // inform players about their player numbers
             foreach (var player in _playerManager.GetPlayers(false))
             {
-                result = result && SendPacket(player.ClientId, response.GetBytes(), Channel.CHL_HANDSHAKE);
+                var response = new KeyCheckPacket
+                {
+                    ClientID = player.ClientId,
+                    PlayerID = player.PlayerId,
+                    VersionNumber = request.VersionNo,
+                    Action = 0,
+                    CheckSum = request.CheckSum
+                };
+                result = result && SendPacket(peerInfo.ClientId, response.GetBytes(), Channel.CHL_HANDSHAKE);
             }
 
             // only if all packets were sent successfully return true

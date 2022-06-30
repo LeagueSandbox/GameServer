@@ -63,8 +63,6 @@ namespace PacketDefinitions420
             var enetEvent = new Event();
             while (_server.HostService(enetEvent, timeout) > 0)
             {
-                Console.WriteLine($"EVENT {enetEvent.Type}");
-
                 switch (enetEvent.Type)
                 {
                     case EventType.CONNECT:
