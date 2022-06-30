@@ -496,7 +496,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         {
             // False because we don't want this to be networked as a normal movement.
             SetWaypoints(new List<Vector2> { Position, target.Position }, false);
-            
+
             SetTargetUnit(target, true);
 
             // TODO: Take into account the rest of the arguments
@@ -514,22 +514,18 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 FollowTravelTime = travelTime
             };
 
-            ///*
             if (consideredCC)
             {
                 MovementParameters.SetStatus = StatusFlags.CanAttack | StatusFlags.CanCast | StatusFlags.CanMove;
             }
-            //*/
 
             SetDashingState(true);
 
-            ///*
             if (animation != null && animation != "")
             {
                 var animPairs = new Dictionary<string, string> { { "RUN", animation } };
                 SetAnimStates(animPairs);
             }
-            //*/
 
             // Movement is networked this way instead.
             // TODO: Verify if we want to use NotifyWaypointListWithSpeed instead as it does not require conversions.

@@ -353,13 +353,13 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             }
             if (IsMovementUpdated())
             {
-                if(MovementParameters != null)
+                if(MovementParameters == null)
                 {
-                //    _game.PacketNotifier.HoldMovementDataUntilWaypointGroupNotification(this, userId, false);
+                    _game.PacketNotifier.HoldMovementDataUntilWaypointGroupNotification(this, userId, false);
                 }
                 else
                 {
-                    _game.PacketNotifier.HoldMovementDataUntilWaypointGroupNotification(this, userId, false);
+                //    _game.PacketNotifier.HoldMovementDataWithSpeedUntilWaypointGroupNotification(this, userId, false);
                 }
             }
         }
@@ -1728,7 +1728,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
 
             if (consideredCC)
             {
-            //    MovementParameters.SetStatus = StatusFlags.CanAttack | StatusFlags.CanCast | StatusFlags.CanMove;
+                MovementParameters.SetStatus = StatusFlags.CanAttack | StatusFlags.CanCast | StatusFlags.CanMove;
             }
 
             SetDashingState(true);
@@ -1766,10 +1766,8 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                 MovementParameters = null;
                 ResetWaypoints();
 
-                ///*
                 var animPairs = new Dictionary<string, string> { { "RUN", "" } };
                 SetAnimStates(animPairs);
-                //*/
 
                 ApiEventManager.OnMoveEnd.Publish(this);
 
