@@ -182,7 +182,7 @@ namespace PacketDefinitions420
 
                 if (failedPeers > 0)
                 {
-                    Console.WriteLine($"Broadcasting packet failed for {failedPeers} peers.");
+                    Debug.WriteLine($"Broadcasting packet failed for {failedPeers} peers.");
                     return false;
                 }
                 return true;
@@ -229,36 +229,37 @@ namespace PacketDefinitions420
             {
                 var loadScreenPacketId = (LoadScreenPacketID)reader.ReadByte();
                 convertor = GetConvertor(loadScreenPacketId);
-                //Console.WriteLine($"load -> {loadScreenPacketId}");
             }
             else
             {
                 var gamePacketId = (GamePacketID)reader.ReadByte();
                 convertor = GetConvertor(gamePacketId, channelId);
-                //Console.WriteLine($"game -> {gamePacketId}");
             }
 
             reader.Close();
 
             if (convertor != null)
             {
-                int clientId = (int)peer.UserData - 1;
+                int clientId = ((int)peer.UserData) - 1;
                 dynamic req = convertor(data);
                 _netReq.OnMessage(clientId, req);
                 return true;
             }
 
+            #if DEBUG
             PrintPacket(data, "Error: ");
+            #endif
+
             return false;
         }
 
         public bool HandleDisconnect(Peer peer)
         {
-            int clientId = (int)peer.UserData - 1;
+            int clientId = ((int)peer.UserData) - 1;
             var peerInfo = _game.PlayerManager.GetPeerInfo(clientId);
             if (peerInfo == null)
             {
-                Console.WriteLine($"prevented double disconnect of {clientId}");
+                Debug.WriteLine($"prevented double disconnect of {clientId}");
                 return true;
             }
             
@@ -282,7 +283,7 @@ namespace PacketDefinitions420
             // every packet that is not blowfish go here
             if (data.Length >= 8)
             {
-                int clientId = (int)peer.UserData - 1;
+                int clientId = ((int)peer.UserData) - 1;
                 data = _blowfishes[clientId].Decrypt(data);
             }
 
@@ -296,26 +297,26 @@ namespace PacketDefinitions420
             var peerInfo = _playerManager.GetClientInfoByPlayerId(request.PlayerID);
             if (peerInfo == null)
             {
-                Console.WriteLine($"Player ID {request.PlayerID} is invalid.");
+                Debug.WriteLine($"Player ID {request.PlayerID} is invalid.");
                 return false;
             }
 
             if(_peers[peerInfo.ClientId] != null && !peerInfo.IsDisconnected)
             {
-                Console.WriteLine($"Player {request.PlayerID} is already connected. Request from {peer.Address.IPEndPoint.Address.ToString()}.");
+                Debug.WriteLine($"Player {request.PlayerID} is already connected. Request from {peer.Address.IPEndPoint.Address.ToString()}.");
                 return false;
             }
 
             long playerID = _blowfishes[peerInfo.ClientId].Decrypt(request.CheckSum);
             if(request.PlayerID != playerID)
             {
-                Console.WriteLine($"Blowfish key is wrong!");
+                Debug.WriteLine($"Blowfish key is wrong!");
                 return false;
             }
 
             peerInfo.IsStartedClient = true;
 
-            Console.WriteLine("Connected client No " + peerInfo.ClientId);      
+            Debug.WriteLine("Connected client No " + peerInfo.ClientId);      
 
             peer.UserData = (int)peerInfo.ClientId + 1;
             _peers[peerInfo.ClientId] = peer;
