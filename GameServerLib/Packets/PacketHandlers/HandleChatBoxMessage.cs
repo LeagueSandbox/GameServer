@@ -15,14 +15,13 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
         private readonly Game _game;
         private readonly ChatCommandManager _chatCommandManager;
         private readonly IPlayerManager _playerManager;
-        private readonly ILog _logger;
+        private static ILog _logger = LoggerProvider.GetLogger();
 
         public HandleChatBoxMessage(Game game)
         {
             _game = game;
             _chatCommandManager = game.ChatCommandManager;
             _playerManager = game.PlayerManager;
-            _logger = LoggerProvider.GetLogger();
         }
 
         public override bool HandlePacket(int userId, ChatMessageRequest req)

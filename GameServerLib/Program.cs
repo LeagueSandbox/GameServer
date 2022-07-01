@@ -12,7 +12,7 @@ namespace LeagueSandbox.GameServer
     public class GameServerLauncher
     {
         // Crucial Vars
-        private readonly ILog _logger;
+        private static ILog _logger = LoggerProvider.GetLogger();
         private readonly Server _server;
         public Game game;
 
@@ -39,7 +39,6 @@ namespace LeagueSandbox.GameServer
         {
             ConfigJson = configJson;
             ServerPort = serverPort;
-            _logger = LoggerProvider.GetLogger();
             game = new Game();
 
             _server = new Server(game, serverPort, configJson);

@@ -69,13 +69,12 @@ namespace LeagueSandbox.GameServer.API
     public static class ApiEventManager
     {
         private static Game _game;
-        private static ILog _logger;
+        private static ILog _logger = LoggerProvider.GetLogger();
         private static List<DispatcherBase> _dispatchers = new List<DispatcherBase>();
 
         internal static void SetGame(Game game)
         {
             _game = game;
-            _logger = LoggerProvider.GetLogger();
         }
 
         public static void RemoveAllListenersForOwner(object owner)

@@ -12,7 +12,8 @@ using LeagueSandbox.GameServer.API;
 using LeagueSandbox.GameServer.Inventory;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using System.Activities.Presentation.View;
-using static GameServerCore.Content.HashFunctions;
+using LeagueSandbox.GameServer.Logging;
+using log4net;
 
 namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 {
@@ -31,6 +32,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         protected AIState _aiState = AIState.AI_IDLE;
         protected bool _aiPaused;
         protected IPet _lastPetSpawned;
+        private static ILog _logger = LoggerProvider.GetLogger();
 
         /// <summary>
         /// Variable storing all the data related to this AI's current auto attack. *NOTE*: Will be deprecated as the spells system gets finished.
@@ -215,20 +217,30 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             }
 
             AIScript = game.ScriptEngine.CreateObject<IAIScript>($"AIScripts", aiScript) ?? new EmptyAIScript();
-            AIScript.OnActivate(this);
+            try
+            {
+                AIScript.OnActivate(this);
+            }
+            catch(Exception e)
+            {
+                _logger.Error(e);
+            }
         }
 
         public override void OnAdded()
         {
             base.OnAdded();
-
-            if (Spells.ContainsKey((int)SpellSlotType.PassiveSpellSlot))
+            try
             {
-                CharScript.OnActivate(this, Spells[(int)SpellSlotType.PassiveSpellSlot]);
+                CharScript.OnActivate(
+                    this, Spells.GetValueOrDefault<short, ISpell>(
+                        (int)SpellSlotType.PassiveSpellSlot
+                    )
+                );
             }
-            else
+            catch(Exception e)
             {
-                CharScript.OnActivate(this);
+                _logger.Error(e);
             }
         }
 
@@ -1057,11 +1069,25 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         public override void Update(float diff)
         {
             base.Update(diff);
+            try
+            {
+                CharScript.OnUpdate(diff);
+            }
+            catch(Exception e)
+            {
+                _logger.Error(e);
+            }
 
-            CharScript.OnUpdate(diff);
             if (!_aiPaused)
             {
-                AIScript.OnUpdate(diff);
+                try
+                {
+                    AIScript.OnUpdate(diff);
+                }
+                catch(Exception e)
+                {
+                    _logger.Error(e);
+                }
             }
 
             // bit of a hack
@@ -1122,7 +1148,14 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                         && Vector2.DistanceSquared(u.Position, attacker.Position) <= acquisitionRangeSquared
                     )
                     {
-                        u.AIScript.OnCallForHelp(attacker, this);
+                        try
+                        {
+                            u.AIScript.OnCallForHelp(attacker, this);
+                        }
+                        catch(Exception e)
+                        {
+                            _logger.Error(e);
+                        }
                     }
                 }
             }

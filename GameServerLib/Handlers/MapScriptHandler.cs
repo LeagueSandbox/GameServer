@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Numerics;
 using GameServerCore.Content;
 using GameServerCore.Domain;
@@ -9,7 +10,6 @@ using LeagueSandbox.GameServer.Logging;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using log4net;
 using MapScripts;
-using static LeagueSandbox.GameServer.API.ApiMapFunctionManager;
 using static GameServerCore.Content.HashFunctions;
 using GameServerCore.Scripting.CSharp;
 
@@ -23,7 +23,7 @@ namespace LeagueSandbox.GameServer.Handlers
         // Crucial Vars
         protected Game _game;
         public MapData _loadMapStructures;
-        private readonly ILog _logger;
+        private static ILog _logger = LoggerProvider.GetLogger();
 
         /// <summary>
         /// Unique identifier for the Map (ex: 1 = Old SR, 11 = New SR)
@@ -61,7 +61,6 @@ namespace LeagueSandbox.GameServer.Handlers
         public MapScriptHandler(Game game)
         {
             _game = game;
-            _logger = LoggerProvider.GetLogger();
             Id = _game.Config.GameConfig.Map;
 
             string scriptName = game.Config.GameConfig.GameMode;
@@ -143,7 +142,14 @@ namespace LeagueSandbox.GameServer.Handlers
                 }
             }
 
-            MapScript.Init(mapObjects);
+            try
+            {
+                MapScript.Init(mapObjects);
+            }
+            catch(Exception e)
+            {
+                _logger.Error(e);
+            }
         }
     }
 }

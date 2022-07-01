@@ -11,13 +11,12 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
     public class HandleClick : PacketHandlerBase<ClickRequest>
     {
         private readonly Game _game;
-        private readonly ILog _logger;
+        private static ILog _logger = LoggerProvider.GetLogger();
         private readonly IPlayerManager _playerManager;
 
         public HandleClick(Game game)
         {
             _game = game;
-            _logger = LoggerProvider.GetLogger();
             _playerManager = game.PlayerManager;
         }
 

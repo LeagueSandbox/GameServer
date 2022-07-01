@@ -11,13 +11,12 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
     {
         private readonly Game _game;
         private readonly IPlayerManager _playerManager;
-        private readonly ILog _logger;
+        private static ILog _logger = LoggerProvider.GetLogger();
 
         public HandleEmotion(Game game)
         {
             _game = game;
             _playerManager = game.PlayerManager;
-            _logger = LoggerProvider.GetLogger();
         }
 
         public override bool HandlePacket(int userId, EmotionPacketRequest req)

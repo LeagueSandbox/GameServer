@@ -12,7 +12,6 @@ namespace LeagueSandbox.GameServer.Content
     {
         public int ContentFormatVersion => Convert.ToInt32(MetaData["ContentFormatVersion"]);
         public string ResourcePath => Convert.ToString(MetaData["ResourcePath"]);
-        public string Name => Convert.ToString(MetaData["Name"]);
         public object Id => MetaData["Id"];
     }
 
@@ -28,7 +27,7 @@ namespace LeagueSandbox.GameServer.Content
     public class ItemContentCollection : ContentCollection
     {
         private Dictionary<int, ItemContentCollectionEntry> _items;
-        ILog _logger = LoggerProvider.GetLogger();
+        private static ILog _logger = LoggerProvider.GetLogger();
 
         public Dictionary<int, ItemContentCollectionEntry>.Enumerator GetEnumerator()
         {

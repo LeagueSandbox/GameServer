@@ -12,7 +12,7 @@ namespace LeagueSandbox.GameServer.Content
 {
     public class ContentManager : IPackage
     {
-        private readonly ILog _logger;
+        private static ILog _logger = LoggerProvider.GetLogger();
         private readonly Game _game;
 
         private readonly List<Package> _loadedPackages;
@@ -30,8 +30,6 @@ namespace LeagueSandbox.GameServer.Content
 
             _loadedPackages = new List<Package>();
             _dataPackageNames = new List<string> { dataPackageName };
-
-            _logger = LoggerProvider.GetLogger();
         }
 
         public static ContentManager LoadDataPackage(Game game, string dataPackageName, string contentPath)
@@ -54,7 +52,7 @@ namespace LeagueSandbox.GameServer.Content
             {
                 contentManager.LoadPackage(dataPackage);
 
-                contentManager._logger.Debug($"Loaded package with name: {dataPackage}");
+                _logger.Debug($"Loaded package with name: {dataPackage}");
             }
 
             return contentManager;

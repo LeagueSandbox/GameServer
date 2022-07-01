@@ -24,15 +24,10 @@ namespace LeagueSandbox.GameServer.Scripting.CSharp
     }
     public class CSharpScriptEngine
     {
-        private readonly ILog _logger;
+        private static ILog _logger = LoggerProvider.GetLogger();
         private static readonly string _assemblyName = "CSharpScriptEngine_Compiler";
         private readonly List<Assembly> _scriptAssembly = new List<Assembly>();
         private readonly Dictionary<string, Type> _types = new Dictionary<string, Type>();
-
-        public CSharpScriptEngine()
-        {
-            _logger = LoggerProvider.GetLogger();
-        }
 
         public CompilationStatus LoadSubDirectoryScripts(string folder)
         {

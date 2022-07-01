@@ -8,7 +8,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
 {
     public class CoordsCommand : ChatCommandBase
     {
-        private readonly ILog _logger;
+        private static ILog _logger = LoggerProvider.GetLogger();
         private readonly IPlayerManager _playerManager;
 
         public override string Command => "coords";
@@ -17,7 +17,6 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
         public CoordsCommand(ChatCommandManager chatCommandManager, Game game)
             : base(chatCommandManager, game)
         {
-            _logger = LoggerProvider.GetLogger();
             _playerManager = game.PlayerManager;
         }
 

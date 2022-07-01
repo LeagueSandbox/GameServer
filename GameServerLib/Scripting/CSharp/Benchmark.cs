@@ -9,12 +9,7 @@ namespace LeagueSandbox.GameServer.Scripting.CSharp
     public class Benchmark
     {
         private IDictionary<string, Stopwatch> _map = new Dictionary<string, Stopwatch>();
-        private readonly ILog _logger;
-
-        public Benchmark(Game game)
-        {
-            _logger = LoggerProvider.GetLogger();
-        }
+        private static ILog _logger = LoggerProvider.GetLogger();
 
         public void StartTiming(string label)
         {

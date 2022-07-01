@@ -13,7 +13,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
 {
     public class DebugParticlesCommand : ChatCommandBase
     {
-        private readonly ILog _logger;
+        private static ILog _logger = LoggerProvider.GetLogger();
         private readonly IPlayerManager _playerManager;
         private readonly Game _game;
         private float lastDrawTime;
@@ -36,7 +36,6 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
         public DebugParticlesCommand(ChatCommandManager chatCommandManager, Game game)
             : base(chatCommandManager, game)
         {
-            _logger = LoggerProvider.GetLogger();
             _playerManager = game.PlayerManager;
             _game = game;
             lastDrawTime = _game.GameTime;
