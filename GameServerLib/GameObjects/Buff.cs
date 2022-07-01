@@ -212,7 +212,7 @@ namespace LeagueSandbox.GameServer.GameObjects
                 {
                     try
                     {
-                        BuffScript?.OnUpdate(diff);
+                        BuffScript.OnUpdate(diff);
                     }
                     catch(Exception e)
                     {
