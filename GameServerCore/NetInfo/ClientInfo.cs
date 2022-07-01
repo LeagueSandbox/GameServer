@@ -8,7 +8,13 @@ namespace GameServerCore.NetInfo
         public long PlayerId { get; private set; }
         public int ClientId { get; set; }
         public bool IsMatchingVersion { get; set; }
+        /// <summary>
+        /// False if the client sent a StartGame request.
+        /// </summary>
         public bool IsDisconnected { get; set; }
+        /// <summary>
+        /// True if the client sent a Handshake request.
+        /// </summary>
         public bool IsStartedClient { get; set; }
         public int SkinNo { get; private set; }
         public string[] SummonerSkills { get; private set; }
@@ -44,10 +50,10 @@ namespace GameServerCore.NetInfo
             Icon = icon;
             SkinNo = skinNo;
             IsMatchingVersion = true;
-            IsDisconnected = false;
             Name = name;
             SummonerSkills = summonerSkills;
             PlayerId = playerId;
+            IsDisconnected = true;
             IsStartedClient = false;
         }
     }

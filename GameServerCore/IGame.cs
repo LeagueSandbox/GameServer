@@ -38,5 +38,11 @@ namespace GameServerCore
         /// Interface of functions containing value assignments for packets sent from the server to clients.
         /// </summary>
         IPacketNotifier PacketNotifier { get; }
+
+        /// <summary>
+        /// Checks for the presence of players on the server and if there are none, ends the game.
+        /// </summary>
+        /// <returns>true if no one is left.</returns>
+        bool CheckIfAllPlayersLeft();
     }
 }

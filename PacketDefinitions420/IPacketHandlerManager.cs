@@ -17,5 +17,6 @@ namespace PacketDefinitions420
         bool HandlePacket(Peer peer, Packet packet, Channel channelId);
         bool SendPacket(int userId, byte[] source, Channel channelNo, PacketFlags flag = PacketFlags.RELIABLE);
         bool HandleDisconnect(Peer peer);
+        bool HandleDisconnect(int clientId);
     }
 }

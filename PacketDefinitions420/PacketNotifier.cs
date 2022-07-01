@@ -3919,7 +3919,7 @@ namespace PacketDefinitions420
         /// <param name="isGlobal">Whether or not the packet should be sent to all players.</param>
         /// <param name="sourceId">ID of the user who dealt the damage that should receive the packet.</param>
         /// <param name="targetId">ID of the user who is taking the damage that should receive the packet.</param>
-        public void NotifyUnitApplyDamage(IAttackableUnit source, IAttackableUnit target, float amount, DamageType type, DamageResultType damagetext, bool isGlobal = true, int sourceId = 0, int targetId = 0)
+        public void NotifyUnitApplyDamage(IAttackableUnit source, IAttackableUnit target, float amount, DamageType type, DamageResultType damagetext, bool isGlobal = true, int sourceId = -1, int targetId = -1)
         {
             var damagePacket = new UnitApplyDamage
             {
@@ -3937,11 +3937,11 @@ namespace PacketDefinitions420
             }
             else
             {
-                if (sourceId > 0)
+                if (sourceId >= 0)
                 {
                     _packetHandlerManager.SendPacket(sourceId, damagePacket.GetBytes(), Channel.CHL_S2C);
                 }
-                if (targetId > 0)
+                if (targetId >= 0)
                 {
                     _packetHandlerManager.SendPacket(targetId, damagePacket.GetBytes(), Channel.CHL_S2C);
                 }

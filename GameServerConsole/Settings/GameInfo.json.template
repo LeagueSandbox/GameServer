@@ -78,5 +78,6 @@
         "MINION_SPAWNS_ENABLED": false,
         "CONTENT_PATH": "../../../../../Content",
         "IS_DAMAGE_TEXT_GLOBAL": false
-    }
+    },
+    "forcedStart": 60
 }
