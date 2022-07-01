@@ -190,6 +190,7 @@ namespace PacketDefinitions420
             else
             {
                 var packet = new LENet.Packet(data, flag);
+
                 _server.Broadcast((byte)channelNo, packet);
                 return true;
             }

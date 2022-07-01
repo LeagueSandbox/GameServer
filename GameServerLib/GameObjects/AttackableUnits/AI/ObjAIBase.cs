@@ -290,25 +290,33 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
         public override bool CanMove()
         {
-            return (!IsDead
-                && MovementParameters != null)
-                || (Status.HasFlag(StatusFlags.CanMove) && Status.HasFlag(StatusFlags.CanMoveEver)
+            return !IsDead && (
+                Status.HasFlag(StatusFlags.CanMove) && Status.HasFlag(StatusFlags.CanMoveEver)
                 && (MoveOrder != OrderType.CastSpell && _castingSpell == null)
                 && (ChannelSpell == null || (ChannelSpell != null && ChannelSpell.SpellData.CanMoveWhileChanneling))
                 && (!IsAttacking || !AutoAttackSpell.SpellData.CantCancelWhileWindingUp)
-                && !(Status.HasFlag(StatusFlags.Netted)
-                || Status.HasFlag(StatusFlags.Rooted)
-                || Status.HasFlag(StatusFlags.Sleep)
-                || Status.HasFlag(StatusFlags.Stunned)
-                || Status.HasFlag(StatusFlags.Suppressed)));
+                && !(
+                    Status.HasFlag(StatusFlags.Netted)
+                    || Status.HasFlag(StatusFlags.Rooted)
+                    || Status.HasFlag(StatusFlags.Sleep)
+                    || Status.HasFlag(StatusFlags.Stunned)
+                    || Status.HasFlag(StatusFlags.Suppressed)
+                )
+            );
         }
 
         public override bool CanChangeWaypoints()
         {
             return !IsDead
-                && (MovementParameters == null || (MovementParameters != null && MovementParameters.FollowNetID != 0))
-                && _castingSpell == null
-                && (ChannelSpell == null || (ChannelSpell != null && !ChannelSpell.SpellData.CantCancelWhileChanneling));
+            && MovementParameters == null
+            && _castingSpell == null
+            && (
+                ChannelSpell == null
+                || (
+                    ChannelSpell != null
+                    && !ChannelSpell.SpellData.CantCancelWhileChanneling
+                )
+            );
         }
 
         /// <summary>
@@ -499,6 +507,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             bool consideredCC = true
         )
         {
+            // False because we don't want this to be networked as a normal movement.
             SetWaypoints(new List<Vector2> { Position, target.Position }, false);
 
             SetTargetUnit(target, true);
@@ -523,8 +532,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 MovementParameters.SetStatus = StatusFlags.CanAttack | StatusFlags.CanCast | StatusFlags.CanMove;
             }
 
-            _game.PacketNotifier.NotifyWaypointGroupWithSpeed(this);
-
             SetDashingState(true);
 
             if (animation != null && animation != "")
@@ -533,7 +540,11 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 SetAnimStates(animPairs);
             }
 
+            // Movement is networked this way instead.
             // TODO: Verify if we want to use NotifyWaypointListWithSpeed instead as it does not require conversions.
+            //_game.PacketNotifier.NotifyWaypointListWithSpeed(this, dashSpeed, leapGravity, keepFacingLastDirection, target, followTargetMaxDistance, backDistance, travelTime);
+            _game.PacketNotifier.NotifyWaypointGroupWithSpeed(this);
+            _movementUpdated = false;
         }
 
         /// <summary>

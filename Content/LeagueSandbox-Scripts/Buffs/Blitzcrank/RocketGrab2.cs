@@ -20,8 +20,8 @@ namespace Buffs
         public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
             buff.SetStatusEffect(StatusFlags.CanAttack | StatusFlags.CanMove | StatusFlags.CanCast, false);
-
-            ForceMovement(unit, "RUN", buff.SourceUnit.Position, 1800f, 0, 5.0f, 0, movementOrdersType: ForceMovementOrdersType.CANCEL_ORDER);
+            //ForceMovement(unit, "RUN", buff.SourceUnit.Position, 1800f, 0, 5.0f, 0, movementOrdersType: ForceMovementOrdersType.CANCEL_ORDER);
+            ForceMovement(unit as IObjAiBase, buff.SourceUnit, "RUN", 1800f, 0, 5.0f, 0, 0, movementOrdersType: ForceMovementOrdersType.CANCEL_ORDER);
         }
 
         // TODO: Use OnMoveEnd event and call this manually.

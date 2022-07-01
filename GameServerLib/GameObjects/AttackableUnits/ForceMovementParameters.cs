@@ -13,7 +13,8 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// <summary>
         /// Amount of time passed since the unit started dashing.
         /// </summary>
-        public float ElapsedTime { get; set; }
+        public float ElapsedTime { get; set; } = 0;
+        public float PassedDistance { get; set; } = 0;
         /// <summary>
         /// Speed to use for the movement.
         /// </summary>
@@ -47,10 +48,5 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// Maximum amount of time to follow the FollowNetID.
         /// </summary>
         public float FollowTravelTime { get; set; }
-
-        public void SetTimeElapsed(float time)
-        {
-            ElapsedTime = time;
-        }
     }
 }

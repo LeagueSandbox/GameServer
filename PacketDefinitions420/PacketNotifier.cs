@@ -3826,9 +3826,10 @@ namespace PacketDefinitions420
         /// <param name="position">Position the unit teleported to.</param>
         public void NotifyTeleport(IAttackableUnit unit, Vector2 position)
         {
+            int ticks = Environment.TickCount;
             var md = new MovementDataNormal()
             {
-                SyncID = unit.SyncId,
+                SyncID = ticks,
                 TeleportNetID = unit.NetId,
                 HasTeleportID = true,
                 TeleportID = unit.TeleportID,
@@ -3837,7 +3838,7 @@ namespace PacketDefinitions420
 
             var wpGroup = new WaypointGroup()
             {
-                SyncID = Environment.TickCount,
+                SyncID = ticks,
                 Movements = new List<MovementDataNormal> { md }
             };
 
@@ -4216,17 +4217,14 @@ namespace PacketDefinitions420
         /// </summary>
         /// <param name="u">Unit that is dashing.</param>
         /// TODO: Implement ForceMovement class which houses these parameters, then have that as the only parameter to this function (and other Dash-based functions).
-        public void NotifyWaypointGroupWithSpeed
-        (
-            IAttackableUnit u
-        )
+        public void NotifyWaypointGroupWithSpeed(IAttackableUnit u)
         {
             // TODO: Implement Dash class and house a List of these with waypoints.
             var md = PacketExtensions.CreateMovementDataWithSpeed(u, _navGrid);
 
             var speedWpGroup = new WaypointGroupWithSpeed
             {
-                SyncID = u.SyncId,
+                SyncID = Environment.TickCount,
                 // TOOD: Implement support for multiple speed-based movements (functionally known as dashes).
                 Movements = new List<MovementDataWithSpeed> { md }
             };
@@ -4242,8 +4240,7 @@ namespace PacketDefinitions420
         {
             var wpList = new WaypointList
             {
-                SenderNetID = unit.NetId,
-                SyncID = unit.SyncId,
+                SyncID = Environment.TickCount,
                 Waypoints = unit.Waypoints
             };
 
@@ -4258,8 +4255,7 @@ namespace PacketDefinitions420
         {
             var wpList = new WaypointList
             {
-                SenderNetID = obj.NetId,
-                SyncID = obj.SyncId,
+                SyncID = Environment.TickCount,
                 Waypoints = waypoints
             };
 
@@ -4313,8 +4309,7 @@ namespace PacketDefinitions420
 
             var speedWpGroup = new WaypointListHeroWithSpeed
             {
-                SenderNetID = u.NetId,
-                SyncID = u.SyncId,
+                SyncID = Environment.TickCount,
                 // TOOD: Implement support for multiple speed-based movements (functionally known as dashes).
                 WaypointSpeedParams = speeds,
                 Waypoints = u.Waypoints
@@ -4334,7 +4329,6 @@ namespace PacketDefinitions420
             var answer = new World_SendCamera_Server_Acknologment
             {
                 //TODO: Check these values
-                SenderNetID = client.Champion.NetId,
                 SyncID = request.SyncID,
             };
             _packetHandlerManager.SendPacket(client.ClientId, answer.GetBytes(), Channel.CHL_S2C, PacketFlags.NONE);
