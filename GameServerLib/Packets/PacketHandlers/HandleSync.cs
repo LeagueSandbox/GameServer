@@ -9,13 +9,12 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 {
     public class HandleSync : PacketHandlerBase<SynchVersionRequest>
     {
-        private readonly ILog _logger;
+        private static ILog _logger = LoggerProvider.GetLogger();
         private readonly Game _game;
         private readonly IPlayerManager _playerManager;
 
         public HandleSync(Game game)
         {
-            _logger = LoggerProvider.GetLogger();
             _game = game;
             _playerManager = game.PlayerManager;
         }

@@ -24,7 +24,7 @@ namespace LeagueSandbox.GameServer.API
     {
         // Required variables.
         private static Game _game;
-        private static ILog _logger;
+        private static ILog _logger = LoggerProvider.GetLogger();
 
         /// <summary>
         /// Converts the given string of hex values into an array of bytes.
@@ -48,7 +48,6 @@ namespace LeagueSandbox.GameServer.API
         internal static void SetGame(Game game)
         {
             _game = game;
-            _logger = LoggerProvider.GetLogger();
         }
 
         /// <summary>

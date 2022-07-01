@@ -16,7 +16,7 @@ namespace LeagueSandbox.GameServer
     {
         private string[] _blowfishKeys;
         private string _serverVersion = "0.2.0";
-        private readonly ILog _logger;
+        private static ILog _logger = LoggerProvider.GetLogger();
         private Game _game;
         private Config _config;
         private ushort _serverPort { get; }
@@ -26,7 +26,6 @@ namespace LeagueSandbox.GameServer
         /// </summary>
         public Server(Game game, ushort port, string configJson)
         {
-            _logger = LoggerProvider.GetLogger();
             _game = game;
             _serverPort = port;
             _config = Config.LoadFromJson(game, configJson);

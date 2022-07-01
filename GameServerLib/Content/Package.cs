@@ -25,7 +25,7 @@ namespace LeagueSandbox.GameServer.Content
         private readonly Dictionary<string, ItemData> _itemData = new Dictionary<string, ItemData>();
 
         private readonly Game _game;
-        private readonly ILog _logger;
+        private static ILog _logger = LoggerProvider.GetLogger();
 
         private readonly Dictionary<string, Dictionary<string, List<string>>> _content = new Dictionary<string, Dictionary<string, List<string>>>();
 
@@ -42,9 +42,7 @@ namespace LeagueSandbox.GameServer.Content
         public Package(string packagePath, Game game)
         {
             PackagePath = packagePath;
-
             _game = game;
-            _logger = LoggerProvider.GetLogger();
         }
 
         public void LoadPackage(string packageName)
@@ -374,7 +372,7 @@ namespace LeagueSandbox.GameServer.Content
 
             if (!File.Exists(navigationGridPath))
             {
-                this._logger.Debug($"{this.PackageName} does not contain a navgrid, skipping...");
+                _logger.Debug($"{this.PackageName} does not contain a navgrid, skipping...");
                 return null;
             }
 

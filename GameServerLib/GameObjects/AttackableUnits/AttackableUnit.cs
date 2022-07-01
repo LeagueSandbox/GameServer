@@ -28,7 +28,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         private float _statUpdateTimer;
         private object _buffsLock;
         private IDeathData _death;
-        protected readonly ILog Logger;
+        private static ILog _logger = LoggerProvider.GetLogger();
 
         //TODO: Find out where this variable came from and if it can be unhardcoded
         internal const float DETECT_RANGE = 475.0f;
@@ -128,7 +128,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         ) : base(game, position, collisionRadius, collisionRadius, visionRadius, netId, team)
 
         {
-            Logger = LoggerProvider.GetLogger();
             Model = model;
 
             CharData = _game.Config.ContentManager.GetCharData(Model);

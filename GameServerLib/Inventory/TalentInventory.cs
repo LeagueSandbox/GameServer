@@ -12,7 +12,7 @@ namespace LeagueSandbox.GameServer.Inventory
     public class TalentInventory : ITalentInventory
     {
         public List<ITalent> Talents { get; } = new List<ITalent>();
-        ILog _logger = LoggerProvider.GetLogger();
+        private static ILog _logger = LoggerProvider.GetLogger();
 
         public void Add(string talentId, byte level)
         {

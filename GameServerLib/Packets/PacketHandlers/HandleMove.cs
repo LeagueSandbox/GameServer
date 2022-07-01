@@ -22,12 +22,12 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
         public override bool HandlePacket(int userId, MovementRequest req)
         {
             var peerInfo = _playerManager.GetPeerInfo(userId);
-            var champion = peerInfo?.Champion;
             if (peerInfo == null)
             {
                 return true;
             }
 
+            var champion = peerInfo.Champion;
             if (champion.MovementParameters == null)
             {
                 // Last waypoint position

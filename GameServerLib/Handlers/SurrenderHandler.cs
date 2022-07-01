@@ -17,7 +17,7 @@ namespace LeagueSandbox.GameServer.Handlers
     {
         private Dictionary<IChampion, bool> _votes = new Dictionary<IChampion, bool>();
         private Game _game;
-        private ILog _log;
+        private static ILog _logger = LoggerProvider.GetLogger();
         private bool toEnd = false;
         private float toEndTimer = 3000.0f;
 
@@ -31,7 +31,6 @@ namespace LeagueSandbox.GameServer.Handlers
         // TODO: The first two parameters are in milliseconds, the third is seconds. QoL fix this?
         public SurrenderHandler(Game g, TeamId team, float minTime, float restTime, float length)
         {
-            _log = LoggerProvider.GetLogger();
             _game = g;
             Team = team;
             SurrenderMinimumTime = minTime;
@@ -74,7 +73,7 @@ namespace LeagueSandbox.GameServer.Handlers
             var players = _game.PlayerManager.GetPlayers(false);
             int total = players.Count;
 
-            _log.Info($"Champion {who.Model} voted {vote}. Currently {voteCounts.Item1} yes votes, {voteCounts.Item2} no votes, with {total} total players");
+            _logger.Info($"Champion {who.Model} voted {vote}. Currently {voteCounts.Item1} yes votes, {voteCounts.Item2} no votes, with {total} total players");
 
             _game.PacketNotifier.NotifyTeamSurrenderVote(who, open, vote, (byte)voteCounts.Item1, (byte)voteCounts.Item2, (byte)total, SurrenderLength);
 
@@ -115,7 +114,7 @@ namespace LeagueSandbox.GameServer.Handlers
                     INexus ourNexus = (INexus)_game.ObjectManager.GetObjects().First(o => o.Value is INexus && o.Value.Team == Team).Value;
                     if (ourNexus == null)
                     {
-                        _log.Error("Unable to surrender correctly, couldn't find the nexus!");
+                        _logger.Error("Unable to surrender correctly, couldn't find the nexus!");
                         return;
                     }
                     ourNexus.Die(null);

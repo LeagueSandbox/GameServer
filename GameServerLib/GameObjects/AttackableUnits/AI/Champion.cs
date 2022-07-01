@@ -12,14 +12,16 @@ using LeagueSandbox.GameServer.API;
 using LeaguePackets.Game.Events;
 using System;
 using GameServerLib.GameObjects.AttackableUnits;
-using static GameServerCore.Content.HashFunctions;
 using GameServerCore.Scripting.CSharp;
+using LeagueSandbox.GameServer.Logging;
+using log4net;
 
 namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 {
     public class Champion : ObjAiBase, IChampion
     {
         private float _championHitFlagTimer;
+        private static ILog _logger = LoggerProvider.GetLogger();
         /// <summary>
         /// Player number ordered by the config file.
         /// </summary>
@@ -185,12 +187,13 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             {
                 return _game.Map.PlayerSpawnPoints[Team][1][1];
             }
-
+            //TODO: wrap in try {} catch
             return _game.Map.MapScript.GetFountainPosition(Team);
         }
 
         public Vector2 GetRespawnPosition()
         {
+            //TODO: wrap in try {} catch
             return _game.Map.MapScript.GetFountainPosition(Team);
         }
 
@@ -237,7 +240,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             else if (!Stats.IsGeneratingGold && _game.GameTime >= _game.Map.MapScript.MapScriptMetadata.AIVars.AmbientGoldDelay * 1000f)
             {
                 Stats.IsGeneratingGold = true;
-                Logger.Debug("Generating Gold!");
+                _logger.Debug("Generating Gold!");
             }
 
             if (RespawnTimer > 0)
@@ -327,7 +330,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
             if (stats.Level < _game.Map.MapScript.MapScriptMetadata.MaxLevel && (stats.Level < 1 || (stats.Experience >= expMap[stats.Level - 1]))) //The - 1s is there because the XP files don't have level 1
             {
-                Logger.Debug("Champion " + Model + " leveled up to " + stats.Level);
+                _logger.Debug("Champion " + Model + " leveled up to " + stats.Level);
                 if (stats.Level <= 18)
                 {
                     SkillPoints++;
@@ -389,7 +392,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             if (cKiller == null && _championHitFlagTimer > 0)
             {
                 cKiller = _game.ObjectManager.GetObjectById(_playerHitId) as Champion;
-                Logger.Debug("Killed by turret, minion or monster, but still  give gold to the enemy.");
+                _logger.Debug("Killed by turret, minion or monster, but still  give gold to the enemy.");
             }
 
             if (cKiller == null)

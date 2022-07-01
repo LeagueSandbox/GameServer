@@ -1,11 +1,12 @@
 ﻿using LeagueSandbox.GameServer.Logging;
 using log4net;
+using System;
 
 namespace LeagueSandbox.GameServer.Chatbox.Commands
 {
     public class JunglespawnCommand : ChatCommandBase
     {
-        private readonly ILog _logger;
+        private static ILog _logger = LoggerProvider.GetLogger();
         private readonly Game _game;
 
         public override string Command => "junglespawn";
@@ -14,13 +15,19 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
         public JunglespawnCommand(ChatCommandManager chatCommandManager, Game game)
             : base(chatCommandManager, game)
         {
-            _logger = LoggerProvider.GetLogger();
             _game = game;
         }
 
         public override void Execute(int userId, bool hasReceivedArguments, string arguments = "")
         {
-            _game.Map.MapScript.SpawnAllCamps();
+            try
+            {
+                _game.Map.MapScript.SpawnAllCamps();
+            }
+            catch(Exception e)
+            {
+                _logger.Error(e);
+            }
             _logger.Info($"{ChatCommandManager.CommandStarterCharacter}{Command} Jungle Spawned!");
             ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.NORMAL, "Jungle Spawned!");
         }

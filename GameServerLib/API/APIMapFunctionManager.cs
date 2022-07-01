@@ -23,7 +23,7 @@ namespace LeagueSandbox.GameServer.API
     {
         // Required variables.
         private static Game _game;
-        private static ILog _logger;
+        private static ILog _logger = LoggerProvider.GetLogger();
         private static MapScriptHandler _map;
 
         /// <summary>
@@ -35,7 +35,6 @@ namespace LeagueSandbox.GameServer.API
         {
             _game = game;
             _map = mapScriptHandler;
-            _logger = LoggerProvider.GetLogger();
         }
 
         public static void AddProtection(IAttackableUnit unit, IAttackableUnit[] dependOnAll, IAttackableUnit[] dependOnSingle)

@@ -10,6 +10,8 @@ using GameServerCore.Scripting.CSharp;
 using GameServerCore.Domain;
 using LeagueSandbox.GameServer.GameObjects.Stats;
 using static GameServerCore.Content.HashFunctions;
+using LeagueSandbox.GameServer.Logging;
+using log4net;
 
 namespace LeagueSandbox.GameServer.GameObjects
 {
@@ -17,6 +19,7 @@ namespace LeagueSandbox.GameServer.GameObjects
     {
         // Crucial Vars.
         private readonly Game _game;
+        private static ILog _logger = LoggerProvider.GetLogger();
 
         // Function Vars.
         private readonly bool _infiniteDuration;
@@ -108,7 +111,14 @@ namespace LeagueSandbox.GameServer.GameObjects
         {
             _remove = false;
 
-            BuffScript.OnActivate(TargetUnit, this, OriginSpell);
+            try
+            {
+                BuffScript.OnActivate(TargetUnit, this, OriginSpell);
+            }
+            catch(Exception e)
+            {
+                _logger.Error(e);
+            }
         }
 
         public void DeactivateBuff()
@@ -119,7 +129,14 @@ namespace LeagueSandbox.GameServer.GameObjects
             }
             _remove = true; // To prevent infinite loop with OnDeactivate calling events
 
-            BuffScript.OnDeactivate(TargetUnit, this, OriginSpell);
+            try
+            {
+                BuffScript.OnDeactivate(TargetUnit, this, OriginSpell);
+            }
+            catch(Exception e)
+            {
+                _logger.Error(e);
+            }
 
             ApiEventManager.RemoveAllListenersForOwner(BuffScript);
 
@@ -193,7 +210,14 @@ namespace LeagueSandbox.GameServer.GameObjects
                 TimeElapsed += diff / 1000.0f;
                 if (Math.Abs(Duration) > Extensions.COMPARE_EPSILON)
                 {
-                    BuffScript?.OnUpdate(diff);
+                    try
+                    {
+                        BuffScript.OnUpdate(diff);
+                    }
+                    catch(Exception e)
+                    {
+                        _logger.Error(e);
+                    }
                     if (TimeElapsed >= Duration)
                     {
                         DeactivateBuff();

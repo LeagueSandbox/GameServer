@@ -10,7 +10,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 {
     public class HandleSpawn : PacketHandlerBase<SpawnRequest>
     {
-        private readonly ILog _logger;
+        private static ILog _logger = LoggerProvider.GetLogger();
         private readonly Game _game;
         private readonly ItemManager _itemManager;
         private readonly IPlayerManager _playerManager;
@@ -18,7 +18,6 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 
         public HandleSpawn(Game game)
         {
-            _logger = LoggerProvider.GetLogger();
             _game = game;
             _itemManager = game.ItemManager;
             _playerManager = game.PlayerManager;

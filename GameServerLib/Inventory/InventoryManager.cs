@@ -2,11 +2,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Numerics;
 using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Packets.Interfaces;
-using LeagueSandbox.GameServer.Scripting.CSharp;
+using LeagueSandbox.GameServer.Logging;
+using log4net;
 
 namespace LeagueSandbox.GameServer.Inventory
 {
@@ -14,6 +14,7 @@ namespace LeagueSandbox.GameServer.Inventory
     {
         private readonly IPacketNotifier _packetNotifier;
         private readonly Inventory _inventory;
+        private static ILog _logger = LoggerProvider.GetLogger();
 
         private InventoryManager(IPacketNotifier packetNotifier)
         {
@@ -183,7 +184,14 @@ namespace LeagueSandbox.GameServer.Inventory
         {
             foreach (var item in _inventory.ItemScripts)
             {
-                item.Value.OnUpdate(diff);
+                try
+                {
+                    item.Value.OnUpdate(diff);
+                }
+                catch(Exception e)
+                {
+                    _logger.Error(e);
+                }
             }
         }
     }

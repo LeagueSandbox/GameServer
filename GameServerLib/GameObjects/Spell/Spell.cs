@@ -17,6 +17,8 @@ using System.Collections.Generic;
 using System.Numerics;
 using LeagueSandbox.GameServer.Content;
 using static GameServerCore.Content.HashFunctions;
+using LeagueSandbox.GameServer.Logging;
+using log4net;
 
 namespace LeagueSandbox.GameServer.GameObjects.Spell
 {
@@ -27,6 +29,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
         private readonly NetworkIdManager _networkIdManager;
         private float _overrrideCastRange;
         private AttackType _attackType;
+        private static ILog _logger = LoggerProvider.GetLogger();
 
         /// <summary>
         /// General information about this spell when it is cast. Refer to CastInfo class.
@@ -162,7 +165,14 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
             }
 
             //Activate spell - Notes: Deactivate is never called as spell removal hasn't been added
-            Script.OnActivate(CastInfo.Owner, this);
+            try
+            {
+                Script.OnActivate(CastInfo.Owner, this);
+            }
+            catch(Exception e)
+            {
+                _logger.Error(e);
+            }
         }
 
         public void ApplyEffects(IAttackableUnit u, ISpellMissile m = null, ISpellSector s = null)
@@ -426,7 +436,14 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
                 CastInfo.Owner.SetTargetUnit(unit, true);
             }
 
-            Script.OnSpellPreCast(CastInfo.Owner, this, unit, start, end);
+            try
+            {
+                Script.OnSpellPreCast(CastInfo.Owner, this, unit, start, end);
+            }
+            catch(Exception e)
+            {
+                _logger.Error(e);
+            }
 
             if (_game.Config.GameFeatures.HasFlag(FeatureFlags.EnableManaCosts))
             {
@@ -571,7 +588,14 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
             var start = new Vector2(CastInfo.TargetPosition.X, CastInfo.TargetPosition.Z);
             var end = new Vector2(CastInfo.TargetPositionEnd.X, CastInfo.TargetPositionEnd.Z);
 
-            Script.OnSpellPreCast(CastInfo.Owner, this, castInfo.Targets[0].Unit, start, end);
+            try
+            {
+                Script.OnSpellPreCast(CastInfo.Owner, this, castInfo.Targets[0].Unit, start, end);
+            }
+            catch(Exception e)
+            {
+                _logger.Error(e);
+            }
 
             var stats = CastInfo.Owner.Stats;
 
@@ -1057,7 +1081,14 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
                 CastInfo.Owner.SetSpellToCast(null, Vector2.Zero);
             }
 
-            Script.OnDeactivate(CastInfo.Owner, this);
+            try
+            {
+                Script.OnDeactivate(CastInfo.Owner, this);
+            }
+            catch(Exception e)
+            {
+                _logger.Error(e);
+            }
         }
 
         /// <summary>
@@ -1545,7 +1576,14 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
         {
             if (!HasEmptyScript)
             {
-                Script.OnUpdate(diff);
+                try
+                {
+                    Script.OnUpdate(diff);
+                }
+                catch(Exception e)
+                {
+                    _logger.Error(e);
+                }
             }
 
             switch (State)

@@ -37,7 +37,7 @@ namespace LeagueSandbox.GameServer
         private List<GameScriptTimer> _gameScriptTimers;
 
         // Function Vars
-        private readonly ILog _logger;
+        private static ILog _logger = LoggerProvider.GetLogger();
         private float _nextSyncTime = 10 * 1000;
         protected const double REFRESH_RATE = 1000.0 / 60.0; // GameLoop called 60 times a second.
         private HandleStartGame _gameStartHandler;
@@ -127,7 +127,6 @@ namespace LeagueSandbox.GameServer
         /// </summary>
         public Game()
         {
-            _logger = LoggerProvider.GetLogger();
             ItemManager = new ItemManager();
             ChatCommandManager = new ChatCommandManager(this);
             NetworkIdManager = new NetworkIdManager();
@@ -441,7 +440,14 @@ namespace LeagueSandbox.GameServer
         public void Start()
         {
             IsRunning = true;
-            Map.MapScript.OnMatchStart();
+            try
+            {
+                Map.MapScript.OnMatchStart();
+            }
+            catch(Exception e)
+            {
+                _logger.Error(e);
+            }
         }
 
         /// <summary>

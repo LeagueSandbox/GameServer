@@ -9,11 +9,10 @@ namespace LeagueSandbox.GameServer.API
     public static class ApiGameEvents
     {
         private static Game _game;
-        private static ILog _logger;
+        private static ILog _logger = LoggerProvider.GetLogger();
         public static void SetGame(Game game)
         {
             _game = game;
-            _logger = LoggerProvider.GetLogger();
         }
 
         public static void AnnounceCaptureAltar(IMinion altar, byte index)

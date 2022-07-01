@@ -249,10 +249,9 @@ public class PlayerConfig : IPlayerConfig
     public IRuneCollection Runes { get; }
     public ITalentInventory Talents { get; }
 
+    private static ILog _logger = LoggerProvider.GetLogger();
     public PlayerConfig(JToken playerData, Game game)
     {
-        ILog logger = LoggerProvider.GetLogger();
-
         PlayerID = (long)playerData.SelectToken("playerId");
         Rank = (string)playerData.SelectToken("rank");
         Name = (string)playerData.SelectToken("name");
@@ -282,7 +281,7 @@ public class PlayerConfig : IPlayerConfig
         }
         else
         {
-            logger.Warn($"No runes found for player {PlayerID}!");
+            _logger.Warn($"No runes found for player {PlayerID}!");
         }
 
         Talents = new TalentInventory();
@@ -298,7 +297,7 @@ public class PlayerConfig : IPlayerConfig
                 }
                 catch
                 {
-                    logger.Warn($"Invalid Talent Rank for Talent {talent.Name}! Please use ranks between 1 and {byte.MaxValue}! Defaulting to Rank 1...");
+                    _logger.Warn($"Invalid Talent Rank for Talent {talent.Name}! Please use ranks between 1 and {byte.MaxValue}! Defaulting to Rank 1...");
                 }
                 Talents.Add(talent.Name, level);
             }
