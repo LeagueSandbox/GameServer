@@ -113,6 +113,11 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             }
             Stats.SetSummonerSpellEnabled(0, true);
             Stats.SetSummonerSpellEnabled(1, true);
+
+            while (Stats.Level < _game.Map.MapScript.MapScriptMetadata.InitialLevel)
+            {
+                this.LevelUp(true);
+            }
         }
 
         protected override void OnSpawn(int userId, TeamId team, bool doVision)

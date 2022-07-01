@@ -10,8 +10,8 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using Channel = GameServerCore.Packets.Enums.Channel;
+using GameServerCore.NetInfo;
 
 namespace PacketDefinitions420
 {
@@ -228,11 +228,13 @@ namespace PacketDefinitions420
             if (channelId == Channel.CHL_COMMUNICATION || channelId == Channel.CHL_LOADING_SCREEN)
             {
                 var loadScreenPacketId = (LoadScreenPacketID)reader.ReadByte();
+                //Console.WriteLine($"-> {loadScreenPacketId}");
                 convertor = GetConvertor(loadScreenPacketId);
             }
             else
             {
                 var gamePacketId = (GamePacketID)reader.ReadByte();
+                //Console.WriteLine($"-> {gamePacketId}");
                 convertor = GetConvertor(gamePacketId, channelId);
             }
 
@@ -261,18 +263,32 @@ namespace PacketDefinitions420
             }
 
             int clientId = ((int)peer.UserData) - 1;
-            var peerInfo = _game.PlayerManager.GetPeerInfo(clientId);
-            if (peerInfo == null)
+            if(clientId < 0)
             {
-                Debug.WriteLine($"prevented double disconnect of {clientId}");
+                // Didn't receive an ID by initiating a handshake.
                 return true;
             }
+            return HandleDisconnect(clientId);
+        }
+
+        public bool HandleDisconnect(int clientId)
+        {
+            var peerInfo = _game.PlayerManager.GetPeerInfo(clientId);
+            if (peerInfo.IsDisconnected)
+            {
+                Debug.WriteLine($"Prevented double disconnect of {peerInfo.PlayerId}");
+                return true;
+            }
+
+            Debug.WriteLine($"Player {peerInfo.PlayerId} disconnected!");
             
             var annoucement = new OnLeave { OtherNetID = peerInfo.Champion.NetId };
             _game.PacketNotifier.NotifyS2C_OnEventWorld(annoucement, peerInfo.Champion);
             peerInfo.IsDisconnected = true;
-            
-            return peerInfo.Champion.OnDisconnect();
+            peerInfo.IsStartedClient = false;
+            _peers[clientId] = null;
+
+            return _game.CheckIfAllPlayersLeft() || peerInfo.Champion.OnDisconnect();
         }
 
         public bool HandlePacket(Peer peer, Packet packet, Channel channelId)

@@ -111,7 +111,6 @@ namespace Spells
             {
                 source = new EventSource(3693728257, HashString("EzrealMysticShot"));
             }
-            System.Console.WriteLine($"Q {source.ScriptNameHash} {source?.ParentScript.ScriptNameHash}");
             target.TakeDamage(owner, damage, DamageType.DAMAGE_TYPE_PHYSICAL, DamageSource.DAMAGE_SOURCE_ATTACK, false, source);
 
             for (byte i = 0; i < 4; i++)

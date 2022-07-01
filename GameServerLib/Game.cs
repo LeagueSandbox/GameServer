@@ -40,6 +40,7 @@ namespace LeagueSandbox.GameServer
         private readonly ILog _logger;
         private float _nextSyncTime = 10 * 1000;
         protected const double REFRESH_RATE = 1000.0 / 60.0; // GameLoop called 60 times a second.
+        private HandleStartGame _gameStartHandler;
 
         // Server
 
@@ -62,10 +63,6 @@ namespace LeagueSandbox.GameServer
 
         // Networking
 
-        /// <summary>
-        /// Number of players which have connected and are ready to be sent into the game (after fully loading).
-        /// </summary>
-        public int PlayersReady { get; private set; }
         /// <summary>
         /// Time since the game has started. Mostly used for networking to sync up players with the server.
         /// </summary>
@@ -202,7 +199,7 @@ namespace LeagueSandbox.GameServer
             RequestHandler.Register<ClickRequest>(new HandleClick(this).HandlePacket);
             RequestHandler.Register<SpellChargeUpdateReq>(new HandleSpellChargeUpdateReq(this).HandlePacket);
             RequestHandler.Register<EmotionPacketRequest>(new HandleEmotion(this).HandlePacket);
-            RequestHandler.Register<ExitRequest>(new HandleExit(this).HandlePacket);
+            RequestHandler.Register<ExitRequest>(new HandleExit(_packetServer.PacketHandlerManager).HandlePacket);
             RequestHandler.Register<SyncSimTimeRequest>(new HandleSyncSimTime(this).HandlePacket);
             RequestHandler.Register<PingLoadInfoRequest>(new HandleLoadPing(this).HandlePacket);
             RequestHandler.Register<LockCameraRequest>(new HandleLockCamera(this).HandlePacket);
@@ -216,7 +213,10 @@ namespace LeagueSandbox.GameServer
             RequestHandler.Register<SellItemRequest>(new HandleSellItem(this).HandlePacket);
             RequestHandler.Register<UpgradeSpellReq>(new HandleUpgradeSpellReq(this).HandlePacket);
             RequestHandler.Register<SpawnRequest>(new HandleSpawn(this).HandlePacket);
-            RequestHandler.Register<StartGameRequest>(new HandleStartGame(this).HandlePacket);
+
+            _gameStartHandler = new HandleStartGame(this);
+            RequestHandler.Register<StartGameRequest>(_gameStartHandler.HandlePacket);
+
             RequestHandler.Register<ReplicationConfirmRequest>(new HandleStatsConfirm(this).HandlePacket);
             RequestHandler.Register<SurrenderRequest>(new HandleSurrender(this).HandlePacket);
             RequestHandler.Register<SwapItemsRequest>(new HandleSwapItems(this).HandlePacket);
@@ -291,40 +291,61 @@ namespace LeagueSandbox.GameServer
             return scriptLoadingResults;
         }
 
+        public bool CheckIfAllPlayersLeft()
+        {
+            var players = PlayerManager.GetPlayers(false);
+            // The number of those who are disconnected and not even loads.
+            var count = players.Count(p => !p.IsStartedClient && p.IsDisconnected);
+            Console.WriteLine($"The number of disconnected players {count}/{players.Count}");
+            if(count == players.Count)
+            {
+                _logger.Info("It's lonely here. All players have left the server");
+                SetToExit = true;
+                return true;
+            }
+            return false;
+        }
+
         /// <summary>
         /// Function which initiates ticking of the game's logic.
         /// </summary>
         public void GameLoop()
         {
-            uint timeout = (uint)REFRESH_RATE;
+            double refreshRate = REFRESH_RATE;
+            double timeout = 0;
 
             Stopwatch lastMapDurationWatch = new Stopwatch();
-            lastMapDurationWatch.Start();
-
-            bool isJustPaused = true;
-            bool autoResumeCheck = false;
+            
+            bool wasNotPaused = true;
+            bool firstCycle = true;
+            
+            float timeToForcedStart = Config.ForcedStart;
 
             while (!SetToExit)
             {
-                _packetServer.NetLoop(timeout);
+                double lastSleepDuration = lastMapDurationWatch.Elapsed.TotalMilliseconds;
+                lastMapDurationWatch.Restart();
+                
+                float deltaTime = (float)lastSleepDuration;
+                if(firstCycle)
+                {
+                    firstCycle = false;
+                    // To avoid Update(0)
+                    deltaTime = (float)refreshRate;
+                }
 
                 if (IsPaused)
                 {
-                    if (isJustPaused)
+                    if (wasNotPaused)
                     {
-                        lastMapDurationWatch.Stop();
-                        isJustPaused = false;
-                        timeout = 1000;
+                        refreshRate = 1000.0;
+                        wasNotPaused = false;
                     }
-                    else if (!autoResumeCheck)
+                    else
                     {
                         PauseTimeLeft--;
-                        _logger.Debug(PauseTimeLeft.ToString());
                         if (PauseTimeLeft <= 0)
                         {
-                            autoResumeCheck = true;
-                            timeout = (int)REFRESH_RATE;
-
                             //TODO: fix these
                             //PacketNotifier.NotifyUnpauseGame();
 
@@ -342,18 +363,30 @@ namespace LeagueSandbox.GameServer
 
                 if (!IsPaused)
                 {
-                    isJustPaused = true;
-                    autoResumeCheck = false;
+                    refreshRate = REFRESH_RATE;
+                    wasNotPaused = true;
 
-                    double sinceLastMapTime = lastMapDurationWatch.Elapsed.TotalMilliseconds;
-                    lastMapDurationWatch.Restart();
+                    if(!IsRunning && timeToForcedStart > 0)
+                    {
+                        if(timeToForcedStart <= deltaTime && !CheckIfAllPlayersLeft())
+                        {
+                            _logger.Info($"Patience is over. The game will start earlier.");
+                            _gameStartHandler.ForceStart();
+                        }
+                        timeToForcedStart -= deltaTime;
+                    }
+
                     if (IsRunning)
                     {
-                        Update((float)sinceLastMapTime);
+                        Update(deltaTime);
                     }
-                    sinceLastMapTime = lastMapDurationWatch.Elapsed.TotalMilliseconds;
-                    timeout = (uint)Math.Max(0, REFRESH_RATE - sinceLastMapTime);
                 }
+
+                double lastUpdateDuration = lastMapDurationWatch.Elapsed.TotalMilliseconds;
+                double oversleep = lastSleepDuration - timeout;
+                timeout = Math.Max(0, refreshRate - lastUpdateDuration - oversleep);
+                
+                _packetServer.NetLoop((uint)timeout);
             }
         }
 
@@ -400,14 +433,6 @@ namespace LeagueSandbox.GameServer
         public void RemoveGameScriptTimer(GameScriptTimer timer)
         {
             _gameScriptTimers.Remove(timer);
-        }
-
-        /// <summary>
-        /// Adds a player to the list of players who have fully loaded and are ready to get in-game.
-        /// </summary>
-        public void IncrementReadyPlayers()
-        {
-            PlayersReady++;
         }
 
         /// <summary>

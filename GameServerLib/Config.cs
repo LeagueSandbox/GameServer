@@ -33,6 +33,8 @@ namespace LeagueSandbox.GameServer
         public string ContentPath { get; private set; }
         public bool IsDamageTextGlobal { get; private set; }
 
+        public float ForcedStart { get; private set; }
+
         private Config()
         {
         }
@@ -91,6 +93,8 @@ namespace LeagueSandbox.GameServer
                 var playerConfig = new PlayerConfig(player, game);
                 Players.Add(playerConfig);
             }
+
+            ForcedStart = (float)(data.SelectToken("forcedStart") ?? 0) * 1000;
         }
 
         private string GetContentPath()
