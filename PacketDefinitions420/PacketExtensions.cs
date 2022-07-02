@@ -101,7 +101,7 @@ namespace PacketDefinitions420
             var currentWaypoints = new List<Vector2>(unit.Waypoints);
             currentWaypoints[0] = unit.Position;
 
-            int count = 2 + ((currentWaypoints.Count - 1) - unit.CurrentWaypoint.Key);
+            int count = 2 + ((currentWaypoints.Count - 1) - unit.CurrentWaypointKey);
             if (count >= 2)
             {
                 currentWaypoints.RemoveRange(1, currentWaypoints.Count - count);

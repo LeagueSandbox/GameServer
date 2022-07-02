@@ -93,7 +93,11 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// <summary>
         /// Index of the waypoint in the list of waypoints that the object is currently on.
         /// </summary>
-        public KeyValuePair<int, Vector2> CurrentWaypoint { get; protected set; }
+        public int CurrentWaypointKey { get; protected set; }
+        public Vector2 CurrentWaypoint
+        {
+            get { return Waypoints[CurrentWaypointKey]; }
+        }
         
         /// <summary>
         /// Status effects enabled on this unit. Refer to StatusFlags enum.
@@ -143,7 +147,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             }
 
             Waypoints = new List<Vector2> { Position };
-            CurrentWaypoint = new KeyValuePair<int, Vector2>(1, Position);
+            CurrentWaypointKey = 1;
             SetStatus(
                 StatusFlags.CanAttack | StatusFlags.CanCast     |
                 StatusFlags.CanMove   | StatusFlags.CanMoveEver |
@@ -970,7 +974,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         {
             // current -> next positions
             var cur = Position;
-            var next = CurrentWaypoint.Value;
+            var next = CurrentWaypoint;
 
             var goingTo = next - cur;
 
@@ -1028,7 +1032,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             // REVIEW (of previous code): (deltaMovement * 2) being used here is problematic; if the server lags, the diff will be much greater than the usual values
             if ((cur - next).LengthSquared() < MOVEMENT_EPSILON * MOVEMENT_EPSILON)
             {
-                var nextIndex = CurrentWaypoint.Key + 1;
+                var nextIndex = CurrentWaypointKey + 1;
                 // stop moving because we have reached our last waypoint
                 if (nextIndex >= Waypoints.Count)
                 {
@@ -1045,23 +1049,11 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                 // start moving to our next waypoint
                 else
                 {
-                    CurrentWaypoint = new KeyValuePair<int, Vector2>(nextIndex, Waypoints[nextIndex]);
+                    CurrentWaypointKey = nextIndex;
                 }
             }
 
             return true;
-        }
-
-        /// <summary>
-        /// Returns the next waypoint. If all waypoints have been reached then this returns a -inf Vector2
-        /// </summary>
-        public Vector2 GetNextWaypoint()
-        {
-            if (CurrentWaypoint.Key < Waypoints.Count)
-            {
-                return CurrentWaypoint.Value;
-            }
-            return new Vector2(float.NegativeInfinity, float.NegativeInfinity);
         }
 
         /// <summary>
@@ -1070,7 +1062,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         public void ResetWaypoints()
         {
             Waypoints = new List<Vector2> { Position };
-            CurrentWaypoint = new KeyValuePair<int, Vector2>(1, Position);
+            CurrentWaypointKey = 1;
         }
 
         /// <summary>
@@ -1078,7 +1070,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// </summary>
         public bool IsPathEnded()
         {
-            return CurrentWaypoint.Key >= Waypoints.Count;
+            return CurrentWaypointKey >= Waypoints.Count;
         }
 
         /// <summary>
@@ -1102,7 +1094,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                 _movementUpdated = true;
             }
             Waypoints = newWaypoints;
-            CurrentWaypoint = new KeyValuePair<int, Vector2>(1, Waypoints[1]);
+            CurrentWaypointKey = 1;
         }
 
         /// <summary>

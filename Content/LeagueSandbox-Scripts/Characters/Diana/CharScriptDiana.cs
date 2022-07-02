@@ -30,7 +30,7 @@ namespace CharScripts
             if (diana != null)
             {
                 // Not moving
-                if (diana.CurrentWaypoint.Value == diana.Position && !beginStance)
+                if (diana.CurrentWaypoint == diana.Position && !beginStance)
                 {
                     PlayAnimation(diana, "Attack1", 5f);
                     beginStance = true;

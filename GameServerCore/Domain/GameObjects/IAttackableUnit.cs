@@ -36,7 +36,8 @@ namespace GameServerCore.Domain.GameObjects
         /// <summary>
         /// Index of the waypoint in the list of waypoints that the object is currently on.
         /// </summary>
-        KeyValuePair<int, Vector2> CurrentWaypoint { get; }
+        int CurrentWaypointKey { get; }
+        Vector2 CurrentWaypoint { get; }
         /// <summary>
         /// Status effects enabled on this unit. Refer to StatusFlags enum.
         /// </summary>
@@ -253,10 +254,6 @@ namespace GameServerCore.Domain.GameObjects
         /// <param name="y">Y coordinate to teleport to.</param>
         /// <param name="repath">Whether or not to repath from the new position.</param>
         void TeleportTo(float x, float y, bool repath = false);
-        /// <summary>
-        /// Returns the next waypoint. If all waypoints have been reached then this returns a -inf Vector2
-        /// </summary>
-        Vector2 GetNextWaypoint();
         /// <summary>
         /// Returns whether this unit has reached the last waypoint in its path of waypoints.
         /// </summary>

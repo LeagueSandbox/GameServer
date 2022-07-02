@@ -75,7 +75,7 @@ namespace LeagueSandbox.GameServer.Handlers
             }
 
             var lastWaypoint = path[path.Count - 1];
-            if (obj.CurrentWaypoint.Value.Equals(lastWaypoint) && lastWaypoint.Equals(obj.Position))
+            if (obj.CurrentWaypoint.Equals(lastWaypoint) && lastWaypoint.Equals(obj.Position))
             {
                 return;
             }
