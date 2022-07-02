@@ -231,16 +231,19 @@ namespace LeagueSandbox.GameServer.API
             {
                 _source = source;
 
-                foreach (var listener in _listeners.FindAll(x => x.Item2.Equals(source)))
+                for (int i = _listeners.Count - 1; i >= 0; i--)
                 {
-                    Call(listener.Item3);
-
-                    if (listener.Item4)
+                    if (_listeners[i].Item2.Equals(source))
                     {
-                        _listeners.Remove(listener);
+                        var listener = _listeners[i];
+                        Call(listener.Item3);
+
+                        if (listener.Item4)
+                        {
+                            _listeners.Remove(listener);
+                        }
                     }
                 }
-
             }
         }
 
@@ -255,13 +258,17 @@ namespace LeagueSandbox.GameServer.API
                 _data = data;
 
                 bool returnVal = true;
-                foreach (var listener in _listeners.FindAll(x => x.Item2.Equals(source)))
+                for (int i = _listeners.Count - 1; i >= 0; i--)
                 {
-                    returnVal = returnVal && Call(listener.Item3);
-
-                    if (listener.Item4)
+                    if (_listeners[i].Item2.Equals(source))
                     {
-                        _listeners.Remove(listener);
+                        var listener = _listeners[i];
+                        returnVal = returnVal && Call(listener.Item3);
+
+                        if (listener.Item4)
+                        {
+                            _listeners.Remove(listener);
+                        }
                     }
                 }
                 return returnVal;
