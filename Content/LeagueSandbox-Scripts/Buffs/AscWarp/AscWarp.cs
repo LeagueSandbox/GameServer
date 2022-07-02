@@ -28,7 +28,7 @@ namespace Buffs
         public void OnDeactivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
             unit.IconInfo.SwapBorder("", true);
-            if (unit is IObjAiBase obj)
+            if (unit is IObjAIBase obj)
             {
                 AddBuff("AscWarpReappear", 10.0f, 1, null, unit, obj);
             }

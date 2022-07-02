@@ -45,7 +45,7 @@ namespace AIScripts
             return false;
         }
 
-        public void OnActivate(IObjAiBase owner)
+        public void OnActivate(IObjAIBase owner)
         {
             LaneMinion = owner as ILaneMinion;
         }

@@ -16,7 +16,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
     /// In League, turrets are separated into visual and AI objects, so this GameObject represents the AI portion,
     /// while the visual object is handled automatically by clients via packets.
     /// </summary>
-    public class BaseTurret : ObjAiBase, IBaseTurret
+    public class BaseTurret : ObjAIBase, IBaseTurret
     {
         /// <summary>
         /// Current lane this turret belongs to.
@@ -61,7 +61,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             ParentObject = mapObject;
             SetTeam(team);
             Inventory = InventoryManager.CreateInventory(game.PacketNotifier);
-            Replication = new ReplicationAiTurret(this);
+            Replication = new ReplicationAITurret(this);
         }
 
 

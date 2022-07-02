@@ -36,7 +36,7 @@ namespace Buffs
 
             InvisibleMinion = AddMinion(null, "TestCubeRender", "HiddenMinion", unit.Position, ignoreCollision: true);
 
-            if (unit is IObjAiBase obj)
+            if (unit is IObjAIBase obj)
             {
                 AddBuff("ResistantSkinDragon", 25000f, 1, null, InvisibleMinion, obj, false);
             }

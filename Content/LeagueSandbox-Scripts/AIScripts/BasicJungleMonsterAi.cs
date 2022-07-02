@@ -9,7 +9,7 @@ using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 
 namespace AIScripts
 {
-    public class BasicJungleMonsterAi : IAIScript
+    public class BasicJungleMonsterAI : IAIScript
     {
         //NOTE: This is a EXTREMELY basic A.I just so the jungle monsters aren't just complete dummies
         public IAIScriptMetaData AIScriptMetaData { get; set; } = new AIScriptMetaData();
@@ -17,7 +17,7 @@ namespace AIScripts
         Vector2 initialPosition;
         Vector3 initialFacingDirection;
         bool isInCombat = false;
-        public void OnActivate(IObjAiBase owner)
+        public void OnActivate(IObjAIBase owner)
         {
             monster = owner as IMonster;
             initialPosition = monster.Position;
@@ -29,7 +29,7 @@ namespace AIScripts
             foreach (var campMonster in monster.Camp.Monsters)
             {
                 campMonster.SetTargetUnit(damageData.Attacker);
-                if (campMonster.AIScript is BasicJungleMonsterAi basicJungleScript)
+                if (campMonster.AIScript is BasicJungleMonsterAI basicJungleScript)
                 {
                     basicJungleScript.isInCombat = true;
                 }
@@ -79,7 +79,7 @@ namespace AIScripts
                     initialPosition = monster.Position;
                 }
                 monster.Stats.CurrentHealth = monster.Stats.HealthPoints.Total;
-                if (campMonster.AIScript is BasicJungleMonsterAi basicJungleScript)
+                if (campMonster.AIScript is BasicJungleMonsterAI basicJungleScript)
                 {
                     basicJungleScript.isInCombat = false;
                 }

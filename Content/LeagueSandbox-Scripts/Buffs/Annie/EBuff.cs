@@ -32,7 +32,7 @@ namespace Buffs
 
         public void OnBeingHit(IAttackableUnit owner, IAttackableUnit attacker)
         {
-            if (!(attacker is IBaseTurret) && owner is IObjAiBase obj)
+            if (!(attacker is IBaseTurret) && owner is IObjAIBase obj)
             {
                 float ap = obj.Stats.AbilityPower.Total * 0.2f;
                 float damage = ap + 10f + (obj.Spells[2].CastInfo.SpellLevel * 10f);

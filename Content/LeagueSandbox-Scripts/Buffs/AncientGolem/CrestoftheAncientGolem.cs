@@ -46,7 +46,7 @@ namespace Buffs
 
         public void OnDeath(IDeathData deathData)
         {
-            var unit = deathData.Unit as IObjAiBase;
+            var unit = deathData.Unit as IObjAIBase;
             var killer = deathData.Killer as IChampion;
 
             if (unit != null && killer != null && !killer.IsDead)

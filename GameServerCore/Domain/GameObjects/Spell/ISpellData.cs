@@ -124,7 +124,7 @@ namespace GameServerCore.Domain.GameObjects.Spell
         /// <param name="target">Unit which is being affected.</param>
         /// <param name="overrideFlags">SpellDataFlags to use in place of the ones in this SpellData.</param>
         /// <returns>True/False.</returns>
-        bool IsValidTarget(IObjAiBase attacker, IAttackableUnit target, SpellDataFlags overrideFlags = 0);
+        bool IsValidTarget(IObjAIBase attacker, IAttackableUnit target, SpellDataFlags overrideFlags = 0);
         float GetCastTime();
         float GetCastTimeTotal();
         float GetCharacterAttackDelay

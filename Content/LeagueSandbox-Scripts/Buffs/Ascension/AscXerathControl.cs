@@ -21,7 +21,7 @@ namespace Buffs
         public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
             OverrideAnimation(unit, "IDLE1OVERRIDE", "IDLE1");
-            if(unit is IObjAiBase xerath)
+            if(unit is IObjAIBase xerath)
             {
                 int avgLevel = GetPlayerAverageLevel();
                 while (xerath.Stats.Level < avgLevel)

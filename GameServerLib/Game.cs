@@ -271,7 +271,7 @@ namespace LeagueSandbox.GameServer
             {
                 foreach (var unit in ObjectManager.GetObjects().Values)
                 {
-                    if (unit is IObjAiBase obj)
+                    if (unit is IObjAIBase obj)
                     {
                         if (obj.Spells.ContainsKey((int)SpellSlotType.PassiveSpellSlot))
                         {

@@ -19,7 +19,7 @@ namespace Buffs
         public IStatsModifier StatsModifier { get; private set; } = new StatsModifier();
 
         IParticle ignite;
-        IObjAiBase Owner;
+        IObjAIBase Owner;
         IAttackableUnit Target;
 
         float timeSinceLastTick = 1000.0f;

@@ -14,7 +14,7 @@ namespace AIScripts
         public IAIScriptMetaData AIScriptMetaData { get; set; } = new AIScriptMetaData();
         IBaseTurret baseTurret;
 
-        public void OnActivate(IObjAiBase owner)
+        public void OnActivate(IObjAIBase owner)
         {
             baseTurret = owner as IBaseTurret;
         }

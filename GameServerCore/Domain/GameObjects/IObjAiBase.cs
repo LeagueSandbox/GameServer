@@ -10,7 +10,7 @@ namespace GameServerCore.Domain.GameObjects
     /// Base class for all moving, attackable, and attacking units.
     /// ObjAIBases normally follow these guidelines of functionality: Movement, Crowd Control, Inventory, Targeting, Attacking, and Spells.
     /// </summary>
-    public interface IObjAiBase : IAttackableUnit
+    public interface IObjAIBase : IAttackableUnit
     {
         /// <summary>
         /// This AI's current auto attack spell.
@@ -236,11 +236,11 @@ namespace GameServerCore.Domain.GameObjects
         /// <summary>
         /// Whether or not this unit's AI is innactive.
         /// </summary>
-        bool IsAiPaused();
+        bool IsAIPaused();
         /// <summary>
         /// Forces this unit's AI to pause/unpause.
         /// </summary>
         /// <param name="isPaused">Whether or not to pause.</param>s
-        void PauseAi(bool isPaused);
+        void PauseAI(bool isPaused);
     }
 }

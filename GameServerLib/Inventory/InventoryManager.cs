@@ -22,7 +22,7 @@ namespace LeagueSandbox.GameServer.Inventory
             _inventory = new Inventory(this);
         }
 
-        public KeyValuePair<IItem, bool> AddItem(IItemData itemData, IObjAiBase owner = null)
+        public KeyValuePair<IItem, bool> AddItem(IItemData itemData, IObjAIBase owner = null)
         {
             var item = _inventory.AddItem(itemData, owner);
 
@@ -39,7 +39,7 @@ namespace LeagueSandbox.GameServer.Inventory
             return KeyValuePair.Create(item, true);
         }
 
-        public KeyValuePair<IItem, bool> AddItemToSlot(IItemData itemData, IObjAiBase owner, byte slot)
+        public KeyValuePair<IItem, bool> AddItemToSlot(IItemData itemData, IObjAIBase owner, byte slot)
         {
             var item = _inventory.SetItemToSlot(itemData, owner, slot);
 
@@ -87,7 +87,7 @@ namespace LeagueSandbox.GameServer.Inventory
             return _inventory.HasItemWithID(ItemID);
         }
 
-        public bool RemoveItem(byte slot, IObjAiBase owner = null, int stacksToRemove = 1)
+        public bool RemoveItem(byte slot, IObjAIBase owner = null, int stacksToRemove = 1)
         {
             var item = _inventory.Items[slot];
             if (item == null)
@@ -112,7 +112,7 @@ namespace LeagueSandbox.GameServer.Inventory
 
             return true;
         }
-        public bool RemoveItem(IItem item, IObjAiBase owner = null, int stacksToRemove = 1)
+        public bool RemoveItem(IItem item, IObjAIBase owner = null, int stacksToRemove = 1)
         {
             var slot = _inventory.GetItemSlot(item);
 

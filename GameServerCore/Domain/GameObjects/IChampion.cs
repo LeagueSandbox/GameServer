@@ -4,7 +4,7 @@ using LeaguePackets.Game.Events;
 
 namespace GameServerCore.Domain.GameObjects
 {
-    public interface IChampion : IObjAiBase
+    public interface IChampion : IObjAIBase
     {
         int ClientId { get; }
         IShop Shop { get; }

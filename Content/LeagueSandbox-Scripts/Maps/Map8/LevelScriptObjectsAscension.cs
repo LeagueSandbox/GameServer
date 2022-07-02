@@ -105,7 +105,7 @@ namespace MapScripts.Map8
             var point = CreateMinion("AscWarpIcon", "AscWarpIcon", position, team: team, ignoreCollision: false, isTargetable: false);
             point.IconInfo.SwapIcon(mapIcon, true);
             TeleportPlates.Add(point);
-            point.PauseAi(true);
+            point.PauseAI(true);
         }
     }
 }

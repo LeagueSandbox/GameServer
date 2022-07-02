@@ -33,7 +33,7 @@ namespace Buffs
 
         public void OnDeactivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
-            if (unit is IObjAiBase ai)
+            if (unit is IObjAIBase ai)
             {
                 if (ai.Spells[0].SpellName == "YasuoQ3W")
                 {

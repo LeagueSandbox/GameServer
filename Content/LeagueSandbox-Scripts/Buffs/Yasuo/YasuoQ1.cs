@@ -23,7 +23,7 @@ namespace Buffs
 
         public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
-            if (unit is IObjAiBase ai)
+            if (unit is IObjAIBase ai)
             {
                 SetSpell(ai, "YasuoQ2W", SpellSlotType.SpellSlots, 0);
             }
@@ -31,7 +31,7 @@ namespace Buffs
 
         public void OnDeactivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
-            if (unit is IObjAiBase ai)
+            if (unit is IObjAIBase ai)
             {
                 if (ai.Spells[0].SpellName == "YasuoQ2W")
                 {

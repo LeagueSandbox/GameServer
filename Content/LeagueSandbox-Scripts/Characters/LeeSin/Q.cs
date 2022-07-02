@@ -23,16 +23,16 @@ namespace Spells
             }
         };
 
-        public void OnActivate(IObjAiBase owner, ISpell spell)
+        public void OnActivate(IObjAIBase owner, ISpell spell)
         {
             ApiEventManager.OnSpellHit.AddListener(this, spell, TargetExecute, false);
         }
 
-        public void OnDeactivate(IObjAiBase owner, ISpell spell)
+        public void OnDeactivate(IObjAIBase owner, ISpell spell)
         {
         }
 
-        public void OnSpellPreCast(IObjAiBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
+        public void OnSpellPreCast(IObjAIBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
         {
         }
 
@@ -76,7 +76,7 @@ namespace Spells
 
                 missile.SetToRemove();
 
-                if (!target.IsDead && target is IObjAiBase ai)
+                if (!target.IsDead && target is IObjAIBase ai)
                 {
                     AddBuff("BlindMonkQManager", 3f, 1, spell, owner, ai);
                 }
@@ -102,7 +102,7 @@ namespace Spells
 
                     missile.SetToRemove();
 
-                    if (!target.IsDead && target is IObjAiBase ai)
+                    if (!target.IsDead && target is IObjAIBase ai)
                     {
                         AddBuff("BlindMonkQManager", 3f, 1, spell, owner, ai);
                     }
@@ -125,7 +125,7 @@ namespace Spells
 
                     missile.SetToRemove();
 
-                    if (!target.IsDead && target is IObjAiBase ai)
+                    if (!target.IsDead && target is IObjAIBase ai)
                     {
                         AddBuff("BlindMonkQManager", 3f, 1, spell, owner, ai);
                     }
@@ -159,13 +159,13 @@ namespace Spells
             NotSingleTargetSpell = false
         };
 
-        IObjAiBase Owner;
+        IObjAIBase Owner;
         ISpell thisSpell;
         ISpellSector canCastSector;
         bool seal = true;
         string checkBuffName = "BlindMonkQOne";
 
-        public void OnActivate(IObjAiBase owner, ISpell spell)
+        public void OnActivate(IObjAIBase owner, ISpell spell)
         {
             Owner = owner;
             thisSpell = spell;
@@ -190,11 +190,11 @@ namespace Spells
             SealSpellSlot(Owner, SpellSlotType.SpellSlots, 0, SpellbookType.SPELLBOOK_CHAMPION, seal);
         }
 
-        public void OnDeactivate(IObjAiBase owner, ISpell spell)
+        public void OnDeactivate(IObjAIBase owner, ISpell spell)
         {
         }
 
-        public void OnSpellPreCast(IObjAiBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
+        public void OnSpellPreCast(IObjAIBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
         {
         }
 
@@ -223,7 +223,7 @@ namespace Spells
                         RemoveBuff(buff);
                         AddParticlePos(owner, "blindMonk_Q_resonatingStrike_02", owner.Position, owner.Position, bone: "C_BuffBone_Glb_Center_Loc", flags: 0);
 
-                        if (unit is IObjAiBase ai)
+                        if (unit is IObjAIBase ai)
                         {
                             AddBuff("BlindMonkQTwoDash", 2.5f, 1, spell, owner, ai);
                         }
@@ -255,7 +255,7 @@ namespace Spells
                 canCastSector.ExecuteTick();
                 foreach (IGameObject obj in canCastSector.ObjectsHit)
                 {
-                    if (obj is IObjAiBase ai)
+                    if (obj is IObjAIBase ai)
                     {
                         var buff = ai.GetBuffWithName(checkBuffName);
                         if (buff != null && buff.SourceUnit == Owner)

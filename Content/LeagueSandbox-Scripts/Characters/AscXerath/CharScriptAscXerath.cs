@@ -9,7 +9,7 @@ namespace CharScripts
 {
     internal class CharScriptAscXerath : ICharScript
     {
-        public void OnActivate(IObjAiBase owner, ISpell spell = null)
+        public void OnActivate(IObjAIBase owner, ISpell spell = null)
         {
             AddBuff("ResistantSkinDragon", 25000.0f, 1, null, owner, owner);
             var buff = AddBuff("AscBuffTransfer", 5.7f, 1, null, owner, owner);
@@ -18,9 +18,9 @@ namespace CharScripts
 
         public void OnBuffDeactivation(IBuff buff)
         {
-            AddBuff("AscXerathControl", 999999.0f, 1, null, buff.TargetUnit, buff.TargetUnit as IObjAiBase);
+            AddBuff("AscXerathControl", 999999.0f, 1, null, buff.TargetUnit, buff.TargetUnit as IObjAIBase);
         }
-        public void OnDeactivate(IObjAiBase owner, ISpell spell = null)
+        public void OnDeactivate(IObjAIBase owner, ISpell spell = null)
         {
         }
         public void OnUpdate(float diff)

@@ -15,7 +15,7 @@ namespace ItemPassives
     {
         public IStatsModifier StatsModifier { get; private set; } = new StatsModifier();
 
-        public void OnActivate(IObjAiBase owner)
+        public void OnActivate(IObjAIBase owner)
         {
             ApiEventManager.OnKillUnit.AddListener(this, owner, TargetExecute, false);
             StatsModifier.ManaRegeneration.BaseBonus += 0.6f;
@@ -25,7 +25,7 @@ namespace ItemPassives
         {
             deathData.Killer.Stats.CurrentMana += 4;
         }
-        public void OnDeactivate(IObjAiBase owner)
+        public void OnDeactivate(IObjAIBase owner)
         {
             ApiEventManager.OnKillUnit.RemoveListener(this);
         }

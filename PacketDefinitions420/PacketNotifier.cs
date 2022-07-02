@@ -159,7 +159,7 @@ namespace PacketDefinitions420
             {
                 charStackData.SkinName = a.Model;
 
-                if (a is IObjAiBase obj)
+                if (a is IObjAIBase obj)
                 {
                     charStackData.SkinID = (uint)obj.SkinID;
                     if (obj.Inventory != null)
@@ -318,7 +318,7 @@ namespace PacketDefinitions420
                 FXCreateData = fxDataList
             };
 
-            if (particle.Caster != null && particle.Caster is IObjAiBase o)
+            if (particle.Caster != null && particle.Caster is IObjAIBase o)
             {
                 fxGroupData1.PackageHash = o.GetObjHash();
             }
@@ -681,7 +681,7 @@ namespace PacketDefinitions420
         /// </summary>
         /// <param name="attacker">AI that is targeting an AttackableUnit.</param>
         /// <param name="target">AttackableUnit that is being targeted by the attacker.</param>
-        public void NotifyAI_TargetS2C(IObjAiBase attacker, IAttackableUnit target)
+        public void NotifyAI_TargetS2C(IObjAIBase attacker, IAttackableUnit target)
         {
             var targetPacket = new AI_TargetS2C
             {
@@ -710,7 +710,7 @@ namespace PacketDefinitions420
         /// </summary>
         /// <param name="attacker">AI that is targeting a champion.</param>
         /// <param name="target">Champion that is being targeted by the attacker.</param>
-        public void NotifyAI_TargetHeroS2C(IObjAiBase attacker, IChampion target)
+        public void NotifyAI_TargetHeroS2C(IObjAIBase attacker, IChampion target)
         {
             var targetPacket = new AI_TargetHeroS2C
             {
@@ -775,7 +775,7 @@ namespace PacketDefinitions420
         /// <param name="futureProjNetId">NetId of the auto attack projectile.</param>
         /// <param name="isCrit">Whether or not the auto attack will crit.</param>
         /// <param name="nextAttackFlag">Whether or this basic attack is not the first time this basic attack has been performed on the given target.</param>
-        public void NotifyBasic_Attack(IObjAiBase attacker, IAttackableUnit target, uint futureProjNetId, bool isCrit, bool nextAttackFlag)
+        public void NotifyBasic_Attack(IObjAIBase attacker, IAttackableUnit target, uint futureProjNetId, bool isCrit, bool nextAttackFlag)
         {
             var targetPos = MovementVector.ToCenteredScaledCoordinates(target.Position, _navGrid);
 
@@ -808,7 +808,7 @@ namespace PacketDefinitions420
         /// <param name="target">AttackableUnit being attacked.</param>
         /// <param name="futureProjNetId">NetID of the projectile that will be created for the auto attack.</param>
         /// <param name="isCrit">Whether or not the auto attack is a critical.</param>
-        public void NotifyBasic_Attack_Pos(IObjAiBase attacker, IAttackableUnit target, uint futureProjNetId, bool isCrit)
+        public void NotifyBasic_Attack_Pos(IObjAIBase attacker, IAttackableUnit target, uint futureProjNetId, bool isCrit)
         {
             var targetPos = MovementVector.ToCenteredScaledCoordinates(target.Position, _navGrid);
 
@@ -853,9 +853,9 @@ namespace PacketDefinitions420
         /// Sends a packet to the player attempting to buy an item that their purchase was successful.
         /// </summary>
         /// <param name="userId">User to send the packet to.</param>
-        /// <param name="gameObject">GameObject of type ObjAiBase that can buy items.</param>
+        /// <param name="gameObject">GameObject of type ObjAIBase that can buy items.</param>
         /// <param name="itemInstance">Item instance housing all information about the item that has been bought.</param>
-        public void NotifyBuyItem(int userId, IObjAiBase gameObject, IItem itemInstance)
+        public void NotifyBuyItem(int userId, IObjAIBase gameObject, IItem itemInstance)
         {
             ItemData itemData = new ItemData
             {
@@ -891,7 +891,7 @@ namespace PacketDefinitions420
         /// <param name="newDisplayRange">New max display range for the spell to set.</param>
         /// <param name="newIconIndex">New index of an icon for the spell to set.</param>
         /// <param name="offsetTargets">New target netids for the spell to set.</param>
-        public void NotifyChangeSlotSpellData(int userId, IObjAiBase owner, byte slot, GameServerCore.Enums.ChangeSlotSpellDataType changeType, bool isSummonerSpell = false, TargetingType targetingType = TargetingType.Invalid, string newName = "", float newRange = 0, float newMaxCastRange = 0, float newDisplayRange = 0, byte newIconIndex = 0x0, List<uint> offsetTargets = null)
+        public void NotifyChangeSlotSpellData(int userId, IObjAIBase owner, byte slot, GameServerCore.Enums.ChangeSlotSpellDataType changeType, bool isSummonerSpell = false, TargetingType targetingType = TargetingType.Invalid, string newName = "", float newRange = 0, float newMaxCastRange = 0, float newDisplayRange = 0, byte newIconIndex = 0x0, List<uint> offsetTargets = null)
         {
             ChangeSpellData spellData = new ChangeSpellDataUnknown()
             {
@@ -989,14 +989,14 @@ namespace PacketDefinitions420
         }
 
         /// <summary>
-        /// Sends a packet to all players with vision of a specified ObjAiBase explaining that their specified spell's cooldown has been set.
+        /// Sends a packet to all players with vision of a specified ObjAIBase explaining that their specified spell's cooldown has been set.
         /// </summary>
-        /// <param name="u">ObjAiBase who owns the spell going on cooldown.</param>
+        /// <param name="u">ObjAIBase who owns the spell going on cooldown.</param>
         /// <param name="slotId">Slot of the spell.</param>
         /// <param name="currentCd">Amount of time the spell has already been on cooldown (if applicable).</param>
         /// <param name="totalCd">Maximum amount of time the spell's cooldown can be.</param>
         /// <param name="userId">UserId to send the packet to. If not specified or zero, the packet is broadcasted to all players that have vision of the specified unit.</param>
-        public void NotifyCHAR_SetCooldown(IObjAiBase u, byte slotId, float currentCd, float totalCd, int userId = -1)
+        public void NotifyCHAR_SetCooldown(IObjAIBase u, byte slotId, float currentCd, float totalCd, int userId = -1)
         {
             var cdPacket = new CHAR_SetCooldown
             {
@@ -1724,7 +1724,7 @@ namespace PacketDefinitions420
         /// Used to sync homing (target-based) dashes between client and server.
         /// </summary>
         /// <param name="unit">Unit to sync.</param>
-        public void NotifyMovementDriverReplication(IObjAiBase unit)
+        public void NotifyMovementDriverReplication(IObjAIBase unit)
         {
             var targetPos = unit.TargetUnit.Position;
             if (targetPos == new Vector2(float.NaN, float.NaN))
@@ -1786,7 +1786,7 @@ namespace PacketDefinitions420
         }
 
         /// <summary>
-        /// Sends a packet to all players with vision of the specified ObjAiBase detailing that the specified group of buffs has been added to the ObjAiBase.
+        /// Sends a packet to all players with vision of the specified ObjAIBase detailing that the specified group of buffs has been added to the ObjAIBase.
         /// </summary>
         /// <param name="target">Unit that is receiving the group of buffs.</param>
         /// <param name="buffs">Group of buffs being added to the target.</param>
@@ -1845,7 +1845,7 @@ namespace PacketDefinitions420
         }
 
         /// <summary>
-        /// Sends a packet to all players with vision of the specified ObjAiBase detailing that the specified group of buffs is being removed from the ObjAiBase.
+        /// Sends a packet to all players with vision of the specified ObjAIBase detailing that the specified group of buffs is being removed from the ObjAIBase.
         /// </summary>
         /// <param name="target">Unit getting their group of buffs removed.</param>
         /// <param name="buffs">Group of buffs getting removed.</param>
@@ -2196,7 +2196,7 @@ namespace PacketDefinitions420
         /// </summary>
         /// <param name="c">Champion which leveled up.</param>
         /// <param name="userId">UserId to send the packet to. If not specified or zero, the packet is broadcasted to all players that have vision of the specified unit.</param>
-        public void NotifyNPC_LevelUp(IObjAiBase obj)
+        public void NotifyNPC_LevelUp(IObjAIBase obj)
         {
             var levelUp = new NPC_LevelUp()
             {
@@ -2241,7 +2241,7 @@ namespace PacketDefinitions420
         /// <param name="spell">Spell to auto cast.</param>
         /// // TODO: Verify critSlot functionality
         /// <param name="critSlot">Optional spell slot to cast when a crit is going to occur.</param>
-        public void NotifyNPC_SetAutocast(IObjAiBase caster, ISpell spell, byte critSlot = 0)
+        public void NotifyNPC_SetAutocast(IObjAIBase caster, ISpell spell, byte critSlot = 0)
         {
             var autoCast = new NPC_SetAutocast
             {
@@ -2266,7 +2266,7 @@ namespace PacketDefinitions420
         /// <param name="spell">Spell to auto cast.</param>
         /// // TODO: Verify critSlot functionality
         /// <param name="critSlot">Optional spell slot to cast when a crit is going to occur.</param>
-        public void NotifyNPC_SetAutocast(int userId, IObjAiBase caster, ISpell spell, byte critSlot = 0)
+        public void NotifyNPC_SetAutocast(int userId, IObjAIBase caster, ISpell spell, byte critSlot = 0)
         {
             var autoCast = new NPC_SetAutocast
             {
@@ -2393,7 +2393,7 @@ namespace PacketDefinitions420
         /// <param name="ai">AI with the items.</param>
         /// <param name="slot">Slot of the item that was removed.</param>
         /// <param name="remaining">Number of stacks of the item left (0 if not applicable).</param>
-        public void NotifyRemoveItem(IObjAiBase ai, byte slot, byte remaining)
+        public void NotifyRemoveItem(IObjAIBase ai, byte slot, byte remaining)
         {
             var ria = new RemoveItemAns()
             {
@@ -3305,7 +3305,7 @@ namespace PacketDefinitions420
             _packetHandlerManager.BroadcastPacketVision(attacker, lookAtPacket.GetBytes(), Channel.CHL_S2C);
         }
 
-        public void NotifyS2C_UpdateAscended(IObjAiBase ascendant = null)
+        public void NotifyS2C_UpdateAscended(IObjAIBase ascendant = null)
         {
             var packet = new S2C_UpdateAscended();
             if (ascendant != null)
@@ -3503,12 +3503,12 @@ namespace PacketDefinitions420
         /// <summary>
         /// Sends a packet to the specified player detailing that their range of movement has changed. This packet forces the game client to only send movement request packets when the distance from the specified center is less than the specified radius.
         /// </summary>
-        /// <param name="ai">ObjAiBase that the restriction is being applied to.</param>
+        /// <param name="ai">ObjAIBase that the restriction is being applied to.</param>
         /// <param name="center">Center of the restriction circle.</param>
         /// <param name="radius">Radius of the restriction circle; minimum distance from center required to move.</param>
         /// <param name="userId">User to send the packet to.</param>
         /// <param name="restrictCam">Whether or not the player's camera is also restricted to the same area.</param>
-        public void NotifySetCircularMovementRestriction(IObjAiBase ai, Vector2 center, float radius, int userId, bool restrictCam = false)
+        public void NotifySetCircularMovementRestriction(IObjAIBase ai, Vector2 center, float radius, int userId, bool restrictCam = false)
         {
             var restrictPacket = new S2C_SetCircularMovementRestriction()
             {
@@ -3982,9 +3982,9 @@ namespace PacketDefinitions420
         /// Sends a packet to the player attempting to use an item that the item was used successfully.
         /// </summary>
         /// <param name="userId">User to send the packet to.</param>
-        /// <param name="ai">GameObject of type ObjAiBase that can buy items.</param>
+        /// <param name="ai">GameObject of type ObjAIBase that can buy items.</param>
         /// <param name="itemInstance">Item instance housing all information about the item that has been used.</param>
-        public void NotifyUseItemAns(int userId, IObjAiBase ai, IItem itemInstance)
+        public void NotifyUseItemAns(int userId, IObjAIBase ai, IItem itemInstance)
         {
             var useItemPacket = new UseItemAns
             {

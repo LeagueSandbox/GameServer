@@ -15,15 +15,15 @@ namespace Spells
             // TODO
         };
 
-        public void OnActivate(IObjAiBase owner, ISpell spell)
+        public void OnActivate(IObjAIBase owner, ISpell spell)
         {
         }
 
-        public void OnDeactivate(IObjAiBase owner, ISpell spell)
+        public void OnDeactivate(IObjAIBase owner, ISpell spell)
         {
         }
 
-        public void OnSpellPreCast(IObjAiBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
+        public void OnSpellPreCast(IObjAIBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
         {
             AddParticleTarget(owner, owner, "SRU_Order_Laser_Turret_cas", target, bone: "joint2");
             AddParticleTarget(owner, target, "SRU_Inhibitor_chaos_Tower_Beam_Lvl1", owner, 0.5f, bone: "ROOT", targetBone: "joint2");

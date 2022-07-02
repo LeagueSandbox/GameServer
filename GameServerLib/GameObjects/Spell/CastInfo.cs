@@ -13,7 +13,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
         public uint SpellNetID { get; set; }
         public byte SpellLevel { get; set; }
         public float AttackSpeedModifier { get; set; } = 1.0f;
-        public IObjAiBase Owner { get; set; }
+        public IObjAIBase Owner { get; set; }
         public uint SpellChainOwnerNetID { get; set; } // TODO: Figure out what this is used for
         public uint PackageHash { get; set; }
         public uint MissileNetID { get; set; }

@@ -10,18 +10,18 @@ namespace CharScripts
 {
     public class CharScriptDiana : ICharScript
     {
-        IObjAiBase diana = null;
+        IObjAIBase diana = null;
         float stanceTime = 500;
         float stillTime = 0;
         bool beginStance = false;
         bool stance = false;
 
-        public void OnActivate(IObjAiBase owner, ISpell spell = null)
+        public void OnActivate(IObjAIBase owner, ISpell spell = null)
         {
             diana = owner;
         }
 
-        public void OnDeactivate(IObjAiBase owner, ISpell spell = null)
+        public void OnDeactivate(IObjAIBase owner, ISpell spell = null)
         {
         }
 

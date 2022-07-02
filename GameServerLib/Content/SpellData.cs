@@ -188,7 +188,7 @@ namespace LeagueSandbox.GameServer.Content
         /// <param name="target">Unit which is being affected.</param>
         /// <param name="overrideFlags">SpellDataFlags to use in place of the ones in this SpellData.</param>
         /// <returns>True/False.</returns>
-        public bool IsValidTarget(IObjAiBase attacker, IAttackableUnit target, SpellDataFlags overrideFlags = 0)
+        public bool IsValidTarget(IObjAIBase attacker, IAttackableUnit target, SpellDataFlags overrideFlags = 0)
         {
 
             bool overrideTargetable = false;

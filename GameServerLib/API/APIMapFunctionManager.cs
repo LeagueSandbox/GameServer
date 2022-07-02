@@ -131,14 +131,14 @@ namespace LeagueSandbox.GameServer.API
         /// <param name="minionNo"></param>
         /// <param name="barracksName"></param>
         /// <param name="waypoints"></param>
-        public static void CreateLaneMinion(List<MinionSpawnType> list, Vector2 position, TeamId team, int minionNo, string barracksName, List<Vector2> waypoints, string laneMinionAi)
+        public static void CreateLaneMinion(List<MinionSpawnType> list, Vector2 position, TeamId team, int minionNo, string barracksName, List<Vector2> waypoints, string laneMinionAI)
         {
             if (list.Count <= minionNo)
             {
                 return;
             }
 
-            var m = new LaneMinion(_game, list[minionNo], position, barracksName, waypoints, _map.MapScript.MinionModels[team][list[minionNo]], 0, team, null, laneMinionAi);
+            var m = new LaneMinion(_game, list[minionNo], position, barracksName, waypoints, _map.MapScript.MinionModels[team][list[minionNo]], 0, team, null, laneMinionAI);
             _game.ObjectManager.AddObject(m);
         }
 
@@ -159,7 +159,7 @@ namespace LeagueSandbox.GameServer.API
         /// <param name="initialLevel"></param>
         /// <returns></returns>
         public static IMinion CreateMinion(
-            string name, string model, Vector2 position, IObjAiBase owner = null, uint netId = 0,
+            string name, string model, Vector2 position, IObjAIBase owner = null, uint netId = 0,
             TeamId team = TeamId.TEAM_NEUTRAL, int skinId = 0, bool ignoreCollision = false,
             bool isTargetable = false, bool isWard = false, string aiScript = "", int damageBonus = 0,
             int healthBonus = 0, int initialLevel = 1)
@@ -432,7 +432,7 @@ namespace LeagueSandbox.GameServer.API
             _game.PacketNotifier.NotifyS2C_CameraBehavior(target, position);
         }
 
-        public static void NotifyAscendant(IObjAiBase ascendant = null)
+        public static void NotifyAscendant(IObjAIBase ascendant = null)
         {
             _game.PacketNotifier.NotifyS2C_UpdateAscended(ascendant);
         }

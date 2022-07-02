@@ -47,7 +47,7 @@ namespace Buffs
             300.0f
         };
 
-        IObjAiBase owner;
+        IObjAIBase owner;
         float tickTime;
         float trueHeal;
         int spellLevel;

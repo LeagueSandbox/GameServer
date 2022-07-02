@@ -6,7 +6,7 @@ namespace Talents
 {
     internal class Talent_4222 : ITalentScript
     {
-        public void OnActivate(IObjAiBase owner, byte rank)
+        public void OnActivate(IObjAIBase owner, byte rank)
         {
             var healthModifier = new StatsModifier();
             healthModifier.HealthPoints.FlatBonus = 12.0f * rank;

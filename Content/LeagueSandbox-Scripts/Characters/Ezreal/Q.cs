@@ -20,11 +20,11 @@ namespace Spells
             IsDamagingSpell = true
         };
 
-        private IObjAiBase _owner;
+        private IObjAIBase _owner;
         private ISpell _spell;
         private float _bonusAd = 0;
 
-        public void OnActivate(IObjAiBase owner, ISpell spell)
+        public void OnActivate(IObjAIBase owner, ISpell spell)
         {
             _owner = owner;
             _spell = spell;
@@ -88,7 +88,7 @@ namespace Spells
 
         //Vector2 direction;
 
-        public void OnActivate(IObjAiBase owner, ISpell spell)
+        public void OnActivate(IObjAIBase owner, ISpell spell)
         {
             ApiEventManager.OnSpellHit.AddListener(this, spell, TargetExecute, false);
         }

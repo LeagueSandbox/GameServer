@@ -19,7 +19,7 @@ namespace Buffs
 
         public IStatsModifier StatsModifier { get; private set; }
 
-        IObjAiBase owner;
+        IObjAIBase owner;
         ISpell originSpell;
         IBuff thisBuff;
         IAttackableUnit target;

@@ -108,16 +108,16 @@ namespace LeagueSandbox.GameServer.API
                 = new DataOnlyDispatcher<IAttackableUnit, IDamageData>();
         public static DataOnlyDispatcher<IAttackableUnit, IDeathData> OnDeath
                 = new DataOnlyDispatcher<IAttackableUnit, IDeathData>();
-        public static DataOnlyDispatcher<IObjAiBase, IDamageData> OnHitUnit
-                = new DataOnlyDispatcher<IObjAiBase, IDamageData>();
+        public static DataOnlyDispatcher<IObjAIBase, IDamageData> OnHitUnit
+                = new DataOnlyDispatcher<IObjAIBase, IDamageData>();
         public static DataOnlyDispatcher<IChampion, IScoreData> OnIncrementChampionScore
                 = new DataOnlyDispatcher<IChampion, IScoreData>();
         public static DataOnlyDispatcher<IAttackableUnit, IDeathData> OnKill
                 = new DataOnlyDispatcher<IAttackableUnit, IDeathData>();
         public static DataOnlyDispatcher<IAttackableUnit, IDeathData> OnKillUnit
                 = new DataOnlyDispatcher<IAttackableUnit, IDeathData>();
-        public static DataOnlyDispatcher<IObjAiBase, ISpell> OnLaunchAttack
-                = new DataOnlyDispatcher<IObjAiBase, ISpell>();
+        public static DataOnlyDispatcher<IObjAIBase, ISpell> OnLaunchAttack
+                = new DataOnlyDispatcher<IObjAIBase, ISpell>();
         /// <summary>
         /// Called immediately after the rocket is added to the scene. *NOTE*: At the time of the call, the rocket has not yet been spawned for players.
         /// <summary>
@@ -133,14 +133,14 @@ namespace LeagueSandbox.GameServer.API
                 = new Dispatcher<IAttackableUnit>();
         public static Dispatcher<IAttackableUnit> OnMoveSuccess
                 = new Dispatcher<IAttackableUnit>();
-        public static DataOnlyDispatcher<IObjAiBase, ISpell> OnPreAttack
-                = new DataOnlyDispatcher<IObjAiBase, ISpell>();
+        public static DataOnlyDispatcher<IObjAIBase, ISpell> OnPreAttack
+                = new DataOnlyDispatcher<IObjAIBase, ISpell>();
         public static DataOnlyDispatcher<IAttackableUnit, IDamageData> OnPreDealDamage
                 = new DataOnlyDispatcher<IAttackableUnit, IDamageData>();
         public static DataOnlyDispatcher<IAttackableUnit, IDamageData> OnPreTakeDamage
                 = new DataOnlyDispatcher<IAttackableUnit, IDamageData>();
-        public static Dispatcher<IObjAiBase> OnResurrect
-                = new Dispatcher<IObjAiBase>();
+        public static Dispatcher<IObjAIBase> OnResurrect
+                = new Dispatcher<IObjAIBase>();
         public static Dispatcher<ISpell> OnSpellCast
                 = new Dispatcher<ISpell>();
         public static Dispatcher<ISpell> OnSpellChannel
@@ -163,16 +163,16 @@ namespace LeagueSandbox.GameServer.API
                 = new Dispatcher<ISpellSector, IAttackableUnit>();
         public static DataOnlyDispatcher<IAttackableUnit, IDamageData> OnTakeDamage
                 = new DataOnlyDispatcher<IAttackableUnit, IDamageData>();
-        public static DataOnlyDispatcher<IObjAiBase, IAttackableUnit> OnTargetLost
-                = new DataOnlyDispatcher<IObjAiBase, IAttackableUnit>();
+        public static DataOnlyDispatcher<IObjAIBase, IAttackableUnit> OnTargetLost
+                = new DataOnlyDispatcher<IObjAIBase, IAttackableUnit>();
         public static Dispatcher<IAttackableUnit, IBuff> OnUnitBuffDeactivated
                 = new Dispatcher<IAttackableUnit, IBuff>();
         // TODO: Handle crowd control the same as normal dashes.
         public static Dispatcher<IAttackableUnit> OnUnitCrowdControlled
                 = new Dispatcher<IAttackableUnit>();
         // TODO: Change to OnMoveSuccess and change where Publish is called internally to reflect the name.
-        public static ConditionDispatcher<IObjAiBase, OrderType> OnUnitUpdateMoveOrder
-                = new ConditionDispatcher<IObjAiBase, OrderType>();
+        public static ConditionDispatcher<IObjAIBase, OrderType> OnUnitUpdateMoveOrder
+                = new ConditionDispatcher<IObjAIBase, OrderType>();
         public static Dispatcher<IAttackableUnit, float> OnUpdateStats
                 = new Dispatcher<IAttackableUnit, float>();
 

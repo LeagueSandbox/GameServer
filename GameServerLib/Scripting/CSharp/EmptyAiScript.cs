@@ -8,7 +8,7 @@ namespace GameServerCore.Scripting.CSharp
 
         public IAIScriptMetaData AIScriptMetaData { get; set; } = new AIScriptMetaData();
 
-        public void OnActivate(IObjAiBase owner)
+        public void OnActivate(IObjAIBase owner)
         {
         }
 

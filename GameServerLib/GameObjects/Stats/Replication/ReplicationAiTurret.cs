@@ -3,9 +3,9 @@ using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
 
 namespace LeagueSandbox.GameServer.GameObjects.Stats
 {
-    public class ReplicationAiTurret : Replication
+    public class ReplicationAITurret : Replication
     {
-        public ReplicationAiTurret(IBaseTurret owner) : base(owner)
+        public ReplicationAITurret(IBaseTurret owner) : base(owner)
         {
 
         }

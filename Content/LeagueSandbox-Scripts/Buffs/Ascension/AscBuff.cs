@@ -28,7 +28,7 @@ namespace Buffs
         public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
             thisBuff = buff;
-            if (unit is IObjAiBase obj)
+            if (unit is IObjAIBase obj)
             {
                 AddBuff("AscBuffIcon", 25000.0f, 1, null, unit, obj);
             }

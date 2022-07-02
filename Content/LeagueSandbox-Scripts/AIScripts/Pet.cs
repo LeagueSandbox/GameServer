@@ -28,7 +28,7 @@ namespace AIScripts
         float _timerFearedThreshold = 1.0f;
         IMinion minion;
 
-        public void OnActivate(IObjAiBase owner)
+        public void OnActivate(IObjAIBase owner)
         {
             minion = owner as IMinion;
 
@@ -36,7 +36,7 @@ namespace AIScripts
             ApiEventManager.OnTargetLost.AddListener(this, owner, OnTargetLost, false);
         }
 
-        public bool OnOrder(IObjAiBase ai, OrderType order)
+        public bool OnOrder(IObjAIBase ai, OrderType order)
         {
             IAttackableUnit target = ai.TargetUnit;
             AIState state = ai.GetAIState();
@@ -66,7 +66,7 @@ namespace AIScripts
 
             if (ai is IPet pet)
             {
-                IObjAiBase owner = pet.Owner;
+                IObjAIBase owner = pet.Owner;
                 if (owner == null)
                 {
                     pet.Die(CreateDeathData(false, 0, pet, pet, DamageType.DAMAGE_TYPE_TRUE, DamageSource.DAMAGE_SOURCE_INTERNALRAW, 0.0f));
@@ -136,10 +136,10 @@ namespace AIScripts
                 // TODO: Disable attacking
                 ai.SetAIState(AIState.AI_PET_HARDATTACK);
                 // TODO: Move to target.
-                if (target is IObjAiBase targetAi)
+                if (target is IObjAIBase targetAI)
                 {
                     // TODO: source & target may be backwards
-                    AddBuff("PetCommandParticle", 45.0f, 1, null, ai, targetAi);
+                    AddBuff("PetCommandParticle", 45.0f, 1, null, ai, targetAI);
                 }
                 return true;
             }
@@ -169,7 +169,7 @@ namespace AIScripts
             if (minion != null)
             {
                 AIState state = minion.GetAIState();
-                IObjAiBase owner = minion.Owner;
+                IObjAIBase owner = minion.Owner;
 
                 if (state == AIState.AI_HALTED)
                 {
@@ -259,7 +259,7 @@ namespace AIScripts
         {
             if (!minion.IsDead)
             {
-                if (minion.MovementParameters != null || minion.IsAiPaused())
+                if (minion.MovementParameters != null || minion.IsAIPaused())
                 {
                     return;
                 }
@@ -295,7 +295,7 @@ namespace AIScripts
                     return;
                 }
 
-                IObjAiBase owner = minion.Owner;
+                IObjAIBase owner = minion.Owner;
                 if (owner == null)
                 {
                     minion.Die(CreateDeathData(false, 0, minion, minion, DamageType.DAMAGE_TYPE_TRUE, DamageSource.DAMAGE_SOURCE_INTERNALRAW, 0.0f));
@@ -345,7 +345,7 @@ namespace AIScripts
                     return;
                 }
 
-                IObjAiBase owner = minion.Owner;
+                IObjAIBase owner = minion.Owner;
                 if (owner == null)
                 {
                     minion.Die(CreateDeathData(false, 0, minion, minion, DamageType.DAMAGE_TYPE_TRUE, DamageSource.DAMAGE_SOURCE_INTERNALRAW, 0.0f));

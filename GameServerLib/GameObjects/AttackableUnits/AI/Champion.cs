@@ -18,7 +18,7 @@ using log4net;
 
 namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 {
-    public class Champion : ObjAiBase, IChampion
+    public class Champion : ObjAIBase, IChampion
     {
         private float _championHitFlagTimer;
         private static ILog _logger = LoggerProvider.GetLogger();

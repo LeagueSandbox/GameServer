@@ -19,17 +19,17 @@ namespace Spells
             // TODO
         };
 
-        public void OnActivate(IObjAiBase owner, ISpell spell)
+        public void OnActivate(IObjAIBase owner, ISpell spell)
         {
 
         }
 
-        public void OnDeactivate(IObjAiBase owner, ISpell spell)
+        public void OnDeactivate(IObjAIBase owner, ISpell spell)
         {
 
         }
 
-        public void OnSpellPreCast(IObjAiBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
+        public void OnSpellPreCast(IObjAIBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
         {
         }
 
@@ -48,8 +48,8 @@ namespace Spells
             foreach (var enemy in GetUnitsInRange(owner.Position, 375, true)
                 .Where(x => x.Team == CustomConvert.GetEnemyTeam(owner.Team)))
             {
-                var hasbuff = HasBuff((IObjAiBase)enemy, "TaricWDis");
-                if (enemy is IObjAiBase)
+                var hasbuff = HasBuff((IObjAIBase)enemy, "TaricWDis");
+                if (enemy is IObjAIBase)
                 {
                     enemy.TakeDamage(owner, damage, DamageType.DAMAGE_TYPE_MAGICAL, DamageSource.DAMAGE_SOURCE_SPELL, false);
                     var p2 = AddParticleTarget(owner, enemy, "Shatter_tar", enemy);

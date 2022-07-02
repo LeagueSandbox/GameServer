@@ -15,13 +15,13 @@ namespace ItemPassives
     {
         public IStatsModifier StatsModifier { get; private set; } = new StatsModifier();
 
-        public void OnActivate(IObjAiBase owner)
+        public void OnActivate(IObjAIBase owner)
         {
             StatsModifier.CooldownReduction.FlatBonus = 0.1f;
             owner.AddStatModifier(StatsModifier);
         }
 
-        public void OnDeactivate(IObjAiBase owner)
+        public void OnDeactivate(IObjAIBase owner)
         {
           
         }

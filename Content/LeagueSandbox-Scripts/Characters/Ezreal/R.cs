@@ -25,11 +25,11 @@ namespace Spells
             // TODO
         };
 
-        private IObjAiBase _owner;
+        private IObjAIBase _owner;
         private ISpell _spell;
         private float _bonusAd = 0;
 
-        public void OnActivate(IObjAiBase owner, ISpell spell)
+        public void OnActivate(IObjAIBase owner, ISpell spell)
         {
             _owner = owner;
             _spell = spell;

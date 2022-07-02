@@ -22,7 +22,7 @@ namespace Buffs
 
         public void OnDeactivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
-            if (unit is IObjAiBase obj && obj.Inventory != null)
+            if (unit is IObjAIBase obj && obj.Inventory != null)
             {
                 obj.Spells[6 + (byte)SpellSlotType.InventorySlots].SetCooldown(45.0f, true);
             }

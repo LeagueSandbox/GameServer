@@ -8,6 +8,6 @@ namespace GameServerCore.Domain
     {
         List<ITalent> Talents { get; }
         void Add(string talentId, byte level);
-        void Initialize(IObjAiBase owner);
+        void Initialize(IObjAIBase owner);
     }
 }

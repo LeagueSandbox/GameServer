@@ -205,7 +205,7 @@ namespace LeagueSandbox.GameServer.API
         /// <param name="unit">AI unit to teleport.</param>
         /// <param name="x">X coordinate.</param>
         /// <param name="y">Y coordinate.</param>
-        public static void TeleportTo(IObjAiBase unit, float x, float y)
+        public static void TeleportTo(IObjAIBase unit, float x, float y)
         {
             if (unit.MovementParameters != null)
             {
@@ -269,7 +269,7 @@ namespace LeagueSandbox.GameServer.API
         /// <param name="from">Owner of the buff.</param>
         /// <param name="infiniteduration">Whether or not the buff should last forever.</param>
         /// <returns>New buff instance.</returns>
-        public static IBuff AddBuff(string buffName, float duration, byte stacks, ISpell originspell, IAttackableUnit onto, IObjAiBase from, bool infiniteduration = false, IEventSource parent = null)
+        public static IBuff AddBuff(string buffName, float duration, byte stacks, ISpell originspell, IAttackableUnit onto, IObjAIBase from, bool infiniteduration = false, IEventSource parent = null)
         {
             IBuff buff;
 
@@ -439,7 +439,7 @@ namespace LeagueSandbox.GameServer.API
         /// <returns>New Minion instance.</returns>
         public static IMinion AddMinion
         (
-            IObjAiBase owner,
+            IObjAIBase owner,
             string model,
             string name,
             Vector2 position,
@@ -449,7 +449,7 @@ namespace LeagueSandbox.GameServer.API
             bool targetable = true,
             bool isWard = false,
             SpellDataFlags targetingFlags = 0,
-            IObjAiBase visibilityOwner = null,
+            IObjAIBase visibilityOwner = null,
             bool isVisible = true,
             bool aiPaused = true
         )
@@ -461,7 +461,7 @@ namespace LeagueSandbox.GameServer.API
             {
                 m.SetVisibleByTeam(owner.Team, isVisible);
             }
-            m.PauseAi(aiPaused);
+            m.PauseAI(aiPaused);
             return m;
         }
 
@@ -765,7 +765,7 @@ namespace LeagueSandbox.GameServer.API
         /// TODO: Fully implement new ForceMovement functionality in AttackableUnit.
         public static void ForceMovement
         (
-            IObjAiBase unit,
+            IObjAIBase unit,
             IAttackableUnit target,
             string animation,
             float speed,
@@ -824,7 +824,7 @@ namespace LeagueSandbox.GameServer.API
             obj.StopAnimation(animation, stopAll, fade, ignoreLock);
         }
 
-        public static void SealSpellSlot(IObjAiBase target, SpellSlotType slotType, int slot, SpellbookType spellbookType, bool seal)
+        public static void SealSpellSlot(IObjAIBase target, SpellSlotType slotType, int slot, SpellbookType spellbookType, bool seal)
         {
             slot = ConvertAPISlot(spellbookType, slotType, slot);
 
@@ -894,7 +894,7 @@ namespace LeagueSandbox.GameServer.API
         /// <param name="slot">Index of the spell slot to change.</param>
         /// <param name="fullReplace">Whether or not the spell should be entirely replaced, or just the name. Typically used for transformations.</param>
         /// <returns>Newly created spell or existing spell with the given name. Null for failure.</returns>
-        public static ISpell SetSpell(IObjAiBase target, string newName, SpellSlotType slotType, int slot, bool fullReplace = false)
+        public static ISpell SetSpell(IObjAIBase target, string newName, SpellSlotType slotType, int slot, bool fullReplace = false)
         {
             slot = ConvertAPISlot(slotType, slot);
 
@@ -913,7 +913,7 @@ namespace LeagueSandbox.GameServer.API
         /// <param name="slotType">Type of slot being used.</param>
         /// <param name="slot">Index of the spell slot to change.</param>
         /// <param name="newType">Targeting type to set.</param>
-        public static void SetTargetingType(IObjAiBase target, SpellSlotType slotType, int slot, TargetingType newType)
+        public static void SetTargetingType(IObjAIBase target, SpellSlotType slotType, int slot, TargetingType newType)
         {
             slot = ConvertAPISlot(slotType, slot);
 
@@ -956,7 +956,7 @@ namespace LeagueSandbox.GameServer.API
             buff.SetToolTipVar(tipIndex, value);
         }
 
-        public static void SpellCast(IObjAiBase caster, int slot, SpellSlotType slotType, Vector2 pos, Vector2 endPos, bool fireWithoutCasting, Vector2 overrideCastPos, List<ICastTarget> targets = null, bool isForceCastingOrChanneling = false, int overrideForceLevel = -1, bool updateAutoAttackTimer = false, bool useAutoAttackSpell = false)
+        public static void SpellCast(IObjAIBase caster, int slot, SpellSlotType slotType, Vector2 pos, Vector2 endPos, bool fireWithoutCasting, Vector2 overrideCastPos, List<ICastTarget> targets = null, bool isForceCastingOrChanneling = false, int overrideForceLevel = -1, bool updateAutoAttackTimer = false, bool useAutoAttackSpell = false)
         {
             slot = ConvertAPISlot(slotType, slot);
 
@@ -1012,28 +1012,28 @@ namespace LeagueSandbox.GameServer.API
             spell.Cast(castInfo, !fireWithoutCasting);
         }
 
-        public static void SpellCast(IObjAiBase caster, int slot, SpellSlotType slotType, bool fireWithoutCasting, IAttackableUnit target, Vector2 overrideCastPos, bool isForceCastingOrChanneling = false, int overrideForceLevel = -1, bool updateAutoAttackTimer = false, bool useAutoAttackSpell = false)
+        public static void SpellCast(IObjAIBase caster, int slot, SpellSlotType slotType, bool fireWithoutCasting, IAttackableUnit target, Vector2 overrideCastPos, bool isForceCastingOrChanneling = false, int overrideForceLevel = -1, bool updateAutoAttackTimer = false, bool useAutoAttackSpell = false)
         {
             ICastTarget castTarget = new CastTarget(target, CastTarget.GetHitResult(target, useAutoAttackSpell, caster.IsNextAutoCrit));
 
             SpellCast(caster, slot, slotType, target.Position, target.Position, fireWithoutCasting, overrideCastPos, new List<ICastTarget> { castTarget }, isForceCastingOrChanneling, overrideForceLevel, updateAutoAttackTimer, useAutoAttackSpell);
         }
 
-        public static void SpellCastItem(IObjAiBase caster, string itemSpellName, bool fireWithoutCasting, IAttackableUnit target, Vector2 overrideCastPos, bool isForceCastingOrChanneling = false, int overrideForceLevel = -1, bool updateAutoAttackTimer = false, bool useAutoAttackSpell = false)
+        public static void SpellCastItem(IObjAIBase caster, string itemSpellName, bool fireWithoutCasting, IAttackableUnit target, Vector2 overrideCastPos, bool isForceCastingOrChanneling = false, int overrideForceLevel = -1, bool updateAutoAttackTimer = false, bool useAutoAttackSpell = false)
         {
             // Apply the spell to the TempItemSlot.
             caster.SetSpell(itemSpellName, (byte)SpellSlotType.TempItemSlot, true);
             SpellCast(caster, 0, SpellSlotType.TempItemSlot, fireWithoutCasting, target, overrideCastPos, isForceCastingOrChanneling, overrideForceLevel, updateAutoAttackTimer, useAutoAttackSpell);
         }
 
-        public static void SpellCastItem(IObjAiBase caster, string itemSpellName, Vector2 pos, Vector2 endPos, bool fireWithoutCasting, Vector2 overrideCastPos, bool isForceCastingOrChanneling = false, int overrideForceLevel = -1, bool updateAutoAttackTimer = false, bool useAutoAttackSpell = false)
+        public static void SpellCastItem(IObjAIBase caster, string itemSpellName, Vector2 pos, Vector2 endPos, bool fireWithoutCasting, Vector2 overrideCastPos, bool isForceCastingOrChanneling = false, int overrideForceLevel = -1, bool updateAutoAttackTimer = false, bool useAutoAttackSpell = false)
         {
             // Apply the spell to the TempItemSlot.
             caster.SetSpell(itemSpellName, (byte)SpellSlotType.TempItemSlot, true);
             SpellCast(caster, 0, SpellSlotType.TempItemSlot, pos, endPos, fireWithoutCasting, overrideCastPos, null, isForceCastingOrChanneling, overrideForceLevel, updateAutoAttackTimer, useAutoAttackSpell);
         }
 
-        public static void StopChanneling(IObjAiBase target, ChannelingStopCondition stopCondition, ChannelingStopSource stopSource)
+        public static void StopChanneling(IObjAIBase target, ChannelingStopCondition stopCondition, ChannelingStopSource stopSource)
         {
             target.StopChanneling(stopCondition, stopSource);
         }

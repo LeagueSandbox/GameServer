@@ -3,12 +3,12 @@ using GameServerCore.Scripting.CSharp;
 
 namespace GameServerCore.Domain.GameObjects
 {
-    public interface IMinion : IObjAiBase
+    public interface IMinion : IObjAIBase
     {
         /// <summary>
         /// Unit which spawned this minion.
         /// </summary>
-        IObjAiBase Owner { get; }
+        IObjAIBase Owner { get; }
         /// <summary>
         /// Whether or not this minion should ignore collisions.
         /// </summary>
@@ -32,7 +32,7 @@ namespace GameServerCore.Domain.GameObjects
         /// <summary>
         /// Only unit which is allowed to see this minion.
         /// </summary>
-        IObjAiBase VisibilityOwner { get; }
+        IObjAIBase VisibilityOwner { get; }
         int DamageBonus { get; }
         int HealthBonus { get; }
         int InitialLevel { get; }

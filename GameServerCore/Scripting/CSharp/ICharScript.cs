@@ -5,11 +5,11 @@ namespace GameServerCore.Scripting.CSharp
 {
     public interface ICharScript
     {
-        void OnActivate(IObjAiBase owner, ISpell spell = null)
+        void OnActivate(IObjAIBase owner, ISpell spell = null)
         {
         }
 
-        void OnDeactivate(IObjAiBase owner, ISpell spell = null)
+        void OnDeactivate(IObjAIBase owner, ISpell spell = null)
         {
         }
 
