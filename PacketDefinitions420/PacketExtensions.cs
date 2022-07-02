@@ -78,7 +78,7 @@ namespace PacketDefinitions420
         {
             return new MovementDataStop
             {
-                SyncID = (int)o.SyncId,
+                SyncID = Environment.TickCount,
                 Position = o.Position,
                 Forward = new Vector2(o.Direction.X, o.Direction.Z)
             };
@@ -92,7 +92,7 @@ namespace PacketDefinitions420
         {
             return new MovementDataNone
             {
-                SyncID = (int)o.SyncId
+                SyncID = 0 // Always zero in replays
             };
         }
 
@@ -139,7 +139,7 @@ namespace PacketDefinitions420
 
             return new MovementDataNormal
             {
-                SyncID = unit.SyncId,
+                SyncID = Environment.TickCount,
                 TeleportNetID = unit.NetId,
                 HasTeleportID = useTeleportID,
                 TeleportID = useTeleportID ? unit.TeleportID : (byte)0,
@@ -184,7 +184,7 @@ namespace PacketDefinitions420
 
             return new MovementDataWithSpeed
             {
-                SyncID = unit.SyncId,
+                SyncID = Environment.TickCount,
                 TeleportNetID = unit.NetId,
                 HasTeleportID = useTeleportID,
                 TeleportID = useTeleportID ? unit.TeleportID : (byte)0,
