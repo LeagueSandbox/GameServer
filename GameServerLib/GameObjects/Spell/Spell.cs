@@ -490,7 +490,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
                 _attackType = AttackType.ATTACK_TYPE_MELEE;
             }
 
-            if (CastInfo.Targets[0].Unit != null && CastInfo.Targets[0].Unit != CastInfo.Owner)
+            if (CastInfo.Targets.Count > 0 && CastInfo.Targets[0].Unit != null && CastInfo.Targets[0].Unit != CastInfo.Owner)
             {
                 if (Script.ScriptMetadata.AutoFaceDirection)
                 {
@@ -530,7 +530,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
                 }
             }
 
-            if (CastInfo.Targets[0].Unit != null && CastInfo.Targets[0].Unit != CastInfo.Owner)
+            if (CastInfo.Targets.Count > 0 && CastInfo.Targets[0].Unit != null && CastInfo.Targets[0].Unit != CastInfo.Owner)
             {
                 _game.PacketNotifier.NotifyS2C_UnitSetLookAt(CastInfo.Owner, CastInfo.Targets[0].Unit, _attackType);
             }

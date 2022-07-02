@@ -79,7 +79,7 @@ namespace LeagueSandbox.GameServer.API
 
         public static void RemoveAllListenersForOwner(object owner)
         {
-            foreach(var dispatcher in _dispatchers)
+            foreach (var dispatcher in _dispatchers)
             {
                 dispatcher.RemoveListener(owner);
             }
@@ -185,13 +185,18 @@ namespace LeagueSandbox.GameServer.API
             public abstract void RemoveListener(object owner);
         }
 
-        public abstract class DispatcherBase<Source, CBType>: DispatcherBase
+        public abstract class DispatcherBase<Source, CBType> : DispatcherBase
         {
             protected readonly List<Tuple<object, Source, CBType, bool>> _listeners
                     = new List<Tuple<object, Source, CBType, bool>>();
 
             public void AddListener(object owner, Source source, CBType callback, bool singleInstance = false)
             {
+                if (owner == null || source == null || callback == null)
+                {
+                    return;
+                }
+
                 _listeners.Add(
                     new Tuple<object, Source, CBType, bool>(owner, source, callback, singleInstance)
                 );
@@ -208,7 +213,7 @@ namespace LeagueSandbox.GameServer.API
             }
         }
 
-        public abstract class VariableDispatcherBase<Source, Data, CBType>: VariableDispatcherBase<Source, CBType>
+        public abstract class VariableDispatcherBase<Source, Data, CBType> : VariableDispatcherBase<Source, CBType>
         {
             protected Data _data;
             public void Publish(Source source, Data data)
@@ -218,7 +223,7 @@ namespace LeagueSandbox.GameServer.API
             }
         }
 
-        public abstract class VariableDispatcherBase<Source, CBType>: DispatcherBase<Source, CBType>
+        public abstract class VariableDispatcherBase<Source, CBType> : DispatcherBase<Source, CBType>
         {
             protected Source _source;
             protected abstract void Call(CBType callback);
@@ -226,23 +231,20 @@ namespace LeagueSandbox.GameServer.API
             {
                 _source = source;
 
-                for (int i = _listeners.Count - 1; i >= 0; i--)
+                foreach (var listener in _listeners.FindAll(x => x.Item2.Equals(source)))
                 {
-                    if (_listeners[i].Item2.Equals(source))
-                    {
-                        var listener = _listeners[i];
-                        Call(listener.Item3);
+                    Call(listener.Item3);
 
-                        if (listener.Item4)
-                        {
-                            _listeners.Remove(listener);
-                        }
+                    if (listener.Item4)
+                    {
+                        _listeners.Remove(listener);
                     }
                 }
+
             }
         }
 
-        public abstract class ConditionDispatcherBase<Source, Data, CBType>: DispatcherBase<Source, CBType>
+        public abstract class ConditionDispatcherBase<Source, Data, CBType> : DispatcherBase<Source, CBType>
         {
             protected Source _source;
             protected Data _data;
@@ -253,24 +255,20 @@ namespace LeagueSandbox.GameServer.API
                 _data = data;
 
                 bool returnVal = true;
-                for (int i = _listeners.Count - 1; i >= 0; i--)
+                foreach (var listener in _listeners.FindAll(x => x.Item2.Equals(source)))
                 {
-                    if (_listeners[i].Item2.Equals(source))
-                    {
-                        var listener = _listeners[i];
-                        returnVal = returnVal && Call(listener.Item3);
+                    returnVal = returnVal && Call(listener.Item3);
 
-                        if (listener.Item4)
-                        {
-                            _listeners.Remove(listener);
-                        }
+                    if (listener.Item4)
+                    {
+                        _listeners.Remove(listener);
                     }
                 }
                 return returnVal;
             }
         }
 
-        public class Dispatcher<Source>: VariableDispatcherBase<Source, Action<Source>>
+        public class Dispatcher<Source> : VariableDispatcherBase<Source, Action<Source>>
         {
             public new void Publish(Source source)
             {
@@ -282,7 +280,7 @@ namespace LeagueSandbox.GameServer.API
             }
         }
 
-        public class Dispatcher<Source, Data>: VariableDispatcherBase<Source, Data, Action<Source, Data>>
+        public class Dispatcher<Source, Data> : VariableDispatcherBase<Source, Data, Action<Source, Data>>
         {
             protected override void Call(Action<Source, Data> callback)
             {
@@ -290,7 +288,7 @@ namespace LeagueSandbox.GameServer.API
             }
         }
 
-        public class DataOnlyDispatcher<Source, Data>: VariableDispatcherBase<Source, Data, Action<Data>>
+        public class DataOnlyDispatcher<Source, Data> : VariableDispatcherBase<Source, Data, Action<Data>>
         {
             protected override void Call(Action<Data> callback)
             {
@@ -298,7 +296,7 @@ namespace LeagueSandbox.GameServer.API
             }
         }
 
-        public class Dispatcher<Source, D1, D2, D3>: VariableDispatcherBase<Source, (D1, D2, D3), Action<Source, D1, D2, D3>>
+        public class Dispatcher<Source, D1, D2, D3> : VariableDispatcherBase<Source, (D1, D2, D3), Action<Source, D1, D2, D3>>
         {
             protected override void Call(Action<Source, D1, D2, D3> callback)
             {
@@ -306,7 +304,7 @@ namespace LeagueSandbox.GameServer.API
             }
         }
 
-        public class Dispatcher<Source, D1, D2, D3, D4>: VariableDispatcherBase<Source, (D1, D2, D3, D4), Action<Source, D1, D2, D3, D4>>
+        public class Dispatcher<Source, D1, D2, D3, D4> : VariableDispatcherBase<Source, (D1, D2, D3, D4), Action<Source, D1, D2, D3, D4>>
         {
             protected override void Call(Action<Source, D1, D2, D3, D4> callback)
             {
@@ -314,7 +312,7 @@ namespace LeagueSandbox.GameServer.API
             }
         }
 
-        public class ConditionDispatcher<Source, Data>: ConditionDispatcherBase<Source, Data, Func<Source, Data, bool>>
+        public class ConditionDispatcher<Source, Data> : ConditionDispatcherBase<Source, Data, Func<Source, Data, bool>>
         {
             protected override bool Call(Func<Source, Data, bool> callback)
             {
@@ -322,7 +320,7 @@ namespace LeagueSandbox.GameServer.API
             }
         }
 
-        public class ConditionDispatcher<Source, D1, D2>: ConditionDispatcherBase<Source, (D1, D2), Func<Source, D1, D2, bool>>
+        public class ConditionDispatcher<Source, D1, D2> : ConditionDispatcherBase<Source, (D1, D2), Func<Source, D1, D2, bool>>
         {
             protected override bool Call(Func<Source, D1, D2, bool> callback)
             {
