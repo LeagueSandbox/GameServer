@@ -285,6 +285,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             Stats.CurrentHealth = Stats.HealthPoints.Total;
             IsDead = false;
             RespawnTimer = -1;
+            SetDashingState(false, MoveStopReason.HeroReincarnate);
             ApiEventManager.OnResurrect.Publish(this);
         }
 

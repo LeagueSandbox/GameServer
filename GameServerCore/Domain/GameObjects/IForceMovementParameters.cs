@@ -9,7 +9,11 @@ namespace GameServerCore.Domain.GameObjects
         /// <summary>
         /// Amount of time passed since the unit started dashing.
         /// </summary>
-        float ElapsedTime { get; }
+        float ElapsedTime { get; set; }
+        /// <summary>
+        /// The distance traveled from the beginning of the dash.
+        /// </summary>
+        float PassedDistance { get; set; }
         /// <summary>
         /// Speed to use for the movement.
         /// </summary>
@@ -42,7 +46,5 @@ namespace GameServerCore.Domain.GameObjects
         /// Maximum amount of time to follow the FollowNetID.
         /// </summary>
         float FollowTravelTime { get; }
-
-        void SetTimeElapsed(float time);
     }
 }
