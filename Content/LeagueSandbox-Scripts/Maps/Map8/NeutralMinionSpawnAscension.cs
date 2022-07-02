@@ -131,7 +131,7 @@ public class AscXerath
     public void SpawnXerath()
     {
         var ascXerath = Camp.AddMonster(Xerath);
-        ascXerath.IconInfo.SwapIcon("Dragon", true);
+        ascXerath.IconInfo.ChangeIcon("Dragon");
         ApiEventManager.OnDeath.AddListener(ascXerath, ascXerath, OnXerathDeath, true);
         RespawnTimer = 30.0f * 1000;
     }
@@ -169,7 +169,7 @@ public class AscensionCrystal
     {
         var crystal = CreateMinion("AscRelic", "AscRelic", Position, ignoreCollision: true, isTargetable: false);
         ApiEventManager.OnDeath.AddListener(crystal, crystal, OnDeath, true);
-        crystal.IconInfo.SwapIcon("Relic", true);
+        crystal.IconInfo.ChangeIcon("Relic");
         IsDead = false;
         RespawnTimer = 20.0f * 1000f;
 

@@ -22,15 +22,15 @@ namespace Buffs
         IParticle p1;
         public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
-            unit.IconInfo.SwapBorder("Teleport", true, "ascwarptarget");
-            unit.IconInfo.SwapIcon("NoIcon", true);
+            unit.IconInfo.ChangeBorder("Teleport", "ascwarptarget");
+            unit.IconInfo.ChangeIcon("NoIcon");
             p1 = AddParticleTarget(buff.SourceUnit, null, "global_asc_teleport_target", unit, -1);
         }
 
         public void OnDeactivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
             RemoveParticle(p1);
-            unit.IconInfo.SwapBorder("", true);
+            unit.IconInfo.ResetBorder();
             TeleportTo(buff.SourceUnit, unit.Position.X, unit.Position.Y);
             if (buff.SourceUnit is IChampion ch)
             {

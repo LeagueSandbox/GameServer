@@ -103,7 +103,7 @@ namespace MapScripts.Map8
         public static void CreateTeleportPoint(Vector2 position, TeamId team, string mapIcon)
         {
             var point = CreateMinion("AscWarpIcon", "AscWarpIcon", position, team: team, ignoreCollision: false, isTargetable: false);
-            point.IconInfo.SwapIcon(mapIcon, true);
+            point.IconInfo.ChangeIcon(mapIcon);
             TeleportPlates.Add(point);
             point.PauseAI(true);
         }

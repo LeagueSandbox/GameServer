@@ -743,8 +743,7 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="attacked">Unit that is being attacked.</param>
         /// <param name="attackType">AttackType that the attacker is using to attack.</param>
         void NotifyS2C_UnitSetLookAt(IAttackableUnit attacker, IAttackableUnit attacked, AttackType attackType);
-        void NotifyS2C_UnitSetMinimapIcon(IAttackableUnit unit, TeamId team);
-        void NotifyS2C_UnitSetMinimapIcon(IAttackableUnit unit);
+        void NotifyS2C_UnitSetMinimapIcon(int userId, IAttackableUnit unit, bool changeIcon, bool changeBorder);
         void NotifyS2C_UpdateAscended(IObjAIBase ascendant = null);
         /// <summary>
         /// Sends a packet to all players detailing the attack speed cap overrides for this game.
