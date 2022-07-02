@@ -242,9 +242,21 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
 
             Replication.Update();
 
-            if (Waypoints.Count > 1 && CanMove())
+            if (CanMove())
             {
-                Move(diff);
+                float remainingFrameTime = diff;
+                if(MovementParameters != null)
+                {
+                    remainingFrameTime = DashMove(diff);
+                }
+                if(MovementParameters == null)
+                {
+                    Move(remainingFrameTime);
+                }
+            }
+            else
+            {
+                SetDashingState(false, ~MoveStopReason.Finished);
             }
 
             // Prevents edge cases where a movement command is performed in the same tick as a ForceMovement.
@@ -256,7 +268,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
 
             if (MovementParameters != null && MovementParameters.FollowNetID > 0)
             {
-                MovementParameters.SetTimeElapsed(MovementParameters.ElapsedTime + diff);
+                MovementParameters.ElapsedTime += diff;
                 if (MovementParameters.ElapsedTime >= MovementParameters.FollowTravelTime && MovementParameters.FollowTravelTime >= 0)
                 {
                     SetDashingState(false);
@@ -965,95 +977,97 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             _movementUpdated = false;
         }
 
+        private float DashMove(float frameTime)
+        {
+            var MP = MovementParameters;
+            Vector2 dir;
+            float distToDest;
+            float distRemaining = float.PositiveInfinity;
+            float timeRemaining = float.PositiveInfinity;
+            if(MP.FollowNetID > 0)
+            {
+                IGameObject unitToFollow = _game.ObjectManager.GetObjectById(MP.FollowNetID);
+                if(unitToFollow == null)
+                {
+                    SetDashingState(false, MoveStopReason.LostTarget);
+                    return frameTime;
+                }
+                dir = unitToFollow.Position - Position;
+                distToDest = dir.Length() - (PathfindingRadius + unitToFollow.PathfindingRadius);
+                if(MP.FollowDistance > 0)
+                {
+                    distRemaining = MP.FollowDistance - MP.PassedDistance;
+                    distRemaining = Math.Min(distToDest, distRemaining);
+                }
+                if(MP.FollowTravelTime > 0)
+                {
+                    timeRemaining = MP.FollowTravelTime - MP.ElapsedTime;
+                }
+            }
+            else
+            {
+                dir = Waypoints[1] - Position;
+                distToDest = dir.Length();
+            }
+
+            float time = Math.Min(frameTime, timeRemaining);
+            float speed = MP.PathSpeedOverride * 0.001f;
+            float distPerFrame = speed * time;
+            float dist = Math.Min(distPerFrame, distRemaining);
+            Position += Vector2.Normalize(dir) * dist;
+
+            if(distRemaining <= distPerFrame)
+            {
+                SetDashingState(false);
+                return (distPerFrame - distRemaining) / speed;
+            }
+            if(timeRemaining <= frameTime)
+            {
+                SetDashingState(false);
+                return frameTime - timeRemaining;
+            }
+            MP.PassedDistance += dist;
+            MP.ElapsedTime += time;
+            
+            return 0;
+        }
+
         /// <summary>
         /// Moves this unit to its specified waypoints, updating its position along the way.
         /// </summary>
         /// <param name="diff">The amount of milliseconds the unit is supposed to move</param>
         /// TODO: Implement interpolation (assuming all other desync related issues are already fixed).
-        public virtual bool Move(float diff)
+        public virtual bool Move(float delta)
         {
-            // current -> next positions
-            var cur = Position;
-            var next = CurrentWaypoint;
-
-            var goingTo = next - cur;
-
-            var dirTemp = Vector2.Normalize(goingTo);
-
-            // usually doesn't happen
-            if (float.IsNaN(dirTemp.X) || float.IsNaN(dirTemp.Y))
+            if(CurrentWaypointKey < Waypoints.Count)
             {
-                dirTemp = new Vector2(0, 0);
-            }
+                float speed = GetMoveSpeed() * 0.001f;
+                var maxDist = speed * delta;
 
-            Direction = new Vector3(dirTemp.X, 0.0f, dirTemp.Y);
-
-            //TODO: Turns in the direction of travel automatically, no need to call.
-            if (MovementParameters != null && !MovementParameters.KeepFacingDirection)
-            {
-                FaceDirection(Direction, false);
-            }
-
-            var moveSpeed = GetMoveSpeed();
-
-            var distSqr = MathF.Abs(Vector2.DistanceSquared(cur, next));
-
-            var deltaMovement = moveSpeed * 0.001f * diff;
-
-            // Prevent moving past the next waypoint.
-            if (deltaMovement * deltaMovement > distSqr)
-            {
-                deltaMovement = MathF.Sqrt(distSqr);
-            }
-
-            var xx = Direction.X * deltaMovement;
-            var yy = Direction.Z * deltaMovement;
-
-            Vector2 nextPos = new Vector2(Position.X + xx, Position.Y + yy);
-            // TODO: Implement ForceMovementType so this specifically applies to dashes that can't move past walls.
-            if (MovementParameters == null)
-            {
-                // Prevent moving past obstacles. TODO: Verify if works at high speeds.
-                // TODO: Implement range based (CollisionRadius) pathfinding so we don't keep getting stuck because of IsAnythingBetween.
-                // TODO: After the above, implement repathing if our position within the next tick or two will intersect with another GameObject.
-                KeyValuePair<bool, Vector2> pathBlocked = _game.Map.NavigationGrid.IsAnythingBetween(Position, nextPos);
-                if (pathBlocked.Key)
+                while(true)
                 {
-                    nextPos = _game.Map.NavigationGrid.GetClosestTerrainExit(pathBlocked.Value, PathfindingRadius + 1.0f);
-                }
-            }
+                    var dir = CurrentWaypoint - Position;
+                    var dist = dir.Length();
 
-            Position = nextPos;
-
-            // (X, Y) have now moved to the next position
-            cur = Position;
-
-            // Check if we reached the next waypoint
-            // REVIEW (of previous code): (deltaMovement * 2) being used here is problematic; if the server lags, the diff will be much greater than the usual values
-            if ((cur - next).LengthSquared() < MOVEMENT_EPSILON * MOVEMENT_EPSILON)
-            {
-                var nextIndex = CurrentWaypointKey + 1;
-                // stop moving because we have reached our last waypoint
-                if (nextIndex >= Waypoints.Count)
-                {
-                    ResetWaypoints();
-
-                    if (MovementParameters != null)
+                    if(maxDist < dist)
                     {
-                        SetDashingState(false);
+                        Position += dir / dist * maxDist;
                         return true;
                     }
+                    else
+                    {
+                        Position = CurrentWaypoint;
+                        maxDist -= dist;
 
-                    return true;
-                }
-                // start moving to our next waypoint
-                else
-                {
-                    CurrentWaypointKey = nextIndex;
+                        CurrentWaypointKey++;
+                        if(CurrentWaypointKey == Waypoints.Count || maxDist == 0)
+                        {
+                            return true;
+                        }
+                    }
                 }
             }
-
-            return true;
+            return false;
         }
 
         /// <summary>
@@ -1681,6 +1695,8 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                 {
                     ApiEventManager.OnMoveFailure.Publish(this);
                 }
+
+                ResetWaypoints();
             }
         }
 
