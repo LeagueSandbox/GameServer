@@ -2067,7 +2067,7 @@ namespace PacketDefinitions420
             var castAnsPacket = new NPC_CastSpellAns
             {
                 SenderNetID = s.CastInfo.Owner.NetId,
-                CasterPositionSyncID = s.CastInfo.Owner.SyncId,
+                CasterPositionSyncID = Environment.TickCount,
                 // TODO: Find what this is (if false, causes CasterPositionSyncID to be used)
                 Unknown1 = false,
                 CastInfo = castInfo
@@ -2146,13 +2146,14 @@ namespace PacketDefinitions420
         public void NotifyNPC_Die_EventHistory(IChampion ch, uint killerNetID = 0)
         {
             var history = new NPC_Die_EventHistory();
+            history.SenderNetID = ch.NetId;
             history.KillerNetID = killerNetID;
             history.Duration = 0;
             if(ch.EventHistory.Count > 0)
             {
                 float firstTimestamp = ch.EventHistory[0].Timestamp;
                 float lastTimestamp = ch.EventHistory[ch.EventHistory.Count - 1].Timestamp;
-                history.Duration = lastTimestamp - firstTimestamp; // ?
+                history.Duration = lastTimestamp - firstTimestamp;
             }
             history.EventSourceType = 0; //TODO: Confirm that it is always zero
             history.Entries = ch.EventHistory;
@@ -3828,7 +3829,7 @@ namespace PacketDefinitions420
         {
             var md = new MovementDataNormal()
             {
-                SyncID = unit.SyncId,
+                SyncID = Environment.TickCount,
                 TeleportNetID = unit.NetId,
                 HasTeleportID = true,
                 TeleportID = unit.TeleportID,
@@ -4226,7 +4227,7 @@ namespace PacketDefinitions420
 
             var speedWpGroup = new WaypointGroupWithSpeed
             {
-                SyncID = u.SyncId,
+                SyncID = Environment.TickCount,
                 // TOOD: Implement support for multiple speed-based movements (functionally known as dashes).
                 Movements = new List<MovementDataWithSpeed> { md }
             };
@@ -4243,7 +4244,7 @@ namespace PacketDefinitions420
             var wpList = new WaypointList
             {
                 SenderNetID = unit.NetId,
-                SyncID = unit.SyncId,
+                SyncID = Environment.TickCount,
                 Waypoints = unit.Waypoints
             };
 
@@ -4259,7 +4260,7 @@ namespace PacketDefinitions420
             var wpList = new WaypointList
             {
                 SenderNetID = obj.NetId,
-                SyncID = obj.SyncId,
+                SyncID = Environment.TickCount,
                 Waypoints = waypoints
             };
 
@@ -4314,7 +4315,7 @@ namespace PacketDefinitions420
             var speedWpGroup = new WaypointListHeroWithSpeed
             {
                 SenderNetID = u.NetId,
-                SyncID = u.SyncId,
+                SyncID = Environment.TickCount,
                 // TOOD: Implement support for multiple speed-based movements (functionally known as dashes).
                 WaypointSpeedParams = speeds,
                 Waypoints = u.Waypoints

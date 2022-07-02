@@ -70,10 +70,6 @@ namespace LeagueSandbox.GameServer.GameObjects
         /// </summary>
         public Vector3 Direction { get; protected set; }
         /// <summary>
-        /// Used to synchronize movement between client and server. Is currently assigned Env.TickCount.
-        /// </summary>
-        public int SyncId { get; }
-        /// <summary>
         /// Team identifier, refer to TeamId enum.
         /// </summary>
         public TeamId Team { get; protected set; }
@@ -102,7 +98,6 @@ namespace LeagueSandbox.GameServer.GameObjects
             }
             Position = position;
             Direction = Vector3.Zero;
-            SyncId = Environment.TickCount; // TODO: use movement manager to generate this
             CollisionRadius = collisionRadius;
             PathfindingRadius = pathingRadius;
             VisionRadius = visionRadius;

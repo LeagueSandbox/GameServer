@@ -33,10 +33,6 @@ namespace GameServerCore.Domain.GameObjects
         /// </summary>
         Vector3 Direction { get; }
         /// <summary>
-        /// Used to synchronize movement between client and server. Is currently assigned Env.TickCount.
-        /// </summary>
-        int SyncId { get; }
-        /// <summary>
         /// Team identifier, refer to TeamId enum.
         /// </summary>
         TeamId Team { get; }
