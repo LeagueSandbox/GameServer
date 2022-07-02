@@ -25,7 +25,7 @@ namespace Buffs
         {
             Unit = unit;
 
-            if (unit is IObjAiBase obj)
+            if (unit is IObjAIBase obj)
             {
                 if (unit is IChampion ch)
                 {
@@ -59,7 +59,7 @@ namespace Buffs
             AddParticleTarget(unit, unit, "TurnBack", unit);
             AddParticleTarget(unit, unit, "LeonaPassive_tar", unit, size: 2.5f);
 
-            if (unit is IObjAiBase obj)
+            if (unit is IObjAIBase obj)
             {
                 AddBuff("AscBuff", 25000.0f, 1, null, unit, obj);
             }

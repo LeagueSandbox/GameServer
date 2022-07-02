@@ -18,15 +18,15 @@ namespace Spells
             // TODO
         };
 
-        public void OnActivate(IObjAiBase owner, ISpell spell)
+        public void OnActivate(IObjAIBase owner, ISpell spell)
         {
         }
 
-        public void OnDeactivate(IObjAiBase owner, ISpell spell)
+        public void OnDeactivate(IObjAIBase owner, ISpell spell)
         {
         }
 
-        public void OnSpellPreCast(IObjAiBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
+        public void OnSpellPreCast(IObjAIBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
         {
             //owner.SpellAnimation("SPELL3");
             var p = AddParticleTarget(owner, owner, "Garen_Base_E_Spin", owner, lifetime: 3.0f);
@@ -41,7 +41,7 @@ namespace Spells
             }
         }
 
-        private void ApplySpinDamage(IObjAiBase owner, ISpell spell, IAttackableUnit target)
+        private void ApplySpinDamage(IObjAIBase owner, ISpell spell, IAttackableUnit target)
         {
             var units = GetUnitsInRange(owner.Position, 500, true);
             foreach (var unit in units)

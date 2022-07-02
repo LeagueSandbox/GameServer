@@ -12,7 +12,7 @@ namespace CharScripts
 {
     internal class CharScriptTestCubeRender : ICharScript
     {
-        public void OnActivate(IObjAiBase owner, ISpell spell = null)
+        public void OnActivate(IObjAIBase owner, ISpell spell = null)
         {
             SetStatus(owner, StatusFlags.CanMove, false);
             SetStatus(owner, StatusFlags.Ghosted, true);
@@ -20,7 +20,7 @@ namespace CharScripts
             SetStatus(owner, StatusFlags.SuppressCallForHelp, true);
             SetStatus(owner, StatusFlags.IgnoreCallForHelp, true);
         }
-        public void OnDeactivate(IObjAiBase owner, ISpell spell = null)
+        public void OnDeactivate(IObjAIBase owner, ISpell spell = null)
         {
         }
         public void OnUpdate(float diff)

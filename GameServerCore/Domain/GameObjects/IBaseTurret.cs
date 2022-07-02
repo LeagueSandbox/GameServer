@@ -7,7 +7,7 @@ namespace GameServerCore.Domain.GameObjects
     /// In League, turrets are separated into visual and AI objects, so this GameObject represents the AI portion,
     /// while the visual object is handled automatically by clients via packets.
     /// </summary>
-    public interface IBaseTurret : IObjAiBase
+    public interface IBaseTurret : IObjAIBase
     {
         /// <summary>
         /// Current lane this turret belongs to.

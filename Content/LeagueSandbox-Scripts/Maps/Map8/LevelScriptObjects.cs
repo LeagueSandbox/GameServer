@@ -102,7 +102,7 @@ namespace MapScripts.Map8
         public InfoPoint(Vector2 position, byte index, char id)
         {
             Point = CreateMinion("OdinNeutralGuardian", "OdinNeutralGuardian", position, ignoreCollision: true);
-            Point.PauseAi(true);
+            Point.PauseAI(true);
             AddUnitPerceptionBubble(Point, 800.0f, 25000.0f, TeamId.TEAM_BLUE, true, collisionArea: 120.0f);
             AddUnitPerceptionBubble(Point, 800.0f, 25000.0f, TeamId.TEAM_PURPLE, true, collisionArea: 120.0f);
 

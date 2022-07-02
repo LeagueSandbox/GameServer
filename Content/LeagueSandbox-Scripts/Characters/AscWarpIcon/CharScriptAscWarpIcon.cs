@@ -9,7 +9,7 @@ namespace CharScripts
 {
     internal class CharScriptAscWarpIcon : ICharScript
     {
-        public void OnActivate(IObjAiBase owner, ISpell spell = null)
+        public void OnActivate(IObjAIBase owner, ISpell spell = null)
         {
             SetStatus(owner, StatusFlags.Targetable, false);
             SetStatus(owner, StatusFlags.Stunned, true);
@@ -19,7 +19,7 @@ namespace CharScripts
             SetStatus(owner, StatusFlags.CanMoveEver, false);
         }
 
-        public void OnDeactivate(IObjAiBase owner, ISpell spell = null)
+        public void OnDeactivate(IObjAIBase owner, ISpell spell = null)
         {
         }
 

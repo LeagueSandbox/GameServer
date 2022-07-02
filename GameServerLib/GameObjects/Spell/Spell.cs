@@ -85,7 +85,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
         /// </summary>
         public IToolTipData ToolTipData { get; protected set; }
 
-        public Spell(Game game, IObjAiBase owner, string spellName, byte slot)
+        public Spell(Game game, IObjAIBase owner, string spellName, byte slot)
         {
             _game = game;
             _networkIdManager = game.NetworkIdManager;

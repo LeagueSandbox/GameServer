@@ -20,14 +20,14 @@ namespace Buffs
 
         public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
-            if(unit is IObjAiBase obj && obj.Inventory != null)
+            if(unit is IObjAIBase obj && obj.Inventory != null)
             {
                 AddBuff("AscTrinketStartingCD", 0.3f, 1, null, unit, obj);
                 ApiEventManager.OnResurrect.AddListener(this, obj, OnRespawn, false);
             }
         }
 
-        public void OnRespawn(IObjAiBase owner)
+        public void OnRespawn(IObjAIBase owner)
         {
             owner.Spells[6 + (byte)SpellSlotType.InventorySlots].SetCooldown(0, true);
         }

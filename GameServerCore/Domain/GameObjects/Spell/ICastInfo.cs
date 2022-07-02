@@ -10,7 +10,7 @@ namespace GameServerCore.Domain.GameObjects.Spell
         uint SpellNetID { get; set; }
         byte SpellLevel { get; set; }
         float AttackSpeedModifier { get; set; }
-        IObjAiBase Owner { get; set; }
+        IObjAIBase Owner { get; set; }
         uint SpellChainOwnerNetID { get; set; } // TODO: Figure out what this is used for
         uint PackageHash { get; set; }
         uint MissileNetID { get; set; }

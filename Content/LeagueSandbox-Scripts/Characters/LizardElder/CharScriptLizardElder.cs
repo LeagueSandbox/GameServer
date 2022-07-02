@@ -14,7 +14,7 @@ namespace CharScripts
 {
     internal class CharScriptLizardElder : ICharScript
     {
-        public void OnActivate(IObjAiBase owner, ISpell spell = null)
+        public void OnActivate(IObjAIBase owner, ISpell spell = null)
         {
             AddBuff("GlobalMonsterBuff", 25000.0f, 1, spell, owner, owner, true);
             AddBuff("BlessingoftheLizardElder", 25000.0f, 1, null, owner, owner, true);
@@ -25,7 +25,7 @@ namespace CharScripts
             // TODO: Multiply damage in data (currently unsupported).
         }
 
-        public void OnDeactivate(IObjAiBase owner, ISpell spell = null)
+        public void OnDeactivate(IObjAIBase owner, ISpell spell = null)
         {
         }
         public void OnUpdate(float diff)

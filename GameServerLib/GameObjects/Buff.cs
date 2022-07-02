@@ -32,7 +32,7 @@ namespace LeagueSandbox.GameServer.GameObjects
         public string Name { get; }
         public ISpell OriginSpell { get; }
         public byte Slot { get; private set; }
-        public IObjAiBase SourceUnit { get; }
+        public IObjAIBase SourceUnit { get; }
         public IAttackableUnit TargetUnit { get; }
         public float TimeElapsed { get; private set; }
         /// <summary>
@@ -49,7 +49,7 @@ namespace LeagueSandbox.GameServer.GameObjects
         /// </summary>
         public IToolTipData ToolTipData { get; protected set; }
 
-        public Buff(Game game, string buffName, float duration, int stacks, ISpell originSpell, IAttackableUnit onto, IObjAiBase from, bool infiniteDuration = false, IEventSource parent = null)
+        public Buff(Game game, string buffName, float duration, int stacks, ISpell originSpell, IAttackableUnit onto, IObjAIBase from, bool infiniteDuration = false, IEventSource parent = null)
         {
             if (duration < 0)
             {

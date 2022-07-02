@@ -26,7 +26,7 @@ namespace LeagueSandbox.GameServer.Inventory
             }
         }
 
-        public void Initialize(IObjAiBase owner)
+        public void Initialize(IObjAIBase owner)
         {
             foreach (var talent in Talents)
             {

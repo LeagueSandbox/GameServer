@@ -16,7 +16,7 @@ namespace CharScripts
     {
         ISpell Spell;
         int counter;
-        public void OnActivate(IObjAiBase owner, ISpell spell = null)
+        public void OnActivate(IObjAIBase owner, ISpell spell = null)
         {
             ApiEventManager.OnDeath.AddListener(this, owner, OnDeath, true);
             ApiEventManager.OnResurrect.AddListener(this, owner, OnRessurect, false);
@@ -24,9 +24,9 @@ namespace CharScripts
         }
         public void OnDeath(IDeathData deathData)
         {
-            AddBuff("SionPassiveDelay", 2f, 1, Spell, deathData.Unit, deathData.Unit as IObjAiBase);
+            AddBuff("SionPassiveDelay", 2f, 1, Spell, deathData.Unit, deathData.Unit as IObjAIBase);
         } 
-        public void OnRessurect(IObjAiBase owner)
+        public void OnRessurect(IObjAIBase owner)
         {
             counter++;
             //This is to avoid a loop in his passive.
@@ -36,7 +36,7 @@ namespace CharScripts
                 counter = 0;
             }
         }
-        public void OnDeactivate(IObjAiBase owner, ISpell spell = null)
+        public void OnDeactivate(IObjAIBase owner, ISpell spell = null)
         {
         }
         public void OnUpdate(float diff)

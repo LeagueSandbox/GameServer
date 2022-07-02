@@ -19,15 +19,15 @@ namespace Spells
             // TODO
         };
 
-        public void OnActivate(IObjAiBase owner, ISpell spell)
+        public void OnActivate(IObjAIBase owner, ISpell spell)
         {
         }
 
-        public void OnDeactivate(IObjAiBase owner, ISpell spell)
+        public void OnDeactivate(IObjAIBase owner, ISpell spell)
         {
         }
 
-        public void OnSpellPreCast(IObjAiBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
+        public void OnSpellPreCast(IObjAIBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
         {
         }
 
@@ -65,7 +65,7 @@ namespace Spells
             foreach (var allyTarget in GetUnitsInRange(owner.Position, 1100, true)
                 .Where(x => x.Team != CustomConvert.GetEnemyTeam(owner.Team)))
             {
-                if (allyTarget is IObjAiBase && owner != allyTarget && hasbuff == false)
+                if (allyTarget is IObjAIBase && owner != allyTarget && hasbuff == false)
                 {
                     AddBuff("Radiance_ally", 10.0f, 1, spell, allyTarget, owner);
                 }

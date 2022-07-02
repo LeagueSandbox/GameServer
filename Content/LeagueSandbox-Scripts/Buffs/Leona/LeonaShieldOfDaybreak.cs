@@ -31,7 +31,7 @@ namespace Buffs
 
             unit.AddStatModifier(StatsModifier);
 
-            if (unit is IObjAiBase ai)
+            if (unit is IObjAIBase ai)
             {
                 SealSpellSlot(ai, SpellSlotType.SpellSlots, 0, SpellbookType.SPELLBOOK_CHAMPION, true);
                 ai.CancelAutoAttack(true);
@@ -44,12 +44,12 @@ namespace Buffs
         {
             if (buff.TimeElapsed >= buff.Duration)
             {
-                ApiEventManager.OnPreAttack.RemoveListener(this, unit as IObjAiBase);
+                ApiEventManager.OnPreAttack.RemoveListener(this, unit as IObjAIBase);
             }
 
             // TODO: Spell Cooldown
 
-            if (unit is IObjAiBase ai)
+            if (unit is IObjAIBase ai)
             {
                 SealSpellSlot(ai, SpellSlotType.SpellSlots, 0, SpellbookType.SPELLBOOK_CHAMPION, false);
             }

@@ -21,7 +21,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
     /// Base class for all moving, attackable, and attacking units.
     /// ObjAIBases normally follow these guidelines of functionality: Self movement, Inventory, Targeting, Attacking, and Spells.
     /// </summary>
-    public class ObjAiBase : AttackableUnit, IObjAiBase
+    public class ObjAIBase : AttackableUnit, IObjAIBase
     {
         // Crucial Vars
         private float _autoAttackCurrentCooldown;
@@ -83,7 +83,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         public ICharScript CharScript { get; private set; }
         public bool IsBot { get; set; }
         public IAIScript AIScript { get; protected set; }
-        public ObjAiBase(Game game, string model, int collisionRadius = 0,
+        public ObjAIBase(Game game, string model, int collisionRadius = 0,
             Vector2 position = new Vector2(), int visionRadius = 0, int skinId = 0, uint netId = 0, TeamId team = TeamId.TEAM_NEUTRAL, IStats stats = null, string aiScript = "") :
             base(game, model, collisionRadius, position, visionRadius, netId, team, stats)
         {
@@ -377,7 +377,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         /// TODO: Move to AttackableUnit.
         public ClassifyUnit ClassifyTarget(IAttackableUnit target, IAttackableUnit victium = null)
         {
-            if (target is IObjAiBase ai && victium != null) // If an ally is in distress, target this unit. (Priority 1~5)
+            if (target is IObjAIBase ai && victium != null) // If an ally is in distress, target this unit. (Priority 1~5)
             {
                 switch (target)
                 {
@@ -1135,7 +1135,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             var objects = _game.ObjectManager.GetObjects();
             foreach (var it in objects)
             {
-                if (it.Value is IObjAiBase u)
+                if (it.Value is IObjAIBase u)
                 {
                     float acquisitionRange = Stats.AcquisitionRange.Total;
                     float acquisitionRangeSquared = acquisitionRange * acquisitionRange;
@@ -1397,7 +1397,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         /// <summary>
         /// Whether or not this unit's AI is innactive.
         /// </summary>
-        public bool IsAiPaused()
+        public bool IsAIPaused()
         {
             return _aiPaused;
         }
@@ -1406,7 +1406,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         /// Forces this unit's AI to pause/unpause.
         /// </summary>
         /// <param name="isPaused">Whether or not to pause.</param>
-        public void PauseAi(bool isPaused)
+        public void PauseAI(bool isPaused)
         {
             _aiPaused = isPaused;
         }

@@ -703,7 +703,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             SetToRemove();
 
             ApiEventManager.OnDeath.Publish(data.Unit, data);
-            if (data.Unit is IObjAiBase obj)
+            if (data.Unit is IObjAIBase obj)
             {
                 if (!(obj is IMonster))
                 {

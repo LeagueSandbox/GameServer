@@ -12,7 +12,7 @@ namespace CharScripts
 {
     internal class CharScriptOdinSpeedShrine : ICharScript
     {
-        public void OnActivate(IObjAiBase owner, ISpell spell = null)
+        public void OnActivate(IObjAIBase owner, ISpell spell = null)
         {
             SetStatus(owner, StatusFlags.Rooted, true);
             SetStatus(owner, StatusFlags.CanMove, false);
@@ -24,7 +24,7 @@ namespace CharScripts
 
             AddBuff("OdinSpeedShrineAura", 25000.0f, 1, null, owner, owner, false);
         }
-        public void OnDeactivate(IObjAiBase owner, ISpell spell = null)
+        public void OnDeactivate(IObjAIBase owner, ISpell spell = null)
         {
         }
         public void OnUpdate(float diff)

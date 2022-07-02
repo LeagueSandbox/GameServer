@@ -6,11 +6,11 @@ namespace GameServerCore.Scripting.CSharp
     {
         IStatsModifier StatsModifier { get; }
 
-        void OnActivate(IObjAiBase owner)
+        void OnActivate(IObjAIBase owner)
         {
         }
 
-        void OnDeactivate(IObjAiBase owner)
+        void OnDeactivate(IObjAIBase owner)
         {
         }
 

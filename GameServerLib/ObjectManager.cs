@@ -409,7 +409,7 @@ namespace LeagueSandbox.GameServer
         public int CountUnitsAttackingUnit(IAttackableUnit target)
         {
             return GetObjects().Count(x =>
-                x.Value is IObjAiBase aiBase &&
+                x.Value is IObjAIBase aiBase &&
                 aiBase.Team == target.Team.GetEnemyTeam() &&
                 !aiBase.IsDead &&
                 aiBase.TargetUnit != null &&
@@ -431,7 +431,7 @@ namespace LeagueSandbox.GameServer
                     continue;
                 }
 
-                var ai = u as IObjAiBase;
+                var ai = u as IObjAIBase;
                 if (ai != null)
                 {
                     ai.Untarget(target);

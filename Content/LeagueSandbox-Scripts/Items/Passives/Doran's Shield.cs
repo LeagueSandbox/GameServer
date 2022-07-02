@@ -14,12 +14,12 @@ namespace ItemPassives
     {
         public IStatsModifier StatsModifier { get; private set; } = new StatsModifier();
 
-        public void OnActivate(IObjAiBase owner)
+        public void OnActivate(IObjAIBase owner)
         {
             StatsModifier.HealthRegeneration.BaseBonus += 1.2f;
             owner.AddStatModifier(StatsModifier);
         }
-        public void OnDeactivate(IObjAiBase owner)
+        public void OnDeactivate(IObjAIBase owner)
         {
         }
         public void OnUpdate(float diff)

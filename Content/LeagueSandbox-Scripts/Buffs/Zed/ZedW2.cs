@@ -22,7 +22,7 @@ namespace Buffs
 
         public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
-            if (unit is IObjAiBase owner)
+            if (unit is IObjAIBase owner)
             {
                 Handler = (owner.GetBuffWithName("ZedWHandler").BuffScript as ZedWHandler);
                 var w2Spell = SetSpell(owner, "ZedW2", SpellSlotType.SpellSlots, 1);
@@ -37,7 +37,7 @@ namespace Buffs
                 unit.RemoveBuffsWithName("ZedWHandler");
             }
 
-            if (unit is IObjAiBase ai)
+            if (unit is IObjAIBase ai)
             {
                 SetSpell(ai, "ZedShadowDash", SpellSlotType.SpellSlots, 1);
             }

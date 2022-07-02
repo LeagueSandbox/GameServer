@@ -189,7 +189,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Missile
                 SpellOrigin.ApplyEffects(TargetUnit, this);
             }
 
-            if (CastInfo.Owner is IObjAiBase ai && SpellOrigin.CastInfo.IsAutoAttack)
+            if (CastInfo.Owner is IObjAIBase ai && SpellOrigin.CastInfo.IsAutoAttack)
             {
                 ai.AutoAttackHit(TargetUnit);
             }

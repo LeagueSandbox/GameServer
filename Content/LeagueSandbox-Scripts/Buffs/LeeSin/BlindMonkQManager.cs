@@ -19,7 +19,7 @@ namespace Buffs
 
         public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
-            var owner = unit as IObjAiBase;
+            var owner = unit as IObjAIBase;
 
             if (owner != null)
             {
@@ -39,7 +39,7 @@ namespace Buffs
 
         public void OnDeactivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
-            var owner = unit as IObjAiBase;
+            var owner = unit as IObjAIBase;
 
             if (owner != null)
             {

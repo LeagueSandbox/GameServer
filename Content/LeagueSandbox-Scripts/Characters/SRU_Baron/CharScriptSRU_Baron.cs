@@ -10,7 +10,7 @@ namespace CharScripts
 {
     internal class CharScriptSRU_Baron : ICharScript
     {
-        public void OnActivate(IObjAiBase owner, ISpell spell = null)
+        public void OnActivate(IObjAIBase owner, ISpell spell = null)
         {
             //TODDO: Make so it can't face other direction
             SetStatus(owner, StatusFlags.CanMove, false);
@@ -45,7 +45,7 @@ namespace CharScripts
             }
         }
 
-        public void OnDeactivate(IObjAiBase owner, ISpell spell = null)
+        public void OnDeactivate(IObjAIBase owner, ISpell spell = null)
         {
         }
 

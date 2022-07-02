@@ -8,11 +8,11 @@ namespace LeagueSandbox.GameServer.Scripting.CSharp
 {
     public class CharScriptEmpty : ICharScript
     {
-        public void OnActivate(IObjAiBase owner, ISpell spell = null)
+        public void OnActivate(IObjAIBase owner, ISpell spell = null)
         {
         }
 
-        public void OnDeactivate(IObjAiBase owner, ISpell spell = null)
+        public void OnDeactivate(IObjAIBase owner, ISpell spell = null)
         {
         }
 

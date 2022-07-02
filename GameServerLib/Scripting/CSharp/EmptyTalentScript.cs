@@ -4,7 +4,7 @@ namespace GameServerCore.Scripting.CSharp
 {
     public class EmptyTalentScript : ITalentScript
     {
-        public void OnActivate(IObjAiBase owner, byte level)
+        public void OnActivate(IObjAIBase owner, byte level)
         {
         }
     }

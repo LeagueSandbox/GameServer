@@ -20,7 +20,7 @@ namespace Buffs
         public IStatsModifier StatsModifier { get; private set; } = new StatsModifier();
 
         IBuff thisBuff;
-        IObjAiBase owner;
+        IObjAIBase owner;
         IParticle particle;
         public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
@@ -41,7 +41,7 @@ namespace Buffs
 
         public void OnDeath(IDeathData deathData)
         {
-            var unit = deathData.Unit as IObjAiBase;
+            var unit = deathData.Unit as IObjAIBase;
             var killer = deathData.Killer as IChampion;
 
             if (unit != null && killer != null && !killer.IsDead)
@@ -79,7 +79,7 @@ namespace Buffs
 
         public void OnPreDealDamage(IDamageData data)
         {
-            if (data.Attacker is IObjAiBase ai && data.Target is IObjAiBase && !(data.Target is IBaseTurret || data.Target is IObjBuilding))
+            if (data.Attacker is IObjAIBase ai && data.Target is IObjAIBase && !(data.Target is IBaseTurret || data.Target is IObjBuilding))
             {
                 if (data.DamageSource == DamageSource.DAMAGE_SOURCE_ATTACK)
                 {

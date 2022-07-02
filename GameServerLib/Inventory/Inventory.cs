@@ -33,7 +33,7 @@ namespace LeagueSandbox.GameServer.Inventory
             return Items.Take(BASE_INVENTORY_SIZE).ToArray();
         }
 
-        public IItem AddItem(IItemData item, IObjAiBase owner)
+        public IItem AddItem(IItemData item, IObjAIBase owner)
         {
             if (item.ItemGroup.ToLower().Equals("relicbase"))
             {
@@ -53,7 +53,7 @@ namespace LeagueSandbox.GameServer.Inventory
             return AddNewItem(item);
         }
 
-        public IItem SetItemToSlot(IItemData item, IObjAiBase owner, byte slot)
+        public IItem SetItemToSlot(IItemData item, IObjAIBase owner, byte slot)
         {
             if (item.ItemGroup.ToLower().Equals("relicbase"))
             {
@@ -68,7 +68,7 @@ namespace LeagueSandbox.GameServer.Inventory
             return SetItem(slot, item);
         }
 
-        private void LoadOwnerStats(IItemData item, IObjAiBase owner)
+        private void LoadOwnerStats(IItemData item, IObjAIBase owner)
         {
             owner.AddStatModifier(item);
 
@@ -139,7 +139,7 @@ namespace LeagueSandbox.GameServer.Inventory
             return null;
         }
 
-        public void RemoveItem(byte slot, IObjAiBase owner, int stacksToRemove = 1, bool force = false)
+        public void RemoveItem(byte slot, IObjAIBase owner, int stacksToRemove = 1, bool force = false)
         {
             if (stacksToRemove < 0)
             {
@@ -227,7 +227,7 @@ namespace LeagueSandbox.GameServer.Inventory
             Items[slot2] = buffer;
         }
 
-        private IItem AddTrinketItem(IItemData item, IObjAiBase owner)
+        private IItem AddTrinketItem(IItemData item, IObjAIBase owner)
         {
             if (Items[TRINKET_SLOT] != null)
             {

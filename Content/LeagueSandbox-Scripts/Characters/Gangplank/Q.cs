@@ -17,15 +17,15 @@ namespace Spells
             // TODO
         };
 
-        public void OnActivate(IObjAiBase owner, ISpell spell)
+        public void OnActivate(IObjAIBase owner, ISpell spell)
         {
         }
 
-        public void OnDeactivate(IObjAiBase owner, ISpell spell)
+        public void OnDeactivate(IObjAIBase owner, ISpell spell)
         {
         }
 
-        public void OnSpellPreCast(IObjAiBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
+        public void OnSpellPreCast(IObjAIBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
         {
         }
 
@@ -38,7 +38,7 @@ namespace Spells
             //spell.AddProjectileTarget("pirate_parley_mis", spell.CastInfo.SpellCastLaunchPosition, target);
         }
 
-        public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, ISpellMissile missile)
+        public void ApplyEffects(IObjAIBase owner, IAttackableUnit target, ISpell spell, ISpellMissile missile)
         {
             var isCrit = new Random().Next(0, 100) < owner.Stats.CriticalChance.Total;
             var baseDamage = new[] { 20, 45, 70, 95, 120 }[spell.CastInfo.SpellLevel - 1] + owner.Stats.AttackDamage.Total;

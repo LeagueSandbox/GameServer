@@ -30,7 +30,7 @@ namespace Buffs
             thisBuff = buff;
             pbuff = AddParticleTarget(ownerSpell.CastInfo.Owner, unit, "Sivir_Base_W_Buff", unit, buff.Duration, bone: "BUFFBONE_CSTM_WEAPON_1");
 
-            if (unit is IObjAiBase ai)
+            if (unit is IObjAIBase ai)
             {
                 SealSpellSlot(ai, SpellSlotType.SpellSlots, 1, SpellbookType.SPELLBOOK_CHAMPION, true);
                 ai.CancelAutoAttack(true);
@@ -48,7 +48,7 @@ namespace Buffs
 
             // TODO: Spell Cooldown
 
-            if (unit is IObjAiBase ai)
+            if (unit is IObjAIBase ai)
             {
                 SealSpellSlot(ai, SpellSlotType.SpellSlots, 1, SpellbookType.SPELLBOOK_CHAMPION, false);
             }

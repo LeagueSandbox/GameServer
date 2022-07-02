@@ -39,7 +39,7 @@ namespace Buffs
 
             originSpell.SetCooldown(1.0f, true);
 
-            SetTargetingType((IObjAiBase)unit, SpellSlotType.SpellSlots, 3, TargetingType.Self);
+            SetTargetingType((IObjAIBase)unit, SpellSlotType.SpellSlots, 3, TargetingType.Self);
 
             if (owner.Team == TeamId.TEAM_BLUE)
             {
@@ -57,7 +57,7 @@ namespace Buffs
         {
             ownerSpell.SetCooldown(6.0f);
 
-            SetTargetingType((IObjAiBase)unit, SpellSlotType.SpellSlots, 3, TargetingType.Area);
+            SetTargetingType((IObjAIBase)unit, SpellSlotType.SpellSlots, 3, TargetingType.Area);
 
             RemoveParticle(red);
             RemoveParticle(green);
@@ -96,7 +96,7 @@ namespace Buffs
                 if (SlowTimer >= 250f)
                 {
                     var spellPos = new Vector2(originSpell.CastInfo.TargetPositionEnd.X, originSpell.CastInfo.TargetPositionEnd.Z);
-                    if ((owner is IObjAiBase ai && !ai.CanCast(originSpell)) || !GameServerCore.Extensions.IsVectorWithinRange(owner.Position, spellPos, 1200f))
+                    if ((owner is IObjAIBase ai && !ai.CanCast(originSpell)) || !GameServerCore.Extensions.IsVectorWithinRange(owner.Position, spellPos, 1200f))
                     {
                         RemoveBuff(thisBuff);
                     }

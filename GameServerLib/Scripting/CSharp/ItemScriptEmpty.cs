@@ -8,11 +8,11 @@ namespace LeagueSandbox.GameServer.Scripting.CSharp
     {
         public IStatsModifier StatsModifier { get; private set; } = new StatsModifier();
 
-        public void OnActivate(IObjAiBase owner)
+        public void OnActivate(IObjAIBase owner)
         {
         }
 
-        public void OnDeactivate(IObjAiBase owner)
+        public void OnDeactivate(IObjAIBase owner)
         {
         }
 

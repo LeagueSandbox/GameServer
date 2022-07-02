@@ -136,7 +136,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
             foreach (var minion in minions)
             {
                 minion.SetPosition(championPos + new Vector2(random.Next(-X, X), random.Next(-X, X)), false);
-                minion.PauseAi(true);
+                minion.PauseAI(true);
                 minion.StopMovement();
                 minion.UpdateMoveOrder(OrderType.Hold);
                 Game.ObjectManager.AddObject(minion);

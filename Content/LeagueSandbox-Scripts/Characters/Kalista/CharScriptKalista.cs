@@ -18,7 +18,7 @@ namespace CharScripts
     {
         IAttackableUnit lastTarget;
 
-        public void OnActivate(IObjAiBase owner, ISpell spell = null)
+        public void OnActivate(IObjAIBase owner, ISpell spell = null)
         {
             ApiEventManager.OnPreAttack.AddListener(this, owner, OnPreAttack, false);
             ApiEventManager.OnLaunchAttack.AddListener(this, owner, OnLaunchAttack, false);
@@ -130,13 +130,13 @@ namespace CharScripts
 
         public void OnMoveEnd(IAttackableUnit owner)
         {
-            if (owner is IObjAiBase ai)
+            if (owner is IObjAIBase ai)
             {
                 ai.SetTargetUnit(lastTarget);
             }
         }
 
-        public void OnDeactivate(IObjAiBase owner, ISpell spell = null)
+        public void OnDeactivate(IObjAIBase owner, ISpell spell = null)
         {
         }
         public void OnUpdate(float diff)

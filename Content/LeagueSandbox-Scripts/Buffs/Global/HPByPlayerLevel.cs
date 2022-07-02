@@ -18,13 +18,13 @@ namespace Buffs
 
         public IStatsModifier StatsModifier { get; private set; } = new StatsModifier();
 
-        IObjAiBase owner;
+        IObjAIBase owner;
         int maxPlayerLevel;
         float tickTime;
 
         public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
-            var owner = unit as IObjAiBase;
+            var owner = unit as IObjAIBase;
             foreach (IAttackableUnit target in GetUnitsInRange(unit.Position, 9999.0f, true).Where(x => x is IChampion))
             {
                 // TODO: Use a global "MaxPlayerLevel" variable.

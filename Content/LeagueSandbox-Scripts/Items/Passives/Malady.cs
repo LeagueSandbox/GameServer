@@ -12,7 +12,7 @@ namespace ItemSpells
 {
     public class Malady : ISpellScript
     {
-        private IObjAiBase _owner;
+        private IObjAIBase _owner;
         private ISpell _spell;
         private float _damage = 0f;
         public ISpellScriptMetadata ScriptMetadata { get; private set; } = new SpellScriptMetadata()
@@ -36,7 +36,7 @@ namespace ItemSpells
             }
         }
 
-        public void OnActivate(IObjAiBase owner, ISpell spell)
+        public void OnActivate(IObjAIBase owner, ISpell spell)
         {
             _owner = owner;
             _spell = spell;
@@ -44,7 +44,7 @@ namespace ItemSpells
             ApiEventManager.OnUpdateStats.AddListener(this, owner, OnStatsUpdate, false);
         }
 
-        public void OnDeactivate(IObjAiBase owner, ISpell spell)
+        public void OnDeactivate(IObjAIBase owner, ISpell spell)
         {
             ApiEventManager.OnHitUnit.RemoveListener(this, owner);
         }

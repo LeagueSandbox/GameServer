@@ -7,10 +7,10 @@ namespace ItemPassives
 {
     public class ItemID_3178 : IItemScript
     {
-        IObjAiBase Owner;
+        IObjAIBase Owner;
         public IStatsModifier StatsModifier { get; private set; } = new StatsModifier();
 
-        public void OnActivate(IObjAiBase owner)
+        public void OnActivate(IObjAIBase owner)
         {
             Owner = owner;
 
@@ -25,7 +25,7 @@ namespace ItemPassives
             owner.Stats.AttackSpeedFlat = 0.45f;
         }
 
-        public void OnDeactivate(IObjAiBase owner)
+        public void OnDeactivate(IObjAIBase owner)
         {
         }
 

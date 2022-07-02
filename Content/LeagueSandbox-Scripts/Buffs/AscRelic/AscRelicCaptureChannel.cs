@@ -20,7 +20,7 @@ namespace Buffs
 
         ISpell Spell;
         IAttackableUnit Target;
-        IObjAiBase Owner;
+        IObjAIBase Owner;
         IBuff Buff;
         IParticle p1;
         IRegion r1;

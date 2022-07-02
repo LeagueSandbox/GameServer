@@ -18,15 +18,15 @@ namespace Spells
 
         private const float PERCENT_MAX_MANA_HEAL = 0.40f;
 
-        public void OnActivate(IObjAiBase owner, ISpell spell)
+        public void OnActivate(IObjAIBase owner, ISpell spell)
         {
         }
 
-        public void OnDeactivate(IObjAiBase owner, ISpell spell)
+        public void OnDeactivate(IObjAIBase owner, ISpell spell)
         {
         }
 
-        public void OnSpellPreCast(IObjAiBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
+        public void OnSpellPreCast(IObjAIBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
         {
             foreach (var unit in GetChampionsInRange(owner.Position, 600, true))
             {
@@ -37,7 +37,7 @@ namespace Spells
             }
         }
 
-        private void RestoreMana(IObjAiBase target)
+        private void RestoreMana(IObjAIBase target)
         {
             var maxMp = target.Stats.ManaPoints.Total;
             var newMp = target.Stats.CurrentMana + (maxMp * PERCENT_MAX_MANA_HEAL);

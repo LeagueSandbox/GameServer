@@ -188,7 +188,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Sector
                 SpellOrigin.ApplyEffects(unit, null, this);
             }
 
-            if (CastInfo.Owner is IObjAiBase ai && SpellOrigin.CastInfo.IsAutoAttack)
+            if (CastInfo.Owner is IObjAIBase ai && SpellOrigin.CastInfo.IsAutoAttack)
             {
                 ai.AutoAttackHit(unit);
             }
