@@ -171,7 +171,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
             }
             catch(Exception e)
             {
-                _logger.Error(e);
+                _logger.Error(null, e);
             }
         }
 
@@ -442,7 +442,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
             }
             catch(Exception e)
             {
-                _logger.Error(e);
+                _logger.Error(null, e);
             }
 
             if (_game.Config.GameFeatures.HasFlag(FeatureFlags.EnableManaCosts))
@@ -594,7 +594,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
             }
             catch(Exception e)
             {
-                _logger.Error(e);
+                _logger.Error(null, e);
             }
 
             var stats = CastInfo.Owner.Stats;
@@ -1087,7 +1087,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
             }
             catch(Exception e)
             {
-                _logger.Error(e);
+                _logger.Error(null, e);
             }
         }
 
@@ -1582,7 +1582,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
                 }
                 catch(Exception e)
                 {
-                    _logger.Error(e);
+                    _logger.Error(null, e);
                 }
             }
 

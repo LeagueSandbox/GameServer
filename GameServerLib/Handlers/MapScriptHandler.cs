@@ -148,7 +148,7 @@ namespace LeagueSandbox.GameServer.Handlers
             }
             catch(Exception e)
             {
-                _logger.Error(e);
+                _logger.Error(null, e);
             }
         }
     }

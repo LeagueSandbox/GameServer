@@ -88,7 +88,7 @@ namespace LeagueSandbox.GameServer.Inventory
                 }
                 catch(Exception e)
                 {
-                    _logger.Error(e);
+                    _logger.Error(null, e);
                 }
             }
         }
@@ -171,7 +171,7 @@ namespace LeagueSandbox.GameServer.Inventory
                         }
                         catch(Exception e)
                         {
-                            _logger.Error(e);
+                            _logger.Error(null, e);
                         }
                         if (ItemScripts[itemID].StatsModifier != null)
                         {
@@ -252,7 +252,7 @@ namespace LeagueSandbox.GameServer.Inventory
                     }
                     catch(Exception e)
                     {
-                        _logger.Error(e);
+                        _logger.Error(null, e);
                     }
                 }
             }

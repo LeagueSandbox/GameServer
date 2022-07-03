@@ -190,7 +190,7 @@ namespace LeagueSandbox.GameServer.Inventory
                 }
                 catch(Exception e)
                 {
-                    _logger.Error(e);
+                    _logger.Error(null, e);
                 }
             }
         }

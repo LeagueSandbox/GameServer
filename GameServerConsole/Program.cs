@@ -23,6 +23,9 @@ namespace LeagueSandbox.GameServerConsole
 
         private static void Main(string[] args)
         {
+            try
+            {
+
             // If the command line interface was ran with additional parameters (perhaps via a shortcut or just via another command line)
             // Refer to ArgsOptions for all possible launch parameters
             var parsedArgs = ArgsOptions.Parse(args);
@@ -90,6 +93,12 @@ namespace LeagueSandbox.GameServerConsole
 #endif
             // This is where the actual GameServer starts.
             gameServerLauncher.StartNetworkLoop();
+
+            }
+            catch(Exception e)
+            {
+                _logger.Fatal(null, e);
+            }
         }
 
         /// <summary>
@@ -119,7 +128,7 @@ namespace LeagueSandbox.GameServerConsole
             }
             catch (Exception e)
             {
-                _logger.Error(e);
+                _logger.Error(null, e);
             }
 
             return defaultJsonString;

@@ -26,7 +26,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
             }
             catch(Exception e)
             {
-                _logger.Error(e);
+                _logger.Error(null, e);
             }
             _logger.Info($"{ChatCommandManager.CommandStarterCharacter}{Command} Jungle Spawned!");
             ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.NORMAL, "Jungle Spawned!");

@@ -223,7 +223,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             }
             catch(Exception e)
             {
-                _logger.Error(e);
+                _logger.Error(null, e);
             }
         }
 
@@ -240,7 +240,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             }
             catch(Exception e)
             {
-                _logger.Error(e);
+                _logger.Error(null, e);
             }
         }
 
@@ -1075,7 +1075,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             }
             catch(Exception e)
             {
-                _logger.Error(e);
+                _logger.Error(null, e);
             }
 
             if (!_aiPaused)
@@ -1086,7 +1086,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 }
                 catch(Exception e)
                 {
-                    _logger.Error(e);
+                    _logger.Error(null, e);
                 }
             }
 
@@ -1154,7 +1154,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                         }
                         catch(Exception e)
                         {
-                            _logger.Error(e);
+                            _logger.Error(null, e);
                         }
                     }
                 }
