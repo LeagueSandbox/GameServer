@@ -23,8 +23,9 @@ namespace LeagueSandbox.GameServerConsole
 
         private static void Main(string[] args)
         {
-            try
-            {
+            AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(
+                (sender, args) => _logger.Fatal(null, (Exception)args.ExceptionObject)
+            );
 
             // If the command line interface was ran with additional parameters (perhaps via a shortcut or just via another command line)
             // Refer to ArgsOptions for all possible launch parameters
@@ -93,12 +94,6 @@ namespace LeagueSandbox.GameServerConsole
 #endif
             // This is where the actual GameServer starts.
             gameServerLauncher.StartNetworkLoop();
-
-            }
-            catch(Exception e)
-            {
-                _logger.Fatal(null, e);
-            }
         }
 
         /// <summary>
