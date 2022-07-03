@@ -1,48 +1,81 @@
 ﻿using GameServerCore.Domain;
-using GameServerCore.Domain.GameObjects;
-using GameServerCore.Enums;
-using System;
 using System.Collections.Generic;
+using LeagueSandbox.GameServer;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits;
 
 namespace GameServerLib.Content
 {
     public class IconInfo : IIconInfo
     {
         public string IconCategory { get; private set; } = string.Empty;
-        public bool ChangeIcon { get; private set; } = false;
         public string BorderCategory { get; private set; } = string.Empty;
-        public bool ChangeBorder { get; private set; } = false;
         public string BorderScriptName { get; private set; } = string.Empty;
-        public List<TeamId> TeamsNotified { get; private set; } = new List<TeamId>((TeamId[])Enum.GetValues(typeof(TeamId)));
-        
-        private IAttackableUnit _owner;
-        public IconInfo(IAttackableUnit owner)
+
+        private int _iconState = 0;
+        private int _borderState = 0;
+        private Dictionary<int, (int Icon, int Border)> _lastStateSeenByPlayer
+          = new Dictionary<int, (int, int)>();
+
+        private AttackableUnit _owner;
+        private Game _game;
+        public IconInfo(Game game, AttackableUnit owner)
         {
+            _game = game;
             _owner = owner;
         }
-
-        public void SwapIcon(string iconCategory, bool changeIcon)
+        
+        public void ChangeIcon(string iconCategory)
         {
             IconCategory = iconCategory;
-            ChangeIcon = changeIcon;
-
-            _owner.UpdateIcon();
+            _iconState++;
         }
 
-        public void SwapBorder(string borderCategory, bool changeBorder, string borderScriptName = "")
+        public void ResetIcon()
+        {
+            IconCategory = string.Empty;
+            _iconState = 0;
+        }
+
+        public void ChangeBorder(string borderCategory, string borderScriptName)
         {
             BorderCategory = borderCategory;
-            ChangeBorder = changeBorder;
             BorderScriptName = borderScriptName;
-
-            _owner.UpdateIcon();
+            _borderState++;
         }
 
-        public void AddNotifiedTeam(TeamId team)
+        public void ResetBorder()
         {
-            if (!TeamsNotified.Contains(team))
+            BorderCategory = string.Empty;
+            BorderScriptName = string.Empty;
+            _borderState = 0;
+        }
+
+        public void Sync(int userId, bool visible, bool force = false)
+        {
+            if(visible)
             {
-                TeamsNotified.Add(team);
+                bool changeIcon;
+                bool changeBorder;
+                if(force)
+                {
+                    changeIcon = _iconState != 0;
+                    changeBorder = _borderState != 0;
+                }
+                else
+                {
+                    (int Icon, int Border) lastSeenState = _lastStateSeenByPlayer.GetValueOrDefault(userId, (0, 0));
+                    changeIcon = lastSeenState.Icon != _iconState;
+                    changeBorder = lastSeenState.Border != _borderState;
+                }
+                if(changeIcon || changeBorder)
+                {
+                    _game.PacketNotifier.NotifyS2C_UnitSetMinimapIcon(userId, _owner, changeIcon, changeBorder);
+                    _lastStateSeenByPlayer[userId] = (_iconState, _borderState);
+                }
+            }
+            else if(force)
+            {
+                _lastStateSeenByPlayer[userId] = (0, 0);
             }
         }
     }

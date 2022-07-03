@@ -21,13 +21,13 @@ namespace Buffs
         public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
             buff.SetStatusEffect(StatusFlags.Stunned, true);
-            unit.IconInfo.SwapBorder("Teleport", true, "AscWarp");
+            unit.IconInfo.ChangeBorder("Teleport", "AscWarp");
             AddParticleTarget(unit, unit, "Global_Asc_teleport", unit, buff.Duration);
         }
 
         public void OnDeactivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
-            unit.IconInfo.SwapBorder("", true);
+            unit.IconInfo.ResetBorder();
             if (unit is IObjAIBase obj)
             {
                 AddBuff("AscWarpReappear", 10.0f, 1, null, unit, obj);

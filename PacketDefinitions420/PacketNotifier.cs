@@ -12,7 +12,6 @@ using LeaguePackets.Game;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
-using System.Timers;
 using PingLoadInfoRequest = GameServerCore.Packets.PacketDefinitions.Requests.PingLoadInfoRequest;
 using ViewRequest = GameServerCore.Packets.PacketDefinitions.Requests.ViewRequest;
 using LeaguePackets.Game.Common;
@@ -3441,34 +3440,27 @@ namespace PacketDefinitions420
             _packetHandlerManager.BroadcastPacketTeam(team, dm.GetBytes(), Channel.CHL_S2C);
         }
 
-        public void NotifyS2C_UnitSetMinimapIcon(IAttackableUnit unit, TeamId team)
+        public void NotifyS2C_UnitSetMinimapIcon(int userId, IAttackableUnit unit, bool changeIcon, bool changeBorder)
         {
             var packet = new S2C_UnitSetMinimapIcon
             {
                 UnitNetID = unit.NetId,
-                IconCategory = unit.IconInfo.IconCategory,
-                ChangeIcon = unit.IconInfo.ChangeIcon,
-                BorderCategory = unit.IconInfo.BorderCategory,
-                ChangeBorder = unit.IconInfo.ChangeBorder,
-                BorderScriptName = unit.IconInfo.BorderScriptName
+                ChangeIcon = changeIcon,
+                IconCategory = "",
+                ChangeBorder = changeBorder,
+                BorderCategory = "",
+                BorderScriptName = ""
             };
-
-            _packetHandlerManager.BroadcastPacketTeam(team, packet.GetBytes(), Channel.CHL_S2C);
-        }
-
-        public void NotifyS2C_UnitSetMinimapIcon(IAttackableUnit unit)
-        {
-            var packet = new S2C_UnitSetMinimapIcon
+            if(changeIcon)
             {
-                UnitNetID = unit.NetId,
-                IconCategory = unit.IconInfo.IconCategory,
-                ChangeIcon = unit.IconInfo.ChangeIcon,
-                BorderCategory = unit.IconInfo.BorderCategory,
-                ChangeBorder = unit.IconInfo.ChangeBorder,
-                BorderScriptName = unit.IconInfo.BorderScriptName
-            };
-
-            _packetHandlerManager.BroadcastPacketVision(unit, packet.GetBytes(), Channel.CHL_S2C);
+                packet.IconCategory = unit.IconInfo.IconCategory;
+            }
+            if(changeBorder)
+            {
+                packet.BorderCategory = unit.IconInfo.BorderCategory;
+                packet.BorderScriptName = unit.IconInfo.BorderScriptName;
+            }
+            _packetHandlerManager.SendPacket(userId, packet.GetBytes(), Channel.CHL_S2C);
         }
 
         /// <summary>

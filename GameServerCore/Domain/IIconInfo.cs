@@ -7,13 +7,12 @@ namespace GameServerCore.Domain
     public interface IIconInfo
     {
         string IconCategory { get; }
-        bool ChangeIcon { get; }
         string BorderCategory { get; }
-        bool ChangeBorder { get; }
         string BorderScriptName { get; }
-        List<TeamId> TeamsNotified { get; }
-        void SwapIcon(string iconCategory, bool changeIcon);
-        void SwapBorder(string borderCategory, bool changeBorder, string borderScriptName = "");
-        void AddNotifiedTeam(TeamId team);
+        void ChangeIcon(string iconCategory);
+        void ResetIcon();
+        void ChangeBorder(string borderCategory, string borderScriptName);
+        void ResetBorder();
+        void Sync(int userId, bool visible, bool force = false);
     }
 }

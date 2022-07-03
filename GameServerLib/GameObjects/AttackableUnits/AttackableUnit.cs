@@ -15,6 +15,7 @@ using LeagueSandbox.GameServer.API;
 using LeagueSandbox.GameServer.Logging;
 using log4net;
 using GameServerCore.Scripting.CSharp;
+using PacketDefinitions420;
 
 namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
 {
@@ -116,7 +117,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// Information about this object's icon on the minimap.
         /// </summary>
         /// TODO: Move this to GameObject.
-        public IIconInfo IconInfo { get; }
+        public IIconInfo IconInfo { get; protected set; }
         public override bool IsAffectedByFoW => true;
         public override bool SpawnShouldBeHidden => true;
 
@@ -160,7 +161,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             BuffSlots = new IBuff[256];
             ParentBuffs = new Dictionary<string, IBuff>();
             BuffList = new List<IBuff>();
-            IconInfo = new IconInfo(this);
+            IconInfo = new IconInfo(_game, this);
             CalculateTrueMoveSpeed();
         }
 
@@ -330,34 +331,10 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             }
         }
 
-        protected override void OnSpawn(int userId, TeamId team, bool doVision)
+        public override void Sync(int userId, TeamId team, bool visible, bool forceSpawn = false)
         {
-            base.OnSpawn(userId, team, doVision);
-            UpdateIconVision(team);
-        }
-        protected override void OnEnterVision(int userId, TeamId team)
-        {
-            base.OnEnterVision(userId, team);
-            UpdateIconVision(team);
-        }
-
-        public void UpdateIconVision(TeamId team)
-        {
-            if (!IconInfo.TeamsNotified.Contains(team))
-            {
-                IconInfo.AddNotifiedTeam(team);
-                _game.PacketNotifier.NotifyS2C_UnitSetMinimapIcon(this, team);
-            }
-        }
-
-        public void UpdateIcon()
-        {
-            IconInfo.TeamsNotified.Clear();
-            _game.PacketNotifier.NotifyS2C_UnitSetMinimapIcon(this);
-            foreach (TeamId team in TeamsWithVision())
-            {
-                IconInfo.TeamsNotified.Add(team);
-            }
+            base.Sync(userId, team, visible, forceSpawn);
+            IconInfo.Sync(userId, visible, forceSpawn);
         }
 
         protected override void OnSync(int userId, TeamId team)

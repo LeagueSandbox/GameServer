@@ -21,55 +21,28 @@ namespace Spells
 
         IParticle recallParticle;
 
-        public void OnActivate(IObjAIBase owner, ISpell spell)
-        {
-        }
-
-        public void OnTakeDamage(IAttackableUnit unit, IAttackableUnit attacker)
-        {
-        }
-
-        public void OnDeactivate(IObjAIBase owner, ISpell spell)
-        {
-        }
-
-        public void OnSpellPreCast(IObjAIBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
-        {
-        }
-
-        public void OnSpellCast(ISpell spell)
-        {
-        }
-
-        public void OnSpellPostCast(ISpell spell)
-        {
-        }
-
         public void OnSpellChannel(ISpell spell)
         {
             var owner = spell.CastInfo.Owner;
             recallParticle = AddParticleTarget(owner, owner, "TeleportHome", owner, 8.0f, flags: 0);
             AddBuff("Recall", 7.9f, 1, spell, owner, owner);
+            owner.IconInfo.ChangeBorder("Recall", "recall");
         }
 
         public void OnSpellChannelCancel(ISpell spell, ChannelingStopSource reason)
         {
+            var owner = spell.CastInfo.Owner;
             recallParticle.SetToRemove();
-            RemoveBuff(spell.CastInfo.Owner, "Recall");
+            RemoveBuff(owner, "Recall");
+            owner.IconInfo.ResetBorder();
         }
 
         public void OnSpellPostChannel(ISpell spell)
         {
             var owner = spell.CastInfo.Owner as IChampion;
-
             owner.Recall();
-
             AddParticleTarget(owner, owner, "TeleportArrive", owner, flags: 0);
-        }
-
-        public void OnUpdate(float diff)
-        {
+            owner.IconInfo.ResetBorder();
         }
     }
 }
-

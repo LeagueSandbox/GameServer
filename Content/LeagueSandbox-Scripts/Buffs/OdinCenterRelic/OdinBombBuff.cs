@@ -58,13 +58,12 @@ namespace Buffs
             }
 
             string iconCategory = "CenterRelicLeft";
-
             if (unit.Team == TeamId.TEAM_PURPLE)
             {
                 iconCategory = "CenterRelicRight";
             }
 
-            unit.IconInfo.SwapIcon(iconCategory, true);
+            unit.IconInfo.ChangeIcon(iconCategory);
         }
         public void OnDeath(IDeathData deathData)
         {
