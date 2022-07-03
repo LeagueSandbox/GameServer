@@ -13,5 +13,6 @@ namespace GameServerCore.Domain
         void ResetIcon();
         void ChangeBorder(string borderCategory, string borderScriptName);
         void ResetBorder();
+        void Sync(int userId, bool visible, bool force = false);
     }
 }

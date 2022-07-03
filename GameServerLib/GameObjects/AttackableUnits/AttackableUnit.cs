@@ -117,8 +117,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// Information about this object's icon on the minimap.
         /// </summary>
         /// TODO: Move this to GameObject.
-        public IIconInfo IconInfo => _iconInfo;
-        private IconInfo _iconInfo; // A little hack so that the compiler understands everything correctly.
+        public IIconInfo IconInfo { get; protected set; }
         public override bool IsAffectedByFoW => true;
         public override bool SpawnShouldBeHidden => true;
 
@@ -162,7 +161,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             BuffSlots = new IBuff[256];
             ParentBuffs = new Dictionary<string, IBuff>();
             BuffList = new List<IBuff>();
-            _iconInfo = new IconInfo(_game, this);
+            IconInfo = new IconInfo(_game, this);
             CalculateTrueMoveSpeed();
         }
 
@@ -323,7 +322,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         public override void Sync(int userId, TeamId team, bool visible, bool forceSpawn = false)
         {
             base.Sync(userId, team, visible, forceSpawn);
-            _iconInfo.Sync(userId, visible, forceSpawn);
+            IconInfo.Sync(userId, visible, forceSpawn);
         }
 
         protected override void OnSync(int userId, TeamId team)
