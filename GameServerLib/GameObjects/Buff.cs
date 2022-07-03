@@ -117,7 +117,7 @@ namespace LeagueSandbox.GameServer.GameObjects
             }
             catch(Exception e)
             {
-                _logger.Error(e);
+                _logger.Error(null, e);
             }
         }
 
@@ -135,7 +135,7 @@ namespace LeagueSandbox.GameServer.GameObjects
             }
             catch(Exception e)
             {
-                _logger.Error(e);
+                _logger.Error(null, e);
             }
 
             ApiEventManager.RemoveAllListenersForOwner(BuffScript);
@@ -216,7 +216,7 @@ namespace LeagueSandbox.GameServer.GameObjects
                     }
                     catch(Exception e)
                     {
-                        _logger.Error(e);
+                        _logger.Error(null, e);
                     }
                     if (TimeElapsed >= Duration)
                     {

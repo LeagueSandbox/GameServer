@@ -54,7 +54,7 @@ namespace LeagueSandbox.GameServer
             }
             catch (Exception e)
             {
-                _logger.Error(e);
+                _logger.Error(null, e);
             }
 #endif
         }
@@ -73,7 +73,7 @@ namespace LeagueSandbox.GameServer
             }
             catch (Exception e)
             {
-                _logger.Error(e);
+                _logger.Error(null, e);
             }
 #endif
         }
