@@ -201,10 +201,42 @@ namespace LeagueSandbox.GameServer.API
                     SingleInstance = singleInstance;
                 }
             }
-
             protected readonly List<Listener> _listeners = new List<Listener>();
-            protected int i = -1;
-
+            // Storage for Publish functions counters.
+            protected List<int> _stack = new List<int>{ -1, -1, -1, -1, -1, -1, -1, -1 };
+            // The index of the last Publish function currently executing.
+            protected int _nestingLevel = -1;
+            protected void IncrementNestingLevel()
+            {
+                _nestingLevel++;
+                if(_nestingLevel >= _stack.Count)
+                {
+                    _stack.Add(-1);
+                }
+            }
+            // Removes the element and adjusts the counters of all currently executing Publish functions, if necessary.
+            protected void CarefulRemoval(int index)
+            {
+                _listeners.RemoveAt(index);
+                for(int l = 0; l < _nestingLevel + 1; l++)
+                {
+                    if (index < _stack[l])
+                    {
+                        _stack[l]--;
+                    }
+                }
+            }
+            private void CarefulRemoval(Predicate<Listener> match)
+            {
+                for (int j = _listeners.Count - 1; j >= 0; j--)
+                {
+                    var listener = _listeners[j];
+                    if (match(listener))
+                    {
+                        CarefulRemoval(j);
+                    }
+                }
+            }
             public void AddListener(object owner, Source source, CBType callback, bool singleInstance = false)
             {
                 if (owner == null || source == null || callback == null)
@@ -216,31 +248,17 @@ namespace LeagueSandbox.GameServer.API
                     new Listener(owner, source, callback, singleInstance)
                 );
             }
-
-            private void CarefulRemoval(Predicate<Listener> match)
-            {
-                for (int j = _listeners.Count - 1; j >= 0; j--)
-                {
-                    var listener = _listeners[j];
-                    if (match(listener))
-                    {
-                        _listeners.RemoveAt(j);
-                        if (j < i)
-                        {
-                            i--;
-                        }
-                    }
-                }
-            }
-
             public override void RemoveListener(object owner)
             {
                 CarefulRemoval(listener => listener.Owner == owner);
             }
-
             public void RemoveListener(object owner, Source source)
             {
                 CarefulRemoval(listener => listener.Owner == owner && listener.Source.Equals(source));
+            }
+            public void RemoveListener(object owner, Source source, CBType callback)
+            {
+                CarefulRemoval(listener => listener.Owner == owner && listener.Source.Equals(source) && listener.Callback.Equals(callback));
             }
         }
 
@@ -260,16 +278,22 @@ namespace LeagueSandbox.GameServer.API
             protected abstract void Call(CBType callback);
             protected void Publish(Source source)
             {
+                IncrementNestingLevel();
                 _source = source;
 
-                for (i = _listeners.Count - 1; i >= 0; i--)
+                int i;
+                for (
+                    _stack[_nestingLevel] = _listeners.Count - 1;
+                    (i = _stack[_nestingLevel]) >= 0;
+                    _stack[_nestingLevel]--
+                )
                 {
-                    if (_listeners[i].Source.Equals(source))
+                    var listener = _listeners[i];
+                    if (listener.Source.Equals(source))
                     {
-                        var listener = _listeners[i];
                         if (listener.SingleInstance)
                         {
-                            _listeners.RemoveAt(i);
+                            CarefulRemoval(i);
                         }
 
                         try
@@ -282,6 +306,7 @@ namespace LeagueSandbox.GameServer.API
                         }
                     }
                 }
+                _nestingLevel--;
             }
         }
 
@@ -292,18 +317,24 @@ namespace LeagueSandbox.GameServer.API
             protected abstract bool Call(CBType callback);
             public bool Publish(Source source, Data data)
             {
+                IncrementNestingLevel();
                 _source = source;
                 _data = data;
 
                 bool returnVal = true;
-                for (i = _listeners.Count - 1; i >= 0; i--)
+                int i;
+                for (
+                    _stack[_nestingLevel] = _listeners.Count - 1;
+                    (i = _stack[_nestingLevel]) >= 0;
+                    _stack[_nestingLevel]--
+                )
                 {
-                    if (_listeners[i].Source.Equals(source))
+                    var listener = _listeners[i];
+                    if (listener.Source.Equals(source))
                     {
-                        var listener = _listeners[i];
                         if (listener.SingleInstance)
                         {
-                            _listeners.RemoveAt(i);
+                            CarefulRemoval(i);
                         }
 
                         try
@@ -316,6 +347,7 @@ namespace LeagueSandbox.GameServer.API
                         }
                     }
                 }
+                _nestingLevel--;
                 return returnVal;
             }
         }
