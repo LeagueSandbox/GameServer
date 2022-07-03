@@ -187,8 +187,23 @@ namespace LeagueSandbox.GameServer.API
 
         public abstract class DispatcherBase<Source, CBType> : DispatcherBase
         {
-            protected readonly List<Tuple<object, Source, CBType, bool>> _listeners
-                    = new List<Tuple<object, Source, CBType, bool>>();
+            protected class Listener
+            {
+                public object Owner;
+                public Source Source;
+                public CBType Callback;
+                public bool SingleInstance;
+                public Listener(object owner, Source source, CBType callback, bool singleInstance = false)
+                {
+                    Owner = owner;
+                    Source = source;
+                    Callback = callback;
+                    SingleInstance = singleInstance;
+                }
+            }
+
+            protected readonly List<Listener> _listeners = new List<Listener>();
+            protected int i = -1;
 
             public void AddListener(object owner, Source source, CBType callback, bool singleInstance = false)
             {
@@ -198,18 +213,34 @@ namespace LeagueSandbox.GameServer.API
                 }
 
                 _listeners.Add(
-                    new Tuple<object, Source, CBType, bool>(owner, source, callback, singleInstance)
+                    new Listener(owner, source, callback, singleInstance)
                 );
             }
 
-            public void RemoveListener(object owner, Source source)
+            private void CarefulRemoval(Predicate<Listener> match)
             {
-                _listeners.RemoveAll(listener => listener.Item1 == owner && listener.Item2.Equals(source));
+                for (int j = _listeners.Count - 1; j >= 0; j--)
+                {
+                    var listener = _listeners[j];
+                    if (match(listener))
+                    {
+                        _listeners.RemoveAt(j);
+                        if (j < i)
+                        {
+                            i--;
+                        }
+                    }
+                }
             }
 
             public override void RemoveListener(object owner)
             {
-                _listeners.RemoveAll(listener => listener.Item1 == owner);
+                CarefulRemoval(listener => listener.Owner == owner);
+            }
+
+            public void RemoveListener(object owner, Source source)
+            {
+                CarefulRemoval(listener => listener.Owner == owner && listener.Source.Equals(source));
             }
         }
 
@@ -231,16 +262,23 @@ namespace LeagueSandbox.GameServer.API
             {
                 _source = source;
 
-                for (int i = _listeners.Count - 1; i >= 0; i--)
+                for (i = _listeners.Count - 1; i >= 0; i--)
                 {
-                    if (_listeners[i].Item2.Equals(source))
+                    if (_listeners[i].Source.Equals(source))
                     {
                         var listener = _listeners[i];
-                        Call(listener.Item3);
-
-                        if (listener.Item4)
+                        if (listener.SingleInstance)
                         {
-                            _listeners.Remove(listener);
+                            _listeners.RemoveAt(i);
+                        }
+
+                        try
+                        {
+                            Call(listener.Callback);
+                        }
+                        catch (Exception e)
+                        {
+                            _logger.Error(e);
                         }
                     }
                 }
@@ -258,16 +296,23 @@ namespace LeagueSandbox.GameServer.API
                 _data = data;
 
                 bool returnVal = true;
-                for (int i = _listeners.Count - 1; i >= 0; i--)
+                for (i = _listeners.Count - 1; i >= 0; i--)
                 {
-                    if (_listeners[i].Item2.Equals(source))
+                    if (_listeners[i].Source.Equals(source))
                     {
                         var listener = _listeners[i];
-                        returnVal = returnVal && Call(listener.Item3);
-
-                        if (listener.Item4)
+                        if (listener.SingleInstance)
                         {
-                            _listeners.Remove(listener);
+                            _listeners.RemoveAt(i);
+                        }
+
+                        try
+                        {
+                            returnVal = returnVal && Call(listener.Callback);
+                        }
+                        catch (Exception e)
+                        {
+                            _logger.Error(e);
                         }
                     }
                 }
@@ -335,6 +380,4 @@ namespace LeagueSandbox.GameServer.API
             }
         }
     }
-
-    // TODO: Make listeners support removal at any point in code execution.
 }
