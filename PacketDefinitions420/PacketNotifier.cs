@@ -3442,8 +3442,6 @@ namespace PacketDefinitions420
 
         public void NotifyS2C_UnitSetMinimapIcon(int userId, IAttackableUnit unit, bool changeIcon, bool changeBorder)
         {
-            Console.WriteLine($"NotifyS2C_UnitSetMinimapIcon({userId}, {unit.Model}#{unit.NetId}, {changeIcon}, {changeBorder})");
-
             var packet = new S2C_UnitSetMinimapIcon
             {
                 UnitNetID = unit.NetId,
@@ -3462,12 +3460,6 @@ namespace PacketDefinitions420
                 packet.BorderCategory = unit.IconInfo.BorderCategory;
                 packet.BorderScriptName = unit.IconInfo.BorderScriptName;
             }
-            Console.WriteLine(
-                Newtonsoft.Json.JsonConvert.SerializeObject(
-                    packet,
-                    Newtonsoft.Json.Formatting.Indented
-                )
-            );
             _packetHandlerManager.SendPacket(userId, packet.GetBytes(), Channel.CHL_S2C);
         }
 
