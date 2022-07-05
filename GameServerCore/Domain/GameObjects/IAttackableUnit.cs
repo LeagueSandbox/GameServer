@@ -263,21 +263,11 @@ namespace GameServerCore.Domain.GameObjects
         /// </summary>
         /// <param name="newWaypoints">New path of Vector2 coordinates that the unit will move to.</param>
         /// <param name="networked">Whether or not clients should be notified of this change in waypoints at the next ObjectManager.Update.</param>
-        void SetWaypoints(List<Vector2> newWaypoints, bool networked = true);
+        bool SetWaypoints(List<Vector2> newWaypoints);
         /// <summary>
         /// Forces this unit to stop moving.
         /// </summary>
         void StopMovement();
-        /// <summary>
-        /// Returns whether this unit's waypoints will be networked to clients the next update. Movement updates do not occur for dash based movements.
-        /// </summary>
-        /// <returns>True/False</returns>
-        /// TODO: Refactor movement update logic so this can be applied to any kind of movement.
-        bool IsMovementUpdated();
-        /// <summary>
-        /// Used each object manager update after this unit has set its waypoints and the server has networked it.
-        /// </summary>
-        void ClearMovementUpdated();
         /// <summary>
         /// Enables or disables the given status on this unit.
         /// </summary>

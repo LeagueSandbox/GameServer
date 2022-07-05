@@ -489,6 +489,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             _game.PacketNotifier.NotifyNPC_Hero_Die(data);
             EventHistory.Clear();
             
+            SetDashingState(false, MoveStopReason.Death);
             _game.ObjectManager.StopTargeting(this);
         }
 

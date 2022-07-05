@@ -255,26 +255,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                     Move(remainingFrameTime);
                 }
             }
-            else
-            {
-                SetDashingState(false, ~MoveStopReason.Finished);
-            }
-
-            // Prevents edge cases where a movement command is performed in the same tick as a ForceMovement.
-            // TODO: Perhaps just make a check for MovementParameters in ObjectManager.Sync, and send WaypointGroupWithSpeed instead.
-            if (IsMovementUpdated() && !CanChangeWaypoints())
-            {
-                _movementUpdated = false;
-            }
-
-            if (MovementParameters != null && MovementParameters.FollowNetID > 0)
-            {
-                MovementParameters.ElapsedTime += diff;
-                if (MovementParameters.ElapsedTime >= MovementParameters.FollowTravelTime && MovementParameters.FollowTravelTime >= 0)
-                {
-                    SetDashingState(false);
-                }
-            }
 
             if (IsDead && _death != null)
             {
@@ -343,7 +323,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             {
                 _game.PacketNotifier.HoldReplicationDataUntilOnReplicationNotification(this, userId, true);
             }
-            if (IsMovementUpdated())
+            if (_movementUpdated)
             {
                 _game.PacketNotifier.HoldMovementDataUntilWaypointGroupNotification(this, userId, false);
             }
@@ -352,7 +332,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         public override void OnAfterSync()
         {
             Replication.MarkAsUnchanged();
-            ClearMovementUpdated();
+            _movementUpdated = false;
         }
 
         /// <summary>
@@ -974,7 +954,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                 if(MP.FollowDistance > 0)
                 {
                     distRemaining = MP.FollowDistance - MP.PassedDistance;
-                    distRemaining = Math.Min(distToDest, distRemaining);
                 }
                 if(MP.FollowTravelTime > 0)
                 {
@@ -986,6 +965,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                 dir = Waypoints[1] - Position;
                 distToDest = dir.Length();
             }
+            distRemaining = Math.Min(distToDest, distRemaining);
 
             float time = Math.Min(frameTime, timeRemaining);
             float speed = MP.PathSpeedOverride * 0.001f;
@@ -1069,7 +1049,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// </summary>
         /// <param name="newWaypoints">New path of Vector2 coordinates that the unit will move to.</param>
         /// <param name="networked">Whether or not clients should be notified of this change in waypoints at the next ObjectManager.Update.</param>
-        public void SetWaypoints(List<Vector2> newWaypoints, bool networked = true)
+        public bool SetWaypoints(List<Vector2> newWaypoints)
         {
             // Waypoints should always have an origin at the current position.
             // Dashes are excluded as their paths should be set before being applied.
@@ -1077,15 +1057,13 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             // Setting waypoints during auto attacks is allowed.
             if (newWaypoints == null || newWaypoints.Count <= 1 || newWaypoints[0] != Position || !CanChangeWaypoints())
             {
-                return;
+                return false;
             }
 
-            if (networked)
-            {
-                _movementUpdated = true;
-            }
+            _movementUpdated = true;
             Waypoints = newWaypoints;
             CurrentWaypointKey = 1;
+            return true;
         }
 
         /// <summary>
@@ -1103,24 +1081,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             }
 
             ResetWaypoints();
-        }
-
-        /// <summary>
-        /// Returns whether this unit's waypoints will be networked to clients the next update. Movement updates do not occur for dash based movements.
-        /// </summary>
-        /// <returns>True/False</returns>
-        /// TODO: Refactor movement update logic so this can be applied to any kind of movement.
-        public bool IsMovementUpdated()
-        {
-            return _movementUpdated;
-        }
-
-        /// <summary>
-        /// Used each object manager update after this unit has set its waypoints and the server has networked it.
-        /// </summary>
-        public void ClearMovementUpdated()
-        {
-            _movementUpdated = false;
         }
 
         /// <summary>
@@ -1601,7 +1561,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             var newCoords = _game.Map.NavigationGrid.GetClosestTerrainExit(endPos, PathfindingRadius + 1.0f);
 
             // False because we don't want this to be networked as a normal movement.
-            SetWaypoints(new List<Vector2> { Position, newCoords }, false);
+            SetWaypoints(new List<Vector2> { Position, newCoords });
 
             // TODO: Take into account the rest of the arguments
             MovementParameters = new ForceMovementParameters
@@ -1651,8 +1611,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             {
                 _dashEffectsToDisable = MovementParameters.SetStatus;
             }
-
-            // TODO: Implement this as a parameter.
             SetStatus(StatusFlags.None, true);
 
             if (MovementParameters != null && state == false)
