@@ -35,6 +35,10 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         private static ILog _logger = LoggerProvider.GetLogger();
 
         /// <summary>
+        /// Name assigned to this unit.
+        /// </summary>
+        public string Name { get; }
+        /// <summary>
         /// Variable storing all the data related to this AI's current auto attack. *NOTE*: Will be deprecated as the spells system gets finished.
         /// </summary>
         public ISpell AutoAttackSpell { get; protected set; }
@@ -83,22 +87,23 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         public ICharScript CharScript { get; private set; }
         public bool IsBot { get; set; }
         public IAIScript AIScript { get; protected set; }
-        public ObjAIBase(Game game, string model, int collisionRadius = 0,
+        public ObjAIBase(Game game, string model, string name = "", int collisionRadius = 0,
             Vector2 position = new Vector2(), int visionRadius = 0, int skinId = 0, uint netId = 0, TeamId team = TeamId.TEAM_NEUTRAL, IStats stats = null, string aiScript = "") :
             base(game, model, collisionRadius, position, visionRadius, netId, team, stats)
         {
             _itemManager = game.ItemManager;
 
+            Name = name;
             SkinID = skinId;
 
             // TODO: Centralize this instead of letting it lay in the initialization.
-            if (collisionRadius > 0)
-            {
-                CollisionRadius = collisionRadius;
-            }
-            else if (CharData.GameplayCollisionRadius > 0)
+            if (CharData.GameplayCollisionRadius > 0)
             {
                 CollisionRadius = CharData.GameplayCollisionRadius;
+            }
+            else if (collisionRadius > 0)
+            {
+                CollisionRadius = collisionRadius;
             }
             else
             {

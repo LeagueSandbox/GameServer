@@ -50,7 +50,6 @@ namespace Spells
                 "AnnieTibbers",
                 "InfernalGuardian",
                 45.0f,
-                owner.SkinID,
                 showMinimapIfClone: false,
                 isClone: false
             );

@@ -149,7 +149,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
 
             var runesTemp = new RuneCollection();
             var talents = new TalentInventory();
-            var clientInfoTemp = new ClientInfo("", team, 0, 0, 0, model, new string[] { "SummonerHeal", "SummonerFlash" }, -1);
+            var clientInfoTemp = new ClientInfo("", team, 0, 0, 0, $"{model} Bot", new string[] { "SummonerHeal", "SummonerFlash" }, -1);
 
             _playerManager.AddPlayer(clientInfoTemp);
 
@@ -171,7 +171,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
 
             Game.ObjectManager.AddObject(c);
 
-            ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.INFO, "Spawned Bot" + clientInfoTemp.Name + " as " + c.Model + " with NetID: " + c.NetId + ".");
+            ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.INFO, $"Spawned Bot {c.Name} as {c.Model} with NetID: {c.NetId}.");
         }
 
         public void SpawnRegionForTeam(TeamId team, int userId, float radius = 250.0f, float lifetime = -1.0f)

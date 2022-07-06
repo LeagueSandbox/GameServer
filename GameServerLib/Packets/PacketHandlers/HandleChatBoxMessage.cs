@@ -70,8 +70,9 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                 return true;
             }
 
+            var peer = _playerManager.GetPeerInfo(userId);
             var debugMessage =
-                $"{_playerManager.GetPeerInfo(userId).Name} ({_playerManager.GetPeerInfo(userId).Champion.Model}): </font><font color=\"#FFFFFF\">{req.Message}";
+                $"{peer.Name} ({peer.Champion.Model}): </font><font color=\"#FFFFFF\">{req.Message}";
             var teamChatColor = "<font color=\"#00FF00\">";
             var enemyChatColor = "<font color=\"#FF0000\">";
             var dmTeam = teamChatColor + "[All] " + debugMessage;

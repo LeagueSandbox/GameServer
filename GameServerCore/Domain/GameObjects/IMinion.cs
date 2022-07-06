@@ -26,10 +26,6 @@ namespace GameServerCore.Domain.GameObjects
         /// </summary>
         bool IsTargetable { get; }
         /// <summary>
-        /// Internal name of the minion.
-        /// </summary>
-        string Name { get; }
-        /// <summary>
         /// Only unit which is allowed to see this minion.
         /// </summary>
         IObjAIBase VisibilityOwner { get; }
