@@ -499,7 +499,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             bool consideredCC = true
         )
         {
-            SetWaypoints(new List<Vector2> { Position, target.Position }, false);
+            SetWaypoints(new List<Vector2> { Position, target.Position });
 
             SetTargetUnit(target, true);
 
@@ -584,34 +584,12 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         /// </summary>
         public virtual void RefreshWaypoints(float idealRange)
         {
-            // Stop dashing to target if we reached them.
-            // TODO: Implement events so we can centralize things like this.
             if (MovementParameters != null)
             {
-                if (TargetUnit != null)
-                {
-                    if (IsCollidingWith(TargetUnit))
-                    {
-                        SetDashingState(false);
-                    }
-                    else
-                    {
-                        SetWaypoints(new List<Vector2> { Position, TargetUnit.Position });
-                    }
-                }
-                else
-                {
-                    if (IsPathEnded())
-                    {
-                        SetDashingState(false);
-                    }
-                }
-
                 return;
             }
 
-            if (TargetUnit != null && _castingSpell == null && ChannelSpell == null
-                && MoveOrder != OrderType.AttackTo)
+            if (TargetUnit != null && _castingSpell == null && ChannelSpell == null && MoveOrder != OrderType.AttackTo)
             {
                 UpdateMoveOrder(OrderType.AttackTo, true);
             }
@@ -662,24 +640,21 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
             if (MoveOrder == OrderType.AttackTo && targetPos != Vector2.Zero)
             {
-                if (MovementParameters == null)
+                if (Vector2.DistanceSquared(Position, targetPos) <= idealRange * idealRange)
                 {
-                    if (Vector2.DistanceSquared(Position, targetPos) <= idealRange * idealRange)
+                    UpdateMoveOrder(OrderType.Hold, true);
+                }
+                else
+                {
+                    if (!_game.Map.PathingHandler.IsWalkable(targetPos, PathfindingRadius))
                     {
-                        UpdateMoveOrder(OrderType.Hold, true);
+                        targetPos = _game.Map.NavigationGrid.GetClosestTerrainExit(targetPos, PathfindingRadius);
                     }
-                    else
-                    {
-                        if (!_game.Map.PathingHandler.IsWalkable(targetPos, PathfindingRadius))
-                        {
-                            targetPos = _game.Map.NavigationGrid.GetClosestTerrainExit(targetPos, PathfindingRadius);
-                        }
 
-                        var newWaypoints = _game.Map.PathingHandler.GetPath(Position, targetPos);
-                        if (newWaypoints != null && newWaypoints.Count > 1)
-                        {
-                            SetWaypoints(newWaypoints);
-                        }
+                    var newWaypoints = _game.Map.PathingHandler.GetPath(Position, targetPos);
+                    if (newWaypoints != null && newWaypoints.Count > 1)
+                    {
+                        SetWaypoints(newWaypoints);
                     }
                 }
             }
@@ -1205,14 +1180,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 {
                     IsAttacking = false;
                 }
-                return;
-            }
-
-            // Dashes override all other actions (perhaps move this to a general check, such as IsActionable?)
-            if (MovementParameters != null)
-            {
-                // TODO: Account for dashes which move a certain distance away from their target before stopping.
-                RefreshWaypoints(0);
                 return;
             }
 
