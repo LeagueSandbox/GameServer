@@ -10,7 +10,9 @@ namespace Talents
         public void OnActivate(IObjAIBase owner, byte rank)
         {
             var attackPerLevel = new StatsModifier();
-            attackPerLevel.AttackDamagePerLevel.FlatBonus = 0.22f * rank;
+            float[] statPerRank = new[] { 0.22f, 0.39f, 0.55f };
+            attackPerLevel.AttackDamagePerLevel.FlatBonus = statPerRank[rank - 1];
+
             owner.AddStatModifier(attackPerLevel);
         }
     }

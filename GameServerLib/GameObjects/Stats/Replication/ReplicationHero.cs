@@ -71,7 +71,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
             // UpdateFloat(Stats.LifeTimeTicks, 3, 7); //mLifetimeTicks
             // UpdateFloat(Stats.PerceptionRange.FlatMod, 3, 8); //mFlatBubbleRadiusMod
             // UpdateFloat(Stats.PerceptionRange.PercentMod, 3, 9); //mPercentBubbleRadiusMod
-            UpdateFloat(Owner.GetTrueMoveSpeed(), 3, 10); //mMoveSpeed
+            UpdateFloat(Stats.GetTrueMoveSpeed(), 3, 10); //mMoveSpeed
             UpdateFloat(Stats.Size.Total, 3, 11); //mSkinScaleCoef(mistyped as mCrit)
             // UpdateFloat(Stats.FlatPathfindingRadiusMod, 3, 12); //mPathfindingRadiusMod
             UpdateUint(Stats.Level, 3, 13); //mLevelRef

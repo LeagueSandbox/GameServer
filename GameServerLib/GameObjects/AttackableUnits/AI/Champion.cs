@@ -329,14 +329,14 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 Stats.Experience = expMap[Stats.Level - 1];
             }
 
-            if (stats.Level < _game.Map.MapScript.MapScriptMetadata.MaxLevel && (stats.Level < 1 || (stats.Experience >= expMap[stats.Level - 1]))) //The - 1s is there because the XP files don't have level 1
+            if (stats.Level < _game.Map.MapScript.MapScriptMetadata.MaxLevel && (stats.Level < 1 || (stats.Experience >= expMap[stats.Level - 1])))
             {
-                _logger.Debug("Champion " + Model + " leveled up to " + stats.Level);
                 if (stats.Level <= 18)
                 {
                     SkillPoints++;
                 }
                 base.LevelUp(force);
+                _logger.Debug("Champion " + Model + " leveled up to " + stats.Level);
 
                 return true;
             }
