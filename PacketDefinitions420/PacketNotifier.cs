@@ -3904,24 +3904,20 @@ namespace PacketDefinitions420
         /// <summary>
         /// Sends a packet to optionally all players (given isGlobal), a specified user that is the source of damage, or a specified user that is receiving the damage. The packet details an instance of damage being applied to a unit by another unit.
         /// </summary>
-        /// <param name="source">Unit which caused the damage.</param>
-        /// <param name="target">Unit which is taking the damage.</param>
-        /// <param name="amount">Amount of damage dealt to the target (usually the end result of all damage calculations).</param>
-        /// <param name="type">Type of damage being dealt; PHYSICAL/MAGICAL/TRUE</param>
-        /// <param name="damagetext">Type of text to show above the target; INVULNERABLE/DODGE/CRIT/NORMAL/MISS</param>
         /// <param name="isGlobal">Whether or not the packet should be sent to all players.</param>
         /// <param name="sourceId">ID of the user who dealt the damage that should receive the packet.</param>
         /// <param name="targetId">ID of the user who is taking the damage that should receive the packet.</param>
-        public void NotifyUnitApplyDamage(IAttackableUnit source, IAttackableUnit target, float amount, DamageType type, DamageResultType damagetext, bool isGlobal = true, int sourceId = -1, int targetId = -1)
+        public void NotifyUnitApplyDamage(IDamageData damageData, bool isGlobal = true)
         {
             var damagePacket = new UnitApplyDamage
             {
-                SenderNetID = target.NetId,
-                DamageResultType = (byte)damagetext,
-                DamageType = (byte)type,
-                TargetNetID = target.NetId,
-                SourceNetID = source.NetId,
-                Damage = amount
+                DamageResultType = (byte)damageData.DamageResultType,
+                DamageType = (byte)damageData.DamageType,
+                TargetNetID = damageData.Target.NetId,
+                SourceNetID = damageData.Attacker.NetId,
+                Damage = damageData.PostMitigationDamage,
+                //Sender isn't always the unit itself, sometimes missiles
+                SenderNetID = damageData.Target.NetId
             };
 
             if (isGlobal)
@@ -3930,13 +3926,19 @@ namespace PacketDefinitions420
             }
             else
             {
-                if (sourceId >= 0)
+                // todo: check if damage dealt by disconnected players cause anything bad
+                if (damageData.Attacker is IChampion attackerChamp)
                 {
-                    _packetHandlerManager.SendPacket(sourceId, damagePacket.GetBytes(), Channel.CHL_S2C);
+                    _packetHandlerManager.SendPacket(attackerChamp.ClientId, damagePacket.GetBytes(), Channel.CHL_S2C);
                 }
-                if (targetId >= 0)
+                else if (damageData.Attacker is IPet pet && pet.Owner is IChampion ch)
                 {
-                    _packetHandlerManager.SendPacket(targetId, damagePacket.GetBytes(), Channel.CHL_S2C);
+                    _packetHandlerManager.SendPacket(ch.ClientId, damagePacket.GetBytes(), Channel.CHL_S2C);
+                }
+
+                if (damageData.Target is IChampion targetChamp)
+                {
+                    _packetHandlerManager.SendPacket(targetChamp.ClientId, damagePacket.GetBytes(), Channel.CHL_S2C);
                 }
             }
         }

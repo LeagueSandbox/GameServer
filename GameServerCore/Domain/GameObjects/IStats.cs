@@ -63,6 +63,9 @@ namespace GameServerCore.Domain.GameObjects
         void LevelUp();
 
         float GetTotalAttackSpeed();
+        float GetTrueMoveSpeed();
+        void ClearSlows();
+
         bool GetActionState(ActionState state);
         bool GetSpellEnabled(byte id);
         float GetPostMitigationDamage(float damage, DamageType type, IAttackableUnit attacker);
