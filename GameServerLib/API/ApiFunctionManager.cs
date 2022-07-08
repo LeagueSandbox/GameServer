@@ -382,8 +382,7 @@ namespace LeagueSandbox.GameServer.API
         /// <returns>New particle instance.</returns>
         public static IParticle AddParticle(IGameObject caster, IGameObject bindObj, string particle, Vector2 position, float lifetime = 1.0f, float size = 1.0f, string bone = "", string targetBone = "", Vector3 direction = new Vector3(), bool followGroundTilt = false, TeamId teamOnly = TeamId.TEAM_NEUTRAL, IGameObject unitOnly = null, FXFlags flags = FXFlags.BindDirection)
         {
-            var p = new Particle(_game, caster, bindObj, position, particle, size, bone, targetBone, 0, direction, followGroundTilt, lifetime, teamOnly, unitOnly, flags);
-            return p;
+            return new Particle(_game, caster, bindObj, position, particle, size, bone, targetBone, 0, direction, followGroundTilt, lifetime, teamOnly, unitOnly, flags);
         }
 
         /// <summary>

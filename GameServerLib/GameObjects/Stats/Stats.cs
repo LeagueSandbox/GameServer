@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
@@ -62,7 +64,9 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
         public float Points { get; set; }
         public float SlowResistPercent { get; set; }
         public float MultiplicativeSpeedBonus { get; set; }
+        private List<float> _slows = new List<float>();
         private float _currentHealth;
+        private float _trueMoveSpeed;
         public float CurrentHealth
         {
             get => Math.Min(HealthPoints.Total, _currentHealth);
@@ -140,6 +144,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
             MoveSpeed.BaseValue = charData.MoveSpeed;
             ParType = charData.ParType;
             Range.BaseValue = charData.AttackRange;
+            CalculateTrueMoveSpeed();
         }
 
         public void AddModifier(IStatsModifier modifier)
@@ -161,7 +166,17 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
             MagicPenetration.ApplyStatModifier(modifier.MagicPenetration);
             ManaPoints.ApplyStatModifier(modifier.ManaPoints);
             ManaRegeneration.ApplyStatModifier(modifier.ManaRegeneration);
-            MoveSpeed.ApplyStatModifier(modifier.MoveSpeed);
+            
+            if (modifier.MoveSpeed.PercentBonus < 0)
+            {
+                _slows.Add(modifier.MoveSpeed.PercentBonus);
+            }
+            else
+            {
+                MoveSpeed.ApplyStatModifier(modifier.MoveSpeed);
+            }
+            CalculateTrueMoveSpeed();
+
             Range.ApplyStatModifier(modifier.Range);
             Size.ApplyStatModifier(modifier.Size);
             SpellVamp.ApplyStatModifier(modifier.SpellVamp);
@@ -188,7 +203,17 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
             MagicPenetration.RemoveStatModifier(modifier.MagicPenetration);
             ManaPoints.RemoveStatModifier(modifier.ManaPoints);
             ManaRegeneration.RemoveStatModifier(modifier.ManaRegeneration);
-            MoveSpeed.RemoveStatModifier(modifier.MoveSpeed);
+            
+            if (modifier.MoveSpeed.PercentBonus < 0)
+            {
+                _slows.Remove(modifier.MoveSpeed.PercentBonus);
+            }
+            else
+            {
+                MoveSpeed.RemoveStatModifier(modifier.MoveSpeed);
+            }
+            CalculateTrueMoveSpeed();
+
             Range.RemoveStatModifier(modifier.Range);
             Size.RemoveStatModifier(modifier.Size);
             SpellVamp.RemoveStatModifier(modifier.SpellVamp);
@@ -200,6 +225,17 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
         public float GetTotalAttackSpeed()
         {
             return AttackSpeedFlat * AttackSpeedMultiplier.Total;
+        }
+
+        public float GetTrueMoveSpeed()
+        {
+            return _trueMoveSpeed;
+        }
+
+        public void ClearSlows()
+        {
+            _slows.Clear();
+            CalculateTrueMoveSpeed();
         }
 
         public void Update(float diff)
@@ -227,23 +263,27 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
         public void LevelUp()
         {
             Level++;
-
-            StatsModifier statsLevelUp = new StatsModifier();
-            statsLevelUp.HealthPoints.BaseValue = HealthPerLevel;
-            statsLevelUp.ManaPoints.BaseValue = ManaPerLevel;
-            statsLevelUp.AttackDamage.BaseValue = AttackDamagePerLevel.Total;
-            statsLevelUp.Armor.BaseValue = ArmorPerLevel;
-            statsLevelUp.MagicResist.BaseValue = MagicResistPerLevel;
-            statsLevelUp.HealthRegeneration.BaseValue = HealthRegenerationPerLevel;
-            statsLevelUp.ManaRegeneration.BaseValue = ManaRegenerationPerLevel;
-            if (Level > 1)
+            if(Level > 1)
             {
-                statsLevelUp.AttackSpeed.PercentBaseBonus = GrowthAttackSpeed / 100.0f;
-            }
-            AddModifier(statsLevelUp);
+                StatsModifier statsLevelUp = new StatsModifier();
+                statsLevelUp.HealthPoints.BaseValue = HealthPerLevel;
+                statsLevelUp.ManaPoints.BaseValue = ManaPerLevel;
+                statsLevelUp.AttackDamage.BaseValue = AttackDamagePerLevel.BaseValue;
+                statsLevelUp.AttackDamage.FlatBonus= AttackDamagePerLevel.FlatBonus;
+                statsLevelUp.Armor.BaseValue = ArmorPerLevel;
+                statsLevelUp.MagicResist.BaseValue = MagicResistPerLevel;
+                statsLevelUp.HealthRegeneration.BaseValue = HealthRegenerationPerLevel;
+                statsLevelUp.ManaRegeneration.BaseValue = ManaRegenerationPerLevel;
+                if (Level > 1)
+                {
+                    statsLevelUp.AttackSpeed.PercentBaseBonus = GrowthAttackSpeed / 100.0f;
+                }
+                AddModifier(statsLevelUp);
 
-            CurrentHealth = HealthPoints.Total / (HealthPoints.Total - HealthPerLevel) * CurrentHealth;
-            CurrentMana = ManaPoints.Total / (ManaPoints.Total - ManaPerLevel) * CurrentMana;
+                //Check if these are correct
+                CurrentHealth = HealthPoints.Total / (HealthPoints.Total - HealthPerLevel) * CurrentHealth;
+                CurrentMana = ManaPoints.Total / (ManaPoints.Total - ManaPerLevel) * CurrentMana;
+            }
         }
 
         public bool GetSpellEnabled(byte id)
@@ -287,31 +327,34 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
 
         public float GetPostMitigationDamage(float damage, DamageType type, IAttackableUnit attacker)
         {
-            float defense = 0;
+            if (damage <= 0f)
+            {
+                return 0.0f;
+            }
+
+            float stat;
             switch (type)
             {
                 case DamageType.DAMAGE_TYPE_PHYSICAL:
-                    defense = Armor.Total;
-                    defense = (1 - attacker.Stats.ArmorPenetration.PercentBonus) * defense -
-                              attacker.Stats.ArmorPenetration.FlatBonus;
-
+                    stat = Armor.Total;
                     break;
                 case DamageType.DAMAGE_TYPE_MAGICAL:
-                    defense = MagicResist.Total;
-                    defense = (1 - attacker.Stats.MagicPenetration.PercentBonus) * defense -
-                              attacker.Stats.MagicPenetration.FlatBonus;
+                    stat = MagicResist.Total;
                     break;
                 case DamageType.DAMAGE_TYPE_TRUE:
-                    break;
+                    return damage;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(type), type, null);
             }
-            if (damage < 0f)
+
+            float mitigationPercent = 100 / (100 + stat);
+            
+            if (stat < 0)
             {
-                damage = 0f;
+                mitigationPercent = 2 - mitigationPercent;
             }
-            damage = defense >= 0 ? 100 / (100 + defense) * damage : (2 - 100 / (100 - defense)) * damage;
-            return damage;
+
+            return damage * mitigationPercent;
         }
 
         public void SetActionState(ActionState state, bool enabled)
@@ -324,6 +367,33 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
             {
                 ActionState &= ~state;
             }
+        }
+
+        public void CalculateTrueMoveSpeed()
+        {
+            float speed = MoveSpeed.BaseValue + MoveSpeed.FlatBonus;
+            if (speed > 490.0f)
+            {
+                speed = speed * 0.5f + 230.0f;
+            }
+            else if (speed >= 415.0f)
+            {
+                speed = speed * 0.8f + 83.0f;
+            }
+            else if (speed < 220.0f)
+            {
+                speed = speed * 0.5f + 110.0f;
+            }
+
+            speed = speed * (1 + MoveSpeed.PercentBonus) * (1 + MultiplicativeSpeedBonus);
+
+            if (_slows.Count > 0)
+            {
+                //Only takes into account the highest slow
+                speed *= 1 + _slows.Max(z => z) * (1 - SlowResistPercent);
+            }
+
+            _trueMoveSpeed = speed;
         }
     }
 }

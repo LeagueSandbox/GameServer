@@ -30,7 +30,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
             UpdateFloat(Stats.HealthPoints.Total, 3, 1); //mMaxHP
             // UpdateFloat(Stats.PerceptionRange.FlatBonus, 3, 2); //mFlatBubbleRadiusMod
             // UpdateFloat(Stats.PerceptionRange.PercentBonus, 3, 3); //mPercentBubbleRadiusMod
-            UpdateFloat(Owner.GetTrueMoveSpeed(), 3, 4); //mMoveSpeed
+            UpdateFloat(Stats.GetTrueMoveSpeed(), 3, 4); //mMoveSpeed
             UpdateFloat(Stats.Size.Total, 3, 5); //mSkinScaleCoef(mistyped as mCrit)
             UpdateBool(Stats.IsTargetable, 5, 0); //mIsTargetable
             UpdateUint((uint)Stats.IsTargetableToTeam, 5, 1); //mIsTargetableToTeamFlags

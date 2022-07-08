@@ -16,6 +16,7 @@ using LeagueSandbox.GameServer.Logging;
 using log4net;
 using GameServerCore.Scripting.CSharp;
 using PacketDefinitions420;
+using LeagueSandbox.GameServer.GameObjects.Stats;
 
 namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
 {
@@ -80,14 +81,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// TODO: Verify if we can remove this in favor of BuffSlots while keeping the functions which allow for easy accessing of individual buff instances.
         private List<IBuff> BuffList { get; }
         /// <summary>
-        /// List of all slows applied to this unit
-        /// </summary>
-        private List<float> _slows = new List<float>();
-        /// <summary>
-        /// The true movement speed of an unit, after mitigation and softcaps
-        /// </summary>
-        private float _trueMoveSpeed;
-        /// <summary>
         /// Waypoints that make up the path a game object is walking in.
         /// </summary>
         public List<Vector2> Waypoints { get; protected set; }
@@ -99,7 +92,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         {
             get { return Waypoints[CurrentWaypointKey]; }
         }
-        
+
         /// <summary>
         /// Status effects enabled on this unit. Refer to StatusFlags enum.
         /// </summary>
@@ -150,8 +143,8 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             Waypoints = new List<Vector2> { Position };
             CurrentWaypointKey = 1;
             SetStatus(
-                StatusFlags.CanAttack | StatusFlags.CanCast     |
-                StatusFlags.CanMove   | StatusFlags.CanMoveEver |
+                StatusFlags.CanAttack | StatusFlags.CanCast |
+                StatusFlags.CanMove | StatusFlags.CanMoveEver |
                 StatusFlags.Targetable, true
             );
             MovementParameters = null;
@@ -162,7 +155,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             ParentBuffs = new Dictionary<string, IBuff>();
             BuffList = new List<IBuff>();
             IconInfo = new IconInfo(_game, this);
-            CalculateTrueMoveSpeed();
         }
 
         /// <summary>
@@ -246,11 +238,11 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             if (CanMove())
             {
                 float remainingFrameTime = diff;
-                if(MovementParameters != null)
+                if (MovementParameters != null)
                 {
                     remainingFrameTime = DashMove(diff);
                 }
-                if(MovementParameters == null)
+                if (MovementParameters == null)
                 {
                     Move(remainingFrameTime);
                 }
@@ -455,14 +447,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// <param name="statModifier">Modifier to add.</param>
         public void AddStatModifier(IStatsModifier statModifier)
         {
-            if (statModifier.MoveSpeed.PercentBonus < 0)
-            {
-                _slows.Add(statModifier.MoveSpeed.PercentBonus);
-                statModifier.MoveSpeed.PercentBonus = 0;
-            }
-
             Stats.AddModifier(statModifier);
-            CalculateTrueMoveSpeed();
         }
 
         /// <summary>
@@ -471,14 +456,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// <param name="statModifier">Stat modifier instance to remove.</param>
         public void RemoveStatModifier(IStatsModifier statModifier)
         {
-            if (statModifier.MoveSpeed.PercentBonus < 0)
-            {
-                _slows.Remove(statModifier.MoveSpeed.PercentBonus);
-                statModifier.MoveSpeed.PercentBonus = 0;
-            }
-
             Stats.RemoveModifier(statModifier);
-            CalculateTrueMoveSpeed();
         }
 
         public virtual void TakeHeal(IAttackableUnit caster, float amount, IEventSource sourceScript = null)
@@ -496,15 +474,17 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// <param name="damageText">Type of damage the damage text should be.</param>
         public void TakeDamage(IAttackableUnit attacker, float damage, DamageType type, DamageSource source, DamageResultType damageText, IEventSource sourceScript = null)
         {
+            //TODO: Make all TakeDamage functions return DamageData
             IDamageData damageData = new DamageData
             {
                 IsAutoAttack = source == DamageSource.DAMAGE_SOURCE_ATTACK,
                 Attacker = attacker,
                 Target = this,
                 Damage = damage,
-                PostMitigationdDamage = Stats.GetPostMitigationDamage(damage, type, attacker),
+                PostMitigationDamage = Stats.GetPostMitigationDamage(damage, type, attacker),
                 DamageSource = source,
                 DamageType = type,
+                DamageResultType = damageText
             };
             this.TakeDamage(damageData, damageText, sourceScript);
         }
@@ -551,7 +531,8 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             var attackerStats = damageData.Attacker.Stats;
             var type = damageData.DamageType;
             var source = damageData.DamageSource;
-            var postMitigationDamage = damageData.PostMitigationdDamage;
+            var postMitigationDamage = damageData.PostMitigationDamage;
+
 
             ApiEventManager.OnPreTakeDamage.Publish(damageData.Target, damageData);
 
@@ -611,28 +592,9 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                 };
             }
 
-            int attackerId = 0, targetId = 0;
-
-            // todo: check if damage dealt by disconnected players cause anything bad
-            if (attacker is IChampion attackerChamp)
-            {
-                attackerId = _game.PlayerManager.GetClientInfoByChampion(attackerChamp).ClientId;
-            }
-
-            if (this is IChampion targetChamp)
-            {
-                targetId = _game.PlayerManager.GetClientInfoByChampion(targetChamp).ClientId;
-            }
-            // Show damage text for owner of pet
-            if (attacker is IPet attackerPet && attackerPet.Owner is IChampion)
-            {
-                attackerId = _game.PlayerManager.GetClientInfoByChampion((IChampion)attackerPet.Owner).ClientId;
-            }
-
             if (attacker.Team != Team)
             {
-                _game.PacketNotifier.NotifyUnitApplyDamage(attacker, this, postMitigationDamage, type, damageText,
-                    _game.Config.IsDamageTextGlobal, attackerId, targetId);
+                _game.PacketNotifier.NotifyUnitApplyDamage(damageData, _game.Config.IsDamageTextGlobal);
             }
 
             // Get health from lifesteal/spellvamp
@@ -730,48 +692,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                 return MovementParameters.PathSpeedOverride;
             }
 
-            return GetTrueMoveSpeed();
-        }
-
-        /// <summary>
-        /// Processes the unit's move speed
-        /// </summary>
-        public void CalculateTrueMoveSpeed()
-        {
-            float speed = Stats.MoveSpeed.BaseValue + Stats.MoveSpeed.FlatBonus;
-            if (speed > 490.0f)
-            {
-                speed = speed * 0.5f + 230.0f;
-            }
-            else if (speed >= 415.0f)
-            {
-                speed = speed * 0.8f + 83.0f;
-            }
-            else if (speed < 220.0f)
-            {
-                speed = speed * 0.5f + 110.0f;
-            }
-
-            speed = speed * (1 + Stats.MoveSpeed.PercentBonus) * (1 + Stats.MultiplicativeSpeedBonus);
-
-            if (_slows.Count > 0)
-            {
-                //Only takes into account the highest slow
-                speed *= 1 + _slows.Max(z => z) * (1 - Stats.SlowResistPercent);
-            }
-
-            _trueMoveSpeed = speed;
-        }
-
-        public float GetTrueMoveSpeed()
-        {
-            return _trueMoveSpeed;
-        }
-
-        public void ClearSlows()
-        {
-            _slows.Clear();
-            CalculateTrueMoveSpeed();
+            return Stats.GetTrueMoveSpeed();
         }
 
         /// <summary>
@@ -800,7 +721,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
 
             UpdateActionState();
         }
-    
+
         void UpdateActionState()
         {
             // CallForHelpSuppressor
@@ -810,12 +731,12 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             Stats.SetActionState(ActionState.CAN_NOT_MOVE, !Status.HasFlag(StatusFlags.CanMoveEver));
             Stats.SetActionState(ActionState.CHARMED, Status.HasFlag(StatusFlags.Charmed));
             // DisableAmbientGold
-            
+
             bool feared = Status.HasFlag(StatusFlags.Feared);
             Stats.SetActionState(ActionState.FEARED, feared);
             // TODO: Verify
             Stats.SetActionState(ActionState.IS_FLEEING, feared);
-            
+
             Stats.SetActionState(ActionState.FORCE_RENDER_PARTICLES, Status.HasFlag(StatusFlags.ForceRenderParticles));
             // GhostProof
             Stats.SetActionState(ActionState.IS_GHOSTED, Status.HasFlag(StatusFlags.Ghosted));
@@ -859,7 +780,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             );
 
             Stats.SetActionState(
-                ActionState.CAN_NOT_ATTACK, 
+                ActionState.CAN_NOT_ATTACK,
                 !Status.HasFlag(StatusFlags.CanAttack)
                 || Status.HasFlag(StatusFlags.Charmed)
                 || Status.HasFlag(StatusFlags.Disarmed)
@@ -871,7 +792,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                 || Status.HasFlag(StatusFlags.Suppressed)
             );
         }
-        
+
         void UpdateBuffs(float diff)
         {
             // Combine the status effects of all the buffs
@@ -941,21 +862,21 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             float distToDest;
             float distRemaining = float.PositiveInfinity;
             float timeRemaining = float.PositiveInfinity;
-            if(MP.FollowNetID > 0)
+            if (MP.FollowNetID > 0)
             {
                 IGameObject unitToFollow = _game.ObjectManager.GetObjectById(MP.FollowNetID);
-                if(unitToFollow == null)
+                if (unitToFollow == null)
                 {
                     SetDashingState(false, MoveStopReason.LostTarget);
                     return frameTime;
                 }
                 dir = unitToFollow.Position - Position;
                 distToDest = dir.Length() - (PathfindingRadius + unitToFollow.PathfindingRadius);
-                if(MP.FollowDistance > 0)
+                if (MP.FollowDistance > 0)
                 {
                     distRemaining = MP.FollowDistance - MP.PassedDistance;
                 }
-                if(MP.FollowTravelTime > 0)
+                if (MP.FollowTravelTime > 0)
                 {
                     timeRemaining = MP.FollowTravelTime - MP.ElapsedTime;
                 }
@@ -973,19 +894,19 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             float dist = Math.Min(distPerFrame, distRemaining);
             Position += Vector2.Normalize(dir) * dist;
 
-            if(distRemaining <= distPerFrame)
+            if (distRemaining <= distPerFrame)
             {
                 SetDashingState(false);
                 return (distPerFrame - distRemaining) / speed;
             }
-            if(timeRemaining <= frameTime)
+            if (timeRemaining <= frameTime)
             {
                 SetDashingState(false);
                 return frameTime - timeRemaining;
             }
             MP.PassedDistance += dist;
             MP.ElapsedTime += time;
-            
+
             return 0;
         }
 
@@ -996,17 +917,17 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// TODO: Implement interpolation (assuming all other desync related issues are already fixed).
         public virtual bool Move(float delta)
         {
-            if(CurrentWaypointKey < Waypoints.Count)
+            if (CurrentWaypointKey < Waypoints.Count)
             {
                 float speed = GetMoveSpeed() * 0.001f;
                 var maxDist = speed * delta;
 
-                while(true)
+                while (true)
                 {
                     var dir = CurrentWaypoint - Position;
                     var dist = dir.Length();
 
-                    if(maxDist < dist)
+                    if (maxDist < dist)
                     {
                         Position += dir / dist * maxDist;
                         return true;
@@ -1017,7 +938,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                         maxDist -= dist;
 
                         CurrentWaypointKey++;
-                        if(CurrentWaypointKey == Waypoints.Count || maxDist == 0)
+                        if (CurrentWaypointKey == Waypoints.Count || maxDist == 0)
                         {
                             return true;
                         }
@@ -1537,7 +1458,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         {
             foreach (IBuff b in BuffList)
             {
-                if(b.IsBuffSame(buffName))
+                if (b.IsBuffSame(buffName))
                 {
                     b.DeactivateBuff();
                 }
@@ -1607,7 +1528,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         public virtual void SetDashingState(bool state, MoveStopReason reason = MoveStopReason.Finished)
         {
             _dashEffectsToDisable = 0;
-            if(state)
+            if (state)
             {
                 _dashEffectsToDisable = MovementParameters.SetStatus;
             }
