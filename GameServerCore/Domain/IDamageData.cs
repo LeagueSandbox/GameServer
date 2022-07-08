@@ -16,7 +16,7 @@ namespace GameServerCore.Domain
         /// <summary>
         /// The result of this damage (Ex. Dodged, Missed, Invulnerable or Crit)
         /// </summary>
-        public DamageResultType DamageResultType { get; set; }
+        DamageResultType DamageResultType { get; set; }
         /// <summary>
         /// Source of the damage.
         /// </summary>
