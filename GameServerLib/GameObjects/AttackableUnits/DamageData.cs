@@ -11,7 +11,7 @@ namespace GameServerLib.GameObjects.AttackableUnits
         /// </summary>
         public IAttackableUnit Attacker { get; set; }
         /// <summary>
-        /// The raw ammount of damage to be inflicted (Pre-mitigated damage)
+        /// The raw amount of damage to be inflicted (Pre-mitigated damage)
         /// </summary>
         public float Damage { get; set; }
         /// <summary>
@@ -27,13 +27,13 @@ namespace GameServerLib.GameObjects.AttackableUnits
         /// </summary>
         public DamageType DamageType { get; set; }
         /// <summary>
-        /// Wheter or not the damage came from an auttoatack or a Spell
+        /// Whether or not the damage came from an autoatack or a Spell
         /// </summary>
         public bool IsAutoAttack { get; set; }
         /// <summary>
-        /// Mitigated ammount of damage (after being reduced by Armor/MR stats) 
+        /// Mitigated amount of damage (after being reduced by Armor/MR stats) 
         /// </summary>
-        public float PostMitigationdDamage { get; set; }
+        public float PostMitigationDamage { get; set; }
         /// <summary>
         /// Unit that will receive the damage.
         /// </summary>
