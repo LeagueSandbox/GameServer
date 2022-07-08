@@ -114,6 +114,8 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         public override bool IsAffectedByFoW => true;
         public override bool SpawnShouldBeHidden => true;
 
+        private bool _teleportedDuringThisFrame = false;
+
         public AttackableUnit(
             Game game,
             string model,
@@ -193,7 +195,15 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             Position = vec;
             _movementUpdated = true;
 
-            if (!IsPathEnded())
+            if (MovementParameters != null)
+            {
+                SetDashingState(false);
+            }
+            else if (IsPathEnded())
+            {
+                ResetWaypoints();
+            }
+            else
             {
                 // Reevaluate our current path to account for the starting position being changed.
                 if (repath)
@@ -207,15 +217,15 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                     {
                         SetWaypoints(safePath);
                     }
+                    else
+                    {
+                        ResetWaypoints();
+                    }
                 }
                 else
                 {
                     Waypoints[0] = Position;
                 }
-            }
-            else
-            {
-                ResetWaypoints();
             }
         }
 
@@ -317,13 +327,14 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             }
             if (_movementUpdated)
             {
-                _game.PacketNotifier.HoldMovementDataUntilWaypointGroupNotification(this, userId, false);
+                _game.PacketNotifier.HoldMovementDataUntilWaypointGroupNotification(this, userId, _teleportedDuringThisFrame);
             }
         }
 
         public override void OnAfterSync()
         {
             Replication.MarkAsUnchanged();
+            _teleportedDuringThisFrame = false;
             _movementUpdated = false;
         }
 
@@ -838,6 +849,10 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// </summary>
         public void TeleportTo(Vector2 position, bool repath = false)
         {
+            TeleportID++;
+            _movementUpdated = true;
+            _teleportedDuringThisFrame = true;
+
             position = _game.Map.NavigationGrid.GetClosestTerrainExit(position, PathfindingRadius + 1.0f);
 
             if (repath)
@@ -847,12 +862,8 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             else
             {
                 Position = position;
-                ResetWaypoints();
+                StopMovement();
             }
-
-            TeleportID++;
-            _game.PacketNotifier.NotifyWaypointGroup(this, useTeleportID: true);
-            _movementUpdated = false;
         }
 
         private float DashMove(float frameTime)
@@ -871,7 +882,8 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                     return frameTime;
                 }
                 dir = unitToFollow.Position - Position;
-                distToDest = dir.Length() - (PathfindingRadius + unitToFollow.PathfindingRadius);
+                float combinedRadius = PathfindingRadius + unitToFollow.PathfindingRadius;
+                distToDest = Math.Max(0, dir.Length() - combinedRadius);
                 if (MP.FollowDistance > 0)
                 {
                     distRemaining = MP.FollowDistance - MP.PassedDistance;
@@ -892,7 +904,10 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             float speed = MP.PathSpeedOverride * 0.001f;
             float distPerFrame = speed * time;
             float dist = Math.Min(distPerFrame, distRemaining);
-            Position += Vector2.Normalize(dir) * dist;
+            if (dir != Vector2.Zero)
+            {
+                Position += Vector2.Normalize(dir) * dist;
+            }
 
             if (distRemaining <= distPerFrame)
             {
@@ -951,7 +966,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// <summary>
         /// Resets this unit's waypoints.
         /// </summary>
-        public void ResetWaypoints()
+        private void ResetWaypoints()
         {
             Waypoints = new List<Vector2> { Position };
             CurrentWaypointKey = 1;
