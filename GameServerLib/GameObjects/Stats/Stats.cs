@@ -351,7 +351,6 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
             
             if (stat < 0)
             {
-                Console.WriteLine("Mitigation: " + mitigationPercent);
                 mitigationPercent = 2 - mitigationPercent;
             }
 
