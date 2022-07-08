@@ -3915,7 +3915,7 @@ namespace PacketDefinitions420
                 DamageType = (byte)damageData.DamageType,
                 TargetNetID = damageData.Target.NetId,
                 SourceNetID = damageData.Attacker.NetId,
-                Damage = damageData.PostMitigationdDamage,
+                Damage = damageData.PostMitigationDamage,
                 //Sender isn't always the unit itself, sometimes missiles
                 SenderNetID = damageData.Target.NetId
             };
