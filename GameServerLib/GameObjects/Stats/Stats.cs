@@ -332,7 +332,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
                 return 0.0f;
             }
 
-            float stat = 0;
+            float stat;
             switch (type)
             {
                 case DamageType.DAMAGE_TYPE_PHYSICAL:
