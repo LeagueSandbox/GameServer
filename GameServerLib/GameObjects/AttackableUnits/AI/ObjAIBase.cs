@@ -269,7 +269,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 Attacker = this,
                 Target = target,
                 Damage = damage,
-                PostMitigationdDamage = target.Stats.GetPostMitigationDamage(damage, DamageType.DAMAGE_TYPE_PHYSICAL, this),
+                PostMitigationDamage = target.Stats.GetPostMitigationDamage(damage, DamageType.DAMAGE_TYPE_PHYSICAL, this),
                 DamageSource = DamageSource.DAMAGE_SOURCE_ATTACK,
                 DamageType = DamageType.DAMAGE_TYPE_PHYSICAL,
             };
