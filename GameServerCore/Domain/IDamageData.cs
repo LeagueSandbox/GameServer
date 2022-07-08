@@ -10,7 +10,7 @@ namespace GameServerCore.Domain
         /// </summary>
         IAttackableUnit Attacker { get; }
         /// <summary>
-        /// The raw ammount of damage to be inflicted (Pre-Mitigation damage)
+        /// The raw amount of damage to be inflicted (Pre-Mitigation damage)
         /// </summary>
         float Damage { get; }
         /// <summary>
