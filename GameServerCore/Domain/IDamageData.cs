@@ -27,7 +27,7 @@ namespace GameServerCore.Domain
         DamageType DamageType { get; }
 
         /// <summary>
-        /// Wheter or not the damage came from an auttoatack or a Spell
+        /// Whether or not the damage came from an autoatack or a Spell
         /// </summary>
         bool IsAutoAttack { get; }
         /// <summary>
