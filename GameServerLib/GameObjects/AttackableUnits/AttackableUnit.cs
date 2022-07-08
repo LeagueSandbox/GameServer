@@ -892,7 +892,10 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             float speed = MP.PathSpeedOverride * 0.001f;
             float distPerFrame = speed * time;
             float dist = Math.Min(distPerFrame, distRemaining);
-            Position += Vector2.Normalize(dir) * dist;
+            if(dir != Vector2.Zero)
+            {
+                Position += Vector2.Normalize(dir) * dist;
+            }
 
             if (distRemaining <= distPerFrame)
             {
