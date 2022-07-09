@@ -163,7 +163,7 @@ namespace PacketDefinitions420
                     charStackData.SkinID = (uint)obj.SkinID;
                     if (obj.Inventory != null)
                     {
-                        foreach (var item in obj.Inventory.GetAllItems())
+                        foreach (var item in obj.Inventory.GetAllItems(true, true))
                         {
                             var itemData = item.ItemData;
                             itemDataList.Add(new ItemData

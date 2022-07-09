@@ -64,11 +64,10 @@ namespace LeagueSandbox.GameServer.Players
             c.SetPosition(pos, false);
             c.StopMovement();
             c.UpdateMoveOrder(OrderType.Stop);
-
-            _game.ObjectManager.AddObject(c);
-
             info.Champion = c;
             _players.Add(info);
+
+            _game.ObjectManager.AddObject(c);
         }
 
         public void AddPlayer(ClientInfo info)
