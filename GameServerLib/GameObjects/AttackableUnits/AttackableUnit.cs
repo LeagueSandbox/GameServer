@@ -472,7 +472,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// <param name="type">Whether the damage is physical, magical, or true.</param>
         /// <param name="source">What the damage came from: attack, spell, summoner spell, or passive.</param>
         /// <param name="damageText">Type of damage the damage text should be.</param>
-        public void TakeDamage(IAttackableUnit attacker, float damage, DamageType type, DamageSource source, DamageResultType damageText, IEventSource sourceScript = null)
+        public IDamageData TakeDamage(IAttackableUnit attacker, float damage, DamageType type, DamageSource source, DamageResultType damageText, IEventSource sourceScript = null)
         {
             //TODO: Make all TakeDamage functions return DamageData
             IDamageData damageData = new DamageData
@@ -487,6 +487,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                 DamageResultType = damageText
             };
             this.TakeDamage(damageData, damageText, sourceScript);
+            return damageData;
         }
 
         DamageResultType Bool2Crit(bool isCrit)
@@ -506,9 +507,9 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// <param name="type">Whether the damage is physical, magical, or true.</param>
         /// <param name="source">What the damage came from: attack, spell, summoner spell, or passive.</param>
         /// <param name="isCrit">Whether or not the damage text should be shown as a crit.</param>
-        public void TakeDamage(IAttackableUnit attacker, float damage, DamageType type, DamageSource source, bool isCrit, IEventSource sourceScript = null)
+        public IDamageData TakeDamage(IAttackableUnit attacker, float damage, DamageType type, DamageSource source, bool isCrit, IEventSource sourceScript = null)
         {
-            TakeDamage(attacker, damage, type, source, Bool2Crit(isCrit), sourceScript);
+            return TakeDamage(attacker, damage, type, source, Bool2Crit(isCrit), sourceScript);
         }
 
         public void TakeDamage(IDamageData damageData, bool isCrit, IEventSource sourceScript)

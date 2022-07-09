@@ -150,9 +150,15 @@ namespace LeagueSandbox.GameServer
 
             ChatCommandManager.LoadCommands();
 
+            Map = new MapScriptHandler(this);
+
+            // TODO: GameApp should send the Response/Request handlers
+            _packetServer = server;
+            // TODO: switch the notifier with ResponseHandler
+            PacketNotifier = new PacketNotifier(_packetServer.PacketHandlerManager, Map.NavigationGrid);
+
             ObjectManager = new ObjectManager(this);
             ProtectionManager = new ProtectionManager(this);
-            Map = new MapScriptHandler(this);
             ApiGameEvents.SetGame(this);
             ApiMapFunctionManager.SetGame(this, Map as MapScriptHandler);
             ApiFunctionManager.SetGame(this);
@@ -163,10 +169,6 @@ namespace LeagueSandbox.GameServer
 
             PauseTimeLeft = 30 * 60; // 30 minutes
 
-            // TODO: GameApp should send the Response/Request handlers
-            _packetServer = server;
-            // TODO: switch the notifier with ResponseHandler
-            PacketNotifier = new PacketNotifier(_packetServer.PacketHandlerManager, Map.NavigationGrid);
             InitializePacketHandlers();
 
             _logger.Info("Add players");

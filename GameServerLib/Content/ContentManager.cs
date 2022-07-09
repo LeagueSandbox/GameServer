@@ -4,6 +4,7 @@ using System.Linq;
 using GameServerCore.Content;
 using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects.Spell;
+using GameServerCore.Handlers;
 using LeagueSandbox.GameServer.Logging;
 using log4net;
 using Newtonsoft.Json.Linq;
@@ -173,11 +174,11 @@ namespace LeagueSandbox.GameServer.Content
             throw new ContentNotFoundException($"No {contentType} found with name: {itemName} in any package.");
         }
 
-        public INavigationGrid GetNavigationGrid(int mapId)
+        public INavigationGrid GetNavigationGrid(IMapScriptHandler map)
         {
             foreach (var dataPackage in _loadedPackages)
             {
-                INavigationGrid toReturnNavgrid = dataPackage.GetNavigationGrid(mapId);
+                INavigationGrid toReturnNavgrid = dataPackage.GetNavigationGrid(map);
 
                 if (toReturnNavgrid != null)
                 {
@@ -185,7 +186,7 @@ namespace LeagueSandbox.GameServer.Content
                 }
             }
 
-            throw new ContentNotFoundException($"No NavGrid for map with id {mapId} found in packages, skipping map load...");
+            throw new ContentNotFoundException($"No NavGrid for map with id {map.Id} found in packages, skipping map load...");
         }
 
         public ISpellData GetSpellData(string spellName)

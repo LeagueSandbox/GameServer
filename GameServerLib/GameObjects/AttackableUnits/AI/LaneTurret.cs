@@ -106,7 +106,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             {
                 if (item != null)
                 {
-                    _game.PacketNotifier.NotifyBuyItem(userId, this, item as IItem);
+                    _game.PacketNotifier.NotifyBuyItem(this, item as IItem);
                 }
             }
         }

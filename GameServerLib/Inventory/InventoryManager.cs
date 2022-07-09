@@ -31,10 +31,10 @@ namespace LeagueSandbox.GameServer.Inventory
                 return KeyValuePair.Create(item, false);
             }
 
-            if (owner is IChampion champion && item != null)
+            if (owner != null && item != null)
             {
                 //This packet seems to break when buying more than 3 of one of the 250Gold elixirs
-                _packetNotifier.NotifyBuyItem(champion.ClientId, champion, item);
+                _packetNotifier.NotifyBuyItem(owner, item);
             }
             return KeyValuePair.Create(item, true);
         }
@@ -48,10 +48,10 @@ namespace LeagueSandbox.GameServer.Inventory
                 return KeyValuePair.Create(item, false);
             }
 
-            if (owner is IChampion champion && item != null)
+            if (owner != null && item != null)
             {
                 //This packet seems to break when buying more than 3 of one of the 250Gold elixirs
-                _packetNotifier.NotifyBuyItem(champion.ClientId, champion, item);
+                _packetNotifier.NotifyBuyItem(owner, item);
             }
 
             return KeyValuePair.Create(item, true);
@@ -71,14 +71,19 @@ namespace LeagueSandbox.GameServer.Inventory
         {
             return _inventory.GetItem(itemSpellName);
         }
-        public List<IItem> GetAllItems(bool includeRunes = false)
+        public List<IItem> GetAllItems(bool includeRunes = false, bool includeRecallItem = false)
         {
             List<IItem> toReturn = new List<IItem>(_inventory.Items.ToList());
+            if (!includeRecallItem)
+            {
+                toReturn.RemoveAt(7);
+            }
             toReturn.RemoveAll(x => x == null);
             if (!includeRunes)
             {
                 toReturn.RemoveAll(x => x.ItemData.ItemId >= 5000);
             }
+
             return toReturn;
         }
 

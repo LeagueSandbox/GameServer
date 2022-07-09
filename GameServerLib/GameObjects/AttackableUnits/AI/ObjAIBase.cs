@@ -95,6 +95,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
             Name = name;
             SkinID = skinId;
+            Inventory = InventoryManager.CreateInventory(game.PacketNotifier);
 
             // TODO: Centralize this instead of letting it lay in the initialization.
             if (CharData.GameplayCollisionRadius > 0)
@@ -842,6 +843,10 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                     }
 
                     toReturn.SetLevel(Spells[slot].CastInfo.SpellLevel);
+                }
+                else
+                {
+                    toReturn.Script.OnActivate(this, toReturn);
                 }
 
                 Spells[slot] = toReturn;

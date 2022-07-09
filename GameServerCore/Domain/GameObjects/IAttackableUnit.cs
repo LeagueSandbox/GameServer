@@ -130,7 +130,7 @@ namespace GameServerCore.Domain.GameObjects
         /// <param name="source">What the damage came from: attack, spell, summoner spell, or passive.</param>
         /// <param name="damageText">Type of damage the damage text should be.</param>
         /// <param name="sourceScript">Data about the script that made the call.</param>
-        void TakeDamage(IAttackableUnit attacker, float damage, DamageType type, DamageSource source, DamageResultType damageText, IEventSource sourceScript = null);
+        IDamageData TakeDamage(IAttackableUnit attacker, float damage, DamageType type, DamageSource source, DamageResultType damageText, IEventSource sourceScript = null);
         /// <summary>
         /// Applies damage to this unit.
         /// </summary>
@@ -140,7 +140,7 @@ namespace GameServerCore.Domain.GameObjects
         /// <param name="source">What the damage came from: attack, spell, summoner spell, or passive.</param>
         /// <param name="isCrit">Whether or not the damage text should be shown as a crit.</param>
         /// <param name="sourceScript">Data about the script that made the call.</param>
-        void TakeDamage(IAttackableUnit attacker, float damage, DamageType type, DamageSource source, bool isCrit, IEventSource sourceScript = null);
+        IDamageData TakeDamage(IAttackableUnit attacker, float damage, DamageType type, DamageSource source, bool isCrit, IEventSource sourceScript = null);
         void TakeDamage(IDamageData damageData, DamageResultType damageText, IEventSource sourceScript = null);
         void TakeDamage(IDamageData damageData, bool isCrit, IEventSource sourceScript = null);
 

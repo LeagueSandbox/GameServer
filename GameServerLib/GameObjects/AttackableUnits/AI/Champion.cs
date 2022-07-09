@@ -57,7 +57,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             ClientId = clientInfo.ClientId;
             RuneList = runeList;
 
-            Inventory = InventoryManager.CreateInventory(game.PacketNotifier);
             TalentInventory = talentInventory;
             Shop = GameServer.Inventory.Shop.CreateShop(this, game);
 
@@ -73,7 +72,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             Spells[(int)SpellSlotType.SummonerSpellSlots + 1].LevelUp();
 
             Spells[(int)SpellSlotType.BluePillSlot] = new Spell.Spell(game, this,
-                _game.ItemManager.GetItemType(_game.Map.MapScript.MapScriptMetadata.RecallSpellItemId).SpellName, (int)SpellSlotType.BluePillSlot);
+            _game.ItemManager.GetItemType(_game.Map.MapScript.MapScriptMetadata.RecallSpellItemId).SpellName, (int)SpellSlotType.BluePillSlot);
             Stats.SetSpellEnabled((byte)SpellSlotType.BluePillSlot, true);
 
             Replication = new ReplicationHero(this);
@@ -133,7 +132,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             {
                 // Buy blue pill
                 var itemInstance = Inventory.GetItem(7);
-                _game.PacketNotifier.NotifyBuyItem(userId, this, itemInstance);
+                _game.PacketNotifier.NotifyBuyItem(this, itemInstance);
 
                 // Set spell levels
                 foreach (var spell in Spells)

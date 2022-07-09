@@ -5,6 +5,7 @@ namespace GameServerCore.Domain.GameObjects
     public interface IPet : IMinion
     {
         IBuff CloneBuff { get; }
+        IObjAIBase ClonedUnit { get; }
         ISpell SourceSpell { get; }
         float LifeTime { get; }
         bool CloneInventory { get; }

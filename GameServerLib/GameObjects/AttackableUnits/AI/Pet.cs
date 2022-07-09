@@ -1,5 +1,6 @@
 ﻿using GameServerCore.Domain.GameObjects;
 using GameServerCore.Domain.GameObjects.Spell;
+using System;
 using System.Numerics;
 
 namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
@@ -59,6 +60,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             DoFade = doFade;
             IsClone = isClone;
 
+            Owner.SetPet(this);
             game.ObjectManager.AddObject(this);
         }
 
@@ -79,13 +81,18 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             ) : base(game, owner, cloned.Position, cloned.Model, cloned.Name, 0, owner.Team, cloned.SkinID, stats: stats, AIScript: AIScript)
         {
 
-            if(position != Vector2.Zero)
+            if (position == Vector2.Zero)
+            {
+                Position = cloned.Position;
+            }
+            else
             {
                 Position = position;
             }
 
             SourceSpell = spell;
             LifeTime = lifeTime;
+            ClonedUnit = cloned;
             CloneBuff = new Buff(game, buffName, lifeTime, 1, spell, this, owner);
             CloneInventory = cloneInventory;
             ShowMinimapIconIfClone = showMinimapIfClone;
@@ -93,6 +100,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             DoFade = doFade;
             IsClone = true;
 
+            Owner.SetPet(this);
             game.ObjectManager.AddObject(this);
         }
 
@@ -100,7 +108,16 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         {
             base.OnAdded();
             AddBuff(CloneBuff);
-            Owner.SetPet(this);
+
+            if(CloneInventory && ClonedUnit != null)
+            {
+                foreach(var item in ClonedUnit.Inventory.GetAllItems())
+                {
+                    Inventory.AddItem(item.ItemData, this);
+                    //Remove this later
+                    Console.WriteLine($"Added {item.ItemData.Name} to the Pet's inventory!");
+                }
+            }
         }
 
         public float GetReturnRadius()

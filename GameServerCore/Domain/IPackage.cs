@@ -1,5 +1,6 @@
 ﻿using GameServerCore.Content;
 using GameServerCore.Domain.GameObjects.Spell;
+using GameServerCore.Handlers;
 
 namespace GameServerCore.Domain
 {
@@ -11,7 +12,7 @@ namespace GameServerCore.Domain
         bool HasScripts();
         bool LoadScripts();
         IContentFile GetContentFileFromJson(string contentType, string itemName, string subPath = null);
-        INavigationGrid GetNavigationGrid(int mapId);
+        INavigationGrid GetNavigationGrid(IMapScriptHandler mapId);
         ISpellData GetSpellData(string spellName);
         ICharData GetCharData(string characterName);
     }
