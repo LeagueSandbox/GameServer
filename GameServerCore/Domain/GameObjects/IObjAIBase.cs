@@ -4,8 +4,6 @@ using GameServerCore.Scripting.CSharp;
 using System.Collections.Generic;
 using System.Numerics;
 
-//TODO: RENAME THIS FILE WITH CAPITAL I
-
 namespace GameServerCore.Domain.GameObjects
 {
     /// <summary>
@@ -17,7 +15,7 @@ namespace GameServerCore.Domain.GameObjects
         /// <summary>
         /// Name assigned to this unit.
         /// </summary>
-        public string Name { get; }
+        string Name { get; }
         /// <summary>
         /// This AI's current auto attack spell.
         /// </summary>
