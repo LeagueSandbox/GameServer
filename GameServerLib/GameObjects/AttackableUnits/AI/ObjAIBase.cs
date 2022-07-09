@@ -98,11 +98,11 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             Inventory = InventoryManager.CreateInventory(game.PacketNotifier);
 
             // TODO: Centralize this instead of letting it lay in the initialization.
-            if (CharData.GameplayCollisionRadius > 0)
+            if (collisionRadius > 0)
             {
                 CollisionRadius = collisionRadius;
             }
-            else if (collisionRadius > 0)
+            else if (CharData.GameplayCollisionRadius > 0)
             {
                 CollisionRadius = CharData.GameplayCollisionRadius;
             }
