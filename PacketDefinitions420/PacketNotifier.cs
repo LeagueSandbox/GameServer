@@ -163,7 +163,7 @@ namespace PacketDefinitions420
                     charStackData.SkinID = (uint)obj.SkinID;
                     if (obj.Inventory != null)
                     {
-                        foreach (var item in obj.Inventory.GetAllItems())
+                        foreach (var item in obj.Inventory.GetAllItems(true, true))
                         {
                             var itemData = item.ItemData;
                             itemDataList.Add(new ItemData
@@ -547,9 +547,9 @@ namespace PacketDefinitions420
                 SenderNetID = pet.NetId
             };
 
-            if (pet.IsClone)
+            if (pet.IsClone && pet.ClonedUnit != null)
             {
-                packet.CloneID = pet.Owner.NetId;
+                packet.CloneID = pet.ClonedUnit.NetId;
             }
 
             return packet;
@@ -854,7 +854,7 @@ namespace PacketDefinitions420
         /// <param name="userId">User to send the packet to.</param>
         /// <param name="gameObject">GameObject of type ObjAIBase that can buy items.</param>
         /// <param name="itemInstance">Item instance housing all information about the item that has been bought.</param>
-        public void NotifyBuyItem(int userId, IObjAIBase gameObject, IItem itemInstance)
+        public void NotifyBuyItem(IObjAIBase gameObject, IItem itemInstance)
         {
             ItemData itemData = new ItemData
             {
@@ -2614,7 +2614,7 @@ namespace PacketDefinitions420
                 // TODO: Unhardcode
                 SpawnPositionIndex = 0,
                 SkinID = champion.SkinID,
-                Name = clientInfo.Name,
+                Name = champion.Name,
                 Skin = champion.Model,
                 DeathDurationRemaining = champion.RespawnTimer,
                 // TimeSinceDeath
@@ -2890,12 +2890,17 @@ namespace PacketDefinitions420
                 {
                     BecomeZombie = data.BecomeZombie,
                     DieType = data.DieType,
-                    KillerNetID = data.Killer.NetId,
                     DamageType = (byte)data.DamageType,
                     DamageSource = (byte)data.DamageSource,
                     DeathDuration = data.DeathDuration
                 }
             };
+
+            if(data.Killer != null)
+            {
+                dieMapView.DeathData.KillerNetID = data.Killer.NetId;
+            }
+
             _packetHandlerManager.BroadcastPacket(dieMapView.GetBytes(), Channel.CHL_S2C);
         }
 

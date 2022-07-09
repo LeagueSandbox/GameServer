@@ -12,6 +12,7 @@ using GameServerCore.Domain.GameObjects.Spell;
 using System.Numerics;
 using LeagueSandbox.GameServer.Inventory;
 using LeagueSandbox.GameServer.Scripting.CSharp;
+using GameServerCore.Handlers;
 
 namespace LeagueSandbox.GameServer.Content
 {
@@ -360,15 +361,15 @@ namespace LeagueSandbox.GameServer.Content
             return toReturnMapSpawns;
         }
 
-        public INavigationGrid GetNavigationGrid(int mapId)
+        public INavigationGrid GetNavigationGrid(IMapScriptHandler map)
         {
             string navgridName = "AIPath";
-            if (!string.IsNullOrEmpty(_game.Map.MapScript.MapScriptMetadata.NavGridOverride))
+            if (!string.IsNullOrEmpty(map.MapScript.MapScriptMetadata.NavGridOverride))
             {
                 navgridName = _game.Map.MapScript.MapScriptMetadata.NavGridOverride;
             }
 
-            string navigationGridPath = $"{this.PackagePath}/AIMesh/Map{mapId}/{navgridName}.aimesh_ngrid";
+            string navigationGridPath = $"{this.PackagePath}/AIMesh/Map{map.Id}/{navgridName}.aimesh_ngrid";
 
             if (!File.Exists(navigationGridPath))
             {

@@ -13,6 +13,10 @@ namespace GameServerCore.Domain.GameObjects
     public interface IObjAIBase : IAttackableUnit
     {
         /// <summary>
+        /// Name assigned to this unit.
+        /// </summary>
+        string Name { get; }
+        /// <summary>
         /// This AI's current auto attack spell.
         /// </summary>
         ISpell AutoAttackSpell { get; }

@@ -27,10 +27,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         /// </summary>
         public MapObject ParentObject { get; private set; }
         /// <summary>
-        /// Internal name of this turret, used for packets so that clients know which visual turret to assign them to.
-        /// </summary>
-        public string Name { get; private set; }
-        /// <summary>
         /// Supposed to be the NetID for the visual counterpart of this turret. Used only for packets.
         /// </summary>
         public uint ParentNetId { get; private set; }
@@ -53,14 +49,12 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             int skinId = 0,
             IStats stats = null,
             string aiScript = ""
-        ) : base(game, model, position: position, visionRadius: 800, skinId: skinId, netId: netId, team: team, stats: stats, aiScript: aiScript)
+        ) : base(game, model, name, position: position, visionRadius: 800, skinId: skinId, netId: netId, team: team, stats: stats, aiScript: aiScript)
         {
             ParentNetId = Crc32Algorithm.Compute(Encoding.UTF8.GetBytes(name)) | 0xFF000000;
-            Name = name;
             Lane = lane;
             ParentObject = mapObject;
             SetTeam(team);
-            Inventory = InventoryManager.CreateInventory(game.PacketNotifier);
             Replication = new ReplicationAITurret(this);
         }
 

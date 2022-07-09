@@ -18,10 +18,6 @@ namespace GameServerCore.Domain.GameObjects
         /// </summary>
         uint ParentNetId { get; }
         /// <summary>
-        /// Internal name of this turret.
-        /// </summary>
-        string Name { get; }
-        /// <summary>
         /// Sets this turret's LaneID to the specified LaneID.
         /// Only sets if its current LaneID is NONE.
         /// Used for ObjectManager.

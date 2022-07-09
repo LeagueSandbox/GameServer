@@ -75,6 +75,19 @@ namespace LeagueSandbox.GameServer.Handlers
             {
                 PlayerSpawnPoints = _game.Config.GetMapSpawns();
             }
+
+            try
+            {
+                NavigationGrid = _game.Config.ContentManager.GetNavigationGrid(this);
+            }
+            catch (ContentNotFoundException exception)
+            {
+                _logger.Error(exception.Message);
+                return;
+            }
+
+            CollisionHandler = new CollisionHandler(this);
+            PathingHandler = new PathingHandler(this);
         }
 
         /// <summary>
@@ -100,19 +113,6 @@ namespace LeagueSandbox.GameServer.Handlers
         public void Init()
         {
             MapData = _game.Config.ContentManager.GetMapData(Id);
-
-            try
-            {
-                NavigationGrid = _game.Config.ContentManager.GetNavigationGrid(Id);
-            }
-            catch (ContentNotFoundException exception)
-            {
-                _logger.Error(exception.Message);
-                return;
-            }
-
-            CollisionHandler = new CollisionHandler(this);
-            PathingHandler = new PathingHandler(this);
 
             Dictionary<GameObjectTypes, List<MapObject>> mapObjects = new Dictionary<GameObjectTypes, List<MapObject>>();
             foreach (var mapObject in MapData.MapObjects.Values)

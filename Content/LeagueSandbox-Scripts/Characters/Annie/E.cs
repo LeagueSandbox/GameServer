@@ -33,12 +33,14 @@ namespace Spells
 
         public void OnSpellPostCast(ISpell spell)
         {
-            AddBuff("MoltenShield", 5f, 1, spell, spell.CastInfo.Owner, spell.CastInfo.Owner);
-
-            var ultScript = spell.CastInfo.Owner.GetSpell("InfernalGuardianGuide").Script as InfernalGuardianGuide;
-            if (ultScript.Tibbers != null && !ultScript.Tibbers.IsDead)
+            AddBuff("MoltenShield", 5.0f, 1, spell, spell.CastInfo.Owner, spell.CastInfo.Owner);
+            if (spell.CastInfo.Owner is IChampion ch)
             {
-                AddBuff("MoltenShield", 5f, 1, spell, ultScript.Tibbers, spell.CastInfo.Owner);
+                IPet tibbers = ch.GetPet();
+                if (tibbers != null && !tibbers.IsDead)
+                {
+                    AddBuff("MoltenShield", 5.0f, 1, spell, tibbers, spell.CastInfo.Owner);
+                }
             }
         }
 

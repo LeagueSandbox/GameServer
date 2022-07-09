@@ -50,13 +50,10 @@ namespace Spells
                 "AnnieTibbers",
                 "InfernalGuardian",
                 45.0f,
-                owner.SkinID,
                 showMinimapIfClone: false,
                 isClone: false
             );
-
             var guideSpell = SetSpell(owner, "InfernalGuardianGuide", SpellSlotType.SpellSlots, 3);
-            (guideSpell.Script as InfernalGuardianGuide).Tibbers = tibbers;
 
             AddBuff("InfernalGuardianBurning", 45.0f, 1, spell, tibbers, owner);
             AddBuff("InfernalGuardianTimer", 45.0f, 1, spell, owner, owner);
@@ -101,99 +98,9 @@ namespace Spells
             var totalDamage = 50 + 125 * spell.CastInfo.SpellLevel + Ap;
             target.TakeDamage(spell.CastInfo.Owner, totalDamage, DamageType.DAMAGE_TYPE_MAGICAL, DamageSource.DAMAGE_SOURCE_SPELLAOE, false);
         }
-
-        public void OnSpellChannel(ISpell spell)
-        {
-        }
-
-        public void OnSpellChannelCancel(ISpell spell, ChannelingStopSource reason)
-        {
-        }
-
-        public void OnSpellPostChannel(ISpell spell)
-        {
-        }
-
-        public void OnUpdate(float diff)
-        {
-        }
     }
 
-    public class InfernalGuardianGuide : ISpellScript
+    public class InfernalGuardianGuide : BasePetController
     {
-        public IPet Tibbers;
-        public ISpellScriptMetadata ScriptMetadata => new SpellScriptMetadata()
-        {
-            NotSingleTargetSpell = true,
-            DoesntBreakShields = true,
-            TriggersSpellCasts = false,
-            IsDamagingSpell = true,
-            SpellDamageRatio = 0.5f,
-            IsPetDurationBuff = true
-        };
-
-        public void OnActivate(IObjAIBase owner, ISpell spell)
-        {
-        }
-
-        public void OnDeactivate(IObjAIBase owner, ISpell spell)
-        {
-        }
-
-        public void OnSpellPreCast(IObjAIBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
-        {
-            if (Tibbers != null)
-            {
-                // likely AddBuff("PetCommandParticle") here (refer to preload for particles)
-                AddParticle(owner, null, "cursor_moveto", start);
-
-                //TODO: Instead of baking AI here, make a general Pet AI script and set it as the default AI for Pet class.
-                var unitsInRage = GetUnitsInRange(end, 100.0f, true);
-                unitsInRage.RemoveAll(x => x.Team == spell.CastInfo.Owner.Team);
-                if (unitsInRage.Count > 0)
-                {
-                    Tibbers.UpdateMoveOrder(OrderType.PetHardAttack);
-                    Tibbers.SetTargetUnit(unitsInRage[0]);
-                    for(int i = 0; i < unitsInRage.Count; i++)
-                    {
-                        spell.CastInfo.SetTarget(unitsInRage[i], i);
-                    }
-                }
-                else
-                {
-                    Tibbers.SetTargetUnit(null, true);
-                    Tibbers.UpdateMoveOrder(OrderType.PetHardMove);
-                    Tibbers.SetWaypoints(GetPath(Tibbers.Position, end));
-                }
-            }
-        }
-
-        public void OnSpellCast(ISpell spell)
-        {
-        }
-
-        public void OnSpellPostCast(ISpell spell)
-        {
-        }
-
-        public void TargetExecute(ISpell spell, IAttackableUnit target, ISpellMissile missile, ISpellSector sector)
-        {
-        }
-
-        public void OnSpellChannel(ISpell spell)
-        {
-        }
-
-        public void OnSpellChannelCancel(ISpell spell, ChannelingStopSource reason)
-        {
-        }
-
-        public void OnSpellPostChannel(ISpell spell)
-        {
-        }
-
-        public void OnUpdate(float diff)
-        {
-        }
     }
 }

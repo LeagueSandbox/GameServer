@@ -28,10 +28,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         /// </summary>
         public bool IsTargetable { get; protected set; }
         /// <summary>
-        /// Internal name of the minion.
-        /// </summary>
-        public string Name { get; protected set; }
-        /// <summary>
         /// Only unit which is allowed to see this minion.
         /// </summary>
         public IObjAIBase VisibilityOwner { get; }
@@ -59,9 +55,8 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             int damageBonus = 0,
             int healthBonus = 0,
             int initialLevel = 1
-        ) : base(game, model, 40, position, 1100, skinId, netId, team, stats, AIScript)
+        ) : base(game, model, name, 40, position, 1100, skinId, netId, team, stats, AIScript)
         {
-            Name = name;
             Owner = owner;
 
             IsLaneMinion = false;

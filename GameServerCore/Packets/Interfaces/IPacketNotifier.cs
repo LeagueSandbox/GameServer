@@ -112,7 +112,7 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="userId">User to send the packet to.</param>
         /// <param name="gameObject">GameObject of type ObjAIBase that can buy items.</param>
         /// <param name="itemInstance">Item instance housing all information about the item that has been bought.</param>
-        void NotifyBuyItem(int userId, IObjAIBase gameObject, IItem itemInstance);
+        void NotifyBuyItem(IObjAIBase gameObject, IItem itemInstance);
         /// <summary>
         /// Sends a packet to the specified user detailing that the specified owner unit's spell in the specified slot has been changed.
         /// </summary>
