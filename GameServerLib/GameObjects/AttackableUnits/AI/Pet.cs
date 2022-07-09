@@ -114,8 +114,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 foreach(var item in ClonedUnit.Inventory.GetAllItems())
                 {
                     Inventory.AddItem(item.ItemData, this);
-                    //Remove this later
-                    Console.WriteLine($"Added {item.ItemData.Name} to the Pet's inventory!");
                 }
             }
         }
