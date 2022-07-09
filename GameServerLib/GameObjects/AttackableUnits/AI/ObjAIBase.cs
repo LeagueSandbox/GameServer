@@ -100,11 +100,11 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             // TODO: Centralize this instead of letting it lay in the initialization.
             if (CharData.GameplayCollisionRadius > 0)
             {
-                CollisionRadius = CharData.GameplayCollisionRadius;
+                CollisionRadius = collisionRadius;
             }
             else if (collisionRadius > 0)
             {
-                CollisionRadius = collisionRadius;
+                CollisionRadius = CharData.GameplayCollisionRadius;
             }
             else
             {
