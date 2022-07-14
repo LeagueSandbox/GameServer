@@ -194,7 +194,9 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         {
             Position = vec;
             _movementUpdated = true;
-
+            
+            // TODO: Verify how dashes are affected by teleports.
+            //       Typically follow dashes are unaffected, but there may be edge cases e.g. LeeSin
             if (MovementParameters != null)
             {
                 SetDashingState(false);
