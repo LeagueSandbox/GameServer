@@ -174,6 +174,70 @@ namespace LeagueSandbox.GameServer.Content.Navigation
                     Z = this.CellCountY / (this.MaxGridPosition.Z - this.MinGridPosition.Z)
                 };
             }
+
+            foreach(var cell in Cells)
+            {
+                if(cell.HasFlag(NavigationGridCellFlags.NOT_PASSABLE) || cell.HasFlag(NavigationGridCellFlags.SEE_THROUGH))
+                {
+                    cell.BecomesUnwalkableStartingFromRadius = 0;
+                }
+            }
+
+            float mapWidth = this.MaxGridPosition.X - this.MinGridPosition.X;
+            float mapHeight = this.MaxGridPosition.Z - this.MinGridPosition.Z;
+            Console.WriteLine($"{CellCountX}x{CellCountY} {mapWidth}x{mapHeight} {mapWidth / CellCountX}x{mapHeight / CellCountY}");
+
+            for(short radius = 1; radius < Math.Min(CellCountX, CellCountY) / 2; radius++)
+            {
+                bool somethingChanged = false;
+                for(short x = 0; x < CellCountX; x++)
+                {
+                    for(short y = 0; y < CellCountY; y++)
+                    {
+                        var cell = GetCell(x, y);
+
+                        if(cell.IsWalkable(radius))
+                        {
+                            for(short dx = -1; dx <= 1; dx++)
+                            {
+                                for(short dy = -1; dy <= 1; dy++)
+                                {
+                                    if(dx != 0 && dy != 0)
+                                    {
+                                        var neighborCell = GetCell((short)(x + dx), (short)(y + dy));
+                                        if(neighborCell != null && !neighborCell.IsWalkable(radius - 1))
+                                        {
+                                            cell.BecomesUnwalkableStartingFromRadius = radius;
+                                            somethingChanged = true;
+                                            goto NextCell;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        NextCell:;
+                    }
+                }
+
+                if(!somethingChanged)
+                {
+                    Console.WriteLine($"MAX RADIUS: {radius}");
+                    break;
+                }
+            }
+
+            string alphabet = "0123456789abcdefghijklmnopqrstuvwxyz";
+            for(short x = 0; x < CellCountX; x++)
+            {
+                for(short y = 0; y < CellCountY; y++)
+                {
+                    var cell = GetCell(x, y);
+                    int radius = Math.Min(cell.BecomesUnwalkableStartingFromRadius, alphabet.Length - 1);
+                    Console.Write(alphabet[radius]);
+                }
+                Console.WriteLine();
+            }
         }
 
         /// <summary>
@@ -185,6 +249,8 @@ namespace LeagueSandbox.GameServer.Content.Navigation
         /// <returns>List of points forming a path in order: from -> to</returns>
         public List<Vector2> GetPath(Vector2 from, Vector2 to, float distanceThreshold = 0)
         {
+            distanceThreshold = (float)Math.Ceiling(distanceThreshold * TranslationMaxGridPosition.X);
+
             List<Vector2> returnList = new List<Vector2>() { from };
 
             Vector2 vectorFrom = TranslateToNavGrid(from);
@@ -238,12 +304,7 @@ namespace LeagueSandbox.GameServer.Content.Navigation
                         }
 
                         // not walkable - skip
-                        if (distanceThreshold != 0 && !IsWalkable(neighborCell.Locator.X, neighborCell.Locator.Y, distanceThreshold, false))
-                        {
-                            closedList.Add(neighborCell.ID, neighborCell);
-                            continue;
-                        }
-                        else if (neighborCell.HasFlag(NavigationGridCellFlags.NOT_PASSABLE) || neighborCell.HasFlag(NavigationGridCellFlags.SEE_THROUGH))
+                        if (!IsWalkable(neighborCell, distanceThreshold, false))
                         {
                             closedList.Add(neighborCell.ID, neighborCell);
                             continue;
@@ -269,7 +330,7 @@ namespace LeagueSandbox.GameServer.Content.Navigation
 
                 var pathList = new List<NavigationGridCell>(path);
                 pathList.Reverse();
-                pathList = SmoothPath(pathList);
+                //pathList = SmoothPath(pathList);
 
                 // removes the first point
                 pathList.RemoveAt(0);
@@ -572,35 +633,22 @@ namespace LeagueSandbox.GameServer.Content.Navigation
         /// <returns>True/False.</returns>
         public bool IsWalkable(Vector2 coords, float checkRadius = 0, bool translate = true)
         {
-            if (checkRadius == 0)
+            if (translate)
             {
-                Vector2 vector = new Vector2 { X = coords.X, Y = coords.Y };
-
-                if (translate)
-                {
-                    vector = TranslateToNavGrid(new Vector2 { X = coords.X, Y = coords.Y });
-                }
-
-                NavigationGridCell cell = GetCell((short)vector.X, (short)vector.Y);
-
-                return cell != null && !cell.HasFlag(NavigationGridCellFlags.NOT_PASSABLE) && !cell.HasFlag(NavigationGridCellFlags.SEE_THROUGH);
+                coords = TranslateToNavGrid(coords);
             }
+            NavigationGridCell cell = GetCell((short)coords.X, (short)coords.Y);
+            return IsWalkable(cell, checkRadius, true);
+        }
 
-            List<NavigationGridCell> cells = GetAllCellsInRange(coords, checkRadius, translate);
-
-            if (cells.Count == 0)
+        private bool IsWalkable(NavigationGridCell cell, float checkRadius = 0, bool translate = true)
+        {
+            int radius = (int)checkRadius;
+            if(translate)
             {
-                return false;
+                radius = (int)(checkRadius * TranslationMaxGridPosition.X);
             }
-
-            foreach (NavigationGridCell c in cells)
-            {
-                if (c == null || c.HasFlag(NavigationGridCellFlags.NOT_PASSABLE) || c.HasFlag(NavigationGridCellFlags.SEE_THROUGH))
-                {
-                    return false;
-                }
-            }
-            return true;
+            return cell != null && cell.IsWalkable(radius);
         }
 
         /// <summary>
