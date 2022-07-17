@@ -27,11 +27,6 @@ namespace GameServerCore
         /// <returns>True/False</returns>
         public static bool IsVectorValid(Vector2 v, Vector2 max, Vector2 min)
         {
-            if (v == null)
-            {
-                return false;
-            }
-
             return v.X <= max.X && v.Y <= max.Y && v.X >= min.X && v.Y >= min.Y;
         }
 
