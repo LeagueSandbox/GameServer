@@ -2,9 +2,11 @@ name: .NET
 
 on:
   push:
-    branches: [ "indev" ]
+    branches:
+      - '**'
   pull_request:
-    branches: [ "indev" ]
+    branches:
+      - '**'
 
 jobs:
   build:
