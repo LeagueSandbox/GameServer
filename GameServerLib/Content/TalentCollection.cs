@@ -11,7 +11,6 @@ namespace LeagueSandbox.GameServer.Content
         public class TalentCollectionEntry : ContentFile
         {
             public byte MaxLevel => Convert.ToByte(Values["SpellData"]["Ranks"]);
-            public string Name => Convert.ToString(MetaData["Name"]);
             public object Id => MetaData["Id"];
         }
 
