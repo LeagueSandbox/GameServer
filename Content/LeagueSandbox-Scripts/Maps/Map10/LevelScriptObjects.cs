@@ -1,12 +1,15 @@
-﻿using GameServerCore.Domain.GameObjects;
-using GameServerCore.Enums;
+﻿using GameServerCore.Enums;
 using LeagueSandbox.GameServer.API;
 using static LeagueSandbox.GameServer.API.ApiMapFunctionManager;
-using LeagueSandbox.GameServer.GameObjects.Stats;
+using LeagueSandbox.GameServer.GameObjects.StatsNS;
 using System.Collections.Generic;
 using GameServerCore.Domain;
 using System.Numerics;
 using System.Linq;
+using LeagueSandbox.GameServer.GameObjects;
+using            GameServerLib.GameObjects.AttackableUnits;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits.Buildings.AnimatedBuildings;
 
 namespace MapScripts.Map10
 {
@@ -14,42 +17,42 @@ namespace MapScripts.Map10
     {
         private static Dictionary<GameObjectTypes, List<MapObject>> _mapObjects;
 
-        public static Dictionary<TeamId, IFountain> FountainList = new Dictionary<TeamId, IFountain>();
+        public static Dictionary<TeamId, Fountain> FountainList = new Dictionary<TeamId, Fountain>();
         public static Dictionary<TeamId, Dictionary<LaneID, MapObject>> SpawnBarracks = new Dictionary<TeamId, Dictionary<LaneID, MapObject>>();
         public static Dictionary<TeamId, bool> AllInhibitorsAreDead = new Dictionary<TeamId, bool> { { TeamId.TEAM_BLUE, false }, { TeamId.TEAM_PURPLE, false } };
         public static Dictionary<LaneID, List<Vector2>> MinionPaths = new Dictionary<LaneID, List<Vector2>> { { LaneID.TOP, new List<Vector2>() }, { LaneID.BOTTOM, new List<Vector2>() } };
-        static List<INexus> NexusList = new List<INexus>();
+        static List<Nexus> NexusList = new List<Nexus>();
         static string LaneTurretAI = "TurretAI";
 
-        static Dictionary<TeamId, Dictionary<IInhibitor, float>> DeadInhibitors = new Dictionary<TeamId, Dictionary<IInhibitor, float>> 
+        static Dictionary<TeamId, Dictionary<Inhibitor, float>> DeadInhibitors = new Dictionary<TeamId, Dictionary<Inhibitor, float>> 
         { 
-            { TeamId.TEAM_BLUE, new Dictionary<IInhibitor, float>() }, 
-            { TeamId.TEAM_PURPLE, new Dictionary<IInhibitor, float>() } 
+            { TeamId.TEAM_BLUE, new Dictionary<Inhibitor, float>() }, 
+            { TeamId.TEAM_PURPLE, new Dictionary<Inhibitor, float>() } 
         };
 
-        static Dictionary<TeamId, Dictionary<LaneID, List<ILaneTurret>>> TurretList = new Dictionary<TeamId, Dictionary<LaneID, List<ILaneTurret>>>
+        static Dictionary<TeamId, Dictionary<LaneID, List<LaneTurret>>> TurretList = new Dictionary<TeamId, Dictionary<LaneID, List<LaneTurret>>>
         {
-            {TeamId.TEAM_BLUE, new Dictionary<LaneID, List<ILaneTurret>>{
-                { LaneID.NONE, new List<ILaneTurret>()},
-                { LaneID.TOP, new List<ILaneTurret>()},
-                { LaneID.MIDDLE, new List<ILaneTurret>()},
-                { LaneID.BOTTOM, new List<ILaneTurret>()}}
+            {TeamId.TEAM_BLUE, new Dictionary<LaneID, List<LaneTurret>>{
+                { LaneID.NONE, new List<LaneTurret>()},
+                { LaneID.TOP, new List<LaneTurret>()},
+                { LaneID.MIDDLE, new List<LaneTurret>()},
+                { LaneID.BOTTOM, new List<LaneTurret>()}}
             },
-            {TeamId.TEAM_PURPLE, new Dictionary<LaneID, List<ILaneTurret>>{
-                { LaneID.NONE, new List<ILaneTurret>()},
-                { LaneID.TOP, new List<ILaneTurret>()},
-                { LaneID.MIDDLE, new List<ILaneTurret>()},
-                { LaneID.BOTTOM, new List<ILaneTurret>()}}
+            {TeamId.TEAM_PURPLE, new Dictionary<LaneID, List<LaneTurret>>{
+                { LaneID.NONE, new List<LaneTurret>()},
+                { LaneID.TOP, new List<LaneTurret>()},
+                { LaneID.MIDDLE, new List<LaneTurret>()},
+                { LaneID.BOTTOM, new List<LaneTurret>()}}
             }
         };
 
-        public static Dictionary<TeamId, Dictionary<LaneID, IInhibitor>> InhibitorList = new Dictionary<TeamId, Dictionary<LaneID, IInhibitor>>
+        public static Dictionary<TeamId, Dictionary<LaneID, Inhibitor>> InhibitorList = new Dictionary<TeamId, Dictionary<LaneID, Inhibitor>>
         {
-            {TeamId.TEAM_BLUE, new Dictionary<LaneID, IInhibitor>{
+            {TeamId.TEAM_BLUE, new Dictionary<LaneID, Inhibitor>{
                 { LaneID.TOP, null },
                 { LaneID.BOTTOM, null }}
             },
-            {TeamId.TEAM_PURPLE, new Dictionary<LaneID, IInhibitor>{
+            {TeamId.TEAM_PURPLE, new Dictionary<LaneID, Inhibitor>{
                 { LaneID.TOP, null },
                 { LaneID.BOTTOM, null }}
             }
@@ -97,7 +100,7 @@ namespace MapScripts.Map10
             { TurretType.NEXUS_TURRET, new[] { 1501, 1502, 1503, 1505 } }
         };
 
-        static IStatsModifier TurretStatsModifier = new StatsModifier();
+        static StatsModifier TurretStatsModifier = new StatsModifier();
         public static void LoadObjects(Dictionary<GameObjectTypes, List<MapObject>> mapObjects)
         {
             _mapObjects = mapObjects;
@@ -124,13 +127,13 @@ namespace MapScripts.Map10
         {
             LoadShops();
 
-            Dictionary<TeamId, List<IChampion>> Players = new Dictionary<TeamId, List<IChampion>>
+            Dictionary<TeamId, List<Champion>> Players = new Dictionary<TeamId, List<Champion>>
             {
                 {TeamId.TEAM_BLUE, ApiFunctionManager.GetAllPlayersFromTeam(TeamId.TEAM_BLUE) },
                 {TeamId.TEAM_PURPLE, ApiFunctionManager.GetAllPlayersFromTeam(TeamId.TEAM_PURPLE) }
             };
 
-            IStatsModifier TurretHealthModifier = new StatsModifier();
+            StatsModifier TurretHealthModifier = new StatsModifier();
             foreach (var team in TurretList.Keys)
             {
                 TeamId enemyTeam = TeamId.TEAM_BLUE;
@@ -197,15 +200,15 @@ namespace MapScripts.Map10
             }
         }
 
-        static void OnNexusDeath(IDeathData deathaData)
+        static void OnNexusDeath(DeathData deathaData)
         {
             var nexus = deathaData.Unit;
             EndGame(nexus.Team, new Vector3(nexus.Position.X, nexus.GetHeight(), nexus.Position.Y), deathData: deathaData);
         }
 
-        public static void OnInhibitorDeath(IDeathData deathData)
+        public static void OnInhibitorDeath(DeathData deathData)
         {
-            var inhibitor = deathData.Unit as IInhibitor;
+            var inhibitor = deathData.Unit as Inhibitor;
 
             DeadInhibitors[inhibitor.Team].Add(inhibitor, inhibitor.RespawnTime * 1000);
 
@@ -359,7 +362,7 @@ namespace MapScripts.Map10
         static void LoadProtection()
         {
             //I can't help but feel there's a better way to do this
-            Dictionary<TeamId, List<IInhibitor>> TeamInhibitors = new Dictionary<TeamId, List<IInhibitor>> { { TeamId.TEAM_BLUE, new List<IInhibitor>() }, { TeamId.TEAM_PURPLE, new List<IInhibitor>() } };
+            Dictionary<TeamId, List<Inhibitor>> TeamInhibitors = new Dictionary<TeamId, List<Inhibitor>> { { TeamId.TEAM_BLUE, new List<Inhibitor>() }, { TeamId.TEAM_PURPLE, new List<Inhibitor>() } };
             foreach (var teams in InhibitorList.Keys)
             {
                 foreach (var lane in InhibitorList[teams].Keys)

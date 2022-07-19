@@ -1,28 +1,29 @@
-﻿using GameServerCore.Domain.GameObjects;
-using GameServerCore.Domain.GameObjects.Spell;
-using GameServerCore.Enums;
+﻿using GameServerCore.Enums;
 using GameServerCore.Scripting.CSharp;
-using LeagueSandbox.GameServer.GameObjects.Stats;
+using LeagueSandbox.GameServer.GameObjects;
+using            GameServerLib.GameObjects.AttackableUnits;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits;
+using LeagueSandbox.GameServer.GameObjects.SpellNS;
+using LeagueSandbox.GameServer.GameObjects.StatsNS;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 using static LeagueSandbox.GameServer.API.ApiEventManager;
-using GameServerCore.Domain;
 
 namespace Buffs
 {
     internal class MordekaiserChildrenOfTheGrave : IBuffGameScript
     {
-        public IBuffScriptMetaData BuffMetaData { get; set; } = new BuffScriptMetaData
+        public BuffScriptMetaData BuffMetaData { get; set; } = new BuffScriptMetaData
         {
             BuffType = BuffType.DAMAGE,
             BuffAddType = BuffAddType.REPLACE_EXISTING
         };
 
-        public IStatsModifier StatsModifier { get; private set; } = new StatsModifier();
+        public StatsModifier StatsModifier { get; private set; } = new StatsModifier();
 
-        IBuff Buff;
+        Buff Buff;
         float timer = 1000.0f;
-        public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
+        public void OnActivate(AttackableUnit unit, Buff buff, Spell ownerSpell)
         {
             Buff = buff;
             OnDeath.AddListener(this, unit, OnTargetDeath, true);
@@ -35,13 +36,13 @@ namespace Buffs
             buff.SourceUnit.Stats.CurrentHealth += data.PostMitigationDamage;
         }
 
-        public void OnTargetDeath(IDeathData data)
+        public void OnTargetDeath(DeathData data)
         {
             AddBuff("MordekaiserCOTGRevive", 30.0f, 1, Buff.OriginSpell, data.Unit, Buff.SourceUnit);
             RemoveBuff(Buff);
         }
 
-        public void OnDeactivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
+        public void OnDeactivate(AttackableUnit unit, Buff buff, Spell ownerSpell)
         {
             OnDeath.RemoveListener(this);
         }

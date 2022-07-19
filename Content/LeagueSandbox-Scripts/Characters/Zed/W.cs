@@ -1,88 +1,51 @@
 ﻿using System.Numerics;
-using GameServerCore;
-using GameServerCore.Domain;
 using GameServerCore.Enums;
-using GameServerCore.Domain.GameObjects;
-using GameServerCore.Domain.GameObjects.Spell;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 using LeagueSandbox.GameServer.Scripting.CSharp;
-using GameServerCore.Domain.GameObjects.Spell.Missile;
 using LeagueSandbox.GameServer.API;
-using System.Collections.Generic;
 using GameServerCore.Scripting.CSharp;
+using LeagueSandbox.GameServer.GameObjects;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
+using LeagueSandbox.GameServer.GameObjects.SpellNS;
+using LeagueSandbox.GameServer.GameObjects.SpellNS.Missile;
 
 namespace Spells
 {
     public class ZedShadowDash : ISpellScript
     {
-        public ISpellScriptMetadata ScriptMetadata { get; private set; } = new SpellScriptMetadata()
+        public SpellScriptMetadata ScriptMetadata { get; private set; } = new SpellScriptMetadata()
         {
             AutoFaceDirection = false,
             TriggersSpellCasts = true
             // TODO
         };
 
-        public void OnActivate(IObjAIBase owner, ISpell spell)
+        public void OnActivate(ObjAIBase owner, Spell spell)
         {
             AddBuff("ZedWPassiveBuff", 1.0f, 1, spell, owner, owner, true);
         }
 
-        public void OnDeactivate(IObjAIBase owner, ISpell spell)
+        public void OnSpellPostCast(Spell spell)
         {
-        }
-
-        public void OnSpellPreCast(IObjAIBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
-        {
-        }
-
-        public void OnSpellCast(ISpell spell)
-        {
-        }
-
-        public void OnSpellPostCast(ISpell spell)
-        {
-            var owner = spell.CastInfo.Owner as IChampion;
+            var owner = spell.CastInfo.Owner as Champion;
             var spellPos = new Vector2(spell.CastInfo.TargetPosition.X, spell.CastInfo.TargetPosition.Z);
             SpellCast(owner, 4, SpellSlotType.ExtraSlots, spellPos, spellPos, true, Vector2.Zero);
             PlayAnimation(owner, "Spell2_Cast", timeScale: 0.6f);
-        }
-
-        public void OnSpellChannel(ISpell spell)
-        {
-        }
-
-        public void OnSpellChannelCancel(ISpell spell, ChannelingStopSource reason)
-        {
-        }
-
-        public void OnSpellPostChannel(ISpell spell)
-        {
-        }
-
-        public void OnUpdate(float diff)
-        {
         }
     }
 
     public class ZedShadowDashMissile : ISpellScript
     {
-        public ISpellScriptMetadata ScriptMetadata { get; private set; } = new SpellScriptMetadata()
+        public SpellScriptMetadata ScriptMetadata { get; private set; } = new SpellScriptMetadata()
         {
             // TODO
         };
 
-        IBuff HandlerBuff;
-        IMinion Shadow;
+        Buff HandlerBuff;
+        Minion Shadow;
 
-        public void OnActivate(IObjAIBase owner, ISpell spell)
-        {
-        }
-
-        public void OnDeactivate(IObjAIBase owner, ISpell spell)
-        {
-        }
-
-        public void OnSpellPreCast(IObjAIBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
+        public void OnSpellPreCast(ObjAIBase owner, Spell spell, AttackableUnit target, Vector2 start, Vector2 end)
         {
             HandlerBuff = AddBuff("ZedWHandler", 4.0f, 1, spell, owner, owner);
             AddBuff("ZedW2", 4.0f, 1, spell, owner, owner);
@@ -106,80 +69,20 @@ namespace Spells
             ApiEventManager.OnSpellMissileEnd.AddListener(this, missile, OnMissileEnd, true);
         }
 
-        public void OnMissileEnd(ISpellMissile missile)
+        public void OnMissileEnd(SpellMissile missile)
         {
             if (HandlerBuff != null)
             {
                 Shadow = (HandlerBuff.BuffScript as Buffs.ZedWHandler).ShadowSpawn();
             }
         }
-
-        public void OnSpellCast(ISpell spell)
-        {
-        }
-
-        public void OnSpellPostCast(ISpell spell)
-        {
-        }
-
-        public void OnSpellChannel(ISpell spell)
-        {
-        }
-
-        public void OnSpellChannelCancel(ISpell spell, ChannelingStopSource reason)
-        {
-        }
-
-        public void OnSpellPostChannel(ISpell spell)
-        {
-        }
-
-        public void OnUpdate(float diff)
-        {
-        }
     }
 
     public class ZedW2 : ISpellScript
     {
-        public ISpellScriptMetadata ScriptMetadata { get; private set; } = new SpellScriptMetadata()
+        public SpellScriptMetadata ScriptMetadata { get; private set; } = new SpellScriptMetadata()
         {
             TriggersSpellCasts = true
         };
-
-        public void OnActivate(IObjAIBase owner, ISpell spell)
-        {
-        }
-
-        public void OnDeactivate(IObjAIBase owner, ISpell spell)
-        {
-        }
-
-        public void OnSpellPreCast(IObjAIBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
-        {
-        }
-
-        public void OnSpellCast(ISpell spell)
-        {
-        }
-
-        public void OnSpellPostCast(ISpell spell)
-        {
-        }
-
-        public void OnSpellChannel(ISpell spell)
-        {
-        }
-
-        public void OnSpellChannelCancel(ISpell spell, ChannelingStopSource reason)
-        {
-        }
-
-        public void OnSpellPostChannel(ISpell spell)
-        {
-        }
-
-        public void OnUpdate(float diff)
-        {
-        }
     }
 }

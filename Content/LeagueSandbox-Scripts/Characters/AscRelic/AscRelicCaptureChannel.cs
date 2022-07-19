@@ -1,19 +1,21 @@
-﻿using GameServerCore.Domain.GameObjects;
-using GameServerCore.Domain.GameObjects.Spell;
-using LeagueSandbox.GameServer.Scripting.CSharp;
+﻿using LeagueSandbox.GameServer.Scripting.CSharp;
 using System.Numerics;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 using LeagueSandbox.GameServer.API;
 using GameServerCore.Scripting.CSharp;
 using GameServerCore.Enums;
-using GameServerCore.Domain;
 using System.Collections.Generic;
+using LeagueSandbox.GameServer.GameObjects;
+using            GameServerLib.GameObjects.AttackableUnits;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
+using LeagueSandbox.GameServer.GameObjects.SpellNS;
 
 namespace Spells
 {
     public class AscRelicCaptureChannel : ISpellScript
     {
-        public ISpellScriptMetadata ScriptMetadata { get; private set; } = new SpellScriptMetadata()
+        public SpellScriptMetadata ScriptMetadata { get; private set; } = new SpellScriptMetadata()
         {
             NotSingleTargetSpell = true,
             DoesntBreakShields = true,
@@ -23,25 +25,21 @@ namespace Spells
             ChannelDuration = 7.0f
         };
 
-        ISpell Spell;
-        IAttackableUnit Target;
-        IObjAIBase Owner;
-        public void OnActivate(IObjAIBase owner, ISpell spell)
+        Spell Spell;
+        AttackableUnit Target;
+        ObjAIBase Owner;
+        public void OnActivate(ObjAIBase owner, Spell spell)
         {
             Spell = spell;
             Owner = owner;
         }
 
-        public void OnDeactivate(IObjAIBase owner, ISpell spell)
-        {
-        }
-
-        public void OnSpellPreCast(IObjAIBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
+        public void OnSpellPreCast(ObjAIBase owner, Spell spell, AttackableUnit target, Vector2 start, Vector2 end)
         {
             Target = target;
         }
 
-        public void OnSpellCast(ISpell spell)
+        public void OnSpellCast(Spell spell)
         {
             var owner = spell.CastInfo.Owner;
             AddBuff("AscRelicCaptureChannel", 30.0f, 1, spell, owner, owner);
@@ -50,15 +48,7 @@ namespace Spells
             ApiEventManager.OnTakeDamage.AddListener(this, owner, OnTakeDamage, true);
         }
 
-        public void OnSpellPostCast(ISpell spell)
-        {
-        }
-
-        public void OnSpellChannel(ISpell spell)
-        {
-        }
-
-        public void OnSpellChannelCancel(ISpell spell, ChannelingStopSource reason)
+        public void OnSpellChannelCancel(Spell spell, ChannelingStopSource reason)
         {
             var target = spell.CastInfo.Targets[0].Unit;
             if (target.HasBuff("AscRelicSuppression"))
@@ -78,7 +68,7 @@ namespace Spells
             StopChannel();
         }
 
-        public void OnSpellPostChannel(ISpell spell)
+        public void OnSpellPostChannel(Spell spell)
         {
             if (spell.CastInfo.Targets[0].Unit != null)
             {
@@ -86,7 +76,7 @@ namespace Spells
                 //I Suspect that the condition that actually kills the crystal is it running out of mana, have to investigate further.
                 crystal.Die(CreateDeathData(false, 0, crystal, crystal, DamageType.DAMAGE_TYPE_TRUE, DamageSource.DAMAGE_SOURCE_INTERNALRAW, 0.0f));
 
-                if (spell.CastInfo.Owner is IChampion ch)
+                if (spell.CastInfo.Owner is Champion ch)
                 {
                     ch.IncrementScore(3.0f, ScoreCategory.Objective, ScoreEvent.MajorRelicPickup, true, true);
                 }
@@ -97,7 +87,7 @@ namespace Spells
 
         public void StopChannel()
         {
-            List<IBuff> buffs = new List<IBuff>
+            List<Buff> buffs = new List<Buff>
             {
                 Target.GetBuffWithName("AscRelicSuppression"),
                 Target.GetBuffWithName("OdinBombSuppressionOrder"),
@@ -119,14 +109,9 @@ namespace Spells
             Spell.SetCooldown(4.0f, true);
         }
 
-        public void OnTakeDamage(IDamageData damageData)
+        public void OnTakeDamage(DamageData damageData)
         {
             Spell.StopChanneling(ChannelingStopCondition.Cancel, ChannelingStopSource.Attack);
-        }
-
-
-        public void OnUpdate(float diff)
-        {
         }
     }
 }

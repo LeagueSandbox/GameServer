@@ -2,22 +2,21 @@
 using System.Collections.Generic;
 using System.Numerics;
 using GameServerCore.Domain;
-using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
 using LeagueSandbox.GameServer.Content;
-using GameServerCore.Scripting.CSharp;
 using LeagueSandbox.GameServer.Scripting.CSharp;
-using LeagueSandbox.GameServer.GameObjects.Stats;
+using LeagueSandbox.GameServer.GameObjects.StatsNS;
 using static LeagueSandbox.GameServer.API.ApiMapFunctionManager;
 using static LeagueSandbox.GameServer.API.ApiGameEvents;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits.Buildings.AnimatedBuildings;
 
 namespace MapScripts.Map1
 {
     public class CLASSIC : IMapScript
     {
-        public virtual IMapScriptMetadata MapScriptMetadata { get; set; } = new MapScriptMetadata();
+        public virtual MapScriptMetadata MapScriptMetadata { get; set; } = new MapScriptMetadata();
 
-        public virtual IGlobalData GlobalData { get; set; } = new GlobalData();
+        public virtual GlobalData GlobalData { get; set; } = new GlobalData();
         public bool HasFirstBloodHappened { get; set; } = false;
         public long NextSpawnTime { get; set; } = 90 * 1000;
         public string LaneMinionAI { get; set; } = "LaneMinionAI";
@@ -122,7 +121,7 @@ namespace MapScripts.Map1
         }};
 
         //These minion modifiers will remain unused for the moment, untill i pull the spawning systems to MapScripts
-        Dictionary<MinionSpawnType, IStatsModifier> MinionModifiers = new Dictionary<MinionSpawnType, IStatsModifier>
+        Dictionary<MinionSpawnType, StatsModifier> MinionModifiers = new Dictionary<MinionSpawnType, StatsModifier>
         {
             { MinionSpawnType.MINION_TYPE_MELEE, new StatsModifier() },
             { MinionSpawnType.MINION_TYPE_CASTER, new StatsModifier() },
@@ -287,7 +286,7 @@ namespace MapScripts.Map1
                 TeamId opposed_team = barrack.Value.GetOpposingTeamID();
                 TeamId barrackTeam = barrack.Value.GetTeamID();
                 LaneID lane = barrack.Value.GetSpawnBarrackLaneID();
-                IInhibitor inhibitor = LevelScriptObjects.InhibitorList[opposed_team][lane];
+                Inhibitor inhibitor = LevelScriptObjects.InhibitorList[opposed_team][lane];
                 Vector2 position = new Vector2(barrack.Value.CentralPoint.X, barrack.Value.CentralPoint.Z);
                 bool isInhibitorDead = inhibitor.InhibitorState == InhibitorState.DEAD;
                 Tuple<int, List<MinionSpawnType>> spawnWave = MinionWaveToSpawn(GameTime(), _cannonMinionCount, isInhibitorDead, LevelScriptObjects.AllInhibitorsAreDead[opposed_team]);

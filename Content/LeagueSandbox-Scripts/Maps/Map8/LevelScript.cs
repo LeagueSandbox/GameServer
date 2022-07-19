@@ -1,20 +1,19 @@
 ﻿using System.Collections.Generic;
 using System.Numerics;
 using GameServerCore.Domain;
-using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
 using LeagueSandbox.GameServer.Content;
 using LeagueSandbox.GameServer.Scripting.CSharp;
-using GameServerCore.Scripting.CSharp;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 using static LeagueSandbox.GameServer.API.ApiMapFunctionManager;
 using static LeagueSandbox.GameServer.API.ApiGameEvents;
+using LeagueSandbox.GameServer.GameObjects;
 
 namespace MapScripts.Map8
 {
     public class ODIN : IMapScript
     {
-        public IMapScriptMetadata MapScriptMetadata { get; set; } = new MapScriptMetadata
+        public MapScriptMetadata MapScriptMetadata { get; set; } = new MapScriptMetadata
         {
             MinionSpawnEnabled = false,
             OverrideSpawnPoints = true,
@@ -28,7 +27,7 @@ namespace MapScripts.Map8
             }
         };
 
-        public virtual IGlobalData GlobalData { get; set; } = new GlobalData();
+        public virtual GlobalData GlobalData { get; set; } = new GlobalData();
         public bool HasFirstBloodHappened { get; set; } = false;
         public long NextSpawnTime { get; set; } = 90 * 1000;
         public string LaneMinionAI { get; set; } = "LaneMinionAI";
@@ -132,9 +131,9 @@ namespace MapScripts.Map8
             MinionSpawnType.MINION_TYPE_CASTER }
         }};
 
-        public Dictionary<TeamId, ILevelProp> TeamStairs = new Dictionary<TeamId, ILevelProp>();
-        public Dictionary<TeamId, ILevelProp> Nexus = new Dictionary<TeamId, ILevelProp>();
-        public Dictionary<int, ILevelProp> SwainBeams = new Dictionary<int, ILevelProp>();
+        public Dictionary<TeamId, LevelProp> TeamStairs = new Dictionary<TeamId, LevelProp>();
+        public Dictionary<TeamId, LevelProp> Nexus = new Dictionary<TeamId, LevelProp>();
+        public Dictionary<int, LevelProp> SwainBeams = new Dictionary<int, LevelProp>();
         //This function is executed in-between Loading the map structures and applying the structure protections. Is the first thing on this script to be executed
         public void Init(Dictionary<GameObjectTypes, List<MapObject>> mapObjects)
         {

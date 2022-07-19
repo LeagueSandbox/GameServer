@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using GameServerCore.Domain;
-using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
+using LeagueSandbox.GameServer.Content;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits;
 
-namespace LeagueSandbox.GameServer.GameObjects.Stats
+namespace LeagueSandbox.GameServer.GameObjects.StatsNS
 {
-    public class Stats : IStats
+    public class Stats
     {
         public ulong SpellsEnabled { get; private set; }
         public ulong SummonerSpellsEnabled { get; private set; }
@@ -32,31 +32,31 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
         public float GrowthAttackSpeed { get; set; }
         public float[] ManaCost { get; }
 
-        public IStat AbilityPower { get; }
-        public IStat Armor { get; }
-        public IStat ArmorPenetration { get; }
-        public IStat AttackDamage { get; }
-        public IStat AttackDamagePerLevel { get; set; }
-        public IStat AttackSpeedMultiplier { get; set; }
-        public IStat CooldownReduction { get; }
-        public IStat CriticalChance { get; }
-        public IStat CriticalDamage { get; }
-        public IStat ExpGivenOnDeath { get; }
-        public IStat GoldPerGoldTick { get; }
-        public IStat GoldGivenOnDeath { get; }
-        public IStat HealthPoints { get; }
-        public IStat HealthRegeneration { get; }
-        public IStat LifeSteal { get; }
-        public IStat MagicResist { get; }
-        public IStat MagicPenetration { get; }
-        public IStat ManaPoints { get; }
-        public IStat ManaRegeneration { get; }
-        public IStat MoveSpeed { get; }
-        public IStat Range { get; }
-        public IStat Size { get; }
-        public IStat SpellVamp { get; }
-        public IStat Tenacity { get; }
-        public IStat AcquisitionRange { get; set; }
+        public Stat AbilityPower { get; }
+        public Stat Armor { get; }
+        public Stat ArmorPenetration { get; }
+        public Stat AttackDamage { get; }
+        public Stat AttackDamagePerLevel { get; set; }
+        public Stat AttackSpeedMultiplier { get; set; }
+        public Stat CooldownReduction { get; }
+        public Stat CriticalChance { get; }
+        public Stat CriticalDamage { get; }
+        public Stat ExpGivenOnDeath { get; }
+        public Stat GoldPerGoldTick { get; }
+        public Stat GoldGivenOnDeath { get; }
+        public Stat HealthPoints { get; }
+        public Stat HealthRegeneration { get; }
+        public Stat LifeSteal { get; }
+        public Stat MagicResist { get; }
+        public Stat MagicPenetration { get; }
+        public Stat ManaPoints { get; }
+        public Stat ManaRegeneration { get; }
+        public Stat MoveSpeed { get; }
+        public Stat Range { get; }
+        public Stat Size { get; }
+        public Stat SpellVamp { get; }
+        public Stat Tenacity { get; }
+        public Stat AcquisitionRange { get; set; }
 
         public float Gold { get; set; }
         public byte Level { get; set; }
@@ -118,7 +118,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
             AcquisitionRange = new Stat();
         }
 
-        public void LoadStats(ICharData charData)
+        public void LoadStats(CharData charData)
         {
             AcquisitionRange.BaseValue = charData.AcquisitionRange;
             AttackDamagePerLevel.BaseValue = charData.DamagePerLevel;
@@ -147,7 +147,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
             CalculateTrueMoveSpeed();
         }
 
-        public void AddModifier(IStatsModifier modifier)
+        public void AddModifier(StatsModifier modifier)
         {
             AbilityPower.ApplyStatModifier(modifier.AbilityPower);
             Armor.ApplyStatModifier(modifier.Armor);
@@ -185,7 +185,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
             MultiplicativeSpeedBonus += modifier.MultiplicativeSpeedBonus;
         }
 
-        public void RemoveModifier(IStatsModifier modifier)
+        public void RemoveModifier(StatsModifier modifier)
         {
             AbilityPower.RemoveStatModifier(modifier.AbilityPower);
             Armor.RemoveStatModifier(modifier.Armor);
@@ -325,7 +325,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
             return ActionState.HasFlag(state);
         }
 
-        public float GetPostMitigationDamage(float damage, DamageType type, IAttackableUnit attacker)
+        public float GetPostMitigationDamage(float damage, DamageType type, AttackableUnit attacker)
         {
             if (damage <= 0f)
             {

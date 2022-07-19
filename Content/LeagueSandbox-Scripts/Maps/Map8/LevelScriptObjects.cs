@@ -1,10 +1,11 @@
-﻿using GameServerCore.Domain.GameObjects;
-using GameServerCore.Enums;
-using static LeagueSandbox.GameServer.API.ApiMapFunctionManager;
+﻿using System.Numerics;
 using System.Collections.Generic;
 using GameServerCore.Domain;
-using System.Numerics;
+using GameServerCore.Enums;
+using static LeagueSandbox.GameServer.API.ApiMapFunctionManager;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
+using LeagueSandbox.GameServer.GameObjects;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
 
 namespace MapScripts.Map8
 {
@@ -13,11 +14,11 @@ namespace MapScripts.Map8
         private static Dictionary<GameObjectTypes, List<MapObject>> _mapObjects;
 
         static List<InfoPoint> InfoPoints = new List<InfoPoint>();
-        public static Dictionary<TeamId, IFountain> FountainList = new Dictionary<TeamId, IFountain>();
-        static Dictionary<TeamId, List<ILaneTurret>> TurretList = new Dictionary<TeamId, List<ILaneTurret>> { { TeamId.TEAM_BLUE, new List<ILaneTurret>() }, { TeamId.TEAM_PURPLE, new List<ILaneTurret>() } };
+        public static Dictionary<TeamId, Fountain> FountainList = new Dictionary<TeamId, Fountain>();
+        static Dictionary<TeamId, List<LaneTurret>> TurretList = new Dictionary<TeamId, List<LaneTurret>> { { TeamId.TEAM_BLUE, new List<LaneTurret>() }, { TeamId.TEAM_PURPLE, new List<LaneTurret>() } };
 
         //Turret netIds are used for the capture point announcements
-        static Dictionary<TeamId, ILaneTurret> AnnouncementUnits = new Dictionary<TeamId, ILaneTurret>();
+        static Dictionary<TeamId, LaneTurret> AnnouncementUnits = new Dictionary<TeamId, LaneTurret>();
         public static Dictionary<TeamId, string> TowerModels { get; set; } = new Dictionary<TeamId, string>
         {
             {TeamId.TEAM_BLUE, "OdinOrderTurretShrine" },
@@ -96,7 +97,7 @@ namespace MapScripts.Map8
 
     class InfoPoint
     {
-        public IMinion Point;
+        public Minion Point;
         public char Id;
         public byte Index;
         public InfoPoint(Vector2 position, byte index, char id)

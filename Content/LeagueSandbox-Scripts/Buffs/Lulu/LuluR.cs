@@ -1,8 +1,9 @@
 ﻿using GameServerCore.Enums;
-using GameServerCore.Domain.GameObjects;
-using GameServerCore.Domain.GameObjects.Spell;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
-using LeagueSandbox.GameServer.GameObjects.Stats;
+using LeagueSandbox.GameServer.GameObjects;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits;
+using LeagueSandbox.GameServer.GameObjects.SpellNS;
+using LeagueSandbox.GameServer.GameObjects.StatsNS;
 using GameServerCore.Scripting.CSharp;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 
@@ -10,23 +11,23 @@ namespace Buffs
 {
     internal class LuluR : IBuffGameScript
     {
-        public IBuffScriptMetaData BuffMetaData { get; set; } = new BuffScriptMetaData
+        public BuffScriptMetaData BuffMetaData { get; set; } = new BuffScriptMetaData
         {
             BuffType = BuffType.COMBAT_ENCHANCER,
             BuffAddType = BuffAddType.REPLACE_EXISTING
         };
 
-        public IStatsModifier StatsModifier { get; private set; } = new StatsModifier();
+        public StatsModifier StatsModifier { get; private set; } = new StatsModifier();
 
         private float _healthBefore;
         private float _meantimeDamage;
         private float _healthNow;
         private float _healthBonus;
 
-        ISpell OwnerSpell;
-        IParticle cast;
+        Spell OwnerSpell;
+        Particle cast;
 
-        public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
+        public void OnActivate(AttackableUnit unit, Buff buff, Spell ownerSpell)
         {
             var owner = ownerSpell.CastInfo.Owner;
             OwnerSpell = ownerSpell;
@@ -40,7 +41,7 @@ namespace Buffs
             unit.AddStatModifier(StatsModifier);
         }
 
-        public void OnDeactivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
+        public void OnDeactivate(AttackableUnit unit, Buff buff, Spell ownerSpell)
         {
             RemoveParticle(cast);
             AddParticleTarget(OwnerSpell.CastInfo.Owner, unit, "Lulu_R_expire", unit);
@@ -51,11 +52,6 @@ namespace Buffs
             {
                 unit.Stats.CurrentHealth = unit.Stats.CurrentHealth - bonusDamage;
             }
-        }
-
-        public void OnUpdate(float diff)
-        {
-
         }
     }
 }

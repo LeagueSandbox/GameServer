@@ -1,26 +1,25 @@
-﻿using GameServerCore.Domain.GameObjects;
-using GameServerCore.Domain.GameObjects.Spell;
-using System;
-using System.Numerics;
+﻿using System.Numerics;
+using LeagueSandbox.GameServer.GameObjects.SpellNS;
+using LeagueSandbox.GameServer.GameObjects.StatsNS;
 
 namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 {
-    public class Pet : Minion, IPet
+    public class Pet : Minion
     {
         private float _returnRadius;
 
         /// <summary>
         /// Entity that the pet is cloning (Ex. Who Mordekaiser's ghost is)
         /// </summary>
-        public IObjAIBase ClonedUnit { get; private set; }
+        public ObjAIBase ClonedUnit { get; private set; }
         /// <summary>
         /// Buff Assigned to this Pet at Spawn
         /// </summary>
-        public IBuff CloneBuff { get; }
+        public Buff CloneBuff { get; }
         /// <summary>
         /// Spell that created this Pet
         /// </summary>
-        public ISpell SourceSpell { get; }
+        public Spell SourceSpell { get; }
         /// <summary>
         /// Duration of CloneBuff
         /// </summary>
@@ -33,14 +32,14 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
         public Pet(
             Game game,
-            IChampion owner,
-            ISpell spell,
+            Champion owner,
+            Spell spell,
             Vector2 position,
             string name,
             string model,
             string buffName,
             float lifeTime,
-            IStats stats = null,
+            Stats stats = null,
             bool cloneInventory = true,
             bool showMinimapIfClone = true,
             bool disallowPlayerControl = false,
@@ -66,13 +65,13 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
         public Pet(
             Game game,
-            IChampion owner,
-            ISpell spell,
-            IObjAIBase cloned,
+            Champion owner,
+            Spell spell,
+            ObjAIBase cloned,
             Vector2 position,
             string buffName,
             float lifeTime,
-            IStats stats = null,
+            Stats stats = null,
             bool cloneInventory = true,
             bool showMinimapIfClone = true,
             bool disallowPlayerControl = false,

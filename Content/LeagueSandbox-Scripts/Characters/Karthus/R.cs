@@ -1,36 +1,21 @@
 using System.Linq;
 using GameServerCore;
 using GameServerCore.Enums;
-using GameServerCore.Domain.GameObjects;
-using GameServerCore.Domain.GameObjects.Spell;
-using GameServerCore.Domain.GameObjects.Spell.Missile;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 using LeagueSandbox.GameServer.Scripting.CSharp;
-using System.Numerics;
 using GameServerCore.Scripting.CSharp;
+using LeagueSandbox.GameServer.GameObjects.SpellNS;
 
 namespace Spells
 {
     public class FallenOne : ISpellScript
     {
-        public ISpellScriptMetadata ScriptMetadata { get; private set; } = new SpellScriptMetadata()
+        public SpellScriptMetadata ScriptMetadata { get; private set; } = new SpellScriptMetadata()
         {
             // TODO
         };
 
-        public void OnActivate(IObjAIBase owner, ISpell spell)
-        {
-        }
-
-        public void OnDeactivate(IObjAIBase owner, ISpell spell)
-        {
-        }
-
-        public void OnSpellPreCast(IObjAIBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
-        {
-        }
-
-        public void OnSpellCast(ISpell spell)
+        public void OnSpellCast(Spell spell)
         {
             var owner = spell.CastInfo.Owner;
             foreach (var enemyTarget in GetChampionsInRange(owner.Position, 20000, true)
@@ -40,7 +25,7 @@ namespace Spells
             }
         }
 
-        public void OnSpellPostCast(ISpell spell)
+        public void OnSpellPostCast(Spell spell)
         {
             var owner = spell.CastInfo.Owner;
             var ap = owner.Stats.AbilityPower.Total;
@@ -51,22 +36,6 @@ namespace Spells
                 enemyTarget.TakeDamage(owner, damage, DamageType.DAMAGE_TYPE_MAGICAL, DamageSource.DAMAGE_SOURCE_SPELL,
                     false);
             }
-        }
-
-        public void OnSpellChannel(ISpell spell)
-        {
-        }
-
-        public void OnSpellChannelCancel(ISpell spell, ChannelingStopSource reason)
-        {
-        }
-
-        public void OnSpellPostChannel(ISpell spell)
-        {
-        }
-
-        public void OnUpdate(float diff)
-        {
         }
     }
 }

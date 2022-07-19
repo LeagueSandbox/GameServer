@@ -1,49 +1,44 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
-using GameServerCore.Content;
-using GameServerCore.Domain;
-using GameServerCore.Domain.GameObjects;
-using GameServerCore.Domain.GameObjects.Spell;
-using GameServerCore.Domain.GameObjects.Spell.Missile;
 using GameServerCore.Enums;
-using LeagueSandbox.GameServer.Content;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 
-namespace LeagueSandbox.GameServer.GameObjects.Spell.Missile
+namespace LeagueSandbox.GameServer.GameObjects.SpellNS.Missile
 {
-    public class SpellChainMissile : SpellMissile, ISpellChainMissile
+    public class SpellChainMissile : SpellMissile
     {
         public override MissileType Type { get; protected set; } = MissileType.Chained;
 
         /// <summary>
         /// Number of objects this projectile has hit since it was created.
         /// </summary>
-        public List<IGameObject> ObjectsHit { get; }
+        public List<GameObject> ObjectsHit { get; }
         /// <summary>
         /// Total number of times this missile has hit any units.
         /// </summary>
         /// TODO: Verify if we want this to be an array for different MaximumHit counts for: CanHitCaster, CanHitEnemies, CanHitFriends, CanHitSameTarget, and CanHitSameTargetConsecutively.
         public int HitCount { get; protected set; }
         /// <summary>
-        /// Parameters for this chain missile, refer to IMissileParameters.
+        /// Parameters for this chain missile, refer to MissileParameters.
         /// </summary>
-        public IMissileParameters Parameters { get; protected set; }
+        public MissileParameters Parameters { get; protected set; }
 
         public SpellChainMissile(
             Game game,
             int collisionRadius,
-            ISpell originSpell,
-            ICastInfo castInfo,
-            IMissileParameters parameters,
+            Spell originSpell,
+            CastInfo castInfo,
+            MissileParameters parameters,
             float moveSpeed,
             SpellDataFlags overrideFlags = 0, // TODO: Find a use for these
             uint netId = 0,
             bool serverOnly = false
         ) : base(game, collisionRadius, originSpell, castInfo, moveSpeed, overrideFlags, netId, serverOnly)
         {
-            ObjectsHit = new List<IGameObject>();
+            ObjectsHit = new List<GameObject>();
             HitCount = 0;
             Parameters = parameters;
         }
@@ -65,7 +60,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Missile
             }
         }
 
-        public override void CheckFlagsForUnit(IAttackableUnit unit)
+        public override void CheckFlagsForUnit(AttackableUnit unit)
         {
             if (!IsValidTarget(unit) && !GetNextTarget())
             {
@@ -83,7 +78,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Missile
                 SpellOrigin.ApplyEffects(TargetUnit, this);
             }
 
-            if (CastInfo.Owner is IObjAIBase ai && SpellOrigin.CastInfo.IsAutoAttack)
+            if (CastInfo.Owner is ObjAIBase ai && SpellOrigin.CastInfo.IsAutoAttack)
             {
                 ai.AutoAttackHit(TargetUnit);
             }
@@ -98,7 +93,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Missile
         {
             var units = _game.ObjectManager.GetUnitsInRange(Position, SpellOrigin.SpellData.BounceRadius, true);
 
-            foreach (IAttackableUnit closestUnit in units.OrderBy(unit => Vector2.DistanceSquared(Position, unit.Position)))
+            foreach (AttackableUnit closestUnit in units.OrderBy(unit => Vector2.DistanceSquared(Position, unit.Position)))
             {
                 if (IsValidTarget(closestUnit))
                 {
@@ -116,7 +111,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Missile
             return false;
         }
 
-        protected bool IsValidTarget(IAttackableUnit unit, bool checkOnly = false)
+        protected bool IsValidTarget(AttackableUnit unit, bool checkOnly = false)
         {
             bool valid = SpellOrigin.SpellData.IsValidTarget(CastInfo.Owner, unit);
             bool hit = ObjectsHit.Contains(unit);

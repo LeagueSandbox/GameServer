@@ -3,16 +3,17 @@ using System.Collections.Generic;
 using System.IO;
 using GameServerCore;
 using GameServerCore.Content;
-using GameServerCore.Domain.GameObjects;
 using Priority_Queue;
 using Vector2 = System.Numerics.Vector2;
 using System.Numerics;
 using GameServerLib.Extensions;
 using GameServerCore.Enums;
+using LeagueSandbox.GameServer.GameObjects;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits.Buildings;
 
 namespace LeagueSandbox.GameServer.Content.Navigation
 {
-    public class NavigationGrid : INavigationGrid
+    public class NavigationGrid
     {
         /// <summary>
         /// The minimum position on the NavigationGrid in normal coordinate space (bottom left in 2D).
@@ -879,15 +880,15 @@ namespace LeagueSandbox.GameServer.Content.Navigation
         /// <param name="b">GameObject to end the check at.</param>
         /// <param name="checkVision">True = Check for positions that block vision. False = Check for positions that block pathing.</param>
         /// <returns>True/False.</returns>
-        public bool IsAnythingBetween(IGameObject a, IGameObject b, bool checkVision = false)
+        public bool IsAnythingBetween(GameObject a, GameObject b, bool checkVision = false)
         {
-            if (a is IObjBuilding)
+            if (a is ObjBuilding)
             {
                 double rayDist = Math.Sqrt((CastRay(b.Position, a.Position, !checkVision, checkVision).Value - b.Position).SqrLength());
                 rayDist += a.PathfindingRadius;
                 return (rayDist * rayDist) < (b.Position - a.Position).SqrLength();
             }
-            if (b is IObjBuilding)
+            if (b is ObjBuilding)
             {
                 double rayDist = Math.Sqrt((CastRay(a.Position, b.Position, !checkVision, checkVision).Value - a.Position).SqrLength());
                 rayDist += b.PathfindingRadius;

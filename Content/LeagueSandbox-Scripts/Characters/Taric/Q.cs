@@ -1,41 +1,27 @@
 using System;
-using GameServerCore.Domain.GameObjects;
-using GameServerCore.Domain.GameObjects.Spell;
-using GameServerCore.Domain.GameObjects.Spell.Missile;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 using LeagueSandbox.GameServer.Scripting.CSharp;
-using System.Numerics;
 using GameServerCore.Scripting.CSharp;
-using GameServerCore.Enums;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits;
+using LeagueSandbox.GameServer.GameObjects.SpellNS;
 
 namespace Spells
 {
     public class Imbue : ISpellScript
     {
-        public ISpellScriptMetadata ScriptMetadata { get; private set; } = new SpellScriptMetadata()
+        public SpellScriptMetadata ScriptMetadata { get; private set; } = new SpellScriptMetadata()
         {
             TriggersSpellCasts = true
             // TODO
         };
 
-        public void OnActivate(IObjAIBase owner, ISpell spell)
-        {
-        }
-
-        public void OnDeactivate(IObjAIBase owner, ISpell spell)
-        {
-        }
-
-        public void OnSpellPreCast(IObjAIBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
-        {
-        }
-
-        public void OnSpellCast(ISpell spell)
+        public void OnSpellCast(Spell spell)
         {
             //spell.CastInfo.Owner.SpellAnimation("SPELL1");
         }
 
-        public void OnSpellPostCast(ISpell spell)
+        public void OnSpellPostCast(Spell spell)
         {
             var owner = spell.CastInfo.Owner;
             var target = spell.CastInfo.Targets[0].Unit;
@@ -60,13 +46,13 @@ namespace Spells
             }
         }
 
-        private void PerformHeal(IObjAIBase owner, ISpell spell, IAttackableUnit target)
+        private void PerformHeal(ObjAIBase owner, Spell spell, AttackableUnit target)
         {
             var ap = owner.Stats.AbilityPower.Total * 0.3f;
             var baseHp = (owner.Stats.HealthPoints.Total - owner.Stats.HealthPoints.BaseValue) * 0.05f;
             float healthGain = 20 + spell.CastInfo.SpellLevel * 40 + ap + baseHp;
 
-            if (target == owner && spell.CastInfo.Targets[0] == owner)
+            if (target == owner && spell.CastInfo.Targets[0].Unit == owner)
             {
                 var selfAp = owner.Stats.AbilityPower.Total * 0.42f;
                 var selfBaseHp = (owner.Stats.HealthPoints.Total - owner.Stats.HealthPoints.BaseValue) * 0.07f;
@@ -77,22 +63,6 @@ namespace Spells
             target.Stats.CurrentHealth = Math.Min(newHealth, target.Stats.HealthPoints.Total);
             AddParticleTarget(owner, target, "global_ss_heal_02", target);
             AddParticleTarget(owner, target, "global_ss_heal_speedboost", target);
-        }
-
-        public void OnSpellChannel(ISpell spell)
-        {
-        }
-
-        public void OnSpellChannelCancel(ISpell spell, ChannelingStopSource reason)
-        {
-        }
-
-        public void OnSpellPostChannel(ISpell spell)
-        {
-        }
-
-        public void OnUpdate(float diff)
-        {
         }
     }
 }

@@ -1,16 +1,12 @@
-﻿using GameServerCore;
-using GameServerCore.Domain.GameObjects;
-using GameServerCore.NetInfo;
+﻿using GameServerCore.NetInfo;
 using GameServerCore.Enums;
 using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
 using LeagueSandbox.GameServer.Packets;
 using System.Collections.Generic;
-using System;
-using GameServerCore.Domain;
 
 namespace LeagueSandbox.GameServer.Players
 {
-    public class PlayerManager : IPlayerManager
+    public class PlayerManager
     {
         private NetworkIdManager _networkIdManager;
         private Game _game;
@@ -28,7 +24,7 @@ namespace LeagueSandbox.GameServer.Players
             _networkIdManager = game.NetworkIdManager;
         }
 
-        public void AddPlayer(IPlayerConfig config)
+        public void AddPlayer(PlayerConfig config)
         {
             var summonerSkills = new[]
             {
@@ -91,7 +87,7 @@ namespace LeagueSandbox.GameServer.Players
             return _players.Find(c => c.PlayerId == playerId);
         }
 
-        public ClientInfo GetClientInfoByChampion(IChampion champ)
+        public ClientInfo GetClientInfoByChampion(Champion champ)
         {
             return _players.Find(c => c.Champion == champ);
         }

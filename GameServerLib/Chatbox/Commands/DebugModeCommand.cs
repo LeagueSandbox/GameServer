@@ -1,24 +1,26 @@
 ﻿using GameServerCore;
-using GameServerCore.Domain.GameObjects;
-using GameServerCore.Domain.GameObjects.Spell.Missile;
-using GameServerCore.Domain.GameObjects.Spell.Sector;
+using LeagueSandbox.GameServer.Players;
 using LeagueSandbox.GameServer.GameObjects;
 using LeagueSandbox.GameServer.Logging;
 using log4net;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits;
+using LeagueSandbox.GameServer.GameObjects.SpellNS.Missile;
+using LeagueSandbox.GameServer.GameObjects.SpellNS.Sector;
 
 namespace LeagueSandbox.GameServer.Chatbox.Commands
 {
     public class DebugParticlesCommand : ChatCommandBase
     {
         private static ILog _logger = LoggerProvider.GetLogger();
-        private readonly IPlayerManager _playerManager;
+        private readonly PlayerManager _playerManager;
         private readonly Game _game;
         private float lastDrawTime;
         private int _userId;
-        private IChampion _userChampion;
+        private Champion _userChampion;
         private static readonly Dictionary<uint, Particle> _circleParticles = new Dictionary<uint, Particle>();
         private static readonly Dictionary<uint, List<Particle>> _arrowParticlesList = new Dictionary<uint, List<Particle>>();
         private enum DebugMode: int
@@ -156,7 +158,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
             DrawAttackableUnit(_userChampion, userId);
         }
 
-        void DrawAttackableUnit(IAttackableUnit u, int userId = -1)
+        void DrawAttackableUnit(AttackableUnit u, int userId = -1)
         {
             // Arbitrary ratio is required for the DebugCircle particle to look accurate
             var circlesize = _debugCircleScale * u.PathfindingRadius;
@@ -237,9 +239,9 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
         public void DrawMinions(int userId)
         {
             // Same method as DebugSelf just for every minion
-            foreach (IGameObject obj in _game.ObjectManager.GetObjects().Values)
+            foreach (GameObject obj in _game.ObjectManager.GetObjects().Values)
             {
-                if (obj is IMinion minion)
+                if (obj is Minion minion)
                 {
                     DrawAttackableUnit(minion, userId);
                 }
@@ -251,9 +253,9 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
         {
             var tempObjects = Game.ObjectManager.GetObjects();
 
-            foreach (KeyValuePair<uint, IGameObject> obj in tempObjects)
+            foreach (KeyValuePair<uint, GameObject> obj in tempObjects)
             {
-                if (obj.Value is ISpellMissile missile)
+                if (obj.Value is SpellMissile missile)
                 {
                     // Arbitrary ratio is required for the DebugCircle particle to look accurate
                     var circlesize = _debugCircleScale * missile.CollisionRadius;
@@ -307,7 +309,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
 
                             //_game.PacketNotifier.NotifyFXCreateGroup(arrowparticle, userId);
                         }
-                        else if (missile is ISpellCircleMissile skillshot)
+                        else if (missile is SpellCircleMissile skillshot)
                         {
                             if (!_arrowParticlesList.ContainsKey(missile.NetId))
                             {
@@ -356,9 +358,9 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
         {
             var tempObjects = Game.ObjectManager.GetObjects();
 
-            foreach (KeyValuePair<uint, IGameObject> obj in tempObjects)
+            foreach (KeyValuePair<uint, GameObject> obj in tempObjects)
             {
-                if (obj.Value is ISpellSector sector)
+                if (obj.Value is SpellSector sector)
                 {
                     // Arbitrary ratio is required for the DebugCircle particle to look accurate
                     var circlesize = _debugCircleScale * sector.CollisionRadius;
@@ -388,7 +390,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
                             }
                         }
 
-                        if (sector is ISpellSectorPolygon polygon)
+                        if (sector is SpellSectorPolygon polygon)
                         {
                             if (!_arrowParticlesList.ContainsKey(polygon.NetId))
                             {
@@ -426,7 +428,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
         {
             var tempObjects = Game.ObjectManager.GetObjects();
 
-            foreach (IGameObject obj in tempObjects.Values)
+            foreach (GameObject obj in tempObjects.Values)
             {
                 // Arbitrary ratio is required for the DebugCircle particle to look accurate
                 var circlesize = _debugCircleScale * obj.PathfindingRadius;

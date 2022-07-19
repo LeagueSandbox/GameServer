@@ -1,30 +1,20 @@
-﻿using GameServerCore.Domain.GameObjects;
-using GameServerCore.Domain.GameObjects.Spell;
-using GameServerCore.Enums;
+﻿using GameServerCore.Enums;
 using GameServerCore.Scripting.CSharp;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
-
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
+using LeagueSandbox.GameServer.GameObjects.SpellNS;
 
 namespace CharScripts
 {
     internal class CharScriptTestCubeRender : ICharScript
     {
-        public void OnActivate(IObjAIBase owner, ISpell spell = null)
+        public void OnActivate(ObjAIBase owner, Spell spell = null)
         {
             SetStatus(owner, StatusFlags.CanMove, false);
             SetStatus(owner, StatusFlags.Ghosted, true);
             SetStatus(owner, StatusFlags.Targetable, false);
             SetStatus(owner, StatusFlags.SuppressCallForHelp, true);
             SetStatus(owner, StatusFlags.IgnoreCallForHelp, true);
-        }
-        public void OnDeactivate(IObjAIBase owner, ISpell spell = null)
-        {
-        }
-        public void OnUpdate(float diff)
-        {
         }
     }
 }

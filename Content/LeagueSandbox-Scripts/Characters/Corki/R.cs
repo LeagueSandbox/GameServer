@@ -1,19 +1,20 @@
-using GameServerCore.Domain.GameObjects;
-using GameServerCore.Domain.GameObjects.Spell;
-using GameServerCore.Domain.GameObjects.Spell.Missile;
-using GameServerCore.Domain.GameObjects.Spell.Sector;
 using GameServerCore.Enums;
 using GameServerCore.Scripting.CSharp;
 using LeagueSandbox.GameServer.API;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using System.Numerics;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
+using LeagueSandbox.GameServer.GameObjects.SpellNS;
+using LeagueSandbox.GameServer.GameObjects.SpellNS.Missile;
+using LeagueSandbox.GameServer.GameObjects.SpellNS.Sector;
 
 namespace Spells
 {
     public class MissileBarrage : ISpellScript
     {
-        public ISpellScriptMetadata ScriptMetadata { get; private set; } = new SpellScriptMetadata()
+        public SpellScriptMetadata ScriptMetadata { get; private set; } = new SpellScriptMetadata()
         {
             PersistsThroughDeath = true,
             IsNonDispellable = true,
@@ -25,50 +26,18 @@ namespace Spells
             }
         };
 
-        public void OnActivate(IObjAIBase owner, ISpell spell)
-        {
-        }
-
-        public void OnDeactivate(IObjAIBase owner, ISpell spell)
-        {
-        }
-
-        public void OnSpellPreCast(IObjAIBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
-        {
-        }
-
-        public void OnSpellCast(ISpell spell)
+        public void OnSpellCast(Spell spell)
         {
             var owner = spell.CastInfo.Owner;
             FaceDirection(new Vector2(spell.CastInfo.TargetPosition.X, spell.CastInfo.TargetPosition.Z), owner, true);
             var targetPos = GetPointFromUnit(spell.CastInfo.Owner, spell.SpellData.CastRange[0]);
             SpellCast(owner, 1, SpellSlotType.ExtraSlots, owner.Position, targetPos, false, Vector2.Zero);
         }
-
-        public void OnSpellPostCast(ISpell spell)
-        {
-        }
-
-        public void OnSpellChannel(ISpell spell)
-        {
-        }
-
-        public void OnSpellChannelCancel(ISpell spell, ChannelingStopSource reason)
-        {
-        }
-
-        public void OnSpellPostChannel(ISpell spell)
-        {
-        }
-
-        public void OnUpdate(float diff)
-        {
-        }
     }
 
     public class MissileBarrageMissile : ISpellScript
     {
-        public ISpellScriptMetadata ScriptMetadata { get; private set; } = new SpellScriptMetadata()
+        public SpellScriptMetadata ScriptMetadata { get; private set; } = new SpellScriptMetadata()
         {
             MissileParameters = new MissileParameters
             {
@@ -83,12 +52,12 @@ namespace Spells
         };
 
 
-        public void OnActivate(IObjAIBase owner, ISpell spell)
+        public void OnActivate(ObjAIBase owner, Spell spell)
         {
             ApiEventManager.OnSpellHit.AddListener(this, spell, OnSpellHit, false);
         }
 
-        public void OnSpellHit(ISpell spell, IAttackableUnit target, ISpellMissile missile, ISpellSector sector)
+        public void OnSpellHit(Spell spell, AttackableUnit target, SpellMissile missile, SpellSector sector)
         {
             var owner = spell.CastInfo.Owner;
 
@@ -108,37 +77,9 @@ namespace Spells
             missile.SetToRemove();
         }
 
-        public void OnDeactivate(IObjAIBase owner, ISpell spell)
-        {
-        }
-
-        public void OnSpellPreCast(IObjAIBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
+        public void OnSpellPreCast(ObjAIBase owner, Spell spell, AttackableUnit target, Vector2 start, Vector2 end)
         {
             FaceDirection(end, owner, true);
-        }
-
-        public void OnSpellCast(ISpell spell)
-        {
-        }
-
-        public void OnSpellPostCast(ISpell spell)
-        {
-        }
-
-        public void OnSpellChannel(ISpell spell)
-        {
-        }
-
-        public void OnSpellChannelCancel(ISpell spell, ChannelingStopSource reason)
-        {
-        }
-
-        public void OnSpellPostChannel(ISpell spell)
-        {
-        }
-
-        public void OnUpdate(float diff)
-        {
         }
     }
 }

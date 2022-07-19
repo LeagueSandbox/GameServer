@@ -1,10 +1,9 @@
 ﻿using System;
-using GameServerCore.Domain;
 using GameServerCore.Enums;
 
 namespace LeagueSandbox.GameServer.Content
 {
-    public class PassiveData : IPassiveData
+    public class PassiveData
     {
         public string PassiveAbilityName { get; set; } = "";
         public int[] PassiveLevels { get; set; } = new int[6];
@@ -14,9 +13,9 @@ namespace LeagueSandbox.GameServer.Content
         //TODO: Extend into handling several passives, when we decide on a format for that case.
     }
 
-    public class CharData : ICharData
+    public class CharData
     {
-        public IGlobalData GlobalCharData { get; private set; } = new GlobalData();
+        public GlobalData GlobalCharData { get; private set; } = new GlobalData();
 
         public float AcquisitionRange { get; private set; } = 475;
         public bool AllyCanUse { get; private set; } = false;
@@ -81,7 +80,7 @@ namespace LeagueSandbox.GameServer.Content
         public float[] AttackProbabilities { get; private set; } = new float[18];
 
         // TODO: Verify if we want this to be an array.
-        public IPassiveData PassiveData { get; private set; } = new PassiveData();
+        public PassiveData PassiveData { get; private set; } = new PassiveData();
 
         public CharData Load(ContentFile file)
         {

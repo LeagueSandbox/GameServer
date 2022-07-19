@@ -1,34 +1,37 @@
 using GameServerCore.Enums;
-using GameServerCore.Domain.GameObjects;
-using GameServerCore.Domain.GameObjects.Spell;
 using GameServerCore.Scripting.CSharp;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 using LeagueSandbox.GameServer.API;
-using GameServerCore.Domain;
 using LeagueSandbox.GameServer.Scripting.CSharp;
+using LeagueSandbox.GameServer.GameObjects;
+using            GameServerLib.GameObjects.AttackableUnits;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
+using LeagueSandbox.GameServer.GameObjects.SpellNS;
+using LeagueSandbox.GameServer.GameObjects.StatsNS;
 
 namespace Buffs
 {
     internal class SionPassive : IBuffGameScript
     {
-        public IBuffScriptMetaData BuffMetaData { get; set; } = new BuffScriptMetaData
+        public BuffScriptMetaData BuffMetaData { get; set; } = new BuffScriptMetaData
         {
             BuffType = BuffType.COMBAT_ENCHANCER,
             BuffAddType = BuffAddType.REPLACE_EXISTING
         };
 
-        public IStatsModifier StatsModifier { get; private set; }
+        public StatsModifier StatsModifier { get; private set; }
 
         float timer = 0f;
         int tickCount = 0;
-        IChampion champion;
-        IBuff thisBuff;
-        IParticle p;
-        IParticle p2;
-        public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
+        Champion champion;
+        Buff thisBuff;
+        Particle p;
+        Particle p2;
+        public void OnActivate(AttackableUnit unit, Buff buff, Spell ownerSpell)
         {
             ApiEventManager.OnDeath.AddListener(this, unit, OnDeath, true);
-            champion = unit as IChampion;
+            champion = unit as Champion;
             thisBuff = buff;
 
             //These Particles aren't working
@@ -44,7 +47,7 @@ namespace Buffs
             };
         }
 
-        public void OnDeactivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
+        public void OnDeactivate(AttackableUnit unit, Buff buff, Spell ownerSpell)
         {            
             string[] originalAbilities = new string[] {"SionQ", "SionW", "SionE", "SionR"};
             for (byte i = 0; i < 4; i++)
@@ -63,7 +66,7 @@ namespace Buffs
             //RemoveParticle(p2);
         }
 
-        public void OnDeath(IDeathData deathData)
+        public void OnDeath(DeathData deathData)
         {
             if (thisBuff != null && !thisBuff.Elapsed())
             {

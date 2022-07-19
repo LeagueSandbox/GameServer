@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using GameServerCore.Domain;
-using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
 using GameServerCore.Scripting.CSharp;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using LeagueSandbox.GameServer.Logging;
 using log4net;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
 
 namespace LeagueSandbox.GameServer.Inventory
 {
@@ -20,20 +19,20 @@ namespace LeagueSandbox.GameServer.Inventory
         private InventoryManager _owner;
         private static ILog _logger = LoggerProvider.GetLogger();
         public Dictionary<int, IItemScript> ItemScripts = new Dictionary<int, IItemScript>();
-        public IItem[] Items { get; }
+        public Item[] Items { get; }
 
         public Inventory(InventoryManager owner)
         {
             _owner = owner;
-            Items = new IItem[BASE_INVENTORY_SIZE + EXTRA_INVENTORY_SIZE + RUNE_INVENTORY_SIZE];
+            Items = new Item[BASE_INVENTORY_SIZE + EXTRA_INVENTORY_SIZE + RUNE_INVENTORY_SIZE];
         }
 
-        public IItem[] GetBaseItems()
+        public Item[] GetBaseItems()
         {
             return Items.Take(BASE_INVENTORY_SIZE).ToArray();
         }
 
-        public IItem AddItem(IItemData item, IObjAIBase owner)
+        public Item AddItem(ItemData item, ObjAIBase owner)
         {
             if (item.ItemGroup.ToLower().Equals("relicbase"))
             {
@@ -53,7 +52,7 @@ namespace LeagueSandbox.GameServer.Inventory
             return AddNewItem(item);
         }
 
-        public IItem SetItemToSlot(IItemData item, IObjAIBase owner, byte slot)
+        public Item SetItemToSlot(ItemData item, ObjAIBase owner, byte slot)
         {
             if (item.ItemGroup.ToLower().Equals("relicbase"))
             {
@@ -68,7 +67,7 @@ namespace LeagueSandbox.GameServer.Inventory
             return SetItem(slot, item);
         }
 
-        private void LoadOwnerStats(IItemData item, IObjAIBase owner)
+        private void LoadOwnerStats(ItemData item, ObjAIBase owner)
         {
             owner.AddStatModifier(item);
 
@@ -93,7 +92,7 @@ namespace LeagueSandbox.GameServer.Inventory
             }
         }
 
-        public IItem SetExtraItem(byte slot, IItemData item)
+        public Item SetExtraItem(byte slot, ItemData item)
         {
             if (slot < BASE_INVENTORY_SIZE)
             {
@@ -103,18 +102,18 @@ namespace LeagueSandbox.GameServer.Inventory
             return SetItem(slot, item);
         }
 
-        private IItem SetItem(byte slot, IItemData item)
+        private Item SetItem(byte slot, ItemData item)
         {
             Items[slot] = Item.CreateFromType(item);
             return Items[slot];
         }
 
-        public IItem GetItem(byte slot)
+        public Item GetItem(byte slot)
         {
             return Items[slot];
         }
 
-        public IItem GetItem(string name, bool isItemName = false)
+        public Item GetItem(string name, bool isItemName = false)
         {
             if (name != null)
             {
@@ -139,7 +138,7 @@ namespace LeagueSandbox.GameServer.Inventory
             return null;
         }
 
-        public void RemoveItem(byte slot, IObjAIBase owner, int stacksToRemove = 1, bool force = false)
+        public void RemoveItem(byte slot, ObjAIBase owner, int stacksToRemove = 1, bool force = false)
         {
             if (stacksToRemove < 0)
             {
@@ -200,7 +199,7 @@ namespace LeagueSandbox.GameServer.Inventory
             return false;
         }
 
-        public byte GetItemSlot(IItem item)
+        public byte GetItemSlot(Item item)
         {
             for (byte i = 0; i < Items.Length; i++)
             {
@@ -227,7 +226,7 @@ namespace LeagueSandbox.GameServer.Inventory
             Items[slot2] = buffer;
         }
 
-        private IItem AddTrinketItem(IItemData item, IObjAIBase owner)
+        private Item AddTrinketItem(ItemData item, ObjAIBase owner)
         {
             if (Items[TRINKET_SLOT] != null)
             {
@@ -260,7 +259,7 @@ namespace LeagueSandbox.GameServer.Inventory
             return itemResult;
         }
 
-        private IItem AddStackingItem(IItemData item)
+        private Item AddStackingItem(ItemData item)
         {
             for (var i = 0; i < BASE_INVENTORY_SIZE; i++)
             {
@@ -283,7 +282,7 @@ namespace LeagueSandbox.GameServer.Inventory
             }
             return AddNewItem(item);
         }
-        private IItem AddNewItem(IItemData item)
+        private Item AddNewItem(ItemData item)
         {
             for (var i = 0; i < BASE_INVENTORY_SIZE; i++)
             {

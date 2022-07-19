@@ -1,6 +1,6 @@
 ﻿using LeagueSandbox.GameServer.GameObjects.AttackableUnits.Buildings.AnimatedBuildings;
 
-namespace LeagueSandbox.GameServer.GameObjects.Stats
+namespace LeagueSandbox.GameServer.GameObjects.StatsNS
 {
     public class ReplicationAnimatedBuilding : Replication
     {

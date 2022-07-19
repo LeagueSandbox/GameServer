@@ -1,18 +1,17 @@
-﻿using GameServerCore.Domain.GameObjects;
-using GameServerCore.Domain.GameObjects.Spell;
-using GameServerCore.Domain.GameObjects.Spell.Missile;
-using static LeagueSandbox.GameServer.API.ApiFunctionManager;
+﻿using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using System.Numerics;
 using GameServerCore.Scripting.CSharp;
-using System;
 using GameServerCore.Enums;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
+using LeagueSandbox.GameServer.GameObjects.SpellNS;
 
 namespace Spells
 {
     public class Meditate : ISpellScript
     {
-        public ISpellScriptMetadata ScriptMetadata { get; private set; } = new SpellScriptMetadata()
+        public SpellScriptMetadata ScriptMetadata { get; private set; } = new SpellScriptMetadata()
         {
             NotSingleTargetSpell = true,
             TriggersSpellCasts = true,
@@ -27,41 +26,29 @@ namespace Spells
             }
         };
 
-        IObjAIBase Owner;
+        ObjAIBase Owner;
 
-        public void OnActivate(IObjAIBase owner, ISpell spell)
-        {
-        }
-
-        public void OnDeactivate(IObjAIBase owner, ISpell spell)
-        {
-        }
-
-        public void OnSpellPreCast(IObjAIBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
+        public void OnSpellPreCast(ObjAIBase owner, Spell spell, AttackableUnit target, Vector2 start, Vector2 end)
         {
             Owner = owner;
         }
 
-        public void OnSpellCast(ISpell spell)
+        public void OnSpellCast(Spell spell)
         {
             AddParticleTarget(Owner, Owner, "masteryi_base_w_cas", Owner, flags: 0);
         }
 
-        public void OnSpellPostCast(ISpell spell)
-        {
-        }
-
-        public void OnSpellChannel(ISpell spell)
+        public void OnSpellChannel(Spell spell)
         {
             AddBuff("Meditate", 4.0f, 1, spell, Owner, Owner);
         }
 
-        public void OnSpellChannelCancel(ISpell spell, ChannelingStopSource reason)
+        public void OnSpellChannelCancel(Spell spell, ChannelingStopSource reason)
         {
             RemoveBuff(Owner, "Meditate");
         }
 
-        public void OnSpellPostChannel(ISpell spell)
+        public void OnSpellPostChannel(Spell spell)
         {
             //float[] finalHeal = new float[]
             //{
@@ -73,10 +60,6 @@ namespace Spells
             //};
             //Owner.Stats.CurrentHealth = Math.Min(Owner.Stats.CurrentHealth, finalHeal[spell.CastInfo.SpellLevel]);
             RemoveBuff(Owner, "Meditate");
-        }
-
-        public void OnUpdate(float diff)
-        {
         }
     }
 }

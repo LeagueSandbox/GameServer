@@ -1,17 +1,15 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using GameServerCore.Content;
-using GameServerCore.Domain;
-using GameServerCore.Domain.GameObjects.Spell;
-using GameServerCore.Handlers;
+using LeagueSandbox.GameServer.Content.Navigation;
+using LeagueSandbox.GameServer.Handlers;
 using LeagueSandbox.GameServer.Logging;
 using log4net;
 using Newtonsoft.Json.Linq;
 
 namespace LeagueSandbox.GameServer.Content
 {
-    public class ContentManager : IPackage
+    public class ContentManager
     {
         private static ILog _logger = LoggerProvider.GetLogger();
         private readonly Game _game;
@@ -157,7 +155,7 @@ namespace LeagueSandbox.GameServer.Content
             throw new ContentNotFoundException($"No map spawns found for map with id: {mapId}");
         }
 
-        public IContentFile GetContentFileFromJson(string contentType, string itemName, string subPath = null)
+        public ContentFile GetContentFileFromJson(string contentType, string itemName, string subPath = null)
         {
             foreach (var dataPackage in _loadedPackages)
             {
@@ -174,11 +172,11 @@ namespace LeagueSandbox.GameServer.Content
             throw new ContentNotFoundException($"No {contentType} found with name: {itemName} in any package.");
         }
 
-        public INavigationGrid GetNavigationGrid(IMapScriptHandler map)
+        public NavigationGrid GetNavigationGrid(MapScriptHandler map)
         {
             foreach (var dataPackage in _loadedPackages)
             {
-                INavigationGrid toReturnNavgrid = dataPackage.GetNavigationGrid(map);
+                NavigationGrid toReturnNavgrid = dataPackage.GetNavigationGrid(map);
 
                 if (toReturnNavgrid != null)
                 {
@@ -189,11 +187,11 @@ namespace LeagueSandbox.GameServer.Content
             throw new ContentNotFoundException($"No NavGrid for map with id {map.Id} found in packages, skipping map load...");
         }
 
-        public ISpellData GetSpellData(string spellName)
+        public SpellData GetSpellData(string spellName)
         {
             foreach (var dataPackage in _loadedPackages)
             {
-                ISpellData toReturnSpellData = dataPackage.GetSpellData(spellName);
+                SpellData toReturnSpellData = dataPackage.GetSpellData(spellName);
 
                 if (toReturnSpellData != null)
                 {
@@ -204,11 +202,11 @@ namespace LeagueSandbox.GameServer.Content
             throw new ContentNotFoundException($"No Spell Data found with name: {spellName}");
         }
 
-        public ICharData GetCharData(string characterName)
+        public CharData GetCharData(string characterName)
         {
             foreach (var dataPackage in _loadedPackages)
             {
-                ICharData toReturnCharData = dataPackage.GetCharData(characterName);
+                CharData toReturnCharData = dataPackage.GetCharData(characterName);
 
                 if (toReturnCharData != null)
                 {

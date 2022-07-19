@@ -1,42 +1,40 @@
-﻿using System.Numerics;
-using GameServerCore.Domain.GameObjects;
-using GameServerCore.Domain.GameObjects.Spell;
-using GameServerCore.Enums;
-using LeagueSandbox.GameServer.API;
-using LeagueSandbox.GameServer.GameObjects.Stats;
+﻿using GameServerCore.Enums;
+using LeagueSandbox.GameServer.GameObjects.StatsNS;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 using GameServerCore.Scripting.CSharp;
-
+using LeagueSandbox.GameServer.GameObjects;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits;
+using LeagueSandbox.GameServer.GameObjects.SpellNS;
 
 namespace Buffs
 {
     class AkaliMota : IBuffGameScript
     {
-        public IBuffScriptMetaData BuffMetaData { get; set; } = new BuffScriptMetaData 
+        public BuffScriptMetaData BuffMetaData { get; set; } = new BuffScriptMetaData 
         {
             BuffType = BuffType.COMBAT_DEHANCER
         };
 
-        public IStatsModifier StatsModifier { get; private set; } = new StatsModifier();
+        public StatsModifier StatsModifier { get; private set; } = new StatsModifier();
 
-        IParticle p;
-        IParticle p2;
+        Particle p;
+        Particle p2;
 
-        public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
+        public void OnActivate(AttackableUnit unit, Buff buff, Spell ownerSpell)
         {
             p = AddParticleTarget(ownerSpell.CastInfo.Owner, unit, "akali_markOftheAssasin_marker_tar", unit, buff.Duration);
             p2 = AddParticleTarget(ownerSpell.CastInfo.Owner, unit, "akali_markOftheAssasin_marker_tar_02", unit, buff.Duration);
             //TODO: Find the overhead particle effects
         }
 
-        public void OnDeactivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
+        public void OnDeactivate(AttackableUnit unit, Buff buff, Spell ownerSpell)
         {
             RemoveParticle(p);
             RemoveParticle(p2);
         }
 
-        public void OnPreAttack(ISpell spell)
+        public void OnPreAttack(Spell spell)
         {
         }
 

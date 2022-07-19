@@ -1,14 +1,12 @@
-﻿using GameServerCore.Domain;
-using GameServerCore.Domain.GameObjects;
-using GameServerCore.Domain.GameObjects.Spell;
-using System;
+﻿using LeagueSandbox.GameServer.GameObjects.AttackableUnits;
+using LeagueSandbox.GameServer.GameObjects.SpellNS;
 
-namespace LeagueSandbox.GameServer.GameObjects.Stats
+namespace LeagueSandbox.GameServer.GameObjects.StatsNS
 {
     // TODO: Cleanup
-    public class ToolTipData : IToolTipData
+    public class ToolTipData
     {
-        public class ToolTipValue : IToolTipValue
+        public class ToolTipValue
         {
             public bool Hide { get; set; } = false;
             public float Value { get; set; } = 0.0f;
@@ -18,9 +16,9 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
             public ToolTipValue() { }
         }
 
-        protected readonly IAttackableUnit Owner;
-        protected readonly ISpell Spell;
-        protected readonly IBuff Buff;
+        protected readonly AttackableUnit Owner;
+        protected readonly Spell Spell;
+        protected readonly Buff Buff;
 
         public uint NetID => Owner.NetId;
         public byte Slot { get; private set; }
@@ -28,9 +26,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
         public ToolTipValue[] Values { get; private set; } = new ToolTipValue[16];
         public bool Changed { get; private set; }
 
-        IToolTipValue[] IToolTipData.Values => Values;
-
-        public ToolTipData(IAttackableUnit owner, ISpell spell, IBuff buff = null)
+        public ToolTipData(AttackableUnit owner, Spell spell, Buff buff = null)
         {
             Populate(Values);
 

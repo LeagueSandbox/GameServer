@@ -1,17 +1,18 @@
-﻿using GameServerCore.Domain.GameObjects;
-using GameServerCore.Domain.GameObjects.Spell;
-using GameServerCore.Enums;
+﻿using GameServerCore.Enums;
 using GameServerCore.Scripting.CSharp;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using System.Numerics;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
+using LeagueSandbox.GameServer.GameObjects.SpellNS;
 
 namespace Spells
 {
     public class BasePetController : ISpellScript
     {
-        private IPet Pet;
-        public ISpellScriptMetadata ScriptMetadata => new SpellScriptMetadata()
+        private Pet Pet;
+        public SpellScriptMetadata ScriptMetadata => new SpellScriptMetadata()
         {
             NotSingleTargetSpell = true,
             DoesntBreakShields = true,
@@ -21,12 +22,12 @@ namespace Spells
             IsPetDurationBuff = true
         };
 
-        public void OnActivate(IObjAIBase owner, ISpell spell)
+        public void OnActivate(ObjAIBase owner, Spell spell)
         {
             Pet = owner.GetPet();
         }
 
-        public void OnSpellPreCast(IObjAIBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
+        public void OnSpellPreCast(ObjAIBase owner, Spell spell, AttackableUnit target, Vector2 start, Vector2 end)
         {
             if (Pet != null)
             {

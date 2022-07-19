@@ -1,7 +1,5 @@
-﻿using GameServerCore;
-using GameServerCore.Enums;
+﻿using GameServerCore.Enums;
 using GameServerCore.Packets.Handlers;
-using GameServerCore.Packets.Interfaces;
 using LeagueSandbox.GameServer.API;
 using LeagueSandbox.GameServer.Chatbox;
 using LeagueSandbox.GameServer.Logging;
@@ -19,18 +17,17 @@ using System.Linq;
 using System.Reflection;
 using Timer = System.Timers.Timer;
 using LeagueSandbox.GameServer.Packets.PacketHandlers;
-using GameServerCore.Domain.GameObjects;
-using GameServerCore.Handlers;
 using LeagueSandbox.GameServer.Handlers;
 using GameServerCore.Packets.PacketDefinitions;
 using GameServerCore.Packets.PacketDefinitions.Requests;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
 
 namespace LeagueSandbox.GameServer
 {
     /// <summary>
     /// Class that contains and manages all qualities of the game such as managers for networking and game mechanics, as well as the starting, pausing, and stopping of the game.
     /// </summary>
-    public class Game : IGame
+    public class Game
     {
         // Crucial Game Vars
         private PacketServer _packetServer;
@@ -78,23 +75,23 @@ namespace LeagueSandbox.GameServer
         /// <summary>
         /// Interface containing all function related packets (except handshake) which are sent by the server to game clients.
         /// </summary>
-        public IPacketNotifier PacketNotifier { get; private set; }
+        public PacketNotifier PacketNotifier { get; private set; }
 
         // Game
 
         /// <summary>
         /// Interface containing all (public) functions used by ObjectManager. ObjectManager manages GameObjects, their properties, and their interactions such as being added, removed, colliding with other objects or terrain, vision, teams, etc.
         /// </summary>
-        public IObjectManager ObjectManager { get; private set; }
+        public ObjectManager ObjectManager { get; private set; }
         /// <summary>
         /// Interface for all protection related functions.
         /// Protection is a mechanic which determines whether or not a unit is targetable.
         /// </summary>
-        public IProtectionManager ProtectionManager { get; private set; }
+        public ProtectionManager ProtectionManager { get; private set; }
         /// <summary>
         /// Contains all map related game settings such as collision handler, navigation grid, announcer events, and map properties. Doubles as a Handler/Manager for all MapScripts.
         /// </summary>
-        public IMapScriptHandler Map { get; private set; }
+        public MapScriptHandler Map { get; private set; }
         /// <summary>
         /// Class containing all information about the game's configuration such as game content location, map spawn points, whether cheat commands are enabled, etc.
         /// </summary>
@@ -110,7 +107,7 @@ namespace LeagueSandbox.GameServer
         /// <summary>
         /// Interface of functions used to identify players or their properties (such as their champion).
         /// </summary>
-        public IPlayerManager PlayerManager { get; private set; }
+        public PlayerManager PlayerManager { get; private set; }
         /// <summary>
         /// Manager for all unique identifiers used by GameObjects.
         /// </summary>
@@ -273,7 +270,7 @@ namespace LeagueSandbox.GameServer
             {
                 foreach (var unit in ObjectManager.GetObjects().Values)
                 {
-                    if (unit is IObjAIBase obj)
+                    if (unit is ObjAIBase obj)
                     {
                         if (obj.Spells.ContainsKey((int)SpellSlotType.PassiveSpellSlot))
                         {
@@ -488,7 +485,7 @@ namespace LeagueSandbox.GameServer
         /// Unused function meant to get the instances of a specific type who rely on Game as a parameter.
         /// </summary>
         /// <returns>List of instances of type T.</returns>
-        private static List<T> GetInstances<T>(IGame g)
+        private static List<T> GetInstances<T>(Game g)
         {
             return Assembly.GetCallingAssembly()
                 .GetTypes()

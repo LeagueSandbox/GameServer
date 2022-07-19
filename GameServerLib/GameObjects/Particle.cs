@@ -1,5 +1,4 @@
-﻿using GameServerCore.Domain.GameObjects;
-using GameServerCore.Enums;
+﻿using GameServerCore.Enums;
 using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
 using LeagueSandbox.GameServer.GameObjects.Other;
 using System.Numerics;
@@ -9,7 +8,7 @@ namespace LeagueSandbox.GameServer.GameObjects
     /// <summary>
     /// Class used for all in-game visual effects meant to be explicitly networked by the server (never spawned client-side).
     /// </summary>
-    public class Particle : GameObject, IParticle
+    public class Particle : GameObject
     {
         // Function Vars
         private float _currentTime;
@@ -17,11 +16,11 @@ namespace LeagueSandbox.GameServer.GameObjects
         /// <summary>
         /// Creator of this particle.
         /// </summary>
-        public IGameObject Caster { get; }
+        public GameObject Caster { get; }
         /// <summary>
         /// Primary bind target.
         /// </summary>
-        public IGameObject BindObject { get; }
+        public GameObject BindObject { get; }
         /// <summary>
         /// Client-sided, internal name of the particle used in networking, usually always ends in .troy
         /// </summary>
@@ -29,7 +28,7 @@ namespace LeagueSandbox.GameServer.GameObjects
         /// <summary>
         /// Secondary bind target. Null when not attached to anything.
         /// </summary>
-        public IGameObject TargetObject { get; }
+        public GameObject TargetObject { get; }
         /// <summary>
         /// Position this object is spawned at.
         /// </summary>
@@ -62,7 +61,7 @@ namespace LeagueSandbox.GameServer.GameObjects
         /// The only unit that should be able to see this particle.
         /// Only effective if this is a player controlled unit.
         /// </summary>
-        public IGameObject SpecificUnit { get; }
+        public GameObject SpecificUnit { get; }
         /// <summary>
         /// Whether or not the particle should be titled along the ground towards its end position.
         /// Effectively uses the ground height for the end position.
@@ -94,7 +93,7 @@ namespace LeagueSandbox.GameServer.GameObjects
         /// <param name="lifetime">Number of seconds the Particle should exist.</param>
         /// <param name="teamOnly">The only team that should be able to see this particle.</param>
         /// <param name="flags">Flags which determine how the particle behaves. Refer to FXFlags enum.</param>
-        public Particle(Game game, IGameObject caster, IGameObject bindObj, IGameObject target, string particleName, float scale = 1.0f, string boneName = "", string targetBoneName = "", uint netId = 0, Vector3 direction = new Vector3(), bool followGroundTilt = false, float lifetime = 0, TeamId teamOnly = TeamId.TEAM_NEUTRAL, IGameObject unitOnly = null, FXFlags flags = FXFlags.GivenDirection)
+        public Particle(Game game, GameObject caster, GameObject bindObj, GameObject target, string particleName, float scale = 1.0f, string boneName = "", string targetBoneName = "", uint netId = 0, Vector3 direction = new Vector3(), bool followGroundTilt = false, float lifetime = 0, TeamId teamOnly = TeamId.TEAM_NEUTRAL, GameObject unitOnly = null, FXFlags flags = FXFlags.GivenDirection)
                : base(game, target.Position, 0, 0, 0, netId, teamOnly)
         {
             Caster = caster;
@@ -150,7 +149,7 @@ namespace LeagueSandbox.GameServer.GameObjects
         /// <param name="lifetime">Number of seconds the Particle should exist.</param>
         /// <param name="teamOnly">The only team that should be able to see this particle.</param>
         /// <param name="flags">Flags which determine how the particle behaves. Refer to FXFlags enum.</param>
-        public Particle(Game game, IGameObject caster, IGameObject bindObj, Vector2 targetPos, string particleName, float scale = 1.0f, string boneName = "", string targetBoneName = "", uint netId = 0, Vector3 direction = new Vector3(), bool followGroundTilt = false, float lifetime = 0, TeamId teamOnly = TeamId.TEAM_NEUTRAL, IGameObject unitOnly = null, FXFlags flags = FXFlags.GivenDirection)
+        public Particle(Game game, GameObject caster, GameObject bindObj, Vector2 targetPos, string particleName, float scale = 1.0f, string boneName = "", string targetBoneName = "", uint netId = 0, Vector3 direction = new Vector3(), bool followGroundTilt = false, float lifetime = 0, TeamId teamOnly = TeamId.TEAM_NEUTRAL, GameObject unitOnly = null, FXFlags flags = FXFlags.GivenDirection)
                : base(game, targetPos, 0, 0, 0, netId, teamOnly)
         {
             Caster = caster;
@@ -212,7 +211,7 @@ namespace LeagueSandbox.GameServer.GameObjects
         /// <param name="lifetime">Number of seconds the Particle should exist.</param>
         /// <param name="teamOnly">The only team that should be able to see this particle.</param>
         /// <param name="flags">Flags which determine how the particle behaves. Refer to FXFlags enum.</param>
-        public Particle(Game game, IGameObject caster, Vector2 startPos, Vector2 endPos, string particleName, float scale = 1.0f, string boneName = "", string targetBoneName = "", uint netId = 0, Vector3 direction = new Vector3(), bool followGroundTilt = false, float lifetime = 0, TeamId teamOnly = TeamId.TEAM_NEUTRAL, IGameObject unitOnly = null, FXFlags flags = FXFlags.GivenDirection)
+        public Particle(Game game, GameObject caster, Vector2 startPos, Vector2 endPos, string particleName, float scale = 1.0f, string boneName = "", string targetBoneName = "", uint netId = 0, Vector3 direction = new Vector3(), bool followGroundTilt = false, float lifetime = 0, TeamId teamOnly = TeamId.TEAM_NEUTRAL, GameObject unitOnly = null, FXFlags flags = FXFlags.GivenDirection)
                : base(game, startPos, 0, 0, 0, netId, teamOnly)
         {
             Caster = caster;

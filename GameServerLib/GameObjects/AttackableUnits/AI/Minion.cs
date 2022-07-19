@@ -1,16 +1,15 @@
-﻿using GameServerCore.Domain.GameObjects;
-using LeagueSandbox.GameServer.GameObjects.Stats;
+﻿using LeagueSandbox.GameServer.GameObjects.StatsNS;
 using GameServerCore.Enums;
 using System.Numerics;
 
 namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 {
-    public class Minion : ObjAIBase, IMinion
+    public class Minion : ObjAIBase
     {
         /// <summary>
         /// Unit which spawned this minion.
         /// </summary>
-        public IObjAIBase Owner { get; }
+        public ObjAIBase Owner { get; }
         /// <summary>
         /// Whether or not this minion should ignore collisions.
         /// </summary>
@@ -30,7 +29,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         /// <summary>
         /// Only unit which is allowed to see this minion.
         /// </summary>
-        public IObjAIBase VisibilityOwner { get; }
+        public ObjAIBase VisibilityOwner { get; }
 
         //TODO: Implement these variables
         public int DamageBonus { get; protected set; }
@@ -39,7 +38,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
         public Minion(
             Game game,
-            IObjAIBase owner,
+            ObjAIBase owner,
             Vector2 position,
             string model,
             string name,
@@ -49,8 +48,8 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             bool ignoreCollision = false,
             bool targetable = true,
             bool isWard = false,
-            IObjAIBase visibilityOwner = null,
-            IStats stats = null,
+            ObjAIBase visibilityOwner = null,
+            Stats stats = null,
             string AIScript = "",
             int damageBonus = 0,
             int healthBonus = 0,

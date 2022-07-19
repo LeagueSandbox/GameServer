@@ -2,18 +2,18 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
-using GameServerCore.Domain;
-using GameServerCore.Domain.GameObjects;
-using GameServerCore.Domain.GameObjects.Spell;
 using GameServerCore.Enums;
 using GameServerCore.Scripting.CSharp;
 using GameServerLib.GameObjects.AttackableUnits;
+using LeagueSandbox.GameServer.Inventory;
 using LeagueSandbox.GameServer.GameObjects;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits;
 using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
-using LeagueSandbox.GameServer.GameObjects.Spell;
+using LeagueSandbox.GameServer.GameObjects.SpellNS;
 using LeagueSandbox.GameServer.Logging;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using log4net;
+using LeagueSandbox.GameServer.GameObjects.StatsNS;
 
 namespace LeagueSandbox.GameServer.API
 {
@@ -112,7 +112,7 @@ namespace LeagueSandbox.GameServer.API
         /// </summary>
         /// <param name="gameObject">GameObject to set.</param>
         /// <param name="visibility">Whether or not the GameObject should be visible.</param>
-        public static void SetGameObjectVisibility(IGameObject gameObject, bool visibility)
+        public static void SetGameObjectVisibility(GameObject gameObject, bool visibility)
         {
             var teams = GetTeams();
             foreach (var id in teams)
@@ -205,7 +205,7 @@ namespace LeagueSandbox.GameServer.API
         /// <param name="unit">AI unit to teleport.</param>
         /// <param name="x">X coordinate.</param>
         /// <param name="y">Y coordinate.</param>
-        public static void TeleportTo(IObjAIBase unit, float x, float y)
+        public static void TeleportTo(ObjAIBase unit, float x, float y)
         {
             if (unit.MovementParameters != null)
             {
@@ -215,7 +215,7 @@ namespace LeagueSandbox.GameServer.API
             unit.TeleportTo(x, y);
         }
 
-        public static void FaceDirection(Vector2 location, IGameObject target, bool isInstant = false, float turnTime = 0.08333f)
+        public static void FaceDirection(Vector2 location, GameObject target, bool isInstant = false, float turnTime = 0.08333f)
         {
             if (location == target.Position)
             {
@@ -234,7 +234,7 @@ namespace LeagueSandbox.GameServer.API
         /// <param name="obj">Unit to base the point off of.</param>
         /// <param name="offsetAngle">Offset angle from the unit's facing angle (in degrees, clockwise). Must be > 0 to have an effect.</param>
         /// <returns>Vector2 point.</returns>
-        public static Vector2 GetPointFromUnit(IGameObject obj, float distance, float offsetAngle = 0)
+        public static Vector2 GetPointFromUnit(GameObject obj, float distance, float offsetAngle = 0)
         {
             Vector2 pos = obj.Position;
             Vector2 dir = new Vector2(obj.Direction.X, obj.Direction.Z);
@@ -269,9 +269,9 @@ namespace LeagueSandbox.GameServer.API
         /// <param name="from">Owner of the buff.</param>
         /// <param name="infiniteduration">Whether or not the buff should last forever.</param>
         /// <returns>New buff instance.</returns>
-        public static IBuff AddBuff(string buffName, float duration, byte stacks, ISpell originspell, IAttackableUnit onto, IObjAIBase from, bool infiniteduration = false, IEventSource parent = null)
+        public static Buff AddBuff(string buffName, float duration, byte stacks, Spell originspell, AttackableUnit onto, ObjAIBase from, bool infiniteduration = false, IEventSource parent = null)
         {
-            IBuff buff;
+            Buff buff;
 
             try
             {
@@ -293,7 +293,7 @@ namespace LeagueSandbox.GameServer.API
         /// <param name="unit">Unit to check.</param>
         /// <param name="b">Buff to check for.</param>
         /// <returns>True/False</returns>
-        public static bool HasBuff(IAttackableUnit unit, IBuff b)
+        public static bool HasBuff(AttackableUnit unit, Buff b)
         {
             return unit.HasBuff(b);
         }
@@ -304,7 +304,7 @@ namespace LeagueSandbox.GameServer.API
         /// <param name="unit">Unit to check.</param>
         /// <param name="b">Buff name to check for.</param>
         /// <returns>True/False</returns>
-        public static bool HasBuff(IAttackableUnit unit, string b)
+        public static bool HasBuff(AttackableUnit unit, string b)
         {
             return unit.HasBuff(b);
         }
@@ -314,7 +314,7 @@ namespace LeagueSandbox.GameServer.API
         /// </summary>
         /// <param name="b">Buff instance.</param>
         /// <param name="newStacks">Stacks to set.</param>
-        public static void EditBuff(IBuff b, byte newStacks)
+        public static void EditBuff(Buff b, byte newStacks)
         {
             b.SetStacks(newStacks);
         }
@@ -324,7 +324,7 @@ namespace LeagueSandbox.GameServer.API
         /// If the buff's BuffAddType is STACKS_AND_OVERLAPS, each stack is individually instanced, so only one stack is removed.
         /// </summary>
         /// <param name="buff">Buff instance to remove.</param>
-        public static void RemoveBuff(IBuff buff)
+        public static void RemoveBuff(Buff buff)
         {
             buff.DeactivateBuff();
         }
@@ -335,7 +335,7 @@ namespace LeagueSandbox.GameServer.API
         /// </summary>
         /// <param name="target">AI unit to check.</param>
         /// <param name="buff">Buff name to remove.</param>
-        public static void RemoveBuff(IAttackableUnit target, string buff)
+        public static void RemoveBuff(AttackableUnit target, string buff)
         {
             target.RemoveBuffsWithName(buff);
         }
@@ -357,7 +357,7 @@ namespace LeagueSandbox.GameServer.API
         /// <param name="teamOnly">The only team which should be able to see the particle.</param>
         /// <param name="flags">Flags which determine how the particle behaves. Refer to FXFlags enum.</param>
         /// <returns>New particle instance.</returns>
-        public static IParticle AddParticlePos(IGameObject caster, string particle, Vector2 start, Vector2 end, float lifetime = 1.0f, float size = 1.0f, string bone = "", string targetBone = "", Vector3 direction = new Vector3(), bool followGroundTilt = false, TeamId teamOnly = TeamId.TEAM_NEUTRAL, IGameObject unitOnly = null, FXFlags flags = FXFlags.BindDirection)
+        public static Particle AddParticlePos(GameObject caster, string particle, Vector2 start, Vector2 end, float lifetime = 1.0f, float size = 1.0f, string bone = "", string targetBone = "", Vector3 direction = new Vector3(), bool followGroundTilt = false, TeamId teamOnly = TeamId.TEAM_NEUTRAL, GameObject unitOnly = null, FXFlags flags = FXFlags.BindDirection)
         {
             var p = new Particle(_game, caster, start, end, particle, size, bone, targetBone, 0, direction, followGroundTilt, lifetime, teamOnly, unitOnly, flags);
             return p;
@@ -380,7 +380,7 @@ namespace LeagueSandbox.GameServer.API
         /// <param name="teamOnly">The only team which should be able to see the particle.</param>
         /// <param name="flags">Flags which determine how the particle behaves. Refer to FXFlags enum.</param>
         /// <returns>New particle instance.</returns>
-        public static IParticle AddParticle(IGameObject caster, IGameObject bindObj, string particle, Vector2 position, float lifetime = 1.0f, float size = 1.0f, string bone = "", string targetBone = "", Vector3 direction = new Vector3(), bool followGroundTilt = false, TeamId teamOnly = TeamId.TEAM_NEUTRAL, IGameObject unitOnly = null, FXFlags flags = FXFlags.BindDirection)
+        public static Particle AddParticle(GameObject caster, GameObject bindObj, string particle, Vector2 position, float lifetime = 1.0f, float size = 1.0f, string bone = "", string targetBone = "", Vector3 direction = new Vector3(), bool followGroundTilt = false, TeamId teamOnly = TeamId.TEAM_NEUTRAL, GameObject unitOnly = null, FXFlags flags = FXFlags.BindDirection)
         {
             return new Particle(_game, caster, bindObj, position, particle, size, bone, targetBone, 0, direction, followGroundTilt, lifetime, teamOnly, unitOnly, flags);
         }
@@ -403,7 +403,7 @@ namespace LeagueSandbox.GameServer.API
         /// <param name="teamOnly">The only team which should be able to see the particle.</param>
         /// <param name="flags">Flags which determine how the particle behaves. Refer to FXFlags enum.</param>
         /// <returns>New particle instance.</returns>
-        public static IParticle AddParticleTarget(IGameObject caster, IGameObject bindObj, string particle, IGameObject target, float lifetime = 1.0f, float size = 1.0f, string bone = "", string targetBone = "", Vector3 direction = new Vector3(), bool followGroundTilt = false, TeamId teamOnly = TeamId.TEAM_NEUTRAL, IGameObject unitOnly = null, FXFlags flags = FXFlags.BindDirection)
+        public static Particle AddParticleTarget(GameObject caster, GameObject bindObj, string particle, GameObject target, float lifetime = 1.0f, float size = 1.0f, string bone = "", string targetBone = "", Vector3 direction = new Vector3(), bool followGroundTilt = false, TeamId teamOnly = TeamId.TEAM_NEUTRAL, GameObject unitOnly = null, FXFlags flags = FXFlags.BindDirection)
         {
             var p = new Particle(_game, caster, bindObj, target, particle, size, bone, targetBone, 0, direction, followGroundTilt, lifetime, teamOnly, unitOnly, flags);
             return p;
@@ -413,7 +413,7 @@ namespace LeagueSandbox.GameServer.API
         /// Removes the specified particle from ObjectManager and networks the removal to players.
         /// </summary>
         /// <param name="p">Particle to remove.</param>
-        public static void RemoveParticle(IParticle p)
+        public static void RemoveParticle(Particle p)
         {
             if (p != null)
             {
@@ -436,9 +436,9 @@ namespace LeagueSandbox.GameServer.API
         /// <param name="isVisible">Whether or not this minion should be visible.</param>
         /// <param name="aiPaused">Whether or not this minion's AI is inactive.</param>
         /// <returns>New Minion instance.</returns>
-        public static IMinion AddMinion
+        public static Minion AddMinion
         (
-            IObjAIBase owner,
+            ObjAIBase owner,
             string model,
             string name,
             Vector2 position,
@@ -448,7 +448,7 @@ namespace LeagueSandbox.GameServer.API
             bool targetable = true,
             bool isWard = false,
             SpellDataFlags targetingFlags = 0,
-            IObjAIBase visibilityOwner = null,
+            ObjAIBase visibilityOwner = null,
             bool isVisible = true,
             bool aiPaused = true
         )
@@ -476,14 +476,14 @@ namespace LeagueSandbox.GameServer.API
         /// <param name="collisionArea">Area around the perception bubble where units are not allowed to move into.</param>
         ///
         /// <returns>New Region instance.</returns>
-        public static IRegion AddPosPerceptionBubble
+        public static Region AddPosPerceptionBubble
         (
             Vector2 position,
             float radius,
             float duration,
             TeamId team = TeamId.TEAM_NEUTRAL,
             bool revealStealthed = false,
-            IAttackableUnit revealSpecificUnitOnly = null,
+            AttackableUnit revealSpecificUnitOnly = null,
             float collisionArea = 0f,
             RegionType regionType = RegionType.Default
         )
@@ -511,14 +511,14 @@ namespace LeagueSandbox.GameServer.API
         /// <param name="collisionArea">Area around the perception bubble where units are not allowed to move into.</param>
         ///
         /// <returns>New Region instance.</returns>
-        public static IRegion AddUnitPerceptionBubble
+        public static Region AddUnitPerceptionBubble
         (
-            IAttackableUnit target,
+            AttackableUnit target,
             float radius,
             float duration,
             TeamId team = TeamId.TEAM_NEUTRAL,
             bool revealStealthed = false,
-            IAttackableUnit revealSpecificUnitOnly = null,
+            AttackableUnit revealSpecificUnitOnly = null,
             float collisionArea = 0f,
             RegionType regionType = RegionType.Default
         )
@@ -552,7 +552,7 @@ namespace LeagueSandbox.GameServer.API
         /// <param name="range">Range around the position to check.</param>
         /// <param name="isAlive">Whether or not the unit should be alive.</param>
         /// <returns></returns>
-        public static bool IsUnitInRange(IAttackableUnit unit, Vector2 targetPos, float range, bool isAlive)
+        public static bool IsUnitInRange(AttackableUnit unit, Vector2 targetPos, float range, bool isAlive)
         {
             if (unit.IsDead == isAlive)
             {
@@ -569,7 +569,7 @@ namespace LeagueSandbox.GameServer.API
         /// <param name="range">Range to check from the target position.</param>
         /// <param name="isAlive">Whether or not to return alive AttackableUnits.</param>
         /// <returns>List of AttackableUnits.</returns>
-        public static List<IAttackableUnit> GetUnitsInRangeOld(Vector2 targetPos, float range, bool isAlive)
+        public static List<AttackableUnit> GetUnitsInRangeOld(Vector2 targetPos, float range, bool isAlive)
         {
             return _game.ObjectManager.GetUnitsInRange(targetPos, range, isAlive);
         }
@@ -580,11 +580,11 @@ namespace LeagueSandbox.GameServer.API
         /// <param name="targetPos">Origin of the range to check.</param>
         /// <param name="range">Range to check from the target position.</param>
         /// <returns>List of AttackableUnits.</returns>
-        public static IEnumerable<IAttackableUnit> EnumerateUnitsInRange(Vector2 targetPos, float range, bool isAlive)
+        public static IEnumerable<AttackableUnit> EnumerateUnitsInRange(Vector2 targetPos, float range, bool isAlive)
         {
             foreach (var obj in _game.Map.CollisionHandler.GetNearestObjects(new System.Activities.Presentation.View.Circle(targetPos, range)))
             {
-                if (obj is IAttackableUnit u && (!isAlive || !u.IsDead))
+                if (obj is AttackableUnit u && (!isAlive || !u.IsDead))
                 {
                     yield return u;
                 }
@@ -597,12 +597,12 @@ namespace LeagueSandbox.GameServer.API
         /// <param name="targetPos">Origin of the range to check.</param>
         /// <param name="range">Range to check from the target position.</param>
         /// <returns>List of AttackableUnits.</returns>
-        public static List<IAttackableUnit> GetUnitsInRange(Vector2 targetPos, float range, bool isAlive)
+        public static List<AttackableUnit> GetUnitsInRange(Vector2 targetPos, float range, bool isAlive)
         {
-            var returnList = new List<IAttackableUnit>();
+            var returnList = new List<AttackableUnit>();
             foreach (var obj in _game.Map.CollisionHandler.GetNearestObjects(new System.Activities.Presentation.View.Circle(targetPos, range)))
             {
-                if (obj is IAttackableUnit u && (!isAlive || !u.IsDead))
+                if (obj is AttackableUnit u && (!isAlive || !u.IsDead))
                 {
                     returnList.Add(u);
                 }
@@ -618,7 +618,7 @@ namespace LeagueSandbox.GameServer.API
         /// <param name="range">Range to check from the target position.</param>
         /// <param name="isAlive">Whether or not to return alive AttackableUnits.</param>
         /// <returns>Closest AttackableUnit.</returns>
-        public static IAttackableUnit GetClosestUnitInRange(Vector2 targetPos, float range, bool isAlive)
+        public static AttackableUnit GetClosestUnitInRange(Vector2 targetPos, float range, bool isAlive)
         {
             var units = GetUnitsInRange(targetPos, range, isAlive);
             var orderedUnits = units.OrderBy(unit => Vector2.DistanceSquared(targetPos, unit.Position));
@@ -633,7 +633,7 @@ namespace LeagueSandbox.GameServer.API
         /// <param name="range">Range to check from the target position.</param>
         /// <param name="isAlive">Whether or not to return alive AttackableUnits.</param>
         /// <returns>Closest AttackableUnit.</returns>
-        public static IAttackableUnit GetClosestUnitInRange(IAttackableUnit target, float range, bool isAlive)
+        public static AttackableUnit GetClosestUnitInRange(AttackableUnit target, float range, bool isAlive)
         {
             var units = GetUnitsInRange(target.Position, range, isAlive);
             var orderedUnits = units.OrderBy(unit => Vector2.DistanceSquared(target.Position, unit.Position));
@@ -653,7 +653,7 @@ namespace LeagueSandbox.GameServer.API
         /// <param name="range">Range to check from the target position.</param>
         /// <param name="isAlive">Whether or not the return alive Champions.</param>
         /// <returns>List of Champions.</returns>
-        public static List<IChampion> GetChampionsInRange(Vector2 targetPos, float range, bool isAlive)
+        public static List<Champion> GetChampionsInRange(Vector2 targetPos, float range, bool isAlive)
         {
             return _game.ObjectManager.GetChampionsInRange(targetPos, range, isAlive);
         }
@@ -663,7 +663,7 @@ namespace LeagueSandbox.GameServer.API
         /// </summary>
         /// <param name="target">AttackableUnit potentially being attacked.</param>
         /// <returns>Number of units attacking target.</returns>
-        public static int CountUnitsAttackingUnit(IAttackableUnit target)
+        public static int CountUnitsAttackingUnit(AttackableUnit target)
         {
             return _game.ObjectManager.CountUnitsAttackingUnit(target);
         }
@@ -674,9 +674,9 @@ namespace LeagueSandbox.GameServer.API
         /// Currently only a single champion is designated to each player.
         /// </summary>
         /// <returns></returns>
-        public static List<IChampion> GetAllPlayers()
+        public static List<Champion> GetAllPlayers()
         {
-            var toreturn = new List<IChampion>();
+            var toreturn = new List<Champion>();
             foreach (var player in _game.PlayerManager.GetPlayers(true))
             {
                 toreturn.Add(player.Champion);
@@ -685,7 +685,7 @@ namespace LeagueSandbox.GameServer.API
         }
 
         //Consider changing this to take bots into account too
-        public static List<IChampion> GetAllPlayersFromTeam(TeamId team)
+        public static List<Champion> GetAllPlayersFromTeam(TeamId team)
         {
             return _game.ObjectManager.GetAllChampionsFromTeam(team);
         }
@@ -694,7 +694,7 @@ namespace LeagueSandbox.GameServer.API
         /// Returns a new list of all champions in the game.
         /// </summary>
         /// <returns></returns>
-        public static List<IChampion> GetAllChampions()
+        public static List<Champion> GetAllChampions()
         {
             return _game.ObjectManager.GetAllChampions();
         }
@@ -703,7 +703,7 @@ namespace LeagueSandbox.GameServer.API
         /// Instantly cancels any dashes the specified unit is performing.
         /// </summary>
         /// <param name="unit">Unit to stop dashing.</param>
-        public static void CancelDash(IAttackableUnit unit)
+        public static void CancelDash(AttackableUnit unit)
         {
             // Allow the user to move the champion
             unit.SetDashingState(false);
@@ -726,7 +726,7 @@ namespace LeagueSandbox.GameServer.API
         /// TODO: Fully implement new ForceMovement functionality in AttackableUnit.
         public static void ForceMovement
         (
-            IAttackableUnit unit,
+            AttackableUnit unit,
             string animation,
             Vector2 target,
             float speed,
@@ -764,8 +764,8 @@ namespace LeagueSandbox.GameServer.API
         /// TODO: Fully implement new ForceMovement functionality in AttackableUnit.
         public static void ForceMovement
         (
-            IObjAIBase unit,
-            IAttackableUnit target,
+            ObjAIBase unit,
+            AttackableUnit target,
             string animation,
             float speed,
             float idealDistance,
@@ -796,7 +796,7 @@ namespace LeagueSandbox.GameServer.API
         /// <param name="speedScale">How much the speed of the GameObject should affect the animation.</param>
         /// TODO: Implement AnimationFlags enum for this and fill it in.
         /// <param name="flags">Animation flags. Refer to AnimationFlags enum.</param>
-        public static void PlayAnimation(IGameObject obj, string animName, float timeScale = 1.0f, float startTime = 0, float speedScale = 0, AnimationFlags flags = 0)
+        public static void PlayAnimation(GameObject obj, string animName, float timeScale = 1.0f, float startTime = 0, float speedScale = 0, AnimationFlags flags = 0)
         {
             obj.PlayAnimation(animName, timeScale, startTime, speedScale, flags);
         }
@@ -805,7 +805,7 @@ namespace LeagueSandbox.GameServer.API
         /// Forces the given object's current animations to pause/unpause.
         /// </summary>
         /// <param name="pause">Whether or not to pause/unpause animations.</param>
-        public static void PauseAnimation(IGameObject obj, bool pause)
+        public static void PauseAnimation(GameObject obj, bool pause)
         {
             obj.PauseAnimation(pause);
         }
@@ -818,12 +818,12 @@ namespace LeagueSandbox.GameServer.API
         /// <param name="stopAll">Whether or not to stop all animations. Only works if animation is empty/null.</param>
         /// <param name="fade">Whether or not the animation should fade before stopping.</param>
         /// <param name="ignoreLock">Whether or not locked animations should still be stopped.</param>
-        public static void StopAnimation(IGameObject obj, string animation, bool stopAll = false, bool fade = false, bool ignoreLock = true)
+        public static void StopAnimation(GameObject obj, string animation, bool stopAll = false, bool fade = false, bool ignoreLock = true)
         {
             obj.StopAnimation(animation, stopAll, fade, ignoreLock);
         }
 
-        public static void SealSpellSlot(IObjAIBase target, SpellSlotType slotType, int slot, SpellbookType spellbookType, bool seal)
+        public static void SealSpellSlot(ObjAIBase target, SpellSlotType slotType, int slot, SpellbookType spellbookType, bool seal)
         {
             slot = ConvertAPISlot(spellbookType, slotType, slot);
 
@@ -848,7 +848,7 @@ namespace LeagueSandbox.GameServer.API
         /// <param name="unit">Unit to set animation states on.</param>
         /// <param name="overrideAnim">Animation to use instead.</param>
         /// <param name="toOverrideAnim">Animation to override.</param>
-        public static void OverrideAnimation(IAttackableUnit unit, string overrideAnim, string toOverrideAnim)
+        public static void OverrideAnimation(AttackableUnit unit, string overrideAnim, string toOverrideAnim)
         {
             unit.SetAnimStates(new Dictionary<string, string> { { toOverrideAnim, overrideAnim } });
         }
@@ -858,7 +858,7 @@ namespace LeagueSandbox.GameServer.API
         /// </summary>
         /// <param name="unit">Unit to set animation states on.</param>
         /// <param name="overriddenAnim">Animation which has been overridden.</param>
-        public static void ClearOverrideAnimation(IAttackableUnit unit, string overriddenAnim)
+        public static void ClearOverrideAnimation(AttackableUnit unit, string overriddenAnim)
         {
             unit.SetAnimStates(new Dictionary<string, string> { { overriddenAnim, "" } });
         }
@@ -868,7 +868,7 @@ namespace LeagueSandbox.GameServer.API
         /// </summary>
         /// <param name="spell">Spell to auto cast.</param>
         /// TODO: Verify if this works.
-        public static void SetAutocast(ISpell spell)
+        public static void SetAutocast(Spell spell)
         {
             spell.SetAutocast();
         }
@@ -879,7 +879,7 @@ namespace LeagueSandbox.GameServer.API
         /// <param name="unit">Unit to set status.</param>
         /// <param name="status">Status to set.</param>
         /// <param name="enabled">Whether or not the status should be enabled.</param>
-        public static void SetStatus(IAttackableUnit unit, StatusFlags status, bool enabled)
+        public static void SetStatus(AttackableUnit unit, StatusFlags status, bool enabled)
         {
             unit.SetStatus(status, enabled);
         }
@@ -893,7 +893,7 @@ namespace LeagueSandbox.GameServer.API
         /// <param name="slot">Index of the spell slot to change.</param>
         /// <param name="fullReplace">Whether or not the spell should be entirely replaced, or just the name. Typically used for transformations.</param>
         /// <returns>Newly created spell or existing spell with the given name. Null for failure.</returns>
-        public static ISpell SetSpell(IObjAIBase target, string newName, SpellSlotType slotType, int slot, bool fullReplace = false)
+        public static Spell SetSpell(ObjAIBase target, string newName, SpellSlotType slotType, int slot, bool fullReplace = false)
         {
             slot = ConvertAPISlot(slotType, slot);
 
@@ -912,7 +912,7 @@ namespace LeagueSandbox.GameServer.API
         /// <param name="slotType">Type of slot being used.</param>
         /// <param name="slot">Index of the spell slot to change.</param>
         /// <param name="newType">Targeting type to set.</param>
-        public static void SetTargetingType(IObjAIBase target, SpellSlotType slotType, int slot, TargetingType newType)
+        public static void SetTargetingType(ObjAIBase target, SpellSlotType slotType, int slot, TargetingType newType)
         {
             slot = ConvertAPISlot(slotType, slot);
 
@@ -925,7 +925,7 @@ namespace LeagueSandbox.GameServer.API
 
             spell.SpellData.SetTargetingType(newType);
 
-            if (target is IChampion champion)
+            if (target is Champion champion)
             {
                 _game.PacketNotifier.NotifyChangeSlotSpellData
                 (
@@ -938,10 +938,10 @@ namespace LeagueSandbox.GameServer.API
             }
         }
 
-        public static void SetSpellToolTipVar<T>(IAttackableUnit unit, int tipIndex, T value, SpellbookType book, byte slot, SpellSlotType slotType)
+        public static void SetSpellToolTipVar<T>(AttackableUnit unit, int tipIndex, T value, SpellbookType book, byte slot, SpellSlotType slotType)
             where T : struct
         {
-            if (unit is IChampion champ)
+            if (unit is Champion champ)
             {
                 slot = (byte)ConvertAPISlot(book, slotType, slot);
 
@@ -949,24 +949,24 @@ namespace LeagueSandbox.GameServer.API
             }
         }
 
-        public static void SetBuffToolTipVar<T>(IBuff buff, int tipIndex, T value)
+        public static void SetBuffToolTipVar<T>(Buff buff, int tipIndex, T value)
             where T : struct
         {
             buff.SetToolTipVar(tipIndex, value);
         }
 
-        public static void SpellCast(IObjAIBase caster, int slot, SpellSlotType slotType, Vector2 pos, Vector2 endPos, bool fireWithoutCasting, Vector2 overrideCastPos, List<ICastTarget> targets = null, bool isForceCastingOrChanneling = false, int overrideForceLevel = -1, bool updateAutoAttackTimer = false, bool useAutoAttackSpell = false)
+        public static void SpellCast(ObjAIBase caster, int slot, SpellSlotType slotType, Vector2 pos, Vector2 endPos, bool fireWithoutCasting, Vector2 overrideCastPos, List<CastTarget> targets = null, bool isForceCastingOrChanneling = false, int overrideForceLevel = -1, bool updateAutoAttackTimer = false, bool useAutoAttackSpell = false)
         {
             slot = ConvertAPISlot(slotType, slot);
 
-            ISpell spell = caster.GetSpell((byte)slot);
+            Spell spell = caster.GetSpell((byte)slot);
 
             if (targets == null)
             {
-                targets = new List<ICastTarget> { new CastTarget(null, HitResult.HIT_Normal) };
+                targets = new List<CastTarget> { new CastTarget(null, HitResult.HIT_Normal) };
             }
 
-            ICastInfo castInfo = new CastInfo()
+            CastInfo castInfo = new CastInfo()
             {
                 SpellHash = (uint)spell.GetId(),
                 SpellNetID = _game.NetworkIdManager.GetNewNetId(),
@@ -1011,34 +1011,34 @@ namespace LeagueSandbox.GameServer.API
             spell.Cast(castInfo, !fireWithoutCasting);
         }
 
-        public static void SpellCast(IObjAIBase caster, int slot, SpellSlotType slotType, bool fireWithoutCasting, IAttackableUnit target, Vector2 overrideCastPos, bool isForceCastingOrChanneling = false, int overrideForceLevel = -1, bool updateAutoAttackTimer = false, bool useAutoAttackSpell = false)
+        public static void SpellCast(ObjAIBase caster, int slot, SpellSlotType slotType, bool fireWithoutCasting, AttackableUnit target, Vector2 overrideCastPos, bool isForceCastingOrChanneling = false, int overrideForceLevel = -1, bool updateAutoAttackTimer = false, bool useAutoAttackSpell = false)
         {
-            ICastTarget castTarget = new CastTarget(target, CastTarget.GetHitResult(target, useAutoAttackSpell, caster.IsNextAutoCrit));
+            CastTarget castTarget = new CastTarget(target, CastTarget.GetHitResult(target, useAutoAttackSpell, caster.IsNextAutoCrit));
 
-            SpellCast(caster, slot, slotType, target.Position, target.Position, fireWithoutCasting, overrideCastPos, new List<ICastTarget> { castTarget }, isForceCastingOrChanneling, overrideForceLevel, updateAutoAttackTimer, useAutoAttackSpell);
+            SpellCast(caster, slot, slotType, target.Position, target.Position, fireWithoutCasting, overrideCastPos, new List<CastTarget> { castTarget }, isForceCastingOrChanneling, overrideForceLevel, updateAutoAttackTimer, useAutoAttackSpell);
         }
 
-        public static void SpellCastItem(IObjAIBase caster, string itemSpellName, bool fireWithoutCasting, IAttackableUnit target, Vector2 overrideCastPos, bool isForceCastingOrChanneling = false, int overrideForceLevel = -1, bool updateAutoAttackTimer = false, bool useAutoAttackSpell = false)
+        public static void SpellCastItem(ObjAIBase caster, string itemSpellName, bool fireWithoutCasting, AttackableUnit target, Vector2 overrideCastPos, bool isForceCastingOrChanneling = false, int overrideForceLevel = -1, bool updateAutoAttackTimer = false, bool useAutoAttackSpell = false)
         {
             // Apply the spell to the TempItemSlot.
             caster.SetSpell(itemSpellName, (byte)SpellSlotType.TempItemSlot, true);
             SpellCast(caster, 0, SpellSlotType.TempItemSlot, fireWithoutCasting, target, overrideCastPos, isForceCastingOrChanneling, overrideForceLevel, updateAutoAttackTimer, useAutoAttackSpell);
         }
 
-        public static void SpellCastItem(IObjAIBase caster, string itemSpellName, Vector2 pos, Vector2 endPos, bool fireWithoutCasting, Vector2 overrideCastPos, bool isForceCastingOrChanneling = false, int overrideForceLevel = -1, bool updateAutoAttackTimer = false, bool useAutoAttackSpell = false)
+        public static void SpellCastItem(ObjAIBase caster, string itemSpellName, Vector2 pos, Vector2 endPos, bool fireWithoutCasting, Vector2 overrideCastPos, bool isForceCastingOrChanneling = false, int overrideForceLevel = -1, bool updateAutoAttackTimer = false, bool useAutoAttackSpell = false)
         {
             // Apply the spell to the TempItemSlot.
             caster.SetSpell(itemSpellName, (byte)SpellSlotType.TempItemSlot, true);
             SpellCast(caster, 0, SpellSlotType.TempItemSlot, pos, endPos, fireWithoutCasting, overrideCastPos, null, isForceCastingOrChanneling, overrideForceLevel, updateAutoAttackTimer, useAutoAttackSpell);
         }
 
-        public static void StopChanneling(IObjAIBase target, ChannelingStopCondition stopCondition, ChannelingStopSource stopSource)
+        public static void StopChanneling(ObjAIBase target, ChannelingStopCondition stopCondition, ChannelingStopSource stopSource)
         {
             target.StopChanneling(stopCondition, stopSource);
         }
 
         /// <summary>
-        /// Creates a DeathData variable for use with the IAttackableUnit.Die() function.
+        /// Creates a DeathData variable for use with the AttackableUnit.Die() function.
         /// </summary>
         /// <param name="zombify">Whether or not the unit should become a zombie after death.</param>
         /// <param name="deathType">Type of death. Values unknown.</param>
@@ -1048,7 +1048,7 @@ namespace LeagueSandbox.GameServer.API
         /// <param name="dmgSource">Source of the damage that caused the death.</param>
         /// <param name="duration">Time until the death completes (fade-out?).</param>
         /// <returns></returns>
-        public static IDeathData CreateDeathData(bool zombify, byte deathType, IAttackableUnit unit, IAttackableUnit killer, DamageType dmgType, DamageSource dmgSource, float duration)
+        public static DeathData CreateDeathData(bool zombify, byte deathType, AttackableUnit unit, AttackableUnit killer, DamageType dmgType, DamageSource dmgSource, float duration)
         {
             return new DeathData
             {
@@ -1068,7 +1068,7 @@ namespace LeagueSandbox.GameServer.API
         /// <param name="team"></param>
         /// <param name="unit"></param>
         /// <returns></returns>
-        public static bool TeamHasVision(TeamId team, IGameObject unit)
+        public static bool TeamHasVision(TeamId team, GameObject unit)
         {
             return _game.ObjectManager.TeamHasVisionOn(team, unit);
         }
@@ -1078,7 +1078,7 @@ namespace LeagueSandbox.GameServer.API
         /// </summary>
         /// <param name="unit"></param>
         /// <returns></returns>
-        public static bool UnitIsProtectionActive(IAttackableUnit unit)
+        public static bool UnitIsProtectionActive(AttackableUnit unit)
         {
             return _game.ProtectionManager.IsProtectionActive(unit);
         }
@@ -1095,31 +1095,31 @@ namespace LeagueSandbox.GameServer.API
             return _game.Map.PathingHandler.GetPath(from, to, distanceThreshold);
         }
 
-        public static void OverrideUnitAttackSpeedCap(IAttackableUnit unit, bool doOverrideMax, float maxAttackSpeedOverride, bool doOverrideMin, float minAttackSpeedOverride)
+        public static void OverrideUnitAttackSpeedCap(AttackableUnit unit, bool doOverrideMax, float maxAttackSpeedOverride, bool doOverrideMin, float minAttackSpeedOverride)
         {
             //Investigate if we wanna update the stats here too
             _game.PacketNotifier.NotifyS2C_UpdateAttackSpeedCapOverrides(doOverrideMax, maxAttackSpeedOverride, doOverrideMin, minAttackSpeedOverride, unit);
         }
 
-        public static IItemData GetItemData(int Id)
+        public static ItemData GetItemData(int Id)
         {
             return _game.ItemManager.SafeGetItemType(Id);
         }
 
-        public static void PlaySound(string soundName, IAttackableUnit soundOwner)
+        public static void PlaySound(string soundName, AttackableUnit soundOwner)
         {
             _game.PacketNotifier.NotifyS2C_PlaySound(soundName, soundOwner);
         }
 
-        public static void StopTargetingUnit(IAttackableUnit unit)
+        public static void StopTargetingUnit(AttackableUnit unit)
         {
             _game.ObjectManager.StopTargeting(unit);
         }
 
-        public static IPet CreatePet
+        public static Pet CreatePet
         (
-            IChampion owner,
-            ISpell spell,
+            Champion owner,
+            Spell spell,
             Vector2 position,
             string name,
             string model,
@@ -1130,7 +1130,7 @@ namespace LeagueSandbox.GameServer.API
             bool disallowPlayerControl = false,
             bool doFade = false,
             bool isClone = true,
-            IStats stats = null,
+            Stats stats = null,
             string aiScript = "Pet"
 
         )
@@ -1138,11 +1138,11 @@ namespace LeagueSandbox.GameServer.API
             return new Pet(_game, owner, spell, position, name, model, buffName, lifeTime, stats, cloneInventory, showMinimapIfClone, disallowPlayerControl, doFade, isClone, aiScript);
         }
 
-        public static IPet CreateClonePet
+        public static Pet CreateClonePet
         (
-            IChampion owner,
-            ISpell spell,
-            IObjAIBase cloned,
+            Champion owner,
+            Spell spell,
+            ObjAIBase cloned,
             Vector2 position,
             string buffName,
             float lifeTime,
@@ -1150,7 +1150,7 @@ namespace LeagueSandbox.GameServer.API
             bool showMinimapIfClone = true,
             bool disallowPlayerControl = false,
             bool doFade = false,
-            IStats stats = null,
+            Stats stats = null,
             string AIScript = "Pet"
         )
         {
@@ -1162,9 +1162,9 @@ namespace LeagueSandbox.GameServer.API
             return _game.Map.MapScript.MapScriptMetadata.AIVars.DefaultPetReturnRadius;
         }
 
-        public static float GetPetReturnRadius(IMinion minion)
+        public static float GetPetReturnRadius(Minion minion)
         {
-            if (minion is IPet pet)
+            if (minion is Pet pet)
             {
                 return pet.GetReturnRadius();
             }

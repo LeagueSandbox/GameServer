@@ -1,24 +1,23 @@
 ﻿using System.Collections.Generic;
-using GameServerCore.Domain;
 using LeagueSandbox.GameServer.Content;
 
 namespace LeagueSandbox.GameServer.Inventory
 {
     public class ItemManager
     {
-        private readonly Dictionary<int, IItemData> _itemTypes;
+        private readonly Dictionary<int, ItemData> _itemTypes;
 
         public ItemManager()
         {
-            _itemTypes = new Dictionary<int, IItemData>();
+            _itemTypes = new Dictionary<int, ItemData>();
         }
 
-        public IItemData GetItemType(int itemId)
+        public ItemData GetItemType(int itemId)
         {
             return _itemTypes[itemId];
         }
 
-        public IItemData SafeGetItemType(int itemId)
+        public ItemData SafeGetItemType(int itemId)
         {
             return _itemTypes.GetValueOrDefault(itemId, null);
         }

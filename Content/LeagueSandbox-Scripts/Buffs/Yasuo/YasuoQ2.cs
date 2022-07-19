@@ -1,27 +1,30 @@
-﻿using GameServerCore.Domain.GameObjects;
-using GameServerCore.Domain.GameObjects.Spell;
-using GameServerCore.Enums;
+﻿using GameServerCore.Enums;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 using GameServerCore.Scripting.CSharp;
 using LeagueSandbox.GameServer.Scripting.CSharp;
+using LeagueSandbox.GameServer.GameObjects;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
+using LeagueSandbox.GameServer.GameObjects.SpellNS;
+using LeagueSandbox.GameServer.GameObjects.StatsNS;
 
 namespace Buffs
 {
     internal class YasuoQ02 : IBuffGameScript
     {
-        public IBuffScriptMetaData BuffMetaData { get; set; } = new BuffScriptMetaData
+        public BuffScriptMetaData BuffMetaData { get; set; } = new BuffScriptMetaData
         {
             BuffAddType = BuffAddType.REPLACE_EXISTING
         };
 
-        public IStatsModifier StatsModifier { get; private set; }
+        public StatsModifier StatsModifier { get; private set; }
 
-        private IParticle p1;
-        private IParticle p2;
-        private IParticle p3;
-        private IParticle p4;
+        private Particle p1;
+        private Particle p2;
+        private Particle p3;
+        private Particle p4;
 
-        public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
+        public void OnActivate(AttackableUnit unit, Buff buff, Spell ownerSpell)
         {
             var caster = ownerSpell.CastInfo.Owner;
             SetSpell(caster, "YasuoQ3W", SpellSlotType.SpellSlots, 0);
@@ -31,9 +34,9 @@ namespace Buffs
             p4 = AddParticleTarget(caster, caster, "Yasuo_Base_Q_strike_build_up_test", caster);
         }
 
-        public void OnDeactivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
+        public void OnDeactivate(AttackableUnit unit, Buff buff, Spell ownerSpell)
         {
-            if (unit is IObjAIBase ai)
+            if (unit is ObjAIBase ai)
             {
                 if (ai.Spells[0].SpellName == "YasuoQ3W")
                 {
@@ -44,11 +47,6 @@ namespace Buffs
             RemoveParticle(p2);
             RemoveParticle(p3);
             RemoveParticle(p4);
-        }
-
-        public void OnUpdate(float diff)
-        {
-            //empty!
         }
     }
 }

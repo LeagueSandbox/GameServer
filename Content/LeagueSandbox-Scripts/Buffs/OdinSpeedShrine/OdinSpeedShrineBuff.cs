@@ -1,8 +1,9 @@
-using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
-using GameServerCore.Domain.GameObjects.Spell;
 using GameServerCore.Scripting.CSharp;
-using LeagueSandbox.GameServer.GameObjects.Stats;
+using LeagueSandbox.GameServer.GameObjects;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits;
+using LeagueSandbox.GameServer.GameObjects.SpellNS;
+using LeagueSandbox.GameServer.GameObjects.StatsNS;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 
@@ -10,16 +11,16 @@ namespace Buffs
 {
     internal class OdinSpeedShrineBuff : IBuffGameScript
     {
-        public IBuffScriptMetaData BuffMetaData { get; set; } = new BuffScriptMetaData
+        public BuffScriptMetaData BuffMetaData { get; set; } = new BuffScriptMetaData
         {
             BuffType = BuffType.COMBAT_ENCHANCER,
             BuffAddType = BuffAddType.RENEW_EXISTING
         };
-        public IStatsModifier StatsModifier { get; private set; } = new StatsModifier();
+        public StatsModifier StatsModifier { get; private set; } = new StatsModifier();
 
-        IParticle p1;
-        IParticle p2;
-        public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
+        Particle p1;
+        Particle p2;
+        public void OnActivate(AttackableUnit unit, Buff buff, Spell ownerSpell)
         {
             //TODO: Make it decay over the duration of the buff
             p1 = AddParticleTarget(buff.SourceUnit, unit, "Odin_Speed_Shrine_buf", unit, -1.0f);
@@ -28,14 +29,10 @@ namespace Buffs
             unit.AddStatModifier(StatsModifier);
         }
 
-        public void OnDeactivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
+        public void OnDeactivate(AttackableUnit unit, Buff buff, Spell ownerSpell)
         {
             RemoveParticle(p1);
             RemoveParticle(p2);
-        }
-
-        public void OnUpdate(float diff)
-        {
         }
     }
 }

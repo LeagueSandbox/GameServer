@@ -1,6 +1,4 @@
 using GameServerCore.Enums;
-using GameServerCore.Domain.GameObjects;
-using GameServerCore.Domain.GameObjects.Spell;
 using LeagueSandbox.GameServer.API;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 using LeagueSandbox.GameServer.Scripting.CSharp;
@@ -8,12 +6,14 @@ using System.Numerics;
 using GameServerCore.Scripting.CSharp;
 using System.Linq;
 using GameServerCore;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits;
 
 namespace AIScripts
 {
     public class Pet : IAIScript
     {
-        public IAIScriptMetaData AIScriptMetaData { get; set; } = new AIScriptMetaData();
+        public AIScriptMetaData AIScriptMetaData { get; set; } = new AIScriptMetaData();
 
         internal const float FAR_MOVEMENT_DISTANCE = 1000.0f;
         internal const float TELEPORT_DISTANCE = 2000.0f;
@@ -26,19 +26,19 @@ namespace AIScripts
         float _timerFindEnemiesThreshold = 0.15f;
         float _timerFeared;
         float _timerFearedThreshold = 1.0f;
-        IMinion minion;
+        Minion minion;
 
-        public void OnActivate(IObjAIBase owner)
+        public void OnActivate(ObjAIBase owner)
         {
-            minion = owner as IMinion;
+            minion = owner as Minion;
 
             ApiEventManager.OnUnitUpdateMoveOrder.AddListener(this, owner, OnOrder, false);
             ApiEventManager.OnTargetLost.AddListener(this, owner, OnTargetLost, false);
         }
 
-        public bool OnOrder(IObjAIBase ai, OrderType order)
+        public bool OnOrder(ObjAIBase ai, OrderType order)
         {
-            IAttackableUnit target = ai.TargetUnit;
+            AttackableUnit target = ai.TargetUnit;
             AIState state = ai.GetAIState();
 
             if (state == AIState.AI_HALTED)
@@ -64,9 +64,9 @@ namespace AIScripts
                 return true;
             }
 
-            if (ai is IPet pet)
+            if (ai is LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI.Pet pet)
             {
-                IObjAIBase owner = pet.Owner;
+                ObjAIBase owner = pet.Owner;
                 if (owner == null)
                 {
                     pet.Die(CreateDeathData(false, 0, pet, pet, DamageType.DAMAGE_TYPE_TRUE, DamageSource.DAMAGE_SOURCE_INTERNALRAW, 0.0f));
@@ -136,7 +136,7 @@ namespace AIScripts
                 // TODO: Disable attacking
                 ai.SetAIState(AIState.AI_PET_HARDATTACK);
                 // TODO: Move to target.
-                if (target is IObjAIBase targetAI)
+                if (target is ObjAIBase targetAI)
                 {
                     // TODO: source & target may be backwards
                     AddBuff("PetCommandParticle", 45.0f, 1, null, ai, targetAI);
@@ -164,12 +164,12 @@ namespace AIScripts
             return false;
         }
 
-        public void OnTargetLost(IAttackableUnit lostTarget)
+        public void OnTargetLost(AttackableUnit lostTarget)
         {
             if (minion != null)
             {
                 AIState state = minion.GetAIState();
-                IObjAIBase owner = minion.Owner;
+                ObjAIBase owner = minion.Owner;
 
                 if (state == AIState.AI_HALTED)
                 {
@@ -183,7 +183,7 @@ namespace AIScripts
                 {
                     return;
                 }
-                IAttackableUnit newTarget = GetTargetInAttackRange();
+                AttackableUnit newTarget = GetTargetInAttackRange();
                 if (newTarget == null)
                 {
                     if (owner == null)
@@ -295,7 +295,7 @@ namespace AIScripts
                     return;
                 }
 
-                IObjAIBase owner = minion.Owner;
+                ObjAIBase owner = minion.Owner;
                 if (owner == null)
                 {
                     minion.Die(CreateDeathData(false, 0, minion, minion, DamageType.DAMAGE_TYPE_TRUE, DamageSource.DAMAGE_SOURCE_INTERNALRAW, 0.0f));
@@ -345,7 +345,7 @@ namespace AIScripts
                     return;
                 }
 
-                IObjAIBase owner = minion.Owner;
+                ObjAIBase owner = minion.Owner;
                 if (owner == null)
                 {
                     minion.Die(CreateDeathData(false, 0, minion, minion, DamageType.DAMAGE_TYPE_TRUE, DamageSource.DAMAGE_SOURCE_INTERNALRAW, 0.0f));
@@ -363,7 +363,7 @@ namespace AIScripts
                     || state == AIState.AI_PET_HARDIDLE
                     || state == AIState.AI_PET_HOLDPOSITION)
                 {
-                    IAttackableUnit newTarget = GetTargetInAttackRange();
+                    AttackableUnit newTarget = GetTargetInAttackRange();
 
                     if (newTarget == null)
                     {
@@ -421,15 +421,15 @@ namespace AIScripts
             }
         }
 
-        private IAttackableUnit GetTargetInAttackRange()
+        private AttackableUnit GetTargetInAttackRange()
         {
-            IAttackableUnit nextTarget = null;
+            AttackableUnit nextTarget = null;
             var nextTargetPriority = 14;
             var nearestObjects = GetUnitsInRange(minion.Position, minion.Stats.Range.Total, true);
             //Find target closest to max attack range.
             foreach (var it in nearestObjects.OrderBy(x => Vector2.DistanceSquared(minion.Position, x.Position) - (minion.Stats.Range.Total * minion.Stats.Range.Total)))
             {
-                if (!(it is IAttackableUnit u)
+                if (!(it is AttackableUnit u)
                     || u.IsDead
                     || u.Team == minion.Team
                     || Vector2.DistanceSquared(minion.Position, u.Position) > DETECT_RANGE * DETECT_RANGE

@@ -2,11 +2,10 @@
 using System.Collections.Generic;
 using System.Numerics;
 using GameServerCore.Domain;
-using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
 using LeagueSandbox.GameServer.Content;
-using GameServerCore.Scripting.CSharp;
 using LeagueSandbox.GameServer.Scripting.CSharp;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits.Buildings.AnimatedBuildings;
 using static LeagueSandbox.GameServer.API.ApiMapFunctionManager;
 using static LeagueSandbox.GameServer.API.ApiGameEvents;
 
@@ -14,8 +13,8 @@ namespace MapScripts.Map11
 {
     public class CLASSIC : IMapScript
     {
-        public virtual IMapScriptMetadata MapScriptMetadata { get; set; } = new MapScriptMetadata();
-        public virtual IGlobalData GlobalData { get; set; } = new GlobalData();
+        public virtual MapScriptMetadata MapScriptMetadata { get; set; } = new MapScriptMetadata();
+        public virtual GlobalData GlobalData { get; set; } = new GlobalData();
         public bool HasFirstBloodHappened { get; set; } = false;
         public long NextSpawnTime { get; set; } = 90 * 1000;
         public string LaneMinionAI { get; set; } = "LaneMinionAI";
@@ -270,7 +269,7 @@ namespace MapScripts.Map11
                 TeamId opposed_team = barrack.Value.GetOpposingTeamID();
                 TeamId barrackTeam = barrack.Value.GetTeamID();
                 LaneID lane = barrack.Value.GetSpawnBarrackLaneID();
-                IInhibitor inhibitor = LevelScriptObjects.InhibitorList[opposed_team][lane];
+                Inhibitor inhibitor = LevelScriptObjects.InhibitorList[opposed_team][lane];
                 Vector2 position = new Vector2(barrack.Value.CentralPoint.X, barrack.Value.CentralPoint.Z);
                 bool isInhibitorDead = inhibitor.InhibitorState == InhibitorState.DEAD;
                 Tuple<int, List<MinionSpawnType>> spawnWave = MinionWaveToSpawn(GameTime(), _cannonMinionCount, isInhibitorDead, LevelScriptObjects.AllInhibitorsAreDead[opposed_team]);

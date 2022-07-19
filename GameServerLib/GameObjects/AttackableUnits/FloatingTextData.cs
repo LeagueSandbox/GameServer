@@ -1,16 +1,15 @@
-﻿using GameServerCore.Domain;
-using GameServerCore.Domain.GameObjects;
-using GameServerCore.Enums;
+﻿using GameServerCore.Enums;
+using LeagueSandbox.GameServer.GameObjects;
 
 namespace GameServerLib.GameObjects.AttackableUnits
 {
-    class FloatingTextData : IFloatingTextData
+    public class FloatingTextData
     {
-        public IGameObject Target { get; }
+        public GameObject Target { get; }
         public FloatTextType FloatTextType { get; }
         public string Message { get; }
         public int Param { get; }
-        public FloatingTextData(IGameObject target, string message, FloatTextType floatTextType, int param)
+        public FloatingTextData(GameObject target, string message, FloatTextType floatTextType, int param)
         {
             Target = target;
             Message = message;

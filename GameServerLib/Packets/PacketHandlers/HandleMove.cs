@@ -1,17 +1,17 @@
 ﻿using GameServerCore.Packets.PacketDefinitions.Requests;
-using GameServerCore;
-using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
 using GameServerCore.Packets.Handlers;
 using System.Numerics;
 using System.Collections.Generic;
+using LeagueSandbox.GameServer.Players;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits;
 
 namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 {
     public class HandleMove : PacketHandlerBase<MovementRequest>
     {
         private readonly Game _game;
-        private readonly IPlayerManager _playerManager;
+        private readonly PlayerManager _playerManager;
 
         public HandleMove(Game game)
         {
@@ -60,7 +60,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                     }
                 }
 
-                var u = _game.ObjectManager.GetObjectById(req.TargetNetID) as IAttackableUnit;
+                var u = _game.ObjectManager.GetObjectById(req.TargetNetID) as AttackableUnit;
                 var pet = champion.GetPet();
 
                 switch (req.OrderType)

@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Numerics;
-using GameServerCore.Domain;
 using GameServerCore.Enums;
 
 namespace LeagueSandbox.GameServer.GameObjects
 {
-    public class Fountain : IFountain
+    public class Fountain
     {
         private Game _game;
         private const float PERCENT_MAX_HEALTH_HEAL = 0.15f;

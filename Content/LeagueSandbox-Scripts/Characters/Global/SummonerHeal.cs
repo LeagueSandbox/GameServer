@@ -1,36 +1,26 @@
-using System;
-using GameServerCore.Domain.GameObjects;
-using GameServerCore.Domain.GameObjects.Spell;
-using GameServerCore.Domain.GameObjects.Spell.Missile;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using System.Numerics;
 using GameServerCore.Scripting.CSharp;
-using GameServerCore.Enums;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
+using LeagueSandbox.GameServer.GameObjects.SpellNS;
 
 namespace Spells
 {
     public class SummonerHeal : ISpellScript
     {
-        public ISpellScriptMetadata ScriptMetadata { get; private set; } = new SpellScriptMetadata()
+        public SpellScriptMetadata ScriptMetadata { get; private set; } = new SpellScriptMetadata()
         {
             // TODO
         };
 
-        public void OnActivate(IObjAIBase owner, ISpell spell)
+        public void OnSpellPreCast(ObjAIBase owner, Spell spell, AttackableUnit target, Vector2 start, Vector2 end)
         {
-        }
-
-        public void OnDeactivate(IObjAIBase owner, ISpell spell)
-        {
-        }
-
-        public void OnSpellPreCast(IObjAIBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
-        {
-            IChampion mostWoundedAlliedIChampion = null;
+            Champion mostWoundedAlliedIChampion = null;
 
             if (target != null
-                && target is IChampion ch
+                && target is Champion ch
                 && IsUnitInRange(ch, owner.Position, spell.SpellData.CastRangeDisplayOverride, true))
             {
                 mostWoundedAlliedIChampion = ch;
@@ -64,7 +54,7 @@ namespace Spells
             PerformHeal(owner, spell, owner);
         }
 
-        private void PerformHeal(IObjAIBase owner, ISpell spell, IAttackableUnit target)
+        private void PerformHeal(ObjAIBase owner, Spell spell, AttackableUnit target)
         {
             float healthGain = 75 + (target.Stats.Level * 15);
             if (target.HasBuff("HealCheck"))
@@ -74,30 +64,6 @@ namespace Spells
             target.TakeHeal(owner, healthGain, spell);
             AddBuff("HealSpeed", 1.0f, 1, spell, target, owner);
             AddBuff("HealCheck", 35.0f, 1, spell, target, owner);
-        }
-
-        public void OnSpellCast(ISpell spell)
-        {
-        }
-
-        public void OnSpellPostCast(ISpell spell)
-        {
-        }
-
-        public void OnSpellChannel(ISpell spell)
-        { 
-        }
-
-        public void OnSpellChannelCancel(ISpell spell, ChannelingStopSource reason)
-        {
-        }
-
-        public void OnSpellPostChannel(ISpell spell)
-        {
-        }
-
-        public void OnUpdate(float diff)
-        {
         }
     }
 }

@@ -1,22 +1,19 @@
 ﻿using System.Collections.Generic;
 using System.IO;
-using GameServerCore.Content;
-using GameServerCore.Domain;
-using GameServerCore.Enums;
 using log4net;
 using LeagueSandbox.GameServer.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using LeagueSandbox.GameServer.Content.Navigation;
-using GameServerCore.Domain.GameObjects.Spell;
 using System.Numerics;
 using LeagueSandbox.GameServer.Inventory;
 using LeagueSandbox.GameServer.Scripting.CSharp;
-using GameServerCore.Handlers;
+using LeagueSandbox.GameServer.Handlers;
+using GameServerCore.Domain;
 
 namespace LeagueSandbox.GameServer.Content
 {
-    public class Package : IPackage
+    public class Package
     {
         public string PackagePath { get; private set; }
         public string PackageName { get; private set; }
@@ -64,7 +61,7 @@ namespace LeagueSandbox.GameServer.Content
             }
         }
 
-        public IContentFile GetContentFileFromJson(string contentType, string itemName, string subPath = null)
+        public ContentFile GetContentFileFromJson(string contentType, string itemName, string subPath = null)
         {
             if (!_content.ContainsKey(contentType) || !_content[contentType].ContainsKey(itemName))
             {
@@ -361,7 +358,7 @@ namespace LeagueSandbox.GameServer.Content
             return toReturnMapSpawns;
         }
 
-        public INavigationGrid GetNavigationGrid(IMapScriptHandler map)
+        public NavigationGrid GetNavigationGrid(MapScriptHandler map)
         {
             string navgridName = "AIPath";
             if (!string.IsNullOrEmpty(map.MapScript.MapScriptMetadata.NavGridOverride))
@@ -380,12 +377,12 @@ namespace LeagueSandbox.GameServer.Content
             return new NavigationGrid(navigationGridPath);
         }
 
-        public ISpellData GetSpellData(string spellName)
+        public SpellData GetSpellData(string spellName)
         {
             return _spellData.GetValueOrDefault(spellName, null);
         }
 
-        public ICharData GetCharData(string characterName)
+        public CharData GetCharData(string characterName)
         {
             return _charData.GetValueOrDefault(characterName, null);
         }

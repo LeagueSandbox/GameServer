@@ -1,21 +1,20 @@
-﻿using GameServerCore.Domain.GameObjects;
-using GameServerCore.Domain.GameObjects.Spell;
-using GameServerCore.Enums;
+﻿using GameServerCore.Enums;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits;
 
-namespace LeagueSandbox.GameServer.GameObjects.Spell
+namespace LeagueSandbox.GameServer.GameObjects.SpellNS
 {
-    public class CastTarget : ICastTarget
+    public class CastTarget
     {
-        public IAttackableUnit Unit { get; protected set; }
+        public AttackableUnit Unit { get; protected set; }
         public HitResult HitResult { get; protected set; }
 
-        public CastTarget(IAttackableUnit unit, HitResult hitResult)
+        public CastTarget(AttackableUnit unit, HitResult hitResult)
         {
             Unit = unit;
             HitResult = hitResult;
         }
 
-        public static HitResult GetHitResult(IAttackableUnit unit, bool isAutoAttack, bool isNextAutoCrit)
+        public static HitResult GetHitResult(AttackableUnit unit, bool isAutoAttack, bool isNextAutoCrit)
         {
             if (isAutoAttack)
             {

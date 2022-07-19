@@ -2,27 +2,26 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using GameServerCore.Domain;
-using GameServerCore.Domain.GameObjects;
-using GameServerCore.Packets.Interfaces;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
 using LeagueSandbox.GameServer.Logging;
 using log4net;
+using PacketDefinitions420;
 
 namespace LeagueSandbox.GameServer.Inventory
 {
-    public class InventoryManager : IInventoryManager
+    public class InventoryManager
     {
-        private readonly IPacketNotifier _packetNotifier;
+        private readonly PacketNotifier _packetNotifier;
         private readonly Inventory _inventory;
         private static ILog _logger = LoggerProvider.GetLogger();
 
-        private InventoryManager(IPacketNotifier packetNotifier)
+        private InventoryManager(PacketNotifier packetNotifier)
         {
             _packetNotifier = packetNotifier;
             _inventory = new Inventory(this);
         }
 
-        public KeyValuePair<IItem, bool> AddItem(IItemData itemData, IObjAIBase owner = null)
+        public KeyValuePair<Item, bool> AddItem(ItemData itemData, ObjAIBase owner = null)
         {
             var item = _inventory.AddItem(itemData, owner);
 
@@ -39,7 +38,7 @@ namespace LeagueSandbox.GameServer.Inventory
             return KeyValuePair.Create(item, true);
         }
 
-        public KeyValuePair<IItem, bool> AddItemToSlot(IItemData itemData, IObjAIBase owner, byte slot)
+        public KeyValuePair<Item, bool> AddItemToSlot(ItemData itemData, ObjAIBase owner, byte slot)
         {
             var item = _inventory.SetItemToSlot(itemData, owner, slot);
 
@@ -57,23 +56,23 @@ namespace LeagueSandbox.GameServer.Inventory
             return KeyValuePair.Create(item, true);
         }
 
-        public IItem SetExtraItem(byte slot, IItemData item)
+        public Item SetExtraItem(byte slot, ItemData item)
         {
             return _inventory.SetExtraItem(slot, item);
         }
 
-        public IItem GetItem(byte slot)
+        public Item GetItem(byte slot)
         {
             return _inventory.GetItem(slot);
         }
 
-        public IItem GetItem(string itemSpellName)
+        public Item GetItem(string itemSpellName)
         {
             return _inventory.GetItem(itemSpellName);
         }
-        public List<IItem> GetAllItems(bool includeRunes = false, bool includeRecallItem = false)
+        public List<Item> GetAllItems(bool includeRunes = false, bool includeRecallItem = false)
         {
-            List<IItem> toReturn = new List<IItem>(_inventory.Items.ToList());
+            List<Item> toReturn = new List<Item>(_inventory.Items.ToList());
             if (!includeRecallItem)
             {
                 toReturn.RemoveAt(7);
@@ -92,7 +91,7 @@ namespace LeagueSandbox.GameServer.Inventory
             return _inventory.HasItemWithID(ItemID);
         }
 
-        public bool RemoveItem(byte slot, IObjAIBase owner = null, int stacksToRemove = 1)
+        public bool RemoveItem(byte slot, ObjAIBase owner = null, int stacksToRemove = 1)
         {
             var item = _inventory.Items[slot];
             if (item == null)
@@ -117,7 +116,7 @@ namespace LeagueSandbox.GameServer.Inventory
 
             return true;
         }
-        public bool RemoveItem(IItem item, IObjAIBase owner = null, int stacksToRemove = 1)
+        public bool RemoveItem(Item item, ObjAIBase owner = null, int stacksToRemove = 1)
         {
             var slot = _inventory.GetItemSlot(item);
 
@@ -135,7 +134,7 @@ namespace LeagueSandbox.GameServer.Inventory
 
             return true;
         }
-        public byte GetItemSlot(IItem item)
+        public byte GetItemSlot(Item item)
         {
             return _inventory.GetItemSlot(item);
         }
@@ -145,15 +144,15 @@ namespace LeagueSandbox.GameServer.Inventory
             _inventory.SwapItems(slot1, slot2);
         }
 
-        public List<IItem> GetAvailableItems(IEnumerable<IItemData> items)
+        public List<Item> GetAvailableItems(IEnumerable<ItemData> items)
         {
-            var tempInv = new List<IItem>(_inventory.GetBaseItems());
+            var tempInv = new List<Item>(_inventory.GetBaseItems());
             return GetAvailableItemsRecursive(ref tempInv, items);
         }
 
-        private static List<IItem> GetAvailableItemsRecursive(ref List<IItem> inventoryState, IEnumerable<IItemData> items)
+        private static List<Item> GetAvailableItemsRecursive(ref List<Item> inventoryState, IEnumerable<ItemData> items)
         {
-            var result = new List<IItem>();
+            var result = new List<Item>();
             foreach (var component in items)
             {
                 if (component == null)
@@ -175,7 +174,7 @@ namespace LeagueSandbox.GameServer.Inventory
             return result;
         }
 
-        public static InventoryManager CreateInventory(IPacketNotifier packetNotifier)
+        public static InventoryManager CreateInventory(PacketNotifier packetNotifier)
         {
             return new InventoryManager(packetNotifier);
         }

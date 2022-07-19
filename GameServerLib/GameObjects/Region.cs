@@ -1,4 +1,3 @@
-using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
 using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
 using LeagueSandbox.GameServer.GameObjects.Other;
@@ -10,14 +9,14 @@ namespace LeagueSandbox.GameServer.GameObjects
     /// Class used for all in-game visual effects meant to be explicitly networked by the server (never spawned client-side).
     /// </summary>
     /// TODO: Possibly turn this into a simple data storage object and put it in GameObject as a RegionParameters variable (or something similar).
-    public class Region : GameObject, IRegion
+    public class Region : GameObject
     {
         // Function Vars
         private float _currentTime;
 
         public int Type { get; }
-        public IGameObject CollisionUnit { get; }
-        public IGameObject VisionTarget { get; }
+        public GameObject CollisionUnit { get; }
+        public GameObject VisionTarget { get; }
         public int OwnerClientID { get; }
         /// <summary>
         /// Total game-time that this region should exist for
@@ -59,8 +58,8 @@ namespace LeagueSandbox.GameServer.GameObjects
             TeamId team,
             Vector2 pos,
             RegionType type = RegionType.Default,
-            IGameObject collisionUnit = null,
-            IGameObject visionTarget = null,
+            GameObject collisionUnit = null,
+            GameObject visionTarget = null,
             float visionRadius = 0,
             bool revealStealth = false,
             float collisionRadius = 0,
@@ -153,7 +152,7 @@ namespace LeagueSandbox.GameServer.GameObjects
         /// <summary>
         /// Called by ObjectManager when the object is ontop of another object or when the object is inside terrain.
         /// </summary>
-        public override void OnCollision(IGameObject collider, bool isTerrain = false)
+        public override void OnCollision(GameObject collider, bool isTerrain = false)
         {
         }
 
