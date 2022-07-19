@@ -9,13 +9,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameServerCore", "GameServe
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameMaths", "GameMaths\GameMaths.csproj", "{8DCE7086-EF5B-45F3-9B91-23E28199BA50}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PacketDefinitions420", "PacketDefinitions420\PacketDefinitions420.csproj", "{57440E69-E7A4-4E24-8AB4-5D766BB0A9F1}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PacketDefinitionsTests", "PacketDefinitionsTests\PacketDefinitionsTests.csproj", "{E39B27AF-7B7E-4719-905F-E3B87421CAE5}"
-	ProjectSection(ProjectDependencies) = postProject
-		{6B86971B-1812-406E-ABD1-3B4B78565642} = {6B86971B-1812-406E-ABD1-3B4B78565642}
-	EndProjectSection
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LeagueSandbox-Scripts", "Content\LeagueSandbox-Scripts\LeagueSandbox-Scripts.csproj", "{8637E2DB-2A64-4A4B-853C-F62C852B2F23}"
 	ProjectSection(ProjectDependencies) = postProject
 		{6B86971B-1812-406E-ABD1-3B4B78565642} = {6B86971B-1812-406E-ABD1-3B4B78565642}
