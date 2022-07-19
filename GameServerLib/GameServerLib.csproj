@@ -18,7 +18,6 @@
   <ItemGroup>
     <ProjectReference Include="..\GameMaths\GameMaths.csproj" />
     <ProjectReference Include="..\GameServerCore\GameServerCore.csproj" />
-    <ProjectReference Include="..\PacketDefinitions420\PacketDefinitions420.csproj" />
     <ProjectReference Include="..\QuadTree\QuadTree.csproj" />
     <ProjectReference Include="..\LeaguePackets\LeaguePackets\LeaguePackets.csproj" />
 	</ItemGroup>
