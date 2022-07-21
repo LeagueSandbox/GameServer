@@ -129,7 +129,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
 
         {
             Model = model;
-
             CharData = _game.Config.ContentManager.GetCharData(Model);
             if (stats == null)
             {

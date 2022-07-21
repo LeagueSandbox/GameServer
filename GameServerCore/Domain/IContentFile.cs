@@ -11,5 +11,6 @@
         int[] GetIntArray(string section, string name, int[] defaultValue);
         float[] GetMultiFloat(string section, string name, int num = 6, float defaultValue = 0);
         int[] GetMultiInt(string section, string name, int num = 6, int defaultValue = 0);
+        bool HasMentionOf(string section, string name);
     }
 }

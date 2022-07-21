@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using GameServerCore.Content;
 using GameServerCore.Domain;
 
@@ -30,6 +31,15 @@ namespace LeagueSandbox.GameServer.Content
             }
 
             return hash;
+        }
+
+        public bool HasMentionOf(string section, string name)
+        {
+            if(Values.ContainsKey(section))
+            {
+                return Values[section].Keys.ToList().Find(x => x.Contains(name)) != null;
+            }
+            return false;
         }
 
         public string GetObject(string section, string name)

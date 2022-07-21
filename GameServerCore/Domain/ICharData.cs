@@ -1,4 +1,5 @@
-﻿using GameServerCore.Enums;
+﻿using GameServerCore.Domain.GameObjects.Spell;
+using GameServerCore.Enums;
 using System.Collections.Generic;
 
 namespace GameServerCore.Domain
@@ -12,10 +13,10 @@ namespace GameServerCore.Domain
         bool AlwaysUpdatePAR { get; }
         float Armor { get; }
         float ArmorPerLevel { get; }
-        float[] AttackDelayCastOffsetPercent { get; }
-        float[] AttackDelayCastOffsetPercentAttackSpeedRatio { get; }
-        float[] AttackDelayOffsetPercent { get; }
-        string[] AttackNames { get; }
+        float AttackDelayCastOffsetPercent { get; }
+        float AttackDelayCastOffsetPercentAttackSpeedRatio { get; }
+        float AttackDelayOffsetPercent { get; }
+        List<IBasicAttackInfo> BasicAttacks { get; }
         float[] AttackProbabilities { get; }
         float AttackRange { get; }
         float AttackSpeedPerLevel { get; }
