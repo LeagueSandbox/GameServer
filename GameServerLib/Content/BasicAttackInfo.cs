@@ -1,6 +1,6 @@
 ﻿using GameServerCore.Domain.GameObjects.Spell;
 
-namespace GameServerLib.Content
+namespace LeagueSandbox.GameServer.Content
 {
     public class BasicAttackInfo : IBasicAttackInfo
     {
