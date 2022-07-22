@@ -678,39 +678,21 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             ISpell toCast;
             if (IsNextAutoCrit)
             {
-                // TODO: Verify if we want these explicitly defined instead of taken via iteration of all spells.
-                for (short i = (short)BasicAttackTypes.BASICATTACK_CRITICAL_SLOT1; i < (short)BasicAttackTypes.BASICATTACK_CRITICAL_LAST_SLOT; i++)
+                for (short i = (short)BasicAttackTypes.BASICATTACK_CRITICAL_SLOT1; i <= (short)BasicAttackTypes.BASICATTACK_CRITICAL_LAST_SLOT; i++)
                 {
-                    if (CharData.BasicAttacks[i - 64].Probability > 0.0f)
+                    if (CharData.BasicAttacks[i - 64].Probability > 0.0f && Spells.TryGetValue(i, out toCast))
                     {
-                        //I Believe a try-catch is faster than checking "if (Spells.ContainsKey(i))" everytime
-                        try
-                        {
-                            autoAttackSpells.Add(Spells[i]);
-                        }
-                        catch
-                        {
-                            break;
-                        }
+                        autoAttackSpells.Add(toCast);
                     }
                 }
             }
             else
             {
-                // TODO: Verify if we want these explicitly defined instead of taken via iteration of all spells.
                 for (short i = (short)BasicAttackTypes.BASIC_ATTACK_TYPES_FIRST_SLOT; i <= (short)BasicAttackTypes.BASICATTACK_NORMAL_LAST_SLOT; i++)
                 {
-                    if (CharData.BasicAttacks[i - 64].Probability > 0.0f)
+                    if (CharData.BasicAttacks[i - 64].Probability > 0.0f && Spells.TryGetValue(i, out toCast))
                     {
-                        //I Believe a try-catch is faster than checking "if (Spells.ContainsKey(i))" everytime
-                        try
-                        {
-                            autoAttackSpells.Add(Spells[i]);
-                        }
-                        catch
-                        {
-                            break;
-                        }
+                        autoAttackSpells.Add(toCast);
                     }
                 }
             }
