@@ -280,7 +280,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
             CurrentMana += statsLevelUp.ManaPoints.BaseValue;
         }
 
-        private float GetLevelUpStatValue(float value)
+        public float GetLevelUpStatValue(float value)
         {
             return value * (0.65f + 0.035f * Level);
         }
