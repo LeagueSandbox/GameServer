@@ -1,15 +1,14 @@
-﻿using GameServerCore.Domain.GameObjects;
-using GameServerCore.Domain.GameObjects.Spell;
-using GameServerCore.Scripting.CSharp;
+﻿using GameServerCore.Scripting.CSharp;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
-using LeagueSandbox.GameServer.API;
 using GameServerCore.Enums;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
+using LeagueSandbox.GameServer.GameObjects.SpellNS;
 
 namespace CharScripts
 {
     internal class CharScriptAscWarpIcon : ICharScript
     {
-        public void OnActivate(IObjAIBase owner, ISpell spell = null)
+        public void OnActivate(ObjAIBase owner, Spell spell = null)
         {
             SetStatus(owner, StatusFlags.Targetable, false);
             SetStatus(owner, StatusFlags.Stunned, true);
@@ -17,14 +16,6 @@ namespace CharScripts
             SetStatus(owner, StatusFlags.Ghosted, true);
             SetStatus(owner, StatusFlags.Invulnerable, true);
             SetStatus(owner, StatusFlags.CanMoveEver, false);
-        }
-
-        public void OnDeactivate(IObjAIBase owner, ISpell spell = null)
-        {
-        }
-
-        public void OnUpdate(float diff)
-        {
         }
     }
 }

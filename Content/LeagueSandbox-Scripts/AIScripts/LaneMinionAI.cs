@@ -1,5 +1,4 @@
 ﻿using GameServerCore.Enums;
-using GameServerCore.Domain.GameObjects;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using System.Numerics;
@@ -7,21 +6,23 @@ using GameServerCore.Scripting.CSharp;
 using System.Linq;
 using System.Collections.Generic;
 using System;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits;
 
 namespace AIScripts
 {
     public class LaneMinionAI : IAIScript
     {
-        public IAIScriptMetaData AIScriptMetaData { get; set; } = new AIScriptMetaData
+        public AIScriptMetaData AIScriptMetaData { get; set; } = new AIScriptMetaData
         {
             HandlesCallsForHelp = true
         };
-        ILaneMinion LaneMinion;
+        LaneMinion LaneMinion;
         int currentWaypointIndex = 0;
         float minionActionTimer = 250f;
         bool targetIsStillValid = false;
         Dictionary<uint, float> temporaryIgnored = new Dictionary<uint, float>();
-        public Dictionary<IAttackableUnit, int> unitsAttackingAllies { get; } = new Dictionary<IAttackableUnit, int>();
+        public Dictionary<AttackableUnit, int> unitsAttackingAllies { get; } = new Dictionary<AttackableUnit, int>();
         float timeSinceLastAttack = 0f;
         int targetUnitPriority = (int) ClassifyUnit.DEFAULT;
         float localTime = 0f;
@@ -44,9 +45,9 @@ namespace AIScripts
             return false;
         }
 
-        public void OnActivate(IObjAIBase owner)
+        public void OnActivate(ObjAIBase owner)
         {
-            LaneMinion = owner as ILaneMinion;
+            LaneMinion = owner as LaneMinion;
         }
         
         public void OnUpdate(float delta)
@@ -98,7 +99,7 @@ namespace AIScripts
             }
         }
 
-        public void OnCallForHelp(IAttackableUnit attacker, IAttackableUnit victium)
+        public void OnCallForHelp(AttackableUnit attacker, AttackableUnit victium)
         {
             if(unitsAttackingAllies != null)
             {
@@ -110,12 +111,12 @@ namespace AIScripts
             }
         }
 
-        bool UnitInRange(IAttackableUnit u, float range)
+        bool UnitInRange(AttackableUnit u, float range)
         {
             return Vector2.DistanceSquared(LaneMinion.Position, u.Position) < (range * range);
         }
 
-        bool IsValidTarget(IAttackableUnit u)
+        bool IsValidTarget(AttackableUnit u)
         {
             return (
                 u != null
@@ -128,7 +129,7 @@ namespace AIScripts
             );
         }
 
-        void Ignore(IAttackableUnit unit, float time = 500)
+        void Ignore(AttackableUnit unit, float time = 500)
         {
             temporaryIgnored[unit.NetId] = localTime + time;
         }
@@ -151,8 +152,8 @@ namespace AIScripts
         {
             callsForHelpMayBeCleared = true;
 
-            IAttackableUnit currentTarget = null;
-            IAttackableUnit nextTarget = currentTarget;
+            AttackableUnit currentTarget = null;
+            AttackableUnit nextTarget = currentTarget;
             int nextTargetPriority = (int)ClassifyUnit.DEFAULT;
             float acquisitionRange = LaneMinion.Stats.AcquisitionRange.Total;
             float nextTargetDistanceSquared = acquisitionRange * acquisitionRange;
@@ -168,7 +169,7 @@ namespace AIScripts
             
             FilterTemporaryIgnoredList();
 
-            IEnumerable<IAttackableUnit> nearestObjects;
+            IEnumerable<AttackableUnit> nearestObjects;
             if(handleOnlyCallsForHelp)
             {
                 if(unitsAttackingAllies.Count == 0)
@@ -183,7 +184,7 @@ namespace AIScripts
             }
             foreach (var it in nearestObjects)
             {
-                if (it is IAttackableUnit u && IsValidTarget(u) && !temporaryIgnored.ContainsKey(u.NetId))
+                if (it is AttackableUnit u && IsValidTarget(u) && !temporaryIgnored.ContainsKey(u.NetId))
                 {
                     int priority = unitsAttackingAllies.ContainsKey(u) ?
                         unitsAttackingAllies[u]
@@ -234,11 +235,11 @@ namespace AIScripts
             Vector2 center = LaneMinion.Position;
 
             var nearestMinions = EnumerateUnitsInRange(LaneMinion.Position, LaneMinion.Stats.AcquisitionRange.Total, true)
-                                .OfType<ILaneMinion>()
+                                .OfType<LaneMinion>()
                                 .OrderBy(minion => Vector2.DistanceSquared(LaneMinion.Position, minion.Position) - minion.CollisionRadius);
 
             // This is equivalent to making any colliding minions equal to a single minion to save on pathfinding resources.
-            foreach (ILaneMinion minion in nearestMinions)
+            foreach (LaneMinion minion in nearestMinions)
             {
                 if(minion != LaneMinion){
                     // If the closest minion is in collision range, add its collision radius to the waypoint success range.

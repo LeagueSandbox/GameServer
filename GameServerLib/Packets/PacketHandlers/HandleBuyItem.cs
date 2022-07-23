@@ -1,7 +1,7 @@
 ﻿using GameServerCore.Packets.PacketDefinitions.Requests;
-using GameServerCore;
 using GameServerCore.Packets.Handlers;
 using LeagueSandbox.GameServer.Inventory;
+using LeagueSandbox.GameServer.Players;
 
 namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 {
@@ -9,7 +9,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
     {
         private readonly Game _game;
         private readonly ItemManager _itemManager;
-        private readonly IPlayerManager _playerManager;
+        private readonly PlayerManager _playerManager;
 
         public HandleBuyItem(Game game)
         {

@@ -1,7 +1,10 @@
-using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
-using GameServerCore.Domain.GameObjects.Spell;
 using GameServerCore.Scripting.CSharp;
+using LeagueSandbox.GameServer.GameObjects;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
+using LeagueSandbox.GameServer.GameObjects.SpellNS;
+using LeagueSandbox.GameServer.GameObjects.StatsNS;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 
 namespace Buffs
@@ -9,25 +12,21 @@ namespace Buffs
     // NOTE: May or may not be the proper functionality (unknown what this script is actually supposed to do).
     internal class AscHardModeEvent : IBuffGameScript
     {
-        public IBuffScriptMetaData BuffMetaData { get; set; } = new BuffScriptMetaData
+        public BuffScriptMetaData BuffMetaData { get; set; } = new BuffScriptMetaData
         {
             BuffType = BuffType.INTERNAL,
             BuffAddType = BuffAddType.REPLACE_EXISTING,
         };
 
-        public IStatsModifier StatsModifier { get; private set; }
+        public StatsModifier StatsModifier { get; private set; }
 
-        IChampion champion;
-        public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
+        Champion champion;
+        public void OnActivate(AttackableUnit unit, Buff buff, Spell ownerSpell)
         {
-            if(unit is IChampion ch)
+            if(unit is Champion ch)
             {
                 champion = ch;
             }
-        }
-
-        public void OnDeactivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
-        {
         }
 
         float timer = 0;

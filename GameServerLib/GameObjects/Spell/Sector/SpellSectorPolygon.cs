@@ -3,17 +3,15 @@ using System.Collections.Generic;
 using System.Numerics;
 using GameMaths.Geometry.Polygons;
 using GameServerCore;
-using GameServerCore.Domain.GameObjects;
-using GameServerCore.Domain.GameObjects.Spell;
-using GameServerCore.Domain.GameObjects.Spell.Sector;
+using LeagueSandbox.GameServer.Scripting.CSharp;
 
-namespace LeagueSandbox.GameServer.GameObjects.Spell.Sector
+namespace LeagueSandbox.GameServer.GameObjects.SpellNS.Sector
 {
     /// <summary>
     /// Base class for all spell sectors. Functionally acts as a circular spell hitbox.
     /// Base functionality can be overriden to fit a specific shape.
     /// </summary>
-    internal class SpellSectorPolygon : SpellSector, ISpellSectorPolygon
+    internal class SpellSectorPolygon : SpellSector
     {
         private Vector2[] _trueVertices;
         private float _trueWidth;
@@ -22,9 +20,9 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Sector
 
         public SpellSectorPolygon(
             Game game,
-            ISectorParameters parameters,
-            ISpell originSpell,
-            ICastInfo castInfo,
+            SectorParameters parameters,
+            Spell originSpell,
+            CastInfo castInfo,
             uint netId = 0
         ) : base(game, parameters, originSpell, castInfo, netId)
         {
@@ -132,7 +130,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Sector
         /// </summary>
         /// <param name="collider">Object to check.</param>
         /// <returns>True/False.</returns>
-        protected override bool FilterCollisions(IGameObject collider)
+        protected override bool FilterCollisions(GameObject collider)
         {
             if (_trueVertices.Length <= 0)
             {

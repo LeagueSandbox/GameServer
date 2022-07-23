@@ -1,28 +1,31 @@
-﻿using GameServerCore.Domain.GameObjects;
-using GameServerCore.Enums;
-using GameServerCore.Domain.GameObjects.Spell;
+﻿using GameServerCore.Enums;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 using GameServerCore.Scripting.CSharp;
 using System.Linq;
 using System.Numerics;
 using LeagueSandbox.GameServer.Scripting.CSharp;
+using LeagueSandbox.GameServer.GameObjects;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
+using LeagueSandbox.GameServer.GameObjects.SpellNS;
+using LeagueSandbox.GameServer.GameObjects.StatsNS;
 
 namespace Buffs
 {
     internal class OdinShieldRelicAura : IBuffGameScript
     {
-        public IBuffScriptMetaData BuffMetaData { get; set; } = new BuffScriptMetaData
+        public BuffScriptMetaData BuffMetaData { get; set; } = new BuffScriptMetaData
         {
         };
 
-        public IStatsModifier StatsModifier { get; private set; }
+        public StatsModifier StatsModifier { get; private set; }
 
         bool setToKill;
-        IBuff thisBuff;
-        IParticle buffParticle;
-        IAttackableUnit Unit;
+        Buff thisBuff;
+        Particle buffParticle;
+        AttackableUnit Unit;
         float timer = 250f;
-        public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
+        public void OnActivate(AttackableUnit unit, Buff buff, Spell ownerSpell)
         {
             thisBuff = buff;
             Unit = unit;
@@ -36,7 +39,7 @@ namespace Buffs
             setToKill = false;
         }
 
-        public void OnDeactivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
+        public void OnDeactivate(AttackableUnit unit, Buff buff, Spell ownerSpell)
         {
             buffParticle.SetToRemove();
 
@@ -58,7 +61,7 @@ namespace Buffs
             if (Unit != null && timer >= 250)
             {
                 var units = GetUnitsInRange(Unit.Position, 175f, true).OrderBy(unit => Vector2.DistanceSquared(unit.Position, Unit.Position)).ToList();
-                units.RemoveAll(x => !(x is IChampion));
+                units.RemoveAll(x => !(x is Champion));
                 if (units.Count >= 1)
                 {
                     if (!setToKill)

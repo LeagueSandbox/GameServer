@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
-using GameServerCore.Domain;
 
 namespace LeagueSandbox.GameServer.Inventory
 {
-    public class RuneCollection : IRuneCollection
+    public class RuneCollection
     {
         public Dictionary<int, int> Runes { get; }
 

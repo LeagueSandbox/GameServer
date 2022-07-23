@@ -1,9 +1,11 @@
 ﻿using System.Linq;
-using GameServerCore.Domain.GameObjects;
-using GameServerCore.Domain.GameObjects.Spell;
 using GameServerCore.Enums;
 using GameServerCore.Scripting.CSharp;
-using LeagueSandbox.GameServer.GameObjects.Stats;
+using LeagueSandbox.GameServer.GameObjects;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
+using LeagueSandbox.GameServer.GameObjects.SpellNS;
+using LeagueSandbox.GameServer.GameObjects.StatsNS;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 
@@ -11,21 +13,21 @@ namespace Buffs
 {
     internal class HPByPlayerLevel : IBuffGameScript
     {
-        public IBuffScriptMetaData BuffMetaData { get; set; } = new BuffScriptMetaData
+        public BuffScriptMetaData BuffMetaData { get; set; } = new BuffScriptMetaData
         {
             BuffAddType = BuffAddType.REPLACE_EXISTING
         };
 
-        public IStatsModifier StatsModifier { get; private set; } = new StatsModifier();
+        public StatsModifier StatsModifier { get; private set; } = new StatsModifier();
 
-        IObjAIBase owner;
+        ObjAIBase owner;
         int maxPlayerLevel;
         float tickTime;
 
-        public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
+        public void OnActivate(AttackableUnit unit, Buff buff, Spell ownerSpell)
         {
-            var owner = unit as IObjAIBase;
-            foreach (IAttackableUnit target in GetUnitsInRange(unit.Position, 9999.0f, true).Where(x => x is IChampion))
+            var owner = unit as ObjAIBase;
+            foreach (AttackableUnit target in GetUnitsInRange(unit.Position, 9999.0f, true).Where(x => x is Champion))
             {
                 // TODO: Use a global "MaxPlayerLevel" variable.
                 if (target.Stats.Level > maxPlayerLevel)
@@ -33,10 +35,6 @@ namespace Buffs
                     maxPlayerLevel = target.Stats.Level;
                 }
             }
-        }
-
-        public void OnDeactivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
-        {
         }
 
         public void OnUpdate(float diff)
@@ -49,7 +47,7 @@ namespace Buffs
                     var healthPercent = (owner.Stats.HealthPoints.Total - owner.Stats.CurrentHealth) / owner.Stats.HealthPoints.Total;
                     if (healthPercent >= 0.99f)
                     {
-                        foreach (IAttackableUnit target in GetUnitsInRange(owner.Position, 9999.0f, true).Where(x => x is IChampion))
+                        foreach (AttackableUnit target in GetUnitsInRange(owner.Position, 9999.0f, true).Where(x => x is Champion))
                         {
                             // TODO: Use a global "MaxPlayerLevel" variable.
                             if (target.Stats.Level > maxPlayerLevel)

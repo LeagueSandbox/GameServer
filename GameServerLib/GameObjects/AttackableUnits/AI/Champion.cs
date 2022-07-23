@@ -1,12 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Numerics;
-using GameServerCore;
-using GameServerCore.Domain;
-using GameServerCore.Domain.GameObjects;
-using GameServerCore.Domain.GameObjects.Spell;
 using GameServerCore.NetInfo;
 using GameServerCore.Enums;
-using LeagueSandbox.GameServer.GameObjects.Stats;
+using LeagueSandbox.GameServer.GameObjects.StatsNS;
+using LeagueSandbox.GameServer.GameObjects.SpellNS;
 using LeagueSandbox.GameServer.Inventory;
 using LeagueSandbox.GameServer.API;
 using LeaguePackets.Game.Events;
@@ -18,7 +15,7 @@ using log4net;
 
 namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 {
-    public class Champion : ObjAIBase, IChampion
+    public class Champion : ObjAIBase
     {
         private float _championHitFlagTimer;
         private static ILog _logger = LoggerProvider.GetLogger();
@@ -27,15 +24,15 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         /// </summary>
         public int ClientId { get; private set; }
         private uint _playerHitId;
-        private List<IToolTipData> _tipsChanged;
-        public IShop Shop { get; protected set; }
+        private List<ToolTipData> _tipsChanged;
+        public Shop Shop { get; protected set; }
         public float RespawnTimer { get; private set; }
         public int DeathSpree { get; set; } = 0;
         public int KillSpree { get; set; } = 0;
         public float GoldFromMinions { get; set; }
-        public IRuneCollection RuneList { get; }
-        public ITalentInventory TalentInventory { get; set; }
-        public IChampionStats ChampStats { get; private set; } = new ChampionStats();
+        public RuneCollection RuneList { get; }
+        public TalentInventory TalentInventory { get; set; }
+        public ChampionStats ChampStats { get; private set; } = new ChampionStats();
 
         public byte SkillPoints { get; set; }
 
@@ -45,12 +42,12 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
         public Champion(Game game,
                         string model,
-                        IRuneCollection runeList,
-                        ITalentInventory talentInventory,
+                        RuneCollection runeList,
+                        TalentInventory talentInventory,
                         ClientInfo clientInfo,
                         uint netId = 0,
                         TeamId team = TeamId.TEAM_BLUE,
-                        IStats stats = null)
+                        Stats stats = null)
             : base(game, model, clientInfo.Name, 30, new Vector2(), 1200, clientInfo.SkinNo, netId, team, stats)
         {
             //TODO: Champion.ClientInfo?
@@ -66,18 +63,18 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
             //TODO: automaticaly rise spell levels with CharData.SpellLevelsUp
 
-            Spells[(int)SpellSlotType.SummonerSpellSlots] = new Spell.Spell(game, this, clientInfo.SummonerSkills[0], (int)SpellSlotType.SummonerSpellSlots);
+            Spells[(int)SpellSlotType.SummonerSpellSlots] = new Spell(game, this, clientInfo.SummonerSkills[0], (int)SpellSlotType.SummonerSpellSlots);
             Spells[(int)SpellSlotType.SummonerSpellSlots].LevelUp();
-            Spells[(int)SpellSlotType.SummonerSpellSlots + 1] = new Spell.Spell(game, this, clientInfo.SummonerSkills[1], (int)SpellSlotType.SummonerSpellSlots + 1);
+            Spells[(int)SpellSlotType.SummonerSpellSlots + 1] = new Spell(game, this, clientInfo.SummonerSkills[1], (int)SpellSlotType.SummonerSpellSlots + 1);
             Spells[(int)SpellSlotType.SummonerSpellSlots + 1].LevelUp();
 
-            Spells[(int)SpellSlotType.BluePillSlot] = new Spell.Spell(game, this,
+            Spells[(int)SpellSlotType.BluePillSlot] = new Spell(game, this,
             _game.ItemManager.GetItemType(_game.Map.MapScript.MapScriptMetadata.RecallSpellItemId).SpellName, (int)SpellSlotType.BluePillSlot);
             Stats.SetSpellEnabled((byte)SpellSlotType.BluePillSlot, true);
 
             Replication = new ReplicationHero(this);
 
-            _tipsChanged = new List<IToolTipData>();
+            _tipsChanged = new List<ToolTipData>();
 
             if (clientInfo.PlayerId == -1)
             {
@@ -85,7 +82,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             }
         }
 
-        public void AddGold(IAttackableUnit source, float gold, bool notify = true)
+        public void AddGold(AttackableUnit source, float gold, bool notify = true)
         {
             Stats.Gold += gold;
             if (notify)
@@ -196,7 +193,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             return _game.Map.MapScript.GetFountainPosition(Team);
         }
 
-        public override ISpell LevelUpSpell(byte slot)
+        public override Spell LevelUpSpell(byte slot)
         {
             if (SkillPoints == 0)
             {
@@ -208,7 +205,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             return base.LevelUpSpell(slot);
         }
 
-        public void AddToolTipChange(IToolTipData data)
+        public void AddToolTipChange(ToolTipData data)
         {
             if (!_tipsChanged.Contains(data))
             {
@@ -343,11 +340,11 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             return false;
         }
 
-        public void OnKill(IDeathData deathData)
+        public void OnKill(DeathData deathData)
         {
             ApiEventManager.OnKillUnit.Publish(deathData.Killer, deathData);
 
-            if (deathData.Unit is IMinion)
+            if (deathData.Unit is Minion)
             {
                 ChampStats.MinionsKilled += 1;
                 if (deathData.Unit.Team == TeamId.TEAM_NEUTRAL)
@@ -376,7 +373,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             }
         }
 
-        public override void Die(IDeathData data)
+        public override void Die(DeathData data)
         {
             var mapScript = _game.Map.MapScript;
             var mapScriptMetaData = mapScript.MapScriptMetadata;
@@ -387,7 +384,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             RespawnTimer = _game.Map.MapData.DeathTimes[Stats.Level] * 1000.0f;
             ChampStats.Deaths += 1;
 
-            var cKiller = data.Killer as IChampion;
+            var cKiller = data.Killer as Champion;
 
             if (cKiller == null && _championHitFlagTimer > 0)
             {
@@ -492,7 +489,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             _game.ObjectManager.StopTargeting(this);
         }
 
-        private T CreateEventForHistory<T>(IAttackableUnit source, IEventSource sourceScript) where T: ArgsForClient, new()
+        private T CreateEventForHistory<T>(AttackableUnit source, IEventSource sourceScript) where T: ArgsForClient, new()
         {
             if(source == null || sourceScript == null)
             {
@@ -516,7 +513,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 e.ScriptNameHash = sourceScript.ScriptNameHash;
                 e.ParentScriptNameHash = sourceScript.ParentScript.ScriptNameHash;
             }
-            else if(sourceScript is IBuff b && b.OriginSpell != null)
+            else if(sourceScript is Buff b && b.OriginSpell != null)
             {
                 e.ScriptNameHash = sourceScript.ScriptNameHash;
                 e.ParentScriptNameHash = (uint)b.OriginSpell.GetId();
@@ -532,7 +529,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             return e;
         }
 
-        public override bool AddBuff(IBuff b)
+        public override bool AddBuff(Buff b)
         {
             if(base.AddBuff(b))
             {
@@ -542,7 +539,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             return false;
         }
 
-        public override void TakeHeal(IAttackableUnit caster, float amount, IEventSource sourceScript = null)
+        public override void TakeHeal(AttackableUnit caster, float amount, IEventSource sourceScript = null)
         {
             base.TakeHeal(caster, amount, sourceScript);
 
@@ -553,7 +550,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             }
         }
 
-        public override void TakeDamage(IDamageData damageData, DamageResultType damageText, IEventSource sourceScript = null)
+        public override void TakeDamage(DamageData damageData, DamageResultType damageText, IEventSource sourceScript = null)
         {
             base.TakeDamage(damageData, damageText, sourceScript);
 

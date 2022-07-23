@@ -1,10 +1,9 @@
-﻿using GameServerCore.Domain.GameObjects;
-using GameServerCore.Enums;
+﻿using GameServerCore.Enums;
 using System.Numerics;
 
 namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
 {
-    public class ForceMovementParameters : IForceMovementParameters
+    public class ForceMovementParameters
     {
         /// <summary>
         /// Status flags which are disabled while dashing.

@@ -1,17 +1,14 @@
-﻿using System;
-using System.Linq;
-using System.Numerics;
-using GameServerCore.Domain;
-using GameServerCore.Domain.GameObjects;
+﻿using System.Numerics;
 using GameServerCore.Enums;
+using GameServerLib.GameObjects;
 using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
-using LeagueSandbox.GameServer.GameObjects.Stats;
+using LeagueSandbox.GameServer.GameObjects.StatsNS;
 
 namespace LeagueSandbox.GameServer.GameObjects
 {
-    public class Monster : Minion, IMonster
+    public class Monster : Minion
     {
-        public IMonsterCamp Camp { get; private set; }
+        public MonsterCamp Camp { get; private set; }
         public string SpawnAnimation { get; private set; }
 
         public Monster(
@@ -20,13 +17,13 @@ namespace LeagueSandbox.GameServer.GameObjects
             string model,
             Vector2 position,
             Vector3 faceDirection,
-            IMonsterCamp monsterCamp,
+            MonsterCamp monsterCamp,
             TeamId team = TeamId.TEAM_NEUTRAL,
             uint netId = 0,
             string spawnAnimation = "",
             bool isTargetable = true,
             bool ignoresCollision = false,
-            IStats stats = null,
+            Stats stats = null,
             string aiScript = "",
             int damageBonus = 0,
             int healthBonus = 0,

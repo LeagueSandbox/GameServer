@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Numerics;
-using GameServerCore.Content;
-using GameServerCore.Domain;
 using GameServerCore.Enums;
-using GameServerCore.Handlers;
 using LeagueSandbox.GameServer.Content;
 using LeagueSandbox.GameServer.Logging;
 using LeagueSandbox.GameServer.Scripting.CSharp;
@@ -12,13 +9,15 @@ using log4net;
 using MapScripts;
 using static GameServerCore.Content.HashFunctions;
 using GameServerCore.Scripting.CSharp;
+using LeagueSandbox.GameServer.Content.Navigation;
+using GameServerCore.Domain;
 
 namespace LeagueSandbox.GameServer.Handlers
 {
     /// <summary>
     /// Class responsible for all map related game settings such as collision handler, navigation grid, announcer events, and map properties.
     /// </summary>
-    public class MapScriptHandler : IMapScriptHandler
+    public class MapScriptHandler
     {
         // Crucial Vars
         protected Game _game;
@@ -32,16 +31,16 @@ namespace LeagueSandbox.GameServer.Handlers
         /// <summary>
         /// Collision Handler to be instanced by the map. Used for collisions between GameObjects or GameObjects and terrain.
         /// </summary>
-        public ICollisionHandler CollisionHandler { get; private set; }
+        public CollisionHandler CollisionHandler { get; private set; }
         /// <summary>
         /// Pathing Handler to be instanced by the map. Used for pathfinding for units.
         /// </summary>
-        public IPathingHandler PathingHandler { get; private set; }
+        public PathingHandler PathingHandler { get; private set; }
         /// <summary>
         /// Navigation Grid to be instanced by the map. Used for terrain data.
         /// </summary>
-        public INavigationGrid NavigationGrid { get; private set; }
-        public IMapData MapData { get; private set; }
+        public NavigationGrid NavigationGrid { get; private set; }
+        public MapData MapData { get; private set; }
         /// <summary>
         /// MapProperties specific to a Map Id. Contains information about passive gold gen, lane minion spawns, experience to level, etc.
         /// </summary>

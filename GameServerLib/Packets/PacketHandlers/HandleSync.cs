@@ -1,9 +1,8 @@
 ﻿using GameServerCore.Packets.PacketDefinitions.Requests;
-using GameServerCore;
 using GameServerCore.Packets.Handlers;
-using LeaguePackets.Game;
 using LeagueSandbox.GameServer.Logging;
 using log4net;
+using LeagueSandbox.GameServer.Players;
 
 namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 {
@@ -11,7 +10,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
     {
         private static ILog _logger = LoggerProvider.GetLogger();
         private readonly Game _game;
-        private readonly IPlayerManager _playerManager;
+        private readonly PlayerManager _playerManager;
 
         public HandleSync(Game game)
         {

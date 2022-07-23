@@ -1,15 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Numerics;
-using GameServerCore.Content;
-using GameServerCore.Domain.GameObjects;
-using GameServerCore.Domain.GameObjects.Spell;
-using GameServerCore.Domain.GameObjects.Spell.Missile;
 using GameServerCore.Enums;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
 
-namespace LeagueSandbox.GameServer.GameObjects.Spell.Missile
+namespace LeagueSandbox.GameServer.GameObjects.SpellNS.Missile
 {
-    public class SpellMissile : GameObject, ISpellMissile
+    public class SpellMissile : GameObject
     {
         // Function Vars.
         protected float _moveSpeed;
@@ -18,7 +15,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Missile
         /// <summary>
         /// Information about this missile's path.
         /// </summary>
-        public ICastInfo CastInfo { get; protected set; }
+        public CastInfo CastInfo { get; protected set; }
         /// <summary>
         /// What kind of behavior this missile has.
         /// </summary>
@@ -26,11 +23,11 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Missile
         /// <summary>
         /// Current unit this projectile is homing in on and moving towards. Projectile is destroyed on contact with this unit unless it has more than one target.
         /// </summary>
-        public IAttackableUnit TargetUnit { get; protected set; }
+        public AttackableUnit TargetUnit { get; protected set; }
         /// <summary>
         /// Spell which created this projectile.
         /// </summary>
-        public ISpell SpellOrigin { get; protected set; }
+        public Spell SpellOrigin { get; protected set; }
         /// <summary>
         /// Whether or not this projectile's visuals should not be networked to clients.
         /// </summary>
@@ -42,8 +39,8 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Missile
         public SpellMissile(
             Game game,
             int collisionRadius,
-            ISpell originSpell,
-            ICastInfo castInfo,
+            Spell originSpell,
+            CastInfo castInfo,
             float moveSpeed,
             SpellDataFlags overrideFlags = 0, // TODO: Find a use for these
             uint netId = 0,
@@ -87,7 +84,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Missile
             }
         }
 
-        public override void OnCollision(IGameObject collider, bool isTerrain = false)
+        public override void OnCollision(GameObject collider, bool isTerrain = false)
         {
             if (IsToRemove() || (TargetUnit != null && collider != TargetUnit))
             {
@@ -165,7 +162,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Missile
             // REVIEW (of previous code): (deltaMovement * 2) being used here is problematic; if the server lags, the diff will be much greater than the usual values
             if ((cur - next).LengthSquared() < MOVEMENT_EPSILON * MOVEMENT_EPSILON)
             {
-                if (this is ISpellMissile && TargetUnit != null)
+                if (this is SpellMissile && TargetUnit != null)
                 {
                     if (Position == TargetUnit.Position)
                     {
@@ -176,7 +173,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Missile
             }
         }
 
-        public virtual void CheckFlagsForUnit(IAttackableUnit unit)
+        public virtual void CheckFlagsForUnit(AttackableUnit unit)
         {
             if (unit == null || !HasTarget() || !SpellOrigin.SpellData.IsValidTarget(CastInfo.Owner, unit) || TargetUnit != unit)
             {
@@ -189,7 +186,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Missile
                 SpellOrigin.ApplyEffects(TargetUnit, this);
             }
 
-            if (CastInfo.Owner is IObjAIBase ai && SpellOrigin.CastInfo.IsAutoAttack)
+            if (CastInfo.Owner is ObjAIBase ai && SpellOrigin.CastInfo.IsAutoAttack)
             {
                 ai.AutoAttackHit(TargetUnit);
             }

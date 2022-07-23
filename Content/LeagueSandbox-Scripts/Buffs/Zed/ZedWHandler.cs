@@ -1,9 +1,11 @@
 ﻿using System.Numerics;
-using GameServerCore.Domain.GameObjects;
-using GameServerCore.Domain.GameObjects.Spell;
 using GameServerCore.Enums;
 using GameServerCore.Scripting.CSharp;
-using LeagueSandbox.GameServer.GameObjects.Stats;
+using LeagueSandbox.GameServer.GameObjects;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
+using LeagueSandbox.GameServer.GameObjects.SpellNS;
+using LeagueSandbox.GameServer.GameObjects.StatsNS;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 
@@ -11,21 +13,21 @@ namespace Buffs
 {
     class ZedWHandler : IBuffGameScript
     {
-        public IBuffScriptMetaData BuffMetaData { get; set; } = new BuffScriptMetaData
+        public BuffScriptMetaData BuffMetaData { get; set; } = new BuffScriptMetaData
         {
             BuffType = BuffType.COMBAT_ENCHANCER,
             BuffAddType = BuffAddType.REPLACE_EXISTING
         };
 
-        public IStatsModifier StatsModifier { get; private set; } = new StatsModifier();
+        public StatsModifier StatsModifier { get; private set; } = new StatsModifier();
 
-        ISpell ThisSpell;
-        IBuff ThisBuff;
-        IMinion Shadow;
-        IBuff ShadowBuff;
+        Spell ThisSpell;
+        Buff ThisBuff;
+        Minion Shadow;
+        Buff ShadowBuff;
         public bool QueueSwap;
 
-        public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
+        public void OnActivate(AttackableUnit unit, Buff buff, Spell ownerSpell)
         {
             ThisSpell = ownerSpell;
             ThisBuff = buff;
@@ -33,11 +35,7 @@ namespace Buffs
             ClearShadows();
         }
 
-        public void OnDeactivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
-        {
-        }
-
-        public IMinion ShadowSpawn()
+        public Minion ShadowSpawn()
         {
             var owner = ThisSpell.CastInfo.Owner;
 
@@ -58,7 +56,7 @@ namespace Buffs
         /// </summary>
         /// <param name="spell">Spell which triggered this shadow cast.</param>
         /// TODO: Test this with Q and E.
-        public void ShadowCast(ISpell spell)
+        public void ShadowCast(Spell spell)
         {
             var slot = spell.CastInfo.SpellSlot;
             if (slot != 0 || slot != 2 && Shadow != null)
@@ -84,7 +82,7 @@ namespace Buffs
             }
         }
 
-        public void ShadowSwap(ISpell spell)
+        public void ShadowSwap(Spell spell)
         {
             var owner = spell.CastInfo.Owner;
 

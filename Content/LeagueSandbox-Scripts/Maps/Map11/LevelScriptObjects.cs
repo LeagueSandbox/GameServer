@@ -1,13 +1,16 @@
-﻿using GameServerCore.Domain.GameObjects;
-using GameServerCore.Enums;
+﻿using GameServerCore.Enums;
 using LeagueSandbox.GameServer.API;
 using static LeagueSandbox.GameServer.API.ApiMapFunctionManager;
-using LeagueSandbox.GameServer.GameObjects.Stats;
+using LeagueSandbox.GameServer.GameObjects.StatsNS;
 using System.Collections.Generic;
 using GameServerCore.Domain;
 using System.Numerics;
 using System.Linq;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
+using LeagueSandbox.GameServer.GameObjects;
+using            GameServerLib.GameObjects.AttackableUnits;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits.Buildings.AnimatedBuildings;
 
 namespace MapScripts.Map11
 {
@@ -15,38 +18,38 @@ namespace MapScripts.Map11
     {
         private static Dictionary<GameObjectTypes, List<MapObject>> _mapObjects;
 
-        public static Dictionary<TeamId, IFountain> FountainList = new Dictionary<TeamId, IFountain>();
+        public static Dictionary<TeamId, Fountain> FountainList = new Dictionary<TeamId, Fountain>();
         public static Dictionary<string, MapObject> SpawnBarracks = new Dictionary<string, MapObject>();
         public static Dictionary<LaneID, List<Vector2>> MinionPaths = new Dictionary<LaneID, List<Vector2>> { { LaneID.TOP, new List<Vector2>() }, { LaneID.BOTTOM, new List<Vector2>() } };
         public static Dictionary<TeamId, bool> AllInhibitorsAreDead = new Dictionary<TeamId, bool> { { TeamId.TEAM_BLUE, false }, { TeamId.TEAM_PURPLE, false } };
-        static Dictionary<TeamId, Dictionary<IInhibitor, float>> DeadInhibitors = new Dictionary<TeamId, Dictionary<IInhibitor, float>> { { TeamId.TEAM_BLUE, new Dictionary<IInhibitor, float>() }, { TeamId.TEAM_PURPLE, new Dictionary<IInhibitor, float>() } };
-        static List<INexus> NexusList = new List<INexus>();
+        static Dictionary<TeamId, Dictionary<Inhibitor, float>> DeadInhibitors = new Dictionary<TeamId, Dictionary<Inhibitor, float>> { { TeamId.TEAM_BLUE, new Dictionary<Inhibitor, float>() }, { TeamId.TEAM_PURPLE, new Dictionary<Inhibitor, float>() } };
+        static List<Nexus> NexusList = new List<Nexus>();
         static string LaneTurretAI = "TurretAI";
 
-        static Dictionary<TeamId, Dictionary<LaneID, List<ILaneTurret>>> TurretList = new Dictionary<TeamId, Dictionary<LaneID, List<ILaneTurret>>>
+        static Dictionary<TeamId, Dictionary<LaneID, List<LaneTurret>>> TurretList = new Dictionary<TeamId, Dictionary<LaneID, List<LaneTurret>>>
         {
-            {TeamId.TEAM_BLUE, new Dictionary<LaneID, List<ILaneTurret>>{
-                { LaneID.NONE, new List<ILaneTurret>()},
-                { LaneID.TOP, new List<ILaneTurret>()},
-                { LaneID.MIDDLE, new List<ILaneTurret>()},
-                { LaneID.BOTTOM, new List<ILaneTurret>()}}
+            {TeamId.TEAM_BLUE, new Dictionary<LaneID, List<LaneTurret>>{
+                { LaneID.NONE, new List<LaneTurret>()},
+                { LaneID.TOP, new List<LaneTurret>()},
+                { LaneID.MIDDLE, new List<LaneTurret>()},
+                { LaneID.BOTTOM, new List<LaneTurret>()}}
             },
-            {TeamId.TEAM_PURPLE, new Dictionary<LaneID, List<ILaneTurret>>{
-                { LaneID.NONE, new List<ILaneTurret>()},
-                { LaneID.TOP, new List<ILaneTurret>()},
-                { LaneID.MIDDLE, new List<ILaneTurret>()},
-                { LaneID.BOTTOM, new List<ILaneTurret>()}}
+            {TeamId.TEAM_PURPLE, new Dictionary<LaneID, List<LaneTurret>>{
+                { LaneID.NONE, new List<LaneTurret>()},
+                { LaneID.TOP, new List<LaneTurret>()},
+                { LaneID.MIDDLE, new List<LaneTurret>()},
+                { LaneID.BOTTOM, new List<LaneTurret>()}}
             }
         };
 
-        public static Dictionary<TeamId, Dictionary<LaneID, IInhibitor>> InhibitorList = new Dictionary<TeamId, Dictionary<LaneID, IInhibitor>>
+        public static Dictionary<TeamId, Dictionary<LaneID, Inhibitor>> InhibitorList = new Dictionary<TeamId, Dictionary<LaneID, Inhibitor>>
         {
-            {TeamId.TEAM_BLUE, new Dictionary<LaneID, IInhibitor>{
+            {TeamId.TEAM_BLUE, new Dictionary<LaneID, Inhibitor>{
                 { LaneID.TOP, null },
                 { LaneID.MIDDLE, null },
                 { LaneID.BOTTOM, null }}
             },
-            {TeamId.TEAM_PURPLE, new Dictionary<LaneID, IInhibitor>{
+            {TeamId.TEAM_PURPLE, new Dictionary<LaneID, Inhibitor>{
                 { LaneID.TOP, null },
                 { LaneID.MIDDLE, null },
                 { LaneID.BOTTOM, null }}
@@ -72,14 +75,14 @@ namespace MapScripts.Map11
             LoadFountains();
         }
 
-        static IStatsModifier TowerStatModifier = new StatsModifier();
+        static StatsModifier TowerStatModifier = new StatsModifier();
         public static void OnMatchStart()
         {
             LoadShops();
-            IStatsModifier InitialTowerHealthModifier = new StatsModifier();
+            StatsModifier InitialTowerHealthModifier = new StatsModifier();
             TowerStatModifier.AttackDamage.FlatBonus = 4.0f;
 
-            Dictionary<TeamId, List<IChampion>> Players = new Dictionary<TeamId, List<IChampion>>
+            Dictionary<TeamId, List<Champion>> Players = new Dictionary<TeamId, List<Champion>>
             {
                 {TeamId.TEAM_BLUE, ApiFunctionManager.GetAllPlayersFromTeam(TeamId.TEAM_BLUE) },
                 {TeamId.TEAM_PURPLE, ApiFunctionManager.GetAllPlayersFromTeam(TeamId.TEAM_PURPLE) }
@@ -165,7 +168,7 @@ namespace MapScripts.Map11
             }
         }
 
-        public static void OnNexusDeath(IDeathData deathaData)
+        public static void OnNexusDeath(DeathData deathaData)
         {
             var nexus = deathaData.Unit;
             string particle = "SRU_Order_Nexus_Explosion";
@@ -180,9 +183,9 @@ namespace MapScripts.Map11
             EndGame(nexus.Team, new Vector3(nexus.Position.X, nexus.GetHeight(), nexus.Position.Y), deathData: deathaData);
         }
 
-        public static void OnInhibitorDeath(IDeathData deathData)
+        public static void OnInhibitorDeath(DeathData deathData)
         {
-            var inhibitor = deathData.Unit as IInhibitor;
+            var inhibitor = deathData.Unit as Inhibitor;
 
             DeadInhibitors[inhibitor.Team].Add(inhibitor, inhibitor.RespawnTime * 1000);
             inhibitor.RespawnAnimationAnnounced = false;
@@ -266,35 +269,35 @@ namespace MapScripts.Map11
             var blueBotOuterTurret = CreateLaneTurret("Turret_T1_R_03_A", "SRUAP_Turret_Order1", new Vector2(10504.246f, 1029.7169f), TeamId.TEAM_BLUE, TurretType.OUTER_TURRET, LaneID.BOTTOM, LaneTurretAI);
             var blueBotInnerTurret = CreateLaneTurret("Turret_T1_R_02_A", "SRUAP_Turret_Order2", new Vector2(6919.156f, 1483.5986f), TeamId.TEAM_BLUE, TurretType.INNER_TURRET, LaneID.BOTTOM, LaneTurretAI);
             var blueBotInhibtorTurret = CreateLaneTurret("Turret_T1_C_07_A", "SRUAP_Turret_Order3", new Vector2(4281.712f, 1253.5687f), TeamId.TEAM_BLUE, TurretType.INHIBITOR_TURRET, LaneID.BOTTOM, LaneTurretAI);
-            TurretList[TeamId.TEAM_BLUE][LaneID.BOTTOM].AddRange(new List<ILaneTurret> { { blueBotOuterTurret }, { blueBotInnerTurret }, { blueBotInhibtorTurret } });
+            TurretList[TeamId.TEAM_BLUE][LaneID.BOTTOM].AddRange(new List<LaneTurret> { { blueBotOuterTurret }, { blueBotInnerTurret }, { blueBotInhibtorTurret } });
 
             //Red Team Bot lane
             var redBotOuterTurret = CreateLaneTurret("Turret_T2_R_03_A", "SRUAP_Turret_Chaos1", new Vector2(13866.243f, 4505.2236f), TeamId.TEAM_PURPLE, TurretType.OUTER_TURRET, LaneID.BOTTOM, LaneTurretAI);
             var redBotInnerTurret = CreateLaneTurret("Turret_T2_R_02_A", "SRUAP_Turret_Chaos2", new Vector2(13327.417f, 8226.276f), TeamId.TEAM_PURPLE, TurretType.INNER_TURRET, LaneID.BOTTOM, LaneTurretAI);
             var redBotInhibtorTurret = CreateLaneTurret("Turret_T2_R_01_A", "SRUAP_Turret_Chaos3", new Vector2(13624.748f, 10572.771f), TeamId.TEAM_PURPLE, TurretType.INHIBITOR_TURRET, LaneID.BOTTOM, LaneTurretAI);
-            TurretList[TeamId.TEAM_PURPLE][LaneID.BOTTOM].AddRange(new List<ILaneTurret> { { redBotOuterTurret }, { redBotInnerTurret }, { redBotInhibtorTurret } });
+            TurretList[TeamId.TEAM_PURPLE][LaneID.BOTTOM].AddRange(new List<LaneTurret> { { redBotOuterTurret }, { redBotInnerTurret }, { redBotInhibtorTurret } });
 
             //Blue Team Mid lane
             var blueMidOuterTurret = CreateLaneTurret("Turret_T1_C_05_A", "SRUAP_Turret_Order1", new Vector2(5846.0967f, 6396.7505f), TeamId.TEAM_BLUE, TurretType.OUTER_TURRET, LaneID.MIDDLE, LaneTurretAI);
             var blueMidInnerTurret = CreateLaneTurret("Turret_T1_C_04_A", "SRUAP_Turret_Order2", new Vector2(5048.0703f, 4812.8936f), TeamId.TEAM_BLUE, TurretType.INNER_TURRET, LaneID.MIDDLE, LaneTurretAI);
             var blueMidInhibtorTurret = CreateLaneTurret("Turret_T1_C_03_A", "SRUAP_Turret_Order3", new Vector2(3651.9016f, 3696.424f), TeamId.TEAM_BLUE, TurretType.INHIBITOR_TURRET, LaneID.MIDDLE, LaneTurretAI);
-            TurretList[TeamId.TEAM_BLUE][LaneID.MIDDLE].AddRange(new List<ILaneTurret> { { blueMidOuterTurret }, { blueMidInnerTurret }, { blueMidInhibtorTurret } });
+            TurretList[TeamId.TEAM_BLUE][LaneID.MIDDLE].AddRange(new List<LaneTurret> { { blueMidOuterTurret }, { blueMidInnerTurret }, { blueMidInhibtorTurret } });
 
             //Blue Team Nexus Towers
             var blueTopNexusTurrets = CreateLaneTurret("Turret_T1_C_01_A", "SRUAP_Turret_Order4", new Vector2(1748.2611f, 2270.7068f), TeamId.TEAM_BLUE, TurretType.NEXUS_TURRET, LaneID.MIDDLE, LaneTurretAI);
             var blueBotNexusTurrets = CreateLaneTurret("Turret_T1_C_02_A", "SRUAP_Turret_Order4", new Vector2(2177.64f, 1807.6298f), TeamId.TEAM_BLUE, TurretType.NEXUS_TURRET, LaneID.MIDDLE, LaneTurretAI);
-            TurretList[TeamId.TEAM_BLUE][LaneID.MIDDLE].AddRange(new List<ILaneTurret> { { blueTopNexusTurrets }, { blueBotNexusTurrets } });
+            TurretList[TeamId.TEAM_BLUE][LaneID.MIDDLE].AddRange(new List<LaneTurret> { { blueTopNexusTurrets }, { blueBotNexusTurrets } });
 
             //Red Team Mid lane
             var redMidOuterTurret = CreateLaneTurret("Turret_T2_C_05_A", "SRUAP_Turret_Chaos1", new Vector2(8955.434f, 8510.48f), TeamId.TEAM_PURPLE, TurretType.OUTER_TURRET, LaneID.MIDDLE, LaneTurretAI);
             var redMidInnerTurret = CreateLaneTurret("Turret_T2_C_04_A", "SRUAP_Turret_Chaos2", new Vector2(9767.701f, 10113.608f), TeamId.TEAM_PURPLE, TurretType.INNER_TURRET, LaneID.MIDDLE, LaneTurretAI);
             var redMidInhibtorTurret = CreateLaneTurret("Turret_T2_C_03_A", "SRUAP_Turret_Chaos3", new Vector2(11134.814f, 11207.938f), TeamId.TEAM_PURPLE, TurretType.INHIBITOR_TURRET, LaneID.MIDDLE, LaneTurretAI);
-            TurretList[TeamId.TEAM_PURPLE][LaneID.MIDDLE].AddRange(new List<ILaneTurret> { { redMidOuterTurret }, { redMidInnerTurret }, { redMidInhibtorTurret } });
+            TurretList[TeamId.TEAM_PURPLE][LaneID.MIDDLE].AddRange(new List<LaneTurret> { { redMidOuterTurret }, { redMidInnerTurret }, { redMidInhibtorTurret } });
 
             //Red Team Nexus Towers
             var redTopNexusTurrets = CreateLaneTurret("Turret_T2_C_01_A", "SRUAP_Turret_Chaos4", new Vector2(13052.915f, 12612.381f), TeamId.TEAM_PURPLE, TurretType.NEXUS_TURRET, LaneID.MIDDLE, LaneTurretAI);
             var redBotNexusTurrets = CreateLaneTurret("Turret_T2_C_02_A", "SRUAP_Turret_Chaos4", new Vector2(12611.182f, 13084.111f), TeamId.TEAM_PURPLE, TurretType.NEXUS_TURRET, LaneID.MIDDLE, LaneTurretAI);
-            TurretList[TeamId.TEAM_PURPLE][LaneID.MIDDLE].AddRange(new List<ILaneTurret> { { redTopNexusTurrets }, { redBotNexusTurrets } });
+            TurretList[TeamId.TEAM_PURPLE][LaneID.MIDDLE].AddRange(new List<LaneTurret> { { redTopNexusTurrets }, { redBotNexusTurrets } });
 
             //Blue Team Fountain Tower
             TurretList[TeamId.TEAM_BLUE][LaneID.NONE].Add(CreateLaneTurret("Turret_OrderTurretShrine_A", "SRUAP_Turret_Order5", new Vector2(105.92846f, 134.49403f), TeamId.TEAM_BLUE, TurretType.FOUNTAIN_TURRET, LaneID.NONE, LaneTurretAI));
@@ -306,13 +309,13 @@ namespace MapScripts.Map11
             var blueTopOuterTurret = CreateLaneTurret("Turret_T1_L_03_A", "SRUAP_Turret_Order1", new Vector2(981.28345f, 10441.454f), TeamId.TEAM_BLUE, TurretType.OUTER_TURRET, LaneID.TOP, LaneTurretAI);
             var blueTopInnerTurret = CreateLaneTurret("Turret_T1_L_02_A", "SRUAP_Turret_Order2", new Vector2(1512.892f, 6699.57f), TeamId.TEAM_BLUE, TurretType.INNER_TURRET, LaneID.TOP, LaneTurretAI);
             var blueTopInhibtorTurret = CreateLaneTurret("Turret_T1_C_06_A", "SRUAP_Turret_Order3", new Vector2(1169.9619f, 4287.4434f), TeamId.TEAM_BLUE, TurretType.INHIBITOR_TURRET, LaneID.TOP, LaneTurretAI);
-            TurretList[TeamId.TEAM_BLUE][LaneID.TOP].AddRange(new List<ILaneTurret> { { blueTopOuterTurret }, { blueTopInnerTurret }, { blueTopInhibtorTurret } });
+            TurretList[TeamId.TEAM_BLUE][LaneID.TOP].AddRange(new List<LaneTurret> { { blueTopOuterTurret }, { blueTopInnerTurret }, { blueTopInhibtorTurret } });
 
             //Red Team Top Towers
             var redTopOuterTurret = CreateLaneTurret("Turret_T2_L_03_A", "SRUAP_Turret_Chaos1", new Vector2(4318.3037f, 13875.8f), TeamId.TEAM_PURPLE, TurretType.OUTER_TURRET, LaneID.TOP, LaneTurretAI);
             var redTopInnerTurret = CreateLaneTurret("Turret_T2_L_02_A", "SRUAP_Turret_Chaos2", new Vector2(7943.152f, 13411.799f), TeamId.TEAM_PURPLE, TurretType.INNER_TURRET, LaneID.TOP, LaneTurretAI);
             var redTopInhibtorTurret = CreateLaneTurret("Turret_T2_L_01_A", "SRUAP_Turret_Chaos3", new Vector2(10481.091f, 13650.535f), TeamId.TEAM_PURPLE, TurretType.INHIBITOR_TURRET, LaneID.TOP, LaneTurretAI);
-            TurretList[TeamId.TEAM_PURPLE][LaneID.TOP].AddRange(new List<ILaneTurret> { { redTopOuterTurret }, { redTopInnerTurret }, { redTopInhibtorTurret } });
+            TurretList[TeamId.TEAM_PURPLE][LaneID.TOP].AddRange(new List<LaneTurret> { { redTopOuterTurret }, { redTopInnerTurret }, { redTopInhibtorTurret } });
 
 
 
@@ -396,7 +399,7 @@ namespace MapScripts.Map11
         static void LoadProtection()
         {
             //I can't help but feel there's a better way to do this
-            Dictionary<TeamId, List<IInhibitor>> TeamInhibitors = new Dictionary<TeamId, List<IInhibitor>> { { TeamId.TEAM_BLUE, new List<IInhibitor>() }, { TeamId.TEAM_PURPLE, new List<IInhibitor>() } };
+            Dictionary<TeamId, List<Inhibitor>> TeamInhibitors = new Dictionary<TeamId, List<Inhibitor>> { { TeamId.TEAM_BLUE, new List<Inhibitor>() }, { TeamId.TEAM_PURPLE, new List<Inhibitor>() } };
             foreach (var teams in InhibitorList.Keys)
             {
                 foreach (var lane in InhibitorList[teams].Keys)

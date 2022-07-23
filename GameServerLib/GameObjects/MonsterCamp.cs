@@ -1,6 +1,5 @@
-﻿using GameServerCore.Domain;
-using GameServerCore.Domain.GameObjects;
-using GameServerCore.Enums;
+﻿using GameServerCore.Enums;
+using GameServerLib.GameObjects.AttackableUnits;
 using LeagueSandbox.GameServer;
 using LeagueSandbox.GameServer.API;
 using LeagueSandbox.GameServer.GameObjects;
@@ -9,7 +8,7 @@ using System.Numerics;
 
 namespace GameServerLib.GameObjects
 {
-    public class MonsterCamp : GameObject, IMonsterCamp
+    public class MonsterCamp : GameObject
     {
         private TeamId[] _playerTeams = new TeamId[] { TeamId.TEAM_BLUE, TeamId.TEAM_PURPLE };
         private Dictionary<TeamId, bool> _teamSawLastDeath = new Dictionary<TeamId, bool>{
@@ -33,7 +32,7 @@ namespace GameServerLib.GameObjects
         public float DoPlayVO { get; set; }
         public bool IsAlive { get; set; } = false;
         public float RespawnTimer { get; set; }
-        public List<IMonster> Monsters { get; set; } = new List<IMonster>();
+        public List<Monster> Monsters { get; set; } = new List<Monster>();
 
         public override bool IsAffectedByFoW => true;
 
@@ -104,7 +103,7 @@ namespace GameServerLib.GameObjects
         {
         }
 
-        public IMonster AddMonster(IMonster monster)
+        public Monster AddMonster(Monster monster)
         {
             var aiscript = monster.AIScript.ToString().Remove(0, 10);
             var campMonster = new Monster
@@ -135,9 +134,9 @@ namespace GameServerLib.GameObjects
             return campMonster;
         }
 
-        public void OnMonsterDeath(IDeathData deathData)
+        public void OnMonsterDeath(DeathData deathData)
         {
-            IMonster monster = deathData.Unit as IMonster;
+            Monster monster = deathData.Unit as Monster;
             Monsters.Remove(monster);
             if (Monsters.Count == 0)
             {

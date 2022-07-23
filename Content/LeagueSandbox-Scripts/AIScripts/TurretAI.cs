@@ -1,22 +1,22 @@
 ﻿using GameServerCore.Enums;
-using GameServerCore.Domain.GameObjects;
-using GameServerCore.Domain.GameObjects.Spell;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using System.Numerics;
 using GameServerCore.Scripting.CSharp;
 using System.Linq;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits;
 
 namespace AIScripts
 {
     public class TurretAI : IAIScript
     {
-        public IAIScriptMetaData AIScriptMetaData { get; set; } = new AIScriptMetaData();
-        IBaseTurret baseTurret;
+        public AIScriptMetaData AIScriptMetaData { get; set; } = new AIScriptMetaData();
+        BaseTurret baseTurret;
 
-        public void OnActivate(IObjAIBase owner)
+        public void OnActivate(ObjAIBase owner)
         {
-            baseTurret = owner as IBaseTurret;
+            baseTurret = owner as BaseTurret;
         }
         public void OnUpdate(float diff)
         {
@@ -39,7 +39,7 @@ namespace AIScripts
         public void CheckForTargets()
         {
             var units = GetUnitsInRange(baseTurret.Position, baseTurret.Stats.Range.Total, true);
-            IAttackableUnit nextTarget = null;
+            AttackableUnit nextTarget = null;
             var nextTargetPriority = ClassifyUnit.DEFAULT;
 
             foreach (var u in units)
@@ -63,16 +63,16 @@ namespace AIScripts
                 else
                 {
                     // Is the current target a champion? If it is, don't do anything
-                    if (baseTurret.TargetUnit is IChampion)
+                    if (baseTurret.TargetUnit is Champion)
                     {
                         continue;
                     }
                     // Find the next champion in range targeting an enemy champion who is also in range
-                    if (!(u is IChampion enemyChamp) || enemyChamp.TargetUnit == null)
+                    if (!(u is Champion enemyChamp) || enemyChamp.TargetUnit == null)
                     {
                         continue;
                     }
-                    if (!(enemyChamp.TargetUnit is IChampion enemyChampTarget) ||
+                    if (!(enemyChamp.TargetUnit is Champion enemyChampTarget) ||
                         Vector2.DistanceSquared(enemyChamp.Position, enemyChampTarget.Position) > enemyChamp.Stats.Range.Total * enemyChamp.Stats.Range.Total ||
                         Vector2.DistanceSquared(baseTurret.Position, enemyChampTarget.Position) > baseTurret.Stats.Range.Total * baseTurret.Stats.Range.Total)
                     {

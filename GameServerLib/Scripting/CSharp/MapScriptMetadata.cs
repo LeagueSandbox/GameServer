@@ -1,15 +1,8 @@
-﻿using GameServerCore.Domain;
-using GameServerCore.Domain.GameObjects;
-using GameServerCore.Domain.GameObjects.Spell.Missile;
-using GameServerCore.Domain.GameObjects.Spell.Sector;
-using GameServerCore.Enums;
-using GameServerCore.Scripting.CSharp;
-using LeagueSandbox.GameServer.Content;
-using System.Numerics;
+﻿using LeagueSandbox.GameServer.Content;
 
 namespace LeagueSandbox.GameServer.Scripting.CSharp
 {
-    public class MapScriptMetadata : IMapScriptMetadata
+    public class MapScriptMetadata
     {
         public float BaseGoldPerGoldTick { get; set; } = 0.95f;
         public float ChampionBaseGoldValue { get; set; } = 300.0f;
@@ -26,6 +19,6 @@ namespace LeagueSandbox.GameServer.Scripting.CSharp
         public bool OverrideSpawnPoints { get; set; } = false;
         public int RecallSpellItemId { get; set; } = 2001;
         public long SpawnInterval { get; set; } = 30 * 1000;
-        public IAIVars AIVars { get; set; } = new AIVars();
+        public AIVars AIVars { get; set; } = new AIVars();
     }
 }

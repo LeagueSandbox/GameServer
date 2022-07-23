@@ -1,16 +1,16 @@
-﻿using GameServerCore.Domain.GameObjects;
-using static LeagueSandbox.GameServer.API.ApiFunctionManager;
+﻿using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 using GameServerCore.Scripting.CSharp;
-using LeagueSandbox.GameServer.GameObjects.Stats;
+using LeagueSandbox.GameServer.GameObjects.StatsNS;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
 
 namespace ItemPassives
 {
     public class ItemID_3178 : IItemScript
     {
-        IObjAIBase Owner;
-        public IStatsModifier StatsModifier { get; private set; } = new StatsModifier();
+        ObjAIBase Owner;
+        public StatsModifier StatsModifier { get; private set; } = new StatsModifier();
 
-        public void OnActivate(IObjAIBase owner)
+        public void OnActivate(ObjAIBase owner)
         {
             Owner = owner;
 
@@ -23,14 +23,6 @@ namespace ItemPassives
 
             //This was the best way i could replicate the tower's attack speed shown in the tool tip vs it's actual attackspeed
             owner.Stats.AttackSpeedFlat = 0.45f;
-        }
-
-        public void OnDeactivate(IObjAIBase owner)
-        {
-        }
-
-        public void OnUpdate(float diff)
-        {
         }
     }
 }

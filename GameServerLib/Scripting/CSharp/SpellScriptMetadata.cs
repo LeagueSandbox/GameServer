@@ -1,13 +1,10 @@
-﻿using GameServerCore.Domain.GameObjects;
-using GameServerCore.Domain.GameObjects.Spell.Missile;
-using GameServerCore.Domain.GameObjects.Spell.Sector;
-using GameServerCore.Enums;
-using GameServerCore.Scripting.CSharp;
+﻿using GameServerCore.Enums;
+using LeagueSandbox.GameServer.GameObjects;
 using System.Numerics;
 
 namespace LeagueSandbox.GameServer.Scripting.CSharp
 {
-    public class SpellScriptMetadata : ISpellScriptMetadata
+    public class SpellScriptMetadata
     {
         public int AmmoPerCharge { get; set; } = 1;
         public string AutoAuraBuffName { get; set; } = "";
@@ -35,7 +32,7 @@ namespace LeagueSandbox.GameServer.Scripting.CSharp
         public bool IsDebugMode { get; set; } = false;
         public bool IsPetDurationBuff { get; set; } = false;
         public bool IsNonDispellable { get; set; } = false;
-        public IMissileParameters MissileParameters { get; set; } = null;
+        public MissileParameters MissileParameters { get; set; } = null;
         public bool NotSingleTargetSpell { get; set; } = false;
         // Never appears below 2?
         public int OnPreDamagePriority { get; set; } = 0;
@@ -43,7 +40,7 @@ namespace LeagueSandbox.GameServer.Scripting.CSharp
         public bool PermeatesThroughDeath { get; set; } = false;
         public bool PersistsThroughDeath { get; set; } = false;
         public string PopupMessage1 { get; set; } = "";
-        public ISectorParameters SectorParameters { get; set; } = null;
+        public SectorParameters SectorParameters { get; set; } = null;
         public float SetSpellDamageRatio { get; set; } = 0.0f;
         public float SpellDamageRatio { get; set; } = 0.0f;
 
@@ -65,7 +62,7 @@ namespace LeagueSandbox.GameServer.Scripting.CSharp
     /// <summary>
     /// Parameters which determine how a missile behaves.
     /// </summary>
-    public class MissileParameters : IMissileParameters
+    public class MissileParameters
     {
         /// <summary>
         /// Whether or not the missile should be able to hit something multiple times.
@@ -96,12 +93,12 @@ namespace LeagueSandbox.GameServer.Scripting.CSharp
     /// <summary>
     /// Parameters which determine how a sector behaves.
     /// </summary>
-    public class SectorParameters : ISectorParameters
+    public class SectorParameters
     {
         /// <summary>
         /// Optional object the sector should be bound to. The sector will be attached to this object and will use its facing direction.
         /// </summary>
-        public IGameObject BindObject { get; set; } = null;
+        public GameObject BindObject { get; set; } = null;
         /// <summary>
         /// Distance from the bottom of the sector to the top.
         /// If this is larger than Width, it will be used as the area around the sector to check for collisions.

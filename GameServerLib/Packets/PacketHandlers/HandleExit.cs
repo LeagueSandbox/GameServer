@@ -1,15 +1,14 @@
 ﻿using GameServerCore.Packets.PacketDefinitions.Requests;
 using GameServerCore.Packets.Handlers;
-using LeaguePackets.Game.Events;
 using PacketDefinitions420;
 
 namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 {
     public class HandleExit : PacketHandlerBase<ExitRequest>
     {
-        private readonly IPacketHandlerManager _packetHandlerManager;
+        private readonly PacketHandlerManager _packetHandlerManager;
 
-        public HandleExit(IPacketHandlerManager packetHandlerManager)
+        public HandleExit(PacketHandlerManager packetHandlerManager)
         {
             _packetHandlerManager = packetHandlerManager;
         }

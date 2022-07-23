@@ -1,5 +1,5 @@
 ﻿using LeagueSandbox.GameServer.GameObjects;
-using LeagueSandbox.GameServer.GameObjects.Spell;
+using LeagueSandbox.GameServer.GameObjects.SpellNS;
 
 namespace LeagueSandbox.GameServer.Chatbox.Commands
 {

@@ -1,19 +1,17 @@
-﻿using GameServerCore;
-using GameServerCore.Enums;
+﻿using GameServerCore.Enums;
 using GameServerCore.NetInfo;
 using LeagueSandbox.GameServer.Content;
-using LeagueSandbox.GameServer.GameObjects;
 using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
 using LeagueSandbox.GameServer.Inventory;
+using LeagueSandbox.GameServer.Players;
 using System;
-using System.Collections.Generic;
 using System.Numerics;
 
 namespace LeagueSandbox.GameServer.Chatbox.Commands
 {
     public class SpawnCommand : ChatCommandBase
     {
-        private readonly IPlayerManager _playerManager;
+        private readonly PlayerManager _playerManager;
 
         Game _game;
         public override string Command => "spawn";

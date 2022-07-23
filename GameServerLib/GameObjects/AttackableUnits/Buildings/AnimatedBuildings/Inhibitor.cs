@@ -1,13 +1,12 @@
-﻿using System;
-using System.Numerics;
-using System.Timers;
-using GameServerCore.Domain;
-using GameServerCore.Domain.GameObjects;
+﻿using System.Numerics;
 using GameServerCore.Enums;
+using GameServerLib.GameObjects.AttackableUnits;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
+using LeagueSandbox.GameServer.GameObjects.StatsNS;
 
 namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.Buildings.AnimatedBuildings
 {
-    public class Inhibitor : ObjAnimatedBuilding, IInhibitor
+    public class Inhibitor : ObjAnimatedBuilding
     {
         public LaneID Lane { get; private set; }
         public InhibitorState InhibitorState { get; private set; }
@@ -24,7 +23,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.Buildings.Animate
             int collisionRadius = 40,
             Vector2 position = new Vector2(),
             int visionRadius = 0,
-            IStats stats = null,
+            Stats stats = null,
             uint netId = 0
         ) : base(game, model, collisionRadius, position, visionRadius, netId, team, stats)
         {
@@ -38,11 +37,11 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.Buildings.Animate
             _game.ObjectManager.AddInhibitor(this);
         }
 
-        public override void Die(IDeathData data)
+        public override void Die(DeathData data)
         {
             base.Die(data);
 
-            if (data.Killer is IChampion c)
+            if (data.Killer is Champion c)
             {
                 c.Stats.Gold += GOLD_WORTH;
                 _game.PacketNotifier.NotifyUnitAddGold(c, this, GOLD_WORTH);
@@ -62,7 +61,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.Buildings.Animate
             InhibitorState = state;
         }
 
-        public void NotifyState(IDeathData data = null)
+        public void NotifyState(DeathData data = null)
         {
             var opposingTeam = Team == TeamId.TEAM_BLUE ? TeamId.TEAM_PURPLE : TeamId.TEAM_BLUE;
 

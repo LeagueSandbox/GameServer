@@ -1,18 +1,18 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using GameServerCore;
 using GameServerCore.Content;
-using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
+using LeagueSandbox.GameServer.Players;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
 
 namespace LeagueSandbox.GameServer.Chatbox.Commands
 {
     public class RainbowCommand : ChatCommandBase
     {
-        private readonly IPlayerManager _playerManager;
+        private readonly PlayerManager _playerManager;
 
-        private IChampion _me;
+        private Champion _me;
         private bool _run;
         private float _a = 0.5f;
         private float _speed = 0.25f;

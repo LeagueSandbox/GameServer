@@ -1,38 +1,35 @@
-﻿using GameServerCore.Domain.GameObjects;
-using GameServerCore.Domain.GameObjects.Spell;
-using LeagueSandbox.GameServer.Scripting.CSharp;
+﻿using LeagueSandbox.GameServer.Scripting.CSharp;
 using System.Numerics;
 using GameServerCore.Scripting.CSharp;
 using GameServerCore.Enums;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits;
+using LeagueSandbox.GameServer.GameObjects.SpellNS;
 
 namespace Spells
 {
     public class SRUAP_Turret_Chaos3BasicAttack : ISpellScript
     {
-        public ISpellScriptMetadata ScriptMetadata { get; private set; } = new SpellScriptMetadata()
+        public SpellScriptMetadata ScriptMetadata { get; private set; } = new SpellScriptMetadata()
         {
             // TODO
         };
 
-        IObjAIBase Owner;
-        public void OnActivate(IObjAIBase owner, ISpell spell)
+        ObjAIBase Owner;
+        public void OnActivate(ObjAIBase owner, Spell spell)
         {
             Owner = owner;
         }
 
-        public void OnDeactivate(IObjAIBase owner, ISpell spell)
-        {
-        }
-
-        public void OnSpellPreCast(IObjAIBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
+        public void OnSpellPreCast(ObjAIBase owner, Spell spell, AttackableUnit target, Vector2 start, Vector2 end)
         {
             AddParticleTarget(owner, owner, "SRU_Order_Laser_Turret_cas", target, bone: "joint2");
             AddParticleTarget(owner, target, "SRU_Inhibitor_chaos_Tower_Beam_Lvl1", owner, 0.5f, bone: "ROOT", targetBone: "joint2");
             AddParticleTarget(owner, target, "SRU_Chaos_Laser_Turret_Tar", target, 0.5f, bone: "ROOT", targetBone: "ROOT");
 
             var dmg = owner.Stats.AttackDamage.Total;
-            if (target is IMinion)
+            if (target is Minion)
             {
                 dmg *= 0.7f;
             }
@@ -41,34 +38,6 @@ namespace Spells
 
             AddBuff("S5Test_TowerWrath", 0.5f, 1, spell, target, owner);
             AddBuff("SRU_Turret_Laser_Audio", 0.5f, 1, spell, owner, owner);
-        }
-
-        public void OnLaunchAttack(ISpell spell)
-        {
-        }
-
-        public void OnSpellCast(ISpell spell)
-        {
-        }
-
-        public void OnSpellPostCast(ISpell spell)
-        {
-        }
-
-        public void OnSpellChannel(ISpell spell)
-        {
-        }
-
-        public void OnSpellChannelCancel(ISpell spell, ChannelingStopSource reason)
-        {
-        }
-
-        public void OnSpellPostChannel(ISpell spell)
-        {
-        }
-
-        public void OnUpdate(float diff)
-        {
         }
     }
 }

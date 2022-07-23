@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Numerics;
-using GameServerCore.Domain;
 
 namespace LeagueSandbox.GameServer.GameObjects.Other
 {
-    public class Stackable : IStackable
+    public class Stackable
     {
         public int MaxStacks { get; protected set; }
         public int StackCount { get; protected set; }

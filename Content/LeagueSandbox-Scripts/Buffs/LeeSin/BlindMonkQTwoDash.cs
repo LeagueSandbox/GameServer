@@ -1,32 +1,35 @@
 ﻿using GameServerCore.Enums;
-using GameServerCore.Domain.GameObjects;
-using GameServerCore.Domain.GameObjects.Spell;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 using GameServerCore.Scripting.CSharp;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using LeagueSandbox.GameServer.API;
 using System;
 using System.Numerics;
+using LeagueSandbox.GameServer.GameObjects;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
+using LeagueSandbox.GameServer.GameObjects.SpellNS;
+using LeagueSandbox.GameServer.GameObjects.StatsNS;
 
 namespace Buffs
 {
     internal class BlindMonkQTwoDash : IBuffGameScript
     {
-        public IBuffScriptMetaData BuffMetaData { get; set; } = new BuffScriptMetaData
+        public BuffScriptMetaData BuffMetaData { get; set; } = new BuffScriptMetaData
         {
             BuffAddType = BuffAddType.REPLACE_EXISTING
         };
 
-        public IStatsModifier StatsModifier { get; private set; }
+        public StatsModifier StatsModifier { get; private set; }
 
-        IObjAIBase owner;
-        ISpell originSpell;
-        IBuff thisBuff;
-        IAttackableUnit target;
+        ObjAIBase owner;
+        Spell originSpell;
+        Buff thisBuff;
+        AttackableUnit target;
         bool toRemove;
-        IParticle selfParticle;
+        Particle selfParticle;
 
-        public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
+        public void OnActivate(AttackableUnit unit, Buff buff, Spell ownerSpell)
         {
             owner = ownerSpell.CastInfo.Owner;
             thisBuff = buff;
@@ -47,12 +50,12 @@ namespace Buffs
             buff.SetStatusEffect(StatusFlags.Ghosted, true);
         }
 
-        public void OnMoveEnd(IAttackableUnit unit)
+        public void OnMoveEnd(AttackableUnit unit)
         {
             toRemove = true;
         }
 
-        public void OnMoveSuccess(IAttackableUnit unit)
+        public void OnMoveSuccess(AttackableUnit unit)
         {
             var missingHealth = target.Stats.HealthPoints.Total - target.Stats.CurrentHealth;
             var bonusDamage = missingHealth * 0.08f;
@@ -73,14 +76,14 @@ namespace Buffs
 
             RemoveBuff(thisBuff);
 
-            if (owner.Team != target.Team && target is IChampion)
+            if (owner.Team != target.Team && target is Champion)
             {
                 owner.SetTargetUnit(target, true);
                 owner.UpdateMoveOrder(OrderType.AttackTo, true);
             }
         }
 
-        public void OnDeactivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
+        public void OnDeactivate(AttackableUnit unit, Buff buff, Spell ownerSpell)
         {
             RemoveParticle(selfParticle);
             // Flags: Blend true

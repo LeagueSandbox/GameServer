@@ -1,13 +1,11 @@
-﻿using GameServerCore;
-using GameServerCore.Domain.GameObjects;
-using LeagueSandbox.GameServer.Content;
+﻿using LeagueSandbox.GameServer.Players;
 using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
 
 namespace LeagueSandbox.GameServer.Chatbox.Commands
 {
     public class ChCommand : ChatCommandBase
     {
-        private readonly IPlayerManager _playerManager;
+        private readonly PlayerManager _playerManager;
 
         public override string Command => "ch";
         public override string Syntax => $"{Command} championName";

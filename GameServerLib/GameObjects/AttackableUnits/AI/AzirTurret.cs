@@ -1,16 +1,15 @@
-﻿using GameServerCore.Domain.GameObjects;
-using GameServerCore.Enums;
+﻿using GameServerCore.Enums;
 using System.Numerics;
 
 namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 {
-    public class AzirTurret : BaseTurret, IAzirTurret
+    public class AzirTurret : BaseTurret
     {
-        public IAttackableUnit Owner { get; private set; }
+        public AttackableUnit Owner { get; private set; }
 
         public AzirTurret(
             Game game,
-            IAttackableUnit owner,
+            AttackableUnit owner,
             string name,
             string model,
             Vector2 position,

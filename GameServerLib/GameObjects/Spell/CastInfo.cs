@@ -1,26 +1,24 @@
-﻿using GameServerCore.Content;
-using GameServerCore.Domain;
-using GameServerCore.Domain.GameObjects;
-using GameServerCore.Domain.GameObjects.Spell;
+﻿using LeagueSandbox.GameServer.GameObjects.AttackableUnits;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
 using System.Collections.Generic;
 using System.Numerics;
 
-namespace LeagueSandbox.GameServer.GameObjects.Spell
+namespace LeagueSandbox.GameServer.GameObjects.SpellNS
 {
-    public class CastInfo : ICastInfo
+    public class CastInfo
     {
         public uint SpellHash { get; set; }
         public uint SpellNetID { get; set; }
         public byte SpellLevel { get; set; }
         public float AttackSpeedModifier { get; set; } = 1.0f;
-        public IObjAIBase Owner { get; set; }
+        public ObjAIBase Owner { get; set; }
         public uint SpellChainOwnerNetID { get; set; } // TODO: Figure out what this is used for
         public uint PackageHash { get; set; }
         public uint MissileNetID { get; set; }
         public Vector3 TargetPosition { get; set; }
         public Vector3 TargetPositionEnd { get; set; }
 
-        public List<ICastTarget> Targets { get; set; }
+        public List<CastTarget> Targets { get; set; }
 
         public float DesignerCastTime { get; set; }
         public float ExtraCastTime { get; set; }
@@ -46,7 +44,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
         /// Adds the specified unit to the list of CastTargets.
         /// </summary>
         /// <param name="target">Unit to add.</param>
-        public void AddTarget(IAttackableUnit target)
+        public void AddTarget(AttackableUnit target)
         {
             Targets.Add(new CastTarget(target, CastTarget.GetHitResult(target, IsAutoAttack, Owner.IsNextAutoCrit)));
         }
@@ -55,7 +53,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
         /// Removes the specified unit from the list of targets for this spell.
         /// </summary>
         /// <param name="target">Unit to remove.</param>
-        public bool RemoveTarget(IAttackableUnit target)
+        public bool RemoveTarget(AttackableUnit target)
         {
             if (!Targets.Exists(t => t.Unit == target))
             {
@@ -73,7 +71,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
         /// </summary>
         /// <param name="target">Unit to input.</param>
         /// <param name="index">Index to set.</param>
-        public void SetTarget(IAttackableUnit target, int index)
+        public void SetTarget(AttackableUnit target, int index)
         {
             if (Targets.Count - 1 < index)
             {

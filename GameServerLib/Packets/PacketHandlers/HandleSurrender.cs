@@ -1,14 +1,14 @@
 ﻿using GameServerCore.Packets.PacketDefinitions.Requests;
-using GameServerCore;
 using GameServerCore.Packets.Handlers;
 using static LeagueSandbox.GameServer.API.ApiMapFunctionManager;
+using LeagueSandbox.GameServer.Players;
 
 namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 {
     public class HandleSurrender : PacketHandlerBase<SurrenderRequest>
     {
         private readonly Game _game;
-        private readonly IPlayerManager _pm;
+        private readonly PlayerManager _pm;
 
         public HandleSurrender(Game game)
         {

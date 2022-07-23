@@ -1,7 +1,6 @@
-﻿using GameServerCore.Domain;
-using GameServerCore.Domain.GameObjects;
-using GameServerCore.Scripting.CSharp;
+﻿using GameServerCore.Scripting.CSharp;
 using LeagueSandbox.GameServer.GameObjects;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
 using LeagueSandbox.GameServer.Logging;
 using log4net;
 using System.Collections.Generic;
@@ -9,9 +8,9 @@ using static LeagueSandbox.GameServer.Content.TalentContentCollection;
 
 namespace LeagueSandbox.GameServer.Inventory
 {
-    public class TalentInventory : ITalentInventory
+    public class TalentInventory
     {
-        public List<ITalent> Talents { get; } = new List<ITalent>();
+        public List<Talent> Talents { get; } = new List<Talent>();
         private static ILog _logger = LoggerProvider.GetLogger();
 
         public void Add(string talentId, byte level)
@@ -26,7 +25,7 @@ namespace LeagueSandbox.GameServer.Inventory
             }
         }
 
-        public void Initialize(IObjAIBase owner)
+        public void Initialize(ObjAIBase owner)
         {
             foreach (var talent in Talents)
             {

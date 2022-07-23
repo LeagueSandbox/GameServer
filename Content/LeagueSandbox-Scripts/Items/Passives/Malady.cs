@@ -1,31 +1,31 @@
-﻿using GameServerCore.Domain;
-using GameServerCore.Domain.GameObjects;
-using GameServerCore.Domain.GameObjects.Spell;
-using GameServerCore.Enums;
+﻿using GameServerCore.Enums;
 using GameServerCore.Scripting.CSharp;
 using LeagueSandbox.GameServer.API;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
-using System.Numerics;
+using            GameServerLib.GameObjects.AttackableUnits;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits;
+using LeagueSandbox.GameServer.GameObjects.SpellNS;
 
 namespace ItemSpells
 {
     public class Malady : ISpellScript
     {
-        private IObjAIBase _owner;
-        private ISpell _spell;
+        private ObjAIBase _owner;
+        private Spell _spell;
         private float _damage = 0f;
-        public ISpellScriptMetadata ScriptMetadata { get; private set; } = new SpellScriptMetadata()
+        public SpellScriptMetadata ScriptMetadata { get; private set; } = new SpellScriptMetadata()
         {
             // TODO
         };
 
-        private void TargetExecute(IDamageData data)
+        private void TargetExecute(DamageData data)
         {
             data.Target.TakeDamage(_owner, _damage, DamageType.DAMAGE_TYPE_MAGICAL, DamageSource.DAMAGE_SOURCE_RAW, false);
         }
 
-        private void OnStatsUpdate(IAttackableUnit _unit, float _delta)
+        private void OnStatsUpdate(AttackableUnit _unit, float _delta)
         {
             float damage = 15 + (_owner.Stats.AbilityPower.Total * 0.15f);
             if(_damage != damage)
@@ -36,7 +36,7 @@ namespace ItemSpells
             }
         }
 
-        public void OnActivate(IObjAIBase owner, ISpell spell)
+        public void OnActivate(ObjAIBase owner, Spell spell)
         {
             _owner = owner;
             _spell = spell;
@@ -44,7 +44,7 @@ namespace ItemSpells
             ApiEventManager.OnUpdateStats.AddListener(this, owner, OnStatsUpdate, false);
         }
 
-        public void OnDeactivate(IObjAIBase owner, ISpell spell)
+        public void OnDeactivate(ObjAIBase owner, Spell spell)
         {
             ApiEventManager.OnHitUnit.RemoveListener(this, owner);
         }

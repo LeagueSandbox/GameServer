@@ -1,13 +1,12 @@
 using System.Collections.Generic;
 using System.Linq;
-using GameServerCore.Domain;
 
 namespace LeagueSandbox.GameServer.Inventory
 {
-    public class ItemRecipe: IItemRecipe
+    public class ItemRecipe
     {
-        private readonly IItemData _itemData;
-        private IItemData[] _items;
+        private readonly ItemData _itemData;
+        private ItemData[] _items;
         private int _totalPrice;
         private readonly ItemManager _itemManager;
 
@@ -24,14 +23,14 @@ namespace LeagueSandbox.GameServer.Inventory
             }
         }
 
-        private ItemRecipe(IItemData itemData, ItemManager manager)
+        private ItemRecipe(ItemData itemData, ItemManager manager)
         {
             _itemData = itemData;
             _totalPrice = -1;
             _itemManager = manager;
         }
 
-        public IEnumerable<IItemData> GetItems()
+        public IEnumerable<ItemData> GetItems()
         {
             if (_items == null)
             {
@@ -59,7 +58,7 @@ namespace LeagueSandbox.GameServer.Inventory
             _totalPrice += _itemData.Price;
         }
 
-        public static ItemRecipe FromItemType(IItemData data, ItemManager manager)
+        public static ItemRecipe FromItemType(ItemData data, ItemManager manager)
         {
             return new ItemRecipe(data, manager);
         }

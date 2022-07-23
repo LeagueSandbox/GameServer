@@ -4,10 +4,6 @@ using System.Linq;
 using System.Numerics;
 using GameServerCore;
 using GameServerCore.Content;
-using GameServerCore.Domain;
-using GameServerCore.Domain.GameObjects;
-using GameServerCore.Domain.GameObjects.Spell.Missile;
-using GameServerCore.Domain.GameObjects.Spell.Sector;
 using GameServerCore.Enums;
 using GameServerLib.Content;
 using GameServerLib.GameObjects.AttackableUnits;
@@ -15,8 +11,12 @@ using LeagueSandbox.GameServer.API;
 using LeagueSandbox.GameServer.Logging;
 using log4net;
 using GameServerCore.Scripting.CSharp;
-using PacketDefinitions420;
-using LeagueSandbox.GameServer.GameObjects.Stats;
+using LeagueSandbox.GameServer.GameObjects.StatsNS;
+using LeagueSandbox.GameServer.Content;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
+using LeagueSandbox.GameServer.GameObjects.SpellNS.Missile;
+using LeagueSandbox.GameServer.GameObjects.SpellNS.Sector;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits.Buildings;
 
 namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
 {
@@ -24,12 +24,12 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
     /// Base class for all attackable units.
     /// AttackableUnits normally follow these guidelines of functionality: Death state, forced movements, Crowd Control, Stats (including modifiers and basic replication), Buffs (and their scripts), and Call for Help.
     /// </summary>
-    public class AttackableUnit : GameObject, IAttackableUnit
+    public class AttackableUnit : GameObject
     {
         // Crucial Vars.
         private float _statUpdateTimer;
         private object _buffsLock;
-        private IDeathData _death;
+        private DeathData _death;
         private static ILog _logger = LoggerProvider.GetLogger();
 
         //TODO: Find out where this variable came from and if it can be unhardcoded
@@ -38,7 +38,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// <summary>
         /// Variable containing all data about the this unit's current character such as base health, base mana, whether or not they are melee, base movespeed, per level stats, etc.
         /// </summary>
-        public ICharData CharData { get; }
+        public CharData CharData { get; }
         /// <summary>
         /// Whether or not this Unit is dead. Refer to TakeDamage() and Die().
         /// </summary>
@@ -55,12 +55,12 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// <summary>
         /// Stats used purely in networking the accompishments or status of units and their gameplay affecting stats.
         /// </summary>
-        public IReplication Replication { get; protected set; }
+        public Replication Replication { get; protected set; }
         /// <summary>
         /// Variable housing all of this Unit's stats such as health, mana, armor, magic resist, ActionState, etc.
         /// Currently these are only initialized manually by ObjAIBase and ObjBuilding.
         /// </summary>
-        public IStats Stats { get; protected set; }
+        public Stats Stats { get; protected set; }
         /// <summary>
         /// Variable which stores the number of times a unit has teleported. Used purely for networking.
         /// Resets when reaching byte.MaxValue (255).
@@ -70,16 +70,16 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// Array of buff slots which contains all parent buffs (oldest buff of a given name) applied to this AI.
         /// Maximum of 256 slots, hard limit due to packets.
         /// </summary>
-        private IBuff[] BuffSlots { get; }
+        private Buff[] BuffSlots { get; }
         /// <summary>
         /// Dictionary containing all parent buffs (oldest buff of a given name). Used for packets and assigning stacks if a buff of the same name is added.
         /// </summary>
-        private Dictionary<string, IBuff> ParentBuffs { get; }
+        private Dictionary<string, Buff> ParentBuffs { get; }
         /// <summary>
         /// List of all buffs applied to this AI. Used for easier indexing of buffs.
         /// </summary>
         /// TODO: Verify if we can remove this in favor of BuffSlots while keeping the functions which allow for easy accessing of individual buff instances.
-        private List<IBuff> BuffList { get; }
+        private List<Buff> BuffList { get; }
         /// <summary>
         /// Waypoints that make up the path a game object is walking in.
         /// </summary>
@@ -105,12 +105,12 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// <summary>
         /// Parameters of any forced movements (dashes) this unit is performing.
         /// </summary>
-        public IForceMovementParameters MovementParameters { get; protected set; }
+        public ForceMovementParameters MovementParameters { get; protected set; }
         /// <summary>
         /// Information about this object's icon on the minimap.
         /// </summary>
         /// TODO: Move this to GameObject.
-        public IIconInfo IconInfo { get; protected set; }
+        public IconInfo IconInfo { get; protected set; }
         public override bool IsAffectedByFoW => true;
         public override bool SpawnShouldBeHidden => true;
 
@@ -124,7 +124,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             int visionRadius = 0,
             uint netId = 0,
             TeamId team = TeamId.TEAM_NEUTRAL,
-            IStats stats = null
+            Stats stats = null
         ) : base(game, position, collisionRadius, collisionRadius, visionRadius, netId, team)
 
         {
@@ -133,7 +133,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             CharData = _game.Config.ContentManager.GetCharData(Model);
             if (stats == null)
             {
-                var charStats = new Stats.Stats();
+                var charStats = new Stats();
                 charStats.LoadStats(CharData);
                 Stats = charStats;
             }
@@ -153,9 +153,9 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             Stats.AttackSpeedMultiplier.BaseValue = 1.0f;
 
             _buffsLock = new object();
-            BuffSlots = new IBuff[256];
-            ParentBuffs = new Dictionary<string, IBuff>();
-            BuffList = new List<IBuff>();
+            BuffSlots = new Buff[256];
+            ParentBuffs = new Dictionary<string, Buff>();
+            BuffList = new List<Buff>();
             IconInfo = new IconInfo(_game, this);
         }
 
@@ -168,7 +168,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             var gobj = "[Character]" + Model;
 
             // TODO: Account for any other units that have skins (requires skins to be implemented for those units)
-            if (this is IChampion c)
+            if (this is Champion c)
             {
                 var szSkin = "";
                 if (c.SkinID < 10)
@@ -272,10 +272,10 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// </summary>
         /// <param name="collider">GameObject that collided with this AI. Null if terrain.</param>
         /// <param name="isTerrain">Whether or not this AI collided with terrain.</param>
-        public override void OnCollision(IGameObject collider, bool isTerrain = false)
+        public override void OnCollision(GameObject collider, bool isTerrain = false)
         {
             // We do not want to teleport out of missiles, sectors, owned regions, or buildings. Buildings in particular are already baked into the Navigation Grid.
-            if (collider is ISpellMissile || collider is ISpellSector || collider is IObjBuilding || (collider is IRegion region && region.CollisionUnit == this))
+            if (collider is SpellMissile || collider is SpellSector || collider is ObjBuilding || (collider is Region region && region.CollisionUnit == this))
             {
                 return;
             }
@@ -298,7 +298,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                 ApiEventManager.OnCollision.Publish(this, collider);
 
                 if (MovementParameters != null || Status.HasFlag(StatusFlags.Ghosted)
-                    || (collider is IAttackableUnit unit &&
+                    || (collider is AttackableUnit unit &&
                     (unit.MovementParameters != null || unit.Status.HasFlag(StatusFlags.Ghosted))))
                 {
                     return;
@@ -458,7 +458,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// Adds a modifier to this unit's stats, ex: Armor, Attack Damage, Movespeed, etc.
         /// </summary>
         /// <param name="statModifier">Modifier to add.</param>
-        public void AddStatModifier(IStatsModifier statModifier)
+        public void AddStatModifier(StatsModifier statModifier)
         {
             Stats.AddModifier(statModifier);
         }
@@ -467,12 +467,12 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// Removes the given stat modifier instance from this unit.
         /// </summary>
         /// <param name="statModifier">Stat modifier instance to remove.</param>
-        public void RemoveStatModifier(IStatsModifier statModifier)
+        public void RemoveStatModifier(StatsModifier statModifier)
         {
             Stats.RemoveModifier(statModifier);
         }
 
-        public virtual void TakeHeal(IAttackableUnit caster, float amount, IEventSource sourceScript = null)
+        public virtual void TakeHeal(AttackableUnit caster, float amount, IEventSource sourceScript = null)
         {
             Stats.CurrentHealth = Math.Clamp(Stats.CurrentHealth + amount, 0, Stats.HealthPoints.Total);
         }
@@ -485,10 +485,10 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// <param name="type">Whether the damage is physical, magical, or true.</param>
         /// <param name="source">What the damage came from: attack, spell, summoner spell, or passive.</param>
         /// <param name="damageText">Type of damage the damage text should be.</param>
-        public IDamageData TakeDamage(IAttackableUnit attacker, float damage, DamageType type, DamageSource source, DamageResultType damageText, IEventSource sourceScript = null)
+        public DamageData TakeDamage(AttackableUnit attacker, float damage, DamageType type, DamageSource source, DamageResultType damageText, IEventSource sourceScript = null)
         {
             //TODO: Make all TakeDamage functions return DamageData
-            IDamageData damageData = new DamageData
+            DamageData damageData = new DamageData
             {
                 IsAutoAttack = source == DamageSource.DAMAGE_SOURCE_ATTACK,
                 Attacker = attacker,
@@ -520,12 +520,12 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// <param name="type">Whether the damage is physical, magical, or true.</param>
         /// <param name="source">What the damage came from: attack, spell, summoner spell, or passive.</param>
         /// <param name="isCrit">Whether or not the damage text should be shown as a crit.</param>
-        public IDamageData TakeDamage(IAttackableUnit attacker, float damage, DamageType type, DamageSource source, bool isCrit, IEventSource sourceScript = null)
+        public DamageData TakeDamage(AttackableUnit attacker, float damage, DamageType type, DamageSource source, bool isCrit, IEventSource sourceScript = null)
         {
             return TakeDamage(attacker, damage, type, source, Bool2Crit(isCrit), sourceScript);
         }
 
-        public void TakeDamage(IDamageData damageData, bool isCrit, IEventSource sourceScript)
+        public void TakeDamage(DamageData damageData, bool isCrit, IEventSource sourceScript = null)
         {
             this.TakeDamage(damageData, Bool2Crit(isCrit));
         }
@@ -538,7 +538,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// <param name="type">Whether the damage is physical, magical, or true.</param>
         /// <param name="source">What the damage came from: attack, spell, summoner spell, or passive.</param>
         /// <param name="damageText">Type of damage the damage text should be.</param>
-        public virtual void TakeDamage(IDamageData damageData, DamageResultType damageText, IEventSource sourceScript = null)
+        public virtual void TakeDamage(DamageData damageData, DamageResultType damageText, IEventSource sourceScript = null)
         {
             float regain = 0;
             var attacker = damageData.Attacker;
@@ -636,7 +636,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// Function called when this unit's health drops to 0 or less.
         /// </summary>
         /// <param name="data">Data of the death.</param>
-        public virtual void Die(IDeathData data)
+        public virtual void Die(DeathData data)
         {
             _game.ObjectManager.StopTargeting(this);
 
@@ -648,9 +648,9 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             SetToRemove();
 
             ApiEventManager.OnDeath.Publish(data.Unit, data);
-            if (data.Unit is IObjAIBase obj)
+            if (data.Unit is ObjAIBase obj)
             {
-                if (!(obj is IMonster))
+                if (!(obj is Monster))
                 {
                     var champs = _game.ObjectManager.GetChampionsInRangeFromTeam(Position, _game.Map.MapScript.MapScriptMetadata.AIVars.EXPRadius, CustomConvert.GetEnemyTeam(Team), true);
                     if (champs.Count > 0)
@@ -664,10 +664,10 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                 }
             }
 
-            if (data.Killer != null && data.Killer is IChampion champion)
+            if (data.Killer != null && data.Killer is Champion champion)
             {
                 //Monsters give XP exclusively to the killer
-                if (data.Unit is IMonster)
+                if (data.Unit is Monster)
                 {
                     champion.AddExperience(data.Unit.Stats.ExpGivenOnDeath.Total);
                 }
@@ -813,8 +813,8 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             _buffEffectsToEnable = 0;
             _buffEffectsToDisable = 0;
 
-            var tempBuffs = new List<IBuff>(BuffList);
-            foreach (IBuff buff in tempBuffs)
+            var tempBuffs = new List<Buff>(BuffList);
+            foreach (Buff buff in tempBuffs)
             {
                 if (buff.Elapsed())
                 {
@@ -878,7 +878,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             float timeRemaining = float.PositiveInfinity;
             if (MP.FollowNetID > 0)
             {
-                IGameObject unitToFollow = _game.ObjectManager.GetObjectById(MP.FollowNetID);
+                GameObject unitToFollow = _game.ObjectManager.GetObjectById(MP.FollowNetID);
                 if (unitToFollow == null)
                 {
                     SetDashingState(false, MoveStopReason.LostTarget);
@@ -1027,7 +1027,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// </summary>
         /// <param name="b">Buff instance to add.</param>
         /// TODO: Probably needs a refactor to lessen thread usage. Make sure to stick very closely to the current method; just optimize it.
-        public virtual bool AddBuff(IBuff b)
+        public virtual bool AddBuff(Buff b)
         {
             if (ApiEventManager.OnAllowAddBuff.Publish(this, (b.SourceUnit, b)))
             {
@@ -1228,7 +1228,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// </summary>
         /// <param name="buff">Buff instance to check.</param>
         /// <returns>True/False.</returns>
-        public bool HasBuff(IBuff buff)
+        public bool HasBuff(Buff buff)
         {
             return BuffList != null && BuffList.Contains(buff);
         }
@@ -1258,7 +1258,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// </summary>
         /// <param name="b">Buff instance to add.</param>
         /// <returns>Byte buff slot of the given buff.</returns>
-        public byte GetNewBuffSlot(IBuff b)
+        public byte GetNewBuffSlot(Buff b)
         {
             var slot = GetBuffSlot();
             BuffSlots[slot] = b;
@@ -1270,7 +1270,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// </summary>
         /// <param name="buffToLookFor">Buff to check. Leave empty to get an empty slot.</param>
         /// <returns>Slot of the given buff or an empty slot.</returns>
-        private byte GetBuffSlot(IBuff buffToLookFor = null)
+        private byte GetBuffSlot(Buff buffToLookFor = null)
         {
             for (byte i = 1; i < BuffSlots.Length; i++) // Find the first open slot or the slot corresponding to buff
             {
@@ -1287,7 +1287,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// Gets the list of parent buffs applied to this unit.
         /// </summary>
         /// <returns>List of parent buffs.</returns>
-        public Dictionary<string, IBuff> GetParentBuffs()
+        public Dictionary<string, Buff> GetParentBuffs()
         {
             return ParentBuffs;
         }
@@ -1297,9 +1297,9 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// </summary>
         /// <param name="name">Internal buff name to check.</param>
         /// <returns>Parent buff instance.</returns>
-        public IBuff GetBuffWithName(string name)
+        public Buff GetBuffWithName(string name)
         {
-            IBuff buff;
+            Buff buff;
             if (ParentBuffs.TryGetValue(name, out buff))
             {
                 return buff;
@@ -1311,7 +1311,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// Gets a list of all buffs applied to this unit (parent and children).
         /// </summary>
         /// <returns>List of buff instances.</returns>
-        public List<IBuff> GetBuffs()
+        public List<Buff> GetBuffs()
         {
             return BuffList;
         }
@@ -1330,7 +1330,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// </summary>
         /// <param name="buffName">Internal buff name to check.</param>
         /// <returns>List of buff instances.</returns>
-        public List<IBuff> GetBuffsWithName(string buffName)
+        public List<Buff> GetBuffsWithName(string buffName)
         {
             return BuffList.FindAll(b => b.IsBuffSame(buffName));
         }
@@ -1341,7 +1341,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// Other BuffAddTypes are removed entirely, regardless of stacks. DecrementStackCount can be used as an alternative.
         /// </summary>
         /// <param name="b">Buff to remove.</param>
-        public void RemoveBuff(IBuff b)
+        public void RemoveBuff(Buff b)
         {
             if (!HasBuff(b))
             {
@@ -1353,7 +1353,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             {
                 b.DecrementStackCount();
 
-                IBuff tempBuff = new Buff(_game, b.Name, b.Duration, b.StackCount, b.OriginSpell, b.TargetUnit, b.SourceUnit, b.IsBuffInfinite(), b.ParentScript);
+                Buff tempBuff = new Buff(_game, b.Name, b.Duration, b.StackCount, b.OriginSpell, b.TargetUnit, b.SourceUnit, b.IsBuffInfinite(), b.ParentScript);
 
                 RemoveBuff(b.Name, true);
 
@@ -1446,7 +1446,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// Called automatically by RemoveBuff().
         /// </summary>
         /// <param name="b">Buff instance to check for.</param>
-        private void RemoveBuffSlot(IBuff b)
+        private void RemoveBuffSlot(Buff b)
         {
             var slot = GetBuffSlot(b);
             BuffSlots[slot] = null;
@@ -1458,7 +1458,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// <param name="b">Internal buff name to remove.</param>
         private void RemoveBuff(string b, bool removeSlot)
         {
-            IBuff parentBuff = ParentBuffs[b];
+            Buff parentBuff = ParentBuffs[b];
             if (removeSlot && parentBuff != null)
             {
                 RemoveBuffSlot(parentBuff);
@@ -1474,7 +1474,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// <param name="buffName">Internal buff name to remove.</param>
         public void RemoveBuffsWithName(string buffName)
         {
-            foreach (IBuff b in BuffList)
+            foreach (Buff b in BuffList)
             {
                 if (b.IsBuffSame(buffName))
                 {

@@ -1,31 +1,28 @@
 ﻿using GameServerCore;
-using GameServerCore.Domain;
-using GameServerCore.Domain.GameObjects;
-using GameServerCore.Domain.GameObjects.Spell;
 using GameServerCore.Enums;
 using GameServerCore.Scripting.CSharp;
 using LeagueSandbox.GameServer.API;
 using System;
-using System.Collections.Generic;
 using System.Numerics;
-using System.Text;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
-
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
+using LeagueSandbox.GameServer.GameObjects.SpellNS;
 
 namespace CharScripts
 {
     internal class CharScriptKalista : ICharScript
     {
-        IAttackableUnit lastTarget;
+        AttackableUnit lastTarget;
 
-        public void OnActivate(IObjAIBase owner, ISpell spell = null)
+        public void OnActivate(ObjAIBase owner, Spell spell = null)
         {
             ApiEventManager.OnPreAttack.AddListener(this, owner, OnPreAttack, false);
             ApiEventManager.OnLaunchAttack.AddListener(this, owner, OnLaunchAttack, false);
             ApiEventManager.OnMoveEnd.AddListener(this, owner, OnMoveEnd, false);
         }
 
-        public void OnPreAttack(ISpell spell)
+        public void OnPreAttack(Spell spell)
         {
             if (spell.CastInfo.Targets.Count > 0)
             {
@@ -34,7 +31,7 @@ namespace CharScripts
             }
         }
 
-        public void OnLaunchAttack(ISpell spell)
+        public void OnLaunchAttack(Spell spell)
         {
             var owner = spell.CastInfo.Owner;
             lastTarget = spell.CastInfo.Targets[0].Unit;
@@ -128,19 +125,12 @@ namespace CharScripts
             }
         }
 
-        public void OnMoveEnd(IAttackableUnit owner)
+        public void OnMoveEnd(AttackableUnit owner)
         {
-            if (owner is IObjAIBase ai)
+            if (owner is ObjAIBase ai)
             {
                 ai.SetTargetUnit(lastTarget);
             }
-        }
-
-        public void OnDeactivate(IObjAIBase owner, ISpell spell = null)
-        {
-        }
-        public void OnUpdate(float diff)
-        {
         }
     }
 }

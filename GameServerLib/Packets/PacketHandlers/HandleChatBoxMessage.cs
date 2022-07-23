@@ -7,6 +7,7 @@ using LeagueSandbox.GameServer.Chatbox;
 using LeagueSandbox.GameServer.Logging;
 using log4net;
 using System.Numerics;
+using LeagueSandbox.GameServer.Players;
 
 namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 {
@@ -14,7 +15,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
     {
         private readonly Game _game;
         private readonly ChatCommandManager _chatCommandManager;
-        private readonly IPlayerManager _playerManager;
+        private readonly PlayerManager _playerManager;
         private static ILog _logger = LoggerProvider.GetLogger();
 
         public HandleChatBoxMessage(Game game)

@@ -1,37 +1,25 @@
 using GameServerCore.Enums;
-using GameServerCore.Domain.GameObjects;
-using GameServerCore.Domain.GameObjects.Spell;
-using GameServerCore.Domain.GameObjects.Spell.Missile;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using System.Linq;
 using GameServerCore;
 using System.Numerics;
 using GameServerCore.Scripting.CSharp;
+using LeagueSandbox.GameServer.GameObjects;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
+using LeagueSandbox.GameServer.GameObjects.SpellNS;
 
 namespace Spells
 {
     public class KarthusLayWasteA1 : ISpellScript
     {
-        public ISpellScriptMetadata ScriptMetadata { get; private set; } = new SpellScriptMetadata()
+        public SpellScriptMetadata ScriptMetadata { get; private set; } = new SpellScriptMetadata()
         {
             TriggersSpellCasts = true
             // TODO
         };
 
-        public void OnActivate(IObjAIBase owner, ISpell spell)
-        {
-        }
-
-        public void OnDeactivate(IObjAIBase owner, ISpell spell)
-        {
-        }
-
-        public void OnSpellPreCast(IObjAIBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
-        {
-        }
-
-        public void OnSpellCast(ISpell spell)
+        public void OnSpellCast(Spell spell)
         {
             var owner = spell.CastInfo.Owner;
              var spellPos = new Vector2(spell.CastInfo.TargetPosition.X, spell.CastInfo.TargetPosition.Z);
@@ -41,11 +29,11 @@ namespace Spells
             AddParticle(owner, null, "Karthus_Base_Q_Skull_Child", spellPos);
         }
 
-        public void OnSpellPostCast(ISpell spell)
+        public void OnSpellPostCast(Spell spell)
         {
             var owner = spell.CastInfo.Owner;
             var spellPos = new Vector2(spell.CastInfo.TargetPosition.X, spell.CastInfo.TargetPosition.Z);
-            IGameObject m = AddParticle(owner, null, "Karthus_Base_Q_Explosion", spellPos);
+            GameObject m = AddParticle(owner, null, "Karthus_Base_Q_Explosion", spellPos);
             var affectedUnits = GetUnitsInRange(m.Position, 150, true);
             var ap = spell.CastInfo.Owner.Stats.AbilityPower.Total;
             var damage = 20f + spell.CastInfo.SpellLevel * 20f + ap * 0.3f;
@@ -56,7 +44,7 @@ namespace Spells
             foreach (var unit in affectedUnits
             .Where(x => x.Team == CustomConvert.GetEnemyTeam(spell.CastInfo.Owner.Team)))
             {
-                if (unit is IChampion || unit is IMinion)
+                if (unit is Champion || unit is Minion)
                 {                        
                     if (affectedUnits.Count == 1)
                     {
@@ -73,22 +61,6 @@ namespace Spells
             }
             m.SetToRemove();
             AddParticle(owner, null, "Karthus_Base_Q_Explosion_Sound", spellPos);
-        }
-
-        public void OnSpellChannel(ISpell spell)
-        {
-        }
-
-        public void OnSpellChannelCancel(ISpell spell, ChannelingStopSource reason)
-        {
-        }
-
-        public void OnSpellPostChannel(ISpell spell)
-        {
-        }
-
-        public void OnUpdate(float diff)
-        {
         }
     }
 }

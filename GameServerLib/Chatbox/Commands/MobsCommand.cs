@@ -3,14 +3,14 @@ using GameServerCore.Packets.Enums;
 using LeagueSandbox.GameServer.GameObjects;
 using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
 using System.Linq;
-using System.Numerics;
+using LeagueSandbox.GameServer.Players;
 
 namespace LeagueSandbox.GameServer.Chatbox.Commands
 {
     public class MobsCommand : ChatCommandBase
     {
         private readonly Game _game;
-        private readonly IPlayerManager _playerManager;
+        private readonly PlayerManager _playerManager;
 
         public override string Command => "mobs";
         public override string Syntax => $"{Command} teamNumber";

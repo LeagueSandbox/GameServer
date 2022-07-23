@@ -1,6 +1,6 @@
-﻿using GameServerCore.Domain;
-using GameServerCore.Domain.GameObjects;
+﻿using GameServerLib.GameObjects.AttackableUnits;
 using LeaguePackets.Game.Events;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
 using LeagueSandbox.GameServer.Logging;
 using log4net;
 
@@ -15,12 +15,12 @@ namespace LeagueSandbox.GameServer.API
             _game = game;
         }
 
-        public static void AnnounceCaptureAltar(IMinion altar, byte index)
+        public static void AnnounceCaptureAltar(Minion altar, byte index)
         {
             _game.PacketNotifier.NotifyS2C_OnEventWorld(new OnCaptureAltar() { CapturePoint = index, OtherNetID = altar.NetId });
         }
 
-        public static void AnnounceCapturePointCaptured(ILaneTurret turret, char point, IChampion captor = null)
+        public static void AnnounceCapturePointCaptured(LaneTurret turret, char point, Champion captor = null)
         {
             IEvent captured;
             switch (char.ToUpper(point))
@@ -53,7 +53,7 @@ namespace LeagueSandbox.GameServer.API
             _game.PacketNotifier.NotifyOnEvent(captured, turret);
         }
 
-        public static void AnnounceCapturePointNeutralized(ILaneTurret turret, char point)
+        public static void AnnounceCapturePointNeutralized(LaneTurret turret, char point)
         {
             IEvent neutralized;
             switch (char.ToUpper(point))
@@ -81,7 +81,7 @@ namespace LeagueSandbox.GameServer.API
             _game.PacketNotifier.NotifyOnEvent(neutralized, turret);
         }
 
-        public static void AnnounceChampionAscended(IChampion champion)
+        public static void AnnounceChampionAscended(Champion champion)
         {
             _game.PacketNotifier.NotifyS2C_OnEventWorld(new OnChampionAscended() { OtherNetID = champion.NetId }, champion);
         }
@@ -92,7 +92,7 @@ namespace LeagueSandbox.GameServer.API
             ApiMapFunctionManager.NotifyAscendant();
         }
 
-        public static void AnnounceKillDragon(IDeathData data)
+        public static void AnnounceKillDragon(DeathData data)
         {
             var killDragon = new OnKillDragon()
             {
@@ -103,7 +103,7 @@ namespace LeagueSandbox.GameServer.API
             _game.PacketNotifier.NotifyS2C_OnEventWorld(killDragon, data.Killer);
         }
 
-        public static void AnnounceKillWorm(IDeathData data)
+        public static void AnnounceKillWorm(DeathData data)
         {
             var killDragon = new OnKillWorm()
             {
@@ -113,7 +113,7 @@ namespace LeagueSandbox.GameServer.API
             _game.PacketNotifier.NotifyS2C_OnEventWorld(killDragon, data.Killer);
         }
 
-        public static void AnnounceKillSpiderBoss(IDeathData data)
+        public static void AnnounceKillSpiderBoss(DeathData data)
         {
             var killDragon = new OnKillSpiderBoss()
             {
@@ -123,7 +123,7 @@ namespace LeagueSandbox.GameServer.API
             _game.PacketNotifier.NotifyS2C_OnEventWorld(killDragon, data.Killer);
         }
 
-        public static void AnnounceMinionAscended(IMinion minion)
+        public static void AnnounceMinionAscended(Minion minion)
         {
             _game.PacketNotifier.NotifyS2C_OnEventWorld(new OnMinionAscended() { OtherNetID = minion.NetId }, minion);
         }
@@ -167,7 +167,7 @@ namespace LeagueSandbox.GameServer.API
             _game.PacketNotifier.NotifyS2C_OnEventWorld(annoucement);
         }
 
-        public static void AnnounceVictoryPointThreshold(ILaneTurret turret, int index)
+        public static void AnnounceVictoryPointThreshold(LaneTurret turret, int index)
         {
             IEvent pointThreshHold;
             switch (index)

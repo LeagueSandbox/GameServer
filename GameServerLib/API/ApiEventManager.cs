@@ -1,8 +1,10 @@
-﻿using GameServerCore.Domain;
-using GameServerCore.Domain.GameObjects;
-using GameServerCore.Domain.GameObjects.Spell;
-using GameServerCore.Domain.GameObjects.Spell.Missile;
-using GameServerCore.Domain.GameObjects.Spell.Sector;
+﻿using LeagueSandbox.GameServer.GameObjects;
+using            GameServerLib.GameObjects.AttackableUnits;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
+using LeagueSandbox.GameServer.GameObjects.SpellNS;
+using LeagueSandbox.GameServer.GameObjects.SpellNS.Sector;
+using LeagueSandbox.GameServer.GameObjects.SpellNS.Missile;
 using GameServerCore.Enums;
 using LeagueSandbox.GameServer.Logging;
 using log4net;
@@ -86,95 +88,95 @@ namespace LeagueSandbox.GameServer.API
         }
 
         // Unused
-        public static Dispatcher<IAttackableUnit, IAttackableUnit> OnAddPAR
-                = new Dispatcher<IAttackableUnit, IAttackableUnit>();
-        public static ConditionDispatcher<IAttackableUnit, IAttackableUnit, IBuff> OnAllowAddBuff
-                = new ConditionDispatcher<IAttackableUnit, IAttackableUnit, IBuff>();
-        public static Dispatcher<IAttackableUnit, IAttackableUnit> OnBeingHit
-                = new Dispatcher<IAttackableUnit, IAttackableUnit>();
-        public static Dispatcher<IAttackableUnit, ISpell, ISpellMissile, ISpellSector> OnBeingSpellHit
-                = new Dispatcher<IAttackableUnit, ISpell, ISpellMissile, ISpellSector>();
-        public static Dispatcher<IBuff> OnBuffDeactivated
-                = new Dispatcher<IBuff>();
-        public static ConditionDispatcher<IAttackableUnit, ISpell> OnCanCast
-                = new ConditionDispatcher<IAttackableUnit, ISpell>();
-        public static Dispatcher<IGameObject, IGameObject> OnCollision
-                = new Dispatcher<IGameObject, IGameObject>();
-        public static Dispatcher<IGameObject> OnCollisionTerrain
-                = new Dispatcher<IGameObject>();
-        public static Dispatcher<ISpell, ISpellSector> OnCreateSector
-                = new Dispatcher<ISpell, ISpellSector>();
-        public static DataOnlyDispatcher<IAttackableUnit, IDamageData> OnDealDamage
-                = new DataOnlyDispatcher<IAttackableUnit, IDamageData>();
-        public static DataOnlyDispatcher<IAttackableUnit, IDeathData> OnDeath
-                = new DataOnlyDispatcher<IAttackableUnit, IDeathData>();
-        public static DataOnlyDispatcher<IObjAIBase, IDamageData> OnHitUnit
-                = new DataOnlyDispatcher<IObjAIBase, IDamageData>();
-        public static DataOnlyDispatcher<IChampion, IScoreData> OnIncrementChampionScore
-                = new DataOnlyDispatcher<IChampion, IScoreData>();
-        public static DataOnlyDispatcher<IAttackableUnit, IDeathData> OnKill
-                = new DataOnlyDispatcher<IAttackableUnit, IDeathData>();
-        public static DataOnlyDispatcher<IAttackableUnit, IDeathData> OnKillUnit
-                = new DataOnlyDispatcher<IAttackableUnit, IDeathData>();
-        public static DataOnlyDispatcher<IObjAIBase, ISpell> OnLaunchAttack
-                = new DataOnlyDispatcher<IObjAIBase, ISpell>();
+        public static Dispatcher<AttackableUnit, AttackableUnit> OnAddPAR
+                = new Dispatcher<AttackableUnit, AttackableUnit>();
+        public static ConditionDispatcher<AttackableUnit, AttackableUnit, Buff> OnAllowAddBuff
+                = new ConditionDispatcher<AttackableUnit, AttackableUnit, Buff>();
+        public static Dispatcher<AttackableUnit, AttackableUnit> OnBeingHit
+                = new Dispatcher<AttackableUnit, AttackableUnit>();
+        public static Dispatcher<AttackableUnit, Spell, SpellMissile, SpellSector> OnBeingSpellHit
+                = new Dispatcher<AttackableUnit, Spell, SpellMissile, SpellSector>();
+        public static Dispatcher<Buff> OnBuffDeactivated
+                = new Dispatcher<Buff>();
+        public static ConditionDispatcher<AttackableUnit, Spell> OnCanCast
+                = new ConditionDispatcher<AttackableUnit, Spell>();
+        public static Dispatcher<GameObject, GameObject> OnCollision
+                = new Dispatcher<GameObject, GameObject>();
+        public static Dispatcher<GameObject> OnCollisionTerrain
+                = new Dispatcher<GameObject>();
+        public static Dispatcher<Spell, SpellSector> OnCreateSector
+                = new Dispatcher<Spell, SpellSector>();
+        public static DataOnlyDispatcher<AttackableUnit, DamageData> OnDealDamage
+                = new DataOnlyDispatcher<AttackableUnit, DamageData>();
+        public static DataOnlyDispatcher<AttackableUnit, DeathData> OnDeath
+                = new DataOnlyDispatcher<AttackableUnit, DeathData>();
+        public static DataOnlyDispatcher<ObjAIBase, DamageData> OnHitUnit
+                = new DataOnlyDispatcher<ObjAIBase, DamageData>();
+        public static DataOnlyDispatcher<Champion, ScoreData> OnIncrementChampionScore
+                = new DataOnlyDispatcher<Champion, ScoreData>();
+        public static DataOnlyDispatcher<AttackableUnit, DeathData> OnKill
+                = new DataOnlyDispatcher<AttackableUnit, DeathData>();
+        public static DataOnlyDispatcher<AttackableUnit, DeathData> OnKillUnit
+                = new DataOnlyDispatcher<AttackableUnit, DeathData>();
+        public static DataOnlyDispatcher<ObjAIBase, Spell> OnLaunchAttack
+                = new DataOnlyDispatcher<ObjAIBase, Spell>();
         /// <summary>
         /// Called immediately after the rocket is added to the scene. *NOTE*: At the time of the call, the rocket has not yet been spawned for players.
         /// <summary>
-        public static Dispatcher<ISpell, ISpellMissile> OnLaunchMissile
-                = new Dispatcher<ISpell, ISpellMissile>();
-        public static Dispatcher<IAttackableUnit> OnLevelUp
-                = new Dispatcher<IAttackableUnit>();
-        public static Dispatcher<ISpell> OnLevelUpSpell
-                = new Dispatcher<ISpell>();
-        public static Dispatcher<IAttackableUnit> OnMoveEnd
-                = new Dispatcher<IAttackableUnit>();
-        public static Dispatcher<IAttackableUnit> OnMoveFailure
-                = new Dispatcher<IAttackableUnit>();
-        public static Dispatcher<IAttackableUnit> OnMoveSuccess
-                = new Dispatcher<IAttackableUnit>();
-        public static DataOnlyDispatcher<IObjAIBase, ISpell> OnPreAttack
-                = new DataOnlyDispatcher<IObjAIBase, ISpell>();
-        public static DataOnlyDispatcher<IAttackableUnit, IDamageData> OnPreDealDamage
-                = new DataOnlyDispatcher<IAttackableUnit, IDamageData>();
-        public static DataOnlyDispatcher<IAttackableUnit, IDamageData> OnPreTakeDamage
-                = new DataOnlyDispatcher<IAttackableUnit, IDamageData>();
-        public static Dispatcher<IObjAIBase> OnResurrect
-                = new Dispatcher<IObjAIBase>();
-        public static Dispatcher<ISpell> OnSpellCast
-                = new Dispatcher<ISpell>();
-        public static Dispatcher<ISpell> OnSpellChannel
-                = new Dispatcher<ISpell>();
-        public static Dispatcher<ISpell, ChannelingStopSource> OnSpellChannelCancel
-                = new Dispatcher<ISpell, ChannelingStopSource>();
-        public static Dispatcher<ISpell, IAttackableUnit, ISpellMissile, ISpellSector> OnSpellHit
-                = new Dispatcher<ISpell, IAttackableUnit, ISpellMissile, ISpellSector>();
-        public static Dispatcher<ISpellMissile> OnSpellMissileEnd
-                = new Dispatcher<ISpellMissile>();
-        public static Dispatcher<ISpellMissile, IAttackableUnit> OnSpellMissileHit
-                = new Dispatcher<ISpellMissile, IAttackableUnit>();
-        public static Dispatcher<ISpellMissile, float> OnSpellMissileUpdate
-                = new Dispatcher<ISpellMissile, float>();
-        public static Dispatcher<ISpell> OnSpellPostCast
-                = new Dispatcher<ISpell>();
-        public static Dispatcher<ISpell> OnSpellPostChannel
-                = new Dispatcher<ISpell>();
-        public static Dispatcher<ISpellSector, IAttackableUnit> OnSpellSectorHit
-                = new Dispatcher<ISpellSector, IAttackableUnit>();
-        public static DataOnlyDispatcher<IAttackableUnit, IDamageData> OnTakeDamage
-                = new DataOnlyDispatcher<IAttackableUnit, IDamageData>();
-        public static DataOnlyDispatcher<IObjAIBase, IAttackableUnit> OnTargetLost
-                = new DataOnlyDispatcher<IObjAIBase, IAttackableUnit>();
-        public static Dispatcher<IAttackableUnit, IBuff> OnUnitBuffDeactivated
-                = new Dispatcher<IAttackableUnit, IBuff>();
+        public static Dispatcher<Spell, SpellMissile> OnLaunchMissile
+                = new Dispatcher<Spell, SpellMissile>();
+        public static Dispatcher<AttackableUnit> OnLevelUp
+                = new Dispatcher<AttackableUnit>();
+        public static Dispatcher<Spell> OnLevelUpSpell
+                = new Dispatcher<Spell>();
+        public static Dispatcher<AttackableUnit> OnMoveEnd
+                = new Dispatcher<AttackableUnit>();
+        public static Dispatcher<AttackableUnit> OnMoveFailure
+                = new Dispatcher<AttackableUnit>();
+        public static Dispatcher<AttackableUnit> OnMoveSuccess
+                = new Dispatcher<AttackableUnit>();
+        public static DataOnlyDispatcher<ObjAIBase, Spell> OnPreAttack
+                = new DataOnlyDispatcher<ObjAIBase, Spell>();
+        public static DataOnlyDispatcher<AttackableUnit, DamageData> OnPreDealDamage
+                = new DataOnlyDispatcher<AttackableUnit, DamageData>();
+        public static DataOnlyDispatcher<AttackableUnit, DamageData> OnPreTakeDamage
+                = new DataOnlyDispatcher<AttackableUnit, DamageData>();
+        public static Dispatcher<ObjAIBase> OnResurrect
+                = new Dispatcher<ObjAIBase>();
+        public static Dispatcher<Spell> OnSpellCast
+                = new Dispatcher<Spell>();
+        public static Dispatcher<Spell> OnSpellChannel
+                = new Dispatcher<Spell>();
+        public static Dispatcher<Spell, ChannelingStopSource> OnSpellChannelCancel
+                = new Dispatcher<Spell, ChannelingStopSource>();
+        public static Dispatcher<Spell, AttackableUnit, SpellMissile, SpellSector> OnSpellHit
+                = new Dispatcher<Spell, AttackableUnit, SpellMissile, SpellSector>();
+        public static Dispatcher<SpellMissile> OnSpellMissileEnd
+                = new Dispatcher<SpellMissile>();
+        public static Dispatcher<SpellMissile, AttackableUnit> OnSpellMissileHit
+                = new Dispatcher<SpellMissile, AttackableUnit>();
+        public static Dispatcher<SpellMissile, float> OnSpellMissileUpdate
+                = new Dispatcher<SpellMissile, float>();
+        public static Dispatcher<Spell> OnSpellPostCast
+                = new Dispatcher<Spell>();
+        public static Dispatcher<Spell> OnSpellPostChannel
+                = new Dispatcher<Spell>();
+        public static Dispatcher<SpellSector, AttackableUnit> OnSpellSectorHit
+                = new Dispatcher<SpellSector, AttackableUnit>();
+        public static DataOnlyDispatcher<AttackableUnit, DamageData> OnTakeDamage
+                = new DataOnlyDispatcher<AttackableUnit, DamageData>();
+        public static DataOnlyDispatcher<ObjAIBase, AttackableUnit> OnTargetLost
+                = new DataOnlyDispatcher<ObjAIBase, AttackableUnit>();
+        public static Dispatcher<AttackableUnit, Buff> OnUnitBuffDeactivated
+                = new Dispatcher<AttackableUnit, Buff>();
         // TODO: Handle crowd control the same as normal dashes.
-        public static Dispatcher<IAttackableUnit> OnUnitCrowdControlled
-                = new Dispatcher<IAttackableUnit>();
+        public static Dispatcher<AttackableUnit> OnUnitCrowdControlled
+                = new Dispatcher<AttackableUnit>();
         // TODO: Change to OnMoveSuccess and change where Publish is called internally to reflect the name.
-        public static ConditionDispatcher<IObjAIBase, OrderType> OnUnitUpdateMoveOrder
-                = new ConditionDispatcher<IObjAIBase, OrderType>();
-        public static Dispatcher<IAttackableUnit, float> OnUpdateStats
-                = new Dispatcher<IAttackableUnit, float>();
+        public static ConditionDispatcher<ObjAIBase, OrderType> OnUnitUpdateMoveOrder
+                = new ConditionDispatcher<ObjAIBase, OrderType>();
+        public static Dispatcher<AttackableUnit, float> OnUpdateStats
+                = new Dispatcher<AttackableUnit, float>();
 
         public abstract class DispatcherBase
         {

@@ -1,19 +1,19 @@
 ﻿using GameServerCore.Enums;
-using GameServerCore.Domain.GameObjects;
-using GameServerCore.Domain.GameObjects.Spell;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using System.Numerics;
 using GameServerCore.Scripting.CSharp;
 using LeagueSandbox.GameServer.API;
-using GameServerCore.Domain.GameObjects.Spell.Sector;
-using GameServerCore.Domain.GameObjects.Spell.Missile;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
+using LeagueSandbox.GameServer.GameObjects.SpellNS;
+using LeagueSandbox.GameServer.GameObjects.SpellNS.Sector;
 
 namespace Spells
 {
     public class InfernalGuardian : ISpellScript
     {
-        public ISpellScriptMetadata ScriptMetadata => new SpellScriptMetadata()
+        public SpellScriptMetadata ScriptMetadata => new SpellScriptMetadata()
         {
             TriggersSpellCasts = true,
             IsDamagingSpell = true,
@@ -22,25 +22,9 @@ namespace Spells
             SpellDamageRatio = 0.5f,
         };
 
-        public void OnActivate(IObjAIBase owner, ISpell spell)
+        public void OnSpellPostCast(Spell spell)
         {
-        }
-
-        public void OnDeactivate(IObjAIBase owner, ISpell spell)
-        {
-        }
-
-        public void OnSpellPreCast(IObjAIBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
-        {
-        }
-
-        public void OnSpellCast(ISpell spell)
-        {
-        }
-
-        public void OnSpellPostCast(ISpell spell)
-        {
-            var owner = spell.CastInfo.Owner as IChampion;
+            var owner = spell.CastInfo.Owner as Champion;
             var tibbers = CreatePet
             (
                 owner,
@@ -88,7 +72,7 @@ namespace Spells
             ApiEventManager.OnSpellSectorHit.AddListener(this, sector, TargetExecute, false);
         }
 
-        public void TargetExecute(ISpellSector sector, IAttackableUnit target)
+        public void TargetExecute(SpellSector sector, AttackableUnit target)
         {
             var spell = sector.SpellOrigin;
 

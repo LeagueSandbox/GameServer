@@ -1,11 +1,12 @@
-using System.Numerics;
-using GameServerCore.Domain;
-using GameServerCore.Domain.GameObjects;
-using GameServerCore.Domain.GameObjects.Spell;
 using GameServerCore.Enums;
 using GameServerCore.Scripting.CSharp;
+using GameServerLib.GameObjects.AttackableUnits;
 using LeagueSandbox.GameServer.API;
-using LeagueSandbox.GameServer.GameObjects.Stats;
+using LeagueSandbox.GameServer.GameObjects;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
+using LeagueSandbox.GameServer.GameObjects.SpellNS;
+using LeagueSandbox.GameServer.GameObjects.StatsNS;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 
@@ -13,20 +14,20 @@ namespace Buffs
 {
     internal class CrestoftheAncientGolem : IBuffGameScript
     {
-        public IBuffScriptMetaData BuffMetaData { get; set; } = new BuffScriptMetaData
+        public BuffScriptMetaData BuffMetaData { get; set; } = new BuffScriptMetaData
         {
             BuffType = BuffType.COMBAT_ENCHANCER
         };
 
-        public IStatsModifier StatsModifier { get; private set; } = new StatsModifier();
+        public StatsModifier StatsModifier { get; private set; } = new StatsModifier();
 
-        IBuff thisBuff;
-        IParticle particle;
-        public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
+        Buff thisBuff;
+        Particle particle;
+        public void OnActivate(AttackableUnit unit, Buff buff, Spell ownerSpell)
         {
             thisBuff  = buff;
 
-            if (unit is IChampion champ)
+            if (unit is Champion champ)
             {
                 particle = AddParticleTarget(unit, unit, "NeutralMonster_buf_blue_defense", unit, buff.Duration);
                 // TODO: Separate Mana and PAR stat mods (energy is modified differently from Mana, same with other types)
@@ -44,10 +45,10 @@ namespace Buffs
             // TODO: CrestoftheAncientGolemLines?
         }
 
-        public void OnDeath(IDeathData deathData)
+        public void OnDeath(DeathData deathData)
         {
-            var unit = deathData.Unit as IObjAIBase;
-            var killer = deathData.Killer as IChampion;
+            var unit = deathData.Unit as ObjAIBase;
+            var killer = deathData.Killer as Champion;
 
             if (unit != null && killer != null && !killer.IsDead)
             {
@@ -64,11 +65,11 @@ namespace Buffs
             }
             else if (killer == null)
             {
-                if (killer is IPet pet)
+                if (deathData.Killer is Pet pet)
                 {
                     var petOwner = pet.Owner;
 
-                    if (petOwner != null && petOwner is IChampion petChamp && !petChamp.IsDead)
+                    if (petOwner != null && petOwner is Champion petChamp && !petChamp.IsDead)
                     {
                         var duration = 150f;
                         if (HasBuff(deathData.Killer, "MonsterBuffs"))
@@ -82,7 +83,7 @@ namespace Buffs
             }
         }
 
-        public void OnDeactivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
+        public void OnDeactivate(AttackableUnit unit, Buff buff, Spell ownerSpell)
         {
             ApiEventManager.OnDeath.RemoveListener(this);
             RemoveParticle(particle);

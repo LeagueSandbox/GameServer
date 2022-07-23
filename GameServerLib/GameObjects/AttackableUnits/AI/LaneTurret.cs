@@ -1,12 +1,12 @@
-﻿using System.Collections.Generic;
-using System.Numerics;
+﻿using System.Numerics;
 using GameServerCore.Domain;
-using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
+using GameServerLib.GameObjects.AttackableUnits;
+using LeagueSandbox.GameServer.GameObjects.StatsNS;
 
 namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 {
-    public class LaneTurret : BaseTurret, ILaneTurret
+    public class LaneTurret : BaseTurret
     {
         public TurretType Type { get; }
 
@@ -20,7 +20,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             uint netId = 0,
             LaneID lane = LaneID.NONE,
             MapObject mapObject = default,
-            IStats stats = null,
+            Stats stats = null,
             string aiScript = ""
         ) : base(game, name, model, position, team, netId, lane, mapObject, stats: stats, aiScript: aiScript)
         {
@@ -34,7 +34,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         }
 
         //TODO: Decide wether we want MapScrits to handle this with Events or leave this here
-        public override void Die(IDeathData data)
+        public override void Die(DeathData data)
         {
             float localGold = CharData.LocalGoldGivenOnDeath;
             float globalGold = CharData.GlobalGoldGivenOnDeath;
@@ -87,7 +87,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             base.Die(data);
         }
 
-        public override void AutoAttackHit(IAttackableUnit target)
+        public override void AutoAttackHit(AttackableUnit target)
         {
             if (Type == TurretType.FOUNTAIN_TURRET)
             {
