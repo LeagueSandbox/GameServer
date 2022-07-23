@@ -1,38 +1,26 @@
 using System.Numerics;
 using GameServerCore.Enums;
-using GameServerCore.Domain.GameObjects;
-using GameServerCore.Domain.GameObjects.Spell;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 using LeagueSandbox.GameServer.Scripting.CSharp;
-using GameServerCore.Domain.GameObjects.Spell.Missile;
 using GameServerCore.Scripting.CSharp;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits;
+using LeagueSandbox.GameServer.GameObjects.SpellNS;
+using LeagueSandbox.GameServer.GameObjects.SpellNS.Missile;
 
 namespace Spells
 {
     public class YasuoQW : ISpellScript
     {
-        public ISpellScriptMetadata ScriptMetadata { get; private set; } = new SpellScriptMetadata()
+        public SpellScriptMetadata ScriptMetadata { get; private set; } = new SpellScriptMetadata()
         {
             TriggersSpellCasts = true
             // TODO
         };
 
         private Vector2 trueCoords;
-        public void OnActivate(IObjAIBase owner, ISpell spell)
-        {
-            // here's nothing
-        }
 
-        public void OnDeactivate(IObjAIBase owner, ISpell spell)
-        {
-            // here's empty
-        }
-
-        public void OnSpellPreCast(IObjAIBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
-        {
-        }
-
-        public void OnSpellCast(ISpell spell)
+        public void OnSpellCast(Spell spell)
         {
             var current = spell.CastInfo.Owner.Position;
             var spellPos = new Vector2(spell.CastInfo.TargetPosition.X, spell.CastInfo.TargetPosition.Z);
@@ -43,7 +31,7 @@ namespace Spells
             FaceDirection(trueCoords, spell.CastInfo.Owner, true);
         }
 
-        public void OnSpellPostCast(ISpell spell)
+        public void OnSpellPostCast(Spell spell)
         {
             var owner = spell.CastInfo.Owner;
             if (HasBuff(owner, "YasuoE"))
@@ -53,7 +41,7 @@ namespace Spells
                 AddParticleTarget(owner, owner, "Yasuo_Base_EQ_SwordGlow", owner, 0, 1, "C_BUFFBONE_GLB_Weapon_1");
                 foreach (var affectEnemys in GetUnitsInRange(spell.CastInfo.Owner.Position, 270f, true))
                 {
-                    if (affectEnemys is IAttackableUnit && affectEnemys.Team != spell.CastInfo.Owner.Team)
+                    if (affectEnemys is AttackableUnit && affectEnemys.Team != spell.CastInfo.Owner.Team)
                     {
                         affectEnemys.TakeDamage(spell.CastInfo.Owner, spell.CastInfo.SpellLevel * 20f + spell.CastInfo.Owner.Stats.AttackDamage.Total, DamageType.DAMAGE_TYPE_PHYSICAL, DamageSource.DAMAGE_SOURCE_ATTACK, false);
                         AddParticleTarget(owner, affectEnemys, "Yasuo_Base_Q_hit_tar", affectEnemys);
@@ -70,7 +58,7 @@ namespace Spells
             }
         }
 
-        public void ApplyEffects(IObjAIBase owner, IAttackableUnit target, ISpell spell, ISpellMissile missile)
+        public void ApplyEffects(ObjAIBase owner, AttackableUnit target, Spell spell, SpellMissile missile)
         {
             AddParticleTarget(owner, target, "Yasuo_Base_Q_hit_tar", target);
             target.TakeDamage(owner, spell.CastInfo.SpellLevel * 20f + owner.Stats.AttackDamage.Total, DamageType.DAMAGE_TYPE_PHYSICAL, DamageSource.DAMAGE_SOURCE_ATTACK, false);
@@ -78,23 +66,6 @@ namespace Spells
             {
                 AddBuff("YasuoQ01", 6f, 1, spell, owner, owner);
             }
-        }
-
-        public void OnSpellChannel(ISpell spell)
-        {
-        }
-
-        public void OnSpellChannelCancel(ISpell spell, ChannelingStopSource reason)
-        {
-        }
-
-        public void OnSpellPostChannel(ISpell spell)
-        {
-        }
-
-        public void OnUpdate(float diff)
-        {
-            //here's nothing
         }
     }
 }

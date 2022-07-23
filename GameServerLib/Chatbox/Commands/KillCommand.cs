@@ -1,13 +1,13 @@
-﻿using GameServerCore;
-using GameServerCore.Enums;
+﻿using GameServerCore.Enums;
 using GameServerLib.GameObjects.AttackableUnits;
 using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
+using LeagueSandbox.GameServer.Players;
 
 namespace LeagueSandbox.GameServer.Chatbox.Commands
 {
     public class KillCommand : ChatCommandBase
     {
-        private readonly IPlayerManager _playerManager;
+        private readonly PlayerManager _playerManager;
 
         public override string Command => "kill";
         public override string Syntax => $"{Command} minions";

@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using GameServerCore.Content;
-using GameServerCore.Domain;
 
 namespace LeagueSandbox.GameServer.Content
 {
-    public class ContentFile : IContentFile
+    public class ContentFile
     {
         public Dictionary<string, Dictionary<string, string>> Values { get; set; }
             = new Dictionary<string, Dictionary<string, string>>();

@@ -1,10 +1,11 @@
 ﻿using GameServerCore;
+using LeagueSandbox.GameServer.Players;
 
 namespace LeagueSandbox.GameServer.Chatbox.Commands
 {
     public class ChangeTeamCommand : ChatCommandBase
     {
-        private readonly IPlayerManager _playerManager;
+        private readonly PlayerManager _playerManager;
 
         public override string Command => "changeteam";
         public override string Syntax => $"{Command} teamNumber";

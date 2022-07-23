@@ -1,10 +1,13 @@
-using GameServerCore.Domain;
-using GameServerCore.Domain.GameObjects;
-using GameServerCore.Domain.GameObjects.Spell;
 using GameServerCore.Enums;
 using GameServerCore.Scripting.CSharp;
 using LeagueSandbox.GameServer.API;
-using LeagueSandbox.GameServer.GameObjects.Stats;
+using LeagueSandbox.GameServer.GameObjects;
+using            GameServerLib.GameObjects.AttackableUnits;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits.Buildings;
+using LeagueSandbox.GameServer.GameObjects.SpellNS;
+using LeagueSandbox.GameServer.GameObjects.StatsNS;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 
@@ -12,21 +15,21 @@ namespace Buffs
 {
     internal class BlessingoftheLizardElder : IBuffGameScript
     {
-        public IBuffScriptMetaData BuffMetaData { get; set; } = new BuffScriptMetaData
+        public BuffScriptMetaData BuffMetaData { get; set; } = new BuffScriptMetaData
         {
             BuffType = BuffType.COMBAT_ENCHANCER
         };
 
-        public IStatsModifier StatsModifier { get; private set; } = new StatsModifier();
+        public StatsModifier StatsModifier { get; private set; } = new StatsModifier();
 
-        IBuff thisBuff;
-        IObjAIBase owner;
-        IParticle particle;
-        public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
+        Buff thisBuff;
+        ObjAIBase owner;
+        Particle particle;
+        public void OnActivate(AttackableUnit unit, Buff buff, Spell ownerSpell)
         {
             thisBuff  = buff;
 
-            if (unit is IChampion champ)
+            if (unit is Champion champ)
             {
                 particle = AddParticleTarget(unit, unit, "NeutralMonster_buf_red_offense", unit, buff.Duration);
             }
@@ -39,10 +42,10 @@ namespace Buffs
             ApiEventManager.OnPreDealDamage.AddListener(this, unit, OnPreDealDamage, false);
         }
 
-        public void OnDeath(IDeathData deathData)
+        public void OnDeath(DeathData deathData)
         {
-            var unit = deathData.Unit as IObjAIBase;
-            var killer = deathData.Killer as IChampion;
+            var unit = deathData.Unit as ObjAIBase;
+            var killer = deathData.Killer as Champion;
 
             if (unit != null && killer != null && !killer.IsDead)
             {
@@ -59,11 +62,11 @@ namespace Buffs
             }
             else if (killer == null)
             {
-                if (deathData.Killer is IPet pet)
+                if (deathData.Killer is Pet pet)
                 {
                     var petOwner = pet.Owner;
 
-                    if (petOwner != null && petOwner is IChampion petChamp && !petChamp.IsDead)
+                    if (petOwner != null && petOwner is Champion petChamp && !petChamp.IsDead)
                     {
                         var duration = 150f;
                         if (HasBuff(deathData.Killer, "MonsterBuffs"))
@@ -77,9 +80,9 @@ namespace Buffs
             }
         }
 
-        public void OnPreDealDamage(IDamageData data)
+        public void OnPreDealDamage(DamageData data)
         {
-            if (data.Attacker is IObjAIBase ai && data.Target is IObjAIBase && !(data.Target is IBaseTurret || data.Target is IObjBuilding))
+            if (data.Attacker is ObjAIBase ai && data.Target is ObjAIBase && !(data.Target is BaseTurret || data.Target is ObjBuilding))
             {
                 if (data.DamageSource == DamageSource.DAMAGE_SOURCE_ATTACK)
                 {
@@ -108,16 +111,11 @@ namespace Buffs
             }
         }
 
-        public void OnDeactivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
+        public void OnDeactivate(AttackableUnit unit, Buff buff, Spell ownerSpell)
         {
             ApiEventManager.OnDeath.RemoveListener(this);
             ApiEventManager.OnHitUnit.RemoveListener(this);
             RemoveParticle(particle);
-        }
-
-        public void OnUpdate(float diff)
-        {
-
         }
     }
 }

@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using GameServerCore.Domain;
-using GameServerCore.Domain.GameObjects.Spell;
 using GameServerCore.Enums;
 
 namespace LeagueSandbox.GameServer.Content
 {
-    public class PassiveData : IPassiveData
+    public class PassiveData
     {
         public string PassiveAbilityName { get; set; } = "";
         public int[] PassiveLevels { get; set; } = new int[6];
@@ -17,9 +13,9 @@ namespace LeagueSandbox.GameServer.Content
         //TODO: Extend into handling several passives, when we decide on a format for that case.
     }
 
-    public class CharData : ICharData
+    public class CharData
     {
-        public IGlobalData GlobalCharData { get; private set; } = new GlobalData();
+        public GlobalData GlobalCharData { get; private set; } = new GlobalData();
 
         public float AcquisitionRange { get; private set; } = 475;
         public bool AllyCanUse { get; private set; } = false;
@@ -27,14 +23,11 @@ namespace LeagueSandbox.GameServer.Content
         public bool AlwaysUpdatePAR { get; private set; } = false;
         public float Armor { get; private set; } = 1.0f;
         public float ArmorPerLevel { get; private set; } = 1.0f;
-        public float AttackCastTime { get; private set; } = 0.0f;
-        public float AttackDelayCastOffsetPercent { get; private set; } = 0.0f;
-        public float AttackDelayCastOffsetPercentAttackSpeedRatio { get; private set; } = 0.0f;
-        public float AttackDelayOffsetPercent { get; private set; } = 0.0f;
+        public float[] AttackDelayCastOffsetPercent { get; private set; } = new float[18];
+        public float[] AttackDelayCastOffsetPercentAttackSpeedRatio { get; private set; } = new float[18];
+        public float[] AttackDelayOffsetPercent { get; private set; } = new float[18];
         public float AttackRange { get; private set; } = 100.0f;
         public float AttackSpeedPerLevel { get; private set; }
-        public float AttackTotalTime { get; private set; } = 0.0f;
-        public float BaseAttackProbability { get; private set; } = 0.5f;
         public float BaseDamage { get; private set; } = 10.0f;
         public float BaseHp { get; private set; } = 100.0f;
         public float BaseMp { get; private set; } = 100.0f;
@@ -42,10 +35,6 @@ namespace LeagueSandbox.GameServer.Content
         public float BaseStaticMpRegen { get; private set; } = 0.30000001f;
         public float CooldownSpellSlot { get; private set; } = 0.0f;
         public float CritDamageBonus { get; private set; } = 2.0f;
-        public float CritAttackDelayCastOffsetPercent { get; private set; } = 0.0f;
-        public float CritAttackDelayCastOffsetPercentAttackSpeedRatio { get; private set; } = 0.0f;
-        public float CritAttackDelayOffsetPercent { get; private set; } = 0.0f;
-        public float CritAttackProbability { get; private set; } = 0.0f;
         public float DamagePerLevel { get; private set; } = 10.0f;
         public bool DisableContinuousTargetFacing { get; private set; } = false;
         public bool EnemyCanUse { get; private set; } = false;
@@ -87,11 +76,11 @@ namespace LeagueSandbox.GameServer.Content
             new[] {6, 11, 16, 99, 99, 99}
         };
 
-        public List<IBasicAttackInfo> BasicAttacks { get; private set; } = Enumerable.Repeat((IBasicAttackInfo)new BasicAttackInfo(), 18).ToList();
+        public string[] AttackNames { get; private set; } = new string[18];
         public float[] AttackProbabilities { get; private set; } = new float[18];
 
         // TODO: Verify if we want this to be an array.
-        public IPassiveData PassiveData { get; private set; } = new PassiveData();
+        public PassiveData PassiveData { get; private set; } = new PassiveData();
 
         public CharData Load(ContentFile file)
         {
@@ -100,28 +89,14 @@ namespace LeagueSandbox.GameServer.Content
             AcquisitionRange = file.GetFloat("Data", "AcquisitionRange", AcquisitionRange);
             Armor = file.GetFloat("Data", "Armor", Armor);
             ArmorPerLevel = file.GetFloat("Data", "ArmorPerLevel", ArmorPerLevel);
-
-            AttackCastTime = file.GetFloat("Data", "AttackCastTime", AttackCastTime);
-            AttackDelayCastOffsetPercent = file.GetFloat("Data", "AttackDelayCastOffsetPercent", AttackDelayCastOffsetPercent);
-            AttackDelayCastOffsetPercentAttackSpeedRatio = file.GetFloat("Data", "AttackDelayCastOffsetPercentAttackSpeedRatio", AttackDelayCastOffsetPercentAttackSpeedRatio);
-            AttackDelayOffsetPercent = file.GetFloat("Data", "AttackDelayOffsetPercent", AttackDelayOffsetPercent);
             AttackRange = file.GetFloat("Data", "AttackRange", AttackRange);
             AttackSpeedPerLevel = file.GetFloat("Data", "AttackSpeedPerLevel", AttackSpeedPerLevel);
-            AttackTotalTime = file.GetFloat("Data", "AttackTotalTime", AttackTotalTime);
-
-            BaseAttackProbability = file.GetFloat("Data", "BaseAttack_Probability", BaseAttackProbability);
             BaseDamage = file.GetFloat("Data", "BaseDamage", BaseDamage);
             BaseHp = file.GetFloat("Data", "BaseHP", BaseHp);
             BaseMp = file.GetFloat("Data", "BaseMP", BaseMp);
             BaseStaticHpRegen = file.GetFloat("Data", "BaseStaticHPRegen", BaseStaticHpRegen);
             BaseStaticMpRegen = file.GetFloat("Data", "BaseStaticMPRegen", BaseStaticMpRegen);
-
-            CritAttackDelayCastOffsetPercent = file.GetFloat("Data", "CritAttack_AttackDelayCastOffsetPercent", CritAttackDelayCastOffsetPercent);
-            CritAttackDelayCastOffsetPercentAttackSpeedRatio = file.GetFloat("Data", "CritAttack_AttackDelayCastOffsetPercentAttackSpeedRatio", CritAttackDelayCastOffsetPercentAttackSpeedRatio);
-            CritAttackDelayOffsetPercent = file.GetFloat("Data", "CritAttack_AttackDelayOffsetPercent", CritAttackDelayOffsetPercent);
-            CritAttackProbability = file.GetFloat("Data", "CritAttack_Probability", CritAttackProbability);
             CritDamageBonus = file.GetFloat("Data", "CritDamageBonus", CritDamageBonus);
-
             DamagePerLevel = file.GetFloat("Data", "DamagePerLevel", DamagePerLevel);
             DisableContinuousTargetFacing = file.GetBool("Data", "DisableContinuousTargetFacing");
             ExpGivenOnDeath = file.GetFloat("Data", "ExpGivenOnDeath", ExpGivenOnDeath);
@@ -155,7 +130,6 @@ namespace LeagueSandbox.GameServer.Content
             IsTower = file.GetBool("Minion", "IsTower", IsTower);
             AlwaysUpdatePAR = file.GetBool("Minion", "AlwaysUpdatePAR", AlwaysUpdatePAR);
 
-
             foreach (var tag in file.GetString("Data", "UnitTags").Split(" | "))
             {
                 Enum.TryParse(tag, out UnitTag unitTag);
@@ -182,83 +156,111 @@ namespace LeagueSandbox.GameServer.Content
             }
 
             PassiveData.PassiveLuaName = file.GetString("Data", "Passive1LuaName", "");
+
             MaxLevels = file.GetIntArray("Data", "MaxLevels", MaxLevels);
 
-            //Main AutoAttack
-            BasicAttacks[0] = new BasicAttackInfo()
+            for (var i = 0; i < 18; i++)
             {
-                Name = name + "BasicAttack",
-                AttackCastTime = AttackCastTime,
-                AttackDelayCastOffsetPercent = AttackDelayCastOffsetPercent,
-                AttackDelayCastOffsetPercentAttackSpeedRatio = AttackDelayCastOffsetPercentAttackSpeedRatio,
-                AttackDelayOffsetPercent = AttackDelayOffsetPercent,
-                AttackTotalTime = AttackTotalTime,
-                Probability = BaseAttackProbability
-            };
-
-            int nameIndex = 2;
-            //Secondary/Extra AutoAttacks
-            for (var i = 1; i < 9; i++)
-            {
-                var attackName = file.GetString("Data", $"ExtraAttack{i}", "");
-
-                //AncientGolem for example, doesn't have his ExtraAttacks explicitly defined in his file, but it has "ExtraAttack_Probability" which implies the existance of ExtraAttacks
-                if (string.IsNullOrEmpty(attackName) && file.HasMentionOf("Data", $"ExtraAttack{i}"))
+                if (i < 9)
                 {
-                    attackName = $"{name}BasicAttack{nameIndex}";
+                    if (i == 0)
+                    {
+                        AttackNames[i] = name + "BasicAttack";
+                        AttackProbabilities[i] = file.GetFloat("Data", "BaseAttack_Probability", 1.0f);
+                        float initAttackCastTime = file.GetFloat("Data", "AttackCastTime", 0.0f);
+                        float initAttackDelayOffsetPercent = file.GetFloat("Data", "AttackDelayOffsetPercent", 0.0f);
+                        float initAttackDelayCastOffsetPercent = file.GetFloat("Data", "AttackDelayCastOffsetPercent", 0.0f);
+                        float initAttackDelayCastOffsetPercentAttackSpeedRatio = file.GetFloat("Data", "AttackDelayCastOffsetPercentAttackSpeedRatio", 1.0f);
+                        float initAttackTotalTime = file.GetFloat("Data", "AttackTotalTime", 0.0f);
+                        float attackCastTime = Math.Min(initAttackTotalTime, initAttackCastTime);
+                        if (initAttackTotalTime > 0.0f && attackCastTime > 0.0f)
+                        {
+                            AttackDelayOffsetPercent[i] = (initAttackTotalTime / GlobalCharData.AttackDelay) - 1.0f;
+                            AttackDelayCastOffsetPercent[i] = (attackCastTime / initAttackTotalTime) - GlobalCharData.AttackDelayCastPercent;
+                            AttackDelayCastOffsetPercentAttackSpeedRatio[i] = 1.0f;
+                        }
+                        else
+                        {
+                            AttackDelayOffsetPercent[i] = initAttackDelayOffsetPercent;
+                            AttackDelayCastOffsetPercent[i] = Math.Max(initAttackDelayCastOffsetPercent, -GlobalCharData.AttackDelayCastPercent);
+                            AttackDelayCastOffsetPercentAttackSpeedRatio[i] = initAttackDelayCastOffsetPercentAttackSpeedRatio;
+                        }
+                        continue;
+                    }
+                    else
+                    {
+                        AttackNames[i] = file.GetString("Data", $"ExtraAttack{i}", "");
+                        AttackProbabilities[i] = file.GetFloat("Data", $"ExtraAttack{i}_Probability", 0.0f);
+                        float extraAttackCastTime = file.GetFloat("Data", AttackNames[i] + "_AttackCastTime", 0.0f);
+                        float extraAttackDelayOffsetPercent = file.GetFloat("Data", AttackNames[i] + "_AttackDelayOffsetPercent", AttackDelayOffsetPercent[0]);
+                        float extraAttackDelayCastOffsetPercent = file.GetFloat("Data", AttackNames[i] + "_AttackDelayCastOffsetPercent", AttackDelayCastOffsetPercent[0]);
+                        float extraAttackDelayCastOffsetPercentAttackSpeedRatio = file.GetFloat("Data", AttackNames[i] + "_AttackDelayCastOffsetPercentAttackSpeedRatio", 1.0f);
+                        float extraAttackTotalTime = file.GetFloat("Data", AttackNames[i] + "_AttackTotalTime", 0.0f);
+                        float attackCastTime = Math.Min(extraAttackTotalTime, extraAttackCastTime);
+                        if (extraAttackTotalTime > 0.0f && attackCastTime > 0.0f)
+                        {
+                            AttackDelayOffsetPercent[i] = (extraAttackTotalTime / GlobalCharData.AttackDelay) - 1.0f;
+                            AttackDelayCastOffsetPercent[i] = (attackCastTime / extraAttackTotalTime) - GlobalCharData.AttackDelayCastPercent;
+                            AttackDelayCastOffsetPercentAttackSpeedRatio[i] = 1.0f;
+                        }
+                        else
+                        {
+                            AttackDelayOffsetPercent[i] = extraAttackDelayOffsetPercent;
+                            AttackDelayCastOffsetPercent[i] = Math.Max(extraAttackDelayCastOffsetPercent, -GlobalCharData.AttackDelayCastPercent);
+                            AttackDelayCastOffsetPercentAttackSpeedRatio[i] = extraAttackDelayCastOffsetPercentAttackSpeedRatio;
+                        }
+                    }
                 }
-
-
-                if (BasicAttacks.Find(x => x.Name == attackName) != null)
+                else if (i == 9)
                 {
-                    nameIndex++;
+                    AttackNames[i] = name + "CritAttack";
+                    AttackProbabilities[i] = file.GetFloat("Data", $"CritAttack_Probability", 1.0f);
+                    float initAttackCastTime = file.GetFloat("Data", "CritAttack_AttackCastTime", 0.0f);
+                    float initAttackDelayOffsetPercent = file.GetFloat("Data", "CritAttack_AttackDelayOffsetPercent", AttackDelayOffsetPercent[0]);
+                    float initAttackDelayCastOffsetPercent = file.GetFloat("Data", "CritAttack_AttackDelayCastOffsetPercent", AttackDelayCastOffsetPercent[0]);
+                    float initAttackDelayCastOffsetPercentAttackSpeedRatio = file.GetFloat("Data", "CritAttack_AttackDelayCastOffsetPercentAttackSpeedRatio", 1.0f);
+                    float initAttackTotalTime = file.GetFloat("Data", "CritAttack_AttackTotalTime", 0.0f);
+                    float attackCastTime = Math.Min(initAttackTotalTime, initAttackCastTime);
+                    if (initAttackTotalTime > 0.0f && attackCastTime > 0.0f)
+                    {
+                        AttackDelayOffsetPercent[i] = (initAttackTotalTime / GlobalCharData.AttackDelay) - 1.0f;
+                        AttackDelayCastOffsetPercent[i] = (attackCastTime / initAttackTotalTime) - GlobalCharData.AttackDelayCastPercent;
+                        AttackDelayCastOffsetPercentAttackSpeedRatio[i] = 1.0f;
+                    }
+                    else
+                    {
+                        AttackDelayOffsetPercent[i] = initAttackDelayOffsetPercent;
+                        AttackDelayCastOffsetPercent[i] = Math.Max(initAttackDelayCastOffsetPercent, -GlobalCharData.AttackDelayCastPercent);
+                        AttackDelayCastOffsetPercentAttackSpeedRatio[i] = initAttackDelayCastOffsetPercentAttackSpeedRatio;
+                    }
                     continue;
                 }
-
-                BasicAttacks[i] = new BasicAttackInfo()
+                else if (AttackNames[9] != null)
                 {
-                    Name = attackName,
-                    AttackCastTime = file.GetFloat("Data", $"ExtraAttack{i}_AttackCastTime", AttackCastTime),
-                    AttackDelayCastOffsetPercent = file.GetFloat("Data", $"ExtraAttack{i}_AttackDelayCastOffsetPercent", AttackDelayCastOffsetPercent),
-                    AttackDelayCastOffsetPercentAttackSpeedRatio = AttackDelayCastOffsetPercentAttackSpeedRatio,
-                    AttackDelayOffsetPercent =  AttackDelayOffsetPercent,
-                    AttackTotalTime = file.GetFloat("Data", $"ExtraAttack{i}_AttackTotalTime", AttackTotalTime),
-                    Probability = file.GetFloat("Data", $"ExtraAttack{i}_Probability", BaseAttackProbability)
-                };
-                nameIndex++;
-            }
-
-            //Main Crit AutoAttack
-            BasicAttacks[9] = new BasicAttackInfo()
-            {
-                Name = file.GetString("Data", $"CritAttack", ""),
-                AttackCastTime = AttackCastTime,
-                AttackDelayCastOffsetPercent = CritAttackDelayCastOffsetPercent,
-                AttackDelayCastOffsetPercentAttackSpeedRatio = CritAttackDelayCastOffsetPercentAttackSpeedRatio,
-                AttackDelayOffsetPercent = CritAttackDelayOffsetPercent,
-                AttackTotalTime = AttackTotalTime,
-                Probability = CritAttackProbability
-            };
-
-            //Secondary Crit AutoAttacks
-            for (var i = 1; i < 9; i++)
-            {
-                var index = i + 9;
-                var attackName = file.GetString("Data", $"ExtraCritAttack{i}", "");
-                BasicAttacks[index] = new BasicAttackInfo()
-                {
-                    Name = attackName,
-                    AttackCastTime = AttackCastTime,
-                    AttackDelayCastOffsetPercent = file.GetFloat("Data", $"{attackName}_AttackDelayCastOffsetPercent", CritAttackDelayCastOffsetPercent),
-                    AttackDelayCastOffsetPercentAttackSpeedRatio = CritAttackDelayCastOffsetPercentAttackSpeedRatio,
-                    AttackDelayOffsetPercent = file.GetFloat("Data", $"{attackName}_AttackDelayOffsetPercent", AttackDelayOffsetPercent),
-                    AttackTotalTime = AttackTotalTime,
-                    Probability = CritAttackProbability
-                };
+                    AttackNames[i] = file.GetString("Data", $"ExtraCritAttack{i}", "");
+                    AttackProbabilities[i] = file.GetFloat("Data", $"ExtraCritAttack{i}_Probability", 0.0f);
+                    float extraAttackCastTime = file.GetFloat("Data", AttackNames[i] + "_AttackCastTime", 0.0f);
+                    float extraAttackDelayOffsetPercent = file.GetFloat("Data", AttackNames[i] + "_AttackDelayOffsetPercent", AttackDelayOffsetPercent[0]);
+                    float extraAttackDelayCastOffsetPercent = file.GetFloat("Data", AttackNames[i] + "_AttackDelayCastOffsetPercent", AttackDelayCastOffsetPercent[0]);
+                    float extraAttackDelayCastOffsetPercentAttackSpeedRatio = file.GetFloat("Data", AttackNames[i] + "_AttackDelayCastOffsetPercentAttackSpeedRatio", 1.0f);
+                    float extraAttackTotalTime = file.GetFloat("Data", AttackNames[i] + "_AttackTotalTime", 0.0f);
+                    float attackCastTime = Math.Min(extraAttackTotalTime, extraAttackCastTime);
+                    if (extraAttackTotalTime > 0.0f && attackCastTime > 0.0f)
+                    {
+                        AttackDelayOffsetPercent[i] = (extraAttackTotalTime / GlobalCharData.AttackDelay) - 1.0f;
+                        AttackDelayCastOffsetPercent[i] = (attackCastTime / extraAttackTotalTime) - GlobalCharData.AttackDelayCastPercent;
+                        AttackDelayCastOffsetPercentAttackSpeedRatio[i] = 1.0f;
+                    }
+                    else
+                    {
+                        AttackDelayOffsetPercent[i] = extraAttackDelayOffsetPercent;
+                        AttackDelayCastOffsetPercent[i] = Math.Max(extraAttackDelayCastOffsetPercent, -GlobalCharData.AttackDelayCastPercent);
+                        AttackDelayCastOffsetPercentAttackSpeedRatio[i] = extraAttackDelayCastOffsetPercentAttackSpeedRatio;
+                    }
+                }
             }
 
             return this;
         }
     }
 }
-

@@ -1,30 +1,30 @@
-﻿using GameServerCore.Domain;
-using GameServerCore.Domain.GameObjects;
+﻿using System.Numerics;
 using GameServerCore.Scripting.CSharp;
 using LeagueSandbox.GameServer.API;
+using LeagueSandbox.GameServer.GameObjects;
+using            GameServerLib.GameObjects.AttackableUnits;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
 using LeagueSandbox.GameServer.Scripting.CSharp;
-using System.Numerics;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
-
 
 namespace AIScripts
 {
     public class BasicJungleMonsterAI : IAIScript
     {
         //NOTE: This is a EXTREMELY basic A.I just so the jungle monsters aren't just complete dummies
-        public IAIScriptMetaData AIScriptMetaData { get; set; } = new AIScriptMetaData();
-        IMonster monster;
+        public AIScriptMetaData AIScriptMetaData { get; set; } = new AIScriptMetaData();
+        Monster monster;
         Vector2 initialPosition;
         Vector3 initialFacingDirection;
         bool isInCombat = false;
-        public void OnActivate(IObjAIBase owner)
+        public void OnActivate(ObjAIBase owner)
         {
-            monster = owner as IMonster;
+            monster = owner as Monster;
             initialPosition = monster.Position;
             initialFacingDirection = monster.Direction;
             ApiEventManager.OnTakeDamage.AddListener(this, monster, OnTakeDamage, false);
         }
-        public void OnTakeDamage(IDamageData damageData)
+        public void OnTakeDamage(DamageData damageData)
         {
             foreach (var campMonster in monster.Camp.Monsters)
             {

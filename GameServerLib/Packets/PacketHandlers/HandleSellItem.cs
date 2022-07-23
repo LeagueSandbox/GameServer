@@ -1,13 +1,13 @@
 ﻿using GameServerCore.Packets.PacketDefinitions.Requests;
-using GameServerCore;
 using GameServerCore.Packets.Handlers;
+using LeagueSandbox.GameServer.Players;
 
 namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 {
     public class HandleSellItem : PacketHandlerBase<SellItemRequest>
     {
         private readonly Game _game;
-        private readonly IPlayerManager _playerManager;
+        private readonly PlayerManager _playerManager;
 
         public HandleSellItem(Game game)
         {

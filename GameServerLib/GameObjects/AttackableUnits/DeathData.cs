@@ -1,10 +1,9 @@
-﻿using GameServerCore.Domain;
-using GameServerCore.Domain.GameObjects;
-using GameServerCore.Enums;
+﻿using GameServerCore.Enums;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits;
 
 namespace GameServerLib.GameObjects.AttackableUnits
 {
-    class DeathData : IDeathData
+    public class DeathData
     {
         /// <summary>
         /// Whether or not the death should result in resurrection as a zombie.
@@ -18,11 +17,11 @@ namespace GameServerLib.GameObjects.AttackableUnits
         /// <summary>
         /// Unit which is dying.
         /// </summary>
-        public IAttackableUnit Unit { get; set; }
+        public AttackableUnit Unit { get; set; }
         /// <summary>
         /// Unit which is responsible for the death.
         /// </summary>
-        public IAttackableUnit Killer { get; set; }
+        public AttackableUnit Killer { get; set; }
         /// <summary>
         /// Type of damage with caused the death.
         /// </summary>

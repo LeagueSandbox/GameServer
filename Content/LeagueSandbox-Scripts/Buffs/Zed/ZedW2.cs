@@ -1,9 +1,11 @@
-﻿using GameServerCore.Domain.GameObjects;
-using GameServerCore.Domain.GameObjects.Spell;
-using GameServerCore.Enums;
+﻿using GameServerCore.Enums;
 using GameServerCore.Scripting.CSharp;
 using LeagueSandbox.GameServer.API;
-using LeagueSandbox.GameServer.GameObjects.Stats;
+using LeagueSandbox.GameServer.GameObjects;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
+using LeagueSandbox.GameServer.GameObjects.SpellNS;
+using LeagueSandbox.GameServer.GameObjects.StatsNS;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 
@@ -11,18 +13,18 @@ namespace Buffs
 {
     public class ZedW2 : IBuffGameScript
     {
-        public IBuffScriptMetaData BuffMetaData { get; set; } = new BuffScriptMetaData
+        public BuffScriptMetaData BuffMetaData { get; set; } = new BuffScriptMetaData
         {
             BuffAddType = BuffAddType.REPLACE_EXISTING
         };
 
-        public IStatsModifier StatsModifier { get; private set; } = new StatsModifier();
+        public StatsModifier StatsModifier { get; private set; } = new StatsModifier();
 
         ZedWHandler Handler;
 
-        public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
+        public void OnActivate(AttackableUnit unit, Buff buff, Spell ownerSpell)
         {
-            if (unit is IObjAIBase owner)
+            if (unit is ObjAIBase owner)
             {
                 Handler = (owner.GetBuffWithName("ZedWHandler").BuffScript as ZedWHandler);
                 var w2Spell = SetSpell(owner, "ZedW2", SpellSlotType.SpellSlots, 1);
@@ -30,21 +32,17 @@ namespace Buffs
             }
         }
 
-        public void OnDeactivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
+        public void OnDeactivate(AttackableUnit unit, Buff buff, Spell ownerSpell)
         {
             if (!Handler.QueueSwap)
             {
                 unit.RemoveBuffsWithName("ZedWHandler");
             }
 
-            if (unit is IObjAIBase ai)
+            if (unit is ObjAIBase ai)
             {
                 SetSpell(ai, "ZedShadowDash", SpellSlotType.SpellSlots, 1);
             }
-        }
-
-        public void OnUpdate(float diff)
-        {
         }
     }
 }

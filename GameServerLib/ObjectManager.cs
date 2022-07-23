@@ -3,14 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using GameServerCore;
-using GameServerCore.Domain;
-using GameServerCore.Domain.GameObjects;
-using GameServerCore.Domain.GameObjects.Spell.Missile;
 using GameServerCore.Enums;
-using LeagueSandbox.GameServer.GameObjects;
-using LeagueSandbox.GameServer.GameObjects.Other;
-using LeagueSandbox.GameServer.Logging;
 using GameServerCore.NetInfo;
+using LeagueSandbox.GameServer.GameObjects;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits.Buildings.AnimatedBuildings;
 
 namespace LeagueSandbox.GameServer
 {
@@ -19,20 +17,20 @@ namespace LeagueSandbox.GameServer
     /// <summary>
     /// Class that manages addition, removal, and updating of all GameObjects, their visibility, and buffs.
     /// </summary>
-    public class ObjectManager : IObjectManager
+    public class ObjectManager
     {
         // Crucial Vars
         private Game _game;
 
         // Dictionaries of GameObjects.
-        private Dictionary<uint, IGameObject> _objects;
-        private List<IGameObject> _objectsToAdd = new List<IGameObject>();
-        private List<IGameObject> _objectsToRemove = new List<IGameObject>();
+        private Dictionary<uint, GameObject> _objects;
+        private List<GameObject> _objectsToAdd = new List<GameObject>();
+        private List<GameObject> _objectsToRemove = new List<GameObject>();
         // For the initial spawning (networking) of newly added objects.
-        private Dictionary<uint, IChampion> _champions;
-        private Dictionary<uint, IBaseTurret> _turrets;
-        private Dictionary<uint, IInhibitor> _inhibitors;
-        private Dictionary<TeamId, List<IGameObject>> _visionProviders;
+        private Dictionary<uint, Champion> _champions;
+        private Dictionary<uint, BaseTurret> _turrets;
+        private Dictionary<uint, Inhibitor> _inhibitors;
+        private Dictionary<TeamId, List<GameObject>> _visionProviders;
 
         private bool _currentlyInUpdate = false;
 
@@ -57,14 +55,14 @@ namespace LeagueSandbox.GameServer
             Teams = Enum.GetValues(typeof(TeamId)).Cast<TeamId>().ToList();
 
             _game = game;
-            _objects = new Dictionary<uint, IGameObject>();
-            _turrets = new Dictionary<uint, IBaseTurret>();
-            _inhibitors = new Dictionary<uint, IInhibitor>();
-            _champions = new Dictionary<uint, IChampion>();
-            _visionProviders = new Dictionary<TeamId, List<IGameObject>>();
+            _objects = new Dictionary<uint, GameObject>();
+            _turrets = new Dictionary<uint, BaseTurret>();
+            _inhibitors = new Dictionary<uint, Inhibitor>();
+            _champions = new Dictionary<uint, Champion>();
+            _visionProviders = new Dictionary<TeamId, List<GameObject>>();
             foreach (var team in Teams)
             {
-                _visionProviders.Add(team, new List<IGameObject>());
+                _visionProviders.Add(team, new List<GameObject>());
             }
         }
 
@@ -109,7 +107,7 @@ namespace LeagueSandbox.GameServer
             var players = _game.PlayerManager.GetPlayers(includeBots: false);
 
             int i = 0;
-            foreach (IGameObject obj in _objects.Values)
+            foreach (GameObject obj in _objects.Values)
             {
                 UpdateTeamsVision(obj);
                 if(i++ < oldObjectsCount)
@@ -135,7 +133,7 @@ namespace LeagueSandbox.GameServer
         /// Normally, objects will spawn at the end of the frame, but calling this function will force the teams' and players' vision of that object to update and send out a spawn notification.
         /// </summary>
         /// <param name="obj">Object to spawn.</param>
-        public void SpawnObject(IGameObject obj)
+        public void SpawnObject(GameObject obj)
         {
             UpdateTeamsVision(obj);
 
@@ -150,7 +148,7 @@ namespace LeagueSandbox.GameServer
 
         public void OnReconnect(int userId, TeamId team)
         {
-            foreach (IGameObject obj in _objects.Values)
+            foreach (GameObject obj in _objects.Values)
             {
                 obj.OnReconnect(userId, team);
             }
@@ -158,7 +156,7 @@ namespace LeagueSandbox.GameServer
 
         public void SpawnObjects(ClientInfo clientInfo)
         {
-            foreach (IGameObject obj in _objects.Values)
+            foreach (GameObject obj in _objects.Values)
             {
                 UpdateVisionSpawnAndSync(obj, clientInfo, forceSpawn: true);
             }
@@ -167,7 +165,7 @@ namespace LeagueSandbox.GameServer
         /// <summary>
         /// Updates the vision of the teams on the object.
         /// </summary>
-        void UpdateTeamsVision(IGameObject obj)
+        void UpdateTeamsVision(GameObject obj)
         {
             foreach (var team in Teams)
             {
@@ -178,11 +176,11 @@ namespace LeagueSandbox.GameServer
         /// <summary>
         /// Updates the player's vision, which may not be tied to the team's vision, sends a spawn notification or updates if the object is already spawned.
         /// </summary>
-        public void UpdateVisionSpawnAndSync(IGameObject obj, ClientInfo clientInfo, bool forceSpawn = false)
+        public void UpdateVisionSpawnAndSync(GameObject obj, ClientInfo clientInfo, bool forceSpawn = false)
         {
             int cid = clientInfo.ClientId;
             TeamId team = clientInfo.Team;
-            IChampion champion = clientInfo.Champion;
+            Champion champion = clientInfo.Champion;
 
             bool nearSighted = champion.Status.HasFlag(StatusFlags.NearSighted);
             bool shouldBeVisibleForPlayer = !obj.IsAffectedByFoW || (
@@ -198,7 +196,7 @@ namespace LeagueSandbox.GameServer
         /// Adds a GameObject to the dictionary of GameObjects in ObjectManager.
         /// </summary>
         /// <param name="o">GameObject to add.</param>
-        public void AddObject(IGameObject o)
+        public void AddObject(GameObject o)
         {
             if (o != null)
             {
@@ -215,7 +213,7 @@ namespace LeagueSandbox.GameServer
                 // TODO: This is a hack-fix for units which have packets being sent before spawning (ex: AscWarp minion)
                 // Instead, we need a dedicated packet queue system which takes all packets which are not vision/spawn related,
                 // and queues them if the object is not spawned yet for clients.
-                if (!(o is IChampion))
+                if (!(o is Champion))
                 {
                     SpawnObject(o);
                 }
@@ -227,7 +225,7 @@ namespace LeagueSandbox.GameServer
         /// Removes a GameObject from the dictionary of GameObjects in ObjectManager.
         /// </summary>
         /// <param name="o">GameObject to remove.</param>
-        public void RemoveObject(IGameObject o)
+        public void RemoveObject(GameObject o)
         {
             if (o != null)
             {
@@ -249,9 +247,9 @@ namespace LeagueSandbox.GameServer
         /// Gets a new Dictionary of all NetID,GameObject pairs present in the dictionary of objects in ObjectManager.
         /// </summary>
         /// <returns>Dictionary of NetIDs and the GameObjects that they refer to.</returns>
-        public Dictionary<uint, IGameObject> GetObjects()
+        public Dictionary<uint, GameObject> GetObjects()
         {
-            var ret = new Dictionary<uint, IGameObject>();
+            var ret = new Dictionary<uint, GameObject>();
             foreach (var obj in _objects)
             {
                 ret.Add(obj.Key, obj.Value);
@@ -265,9 +263,9 @@ namespace LeagueSandbox.GameServer
         /// </summary>
         /// <param name="id">NetID to check.</param>
         /// <returns>GameObject instance that has the specified NetID. Null otherwise.</returns>
-        public IGameObject GetObjectById(uint id)
+        public GameObject GetObjectById(uint id)
         {
-            IGameObject obj = _objectsToAdd.Find(o => o.NetId == id);
+            GameObject obj = _objectsToAdd.Find(o => o.NetId == id);
 
             if (obj == null)
             {
@@ -283,7 +281,7 @@ namespace LeagueSandbox.GameServer
         /// <param name="team">TeamId.BLUE/PURPLE/NEUTRAL</param>
         /// <param name="o">GameObject to check.</param>
         /// <returns>true/false; networked or not.</returns>
-        public bool TeamHasVisionOn(TeamId team, IGameObject o)
+        public bool TeamHasVisionOn(TeamId team, GameObject o)
         {
             if (o != null)
             {
@@ -303,21 +301,21 @@ namespace LeagueSandbox.GameServer
             return false;
         }
 
-        bool UnitHasVisionOn(IGameObject observer, IGameObject tested)
+        bool UnitHasVisionOn(GameObject observer, GameObject tested)
         {
             if(!tested.IsAffectedByFoW)
             {
                 return true;
             }
 
-            if(observer is IRegion region)
+            if(observer is Region region)
             {
                 if(region.VisionTarget != null && region.VisionTarget != tested)
                 {
                     return false;
                 }
             }
-            else if(tested is IParticle particle)
+            else if(tested is Particle particle)
             {
                 // Default behaviour
                 if(particle.SpecificTeam == TeamId.TEAM_NEUTRAL)
@@ -344,7 +342,7 @@ namespace LeagueSandbox.GameServer
             }
 
             if(
-                !(observer is IAttackableUnit u && u.IsDead)
+                !(observer is AttackableUnit u && u.IsDead)
                 && Vector2.DistanceSquared(observer.Position, tested.Position) < observer.VisionRadius * observer.VisionRadius
                 && !_game.Map.NavigationGrid.IsAnythingBetween(observer, tested, true)
             ){
@@ -359,7 +357,7 @@ namespace LeagueSandbox.GameServer
         /// </summary>
         /// <param name="obj">GameObject to add.</param>
         /// <param name="team">The team that GameObject can provide vision to.</param>
-        public void AddVisionProvider(IGameObject obj, TeamId team)
+        public void AddVisionProvider(GameObject obj, TeamId team)
         {
             //lock (_visionLock)
             {
@@ -372,7 +370,7 @@ namespace LeagueSandbox.GameServer
         /// </summary>
         /// <param name="obj">GameObject to remove.</param>
         /// <param name="team">The team that GameObject provided vision to.</param>
-        public void RemoveVisionProvider(IGameObject obj, TeamId team)
+        public void RemoveVisionProvider(GameObject obj, TeamId team)
         {
             //lock (_visionLock)
             {
@@ -387,12 +385,12 @@ namespace LeagueSandbox.GameServer
         /// <param name="range">Distance to check.</param>
         /// <param name="onlyAlive">Whether dead units should be excluded or not.</param>
         /// <returns>List of all AttackableUnits within the specified range and of the specified alive status.</returns>
-        public List<IAttackableUnit> GetUnitsInRange(Vector2 checkPos, float range, bool onlyAlive = false)
+        public List<AttackableUnit> GetUnitsInRange(Vector2 checkPos, float range, bool onlyAlive = false)
         {
-            var units = new List<IAttackableUnit>();
+            var units = new List<AttackableUnit>();
             foreach (var kv in _objects)
             {
-                if (kv.Value is IAttackableUnit u && Vector2.DistanceSquared(checkPos, u.Position) <= range * range && (onlyAlive && !u.IsDead || !onlyAlive))
+                if (kv.Value is AttackableUnit u && Vector2.DistanceSquared(checkPos, u.Position) <= range * range && (onlyAlive && !u.IsDead || !onlyAlive))
                 {
                     units.Add(u);
                 }
@@ -406,10 +404,10 @@ namespace LeagueSandbox.GameServer
         /// </summary>
         /// <param name="target">AttackableUnit potentially being attacked.</param>
         /// <returns>Number of units attacking target.</returns>
-        public int CountUnitsAttackingUnit(IAttackableUnit target)
+        public int CountUnitsAttackingUnit(AttackableUnit target)
         {
             return GetObjects().Count(x =>
-                x.Value is IObjAIBase aiBase &&
+                x.Value is ObjAIBase aiBase &&
                 aiBase.Team == target.Team.GetEnemyTeam() &&
                 !aiBase.IsDead &&
                 aiBase.TargetUnit != null &&
@@ -421,17 +419,17 @@ namespace LeagueSandbox.GameServer
         /// Forces all GameObjects of type ObjAIBase to stop targeting the specified AttackableUnit.
         /// </summary>
         /// <param name="target">AttackableUnit that should be untargeted.</param>
-        public void StopTargeting(IAttackableUnit target)
+        public void StopTargeting(AttackableUnit target)
         {
             foreach (var kv in _objects)
             {
-                var u = kv.Value as IAttackableUnit;
+                var u = kv.Value as AttackableUnit;
                 if (u == null)
                 {
                     continue;
                 }
 
-                var ai = u as IObjAIBase;
+                var ai = u as ObjAIBase;
                 if (ai != null)
                 {
                     ai.Untarget(target);
@@ -443,7 +441,7 @@ namespace LeagueSandbox.GameServer
         /// Adds a GameObject of type BaseTurret to the list of BaseTurrets in ObjectManager.
         /// </summary>
         /// <param name="turret">BaseTurret to add.</param>
-        public void AddTurret(IBaseTurret turret)
+        public void AddTurret(BaseTurret turret)
         {
             _turrets.Add(turret.NetId, turret);
         }
@@ -454,7 +452,7 @@ namespace LeagueSandbox.GameServer
         /// </summary>
         /// <param name="netId"></param>
         /// <returns>BaseTurret instance identified by the specified NetID.</returns>
-        public IBaseTurret GetTurretById(uint netId)
+        public BaseTurret GetTurretById(uint netId)
         {
             if (!_turrets.ContainsKey(netId))
             {
@@ -469,7 +467,7 @@ namespace LeagueSandbox.GameServer
         /// Unused.
         /// </summary>
         /// <param name="turret">BaseTurret to remove.</param>
-        public void RemoveTurret(IBaseTurret turret)
+        public void RemoveTurret(BaseTurret turret)
         {
             _turrets.Remove(turret.NetId);
         }
@@ -501,7 +499,7 @@ namespace LeagueSandbox.GameServer
         /// Adds a GameObject of type Inhibitor to the list of Inhibitors in ObjectManager.
         /// </summary>
         /// <param name="inhib">Inhibitor to add.</param>
-        public void AddInhibitor(IInhibitor inhib)
+        public void AddInhibitor(Inhibitor inhib)
         {
             _inhibitors.Add(inhib.NetId, inhib);
         }
@@ -511,7 +509,7 @@ namespace LeagueSandbox.GameServer
         /// </summary>
         /// <param name="netId"></param>
         /// <returns>Inhibitor instance identified by the specified NetID.</returns>
-        public IInhibitor GetInhibitorById(uint id)
+        public Inhibitor GetInhibitorById(uint id)
         {
             if (!_inhibitors.ContainsKey(id))
             {
@@ -525,7 +523,7 @@ namespace LeagueSandbox.GameServer
         /// Removes a GameObject of type Inhibitor from the list of Inhibitors in ObjectManager.
         /// </summary>
         /// <param name="inhib">Inhibitor to remove.</param>
-        public void RemoveInhibitor(IInhibitor inhib)
+        public void RemoveInhibitor(Inhibitor inhib)
         {
             _inhibitors.Remove(inhib.NetId);
         }
@@ -552,7 +550,7 @@ namespace LeagueSandbox.GameServer
         /// Adds a GameObject of type Champion to the list of Champions in ObjectManager.
         /// </summary>
         /// <param name="champion">Champion to add.</param>
-        public void AddChampion(IChampion champion)
+        public void AddChampion(Champion champion)
         {
             _champions.Add(champion.NetId, champion);
         }
@@ -561,7 +559,7 @@ namespace LeagueSandbox.GameServer
         /// Removes a GameObject of type Champion from the list of Champions in ObjectManager.
         /// </summary>
         /// <param name="champion">Champion to remove.</param>
-        public void RemoveChampion(IChampion champion)
+        public void RemoveChampion(Champion champion)
         {
             _champions.Remove(champion.NetId);
         }
@@ -570,9 +568,9 @@ namespace LeagueSandbox.GameServer
         /// Gets a new list of all Champions found in the list of Champions in ObjectManager.
         /// </summary>
         /// <returns>List of all valid Champions.</returns>
-        public List<IChampion> GetAllChampions()
+        public List<Champion> GetAllChampions()
         {
-            var champs = new List<IChampion>();
+            var champs = new List<Champion>();
             foreach (var kv in _champions)
             {
                 var c = kv.Value;
@@ -590,9 +588,9 @@ namespace LeagueSandbox.GameServer
         /// </summary>
         /// <param name="team">TeamId.BLUE/PURPLE/NEUTRAL</param>
         /// <returns>List of valid Champions of the specified team.</returns>
-        public List<IChampion> GetAllChampionsFromTeam(TeamId team)
+        public List<Champion> GetAllChampionsFromTeam(TeamId team)
         {
-            var champs = new List<IChampion>();
+            var champs = new List<Champion>();
             foreach (var kv in _champions)
             {
                 var c = kv.Value;
@@ -612,9 +610,9 @@ namespace LeagueSandbox.GameServer
         /// <param name="range">Distance to check.</param>
         /// <param name="onlyAlive">Whether dead Champions should be excluded or not.</param>
         /// <returns>List of all Champions within the specified range of the position and of the specified alive status.</returns>
-        public List<IChampion> GetChampionsInRange(Vector2 checkPos, float range, bool onlyAlive = false)
+        public List<Champion> GetChampionsInRange(Vector2 checkPos, float range, bool onlyAlive = false)
         {
-            var champs = new List<IChampion>();
+            var champs = new List<Champion>();
             foreach (var kv in _champions)
             {
                 var c = kv.Value;
@@ -633,9 +631,9 @@ namespace LeagueSandbox.GameServer
         /// <param name="range">Distance to check.</param>
         /// <param name="onlyAlive">Whether dead Champions should be excluded or not.</param>
         /// <returns>List of all Champions within the specified range of the position and of the specified alive status.</returns>
-        public List<IChampion> GetChampionsInRangeFromTeam(Vector2 checkPos, float range, TeamId team, bool onlyAlive = false)
+        public List<Champion> GetChampionsInRangeFromTeam(Vector2 checkPos, float range, TeamId team, bool onlyAlive = false)
         {
-            var champs = new List<IChampion>();
+            var champs = new List<Champion>();
             foreach (var kv in _champions)
             {
                 var c = kv.Value;

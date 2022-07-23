@@ -1,34 +1,23 @@
-using GameServerCore.Domain.GameObjects;
-using GameServerCore.Domain.GameObjects.Spell;
-using GameServerCore.Domain.GameObjects.Spell.Missile;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using System.Numerics;
 using GameServerCore.Scripting.CSharp;
-using GameServerCore.Enums;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits;
+using LeagueSandbox.GameServer.GameObjects.SpellNS;
 
 namespace Spells
 {
     public class YasuoDashWrapper : ISpellScript
     {
-        public ISpellScriptMetadata ScriptMetadata { get; private set; } = new SpellScriptMetadata()
+        public SpellScriptMetadata ScriptMetadata { get; private set; } = new SpellScriptMetadata()
         {
             // TODO
         };
 
-        public static IAttackableUnit _target = null;
+        public static AttackableUnit _target = null;
 
-        public void OnActivate(IObjAIBase owner, ISpell spell)
-        {
-            //here's nothing yet
-        }
-
-        public void OnDeactivate(IObjAIBase owner, ISpell spell)
-        {
-            //here's empty
-        }
-
-        public void OnSpellPreCast(IObjAIBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
+        public void OnSpellPreCast(ObjAIBase owner, Spell spell, AttackableUnit target, Vector2 start, Vector2 end)
         {
             _target = target;
             if (!target.HasBuff("YasuoEBlock"))
@@ -38,25 +27,9 @@ namespace Spells
             }
         }
 
-        public void OnSpellCast(ISpell spell)
+        public void OnSpellCast(Spell spell)
         {
             //here's empty, maybe will add some functions?
-        }
-
-        public void OnSpellPostCast(ISpell spell)
-        {
-        }
-
-        public void OnSpellChannel(ISpell spell)
-        {
-        }
-
-        public void OnSpellChannelCancel(ISpell spell, ChannelingStopSource reason)
-        {
-        }
-
-        public void OnSpellPostChannel(ISpell spell)
-        {
         }
 
         public void OnUpdate(float diff)

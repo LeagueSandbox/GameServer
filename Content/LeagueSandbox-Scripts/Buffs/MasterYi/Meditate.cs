@@ -1,24 +1,26 @@
 ﻿using GameServerCore.Enums;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
-using GameServerCore.Domain.GameObjects;
-using GameServerCore.Domain.GameObjects.Spell;
-using LeagueSandbox.GameServer.GameObjects.Stats;
+using LeagueSandbox.GameServer.GameObjects;
+using            GameServerLib.GameObjects.AttackableUnits;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
+using LeagueSandbox.GameServer.GameObjects.SpellNS;
+using LeagueSandbox.GameServer.GameObjects.StatsNS;
 using GameServerCore.Scripting.CSharp;
 using System;
 using LeagueSandbox.GameServer.API;
-using GameServerCore.Domain;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 
 namespace Buffs
 {
     internal class Meditate : IBuffGameScript
     {
-        public IBuffScriptMetaData BuffMetaData { get; set; } = new BuffScriptMetaData
+        public BuffScriptMetaData BuffMetaData { get; set; } = new BuffScriptMetaData
         {
             BuffType = BuffType.HEAL
         };
 
-        public IStatsModifier StatsModifier { get; private set; } = new StatsModifier();
+        public StatsModifier StatsModifier { get; private set; } = new StatsModifier();
 
         float[] healthTick =
         {
@@ -47,13 +49,13 @@ namespace Buffs
             300.0f
         };
 
-        IObjAIBase owner;
+        ObjAIBase owner;
         float tickTime;
         float trueHeal;
         int spellLevel;
-        IParticle buffParticle;
+        Particle buffParticle;
 
-        public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
+        public void OnActivate(AttackableUnit unit, Buff buff, Spell ownerSpell)
         {
             owner = ownerSpell.CastInfo.Owner;
             spellLevel = ownerSpell.CastInfo.SpellLevel - 1;
@@ -68,13 +70,13 @@ namespace Buffs
             buffParticle = AddParticleTarget(unit, unit, "masteryi_base_w_buf", unit, 4.0f, flags: 0);
         }
 
-        public void TakeDamage(IDamageData dmg)
+        public void TakeDamage(DamageData dmg)
         {
             var unit = dmg.Target;
             AddParticleTarget(unit, unit, "masteryi_base_w_dmg", unit, flags: 0);
         }
 
-        public void OnDeactivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
+        public void OnDeactivate(AttackableUnit unit, Buff buff, Spell ownerSpell)
         {
             var missingHealthBonus = healthTick[spellLevel] * ((owner.Stats.HealthPoints.Total - owner.Stats.CurrentHealth) / owner.Stats.HealthPoints.Total);
             var apBonus = owner.Stats.AbilityPower.Total * 0.3f;

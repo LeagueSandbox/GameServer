@@ -1,17 +1,18 @@
 ﻿using Force.Crc32;
 using GameServerCore.Domain;
-using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
 using GameServerCore.Packets.Enums;
 using GameServerLib.GameObjects;
+using GameServerLib.GameObjects.AttackableUnits;
 using LeaguePackets.Game.Common;
 using LeagueSandbox.GameServer.GameObjects;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits;
 using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
 using LeagueSandbox.GameServer.GameObjects.AttackableUnits.Buildings.AnimatedBuildings;
+using LeagueSandbox.GameServer.GameObjects.StatsNS;
 using LeagueSandbox.GameServer.Handlers;
 using LeagueSandbox.GameServer.Logging;
 using log4net;
-using PacketDefinitions420;
 using System.Collections.Generic;
 using System.Numerics;
 using System.Text;
@@ -37,17 +38,17 @@ namespace LeagueSandbox.GameServer.API
             _map = mapScriptHandler;
         }
 
-        public static void AddProtection(IAttackableUnit unit, IAttackableUnit[] dependOnAll, IAttackableUnit[] dependOnSingle)
+        public static void AddProtection(AttackableUnit unit, AttackableUnit[] dependOnAll, AttackableUnit[] dependOnSingle)
         {
             _game.ProtectionManager.AddProtection(unit, dependOnAll, dependOnSingle);
         }
 
-        public static void AddProtection(IAttackableUnit unit, bool dependOnAll, params IAttackableUnit[] dependOn)
+        public static void AddProtection(AttackableUnit unit, bool dependOnAll, params AttackableUnit[] dependOn)
         {
             _game.ProtectionManager.AddProtection(unit, dependOnAll, dependOn);
         }
 
-        public static IGameObject CreateShop(string name, Vector2 position, TeamId team)
+        public static GameObject CreateShop(string name, Vector2 position, TeamId team)
         {
             var shop = new GameObject(_game, position, team: team, netId: Crc32Algorithm.Compute(Encoding.UTF8.GetBytes(name)) | 0xFF000000);
             _game.ObjectManager.SpawnObject(shop);
@@ -64,7 +65,7 @@ namespace LeagueSandbox.GameServer.API
         /// <param name="nexusRadius"></param>
         /// <param name="sightRange"></param>
         /// <returns></returns>
-        public static INexus CreateNexus(string name, string model, Vector2 position, TeamId team, int nexusRadius, int sightRange, IStats stats = null)
+        public static Nexus CreateNexus(string name, string model, Vector2 position, TeamId team, int nexusRadius, int sightRange, Stats stats = null)
         {
             return new Nexus(_game, model, team, nexusRadius, position, sightRange, stats, Crc32Algorithm.Compute(Encoding.UTF8.GetBytes(name)) | 0xFF000000);
         }
@@ -80,7 +81,7 @@ namespace LeagueSandbox.GameServer.API
         /// <param name="inhibRadius"></param>
         /// <param name="sightRange"></param>
         /// <returns></returns>
-        public static IInhibitor CreateInhibitor(string name, string model, Vector2 position, TeamId team, LaneID lane, int inhibRadius, int sightRange, IStats stats = null)
+        public static Inhibitor CreateInhibitor(string name, string model, Vector2 position, TeamId team, LaneID lane, int inhibRadius, int sightRange, Stats stats = null)
         {
             return new Inhibitor(_game, model, lane, team, inhibRadius, position, sightRange, stats, Crc32Algorithm.Compute(Encoding.UTF8.GetBytes(name)) | 0xFF000000);
         }
@@ -104,7 +105,7 @@ namespace LeagueSandbox.GameServer.API
         /// <param name="mapObject"></param>
         /// <param name="netId"></param>
         /// <returns></returns>
-        public static ILaneTurret CreateLaneTurret(string name, string model, Vector2 position, TeamId team, TurretType turretType, LaneID lane, string aiScript, MapObject mapObject = default, uint netId = 0)
+        public static LaneTurret CreateLaneTurret(string name, string model, Vector2 position, TeamId team, TurretType turretType, LaneID lane, string aiScript, MapObject mapObject = default, uint netId = 0)
         {
             return new LaneTurret(_game, name, model, position, team, turretType, netId, lane, mapObject, null, aiScript);
         }
@@ -158,8 +159,8 @@ namespace LeagueSandbox.GameServer.API
         /// <param name="healthBonus"></param>
         /// <param name="initialLevel"></param>
         /// <returns></returns>
-        public static IMinion CreateMinion(
-            string name, string model, Vector2 position, IObjAIBase owner = null, uint netId = 0,
+        public static Minion CreateMinion(
+            string name, string model, Vector2 position, ObjAIBase owner = null, uint netId = 0,
             TeamId team = TeamId.TEAM_NEUTRAL, int skinId = 0, bool ignoreCollision = false,
             bool isTargetable = false, bool isWard = false, string aiScript = "", int damageBonus = 0,
             int healthBonus = 0, int initialLevel = 1)
@@ -169,7 +170,7 @@ namespace LeagueSandbox.GameServer.API
             return m;
         }
 
-        public static IMinion CreateMinionTemplete(
+        public static Minion CreateMinionTemplete(
             string name, string model, Vector2 position, uint netId = 0,
             TeamId team = TeamId.TEAM_NEUTRAL, int skinId = 0, bool ignoreCollision = false,
             bool isTargetable = false, bool isWard = false, string aiScript = "", int damageBonus = 0,
@@ -199,7 +200,7 @@ namespace LeagueSandbox.GameServer.API
         /// <param name="revealEvent"></param>
         /// <param name="spawnDuration"></param>
         /// <returns></returns>
-        public static IMonsterCamp CreateJungleCamp(Vector3 position, byte groupNumber, TeamId teamSideOfTheMap, string campTypeIcon, float respawnTimer, bool doPlayVO = false, byte revealEvent = 74, float spawnDuration = 0.0f)
+        public static MonsterCamp CreateJungleCamp(Vector3 position, byte groupNumber, TeamId teamSideOfTheMap, string campTypeIcon, float respawnTimer, bool doPlayVO = false, byte revealEvent = 74, float spawnDuration = 0.0f)
         {
             var camp = new MonsterCamp(_game, position, groupNumber, teamSideOfTheMap, campTypeIcon, respawnTimer, doPlayVO, revealEvent, spawnDuration);
             _game.ObjectManager.AddObject(camp);
@@ -223,10 +224,10 @@ namespace LeagueSandbox.GameServer.API
         /// <param name="damageBonus"></param>
         /// <param name="healthBonus"></param>
         /// <param name="initialLevel"></param>
-        public static IMonster CreateJungleMonster
+        public static Monster CreateJungleMonster
         (
             string name, string model, Vector2 position, Vector3 faceDirection,
-            IMonsterCamp monsterCamp, TeamId team = TeamId.TEAM_NEUTRAL, string spawnAnimation = "", uint netId = 0,
+            MonsterCamp monsterCamp, TeamId team = TeamId.TEAM_NEUTRAL, string spawnAnimation = "", uint netId = 0,
             bool isTargetable = true, bool ignoresCollision = false, string aiScript = "",
             int damageBonus = 0, int healthBonus = 0, int initialLevel = 1
         )
@@ -251,7 +252,7 @@ namespace LeagueSandbox.GameServer.API
         /// <param name="netId"></param>
         /// <param name="netNodeId"></param>
         /// <returns></returns>
-        public static ILevelProp AddLevelProp(string name, string model, Vector3 position, Vector3 direction, Vector3 posOffset, Vector3 scale, int skinId = 0, byte skillLevel = 0, byte rank = 0, byte type = 2, uint netId = 0, byte netNodeId = 64)
+        public static LevelProp AddLevelProp(string name, string model, Vector3 position, Vector3 direction, Vector3 posOffset, Vector3 scale, int skinId = 0, byte skillLevel = 0, byte rank = 0, byte type = 2, uint netId = 0, byte netNodeId = 64)
         {
             var prop = new LevelProp(_game, netNodeId, name, model, position, direction, posOffset, scale, skinId, skillLevel, rank, type, netId);
             _game.ObjectManager.AddObject(prop);
@@ -266,7 +267,7 @@ namespace LeagueSandbox.GameServer.API
         /// <param name="animationFlag"></param>
         /// <param name="duration"></param>
         /// <param name="destroyPropAfterAnimation"></param>
-        public static void NotifyPropAnimation(ILevelProp prop, string animation, AnimationFlags animationFlag, float duration, bool destroyPropAfterAnimation)
+        public static void NotifyPropAnimation(LevelProp prop, string animation, AnimationFlags animationFlag, float duration, bool destroyPropAfterAnimation)
         {
             var animationData = new UpdateLevelPropDataPlayAnimation
             {
@@ -292,7 +293,7 @@ namespace LeagueSandbox.GameServer.API
             _map.Surrenders.Add(TeamId.TEAM_PURPLE, new SurrenderHandler(_game, TeamId.TEAM_PURPLE, time, restTime, length));
         }
 
-        public static void HandleSurrender(int userId, IChampion who, bool vote)
+        public static void HandleSurrender(int userId, Champion who, bool vote)
         {
             if (_map.Surrenders.ContainsKey(who.Team))
                 _map.Surrenders[who.Team].HandleSurrender(userId, who, vote);
@@ -303,7 +304,7 @@ namespace LeagueSandbox.GameServer.API
         /// </summary>
         /// <param name="team"></param>
         /// <param name="position"></param>
-        public static IFountain CreateFountain(TeamId team, Vector2 position, float radius = 1000.0f)
+        public static Fountain CreateFountain(TeamId team, Vector2 position, float radius = 1000.0f)
         {
             return new Fountain(_game, team, position, radius);
         }
@@ -336,7 +337,7 @@ namespace LeagueSandbox.GameServer.API
         /// <param name="cameraTimer">The ammount of time the camera has to arrive to it's destination</param>
         /// <param name="disableUI">Whether or not the UI should get disabled</param>
         /// <param name="deathData">DeathData of what triggered the End of the Game, such as necus death</param>
-        public static void EndGame(TeamId losingTeam, Vector3 finalCameraPosition, float endGameTimer = 5000.0f, bool moveCamera = true, float cameraTimer = 3.0f, bool disableUI = true, IDeathData deathData = null)
+        public static void EndGame(TeamId losingTeam, Vector3 finalCameraPosition, float endGameTimer = 5000.0f, bool moveCamera = true, float cameraTimer = 3.0f, bool disableUI = true, GameServerLib.GameObjects.AttackableUnits.DeathData deathData = null)
         {
             //TODO: check if mapScripts should handle this directly
 
@@ -374,7 +375,7 @@ namespace LeagueSandbox.GameServer.API
             timer.Start();
         }
 
-        public static void AddTurretItems(IBaseTurret turret, int[] items)
+        public static void AddTurretItems(BaseTurret turret, int[] items)
         {
             foreach (var item in items)
             {
@@ -382,14 +383,14 @@ namespace LeagueSandbox.GameServer.API
             }
         }
 
-        public static void NotifySpawnBroadcast(IGameObject obj)
+        public static void NotifySpawnBroadcast(GameObject obj)
         {
             //Just a workaround for our current vision problem.
             _game.PacketNotifier.NotifySpawn(obj, TeamId.TEAM_PURPLE, -1, _game.GameTime, true);
             _game.PacketNotifier.NotifySpawn(obj, TeamId.TEAM_BLUE, -1, _game.GameTime, true);
         }
 
-        public static void AddObject(IGameObject obj)
+        public static void AddObject(GameObject obj)
         {
             _game.ObjectManager.AddObject(obj);
         }
@@ -427,12 +428,12 @@ namespace LeagueSandbox.GameServer.API
             _game.PacketNotifier.NotifyS2C_HandleCapturePointUpdate(capturePointIndex, otherNetId, PARType, attackTeam, capturePointUpdateCommand);
         }
 
-        public static void TeleportCamera(IChampion target, Vector3 position)
+        public static void TeleportCamera(Champion target, Vector3 position)
         {
             _game.PacketNotifier.NotifyS2C_CameraBehavior(target, position);
         }
 
-        public static void NotifyAscendant(IObjAIBase ascendant = null)
+        public static void NotifyAscendant(ObjAIBase ascendant = null)
         {
             _game.PacketNotifier.NotifyS2C_UpdateAscended(ascendant);
         }

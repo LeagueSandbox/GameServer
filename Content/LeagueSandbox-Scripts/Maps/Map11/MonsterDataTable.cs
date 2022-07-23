@@ -1,5 +1,5 @@
-﻿using GameServerCore.Domain.GameObjects;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using LeagueSandbox.GameServer.GameObjects;
 
 namespace MapScripts.Map11
 {
@@ -77,7 +77,7 @@ namespace MapScripts.Map11
             2.0f
         };
 
-        public static void UpdateStats(IMonster monster)
+        public static void UpdateStats(Monster monster)
         {
             var level = monster.Stats.Level;
             //Taking into account URF's max level cap at 30

@@ -1,10 +1,10 @@
 ﻿using GameServerCore.Packets.PacketDefinitions.Requests;
-using GameServerCore;
 using GameServerCore.Packets.Handlers;
 using LeagueSandbox.GameServer.Logging;
 using log4net;
-using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
+using LeagueSandbox.GameServer.Players;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits;
 
 namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 {
@@ -12,7 +12,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
     {
         private readonly Game _game;
         private static ILog _logger = LoggerProvider.GetLogger();
-        private readonly IPlayerManager _playerManager;
+        private readonly PlayerManager _playerManager;
 
         public HandleUseObject(Game game)
         {
@@ -23,7 +23,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
         public override bool HandlePacket(int userId, UseObjectRequest req)
         {
             var champion = _playerManager.GetPeerInfo(userId).Champion;
-            var target = _game.ObjectManager.GetObjectById(req.TargetNetID) as IAttackableUnit;
+            var target = _game.ObjectManager.GetObjectById(req.TargetNetID) as AttackableUnit;
 
             champion.SetSpell(target.CharData.HeroUseSpell, (byte)SpellSlotType.UseSpellSlot, true);
 

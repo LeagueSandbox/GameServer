@@ -1,15 +1,14 @@
-﻿using GameServerCore.Domain;
-using GameServerCore.Domain.GameObjects;
-using GameServerCore.Enums;
+﻿using GameServerCore.Enums;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits;
 
 namespace GameServerLib.GameObjects.AttackableUnits
 {
-    class DamageData : IDamageData
+    public class DamageData
     {
         /// <summary>
         /// Unit that inflicted the damage.
         /// </summary>
-        public IAttackableUnit Attacker { get; set; }
+        public AttackableUnit Attacker { get; set; }
         /// <summary>
         /// The raw amount of damage to be inflicted (Pre-mitigated damage)
         /// </summary>
@@ -37,6 +36,6 @@ namespace GameServerLib.GameObjects.AttackableUnits
         /// <summary>
         /// Unit that will receive the damage.
         /// </summary>
-        public IAttackableUnit Target { get; set; }
+        public AttackableUnit Target { get; set; }
     }
 }

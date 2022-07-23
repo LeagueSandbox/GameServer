@@ -2,22 +2,20 @@ using System;
 using System.Collections.Generic;
 using System.Numerics;
 using GameServerCore;
-using GameServerCore.Domain.GameObjects;
-using GameServerCore.Handlers;
-using LeagueSandbox.GameServer.Packets;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits;
 
 namespace LeagueSandbox.GameServer.Handlers
 {
     /// <summary>
     /// Class which calls path based functions for GameObjects.
     /// </summary>
-    public class PathingHandler : IPathingHandler
+    public class PathingHandler
     {
-        private IMapScriptHandler _map;
-        private readonly List<IAttackableUnit> _pathfinders = new List<IAttackableUnit>();
+        private MapScriptHandler _map;
+        private readonly List<AttackableUnit> _pathfinders = new List<AttackableUnit>();
         private float pathUpdateTimer;
 
-        public PathingHandler(IMapScriptHandler map)
+        public PathingHandler(MapScriptHandler map)
         {
             _map = map;
         }
@@ -26,7 +24,7 @@ namespace LeagueSandbox.GameServer.Handlers
         /// Adds the specified GameObject to the list of GameObjects to check for pathfinding. *NOTE*: Will fail to fully add the GameObject if it is out of the map's bounds.
         /// </summary>
         /// <param name="obj">GameObject to add.</param>
-        public void AddPathfinder(IAttackableUnit obj)
+        public void AddPathfinder(AttackableUnit obj)
         {
             _pathfinders.Add(obj);
         }
@@ -36,7 +34,7 @@ namespace LeagueSandbox.GameServer.Handlers
         /// </summary>
         /// <param name="obj">GameObject to remove.</param>
         /// <returns>true if item is successfully removed; false otherwise.</returns>
-        public bool RemovePathfinder(IAttackableUnit obj)
+        public bool RemovePathfinder(AttackableUnit obj)
         {
             return _pathfinders.Remove(obj);
         }
@@ -50,7 +48,7 @@ namespace LeagueSandbox.GameServer.Handlers
             if (pathUpdateTimer >= 3000.0f)
             {
                 // we iterate over a copy of _pathfinders because the original gets modified
-                var objectsCopy = new List<IAttackableUnit>(_pathfinders);
+                var objectsCopy = new List<AttackableUnit>(_pathfinders);
                 foreach (var obj in objectsCopy)
                 {
                     UpdatePaths(obj);
@@ -66,7 +64,7 @@ namespace LeagueSandbox.GameServer.Handlers
         /// Updates pathing for the specified object.
         /// </summary>
         /// <param name="obj">GameObject to check for incorrect paths.</param>
-        public void UpdatePaths(IAttackableUnit obj)
+        public void UpdatePaths(AttackableUnit obj)
         {
             var path = obj.Waypoints;
             if (path.Count == 0)
@@ -121,7 +119,7 @@ namespace LeagueSandbox.GameServer.Handlers
         /// <summary>
         /// Returns a path to the given target position from the given unit's position.
         /// </summary>
-        public List<Vector2> GetPath(IAttackableUnit obj, Vector2 target, bool usePathingRadius = false)
+        public List<Vector2> GetPath(AttackableUnit obj, Vector2 target, bool usePathingRadius = false)
         {
             if (usePathingRadius)
             {

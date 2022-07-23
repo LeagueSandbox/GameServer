@@ -1,7 +1,8 @@
-﻿using GameServerCore.Domain;
-using GameServerCore.Domain.GameObjects;
-using GameServerCore.Enums;
+﻿using GameServerCore.Enums;
+using GameServerLib.GameObjects;
+using GameServerLib.GameObjects.AttackableUnits;
 using LeagueSandbox.GameServer.API;
+using LeagueSandbox.GameServer.GameObjects;
 using System.Collections.Generic;
 using System.Numerics;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
@@ -13,8 +14,8 @@ namespace MapScripts.Map8
     {
         private static bool forceSpawn;
 
-        static Dictionary<IMonsterCamp, IMonster> SpeedShrines = new Dictionary<IMonsterCamp, IMonster>();
-        static Dictionary<IMonsterCamp, IMonster> HealthPacks = new Dictionary<IMonsterCamp, IMonster>();
+        static Dictionary<MonsterCamp, Monster> SpeedShrines = new Dictionary<MonsterCamp, Monster>();
+        static Dictionary<MonsterCamp, Monster> HealthPacks = new Dictionary<MonsterCamp, Monster>();
         static List<Crystal> Crystals = new List<Crystal>();
 
         public static void InitializeNeutrals()
@@ -68,7 +69,7 @@ namespace MapScripts.Map8
             }
         }
 
-        public static void SpawnCamp(IMonsterCamp monsterCamp)
+        public static void SpawnCamp(MonsterCamp monsterCamp)
         {
             monsterCamp.AddMonster(HealthPacks[monsterCamp]);
         }
@@ -129,7 +130,7 @@ namespace MapScripts.Map8
 
         Vector2 Position;
         TeamId Team;
-        List<IRegion> Regions = new List<IRegion>();
+        List<Region> Regions = new List<Region>();
         public Crystal(Vector2 position, TeamId team)
         {
             Position = position;
@@ -147,7 +148,7 @@ namespace MapScripts.Map8
             IsDead = false;
         }
 
-        public void OnCrystalDeath(IDeathData deathData)
+        public void OnCrystalDeath(DeathData deathData)
         {
             IsDead = true;
             foreach (var region in Regions)

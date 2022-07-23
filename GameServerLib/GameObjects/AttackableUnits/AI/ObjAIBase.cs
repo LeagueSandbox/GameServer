@@ -2,9 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
-using GameServerCore.Domain;
-using GameServerCore.Domain.GameObjects;
-using GameServerCore.Domain.GameObjects.Spell;
 using GameServerCore.Enums;
 using GameServerCore.Scripting.CSharp;
 using GameServerLib.GameObjects.AttackableUnits;
@@ -13,7 +10,10 @@ using LeagueSandbox.GameServer.Inventory;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using System.Activities.Presentation.View;
 using LeagueSandbox.GameServer.Logging;
+using LeagueSandbox.GameServer.GameObjects.SpellNS;
 using log4net;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits.Buildings.AnimatedBuildings;
+using LeagueSandbox.GameServer.GameObjects.StatsNS;
 
 namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 {
@@ -21,18 +21,17 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
     /// Base class for all moving, attackable, and attacking units.
     /// ObjAIBases normally follow these guidelines of functionality: Self movement, Inventory, Targeting, Attacking, and Spells.
     /// </summary>
-    public class ObjAIBase : AttackableUnit, IObjAIBase
+    public class ObjAIBase : AttackableUnit
     {
         // Crucial Vars
         private float _autoAttackCurrentCooldown;
         private bool _skipNextAutoAttack;
-        private ISpell _castingSpell;
-        private ISpell _lastAutoAttack;
+        private Spell _castingSpell;
         private Random _random = new Random();
         protected ItemManager _itemManager;
         protected AIState _aiState = AIState.AI_IDLE;
         protected bool _aiPaused;
-        protected IPet _lastPetSpawned;
+        protected Pet _lastPetSpawned;
         private static ILog _logger = LoggerProvider.GetLogger();
 
         /// <summary>
@@ -42,11 +41,11 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         /// <summary>
         /// Variable storing all the data related to this AI's current auto attack. *NOTE*: Will be deprecated as the spells system gets finished.
         /// </summary>
-        public ISpell AutoAttackSpell { get; protected set; }
+        public Spell AutoAttackSpell { get; protected set; }
         /// <summary>
         /// Spell this AI is currently channeling.
         /// </summary>
-        public ISpell ChannelSpell { get; protected set; }
+        public Spell ChannelSpell { get; protected set; }
         /// <summary>
         /// The ID of the skin this unit should use for its model.
         /// </summary>
@@ -60,7 +59,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         /// Variable housing all variables and functions related to this AI's Inventory, ex: Items.
         /// </summary>
         /// TODO: Verify if we want to move this to AttackableUnit since items are related to stats.
-        public IInventoryManager Inventory { get; protected set; }
+        public InventoryManager Inventory { get; protected set; }
         /// <summary>
         /// Whether or not this AI is currently auto attacking.
         /// </summary>
@@ -69,7 +68,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         /// Spell this unit will cast when in range of its target.
         /// Overrides auto attack spell casting.
         /// </summary>
-        public ISpell SpellToCast { get; protected set; }
+        public Spell SpellToCast { get; protected set; }
         /// <summary>
         /// Whether or not this AI's auto attacks apply damage to their target immediately after their cast time ends.
         /// </summary>
@@ -83,13 +82,13 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         /// <summary>
         /// Unit this AI will auto attack or use a spell on when in range.
         /// </summary>
-        public IAttackableUnit TargetUnit { get; set; }
-        public Dictionary<short, ISpell> Spells { get; }
+        public AttackableUnit TargetUnit { get; set; }
+        public Dictionary<short, Spell> Spells { get; }
         public ICharScript CharScript { get; private set; }
         public bool IsBot { get; set; }
         public IAIScript AIScript { get; protected set; }
         public ObjAIBase(Game game, string model, string name = "", int collisionRadius = 0,
-            Vector2 position = new Vector2(), int visionRadius = 0, int skinId = 0, uint netId = 0, TeamId team = TeamId.TEAM_NEUTRAL, IStats stats = null, string aiScript = "") :
+            Vector2 position = new Vector2(), int visionRadius = 0, int skinId = 0, uint netId = 0, TeamId team = TeamId.TEAM_NEUTRAL, Stats stats = null, string aiScript = "") :
             base(game, model, collisionRadius, position, visionRadius, netId, team, stats)
         {
             _itemManager = game.ItemManager;
@@ -140,7 +139,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
             SpellToCast = null;
 
-            Spells = new Dictionary<short, ISpell>();
+            Spells = new Dictionary<short, Spell>();
 
             if (!string.IsNullOrEmpty(model))
             {
@@ -152,14 +151,14 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 {
                     if (!string.IsNullOrEmpty(CharData.SpellNames[i]))
                     {
-                        Spells[i] = new Spell.Spell(game, this, CharData.SpellNames[i], (byte)i);
+                        Spells[i] = new Spell(game, this, CharData.SpellNames[i], (byte)i);
                     }
                 }
 
                 //If character has a passive spell, it'll initialize the CharScript with it
                 if (!string.IsNullOrEmpty(CharData.PassiveData.PassiveLuaName))
                 {
-                    Spells[(int)SpellSlotType.PassiveSpellSlot] = new Spell.Spell(game, this, CharData.PassiveData.PassiveLuaName, (int)SpellSlotType.PassiveSpellSlot);
+                    Spells[(int)SpellSlotType.PassiveSpellSlot] = new Spell(game, this, CharData.PassiveData.PassiveLuaName, (int)SpellSlotType.PassiveSpellSlot);
                 }
                 //If there's no passive spell, it'll just initialize the CharScript with Spell = null
                 else
@@ -167,24 +166,24 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                     LoadCharScript();
                 }
 
-                Spells[(int)SpellSlotType.SummonerSpellSlots] = new Spell.Spell(game, this, "BaseSpell", (int)SpellSlotType.SummonerSpellSlots);
-                Spells[(int)SpellSlotType.SummonerSpellSlots + 1] = new Spell.Spell(game, this, "BaseSpell", (int)SpellSlotType.SummonerSpellSlots + 1);
+                Spells[(int)SpellSlotType.SummonerSpellSlots] = new Spell(game, this, "BaseSpell", (int)SpellSlotType.SummonerSpellSlots);
+                Spells[(int)SpellSlotType.SummonerSpellSlots + 1] = new Spell(game, this, "BaseSpell", (int)SpellSlotType.SummonerSpellSlots + 1);
 
                 // InventorySlots
                 // 6 - 12 (12 = TrinketSlot)
                 for (byte i = (int)SpellSlotType.InventorySlots; i < (int)SpellSlotType.BluePillSlot; i++)
                 {
-                    Spells[i] = new Spell.Spell(game, this, "BaseSpell", i);
+                    Spells[i] = new Spell(game, this, "BaseSpell", i);
                 }
 
-                Spells[(int)SpellSlotType.BluePillSlot] = new Spell.Spell(game, this, "BaseSpell", (int)SpellSlotType.BluePillSlot);
-                Spells[(int)SpellSlotType.TempItemSlot] = new Spell.Spell(game, this, "BaseSpell", (int)SpellSlotType.TempItemSlot);
+                Spells[(int)SpellSlotType.BluePillSlot] = new Spell(game, this, "BaseSpell", (int)SpellSlotType.BluePillSlot);
+                Spells[(int)SpellSlotType.TempItemSlot] = new Spell(game, this, "BaseSpell", (int)SpellSlotType.TempItemSlot);
 
                 // RuneSlots
                 // 15 - 44
                 for (short i = (int)SpellSlotType.RuneSlots; i < (int)SpellSlotType.ExtraSlots; i++)
                 {
-                    Spells[(byte)i] = new Spell.Spell(game, this, "BaseSpell", (byte)i);
+                    Spells[(byte)i] = new Spell(game, this, "BaseSpell", (byte)i);
                 }
 
                 // ExtraSpells
@@ -198,21 +197,21 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                     }
 
                     var slot = i + (int)SpellSlotType.ExtraSlots;
-                    Spells[(byte)slot] = new Spell.Spell(game, this, extraSpellName, (byte)slot);
+                    Spells[(byte)slot] = new Spell(game, this, extraSpellName, (byte)slot);
                     Spells[(byte)slot].LevelUp();
                 }
 
-                Spells[(int)SpellSlotType.RespawnSpellSlot] = new Spell.Spell(game, this, "BaseSpell", (int)SpellSlotType.RespawnSpellSlot);
-                Spells[(int)SpellSlotType.UseSpellSlot] = new Spell.Spell(game, this, "BaseSpell", (int)SpellSlotType.UseSpellSlot);
+                Spells[(int)SpellSlotType.RespawnSpellSlot] = new Spell(game, this, "BaseSpell", (int)SpellSlotType.RespawnSpellSlot);
+                Spells[(int)SpellSlotType.UseSpellSlot] = new Spell(game, this, "BaseSpell", (int)SpellSlotType.UseSpellSlot);
 
                 // BasicAttackNormalSlots & BasicAttackCriticalSlots
                 // 64 - 72 & 73 - 81
-                for (short i = 0; i < CharData.BasicAttacks.Count; i++)
+                for (short i = 0; i < CharData.AttackNames.Length; i++)
                 {
-                    if (!string.IsNullOrEmpty(CharData.BasicAttacks[i].Name))
+                    if (!string.IsNullOrEmpty(CharData.AttackNames[i]))
                     {
                         int slot = i + (int)SpellSlotType.BasicAttackNormalSlots;
-                        Spells[(byte)slot] = new Spell.Spell(game, this, CharData.BasicAttacks[i].Name, (byte)slot);
+                        Spells[(byte)slot] = new Spell(game, this, CharData.AttackNames[i], (byte)slot);
                     }
                 }
 
@@ -228,7 +227,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             {
                 AIScript.OnActivate(this);
             }
-            catch (Exception e)
+            catch(Exception e)
             {
                 _logger.Error(null, e);
             }
@@ -240,12 +239,12 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             try
             {
                 CharScript.OnActivate(
-                    this, Spells.GetValueOrDefault<short, ISpell>(
+                    this, Spells.GetValueOrDefault<short, Spell>(
                         (int)SpellSlotType.PassiveSpellSlot
                     )
                 );
             }
-            catch (Exception e)
+            catch(Exception e)
             {
                 _logger.Error(null, e);
             }
@@ -254,7 +253,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         /// <summary>
         /// Loads the Passive Script
         /// </summary>
-        public void LoadCharScript(ISpell spell = null)
+        public void LoadCharScript(Spell spell = null)
         {
             CharScript = CSharpScriptEngine.CreateObjectStatic<ICharScript>("CharScripts", $"CharScript{Model}") ?? new CharScriptEmpty();
         }
@@ -262,7 +261,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         /// <summary>
         /// Function called by this AI's auto attack projectile when it hits its target.
         /// </summary>
-        public virtual void AutoAttackHit(IAttackableUnit target)
+        public virtual void AutoAttackHit(AttackableUnit target)
         {
             var damage = Stats.AttackDamage.Total;
             if (IsNextAutoCrit)
@@ -270,7 +269,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 damage *= Stats.CriticalDamage.Total;
             }
 
-            IDamageData damageData = new DamageData
+            DamageData damageData = new DamageData
             {
                 IsAutoAttack = true,
                 Attacker = this,
@@ -342,7 +341,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         /// Whether or not this AI is able to cast spells.
         /// </summary>
         /// <param name="spell">Spell to check.</param>
-        public bool CanCast(ISpell spell = null)
+        public bool CanCast(Spell spell = null)
         {
             // TODO: Verify if all cases are accounted for.
             return ApiEventManager.OnCanCast.Publish(this, spell)
@@ -361,7 +360,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 && (!IsAttacking || (IsAttacking && !AutoAttackSpell.SpellData.CantCancelWhileWindingUp));
         }
 
-        public bool CanLevelUpSpell(ISpell s)
+        public bool CanLevelUpSpell(Spell s)
         {
             return CharData.SpellsUpLevels[s.CastInfo.SpellSlot][s.CastInfo.SpellLevel] <= Stats.Level;
         }
@@ -382,45 +381,45 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         /// <returns>Classification for the given unit.</returns>
         /// TODO: Verify if we want to rename this to something which relates more to the internal League name "Call for Help".
         /// TODO: Move to AttackableUnit.
-        public ClassifyUnit ClassifyTarget(IAttackableUnit target, IAttackableUnit victium = null)
+        public ClassifyUnit ClassifyTarget(AttackableUnit target, AttackableUnit victium = null)
         {
-            if (target is IObjAIBase ai && victium != null) // If an ally is in distress, target this unit. (Priority 1~5)
+            if (target is ObjAIBase ai && victium != null) // If an ally is in distress, target this unit. (Priority 1~5)
             {
                 switch (target)
                 {
                     // Champion attacking an allied champion
-                    case IChampion _ when victium is IChampion:
+                    case Champion _ when victium is Champion:
                         return ClassifyUnit.CHAMPION_ATTACKING_CHAMPION;
                     // Champion attacking lane minion
-                    case IChampion _ when victium is ILaneMinion:
+                    case Champion _ when victium is LaneMinion:
                         return ClassifyUnit.CHAMPION_ATTACKING_MINION;
                     // Champion attacking minion
-                    case IChampion _ when victium is IMinion:
+                    case Champion _ when victium is Minion:
                         return ClassifyUnit.CHAMPION_ATTACKING_MINION;
                     // Minion attacking an allied champion.
-                    case IMinion _ when victium is IChampion:
+                    case Minion _ when victium is Champion:
                         return ClassifyUnit.MINION_ATTACKING_CHAMPION;
                     // Minion attacking lane minion
-                    case IMinion _ when victium is ILaneMinion:
+                    case Minion _ when victium is LaneMinion:
                         return ClassifyUnit.MINION_ATTACKING_MINION;
                     // Minion attacking minion
-                    case IMinion _ when victium is IMinion:
+                    case Minion _ when victium is Minion:
                         return ClassifyUnit.MINION_ATTACKING_MINION;
                     // Turret attacking lane minion
-                    case IBaseTurret _ when victium is ILaneMinion:
+                    case BaseTurret _ when victium is LaneMinion:
                         return ClassifyUnit.TURRET_ATTACKING_MINION;
                     // Turret attacking minion
-                    case IBaseTurret _ when victium is IMinion:
+                    case BaseTurret _ when victium is Minion:
                         return ClassifyUnit.TURRET_ATTACKING_MINION;
                 }
             }
 
             switch (target)
             {
-                case IMinion m:
+                case Minion m:
                     if (m.IsLaneMinion)
                     {
-                        switch ((m as ILaneMinion).MinionSpawnType)
+                        switch ((m as LaneMinion).MinionSpawnType)
                         {
                             case MinionSpawnType.MINION_TYPE_MELEE:
                                 return ClassifyUnit.MELEE_MINION;
@@ -432,13 +431,13 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                         }
                     }
                     return ClassifyUnit.MINION;
-                case IBaseTurret _:
+                case BaseTurret _:
                     return ClassifyUnit.TURRET;
-                case IChampion _:
+                case Champion _:
                     return ClassifyUnit.CHAMPION;
-                case IInhibitor _ when !target.IsDead:
+                case Inhibitor _ when !target.IsDead:
                     return ClassifyUnit.INHIBITOR;
-                case INexus _:
+                case Nexus _:
                     return ClassifyUnit.NEXUS;
             }
 
@@ -495,7 +494,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         /// TODO: Implement Dash class which houses these parameters, then have that as the only parameter to this function (and other Dash-based functions).
         public void DashToTarget
         (
-            IAttackableUnit target,
+            AttackableUnit target,
             float dashSpeed,
             string animation = "",
             float leapGravity = 0,
@@ -562,7 +561,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
             foreach (var gameObject in nearestObjects)
             {
-                var unit = gameObject as IAttackableUnit;
+                var unit = gameObject as AttackableUnit;
                 if (unit == null ||
                     unit.NetId == NetId ||
                     unit.IsDead ||
@@ -672,57 +671,45 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         /// Will only select crit auto attacks if the next auto attack is going to be a crit, otherwise normal auto attacks will be selected.
         /// </summary>
         /// <returns>Random auto attack spell.</returns>
-        public ISpell GetNewAutoAttack()
+        public Spell GetNewAutoAttack()
         {
-            List<ISpell> autoAttackSpells = new List<ISpell>();
-            ISpell toCast;
             if (IsNextAutoCrit)
             {
-                for (short i = (short)BasicAttackTypes.BASICATTACK_CRITICAL_SLOT1; i <= (short)BasicAttackTypes.BASICATTACK_CRITICAL_LAST_SLOT; i++)
+                // TODO: Verify if we want these explicitly defined instead of taken via iteration of all spells.
+                var critAttackSpells = Spells.Where(s =>
                 {
-                    if (CharData.BasicAttacks[i - 64].Probability > 0.0f && Spells.TryGetValue(i, out toCast))
+                    if (s.Key - 64 >= 9 && s.Key - 64 < 18)
                     {
-                        autoAttackSpells.Add(toCast);
+                        if (CharData.AttackProbabilities[s.Key - 64] > 0.0f)
+                        {
+                            return true;
+                        }
+                    }
+                    return false;
+                });
+                return critAttackSpells.ElementAt(_random.Next(0, Math.Max(0, critAttackSpells.Count() - 1))).Value;
+            }
+            // TODO: Verify if we want these explicitly defined instead of taken via iteration of all spells.
+            var basicAttackSpells = Spells.Where(s =>
+            {
+                if (s.Key - 64 >= 0 && s.Key - 64 <= 9)
+                {
+                    if (CharData.AttackProbabilities[s.Key - 64] > 0.0f)
+                    {
+                        return true;
                     }
                 }
-            }
-            else
-            {
-                for (short i = (short)BasicAttackTypes.BASIC_ATTACK_TYPES_FIRST_SLOT; i <= (short)BasicAttackTypes.BASICATTACK_NORMAL_LAST_SLOT; i++)
-                {
-                    if (CharData.BasicAttacks[i - 64].Probability > 0.0f && Spells.TryGetValue(i, out toCast))
-                    {
-                        autoAttackSpells.Add(toCast);
-                    }
-                }
-            }
-
-            autoAttackSpells.Remove(_lastAutoAttack);
-
-            if (autoAttackSpells.Count == 0)
-            {
-                BasicAttackTypes type = BasicAttackTypes.BASIC_ATTACK_TYPES_FIRST_SLOT;
-                if (IsNextAutoCrit)
-                {
-                    type = BasicAttackTypes.BASICATTACK_CRITICAL_SLOT1;
-                }
-                toCast = Spells[(short)type];
-            }
-            else
-            {
-                toCast = autoAttackSpells[_random.Next(0, autoAttackSpells.Count)];
-            }
-            _lastAutoAttack = toCast;
-
-            return toCast;
+                return false;
+            });
+            return basicAttackSpells.ElementAt(_random.Next(0, Math.Max(0, basicAttackSpells.Count() - 1))).Value;
         }
 
-        public ISpell GetSpell(byte slot)
+        public Spell GetSpell(byte slot)
         {
             return Spells[slot];
         }
 
-        public ISpell GetSpell(string name)
+        public Spell GetSpell(string name)
         {
             foreach (var s in Spells.Values)
             {
@@ -740,7 +727,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             return null;
         }
 
-        public virtual ISpell LevelUpSpell(byte slot)
+        public virtual Spell LevelUpSpell(byte slot)
         {
             var s = Spells[slot];
 
@@ -770,7 +757,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             {
                 Spells[slot].Deactivate();
             }
-            Spells[slot] = new Spell.Spell(_game, this, "BaseSpell", slot); // Replace previous spell with empty spell.
+            Spells[slot] = new Spell(_game, this, "BaseSpell", slot); // Replace previous spell with empty spell.
             Stats.SetSpellEnabled(slot, false);
         }
 
@@ -785,9 +772,9 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         /// <summary>
         /// Sets this unit's auto attack spell that they will use when in range of their target (unless they are going to cast a spell first).
         /// </summary>
-        /// <param name="spell">ISpell instance to set.</param>
+        /// <param name="spell">Spell instance to set.</param>
         /// <param name="isReset">Whether or not setting this spell causes auto attacks to be reset (cooldown).</param>
-        public void SetAutoAttackSpell(ISpell spell, bool isReset)
+        public void SetAutoAttackSpell(Spell spell, bool isReset)
         {
             AutoAttackSpell = spell;
             CancelAutoAttack(isReset);
@@ -798,8 +785,8 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         /// </summary>
         /// <param name="name">Internal name of the spell to set.</param>
         /// <param name="isReset">Whether or not setting this spell causes auto attacks to be reset (cooldown).</param>
-        /// <returns>ISpell set.</returns>
-        public ISpell SetAutoAttackSpell(string name, bool isReset)
+        /// <returns>Spell set.</returns>
+        public Spell SetAutoAttackSpell(string name, bool isReset)
         {
             AutoAttackSpell = GetSpell(name);
             CancelAutoAttack(isReset);
@@ -823,14 +810,14 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         /// <param name="enabled">Whether or not the new spell should be enabled.</param>
         /// <param name="networkOld">Whether or not to notify clients of this change using an older packet method.</param>
         /// <returns>Newly created spell set.</returns>
-        public ISpell SetSpell(string name, byte slot, bool enabled, bool networkOld = false)
+        public Spell SetSpell(string name, byte slot, bool enabled, bool networkOld = false)
         {
             if (!Spells.ContainsKey(slot) || Spells[slot].CastInfo.IsAutoAttack)
             {
                 return null;
             }
 
-            ISpell toReturn = Spells[slot];
+            Spell toReturn = Spells[slot];
 
             if (name != Spells[slot].SpellName)
             {
@@ -848,7 +835,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
                 if (!exists)
                 {
-                    toReturn = new Spell.Spell(_game, this, name, slot);
+                    toReturn = new Spell(_game, this, name, slot);
 
                     if (Spells[slot] != null)
                     {
@@ -866,7 +853,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 Stats.SetSpellEnabled(slot, enabled);
             }
 
-            if (this is IChampion champion)
+            if (this is Champion champion)
             {
                 int userId = _game.PlayerManager.GetClientInfoByChampion(champion).ClientId;
                 // TODO: Verify if this is all that is needed.
@@ -887,7 +874,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         /// <param name="s">Spell that will be cast.</param>
         /// <param name="location">Location to cast the spell on. May set to Vector2.Zero if unit parameter is used.</param>
         /// <param name="unit">Unit to cast the spell on.</param>
-        public void SetSpellToCast(ISpell s, Vector2 location, IAttackableUnit unit = null)
+        public void SetSpellToCast(Spell s, Vector2 location, AttackableUnit unit = null)
         {
             SpellToCast = s;
 
@@ -929,7 +916,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         /// Sets the spell that this unit is currently casting.
         /// </summary>
         /// <param name="s">Spell that is being cast.</param>
-        public void SetCastSpell(ISpell s)
+        public void SetCastSpell(Spell s)
         {
             _castingSpell = s;
         }
@@ -938,7 +925,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         /// Gets the spell this unit is currently casting.
         /// </summary>
         /// <returns>Spell that is being cast.</returns>
-        public ISpell GetCastSpell()
+        public Spell GetCastSpell()
         {
             return _castingSpell;
         }
@@ -948,7 +935,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         /// Applies to attacks, spell casts, spell channels, and any queued spell casts.
         /// </summary>
         /// <param name="target"></param>
-        public void Untarget(IAttackableUnit target)
+        public void Untarget(AttackableUnit target)
         {
             if (TargetUnit == target)
             {
@@ -973,7 +960,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         /// Sets this AI's current target unit. This relates to both auto attacks as well as general spell targeting.
         /// </summary>
         /// <param name="target">Unit to target.</param>
-        public void SetTargetUnit(IAttackableUnit target, bool networked = false)
+        public void SetTargetUnit(AttackableUnit target, bool networked = false)
         {
             if (target == null && TargetUnit != null)
             {
@@ -986,7 +973,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             {
                 _game.PacketNotifier.NotifyAI_TargetS2C(this, target);
 
-                if (target is IChampion c)
+                if (target is Champion c)
                 {
                     _game.PacketNotifier.NotifyAI_TargetHeroS2C(this, c);
                 }
@@ -1016,7 +1003,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             Stats.SetSpellEnabled(slot1, Stats.GetSpellEnabled(slot2));
             Stats.SetSpellEnabled(slot2, enabledBuffer);
 
-            if (this is IChampion champion)
+            if (this is Champion champion)
             {
                 int clientId = _game.PlayerManager.GetClientInfoByChampion(champion).ClientId;
                 _game.PacketNotifier.NotifyS2C_SetSpellData(clientId, NetId, slot2Name, slot1);
@@ -1029,7 +1016,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         /// </summary>
         /// <param name="spell">Spell that is being channeled.</param>
         /// <param name="network">Whether or not to send the channeling of this spell to clients.</param>
-        public void SetChannelSpell(ISpell spell, bool network = true)
+        public void SetChannelSpell(Spell spell, bool network = true)
         {
             ChannelSpell = spell;
         }
@@ -1051,7 +1038,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         /// <summary>
         /// Gets the most recently spawned Pet unit which is owned by this unit.
         /// </summary>
-        public IPet GetPet()
+        public Pet GetPet()
         {
             return _lastPetSpawned;
         }
@@ -1059,7 +1046,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         /// <summary>
         /// Sets the most recently spawned Pet unit which is owned by this unit.
         /// </summary>
-        public void SetPet(IPet pet)
+        public void SetPet(Pet pet)
         {
             _lastPetSpawned = pet;
         }
@@ -1071,7 +1058,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             {
                 CharScript.OnUpdate(diff);
             }
-            catch (Exception e)
+            catch(Exception e)
             {
                 _logger.Error(null, e);
             }
@@ -1082,14 +1069,14 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 {
                     AIScript.OnUpdate(diff);
                 }
-                catch (Exception e)
+                catch(Exception e)
                 {
                     _logger.Error(null, e);
                 }
             }
 
             // bit of a hack
-            foreach (var s in new List<ISpell>(Spells.Values))
+            foreach (var s in new List<Spell>(Spells.Values))
             {
                 s.Update(diff);
             }
@@ -1111,7 +1098,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 SetPet(null);
             }
         }
-
+        
         public override void LateUpdate(float diff)
         {
             // Stop targeting an untargetable unit.
@@ -1125,15 +1112,15 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             }
         }
 
-        public override void TakeDamage(IDamageData damageData, DamageResultType damageText, IEventSource sourceScript = null)
+        public override void TakeDamage(DamageData damageData, DamageResultType damageText, IEventSource sourceScript = null)
         {
             base.TakeDamage(damageData, damageText, sourceScript);
-
+            
             var attacker = damageData.Attacker;
             var objects = _game.ObjectManager.GetObjects();
             foreach (var it in objects)
             {
-                if (it.Value is IObjAIBase u)
+                if (it.Value is ObjAIBase u)
                 {
                     float acquisitionRange = Stats.AcquisitionRange.Total;
                     float acquisitionRangeSquared = acquisitionRange * acquisitionRange;
@@ -1150,7 +1137,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                         {
                             u.AIScript.OnCallForHelp(attacker, this);
                         }
-                        catch (Exception e)
+                        catch(Exception e)
                         {
                             _logger.Error(null, e);
                         }
@@ -1295,13 +1282,13 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
                         var objects = _game.ObjectManager.GetObjects();
                         var distanceSqrToTarget = 25000f * 25000f;
-                        IAttackableUnit nextTarget = null;
+                        AttackableUnit nextTarget = null;
                         // Previously `Math.Max(Stats.Range.Total, Stats.AcquisitionRange.Total)` which is incorrect
                         var range = Stats.AcquisitionRange.Total;
 
                         foreach (var it in objects)
                         {
-                            if (!(it.Value is IAttackableUnit u) ||
+                            if (!(it.Value is AttackableUnit u) ||
                                 u.IsDead ||
                                 u.Team == Team ||
                                 Vector2.DistanceSquared(Position, u.Position) > range * range ||

@@ -1,20 +1,20 @@
 ﻿using System.Collections.Generic;
-using GameServerCore;
-using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
-using LeagueSandbox.GameServer.GameObjects.Stats;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
+using LeagueSandbox.GameServer.GameObjects.StatsNS;
 
 namespace LeagueSandbox.GameServer
 {
-    public class ProtectionManager : IProtectionManager
+    public class ProtectionManager
     {
-        private Dictionary<IAttackableUnit, IAttackableUnit[]> _dependOnAll = new Dictionary<IAttackableUnit, IAttackableUnit[]>();
-        private Dictionary<IAttackableUnit, IAttackableUnit[]> _dependOnSingle = new Dictionary<IAttackableUnit, IAttackableUnit[]>();
-        private List<IAttackableUnit> _protectedElements = new List<IAttackableUnit>();
-        private List<IAttackableUnit> _hasProtectionElements = new List<IAttackableUnit>();
+        private Dictionary<AttackableUnit, AttackableUnit[]> _dependOnAll = new Dictionary<AttackableUnit, AttackableUnit[]>();
+        private Dictionary<AttackableUnit, AttackableUnit[]> _dependOnSingle = new Dictionary<AttackableUnit, AttackableUnit[]>();
+        private List<AttackableUnit> _protectedElements = new List<AttackableUnit>();
+        private List<AttackableUnit> _hasProtectionElements = new List<AttackableUnit>();
 
-        private readonly List<IChampion> _protectedPlayers = new List<IChampion>();
-        private readonly IStatsModifier AFK_PROT_MODIFIER = new StatsModifier();
+        private readonly List<Champion> _protectedPlayers = new List<Champion>();
+        private readonly StatsModifier AFK_PROT_MODIFIER = new StatsModifier();
 
         private readonly Game _game;
 
@@ -25,16 +25,16 @@ namespace LeagueSandbox.GameServer
             AFK_PROT_MODIFIER.MagicResist.FlatBonus = 99999.0f;
         }
 
-        public void AddProtection(IAttackableUnit element, IAttackableUnit[] dependOnAll,
-            IAttackableUnit[] dependOnSingle)
+        public void AddProtection(AttackableUnit element, AttackableUnit[] dependOnAll,
+            AttackableUnit[] dependOnSingle)
         {
             _dependOnAll.Add(element, dependOnAll);
             _dependOnSingle.Add(element, dependOnSingle);
             _protectedElements.Add(element);
         }
         
-        public void AddProtection(IAttackableUnit element, bool dependAll,
-            params IAttackableUnit[] dependOn)
+        public void AddProtection(AttackableUnit element, bool dependAll,
+            params AttackableUnit[] dependOn)
         {
             if (dependAll)
             {
@@ -47,19 +47,19 @@ namespace LeagueSandbox.GameServer
             _protectedElements.Add(element);
         }
 
-        public void RemoveProtection(IAttackableUnit element)
+        public void RemoveProtection(AttackableUnit element)
         {
             _dependOnAll.Remove(element);
             _dependOnSingle.Remove(element);
             _protectedElements.Remove(element);
         }
 
-        public bool IsProtected(IAttackableUnit element)
+        public bool IsProtected(AttackableUnit element)
         {
             return _protectedElements.Contains(element);
         }
 
-        public bool IsProtectionActive(IAttackableUnit element)
+        public bool IsProtectionActive(AttackableUnit element)
         {
             return _hasProtectionElements.Contains(element);
         }
@@ -115,7 +115,7 @@ namespace LeagueSandbox.GameServer
             }
         }
 
-        public void HandleFountainProtection(IChampion champion)
+        public void HandleFountainProtection(Champion champion)
         {
             if (_game.PlayerManager.GetClientInfoByChampion(champion).IsDisconnected)
             {

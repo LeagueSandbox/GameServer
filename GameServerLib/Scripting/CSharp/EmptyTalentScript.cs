@@ -1,11 +1,8 @@
-using GameServerCore.Domain.GameObjects;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
 
 namespace GameServerCore.Scripting.CSharp
 {
     public class EmptyTalentScript : ITalentScript
     {
-        public void OnActivate(IObjAIBase owner, byte level)
-        {
-        }
     }
 }

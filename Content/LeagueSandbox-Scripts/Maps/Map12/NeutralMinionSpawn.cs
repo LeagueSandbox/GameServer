@@ -1,9 +1,9 @@
-using GameServerCore.Domain;
-using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
 using System.Collections.Generic;
 using System.Numerics;
 using static LeagueSandbox.GameServer.API.ApiMapFunctionManager;
+using            GameServerLib.GameObjects;
+using LeagueSandbox.GameServer.GameObjects;
 
 namespace MapScripts.Map12
 {
@@ -11,7 +11,7 @@ namespace MapScripts.Map12
     {
         private static bool forceSpawn;
 
-        public static Dictionary<IMonsterCamp, IMonster> HealthPacks = new Dictionary<IMonsterCamp, IMonster>();
+        public static Dictionary<MonsterCamp, Monster> HealthPacks = new Dictionary<MonsterCamp, Monster>();
         private static Vector3[]  _champPositions = {
             new Vector3(7582.1f, 60.0f, 6785.5f),
             new Vector3(5929.7f, 60.0f, 5190.9f),
@@ -55,7 +55,7 @@ namespace MapScripts.Map12
             }
         }
 
-        public static void SpawnCamp(IMonsterCamp monsterCamp)
+        public static void SpawnCamp(MonsterCamp monsterCamp)
         {
            monsterCamp.AddMonster(HealthPacks[monsterCamp]);
         }

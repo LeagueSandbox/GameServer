@@ -9,6 +9,8 @@ namespace GameServerCore.Domain
         /// Function tied to the main game tick loop.
         /// </summary>
         /// <param name="diff">Number of milliseconds since this tick occurred.</param>
-        void Update(float diff);
+        void Update(float diff)
+        {
+        }
     }
 }

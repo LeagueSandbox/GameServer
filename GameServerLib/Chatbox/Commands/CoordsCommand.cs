@@ -1,4 +1,4 @@
-﻿using GameServerCore;
+﻿using LeagueSandbox.GameServer.Players;
 using LeagueSandbox.GameServer.Logging;
 using log4net;
 using System.Numerics;
@@ -9,7 +9,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
     public class CoordsCommand : ChatCommandBase
     {
         private static ILog _logger = LoggerProvider.GetLogger();
-        private readonly IPlayerManager _playerManager;
+        private readonly PlayerManager _playerManager;
 
         public override string Command => "coords";
         public override string Syntax => $"{Command}";

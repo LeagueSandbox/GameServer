@@ -22,7 +22,7 @@ namespace LeagueSandbox.GameServer
     /// </summary>
     public class Config
     {
-        public List<IPlayerConfig> Players { get; private set; }
+        public List<PlayerConfig> Players { get; private set; }
         public GameConfig GameConfig { get; private set; }
         public ContentManager ContentManager { get; private set; }
         public FeatureFlags GameFeatures { get; private set; }
@@ -84,7 +84,7 @@ namespace LeagueSandbox.GameServer
             // Load data package
             ContentManager = ContentManager.LoadDataPackage(game, GameConfig.DataPackage, ContentPath);
 
-            Players = new List<IPlayerConfig>();
+            Players = new List<PlayerConfig>();
 
             // Read the player configuration
             var playerConfigurations = data.SelectToken("players");
@@ -179,7 +179,7 @@ namespace LeagueSandbox.GameServer
         }
     }
 }
-public class MapData : IMapData
+public class MapData
 {
     public int Id { get; private set; }
     /// <summary>
@@ -233,7 +233,7 @@ public class GameConfig
     }
 }
 
-public class PlayerConfig : IPlayerConfig
+public class PlayerConfig
 {
     public long PlayerID { get; private set; }
     public string Rank { get; private set; }
@@ -246,8 +246,8 @@ public class PlayerConfig : IPlayerConfig
     public short Ribbon { get; private set; }
     public int Icon { get; private set; }
     public string BlowfishKey { get; private set; }
-    public IRuneCollection Runes { get; }
-    public ITalentInventory Talents { get; }
+    public RuneCollection Runes { get; }
+    public TalentInventory Talents { get; }
 
     private static ILog _logger = LoggerProvider.GetLogger();
     public PlayerConfig(JToken playerData, Game game)

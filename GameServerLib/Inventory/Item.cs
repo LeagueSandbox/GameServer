@@ -1,16 +1,15 @@
-using GameServerCore.Domain;
 using GameServerCore.Scripting.CSharp;
 using LeagueSandbox.GameServer.GameObjects.Other;
 using static GameServerCore.Content.HashFunctions;
 
 namespace LeagueSandbox.GameServer.Inventory
 {
-    public class Item : Stackable, IItem
+    public class Item : Stackable
     {
         public int TotalPrice => ItemData.TotalPrice;
-        public IItemData ItemData { get; }
+        public ItemData ItemData { get; }
 
-        private Item(IItemData data)
+        private Item(ItemData data)
         {
             ItemData = data;
             StackCount = 1;
@@ -35,7 +34,7 @@ namespace LeagueSandbox.GameServer.Inventory
             StackCount = newStacks;
         }
 
-        public static Item CreateFromType(IItemData item)
+        public static Item CreateFromType(ItemData item)
         {
             return new Item(item);
         }

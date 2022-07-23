@@ -1,17 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Numerics;
-using GameServerCore.Content;
-using GameServerCore.Domain;
-using GameServerCore.Domain.GameObjects;
-using GameServerCore.Domain.GameObjects.Spell;
-using GameServerCore.Domain.GameObjects.Spell.Missile;
 using GameServerCore.Enums;
-using LeagueSandbox.GameServer.Content;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits.Buildings;
 
-namespace LeagueSandbox.GameServer.GameObjects.Spell.Missile
+namespace LeagueSandbox.GameServer.GameObjects.SpellNS.Missile
 {
-    public class SpellCircleMissile : SpellMissile, ISpellCircleMissile
+    public class SpellCircleMissile : SpellMissile
     {
         // Function Vars.
         private bool _atDestination;
@@ -20,7 +17,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Missile
         /// <summary>
         /// Number of objects this projectile has hit since it was created.
         /// </summary>
-        public List<IGameObject> ObjectsHit { get; }
+        public List<GameObject> ObjectsHit { get; }
         /// <summary>
         /// Position this projectile is moving towards. Projectile is destroyed once it reaches this destination. Equals Vector2.Zero if TargetUnit is not null.
         /// </summary>
@@ -29,8 +26,8 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Missile
         public SpellCircleMissile(
             Game game,
             int collisionRadius,
-            ISpell originSpell,
-            ICastInfo castInfo,
+            Spell originSpell,
+            CastInfo castInfo,
             float moveSpeed,
             Vector2 overrideEndPos,
             SpellDataFlags overrideFlags = 0, // TODO: Find a use for these
@@ -71,7 +68,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Missile
 
             Destination = endPos;
 
-            ObjectsHit = new List<IGameObject>();
+            ObjectsHit = new List<GameObject>();
         }
 
         public override void Update(float diff)
@@ -85,9 +82,9 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Missile
             Move(diff);
         }
 
-        public override void OnCollision(IGameObject collider, bool isTerrain = false)
+        public override void OnCollision(GameObject collider, bool isTerrain = false)
         {
-            if (IsToRemove() || (Destination != Vector2.Zero && collider is IObjBuilding))
+            if (IsToRemove() || (Destination != Vector2.Zero && collider is ObjBuilding))
             {
                 return;
             }
@@ -100,7 +97,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Missile
 
             if (Destination != Vector2.Zero)
             {
-                CheckFlagsForUnit(collider as IAttackableUnit);
+                CheckFlagsForUnit(collider as AttackableUnit);
             }
         }
 
@@ -158,7 +155,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Missile
             }
         }
 
-        public override void CheckFlagsForUnit(IAttackableUnit unit)
+        public override void CheckFlagsForUnit(AttackableUnit unit)
         {
             if (unit == null || !HasDestination() || ObjectsHit.Contains(unit) || !SpellOrigin.SpellData.IsValidTarget(CastInfo.Owner, unit))
             {
@@ -172,7 +169,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Missile
                 SpellOrigin.ApplyEffects(unit, this);
             }
 
-            if (CastInfo.Owner is IObjAIBase ai && SpellOrigin.CastInfo.IsAutoAttack)
+            if (CastInfo.Owner is ObjAIBase ai && SpellOrigin.CastInfo.IsAutoAttack)
             {
                 ai.AutoAttackHit(TargetUnit);
             }

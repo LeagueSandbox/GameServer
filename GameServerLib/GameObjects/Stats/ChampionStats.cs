@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Runtime.InteropServices;
-using GameServerCore.Domain.GameObjects;
 
-namespace LeagueSandbox.GameServer.GameObjects.Stats
+namespace LeagueSandbox.GameServer.GameObjects.StatsNS
 {
     // deviates from the style guide
     // see discussion here:https://github.com/LeagueSandbox/GameServer/pull/583
     [StructLayout(LayoutKind.Explicit)]
-    public class ChampionStats : IChampionStats
+    public class ChampionStats
     {
         [FieldOffset(0)]
         public int _Assists;
@@ -217,7 +216,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
         // TODO: move to universal serializer
         // also code here is unsafe, but thats prefered than just
         // write a function that simply dumps all the variables
-        public static byte[] GetBytes(IChampionStats stats)
+        public static byte[] GetBytes(ChampionStats stats)
         {
             int size = Marshal.SizeOf(stats);
             byte[] arr = new byte[size];

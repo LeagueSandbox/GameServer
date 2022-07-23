@@ -1,34 +1,26 @@
-﻿using System.Numerics;
-using GameServerCore.Domain;
-using GameServerCore.Domain.GameObjects;
-using GameServerCore.Domain.GameObjects.Spell;
-using GameServerCore.Enums;
-using GameServerCore.Scripting.CSharp;
-using LeagueSandbox.GameServer.API;
-using LeagueSandbox.GameServer.GameObjects.Stats;
-using static LeagueSandbox.GameServer.API.ApiFunctionManager;
+﻿using GameServerCore.Scripting.CSharp;
+using LeagueSandbox.GameServer.GameObjects;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits;
+using LeagueSandbox.GameServer.GameObjects.SpellNS;
+using LeagueSandbox.GameServer.GameObjects.StatsNS;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 
 namespace Buffs
 {
     internal class GlobalMonsterBuff : IBuffGameScript
     {
-        public IBuffScriptMetaData BuffMetaData { get; set; } = new BuffScriptMetaData
+        public BuffScriptMetaData BuffMetaData { get; set; } = new BuffScriptMetaData
         {
         };
 
-        public IStatsModifier StatsModifier { get; private set; } = new StatsModifier();
+        public StatsModifier StatsModifier { get; private set; } = new StatsModifier();
 
-        IBuff thisBuff;
-        IAttackableUnit owner;
-        public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
+        Buff thisBuff;
+        AttackableUnit owner;
+        public void OnActivate(AttackableUnit unit, Buff buff, Spell ownerSpell)
         {
             thisBuff = buff;
             owner = unit;
-        }
-
-        public void OnDeactivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
-        {
         }
 
         public void OnUpdate(float diff)

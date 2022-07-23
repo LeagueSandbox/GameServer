@@ -1,8 +1,7 @@
-﻿using GameServerCore.Domain.GameObjects;
-
-namespace LeagueSandbox.GameServer.GameObjects.Stats
+﻿
+namespace LeagueSandbox.GameServer.GameObjects.StatsNS
 {
-    public class Stat : IStat
+    public class Stat
     {
         private bool _modified;
         private float _baseValue;
@@ -83,7 +82,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
 
         }
 
-        public virtual bool ApplyStatModifier(IStatModifier statModifier)
+        public virtual bool ApplyStatModifier(StatModifier statModifier)
         {
             if (!statModifier.StatModified)
             {
@@ -98,7 +97,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
             return true;
         }
 
-        public virtual bool RemoveStatModifier(IStatModifier statModifier)
+        public virtual bool RemoveStatModifier(StatModifier statModifier)
         {
             if (!statModifier.StatModified)
             {

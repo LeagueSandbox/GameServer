@@ -1,7 +1,9 @@
-﻿using GameServerCore.Domain;
-using GameServerCore.Domain.GameObjects;
-using GameServerCore.Enums;
+﻿using GameServerCore.Enums;
+using GameServerLib.GameObjects;
+using GameServerLib.GameObjects.AttackableUnits;
 using LeagueSandbox.GameServer.API;
+using LeagueSandbox.GameServer.GameObjects;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
 using System.Collections.Generic;
 using System.Numerics;
 using static LeagueSandbox.GameServer.API.ApiMapFunctionManager;
@@ -12,8 +14,8 @@ namespace MapScripts.Map8
     {
         private static bool forceSpawn;
 
-        static Dictionary<IMonsterCamp, IMonster> SpeedShrines = new Dictionary<IMonsterCamp, IMonster>();
-        static Dictionary<IMonsterCamp, IMonster> HealthPacks = new Dictionary<IMonsterCamp, IMonster>();
+        static Dictionary<MonsterCamp, Monster> SpeedShrines = new Dictionary<MonsterCamp, Monster>();
+        static Dictionary<MonsterCamp, Monster> HealthPacks = new Dictionary<MonsterCamp, Monster>();
         static List<AscensionCrystal> CaptureCrystals = new List<AscensionCrystal>();
         static AscXerath Xerath;
 
@@ -70,7 +72,7 @@ namespace MapScripts.Map8
             }
         }
 
-        public static void SpawnCamp(IMonsterCamp monsterCamp)
+        public static void SpawnCamp(MonsterCamp monsterCamp)
         {
             monsterCamp.AddMonster(HealthPacks[monsterCamp]);
         }
@@ -119,11 +121,11 @@ namespace MapScripts.Map8
 
 public class AscXerath
 {
-    IMonster Xerath;
-    public IMonsterCamp Camp;
+    Monster Xerath;
+    public MonsterCamp Camp;
     public float RespawnTimer { get; set; } = 30.0f * 1000;
-    public IChampion AscendedChampion;
-    public AscXerath(IMonster xerath)
+    public Champion AscendedChampion;
+    public AscXerath(Monster xerath)
     {
         Xerath = xerath;
         Camp = xerath.Camp;
@@ -136,9 +138,9 @@ public class AscXerath
         RespawnTimer = 30.0f * 1000;
     }
 
-    public void OnXerathDeath(IDeathData data)
+    public void OnXerathDeath(DeathData data)
     {
-        if (data.Killer is IChampion ch)
+        if (data.Killer is Champion ch)
         {
             ch.IncrementScore(5.0f, ScoreCategory.Combat, ScoreEvent.ChampKill, true);
             AscendedChampion = ch;
@@ -147,7 +149,7 @@ public class AscXerath
         }
     }
 
-    public void OnKillerDeath(IDeathData data)
+    public void OnKillerDeath(DeathData data)
     {
         AscendedChampion = null;
     }
@@ -180,7 +182,7 @@ public class AscensionCrystal
         }
     }
 
-    public void OnDeath(IDeathData deathData)
+    public void OnDeath(DeathData deathData)
     {
         IsDead = true;
     }

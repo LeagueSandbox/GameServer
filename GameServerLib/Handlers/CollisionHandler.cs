@@ -1,29 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
-using GameServerCore;
-using GameServerCore.Domain.GameObjects;
-using GameServerCore.Domain.GameObjects.Spell.Missile;
 using System.Activities.Presentation.View;
-using GameServerCore.Handlers;
+using LeagueSandbox.GameServer.GameObjects;
+using LeagueSandbox.GameServer.GameObjects.SpellNS.Missile;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits.Buildings;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
 
 namespace LeagueSandbox.GameServer.Handlers
 {
     /// <summary>
     /// Class which calls collision based functions for GameObjects.
     /// </summary>
-    public class CollisionHandler : ICollisionHandler
+    public class CollisionHandler
     {
-        private IMapScriptHandler _map;
-        private readonly List<IGameObject> _objects = new List<IGameObject>();
-        private QuadTree<IGameObject> _quadDynamic;
+        private MapScriptHandler _map;
+        private readonly List<GameObject> _objects = new List<GameObject>();
+        private QuadTree<GameObject> _quadDynamic;
 
-        public CollisionHandler(IMapScriptHandler map)
+        public CollisionHandler(MapScriptHandler map)
         {
             _map = map;
 
             // Initializes a dynamic map using NavigationGrid properties and a CollisionObject which takes into account an object's CollisionRadius (+1 for insurance).
             // It will contain all GameObjects that should be able to collide with eachother, refer to IsCollisionObject.
-            _quadDynamic = new QuadTree<IGameObject>(
+            _quadDynamic = new QuadTree<GameObject>(
                 _map.NavigationGrid.MinGridPosition.X, // MIN
                 _map.NavigationGrid.MaxGridPosition.Z, // yep, MAX
                 _map.NavigationGrid.MaxGridPosition.X -_map.NavigationGrid.MinGridPosition.X,
@@ -36,11 +36,11 @@ namespace LeagueSandbox.GameServer.Handlers
         /// </summary>
         /// <param name="obj">GameObject to check.</param>
         /// <returns>True/False.</returns>
-        private bool IsCollisionObject(IGameObject obj)
+        private bool IsCollisionObject(GameObject obj)
         {
             // CollisionObjects can be any AI units, ObjBuildings, pure AttackableUnits, and pure GameObjects.
             // TODO: Implement static navgrid updates for turrets so we don't have to count them as collision objects.
-            return !(obj.IsToRemove() || obj is ILevelProp || obj is IParticle || obj is ISpellMissile || obj is IRegion) && obj.CollisionRadius >= 0;
+            return !(obj.IsToRemove() || obj is LevelProp || obj is Particle || obj is SpellMissile || obj is Region) && obj.CollisionRadius >= 0;
         }
 
         /// <summary>
@@ -49,13 +49,13 @@ namespace LeagueSandbox.GameServer.Handlers
         /// </summary>
         /// <param name="obj">GameObject to check.</param>
         /// <returns>True/False.</returns>
-        private bool IsCollisionAffected(IGameObject obj)
+        private bool IsCollisionAffected(GameObject obj)
         {
             // Collision affected GameObjects are non-turret AI units, AttackableUnits, missiles, and pure GameObjects.
-            return !(obj.IsToRemove() || obj is ILevelProp || obj is IParticle || obj is IObjBuilding || obj is IBaseTurret);
+            return !(obj.IsToRemove() || obj is LevelProp || obj is Particle || obj is ObjBuilding || obj is BaseTurret);
         }
 
-        Circle GetBounds(IGameObject obj)
+        Circle GetBounds(GameObject obj)
         {
             return new Circle(obj.Position, Math.Max(0.5f, obj.CollisionRadius));
         }
@@ -64,7 +64,7 @@ namespace LeagueSandbox.GameServer.Handlers
         /// Adds the specified GameObject to the list of GameObjects to check for collisions. *NOTE*: Will fail to fully add the GameObject if it is out of the map's bounds.
         /// </summary>
         /// <param name="obj">GameObject to add.</param>
-        public void AddObject(IGameObject obj)
+        public void AddObject(GameObject obj)
         {
             bool collides = IsCollisionObject(obj);
             bool detects = IsCollisionAffected(obj);
@@ -83,7 +83,7 @@ namespace LeagueSandbox.GameServer.Handlers
         /// </summary>
         /// <param name="obj">GameObject to remove.</param>
         /// <returns>true if item is successfully removed; false otherwise.</returns>
-        public bool RemoveObject(IGameObject obj)
+        public bool RemoveObject(GameObject obj)
         {
             return _objects.Remove(obj);
         }
@@ -93,7 +93,7 @@ namespace LeagueSandbox.GameServer.Handlers
         /// </summary>
         /// <param name="obj">GameObject which will be the origin of the check.</param>
         /// <returns>List of GameObjects. Null if GameObject is not present in the QuadTree.</returns>
-        public List<IGameObject> GetNearestObjects(IGameObject obj)
+        public List<GameObject> GetNearestObjects(GameObject obj)
         {
             return GetNearestObjects(GetBounds(obj));
         }
@@ -103,9 +103,9 @@ namespace LeagueSandbox.GameServer.Handlers
         /// </summary>
         /// <param name="circle"></param>
         /// <returns>List of GameObjects.</returns>
-        public List<IGameObject> GetNearestObjects(Circle circle)
+        public List<GameObject> GetNearestObjects(Circle circle)
         {
-            var nearest = new List<IGameObject>();
+            var nearest = new List<GameObject>();
 
             foreach (var obj in _quadDynamic.GetNodesInside(circle))
             {
@@ -121,7 +121,7 @@ namespace LeagueSandbox.GameServer.Handlers
         public void Update()
         {
             // we iterate over a copy of _objects because the original gets modified
-            var objectsCopy = new List<IGameObject>(_objects);
+            var objectsCopy = new List<GameObject>(_objects);
             foreach (var obj in objectsCopy)
             {
                 UpdateCollision(obj);
@@ -134,7 +134,7 @@ namespace LeagueSandbox.GameServer.Handlers
         /// Updates collision for the specified object.
         /// </summary>
         /// <param name="obj">GameObject to check if colliding with other objects.</param>
-        public void UpdateCollision(IGameObject obj)
+        public void UpdateCollision(GameObject obj)
         {
             if (IsCollisionAffected(obj))
             {

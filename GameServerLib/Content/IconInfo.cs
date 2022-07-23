@@ -1,11 +1,10 @@
-﻿using GameServerCore.Domain;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using LeagueSandbox.GameServer;
 using LeagueSandbox.GameServer.GameObjects.AttackableUnits;
 
 namespace GameServerLib.Content
 {
-    public class IconInfo : IIconInfo
+    public class IconInfo
     {
         public string IconCategory { get; private set; } = string.Empty;
         public string BorderCategory { get; private set; } = string.Empty;

@@ -1,10 +1,9 @@
 using System;
-using GameServerCore.Domain.GameObjects;
 using GameServerCore;
 
-namespace LeagueSandbox.GameServer.GameObjects.Stats
+namespace LeagueSandbox.GameServer.GameObjects.StatsNS
 {
-    public class StatModifier : IStatModifier
+    public class StatModifier
     {
         public float BaseValue { get; set; }
         public float BaseBonus { get; set; }

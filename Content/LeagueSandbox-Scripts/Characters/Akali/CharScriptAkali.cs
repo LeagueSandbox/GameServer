@@ -1,24 +1,15 @@
-using GameServerCore.Domain.GameObjects;
-using LeagueSandbox.GameServer.Scripting.CSharp;
-using GameServerCore.Domain.GameObjects.Spell;
-using GameServerCore.Domain.GameObjects.Spell.Missile;
-using System.Numerics;
 using GameServerCore.Scripting.CSharp;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
+using LeagueSandbox.GameServer.GameObjects.SpellNS;
 
 namespace CharScripts
 {
     public class CharScriptAkali : ICharScript
     {
-        public void OnActivate(IObjAIBase owner, ISpell spell = null)
+        public void OnActivate(ObjAIBase owner, Spell spell = null)
         {
             var bonusAd = owner.Stats.AttackDamage.Total - owner.Stats.AttackDamage.BaseValue;
             owner.Stats.SpellVamp.PercentBonus = 6 + bonusAd % 6;
-        }
-        public void OnDeactivate(IObjAIBase owner, ISpell spell = null)
-        {
-        }
-        public void OnUpdate(float diff)
-        {
         }
     }
 }

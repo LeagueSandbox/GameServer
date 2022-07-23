@@ -1,7 +1,6 @@
 ﻿using GameServerCore.Domain;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 using LeagueSandbox.GameServer.Content;
-using GameServerCore.Scripting.CSharp;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using static LeagueSandbox.GameServer.API.ApiMapFunctionManager;
 using System.Collections.Generic;
@@ -11,11 +10,11 @@ namespace MapScripts.Map1
 {
     public class URF : CLASSIC
     {
-        public override IMapScriptMetadata MapScriptMetadata { get; set; } = new MapScriptMetadata
+        public override MapScriptMetadata MapScriptMetadata { get; set; } = new MapScriptMetadata
         {
             MaxLevel = 30
         };
-        public override IGlobalData GlobalData { get; set; } = new GlobalData { PercentCooldownModMinimun = 0.8f};
+        public override GlobalData GlobalData { get; set; } = new GlobalData { PercentCooldownModMinimun = 0.8f};
         public override void Init(Dictionary<GameObjectTypes, List<MapObject>> mapObjects)
         {
             base.Init(mapObjects);

@@ -1,10 +1,10 @@
 using System;
-using GameServerCore.Packets.Interfaces;
 using LeagueSandbox.GameServer;
 using LeagueSandbox.GameServer.Content;
 using LeagueSandbox.GameServer.Inventory;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using PacketDefinitions420;
 
 namespace LeagueSandbox.GameServerTests.Tests.Items
 {
@@ -18,7 +18,7 @@ namespace LeagueSandbox.GameServerTests.Tests.Items
             var itemManager = new ItemManager();
             itemManager.AddItems(ItemContentCollection.LoadItemsFrom(path + "LeagueSandbox-Default/Items"));
 
-            IPacketNotifier _packetNotifier = new Game().PacketNotifier;
+            PacketNotifier _packetNotifier = new Game().PacketNotifier;
             var inventoryManager = InventoryManager.CreateInventory(_packetNotifier);
 
             // Add an item and make sure it gets added to the first (0) slot
@@ -57,7 +57,7 @@ namespace LeagueSandbox.GameServerTests.Tests.Items
             var itemManager = new ItemManager();
             itemManager.AddItems(ItemContentCollection.LoadItemsFrom(path + "LeagueSandbox-Default/Items"));
 
-            IPacketNotifier _packetNotifier = new Game().PacketNotifier;
+            PacketNotifier _packetNotifier = new Game().PacketNotifier;
             var manager = InventoryManager.CreateInventory(_packetNotifier);
 
             // Get two stacking item types
@@ -98,7 +98,7 @@ namespace LeagueSandbox.GameServerTests.Tests.Items
             var itemManager = new ItemManager();
             itemManager.AddItems(ItemContentCollection.LoadItemsFrom(path + "LeagueSandbox-Default/Items"));
 
-            IPacketNotifier _packetNotifier = new Game().PacketNotifier;
+            PacketNotifier _packetNotifier = new Game().PacketNotifier;
             var manager = InventoryManager.CreateInventory(_packetNotifier);
 
             // Add an item and make sure it exists in the proper slot
@@ -124,7 +124,7 @@ namespace LeagueSandbox.GameServerTests.Tests.Items
             var itemManager = new ItemManager();
             itemManager.AddItems(ItemContentCollection.LoadItemsFrom(path + "LeagueSandbox-Default/Items"));
 
-            IPacketNotifier _packetNotifier = new Game().PacketNotifier;
+            PacketNotifier _packetNotifier = new Game().PacketNotifier;
             var manager = InventoryManager.CreateInventory(_packetNotifier);
 
             // Add an item, and make sure the slot is right
@@ -156,7 +156,7 @@ namespace LeagueSandbox.GameServerTests.Tests.Items
             var itemManager = new ItemManager();
             itemManager.AddItems(ItemContentCollection.LoadItemsFrom(path + "LeagueSandbox-Default/Items"));
 
-            IPacketNotifier _packetNotifier = new Game().PacketNotifier;
+            PacketNotifier _packetNotifier = new Game().PacketNotifier;
             var manager = InventoryManager.CreateInventory(_packetNotifier);
 
             // Add an item and make sure it gets added to the first (0) slot
@@ -182,7 +182,7 @@ namespace LeagueSandbox.GameServerTests.Tests.Items
             var itemManager = new ItemManager();
             itemManager.AddItems(ItemContentCollection.LoadItemsFrom(path + "LeagueSandbox-Default/Items"));
 
-            IPacketNotifier _packetNotifier = new Game().PacketNotifier;
+            PacketNotifier _packetNotifier = new Game().PacketNotifier;
             var manager = InventoryManager.CreateInventory(_packetNotifier);
 
             // Add 3 items and make sure they get proper slots
@@ -234,7 +234,7 @@ namespace LeagueSandbox.GameServerTests.Tests.Items
             itemManager.ResetItems();
             itemManager.AddItems(ItemContentCollection.LoadItemsFrom(path + "LeagueSandbox-Default/Items"));
 
-            IPacketNotifier _packetNotifier = new Game().PacketNotifier;
+            PacketNotifier _packetNotifier = new Game().PacketNotifier;
             var manager = InventoryManager.CreateInventory(_packetNotifier);
 
             var zephyrId = 3172;

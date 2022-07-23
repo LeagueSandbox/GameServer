@@ -1,30 +1,31 @@
 using GameServerCore.Enums;
-using GameServerCore.Domain.GameObjects;
-using GameServerCore.Domain.GameObjects.Spell;
 using GameServerCore.Scripting.CSharp;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using LeagueSandbox.GameServer.API;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
-using LeagueSandbox.GameServer.GameObjects.Stats;
-using GameServerCore.Domain.GameObjects.Spell.Sector;
-using GameServerCore.Domain.GameObjects.Spell.Missile;
+using LeagueSandbox.GameServer.GameObjects.StatsNS;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
+using LeagueSandbox.GameServer.GameObjects.SpellNS.Sector;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits;
+using LeagueSandbox.GameServer.GameObjects;
+using LeagueSandbox.GameServer.GameObjects.SpellNS;
 
 namespace Buffs
 {
     internal class InfernalGuardianBurning : IBuffGameScript
     {
-        public IBuffScriptMetaData BuffMetaData { get; set; } = new BuffScriptMetaData
+        public BuffScriptMetaData BuffMetaData { get; set; } = new BuffScriptMetaData
         {
             BuffType = BuffType.COMBAT_ENCHANCER
         };
 
-        public IStatsModifier StatsModifier { get; private set; } = new StatsModifier();
+        public StatsModifier StatsModifier { get; private set; } = new StatsModifier();
 
-        IPet Pet;
-        ISpellSector burnSector;
-        public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
+        Pet Pet;
+        SpellSector burnSector;
+        public void OnActivate(AttackableUnit unit, Buff buff, Spell ownerSpell)
         {
-            if (unit is IPet pet)
+            if (unit is Pet pet)
             {
                 Pet = pet;
 
@@ -51,7 +52,7 @@ namespace Buffs
                 ApiEventManager.OnSpellSectorHit.AddListener(this, burnSector, TargetExecute, false);
             }
         }
-        public void TargetExecute(ISpellSector sector, IAttackableUnit target)
+        public void TargetExecute(SpellSector sector, AttackableUnit target)
         {
             if (Pet != null && sector.Parameters.BindObject != null)
             {
@@ -60,7 +61,7 @@ namespace Buffs
             }
         }
 
-        public void OnDeactivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
+        public void OnDeactivate(AttackableUnit unit, Buff buff, Spell ownerSpell)
         {
             unit.Die(CreateDeathData(false, 0, unit, unit, DamageType.DAMAGE_TYPE_TRUE, DamageSource.DAMAGE_SOURCE_INTERNALRAW, 0.0f));
             RemoveBuff(buff.SourceUnit, "InfernalGuardianTimer");

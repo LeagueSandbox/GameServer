@@ -1,27 +1,29 @@
-using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
-using GameServerCore.Domain.GameObjects.Spell;
 using GameServerCore.Scripting.CSharp;
-using LeagueSandbox.GameServer.GameObjects.Stats;
+using LeagueSandbox.GameServer.GameObjects.StatsNS;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
+using LeagueSandbox.GameServer.GameObjects;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
+using LeagueSandbox.GameServer.GameObjects.SpellNS;
 
 namespace Buffs
 {
     internal class InternalTestBuff : IBuffGameScript
     {
-        public IBuffScriptMetaData BuffMetaData { get; set; } = new BuffScriptMetaData
+        public BuffScriptMetaData BuffMetaData { get; set; } = new BuffScriptMetaData
         {
             BuffType = BuffType.AURA,
             BuffAddType = BuffAddType.REPLACE_EXISTING
         };
 
-        public IStatsModifier StatsModifier { get; private set; } = new StatsModifier();
+        public StatsModifier StatsModifier { get; private set; } = new StatsModifier();
 
-        public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell = null)
+        public void OnActivate(AttackableUnit unit, Buff buff, Spell ownerSpell = null)
         {
             //TODO: Set up NotifyS2C_HandleTipUpdate in order to update the stats in the buff's tooltip
-            if (unit is IChampion champion)
+            if (unit is Champion champion)
             {
                 StatsModifier.CooldownReduction.FlatBonus += 0.8f;
                 StatsModifier.Tenacity.FlatBonus += 0.25f;
@@ -44,7 +46,7 @@ namespace Buffs
             }
         }
 
-        public void OnDeactivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
+        public void OnDeactivate(AttackableUnit unit, Buff buff, Spell ownerSpell)
         {
         }
 

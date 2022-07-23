@@ -2,12 +2,10 @@
 using System.Text;
 using Force.Crc32;
 using GameServerCore.Domain;
-using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
-using GameServerCore.Scripting.CSharp;
+using GameServerLib.GameObjects.AttackableUnits;
 using LeaguePackets.Game.Events;
-using LeagueSandbox.GameServer.GameObjects.Stats;
-using LeagueSandbox.GameServer.Inventory;
+using LeagueSandbox.GameServer.GameObjects.StatsNS;
 
 namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 {
@@ -16,7 +14,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
     /// In League, turrets are separated into visual and AI objects, so this GameObject represents the AI portion,
     /// while the visual object is handled automatically by clients via packets.
     /// </summary>
-    public class BaseTurret : ObjAIBase, IBaseTurret
+    public class BaseTurret : ObjAIBase
     {
         /// <summary>
         /// Current lane this turret belongs to.
@@ -33,7 +31,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         /// <summary>
         /// Region assigned to this turret for vision and collision.
         /// </summary>
-        public IRegion BubbleRegion { get; private set; }
+        public Region BubbleRegion { get; private set; }
 
         public override bool IsAffectedByFoW => false;
 
@@ -47,7 +45,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             LaneID lane = LaneID.NONE,
             MapObject mapObject = default,
             int skinId = 0,
-            IStats stats = null,
+            Stats stats = null,
             string aiScript = ""
         ) : base(game, model, name, position: position, visionRadius: 800, skinId: skinId, netId: netId, team: team, stats: stats, aiScript: aiScript)
         {
@@ -64,7 +62,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         /// Called when this unit dies.
         /// </summary>
         /// <param name="killer">Unit that killed this unit.</param>
-        public override void Die(IDeathData data)
+        public override void Die(DeathData data)
         {
             var announce = new OnTurretDie
             {
@@ -99,7 +97,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             );
         }
 
-        public override void OnCollision(IGameObject collider, bool isTerrain = false)
+        public override void OnCollision(GameObject collider, bool isTerrain = false)
         {
             // TODO: Verify if we need this for things like SionR.
         }

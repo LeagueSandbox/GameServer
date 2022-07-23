@@ -1,12 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Numerics;
-using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
-using LeagueSandbox.GameServer.GameObjects.Stats;
+using LeagueSandbox.GameServer.GameObjects.StatsNS;
 
 namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 {
-    public class LaneMinion : Minion, ILaneMinion
+    public class LaneMinion : Minion
     {
         /// <summary>
         /// Const waypoints that define the minion's route
@@ -29,7 +28,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             string model,
             uint netId = 0,
             TeamId team = TeamId.TEAM_BLUE,
-            IStats stats = null,
+            Stats stats = null,
             string AIScript = ""
         ) : base(game, null, new Vector2(), model, model, netId, team, stats: stats, AIScript: AIScript)
         {

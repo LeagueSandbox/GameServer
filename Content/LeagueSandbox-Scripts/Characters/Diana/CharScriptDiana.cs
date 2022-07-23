@@ -1,28 +1,21 @@
-﻿using GameServerCore.Domain.GameObjects;
-using LeagueSandbox.GameServer.Scripting.CSharp;
-using static LeagueSandbox.GameServer.API.ApiFunctionManager;
-using GameServerCore.Domain.GameObjects.Spell;
-using GameServerCore.Domain.GameObjects.Spell.Missile;
-using System.Numerics;
+﻿using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 using GameServerCore.Scripting.CSharp;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
+using LeagueSandbox.GameServer.GameObjects.SpellNS;
 
 namespace CharScripts
 {
     public class CharScriptDiana : ICharScript
     {
-        IObjAIBase diana = null;
+        ObjAIBase diana = null;
         float stanceTime = 500;
         float stillTime = 0;
         bool beginStance = false;
         bool stance = false;
 
-        public void OnActivate(IObjAIBase owner, ISpell spell = null)
+        public void OnActivate(ObjAIBase owner, Spell spell = null)
         {
             diana = owner;
-        }
-
-        public void OnDeactivate(IObjAIBase owner, ISpell spell = null)
-        {
         }
 
         public void OnUpdate(float diff)

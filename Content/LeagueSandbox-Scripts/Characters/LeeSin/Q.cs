@@ -1,19 +1,21 @@
 ﻿using System.Numerics;
 using GameServerCore.Enums;
-using GameServerCore.Domain.GameObjects;
-using GameServerCore.Domain.GameObjects.Spell;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 using LeagueSandbox.GameServer.Scripting.CSharp;
-using GameServerCore.Domain.GameObjects.Spell.Missile;
 using GameServerCore.Scripting.CSharp;
 using LeagueSandbox.GameServer.API;
-using GameServerCore.Domain.GameObjects.Spell.Sector;
+using LeagueSandbox.GameServer.GameObjects;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
+using LeagueSandbox.GameServer.GameObjects.SpellNS;
+using LeagueSandbox.GameServer.GameObjects.SpellNS.Missile;
+using LeagueSandbox.GameServer.GameObjects.SpellNS.Sector;
 
 namespace Spells
 {
     public class BlindMonkQOne : ISpellScript
     {
-        public ISpellScriptMetadata ScriptMetadata { get; private set; } = new SpellScriptMetadata()
+        public SpellScriptMetadata ScriptMetadata { get; private set; } = new SpellScriptMetadata()
         {
             TriggersSpellCasts = true,
             NotSingleTargetSpell = true,
@@ -23,24 +25,12 @@ namespace Spells
             }
         };
 
-        public void OnActivate(IObjAIBase owner, ISpell spell)
+        public void OnActivate(ObjAIBase owner, Spell spell)
         {
             ApiEventManager.OnSpellHit.AddListener(this, spell, TargetExecute, false);
         }
 
-        public void OnDeactivate(IObjAIBase owner, ISpell spell)
-        {
-        }
-
-        public void OnSpellPreCast(IObjAIBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
-        {
-        }
-
-        public void OnSpellCast(ISpell spell)
-        {
-        }
-
-        public void OnSpellPostCast(ISpell spell)
+        public void OnSpellPostCast(Spell spell)
         {
             var current = new Vector2(spell.CastInfo.SpellCastLaunchPosition.X, spell.CastInfo.SpellCastLaunchPosition.Z);
             var spellPos = new Vector2(spell.CastInfo.TargetPosition.X, spell.CastInfo.TargetPosition.Z);
@@ -50,7 +40,7 @@ namespace Spells
             //spell.AddProjectile("BlindMonkQOne", new Vector2(spell.CastInfo.SpellCastLaunchPosition.X, spell.CastInfo.SpellCastLaunchPosition.Z), current, trueCoords, HitResult.HIT_Normal, true);
         }
 
-        public void TargetExecute(ISpell spell, IAttackableUnit target, ISpellMissile missile, ISpellSector sector)
+        public void TargetExecute(Spell spell, AttackableUnit target, SpellMissile missile, SpellSector sector)
         {
             var owner = spell.CastInfo.Owner;
 
@@ -76,14 +66,14 @@ namespace Spells
 
                 missile.SetToRemove();
 
-                if (!target.IsDead && target is IObjAIBase ai)
+                if (!target.IsDead && target is ObjAIBase ai)
                 {
                     AddBuff("BlindMonkQManager", 3f, 1, spell, owner, ai);
                 }
             }
             else
             {
-                if (target is IChampion)
+                if (target is Champion)
                 {
                     if (owner.Team == TeamId.TEAM_BLUE)
                     {
@@ -102,7 +92,7 @@ namespace Spells
 
                     missile.SetToRemove();
 
-                    if (!target.IsDead && target is IObjAIBase ai)
+                    if (!target.IsDead && target is ObjAIBase ai)
                     {
                         AddBuff("BlindMonkQManager", 3f, 1, spell, owner, ai);
                     }
@@ -125,47 +115,31 @@ namespace Spells
 
                     missile.SetToRemove();
 
-                    if (!target.IsDead && target is IObjAIBase ai)
+                    if (!target.IsDead && target is ObjAIBase ai)
                     {
                         AddBuff("BlindMonkQManager", 3f, 1, spell, owner, ai);
                     }
                 }
             }
         }
-
-        public void OnSpellChannel(ISpell spell)
-        {
-        }
-
-        public void OnSpellChannelCancel(ISpell spell, ChannelingStopSource reason)
-        {
-        }
-
-        public void OnSpellPostChannel(ISpell spell)
-        {
-        }
-
-        public void OnUpdate(float diff)
-        {
-        }
     }
 
     public class BlindMonkQTwo : ISpellScript
     {
-        public ISpellScriptMetadata ScriptMetadata { get; private set; } = new SpellScriptMetadata()
+        public SpellScriptMetadata ScriptMetadata { get; private set; } = new SpellScriptMetadata()
         {
             DoesntBreakShields = true,
             TriggersSpellCasts = true,
             NotSingleTargetSpell = false
         };
 
-        IObjAIBase Owner;
-        ISpell thisSpell;
-        ISpellSector canCastSector;
+        ObjAIBase Owner;
+        Spell thisSpell;
+        SpellSector canCastSector;
         bool seal = true;
         string checkBuffName = "BlindMonkQOne";
 
-        public void OnActivate(IObjAIBase owner, ISpell spell)
+        public void OnActivate(ObjAIBase owner, Spell spell)
         {
             Owner = owner;
             thisSpell = spell;
@@ -190,19 +164,7 @@ namespace Spells
             SealSpellSlot(Owner, SpellSlotType.SpellSlots, 0, SpellbookType.SPELLBOOK_CHAMPION, seal);
         }
 
-        public void OnDeactivate(IObjAIBase owner, ISpell spell)
-        {
-        }
-
-        public void OnSpellPreCast(IObjAIBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
-        {
-        }
-
-        public void OnSpellCast(ISpell spell)
-        {
-        }
-
-        public void OnSpellPostCast(ISpell spell)
+        public void OnSpellPostCast(Spell spell)
         {
             var owner = spell.CastInfo.Owner;
 
@@ -212,7 +174,7 @@ namespace Spells
                 buffName = "BlindMonkQOneChaos";
             }
 
-            foreach (IAttackableUnit unit in GetUnitsInRange(owner.Position, 2000f, true))
+            foreach (AttackableUnit unit in GetUnitsInRange(owner.Position, 2000f, true))
             {
                 if (spell.SpellData.IsValidTarget(owner, unit, SpellDataFlags.AffectEnemies | SpellDataFlags.AffectNeutral | SpellDataFlags.AffectMinions | SpellDataFlags.AffectHeroes))
                 {
@@ -223,7 +185,7 @@ namespace Spells
                         RemoveBuff(buff);
                         AddParticlePos(owner, "blindMonk_Q_resonatingStrike_02", owner.Position, owner.Position, bone: "C_BuffBone_Glb_Center_Loc", flags: 0);
 
-                        if (unit is IObjAIBase ai)
+                        if (unit is ObjAIBase ai)
                         {
                             AddBuff("BlindMonkQTwoDash", 2.5f, 1, spell, owner, ai);
                         }
@@ -234,18 +196,6 @@ namespace Spells
             }
         }
 
-        public void OnSpellChannel(ISpell spell)
-        {
-        }
-
-        public void OnSpellChannelCancel(ISpell spell, ChannelingStopSource reason)
-        {
-        }
-
-        public void OnSpellPostChannel(ISpell spell)
-        {
-        }
-
         // TODO: Implement a CanCast function with a return value instead.
         public void OnUpdate(float diff)
         {
@@ -253,9 +203,9 @@ namespace Spells
             {
                 canCastSector.ObjectsHit.Clear();
                 canCastSector.ExecuteTick();
-                foreach (IGameObject obj in canCastSector.ObjectsHit)
+                foreach (GameObject obj in canCastSector.ObjectsHit)
                 {
-                    if (obj is IObjAIBase ai)
+                    if (obj is ObjAIBase ai)
                     {
                         var buff = ai.GetBuffWithName(checkBuffName);
                         if (buff != null && buff.SourceUnit == Owner)

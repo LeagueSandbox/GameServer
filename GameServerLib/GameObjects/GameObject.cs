@@ -2,9 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
-using GameServerCore;
-using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits;
 using LeagueSandbox.GameServer.Packets;
 
 namespace LeagueSandbox.GameServer.GameObjects
@@ -13,7 +12,7 @@ namespace LeagueSandbox.GameServer.GameObjects
     /// Base class for all objects.
     /// GameObjects normally follow these guidelines of functionality: Position, Direction, Collision, Vision, Team, and Networking.
     /// </summmary>
-    public class GameObject : IGameObject
+    public class GameObject
     {
         // Crucial Vars (keep in mind Game is everywhere, which could be an issue for the future)
         protected Game _game;
@@ -224,7 +223,7 @@ namespace LeagueSandbox.GameServer.GameObjects
         /// Whether or not the specified object is colliding with this object.
         /// </summary>
         /// <param name="o">An object that could be colliding with this object.</param>
-        public virtual bool IsCollidingWith(IGameObject o)
+        public virtual bool IsCollidingWith(GameObject o)
         {
             return Vector2.DistanceSquared(Position, o.Position) < (CollisionRadius + o.CollisionRadius) * (CollisionRadius + o.CollisionRadius);
         }
@@ -232,7 +231,7 @@ namespace LeagueSandbox.GameServer.GameObjects
         /// <summary>
         /// Called by ObjectManager when the object is ontop of another object or when the object is inside terrain.
         /// </summary>
-        public virtual void OnCollision(IGameObject collider, bool isTerrain = false)
+        public virtual void OnCollision(GameObject collider, bool isTerrain = false)
         {
             // TODO: Verify if we should trigger events here.
 
@@ -318,7 +317,7 @@ namespace LeagueSandbox.GameServer.GameObjects
             _game.ObjectManager.AddVisionProvider(this, Team);
             if (_game.IsRunning)
             {
-                _game.PacketNotifier.NotifySetTeam(this as IAttackableUnit);
+                _game.PacketNotifier.NotifySetTeam(this as AttackableUnit);
             }
         }
 

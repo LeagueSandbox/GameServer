@@ -1,23 +1,21 @@
 ﻿using System;
 using System.Numerics;
 using GameServerCore;
-using GameServerCore.Domain.GameObjects;
-using GameServerCore.Domain.GameObjects.Spell;
-using GameServerCore.Domain.GameObjects.Spell.Sector;
+using LeagueSandbox.GameServer.Scripting.CSharp;
 
-namespace LeagueSandbox.GameServer.GameObjects.Spell.Sector
+namespace LeagueSandbox.GameServer.GameObjects.SpellNS.Sector
 {
     /// <summary>
     /// Base class for all spell sectors. Functionally acts as a circular spell hitbox.
     /// Base functionality can be overriden to fit a specific shape.
     /// </summary>
-    internal class SpellSectorCone : SpellSector, ISpellSector
+    internal class SpellSectorCone : SpellSector
     {
         public SpellSectorCone(
             Game game,
-            ISectorParameters parameters,
-            ISpell originSpell,
-            ICastInfo castInfo,
+            SectorParameters parameters,
+            Spell originSpell,
+            CastInfo castInfo,
             uint netId = 0
         ) : base(game, parameters, originSpell, castInfo, netId)
         {
@@ -67,7 +65,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Sector
         /// </summary>
         /// <param name="collider">Object to check.</param>
         /// <returns>True/False.</returns>
-        protected override bool FilterCollisions(IGameObject collider)
+        protected override bool FilterCollisions(GameObject collider)
         {
             if (Parameters.ConeAngle <= 0)
             {

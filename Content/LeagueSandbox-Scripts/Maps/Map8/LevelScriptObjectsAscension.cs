@@ -1,10 +1,11 @@
-﻿using GameServerCore.Domain.GameObjects;
-using GameServerCore.Enums;
-using static LeagueSandbox.GameServer.API.ApiMapFunctionManager;
+﻿using System.Numerics;
 using System.Collections.Generic;
 using GameServerCore.Domain;
-using System.Numerics;
+using GameServerCore.Enums;
+using static LeagueSandbox.GameServer.API.ApiMapFunctionManager;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
+using LeagueSandbox.GameServer.GameObjects;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
 
 namespace MapScripts.Map8
 {
@@ -12,10 +13,10 @@ namespace MapScripts.Map8
     {
         private static Dictionary<GameObjectTypes, List<MapObject>> _mapObjects;
 
-        static List<IMinion> InfoPoints = new List<IMinion>();
-        public static Dictionary<TeamId, IFountain> FountainList = new Dictionary<TeamId, IFountain>();
-        static Dictionary<TeamId, List<ILaneTurret>> TurretList = new Dictionary<TeamId, List<ILaneTurret>> { { TeamId.TEAM_BLUE, new List<ILaneTurret>() }, { TeamId.TEAM_PURPLE, new List<ILaneTurret>() } };
-        static List<IMinion> TeleportPlates = new List<IMinion>();
+        static List<Minion> InfoPoints = new List<Minion>();
+        public static Dictionary<TeamId, Fountain> FountainList = new Dictionary<TeamId, Fountain>();
+        static Dictionary<TeamId, List<LaneTurret>> TurretList = new Dictionary<TeamId, List<LaneTurret>> { { TeamId.TEAM_BLUE, new List<LaneTurret>() }, { TeamId.TEAM_PURPLE, new List<LaneTurret>() } };
+        static List<Minion> TeleportPlates = new List<Minion>();
         static string LaneTurretAI = "TurretAI";
 
         public static Dictionary<TeamId, string> TowerModels { get; set; } = new Dictionary<TeamId, string>
