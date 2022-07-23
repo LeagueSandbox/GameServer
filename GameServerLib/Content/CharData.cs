@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects.Spell;
 using GameServerCore.Enums;
@@ -86,7 +87,7 @@ namespace LeagueSandbox.GameServer.Content
             new[] {6, 11, 16, 99, 99, 99}
         };
 
-        public List<IBasicAttackInfo> BasicAttacks { get; private set; } = new List<IBasicAttackInfo>(new IBasicAttackInfo[18]);
+        public List<IBasicAttackInfo> BasicAttacks { get; private set; } = Enumerable.Repeat((IBasicAttackInfo)new BasicAttackInfo(), 18).ToList();
         public float[] AttackProbabilities { get; private set; } = new float[18];
 
         // TODO: Verify if we want this to be an array.
@@ -207,7 +208,8 @@ namespace LeagueSandbox.GameServer.Content
                     attackName = $"{name}BasicAttack{nameIndex}";
                 }
 
-                if (BasicAttacks.Find(x => x != null && x.Name != String.Empty && x.Name == attackName) != null)
+
+                if (BasicAttacks.Find(x => x.Name == attackName) != null)
                 {
                     nameIndex++;
                     continue;
