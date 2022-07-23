@@ -1,8 +1,6 @@
-﻿using GameServerCore.Domain.GameObjects.Spell;
-
-namespace LeagueSandbox.GameServer.Content
+﻿namespace LeagueSandbox.GameServer.Content
 {
-    public class BasicAttackInfo : IBasicAttackInfo
+    public class BasicAttackInfo
     {
         public string Name { get; init; }
         public float AttackCastTime { get; init; }
