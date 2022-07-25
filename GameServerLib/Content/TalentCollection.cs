@@ -14,7 +14,7 @@ namespace LeagueSandbox.GameServer.Content
             public object Id => MetaData["Id"];
         }
 
-        public static Dictionary<string, TalentCollectionEntry> _talents { get; private set; } = new Dictionary<string, TalentCollectionEntry>();
+        private static Dictionary<string, TalentCollectionEntry> _talents = new Dictionary<string, TalentCollectionEntry>();
 
         public static void LoadMasteriesFrom(string directoryPath)
         {

@@ -81,20 +81,27 @@ namespace LeagueSandbox.GameServer
             var gameToken = data.SelectToken("game");
             GameConfig = new GameConfig(gameToken);
 
-            // Load data package
-            ContentManager = ContentManager.LoadDataPackage(game, GameConfig.DataPackage, ContentPath);
-
             Players = new List<PlayerConfig>();
 
             // Read the player configuration
             var playerConfigurations = data.SelectToken("players");
             foreach (var player in playerConfigurations)
             {
-                var playerConfig = new PlayerConfig(player, game);
+                var playerConfig = new PlayerConfig(player);
                 Players.Add(playerConfig);
             }
 
             ForcedStart = (float)(data.SelectToken("forcedStart") ?? 0) * 1000;
+        }
+
+        public void LoadContent(Game game)
+        {
+            // Load data package
+            ContentManager = ContentManager.LoadDataPackage(game, GameConfig.DataPackage, ContentPath);
+            foreach(var player in Players)
+            {
+                player.LoadTalentsAndRunes();
+            }
         }
 
         private string GetContentPath()
@@ -246,12 +253,15 @@ public class PlayerConfig
     public short Ribbon { get; private set; }
     public int Icon { get; private set; }
     public string BlowfishKey { get; private set; }
-    public RuneCollection Runes { get; }
-    public TalentInventory Talents { get; }
+    public RuneCollection Runes { get; private set; }
+    public TalentInventory Talents { get; private set; }
+
+    private JToken _playerData;
 
     private static ILog _logger = LoggerProvider.GetLogger();
-    public PlayerConfig(JToken playerData, Game game)
+    public PlayerConfig(JToken playerData)
     {
+        _playerData = playerData;
         PlayerID = (long)playerData.SelectToken("playerId");
         Rank = (string)playerData.SelectToken("rank");
         Name = (string)playerData.SelectToken("name");
@@ -269,9 +279,12 @@ public class PlayerConfig
         Ribbon = (short)playerData.SelectToken("ribbon");
         Icon = (int)playerData.SelectToken("icon");
         BlowfishKey = (string)playerData.SelectToken("blowfishKey");
+    }
 
+    public void LoadTalentsAndRunes()
+    {
         Runes = new RuneCollection();
-        var runes = playerData.SelectToken("runes");
+        var runes = _playerData.SelectToken("runes");
         if (runes != null)
         {
             foreach (JProperty runeCategory in runes)
@@ -285,7 +298,7 @@ public class PlayerConfig
         }
 
         Talents = new TalentInventory();
-        var talents = playerData.SelectToken("talents");
+        var talents = _playerData.SelectToken("talents");
         if (talents != null)
         {
             foreach (JProperty talent in talents)

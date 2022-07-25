@@ -166,7 +166,7 @@ namespace LeagueSandbox.GameServer.Content
                     continue;
                 }
 
-                return (ContentFile)toReturnContentFile;
+                return toReturnContentFile;
             }
 
             throw new ContentNotFoundException($"No {contentType} found with name: {itemName} in any package.");
