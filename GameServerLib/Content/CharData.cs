@@ -252,6 +252,11 @@ namespace LeagueSandbox.GameServer.Content
                 };
             }
 
+            foreach(var attack in BasicAttacks)
+            {
+                attack.GetAttackValues();
+            }
+
             return this;
         }
     }
