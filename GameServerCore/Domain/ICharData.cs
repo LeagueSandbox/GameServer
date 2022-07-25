@@ -1,11 +1,9 @@
 ﻿using GameServerCore.Enums;
-using System.Collections.Generic;
 
 namespace GameServerCore.Domain
 {
     public interface ICharData
     {
-        IGlobalData GlobalCharData { get; }
         float AcquisitionRange { get; }
         bool AllyCanUse { get; }
         bool AlwaysVisible { get; }

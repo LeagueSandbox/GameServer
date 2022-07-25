@@ -15,10 +15,10 @@ namespace MapScripts.Map1
         {
             MaxLevel = 30
         };
-        public override IGlobalData GlobalData { get; set; } = new GlobalData { PercentCooldownModMinimun = 0.8f};
-        public override void Init(Dictionary<GameObjectTypes, List<MapObject>> mapObjects)
+        //public override IGlobalData GlobalData { get; set; } = new GlobalData { PercentCooldownModMinimun = 0.8f};
+        public override void Init(IMapScriptData mapData)
         {
-            base.Init(mapObjects);
+            base.Init(mapData);
             SetGameFeatures(FeatureFlags.EnableManaCosts, false);
         }
 

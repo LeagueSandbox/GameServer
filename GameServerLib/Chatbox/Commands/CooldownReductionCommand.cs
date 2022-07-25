@@ -25,7 +25,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
             }
             else if (float.TryParse(split[1], out var cdr))
             {
-                _playerManager.GetPeerInfo(userId).Champion.Stats.CooldownReduction.FlatBonus += (cdr / 100f);
+                _playerManager.GetPeerInfo(userId).Champion.Stats.CooldownReduction.FlatBonus -= cdr / 100f;
             }
         }
     }

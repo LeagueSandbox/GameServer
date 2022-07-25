@@ -4,6 +4,7 @@ using System.Linq;
 using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
+using LeagueSandbox.GameServer.Content;
 
 namespace LeagueSandbox.GameServer.GameObjects.Stats
 {
@@ -126,7 +127,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
             ArmorPerLevel = charData.ArmorPerLevel;
             AttackDamage.BaseValue = charData.BaseDamage;
             // AttackSpeedFlat = GlobalAttackSpeed / CharAttackDelay
-            AttackSpeedFlat = (1.0f / charData.GlobalCharData.AttackDelay) / (1.0f + charData.AttackDelayOffsetPercent[0]);
+            AttackSpeedFlat = (1.0f / GlobalData.GlobalCharacterDataConstants.AttackDelay) / (1.0f + charData.AttackDelayOffsetPercent[0]);
             CriticalDamage.BaseValue = charData.CritDamageBonus;
             ExpGivenOnDeath.BaseValue = charData.ExpGivenOnDeath;
             GoldGivenOnDeath.BaseValue = charData.GoldGivenOnDeath;

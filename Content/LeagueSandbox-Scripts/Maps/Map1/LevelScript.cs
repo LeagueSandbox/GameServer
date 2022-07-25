@@ -17,7 +17,6 @@ namespace MapScripts.Map1
     {
         public virtual IMapScriptMetadata MapScriptMetadata { get; set; } = new MapScriptMetadata();
 
-        public virtual IGlobalData GlobalData { get; set; } = new GlobalData();
         public bool HasFirstBloodHappened { get; set; } = false;
         public long NextSpawnTime { get; set; } = 90 * 1000;
         public string LaneMinionAI { get; set; } = "LaneMinionAI";
@@ -131,7 +130,7 @@ namespace MapScripts.Map1
         };
 
         //This function is executed in-between Loading the map structures and applying the structure protections. Is the first thing on this script to be executed
-        public virtual void Init(Dictionary<GameObjectTypes, List<MapObject>> mapObjects)
+        public virtual void Init(IMapScriptData mapData)
         {
             MapScriptMetadata.MinionSpawnEnabled = IsMinionSpawnEnabled();
             AddSurrender(1200000.0f, 300000.0f, 30.0f);
@@ -159,7 +158,7 @@ namespace MapScripts.Map1
             MinionModifiers[MinionSpawnType.MINION_TYPE_SUPER].AttackDamage.FlatBonus = 10.0f;
 
             CreateLevelProps.CreateProps();
-            LevelScriptObjects.LoadBuildings(mapObjects);
+            LevelScriptObjects.LoadBuildings(mapData.MapObjects);
         }
 
         public virtual void OnMatchStart()

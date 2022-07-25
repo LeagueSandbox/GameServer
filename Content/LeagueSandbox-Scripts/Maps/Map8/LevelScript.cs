@@ -28,7 +28,6 @@ namespace MapScripts.Map8
             }
         };
 
-        public virtual IGlobalData GlobalData { get; set; } = new GlobalData();
         public bool HasFirstBloodHappened { get; set; } = false;
         public long NextSpawnTime { get; set; } = 90 * 1000;
         public string LaneMinionAI { get; set; } = "LaneMinionAI";
@@ -61,7 +60,6 @@ namespace MapScripts.Map8
                     { 1, new Vector2(13310f, 4124f) }
                 }}
             }},
-
         };
 
         //Minion models for this map
@@ -136,13 +134,13 @@ namespace MapScripts.Map8
         public Dictionary<TeamId, ILevelProp> Nexus = new Dictionary<TeamId, ILevelProp>();
         public Dictionary<int, ILevelProp> SwainBeams = new Dictionary<int, ILevelProp>();
         //This function is executed in-between Loading the map structures and applying the structure protections. Is the first thing on this script to be executed
-        public void Init(Dictionary<GameObjectTypes, List<MapObject>> mapObjects)
+        public void Init(IMapScriptData mapData)
         {
             //TODO: Implement Dynamic Minion spawn mechanics for Map8
             //SpawnEnabled = map.IsMinionSpawnEnabled();
             AddSurrender(1200000.0f, 300000.0f, 30.0f);
 
-            LevelScriptObjects.LoadObjects(mapObjects);
+            LevelScriptObjects.LoadObjects(mapData.MapObjects);
             CreateLevelProps.CreateProps(this);
         }
 

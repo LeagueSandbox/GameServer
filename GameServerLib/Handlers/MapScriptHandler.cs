@@ -113,42 +113,48 @@ namespace LeagueSandbox.GameServer.Handlers
         public void Init()
         {
             MapData = _game.Config.ContentManager.GetMapData(Id);
-
-            Dictionary<GameObjectTypes, List<MapObject>> mapObjects = new Dictionary<GameObjectTypes, List<MapObject>>();
-            foreach (var mapObject in MapData.MapObjects.Values)
-            {
-                GameObjectTypes objectType = mapObject.GetGameObjectType();
-
-                if (objectType == 0)
-                {
-                    continue;
-                }
-
-                if (!mapObjects.ContainsKey(objectType))
-                {
-                    mapObjects.Add(objectType, new List<MapObject>());
-                }
-
-                mapObjects[objectType].Add(mapObject);
-            }
-
-            if (MapData != null)
-            {
-                mapObjects.Add(GameObjectTypes.ObjBuildingBarracks, new List<MapObject>());
-
-                foreach (var spawnBarrack in MapData.SpawnBarracks)
-                {
-                    mapObjects[GameObjectTypes.ObjBuildingBarracks].Add(spawnBarrack.Value);
-                }
-            }
-
+            GlobalData.Init(MapData.MapConstants);
+            // Load data package
             try
             {
-                MapScript.Init(mapObjects);
+                MapScript.Init(new MapScriptData(MapData));
             }
             catch(Exception e)
             {
                 _logger.Error(null, e);
+            }
+        }
+
+        //In case we ever want/need to send more than MapObjects to MapScripts
+        public class MapScriptData : IMapScriptData
+        {
+            public Dictionary<GameObjectTypes, List<MapObject>> MapObjects { get; } = new Dictionary<GameObjectTypes, List<MapObject>>();
+
+            public MapScriptData(IMapData mapData)
+            {
+                foreach (var mapObject in mapData.MapObjects.Values)
+                {
+                    GameObjectTypes objectType = mapObject.GetGameObjectType();
+
+                    if (objectType == 0)
+                    {
+                        continue;
+                    }
+
+                    if (!MapObjects.ContainsKey(objectType))
+                    {
+                        MapObjects.Add(objectType, new List<MapObject>());
+                    }
+
+                    MapObjects[objectType].Add(mapObject);
+                }
+
+                MapObjects.Add(GameObjectTypes.ObjBuildingBarracks, new List<MapObject>());
+
+                foreach (var spawnBarrack in mapData.SpawnBarracks)
+                {
+                    MapObjects[GameObjectTypes.ObjBuildingBarracks].Add(spawnBarrack.Value);
+                }
             }
         }
     }

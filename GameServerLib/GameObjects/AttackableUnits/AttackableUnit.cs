@@ -17,6 +17,7 @@ using log4net;
 using GameServerCore.Scripting.CSharp;
 using PacketDefinitions420;
 using LeagueSandbox.GameServer.GameObjects.Stats;
+using LeagueSandbox.GameServer.Handlers;
 
 namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
 {

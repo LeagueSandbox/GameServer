@@ -32,7 +32,6 @@ namespace MapScripts.Map8
             ExpCurveOverride = "ExpCurveASCENSION"
         };
 
-        public virtual IGlobalData GlobalData { get; set; } = new GlobalData();
         public bool HasFirstBloodHappened { get; set; } = false;
         public long NextSpawnTime { get; set; } = 90 * 1000;
         public string LaneMinionAI { get; set; } = "LaneMinionAI";
@@ -85,13 +84,13 @@ namespace MapScripts.Map8
             }}
         };
 
-        public void Init(Dictionary<GameObjectTypes, List<MapObject>> mapObjects)
+        public void Init(IMapScriptData mapData)
         {
             //TODO: Implement Dynamic Minion spawn mechanics for Map8
             //SpawnEnabled = map.IsMinionSpawnEnabled();
             AddSurrender(1200000.0f, 300000.0f, 30.0f);
             CreateLevelProps.CreateProps();
-            LevelScriptObjectsAscension.LoadObjects(mapObjects);
+            LevelScriptObjectsAscension.LoadObjects(mapData.MapObjects);
         }
 
         Dictionary<TeamId, float> TeamScores = new Dictionary<TeamId, float> { { TeamId.TEAM_BLUE, 0.0f }, { TeamId.TEAM_PURPLE, 0.0f } };

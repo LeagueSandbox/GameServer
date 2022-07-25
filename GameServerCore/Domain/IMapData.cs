@@ -8,6 +8,7 @@ namespace GameServerCore.Domain
     public interface IMapData
     {
         int Id { get; }
+        Dictionary<string, float> MapConstants { get; }
         /// <summary>
         /// Collection of MapObjects present within a map's room file, with the key being the name present in the room file. Refer to <see cref="MapObject"/>.
         /// </summary>

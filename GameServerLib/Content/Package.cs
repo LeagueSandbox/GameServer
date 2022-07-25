@@ -13,6 +13,7 @@ using System.Numerics;
 using LeagueSandbox.GameServer.Inventory;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using GameServerCore.Handlers;
+using LeagueSandbox.GameServer.Handlers;
 
 namespace LeagueSandbox.GameServer.Content
 {
@@ -91,17 +92,13 @@ namespace LeagueSandbox.GameServer.Content
 
         private ContentFile GetContentFileFromJson(string filePath)
         {
-            var file = new ContentFile();
-            try
+            ContentFile file = null;
+            if (File.Exists(filePath))
             {
                 var fileText = File.ReadAllText(filePath);
                 file = JsonConvert.DeserializeObject<ContentFile>(fileText);
             }
-            catch (System.Exception e)
-            {
-                _logger.Warn(e.Message);
-                return null;
-            }
+
             return file;
         }
 
@@ -126,8 +123,9 @@ namespace LeagueSandbox.GameServer.Content
             // MapObjects
 
             // Define the full path to the room file which houses references to all objects.
-            var sceneDirectory = $"{GetContentTypePath(contentType)}/{mapName}/Scene";
-            var roomFilePath = $"{sceneDirectory}/room.dsc.json";
+            string mapFolder = $"{GetContentTypePath(contentType)}/{mapName}";
+            string sceneDirectory = $"{mapFolder}/Scene";
+            string roomFilePath = $"{sceneDirectory}/room.dsc.json";
 
             // Declare empty room variable.
             JArray mapObjects;
@@ -181,10 +179,9 @@ namespace LeagueSandbox.GameServer.Content
             }
 
             // EXPCurve, DeathTimes, and StatsProgression.
-
-            var expFile = new ContentFile();
-            var deathTimefile = new ContentFile();
-            var statProgressionFile = new ContentFile();
+            ContentFile expFile;
+            ContentFile deathTimefile;
+            ContentFile statProgressionFile;
             try
             {
                 var expFileName = "ExpCurve";
@@ -242,9 +239,23 @@ namespace LeagueSandbox.GameServer.Content
                 }
             }
 
+            //Map Constants
+            string constantsText = File.ReadAllText($"{mapFolder}/Constants.json");
+            JObject serializedConstants = JsonConvert.DeserializeObject<JObject>(constantsText);
+
+            foreach (JProperty childToken in serializedConstants.Children())
+            {
+                //TODO: Investigate if the strings in the file could be usefull for us (I doubt it)
+                if (childToken.Value.Type == JTokenType.Float || childToken.Value.Type == JTokenType.Integer)
+                {
+                    float asdhua = childToken.Value.Value<float>();
+                    toReturnMapData.MapConstants.Add(childToken.Name, asdhua);
+                }
+            }
+
             // SpawnBarracks (lane minion spawn positions)
 
-            JObject spawnBarracks = new JObject();
+            JObject spawnBarracks;
             foreach (var file in Directory.GetFiles(sceneDirectory))
             {
                 if (file.Contains("Spawn_Barracks"))
@@ -382,12 +393,44 @@ namespace LeagueSandbox.GameServer.Content
 
         public ISpellData GetSpellData(string spellName)
         {
-            return _spellData.GetValueOrDefault(spellName, null);
+            if (_spellData.TryGetValue(spellName, out var spellData))
+            {
+                return spellData;
+            }
+            else
+            {
+                string path = $"{GetContentTypePath("Spells")}/{spellName}/{spellName}.json";
+                ContentFile contentFile = GetContentFileFromJson(path);
+                if (contentFile != null)
+                {
+                    SpellData toReturn = new SpellData().Load(contentFile);
+
+                    _spellData.Add(spellName, toReturn);
+                    return toReturn;
+                }
+                return null;
+            }
         }
 
         public ICharData GetCharData(string characterName)
         {
-            return _charData.GetValueOrDefault(characterName, null);
+            if (_charData.TryGetValue(characterName, out var charData))
+            {
+                return _charData.GetValueOrDefault(characterName, null);
+            }
+            else
+            {
+                string path = $"{GetContentTypePath("Stats")}/{characterName}/{characterName}.json";
+                ContentFile contentFile = GetContentFileFromJson(path);
+                if (contentFile != null)
+                {
+                    CharData toReturn = new CharData().Load(contentFile);
+
+                    _charData.Add(characterName, toReturn);
+                    return toReturn;
+                }
+                return null;
+            }
         }
 
         public bool HasScripts()
@@ -401,33 +444,33 @@ namespace LeagueSandbox.GameServer.Content
             switch (scriptLoadResult)
             {
                 case CompilationStatus.Compiled:
-                    {
-                        _logger.Debug($"Loaded all C# scripts from package: {PackageName}");
-                        _hasScripts = true;
-                        return true;
-                    }
+                {
+                    _logger.Debug($"Loaded all C# scripts from package: {PackageName}");
+                    _hasScripts = true;
+                    return true;
+                }
                 case CompilationStatus.SomeCompiled:
-                    {
-                        _logger.Debug($"Loaded some C# scripts from package: {PackageName}");
-                        _hasScripts = true;
-                        return true;
-                    }
+                {
+                    _logger.Debug($"Loaded some C# scripts from package: {PackageName}");
+                    _hasScripts = true;
+                    return true;
+                }
                 case CompilationStatus.NoneCompiled:
-                    {
-                        _logger.Debug($"{PackageName} failed to compile all C# scripts...");
-                        _hasScripts = true;
-                        return false;
-                    }
+                {
+                    _logger.Debug($"{PackageName} failed to compile all C# scripts...");
+                    _hasScripts = true;
+                    return false;
+                }
                 case CompilationStatus.NoScripts:
-                    {
-                        _logger.Debug($"{PackageName} does not have C# scripts, skipping...");
-                        _hasScripts = false;
-                        return true;
-                    }
+                {
+                    _logger.Debug($"{PackageName} does not have C# scripts, skipping...");
+                    _hasScripts = false;
+                    return true;
+                }
                 default:
-                    {
-                        return false;
-                    }
+                {
+                    return false;
+                }
             }
         }
 
@@ -448,34 +491,17 @@ namespace LeagueSandbox.GameServer.Content
 
                 foreach (var filePath in fileList)
                 {
-                    if (contentType == "Stats" || contentType == "Spells" || contentType == "Items")
+                    if (contentType == "Stats" || contentType == "Spells")
+                    {
+                        continue;
+                    }
+                    else if (contentType == "Items")
                     {
                         var file = GetContentFileFromJson(filePath);
                         if (file != null)
                         {
-                            var name = file.Name;
-
-                            switch (contentType)
-                            {
-                                case "Stats":
-                                    {
-                                        _charData[name] = (new CharData()).Load(file);
-                                        break;
-                                    }
-
-                                case "Spells":
-                                    {
-                                        _spellData[name] = (new SpellData()).Load(file);
-                                        break;
-                                    }
-
-                                case "Items":
-                                    {
-                                        var itemData = (new ItemData()).Load(file);
-                                        _game.ItemManager.AddItemType(itemData);
-                                        break;
-                                    }
-                            }
+                            var itemData = new ItemData().Load(file);
+                            _game.ItemManager.AddItemType(itemData);
                         }
                     }
                     else

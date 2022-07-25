@@ -27,7 +27,6 @@ namespace MapScripts.Map12
             }
         };
 
-        public virtual IGlobalData GlobalData { get; set; } = new GlobalData();
         public bool HasFirstBloodHappened { get; set; } = false;
         public long NextSpawnTime { get; set; } = 60 * 1000;
         public string LaneMinionAI { get; set; } = "LaneMinionAI";
@@ -85,14 +84,13 @@ namespace MapScripts.Map12
         public Dictionary<int, ILevelProp> Poros = new Dictionary<int, ILevelProp>();
         public Dictionary<int, ILevelProp> LongChains = new Dictionary<int, ILevelProp>();
         public Dictionary<int, ILevelProp> Chains = new Dictionary<int, ILevelProp>();
-        public void Init(Dictionary<GameObjectTypes, List<MapObject>> mapObjects)
+        public void Init(IMapScriptData mapData)
         {
             MapScriptMetadata.MinionSpawnEnabled = IsMinionSpawnEnabled();
 
             AddSurrender(1200000.0f, 300000.0f, 30.0f);
-
             CreateLevelProps.CreateProps(this);
-            LevelScriptObjects.LoadObjects(mapObjects);
+            LevelScriptObjects.LoadObjects(mapData.MapObjects);
         }
 
         public void OnMatchStart()
