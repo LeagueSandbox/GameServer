@@ -823,31 +823,20 @@ namespace LeagueSandbox.GameServer.Content.Navigation
         /// <returns>Vector2 position which can be pathed on.</returns>
         public Vector2 GetClosestTerrainExit(Vector2 location, float distanceThreshold = 0)
         {
-            if (IsWalkable(location, distanceThreshold))
-            {
-                return location;
-            }
-
-            double trueX = location.X;
-            double trueY = location.Y;
             double angle = Math.PI / 4;
-            // What is the point of rr?
-            double rr = (location.X - trueX) * (location.X - trueX) + (location.Y - trueY) * (location.Y - trueY);
-            double r = Math.Sqrt(rr);
 
             // x = r * cos(angle)
             // y = r * sin(angle)
             // r = distance from center
             // Draws spirals until it finds a walkable spot
-            while (!IsWalkable((float)trueX, (float)trueY, distanceThreshold))
+            for (int r = 1; !IsWalkable(location, distanceThreshold); r++)
             {
-                trueX = location.X + r * Math.Cos(angle);
-                trueY = location.Y + r * Math.Sin(angle);
+                location.X += r * (float)Math.Cos(angle);
+                location.Y += r * (float)Math.Sin(angle);
                 angle += Math.PI / 4;
-                r += 1;
             }
 
-            return new Vector2((float)trueX, (float)trueY);
+            return location;
         }
     }
 }

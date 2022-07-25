@@ -261,7 +261,7 @@ namespace PacketDefinitions420
                 targetPos = particle.EndPosition;
             }
 
-            var targetHeight = _navGrid.GetHeightAtLocation(particle.StartPosition.X, particle.StartPosition.Y);
+            var targetHeight = _navGrid.GetHeightAtLocation(particle.StartPosition);
             var higherValue = Math.Max(targetHeight, particle.GetHeight());
 
             // TODO: implement option for multiple particles instead of hardcoding one
@@ -792,7 +792,7 @@ namespace PacketDefinitions420
                 ExtraTime = attacker.AutoAttackSpell.CastInfo.ExtraCastTime, // TODO: Verify, maybe related to CastInfo.ExtraCastTime?
                 MissileNextID = futureProjNetId,
                 AttackSlot = attacker.AutoAttackSpell.CastInfo.SpellSlot,
-                TargetPosition = new Vector3(targetPos.X, _navGrid.GetHeightAtLocation(targetPos.X, targetPos.Y), targetPos.Y)
+                TargetPosition = new Vector3(targetPos.X, _navGrid.GetHeightAtLocation(targetPos), targetPos.Y)
             };
 
             // Based on DesignerCastTime. Always negative. Value range from replays: [-0.14, 0].
@@ -1739,7 +1739,7 @@ namespace PacketDefinitions420
             }
 
             var current = unit.GetPosition3D();
-            var to = Vector3.Normalize(new Vector3(targetPos.X, _navGrid.GetHeightAtLocation(targetPos.X, targetPos.Y), targetPos.Y) - current);
+            var to = Vector3.Normalize(new Vector3(targetPos.X, _navGrid.GetHeightAtLocation(targetPos), targetPos.Y) - current);
 
             var hd = new MovementDriverHomingData
             {
