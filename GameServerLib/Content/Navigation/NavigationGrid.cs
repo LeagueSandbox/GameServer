@@ -181,12 +181,10 @@ namespace LeagueSandbox.GameServer.Content.Navigation
         /// <returns>List of points forming a path in order: from -> to</returns>
         public List<Vector2> GetPath(Vector2 from, Vector2 to, float distanceThreshold = 0)
         {
-            Vector2 vectorFrom = TranslateToNavGrid(from);
-            NavigationGridCell cellFrom = GetCell((short)vectorFrom.X, (short)vectorFrom.Y);
+            NavigationGridCell cellFrom = GetCell(from, true);
 
             to = GetClosestTerrainExit(to, distanceThreshold);
-            Vector2 vectorTo = TranslateToNavGrid(to);
-            NavigationGridCell goal = GetCell((short)vectorTo.X, (short)vectorTo.Y);
+            NavigationGridCell goal = GetCell(to, true);
 
             if (cellFrom == null || goal == null || cellFrom == goal)
             {
@@ -377,6 +375,15 @@ namespace LeagueSandbox.GameServer.Content.Navigation
             }
 
             return (int)index;
+        }
+
+        public NavigationGridCell GetCell(Vector2 coords, bool translate = true)
+        {
+            if(translate)
+            {
+                coords = TranslateToNavGrid(coords);
+            }
+            return GetCell((short)coords.X, (short)coords.Y);
         }
 
         /// <summary>
@@ -587,11 +594,7 @@ namespace LeagueSandbox.GameServer.Content.Navigation
         {
             if (checkRadius == 0)
             {
-                if (translate)
-                {
-                    coords = TranslateToNavGrid(coords);
-                }
-                NavigationGridCell cell = GetCell((short)coords.X, (short)coords.Y);
+                NavigationGridCell cell = GetCell(coords, translate);
                 return IsWalkable(cell);
             }
 
@@ -632,11 +635,7 @@ namespace LeagueSandbox.GameServer.Content.Navigation
         /// <returns>True/False.</returns>
         public bool IsVisible(Vector2 coords, bool translate = true)
         {
-            if (translate)
-            {
-                coords = TranslateToNavGrid(coords);
-            }
-            NavigationGridCell cell = GetCell((short)coords.X, (short)coords.Y);
+            NavigationGridCell cell = GetCell(coords, translate);
             return IsVisible(cell); //TODO: implement bush logic here
         }
 
@@ -656,11 +655,7 @@ namespace LeagueSandbox.GameServer.Content.Navigation
         /// <returns>True/False.</returns>
         public bool HasFlag(Vector2 coords, NavigationGridCellFlags flag, bool translate = true)
         {
-            if (translate)
-            {
-                coords = TranslateToNavGrid(coords);
-            }
-            NavigationGridCell cell = GetCell((short)coords.X, (short)coords.Y);
+            NavigationGridCell cell = GetCell(coords, translate);
             return cell != null && cell.HasFlag(flag);
         }
 
@@ -799,7 +794,7 @@ namespace LeagueSandbox.GameServer.Content.Navigation
 
                 if (checkVisible)
                 {
-                    var cell = GetCell((short)origin.X, (short)origin.Y);
+                    var cell = GetCell(origin, false);
 
                     if (!IsVisible(cell))
                     {
