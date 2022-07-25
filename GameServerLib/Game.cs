@@ -297,7 +297,7 @@ namespace LeagueSandbox.GameServer
             Console.WriteLine($"The number of disconnected players {count}/{players.Count}");
             if(count == players.Count)
             {
-                _logger.Info("It's lonely here. All players have left the server");
+                _logger.Info("All players have left the server. It's lonely here :(");
                 SetToExit = true;
                 return true;
             }

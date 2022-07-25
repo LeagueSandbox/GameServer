@@ -921,7 +921,7 @@ namespace LeagueSandbox.GameServer.API
                 return;
             }
 
-            var spell = target.GetSpell((byte)slot);
+            var spell = target.Spells[(short)slot];
 
             spell.SpellData.SetTargetingType(newType);
 
@@ -945,7 +945,7 @@ namespace LeagueSandbox.GameServer.API
             {
                 slot = (byte)ConvertAPISlot(book, slotType, slot);
 
-                champ.GetSpell(slot).SetToolTipVar(tipIndex, value);
+                champ.Spells[(short)slot].SetToolTipVar(tipIndex, value);
             }
         }
 
@@ -959,7 +959,7 @@ namespace LeagueSandbox.GameServer.API
         {
             slot = ConvertAPISlot(slotType, slot);
 
-            Spell spell = caster.GetSpell((byte)slot);
+            Spell spell = caster.Spells[(short)slot];
 
             if (targets == null)
             {

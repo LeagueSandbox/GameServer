@@ -112,9 +112,10 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             Stats.SetSummonerSpellEnabled(0, true);
             Stats.SetSummonerSpellEnabled(1, true);
 
+            //Change this to send only a single LevelUp call in case of multiple levels.
             while (Stats.Level < _game.Map.MapScript.MapScriptMetadata.InitialLevel)
             {
-                this.LevelUp(true);
+                LevelUp(true);
             }
         }
 
@@ -332,7 +333,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                     SkillPoints++;
                 }
                 base.LevelUp(force);
-                _logger.Debug("Champion " + Model + " leveled up to " + stats.Level);
+                _logger.Debug($"Player {Name} leveled up to {stats.Level}");
 
                 return true;
             }
