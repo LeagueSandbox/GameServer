@@ -8,7 +8,6 @@ namespace GameServerCore.Domain
 {
     public interface IMapScript : IUpdate
     {
-        GlobalData GlobalData { get; }
         MapScriptMetadata MapScriptMetadata { get; }
         bool HasFirstBloodHappened { get; set; }
         string LaneMinionAI { get; }

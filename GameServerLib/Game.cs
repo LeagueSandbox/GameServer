@@ -172,7 +172,7 @@ namespace LeagueSandbox.GameServer
             foreach (var p in Config.Players)
             {
                 _logger.Info("Player " + p.Name + " Added: " + p.Champion);
-                ((PlayerManager)PlayerManager).AddPlayer(p);
+                PlayerManager.AddPlayer(p);
             }
 
             _logger.Info("Game is ready.");

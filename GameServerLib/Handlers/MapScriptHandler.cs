@@ -116,45 +116,42 @@ namespace LeagueSandbox.GameServer.Handlers
             // Load data package
             try
             {
-                MapScript.Init(new MapScriptData(MapData));
+                MapScript.Init(LoadMapObjects());
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 _logger.Error(null, e);
             }
         }
 
-        //In case we ever want/need to send more than MapObjects to MapScripts
-        public class MapScriptData : IMapScriptData
+        Dictionary<GameObjectTypes, List<MapObject>> LoadMapObjects()
         {
-            public Dictionary<GameObjectTypes, List<MapObject>> MapObjects { get; } = new Dictionary<GameObjectTypes, List<MapObject>>();
-
-            public MapScriptData(IMapData mapData)
+            Dictionary<GameObjectTypes, List<MapObject>> toReturn = new Dictionary<GameObjectTypes, List<MapObject>>();
+            foreach (var mapObject in MapData.MapObjects.Values)
             {
-                foreach (var mapObject in mapData.MapObjects.Values)
+                GameObjectTypes objectType = mapObject.GetGameObjectType();
+
+                if (objectType == 0)
                 {
-                    GameObjectTypes objectType = mapObject.GetGameObjectType();
-
-                    if (objectType == 0)
-                    {
-                        continue;
-                    }
-
-                    if (!MapObjects.ContainsKey(objectType))
-                    {
-                        MapObjects.Add(objectType, new List<MapObject>());
-                    }
-
-                    MapObjects[objectType].Add(mapObject);
+                    continue;
                 }
 
-                MapObjects.Add(GameObjectTypes.ObjBuildingBarracks, new List<MapObject>());
-
-                foreach (var spawnBarrack in mapData.SpawnBarracks)
+                if (!toReturn.ContainsKey(objectType))
                 {
-                    MapObjects[GameObjectTypes.ObjBuildingBarracks].Add(spawnBarrack.Value);
+                    toReturn.Add(objectType, new List<MapObject>());
                 }
+
+                toReturn[objectType].Add(mapObject);
             }
+
+            toReturn.Add(GameObjectTypes.ObjBuildingBarracks, new List<MapObject>());
+
+            foreach (var spawnBarrack in MapData.SpawnBarracks)
+            {
+                toReturn[GameObjectTypes.ObjBuildingBarracks].Add(spawnBarrack.Value);
+            }
+
+            return toReturn;
         }
     }
 }
