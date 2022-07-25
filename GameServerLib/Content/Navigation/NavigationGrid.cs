@@ -273,7 +273,7 @@ namespace LeagueSandbox.GameServer.Content.Navigation
             var returnList = new List<Vector2>(path.Count + 1){ from };
             foreach (NavigationGridCell navGridCell in path)
             {
-                returnList.Add(TranslateFrmNavigationGrid(navGridCell.Locator));
+                returnList.Add(TranslateFromNavGrid(navGridCell.Locator));
             }
 
             return returnList;
@@ -329,12 +329,13 @@ namespace LeagueSandbox.GameServer.Content.Navigation
 
         /// <summary>
         /// Translates the given cell locator position back into normal coordinate space as a Vector2.
+        /// *NOTE*: Returns the coordinates of the center of the cell.
         /// </summary>
         /// <param name="locator">Cell locator.</param>
         /// <returns>Normal coordinate space Vector2.</returns>
-        public Vector2 TranslateFrmNavigationGrid(NavigationGridLocator locator)
+        public Vector2 TranslateFromNavGrid(NavigationGridLocator locator)
         {
-            return TranslateFrmNavigationGrid(new Vector2(locator.X, locator.Y));
+            return TranslateFrmNavigationGrid(new Vector2(locator.X, locator.Y)) + Vector2.One * 0.5f * CellSize;
         }
 
         /// <summary>
@@ -432,7 +433,7 @@ namespace LeagueSandbox.GameServer.Content.Navigation
         /// <summary>
         /// Gets a list of cells within the specified range of a specified point.
         /// </summary>
-        /// <param name="origin">Vector2 with normal coordinates to start the check. *NOTE*: Must be untranslated (normal coordinates).</param>
+        /// <param name="origin">Vector2 with normal coordinates to start the check.</param>
         /// <param name="radius">Range to check around the origin.</param>
         /// <returns>List of all cells in range. Null if range extends outside of NavigationGrid boundaries.</returns>
         private List<NavigationGridCell> GetAllCellsInRange(Vector2 origin, float radius, bool translate = true)
