@@ -351,32 +351,6 @@ namespace LeagueSandbox.GameServer.Content.Navigation
             );
         }
 
-        /// <summary>
-        /// Gets the index of the cell at the given position.
-        /// </summary>
-        /// <param name="x">X coordinate.</param>
-        /// <param name="z">2D Y coordinate.</param>
-        /// <param name="translate">Whether or not the given position should be translated into cell format. False = given position is already in cell format.</param>
-        /// <returns>Cell index.</returns>
-        public int GetCellIndex(float x, float z, bool translate = true)
-        {
-            Vector2 vector = new Vector2(x, z);
-
-            if (translate)
-            {
-                vector = TranslateToNavGrid(vector);
-            }
-
-            // TODO: Cleanup all the casting but keep the same method.
-            long index = (short)vector.Y * CellCountX + (short)vector.X;
-            if ((short)vector.X < 0 || (short)vector.X > CellCountX || (short)vector.Y < 0 || (short)vector.Y > CellCountY || index >= Cells.Length)
-            {
-                return -1;
-            }
-
-            return (int)index;
-        }
-
         public NavigationGridCell GetCell(Vector2 coords, bool translate = true)
         {
             if(translate)
@@ -434,73 +408,25 @@ namespace LeagueSandbox.GameServer.Content.Navigation
         /// <param name="y">Y coordinate to check.</param>
         /// <param name="translate">Whether or not the given coordinates are in LS form.</param>
         /// <returns>Index of a valid cell.</returns>
-        public int GetClosestValidCellIndex(float x, float y, bool translate = true)
+        public NavigationGridCell GetClosestValidCell(Vector2 coords, bool translate = true)
         {
-            Vector3 minGridPos = MinGridPosition;
-            // Because indices are from 0, we subtract a single cell's size from the maximums to prevent getting -1 cell index.
-            Vector3 maxGridPos = new Vector3
-            (
-                (CellCountX - 1) * CellSize,
-                MaxGridPosition.Y,
-                (CellCountY - 1) * CellSize
+            Vector2 minGridPos = Vector2.Zero;
+            Vector2 maxGridPos = TranslateToNavGrid(
+                new Vector2(MaxGridPosition.X, MaxGridPosition.Z)
             );
 
-            if (!translate)
+            if (translate)
             {
-                minGridPos = Vector3.Zero;
-                Vector2 max2D = TranslateToNavGrid(new Vector2(maxGridPos.X, maxGridPos.Z));
-                maxGridPos = new Vector3(max2D.X, 0, max2D.Y);
+                coords = TranslateToNavGrid(coords);
             }
 
-            if (Extensions.IsVectorValid(new Vector2(x, y), new Vector2(maxGridPos.X, maxGridPos.Z), new Vector2(minGridPos.X, minGridPos.Z)))
-            {
-                return GetCellIndex(x, y, translate);
-            }
-
-            // Left
-            if (x < minGridPos.X)
-            {
-                // Bottom
-                if (y < minGridPos.Z)
-                {
-                    return Cells.Length - (int)CellCountX;
-                }
-                // Top
-                else if (y > maxGridPos.Z)
-                {
-                    return 0;
-                }
-
-                // Middle
-                return GetCellIndex(minGridPos.X, y, translate);
-            }
-
-            // Right
-            if (x > maxGridPos.X)
-            {
-                // Bottom
-                if (y < minGridPos.Z)
-                {
-                    return Cells.Length - 1;
-                }
-                // Top
-                else if (y > maxGridPos.Z)
-                {
-                    return (int)CellCountX;
-                }
-
-                // Middle
-                return GetCellIndex(maxGridPos.X, y, translate);
-            }
-
-            // Bottom
-            if (y < minGridPos.Z)
-            {
-                return GetCellIndex(x, minGridPos.Z, translate);
-            }
-
-            // Top
-            return GetCellIndex(x, maxGridPos.Z, translate);
+            return GetCell(
+                new Vector2(
+                    Math.Clamp(coords.X, minGridPos.X, maxGridPos.X),
+                    Math.Clamp(coords.Y, minGridPos.Y, maxGridPos.Y)
+                ),
+                false
+            );
         }
 
         /// <summary>
@@ -512,51 +438,34 @@ namespace LeagueSandbox.GameServer.Content.Navigation
         private List<NavigationGridCell> GetAllCellsInRange(Vector2 origin, float radius, bool translate = true)
         {
             List<NavigationGridCell> cells = new List<NavigationGridCell>();
-
-            float stepX = radius;
-            float stepY = radius;
-            Vector2 trueOrigin = origin;
-            if(!translate)
+            
+            radius /= CellSize;
+            if(translate)
             {
-                stepX /= CellSize;
-                stepY /= CellSize;
-                trueOrigin = TranslateFrmNavigationGrid(origin);
+                origin = TranslateToNavGrid(origin);
             }
 
-            // Ordered: bottom left, bottom right, top right.
-            int[] cellIndices = new int[3]
+            short fx = (short)(origin.X - radius);
+            short lx = (short)(origin.X + radius);
+            short fy = (short)(origin.Y - radius);
+            short ly = (short)(origin.Y + radius);
+
+            for(short x = fx; x <= lx; x++)
             {
-                GetCellIndex(origin.X - stepX, origin.Y - stepY, translate),
-                GetCellIndex(origin.X + stepX, origin.Y - stepY, translate),
-                GetCellIndex(origin.X + stepX, origin.Y + stepY, translate)
-            };
-
-            int rowIndex = cellIndices[0];
-            int columnIndex = cellIndices[1];
-            for (int i = cellIndices[0]; i <= cellIndices[2]; i++)
-            {
-                if (i > columnIndex)
+                for(short y = fy; y <= ly; y++)
                 {
-                    i = rowIndex + (int)CellCountX;
-                    rowIndex = i;
-                    columnIndex += (int)CellCountX;
-                }
-
-                if (i >= Cells.Length || i < 0)
-                {
-                    break;
-                }
-
-                NavigationGridCell cell = Cells[i];
-
-                if (
-                    Extensions.DistanceSquaredToRectangle(
-                        TranslateFrmNavigationGrid(cell.Locator),
-                        CellSize, CellSize, trueOrigin
-                    ) <= radius * radius
-                )
-                {
-                    cells.Add(cell);
+                    Vector2 toClosestVert = new Vector2(
+                        Math.Min(Math.Abs(x - origin.X), Math.Abs(x + 1 - origin.X)),
+                        Math.Min(Math.Abs(y - origin.Y), Math.Abs(y + 1 - origin.Y))
+                    );
+                    if(toClosestVert.LengthSquared() <= radius*radius)
+                    {
+                        var cell = GetCell(x, y);
+                        if(cell != null)
+                        {
+                            cells.Add(cell);
+                        }
+                    }
                 }
             }
 
@@ -568,19 +477,6 @@ namespace LeagueSandbox.GameServer.Content.Navigation
             return cell != null
                 && !cell.HasFlag(NavigationGridCellFlags.NOT_PASSABLE)
                 && !cell.HasFlag(NavigationGridCellFlags.SEE_THROUGH);
-        }
-
-        /// <summary>
-        /// Whether or not the cell at the given position can be pathed on.
-        /// </summary>
-        /// <param name="x">X coordinate to check.</param>
-        /// <param name="y">Y coordinate to check,</param>
-        /// <param name="checkRadius">Radius around the given point to check for walkability.</param>
-        /// <param name="translate">Whether or not to translate the given position to cell-based format.</param>
-        /// <returns>True/False.</returns>
-        public bool IsWalkable(float x, float y, float checkRadius = 0, bool translate = true)
-        {
-            return IsWalkable(new Vector2(x, y), checkRadius, translate);
         }
 
         /// <summary>
@@ -613,18 +509,6 @@ namespace LeagueSandbox.GameServer.Content.Navigation
                 }
             }
             return true;
-        }
-
-        /// <summary>
-        /// Whether or not the given position is see-through. In other words, if it does not block vision.
-        /// </summary>
-        /// <param name="x">X coordinate to check.</param>
-        /// <param name="y">Y coordinate to check.</param>
-        /// <param name="translate">Whether or not to translate the given position to cell-based format.</param>
-        /// <returns>True/False.</returns>
-        public bool IsVisible(float x, float y, bool translate = true)
-        {
-            return IsVisible(new Vector2(x, y), translate);
         }
 
         /// <summary>
@@ -735,17 +619,6 @@ namespace LeagueSandbox.GameServer.Content.Navigation
             }
 
             return 0.0f;
-        }
-
-        /// <summary>
-        /// Gets the height of the ground at the given position. Used purely for packets.
-        /// </summary>
-        /// <param name="x">X coordinate to check.</param>
-        /// <param name="y">Y coordinate to check.</param>
-        /// <returns>Height (3D Y coordinate) at the given position.</returns>
-        public float GetHeightAtLocation(float x, float y)
-        {
-            return GetHeightAtLocation(new Vector2(x, y));
         }
 
         /// <summary>
