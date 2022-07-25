@@ -188,6 +188,7 @@ namespace LeagueSandbox.GameServer.Content
                 AttackTotalTime = AttackTotalTime,
                 Probability = BaseAttackProbability
             };
+            BasicAttacks[0].GetAttackValues();
 
             int nameIndex = 2;
             //Secondary/Extra AutoAttacks
@@ -215,6 +216,7 @@ namespace LeagueSandbox.GameServer.Content
                     AttackTotalTime = file.GetFloat("Data", $"ExtraAttack{i}_AttackTotalTime", AttackTotalTime),
                     Probability = file.GetFloat("Data", $"ExtraAttack{i}_Probability", BaseAttackProbability)
                 };
+                BasicAttacks[i].GetAttackValues();
                 nameIndex++;
             }
 
@@ -226,6 +228,7 @@ namespace LeagueSandbox.GameServer.Content
                 AttackTotalTime = AttackTotalTime,
                 Probability = CritAttackProbability
             };
+            BasicAttacks[9].GetAttackValues();
 
             //Secondary Crit AutoAttacks
             for (var i = 1; i < 9; i++)
@@ -242,11 +245,7 @@ namespace LeagueSandbox.GameServer.Content
                     AttackTotalTime = AttackTotalTime,
                     Probability = CritAttackProbability
                 };
-            }
-
-            foreach(var attack in BasicAttacks)
-            {
-                attack.GetAttackValues();
+                BasicAttacks[index].GetAttackValues();
             }
 
             return this;
