@@ -1,9 +1,7 @@
-﻿using GameServerCore;
-using GameServerCore.Domain;
-using GameServerCore.Domain.GameObjects;
+﻿using GameServerCore.Domain;
 using GameServerCore.Enums;
-using GameServerCore.NetInfo;
-using GameServerCore.Packets.Enums;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits.Buildings.AnimatedBuildings;
 using LeagueSandbox.GameServer.Logging;
 using log4net;
 using System;
@@ -15,7 +13,7 @@ namespace LeagueSandbox.GameServer.Handlers
     // TODO: Make the surrender UI button become clickable upon hitting SurrenderMinimumTime
     public class SurrenderHandler : IUpdate
     {
-        private Dictionary<IChampion, bool> _votes = new Dictionary<IChampion, bool>();
+        private Dictionary<Champion, bool> _votes = new Dictionary<Champion, bool>();
         private Game _game;
         private static ILog _logger = LoggerProvider.GetLogger();
         private bool toEnd = false;
@@ -45,7 +43,7 @@ namespace LeagueSandbox.GameServer.Handlers
             return new Tuple<int, int>(yes, no);
         }
 
-        public void HandleSurrender(int userId, IChampion who, bool vote)
+        public void HandleSurrender(int userId, Champion who, bool vote)
         {
             if (_game.GameTime < SurrenderMinimumTime)
             {
@@ -111,7 +109,7 @@ namespace LeagueSandbox.GameServer.Handlers
                 if(toEndTimer <= 0)
                 {
                     //This will have to be changed in the future in order to properly support Map8 surrender.
-                    INexus ourNexus = (INexus)_game.ObjectManager.GetObjects().First(o => o.Value is INexus && o.Value.Team == Team).Value;
+                    Nexus ourNexus = (Nexus)_game.ObjectManager.GetObjects().First(o => o.Value is Nexus && o.Value.Team == Team).Value;
                     if (ourNexus == null)
                     {
                         _logger.Error("Unable to surrender correctly, couldn't find the nexus!");

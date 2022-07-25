@@ -1,11 +1,10 @@
-﻿using GameServerCore;
-using GameServerCore.Domain;
+﻿using LeagueSandbox.GameServer.Players;
 
 namespace LeagueSandbox.GameServer.Chatbox.Commands
 {
     public class LevelCommand : ChatCommandBase
     {
-        private readonly IPlayerManager _playerManager;
+        private readonly PlayerManager _playerManager;
 
         public override string Command => "level";
         public override string Syntax => $"{Command} level";

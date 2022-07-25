@@ -1,6 +1,5 @@
-﻿using GameServerCore.Domain.GameObjects;
-using GameServerCore.Enums;
-using System;
+﻿using GameServerCore.Enums;
+using LeagueSandbox.GameServer.GameObjects;
 using System.Collections.Generic;
 using System.IO;
 
@@ -30,7 +29,7 @@ namespace LeagueSandbox.GameServer.Content.Navigation
         /// <summary>
         /// List of Actors occupying this cell, as well as how much area each Actor is occupying.
         /// </summary>
-        public SortedList<IGameObject, float> ActorList { get; private set; }
+        public SortedList<GameObject, float> ActorList { get; private set; }
         /// <summary>
         /// Locator variable for this cell detailing its position on the Navigation Grid.
         /// *NOTE*: Requires translation from Navigation Grid in order to compare to League Sandbox coordinates.
@@ -73,7 +72,7 @@ namespace LeagueSandbox.GameServer.Content.Navigation
                 ArrivalCost = arrivalCost,
                 IsOpen = isOpen,
                 Heuristic = heuristic,
-                ActorList = new SortedList<IGameObject, float>(),
+                ActorList = new SortedList<GameObject, float>(),
                 Locator = locator,
                 AdditionalCost = additionalCost,
                 HintAsGoodCell = hintAsGoodCell,
@@ -108,7 +107,7 @@ namespace LeagueSandbox.GameServer.Content.Navigation
                 ArrivalCost = arrivalCost,
                 IsOpen = isOpen,
                 Heuristic = heuristic,
-                ActorList = new SortedList<IGameObject, float>(),
+                ActorList = new SortedList<GameObject, float>(),
                 Locator = locator,
                 GoodCellSessionId = goodCellSessionId,
                 RefHintWeight = refHintWeight,

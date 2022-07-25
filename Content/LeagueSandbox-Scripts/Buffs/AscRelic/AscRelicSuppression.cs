@@ -1,38 +1,39 @@
-using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
-using GameServerCore.Domain.GameObjects.Spell;
 using LeagueSandbox.GameServer.API;
 using GameServerCore.Scripting.CSharp;
 using LeagueSandbox.GameServer.Scripting.CSharp;
-using GameServerCore.Domain;
-using LeagueSandbox.GameServer.GameObjects.Stats;
+using LeagueSandbox.GameServer.GameObjects.StatsNS;
+using LeagueSandbox.GameServer.GameObjects;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits;
+using LeagueSandbox.GameServer.GameObjects.SpellNS;
+using GameServerLib.GameObjects.AttackableUnits;
 
 namespace Buffs
 {
     internal class AscRelicSuppression : IBuffGameScript
     {
-        public IBuffScriptMetaData BuffMetaData { get; set; } = new BuffScriptMetaData
+        public BuffScriptMetaData BuffMetaData { get; set; } = new BuffScriptMetaData
         {
             BuffType = BuffType.AURA,
             BuffAddType = BuffAddType.REPLACE_EXISTING,
         };
 
-        public IStatsModifier StatsModifier { get; private set; } = new StatsModifier();
+        public StatsModifier StatsModifier { get; private set; } = new StatsModifier();
 
-        IBuff Buff;
+        Buff Buff;
         float timer = 100.0f;
-        public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
+        public void OnActivate(AttackableUnit unit, Buff buff, Spell ownerSpell)
         {
             Buff = buff;
             ApiEventManager.OnDeath.AddListener(this, unit, OnDeath, true);
         }
 
-        public void OnDeath(IDeathData deathData)
+        public void OnDeath(DeathData deathData)
         {
             Buff.DeactivateBuff();
         }
 
-        public void OnDeactivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
+        public void OnDeactivate(AttackableUnit unit, Buff buff, Spell ownerSpell)
         {
             ApiEventManager.OnDeath.RemoveListener(this);
             unit.Stats.CurrentMana = unit.Stats.ManaPoints.Total;

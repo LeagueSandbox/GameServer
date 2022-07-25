@@ -1,26 +1,29 @@
-﻿using GameServerCore.Domain.GameObjects;
-using GameServerCore.Enums;
-using GameServerCore.Domain.GameObjects.Spell;
+﻿using GameServerCore.Enums;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 using GameServerCore.Scripting.CSharp;
 using System.Linq;
 using System.Numerics;
 using LeagueSandbox.GameServer.Scripting.CSharp;
+using LeagueSandbox.GameServer.GameObjects;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
+using LeagueSandbox.GameServer.GameObjects.SpellNS;
+using LeagueSandbox.GameServer.GameObjects.StatsNS;
 
 namespace Buffs
 {
     internal class OdinSpeedShrineAura : IBuffGameScript
     {
-        public IBuffScriptMetaData BuffMetaData { get; set; } = new BuffScriptMetaData
+        public BuffScriptMetaData BuffMetaData { get; set; } = new BuffScriptMetaData
         {
         };
 
-        public IStatsModifier StatsModifier { get; private set; }
+        public StatsModifier StatsModifier { get; private set; }
 
-        IParticle buffParticle;
-        IAttackableUnit Unit;
+        Particle buffParticle;
+        AttackableUnit Unit;
         float timer = 250f;
-        public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
+        public void OnActivate(AttackableUnit unit, Buff buff, Spell ownerSpell)
         {
             Unit = unit;
 
@@ -32,17 +35,13 @@ namespace Buffs
             buffParticle = AddParticleTarget(Unit, null, "Odin_Shrine_Time", Unit, buff.Duration);
         }
 
-        public void OnDeactivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
-        {
-        }
-
         public void OnUpdate(float diff)
         {
             timer += diff;
             if (Unit != null && timer >= 100)
             {
                 var units = GetUnitsInRange(Unit.Position, 350f, true).OrderBy(unit => Vector2.DistanceSquared(unit.Position, Unit.Position)).ToList();
-                units.RemoveAll(x => !(x is IChampion));
+                units.RemoveAll(x => !(x is Champion));
                 if (units.Count >= 1)
                 {
                     AddBuff("OdinSpeedShrineBuff", 10.0f, 1, null, units[0], null);

@@ -1,10 +1,10 @@
-﻿using GameServerCore;
+﻿using LeagueSandbox.GameServer.Players;
 
 namespace LeagueSandbox.GameServer.Chatbox.Commands
 {
     public class TpCommand : ChatCommandBase
     {
-        private readonly IPlayerManager _playerManager;
+        private readonly PlayerManager _playerManager;
 
         public override string Command => "tp";
         public override string Syntax => $"{Command} [target NetID (0 or none for self)] X Y";

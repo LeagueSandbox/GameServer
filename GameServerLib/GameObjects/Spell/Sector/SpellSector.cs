@@ -2,43 +2,40 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
-using GameServerCore;
-using GameServerCore.Domain.GameObjects;
-using GameServerCore.Domain.GameObjects.Spell;
-using GameServerCore.Domain.GameObjects.Spell.Missile;
-using GameServerCore.Domain.GameObjects.Spell.Sector;
-using GameServerCore.Enums;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
+using LeagueSandbox.GameServer.GameObjects.SpellNS.Missile;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 
-namespace LeagueSandbox.GameServer.GameObjects.Spell.Sector
+namespace LeagueSandbox.GameServer.GameObjects.SpellNS.Sector
 {
     /// <summary>
     /// Base class for all spell sectors. Functionally acts as a circular spell hitbox.
     /// Base functionality can be overriden to fit a specific shape.
     /// </summary>
-    internal class SpellSector : GameObject, ISpellSector
+    public class SpellSector : GameObject
     {
         // Function Vars.
         private float _timeSinceCreation;
         private float _lastTickTime;
-        private List<IAttackableUnit> _unitsToHit;
+        private List<AttackableUnit> _unitsToHit;
 
         /// <summary>
         /// Information about the creation of this sector.
         /// </summary>
-        public ICastInfo CastInfo { get; protected set; }
+        public CastInfo CastInfo { get; protected set; }
         /// <summary>
         /// Spell which created this projectile.
         /// </summary>
-        public ISpell SpellOrigin { get; protected set; }
+        public Spell SpellOrigin { get; protected set; }
         /// <summary>
-        /// Parameters for this sector, refer to ISectorParameters.
+        /// Parameters for this sector, refer to SectorParameters.
         /// </summary>
-        public ISectorParameters Parameters { get; protected set; }
+        public SectorParameters Parameters { get; protected set; }
         /// <summary>
         /// All objects this sector has hit since it was created and how many times each has been hit.
         /// </summary>
-        public List<IGameObject> ObjectsHit { get; }
+        public List<GameObject> ObjectsHit { get; }
         /// <summary>
         /// Total number of times this sector has hit any units.
         /// </summary>
@@ -47,20 +44,20 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Sector
 
         public SpellSector(
             Game game,
-            ISectorParameters parameters,
-            ISpell originSpell,
-            ICastInfo castInfo,
+            SectorParameters parameters,
+            Spell originSpell,
+            CastInfo castInfo,
             uint netId = 0
         ) : base(game, new Vector2(castInfo.TargetPositionEnd.X, castInfo.TargetPositionEnd.Z), Math.Max(parameters.Length, parameters.Width), 0, 0, netId)
         {
             _timeSinceCreation = 0.0f;
             _lastTickTime = 0.0f;
-            _unitsToHit = new List<IAttackableUnit>();
+            _unitsToHit = new List<AttackableUnit>();
 
             Parameters = parameters;
             CastInfo = castInfo;
             SpellOrigin = originSpell;
-            ObjectsHit = new List<IGameObject>();
+            ObjectsHit = new List<GameObject>();
             HitCount = 0;
 
             VisionRadius = SpellOrigin.SpellData.MissilePerceptionBubbleRadius;
@@ -108,10 +105,10 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Sector
             _timeSinceCreation += diff;
         }
 
-        public override void OnCollision(IGameObject collider, bool isTerrain = false)
+        public override void OnCollision(GameObject collider, bool isTerrain = false)
         {
             // TODO: Verify if we want to support acting differently depending on if it is terrain (if so, simply add it to FilterCollisions as a parameter and remove from here).
-            if (IsToRemove() || isTerrain || collider is ISpellSector || collider is ISpellMissile)
+            if (IsToRemove() || isTerrain || collider is SpellSector || collider is SpellMissile)
             {
                 return;
             }
@@ -130,7 +127,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Sector
             }
 
             // OnCollision has already checked the affectRadius around the sector, so now we filter the area.
-            if (collider is IAttackableUnit unit)
+            if (collider is AttackableUnit unit)
             {
                 if (IsValidTarget(unit))
                 {
@@ -144,7 +141,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Sector
         /// </summary>
         /// <param name="collider">Object to check.</param>
         /// <returns>True/False.</returns>
-        protected virtual bool FilterCollisions(IGameObject collider)
+        protected virtual bool FilterCollisions(GameObject collider)
         {
             // Empty, as the base functionality of SpellSector is an area, which is already accounted for by OnCollision.
             return true;
@@ -181,14 +178,14 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Sector
             SetPosition(next);
         }
 
-        public virtual void HitUnit(IAttackableUnit unit)
+        public virtual void HitUnit(AttackableUnit unit)
         {
             if (SpellOrigin != null)
             {
                 SpellOrigin.ApplyEffects(unit, null, this);
             }
 
-            if (CastInfo.Owner is IObjAIBase ai && SpellOrigin.CastInfo.IsAutoAttack)
+            if (CastInfo.Owner is ObjAIBase ai && SpellOrigin.CastInfo.IsAutoAttack)
             {
                 ai.AutoAttackHit(unit);
             }
@@ -201,7 +198,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Sector
             }
         }
 
-        protected bool IsValidTarget(IAttackableUnit unit)
+        protected bool IsValidTarget(AttackableUnit unit)
         {
             bool valid = SpellOrigin.SpellData.IsValidTarget(CastInfo.Owner, unit, Parameters.OverrideFlags);
             bool hit = ObjectsHit.Contains(unit);

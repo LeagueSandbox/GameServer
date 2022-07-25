@@ -1,33 +1,36 @@
-using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
-using GameServerCore.Domain.GameObjects.Spell;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 using GameServerCore.Scripting.CSharp;
 using LeagueSandbox.GameServer.Scripting.CSharp;
+using LeagueSandbox.GameServer.GameObjects.StatsNS;
+using LeagueSandbox.GameServer.GameObjects.SpellNS;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
+using LeagueSandbox.GameServer.GameObjects;
 
 namespace Buffs
 {
     internal class AscRelicCaptureChannel : IBuffGameScript
     {
-        public IBuffScriptMetaData BuffMetaData { get; set; } = new BuffScriptMetaData
+        public BuffScriptMetaData BuffMetaData { get; set; } = new BuffScriptMetaData
         {
             BuffType = BuffType.AURA,
             BuffAddType = BuffAddType.REPLACE_EXISTING,
             IsHidden = true
         };
 
-        public IStatsModifier StatsModifier { get; private set; }
+        public StatsModifier StatsModifier { get; private set; }
 
-        ISpell Spell;
-        IAttackableUnit Target;
-        IObjAIBase Owner;
-        IBuff Buff;
-        IParticle p1;
-        IRegion r1;
-        IRegion r2;
+        Spell Spell;
+        AttackableUnit Target;
+        ObjAIBase Owner;
+        Buff Buff;
+        Particle p1;
+        Region r1;
+        Region r2;
         float windUpTime = 1500.0f;
         bool castWindUp = false;
-        public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
+        public void OnActivate(AttackableUnit unit, Buff buff, Spell ownerSpell)
         {
             Buff = buff;
             Spell = ownerSpell;
@@ -40,7 +43,7 @@ namespace Buffs
             r2 = AddUnitPerceptionBubble(unit, 0.0f, buff.Duration, TeamId.TEAM_PURPLE, true, unit);
         }
 
-        public void OnDeactivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
+        public void OnDeactivate(AttackableUnit unit, Buff buff, Spell ownerSpell)
         {
             RemoveParticle(p1);
             r1.SetToRemove();

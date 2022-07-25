@@ -1,33 +1,34 @@
-﻿using GameServerCore.Domain.GameObjects;
-using GameServerCore.Enums;
-using GameServerCore.Domain.GameObjects.Spell;
+﻿using GameServerCore.Enums;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
-using static LeagueSandbox.GameServer.API.ApiMapFunctionManager;
 using GameServerCore.Scripting.CSharp;
 using LeagueSandbox.GameServer.API;
-using GameServerCore.Domain;
 using LeagueSandbox.GameServer.Scripting.CSharp;
+using LeagueSandbox.GameServer.GameObjects;
+using            GameServerLib.GameObjects.AttackableUnits;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits;
+using LeagueSandbox.GameServer.GameObjects.SpellNS;
+using LeagueSandbox.GameServer.GameObjects.StatsNS;
 
 namespace Buffs
 {
     internal class OdinBombBuff : IBuffGameScript
     {
-        public IBuffScriptMetaData BuffMetaData { get; set; } = new BuffScriptMetaData
+        public BuffScriptMetaData BuffMetaData { get; set; } = new BuffScriptMetaData
         {
         };
 
-        public IStatsModifier StatsModifier { get; private set; }
+        public StatsModifier StatsModifier { get; private set; }
 
-        IBuff thisBuff;
-        IParticle blueTeamParticle1;
-        IParticle blueTeamParticle2;
-        IParticle blueTeamParticle3;        
-        IParticle redTeamParticle1;
-        IParticle redTeamParticle2;
-        IParticle redTeamParticle3;
-        IAttackableUnit Unit;
+        Buff thisBuff;
+        Particle blueTeamParticle1;
+        Particle blueTeamParticle2;
+        Particle blueTeamParticle3;        
+        Particle redTeamParticle1;
+        Particle redTeamParticle2;
+        Particle redTeamParticle3;
+        AttackableUnit Unit;
 
-        public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
+        public void OnActivate(AttackableUnit unit, Buff buff, Spell ownerSpell)
         {
             Unit = unit;
             thisBuff = buff;
@@ -65,12 +66,12 @@ namespace Buffs
 
             unit.IconInfo.ChangeIcon(iconCategory);
         }
-        public void OnDeath(IDeathData deathData)
+        public void OnDeath(DeathData deathData)
         {
             thisBuff.DeactivateBuff();
         }
 
-        public void OnDeactivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
+        public void OnDeactivate(AttackableUnit unit, Buff buff, Spell ownerSpell)
         {
             RemoveParticle(blueTeamParticle1);
             RemoveParticle(blueTeamParticle2);
@@ -78,10 +79,6 @@ namespace Buffs
             RemoveParticle(redTeamParticle1);
             RemoveParticle(redTeamParticle2);
             RemoveParticle(redTeamParticle3);
-        }
-
-        public void OnUpdate(float diff)
-        {
         }
     }
 }

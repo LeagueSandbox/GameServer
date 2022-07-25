@@ -1,8 +1,8 @@
 ﻿using GameServerCore.Packets.PacketDefinitions.Requests;
-using GameServerCore;
-using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
 using GameServerCore.Packets.Handlers;
+using LeagueSandbox.GameServer.Players;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits;
 
 namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 {
@@ -10,7 +10,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
     {
         private readonly Game _game;
         private readonly NetworkIdManager _networkIdManager;
-        private readonly IPlayerManager _playerManager;
+        private readonly PlayerManager _playerManager;
 
         public HandleCastSpell(Game game)
         {
@@ -22,7 +22,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
         public override bool HandlePacket(int userId, CastSpellRequest req)
         {
             var targetObj = _game.ObjectManager.GetObjectById(req.TargetNetID);
-            var targetUnit = targetObj as IAttackableUnit;
+            var targetUnit = targetObj as AttackableUnit;
             var owner = _playerManager.GetPeerInfo(userId).Champion;
             if (owner == null)
             {

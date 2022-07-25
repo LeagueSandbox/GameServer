@@ -12,14 +12,15 @@
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="OptimizedPriorityQueue" Version="5.1.0" />
     <PackageReference Include="RoyT.AStar" Version="3.0.2" />
-  </ItemGroup>
-
+		<PackageReference Include="LENet" Version="1.0.1" />
+	</ItemGroup>
+  
   <ItemGroup>
     <ProjectReference Include="..\GameMaths\GameMaths.csproj" />
     <ProjectReference Include="..\GameServerCore\GameServerCore.csproj" />
-    <ProjectReference Include="..\PacketDefinitions420\PacketDefinitions420.csproj" />
     <ProjectReference Include="..\QuadTree\QuadTree.csproj" />
-  </ItemGroup>
+    <ProjectReference Include="..\LeaguePackets\LeaguePackets\LeaguePackets.csproj" />
+	</ItemGroup>
 
   <ItemGroup>
       <AssemblyAttribute Include="LeagueSandbox.GameServer.BuildDateTimeAttribute">

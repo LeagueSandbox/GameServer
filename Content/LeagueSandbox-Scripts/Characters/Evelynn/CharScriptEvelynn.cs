@@ -1,26 +1,18 @@
 using LeagueSandbox.GameServer.API;
-using GameServerCore.Domain.GameObjects;
-using LeagueSandbox.GameServer.Scripting.CSharp;
-using System.Numerics;
-using GameServerCore.Domain.GameObjects.Spell;
 using GameServerCore.Scripting.CSharp;
-using GameServerCore.Domain;
+using            GameServerLib.GameObjects.AttackableUnits;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
+using LeagueSandbox.GameServer.GameObjects.SpellNS;
 
 namespace CharScripts
 {
     public class CharScriptEvelynn : ICharScript
     {
-        public void OnActivate(IObjAIBase owner, ISpell spell = null)
+        public void OnActivate(ObjAIBase owner, Spell spell = null)
         {
             ApiEventManager.OnTakeDamage.AddListener(this, owner, SelfWasDamaged, false);
         }
-        private void SelfWasDamaged(IDamageData damageData)
-        {
-        }
-        public void OnDeactivate(IObjAIBase owner, ISpell spell = null)
-        {
-        }
-        public void OnUpdate(float diff)
+        private void SelfWasDamaged(DamageData damageData)
         {
         }
     }

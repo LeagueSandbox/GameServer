@@ -1,10 +1,10 @@
-﻿using GameServerCore;
+﻿using LeagueSandbox.GameServer.Players;
 
 namespace LeagueSandbox.GameServer.Chatbox.Commands
 {
     public class ManaCommand : ChatCommandBase
     {
-        private readonly IPlayerManager _playerManager;
+        private readonly PlayerManager _playerManager;
 
         public override string Command => "mana";
         public override string Syntax => $"{Command} maxMana";

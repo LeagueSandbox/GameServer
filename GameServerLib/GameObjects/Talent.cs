@@ -6,7 +6,7 @@ using static GameServerCore.Content.HashFunctions;
 
 namespace LeagueSandbox.GameServer.GameObjects
 {
-    public class Talent : ITalent
+    public class Talent
     {
         public string Name { get; }
         public byte Rank { get; }

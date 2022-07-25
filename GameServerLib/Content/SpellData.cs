@@ -1,8 +1,8 @@
-﻿using System;
-using System.Numerics;
-using GameServerCore.Domain.GameObjects;
-using GameServerCore.Domain.GameObjects.Spell;
+﻿using System.Numerics;
 using GameServerCore.Enums;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits.Buildings.AnimatedBuildings;
 
 namespace LeagueSandbox.GameServer.Content
 {
@@ -17,7 +17,7 @@ namespace LeagueSandbox.GameServer.Content
         TARGET_LOC2 = 7  // Morg Q, Cait's Q -- These don't seem to have Missile inibins, and SpawnProjectile doesn't seem necessary to show the projectiles
     }
 
-    public class SpellData : ISpellData
+    public class SpellData
     {
         public string AfterEffectName { get; set; } = "";
         //AIEndOnly
@@ -188,7 +188,7 @@ namespace LeagueSandbox.GameServer.Content
         /// <param name="target">Unit which is being affected.</param>
         /// <param name="overrideFlags">SpellDataFlags to use in place of the ones in this SpellData.</param>
         /// <returns>True/False.</returns>
-        public bool IsValidTarget(IObjAIBase attacker, IAttackableUnit target, SpellDataFlags overrideFlags = 0)
+        public bool IsValidTarget(ObjAIBase attacker, AttackableUnit target, SpellDataFlags overrideFlags = 0)
         {
 
             bool overrideTargetable = false;
@@ -240,35 +240,35 @@ namespace LeagueSandbox.GameServer.Content
                     {
                         // TODO: Verify all
                         // Order is important
-                        case ILaneMinion _ when useFlags.HasFlag(SpellDataFlags.AffectMinions)
+                        case LaneMinion _ when useFlags.HasFlag(SpellDataFlags.AffectMinions)
                                         && !useFlags.HasFlag(SpellDataFlags.IgnoreLaneMinion):
                             valid = true;
                             break;
-                        case IMinion m when (!(m is IPet) && useFlags.HasFlag(SpellDataFlags.AffectNotPet))
-                                    || (m is IPet && useFlags.HasFlag(SpellDataFlags.AffectUseable))
+                        case Minion m when (!(m is Pet) && useFlags.HasFlag(SpellDataFlags.AffectNotPet))
+                                    || (m is Pet && useFlags.HasFlag(SpellDataFlags.AffectUseable))
                                     || (m.IsWard && useFlags.HasFlag(SpellDataFlags.AffectWards))
-                                    || (!(m is IPet pet && pet.IsClone) && useFlags.HasFlag(SpellDataFlags.IgnoreClones))
+                                    || (!(m is Pet pet && pet.IsClone) && useFlags.HasFlag(SpellDataFlags.IgnoreClones))
                                     || (target.Team == attacker.Team && !useFlags.HasFlag(SpellDataFlags.IgnoreAllyMinion))
                                     || (target.Team != attacker.Team && target.Team != TeamId.TEAM_NEUTRAL && !useFlags.HasFlag(SpellDataFlags.IgnoreEnemyMinion))
                                     || useFlags.HasFlag(SpellDataFlags.AffectMinions):
-                            if (!(target is ILaneMinion))
+                            if (!(target is LaneMinion))
                             {
                                 valid = true;
                                 break;
                             }
-                            // already got checked in ILaneMinion
+                            // already got checked in LaneMinion
                             valid = false;
                             break;
-                        case IBaseTurret _ when useFlags.HasFlag(SpellDataFlags.AffectTurrets):
+                        case BaseTurret _ when useFlags.HasFlag(SpellDataFlags.AffectTurrets):
                             valid = true;
                             break;
-                        case IInhibitor _ when useFlags.HasFlag(SpellDataFlags.AffectBuildings):
+                        case Inhibitor _ when useFlags.HasFlag(SpellDataFlags.AffectBuildings):
                             valid = true;
                             break;
-                        case INexus _ when useFlags.HasFlag(SpellDataFlags.AffectBuildings):
+                        case Nexus _ when useFlags.HasFlag(SpellDataFlags.AffectBuildings):
                             valid = true;
                             break;
-                        case IChampion _ when useFlags.HasFlag(SpellDataFlags.AffectHeroes):
+                        case Champion _ when useFlags.HasFlag(SpellDataFlags.AffectHeroes):
                             valid = true;
                             break;
                         default:

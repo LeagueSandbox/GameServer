@@ -1,11 +1,10 @@
 using System;
-using GameServerCore.Domain;
 using LeagueSandbox.GameServer.Content;
-using LeagueSandbox.GameServer.GameObjects.Stats;
+using LeagueSandbox.GameServer.GameObjects.StatsNS;
 
 namespace LeagueSandbox.GameServer.Inventory
 {
-    public class ItemData : StatsModifier, IItemData
+    public class ItemData : StatsModifier
     {
         // Meta
         public int ItemId { get; private set; }
@@ -40,7 +39,7 @@ namespace LeagueSandbox.GameServer.Inventory
         }
 
         // Not from data
-        public IItemRecipe Recipe { get; private set; }
+        public ItemRecipe Recipe { get; private set; }
         public int TotalPrice => Recipe.TotalPrice;
 
         public void CreateRecipe(ItemManager manager)

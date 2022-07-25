@@ -1,15 +1,10 @@
 ﻿using GameServerCore.Content;
-using GameServerCore.Domain;
-using GameServerCore.Domain.GameObjects;
-using GameServerCore.Domain.GameObjects.Spell;
-using GameServerCore.Domain.GameObjects.Spell.Missile;
-using GameServerCore.Domain.GameObjects.Spell.Sector;
 using GameServerCore.Enums;
 using GameServerCore.Scripting.CSharp;
 using LeagueSandbox.GameServer.API;
-using LeagueSandbox.GameServer.GameObjects.Spell.Missile;
-using LeagueSandbox.GameServer.GameObjects.Spell.Sector;
-using LeagueSandbox.GameServer.GameObjects.Stats;
+using LeagueSandbox.GameServer.GameObjects.SpellNS.Missile;
+using LeagueSandbox.GameServer.GameObjects.SpellNS.Sector;
+using LeagueSandbox.GameServer.GameObjects.StatsNS;
 using LeagueSandbox.GameServer.Packets;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using System;
@@ -19,10 +14,12 @@ using LeagueSandbox.GameServer.Content;
 using static GameServerCore.Content.HashFunctions;
 using LeagueSandbox.GameServer.Logging;
 using log4net;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits;
 
-namespace LeagueSandbox.GameServer.GameObjects.Spell
+namespace LeagueSandbox.GameServer.GameObjects.SpellNS
 {
-    public class Spell : ISpell
+    public class Spell: IEventSource
     {
         // Crucial Vars.
         private readonly Game _game;
@@ -34,7 +31,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
         /// <summary>
         /// General information about this spell when it is cast. Refer to CastInfo class.
         /// </summary>
-        public ICastInfo CastInfo { get; private set; } = new CastInfo();
+        public CastInfo CastInfo { get; private set; } = new CastInfo();
         public int CurrentAmmo { get; private set; }
         public float CurrentAmmoCooldown { get; private set; }
         /// <summary>
@@ -60,7 +57,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
         /// <summary>
         /// Spell data for this spell used for interactions between units, cooldown, channeling time, etc. Refer to SpellData class.
         /// </summary>
-        public ISpellData SpellData { get; }
+        public SpellData SpellData { get; }
         /// <summary>
         /// Internal name of this spell.
         /// </summary>
@@ -83,9 +80,9 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
         /// <summary>
         /// Used to update player ability tool tip values.
         /// </summary>
-        public IToolTipData ToolTipData { get; protected set; }
+        public ToolTipData ToolTipData { get; protected set; }
 
-        public Spell(Game game, IObjAIBase owner, string spellName, byte slot)
+        public Spell(Game game, ObjAIBase owner, string spellName, byte slot)
         {
             _game = game;
             _networkIdManager = game.NetworkIdManager;
@@ -100,7 +97,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
             CastInfo.SpellHash = (uint)GetId();
             CastInfo.AttackSpeedModifier = owner.Stats.AttackSpeedMultiplier.Total;
             CastInfo.PackageHash = owner.GetObjHash();
-            CastInfo.Targets = new List<ICastTarget>();
+            CastInfo.Targets = new List<CastTarget>();
             CastInfo.SpellSlot = slot;
 
             CastInfo.IsSecondAutoAttack = false;
@@ -175,7 +172,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
             }
         }
 
-        public void ApplyEffects(IAttackableUnit u, ISpellMissile m = null, ISpellSector s = null)
+        public void ApplyEffects(AttackableUnit u, SpellMissile m = null, SpellSector s = null)
         {
             if (SpellData.HaveHitEffect && !string.IsNullOrEmpty(SpellData.HitEffectName) && !CastInfo.IsAutoAttack && HasEmptyScript)
             {
@@ -284,7 +281,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
             return false;
         }
 
-        public bool Cast(Vector2 start, Vector2 end, IAttackableUnit unit = null)
+        public bool Cast(Vector2 start, Vector2 end, AttackableUnit unit = null)
         {
             if ((unit == null && SpellData.TargetingType == TargetingType.Target)
                 || (CastInfo.Owner.MovementParameters != null && !SpellData.CanCastWhileDisabled))
@@ -582,7 +579,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
             return true;
         }
 
-        public bool Cast(ICastInfo castInfo, bool cast)
+        public bool Cast(CastInfo castInfo, bool cast)
         {
             CastInfo = castInfo;
             var start = new Vector2(CastInfo.TargetPosition.X, CastInfo.TargetPosition.Z);
@@ -1063,7 +1060,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
             }
         }
 
-        void ISpell.Deactivate()
+        public void Deactivate()
         {
             CastInfo.Targets.Clear();
             ResetSpellCast();
@@ -1095,7 +1092,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
         /// Creates a spell missile with the given parameters.
         /// </summary>
         /// <param name="parameters">Parameters of the missile.</param>
-        public ISpellMissile CreateSpellMissile(IMissileParameters parameters)
+        public SpellMissile CreateSpellMissile(MissileParameters parameters)
         {
             if (CastInfo.MissileNetID == 0)
             {
@@ -1111,7 +1108,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
 
             bool isServerOnly = SpellData.MissileEffect != "";
 
-            ISpellMissile p = null;
+            SpellMissile p = null;
 
             switch (parameters.Type)
             {
@@ -1178,7 +1175,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
 
             // If the position is the same as the destination, the server will have destroyed the missile before notifying of creation, causing the client to crash.
             // TODO: Make a better check.
-            if (p == null || (p is ISpellCircleMissile c && c.Position == c.Destination)
+            if (p == null || (p is SpellCircleMissile c && c.Position == c.Destination)
                 || p.Position == p.GetTargetPosition())
             {
                 return null;
@@ -1198,7 +1195,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
         /// <summary>
         /// Creates a spell missile using this spell's script for the parameters.
         /// </summary>
-        public ISpellMissile CreateSpellMissile()
+        public SpellMissile CreateSpellMissile()
         {
             return CreateSpellMissile(Script.ScriptMetadata.MissileParameters);
         }
@@ -1207,7 +1204,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
         /// Creates a spell sector with the given parameters.
         /// </summary>
         /// <param name="parameters">Parameters of the sector.</param>
-        public ISpellSector CreateSpellSector(ISectorParameters parameters)
+        public SpellSector CreateSpellSector(SectorParameters parameters)
         {
             if (CastInfo.MissileNetID == 0)
             {
@@ -1221,7 +1218,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
                 netId = _game.NetworkIdManager.GetNewNetId();
             }
 
-            ISpellSector s = null;
+            SpellSector s = null;
 
             switch (parameters.Type)
             {
@@ -1277,7 +1274,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
         /// <summary>
         /// Creates a spell sector using this spell's script for the parameters.
         /// </summary>
-        public ISpellSector CreateSpellSector()
+        public SpellSector CreateSpellSector()
         {
             return CreateSpellSector(Script.ScriptMetadata.SectorParameters);
         }
@@ -1390,7 +1387,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
         /// Adds the specified unit to the list of targets for this spell.
         /// </summary>
         /// <param name="target">Unit to remove.</param>
-        public void AddTarget(IAttackableUnit target)
+        public void AddTarget(AttackableUnit target)
         {
             CastInfo.AddTarget(target);
 
@@ -1405,7 +1402,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
         /// Removes the specified unit from the list of targets for this spell.
         /// </summary>
         /// <param name="target">Unit to remove.</param>
-        public void RemoveTarget(IAttackableUnit target)
+        public void RemoveTarget(AttackableUnit target)
         {
             if (!CastInfo.RemoveTarget(target))
             {
@@ -1435,7 +1432,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
         /// Sets the current target of this spell to the given unit.
         /// </summary>
         /// <param name="target">Unit to target.</param>
-        public void SetCurrentTarget(IAttackableUnit target)
+        public void SetCurrentTarget(AttackableUnit target)
         {
             if (target != null && target != CastInfo.Owner)
             {
@@ -1481,7 +1478,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
         {
             _overrrideCastRange = newCastRange;
 
-            if (CastInfo.Owner is IChampion champion)
+            if (CastInfo.Owner is Champion champion)
             {
                 _game.PacketNotifier.NotifyChangeSlotSpellData
                 (
@@ -1536,7 +1533,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
                 CastInfo.Owner.Stats.ManaCost[CastInfo.SpellSlot] = SpellData.ManaCost[CastInfo.SpellLevel];
             }
 
-            if (CastInfo.Owner is IChampion champion)
+            if (CastInfo.Owner is Champion champion)
             {
                 _game.PacketNotifier.NotifyS2C_SetSpellLevel(_game.PlayerManager.GetClientInfoByChampion(champion).ClientId, champion.NetId, CastInfo.SpellSlot, toLevel);
             }
@@ -1552,7 +1549,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
         {
             Toggle = toggle;
 
-            if (CastInfo.Owner is IChampion ch)
+            if (CastInfo.Owner is Champion ch)
             {
                 var clientInfo = _game.PlayerManager.GetClientInfoByChampion(ch);
                 _game.PacketNotifier.NotifyS2C_UpdateSpellToggle(clientInfo.ClientId, this);
@@ -1563,7 +1560,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
         {
             ToolTipData.Update(tipIndex, value);
 
-            if (CastInfo.Owner is IChampion champ)
+            if (CastInfo.Owner is Champion champ)
             {
                 champ.AddToolTipChange(ToolTipData);
             }

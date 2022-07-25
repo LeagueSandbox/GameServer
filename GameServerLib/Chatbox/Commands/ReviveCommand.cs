@@ -1,11 +1,10 @@
-﻿using GameServerCore;
-using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
+﻿using LeagueSandbox.GameServer.Players;
 
 namespace LeagueSandbox.GameServer.Chatbox.Commands
 {
     public class ReviveCommand : ChatCommandBase
     {
-        private readonly IPlayerManager _playerManager;
+        private readonly PlayerManager _playerManager;
 
         public override string Command => "revive";
         public override string Syntax => $"{Command}";

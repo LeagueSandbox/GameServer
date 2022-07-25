@@ -2,19 +2,18 @@
 using System.Collections.Generic;
 using System.Numerics;
 using GameServerCore.Domain;
-using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
-using GameServerCore.Scripting.CSharp;
 using LeagueSandbox.GameServer.Content;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using static LeagueSandbox.GameServer.API.ApiMapFunctionManager;
 using static LeagueSandbox.GameServer.API.ApiGameEvents;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits.Buildings.AnimatedBuildings;
 
 namespace MapScripts.Map10
 {
     public class CLASSIC : IMapScript
     {
-        public IMapScriptMetadata MapScriptMetadata { get; set; } = new MapScriptMetadata
+        public MapScriptMetadata MapScriptMetadata { get; set; } = new MapScriptMetadata
         {
             BaseGoldPerGoldTick = 0.95f,
             AIVars = new AIVars
@@ -23,6 +22,7 @@ namespace MapScripts.Map10
             }
         };
 
+        public virtual GlobalData GlobalData { get; set; } = new GlobalData();
         public bool HasFirstBloodHappened { get; set; } = false;
         public long NextSpawnTime { get; set; } = 45 * 1000;
         public string LaneMinionAI { get; set; } = "LaneMinionAI";
@@ -86,12 +86,12 @@ namespace MapScripts.Map10
         }};
 
         //This function is executed in-between Loading the map structures and applying the structure protections. Is the first thing on this script to be executed
-        public void Init(IMapScriptData mapData)
+        public void Init(Dictionary<GameObjectTypes, List<MapObject>> mapObjects)
         {
             MapScriptMetadata.MinionSpawnEnabled = IsMinionSpawnEnabled();
             AddSurrender(1200000.0f, 300000.0f, 30.0f);
 
-            LevelScriptObjects.LoadObjects(mapData.MapObjects);
+            LevelScriptObjects.LoadObjects(mapObjects);
             CreateLevelProps.CreateProps();
         }
 
@@ -230,7 +230,7 @@ namespace MapScripts.Map10
                     TeamId opposed_team = barrack.GetOpposingTeamID();
                     LaneID lane = barrack.GetSpawnBarrackLaneID();
                     MapObject opposedBarrack = LevelScriptObjects.SpawnBarracks[opposed_team][lane];
-                    IInhibitor inhibitor = LevelScriptObjects.InhibitorList[opposed_team][lane];
+                    Inhibitor inhibitor = LevelScriptObjects.InhibitorList[opposed_team][lane];
                     Vector2 position = new Vector2(barrack.CentralPoint.X, barrack.CentralPoint.Z);
                     bool isInhibitorDead = inhibitor.InhibitorState == InhibitorState.DEAD;
                     Tuple<int, List<MinionSpawnType>> spawnWave = MinionWaveToSpawn(GameTime(), _cannonMinionCount, isInhibitorDead, LevelScriptObjects.AllInhibitorsAreDead[opposed_team]);

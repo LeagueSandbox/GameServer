@@ -1,35 +1,22 @@
-﻿using GameServerCore.Domain;
-using GameServerCore.Domain.GameObjects;
-using GameServerCore.Domain.GameObjects.Spell;
-using GameServerCore.Enums;
-using GameServerCore.Scripting.CSharp;
-using LeagueSandbox.GameServer.API;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using GameServerCore.Scripting.CSharp;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
-
+using            GameServerLib.GameObjects.AttackableUnits;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
+using LeagueSandbox.GameServer.GameObjects.SpellNS;
 
 namespace CharScripts
 {
     internal class CharScriptLizardElder : ICharScript
     {
-        public void OnActivate(IObjAIBase owner, ISpell spell = null)
+        public void OnActivate(ObjAIBase owner, Spell spell = null)
         {
             AddBuff("GlobalMonsterBuff", 25000.0f, 1, spell, owner, owner, true);
             AddBuff("BlessingoftheLizardElder", 25000.0f, 1, null, owner, owner, true);
         }
 
-        public void OnHitUnit(IDamageData data)
+        public void OnHitUnit(DamageData data)
         {
             // TODO: Multiply damage in data (currently unsupported).
-        }
-
-        public void OnDeactivate(IObjAIBase owner, ISpell spell = null)
-        {
-        }
-        public void OnUpdate(float diff)
-        {
         }
     }
 }

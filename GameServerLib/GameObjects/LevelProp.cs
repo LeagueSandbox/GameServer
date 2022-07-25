@@ -1,10 +1,8 @@
-﻿using GameServerCore.Domain.GameObjects;
-using GameServerCore.Enums;
-using System.Numerics;
+﻿using System.Numerics;
 
 namespace LeagueSandbox.GameServer.GameObjects
 {
-    public class LevelProp : GameObject, ILevelProp
+    public class LevelProp : GameObject
     {
         public byte NetNodeID { get; set; }
         public int SkinID { get; set; }

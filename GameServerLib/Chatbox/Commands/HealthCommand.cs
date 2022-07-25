@@ -1,10 +1,10 @@
-﻿using GameServerCore;
+﻿using LeagueSandbox.GameServer.Players;
 
 namespace LeagueSandbox.GameServer.Chatbox.Commands
 {
     public class HealthCommand : ChatCommandBase
     {
-        private readonly IPlayerManager _playerManager;
+        private readonly PlayerManager _playerManager;
 
         public override string Command => "health";
         public override string Syntax => $"{Command} maxHealth";

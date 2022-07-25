@@ -1,22 +1,22 @@
 ﻿using GameServerCore.Enums;
-using GameServerCore.Domain.GameObjects;
-using GameServerCore.Domain.GameObjects.Spell;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using System.Numerics;
 using GameServerCore.Scripting.CSharp;
 using System.Linq;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits;
 
 namespace AIScripts
 {
     public class MinonAI : IAIScript
     {
-        public IAIScriptMetaData AIScriptMetaData { get; set; } = new AIScriptMetaData();
-        IMinion minion;
+        public AIScriptMetaData AIScriptMetaData { get; set; } = new AIScriptMetaData();
+        Minion minion;
         internal const float DETECT_RANGE = 475.0f;
-        public void OnActivate(IObjAIBase owner)
+        public void OnActivate(ObjAIBase owner)
         {
-            minion = owner as IMinion;
+            minion = owner as Minion;
         }
         public void OnUpdate(float diff)
         {
@@ -38,13 +38,13 @@ namespace AIScripts
                 return true;
             }
 
-            IAttackableUnit nextTarget = null;
+            AttackableUnit nextTarget = null;
             var nextTargetPriority = 14;
             var nearestObjects = GetUnitsInRange(minion.Position, minion.Stats.Range.Total, true);
             //Find target closest to max attack range.
             foreach (var it in nearestObjects.OrderBy(x => Vector2.DistanceSquared(minion.Position, x.Position) - (minion.Stats.Range.Total * minion.Stats.Range.Total)))
             {
-                if (!(it is IAttackableUnit u)
+                if (!(it is AttackableUnit u)
                     || u.IsDead
                     || u.Team == minion.Team
                     || Vector2.DistanceSquared(minion.Position, u.Position) > DETECT_RANGE * DETECT_RANGE

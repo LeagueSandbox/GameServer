@@ -1,10 +1,9 @@
 ﻿using System;
-using GameServerCore.Domain;
 using GameServerCore.Enums;
 
 namespace LeagueSandbox.GameServer.Content
 {
-    public class PassiveData : IPassiveData
+    public class PassiveData
     {
         public string PassiveAbilityName { get; set; } = "";
         public int[] PassiveLevels { get; set; } = new int[6];
@@ -14,8 +13,10 @@ namespace LeagueSandbox.GameServer.Content
         //TODO: Extend into handling several passives, when we decide on a format for that case.
     }
 
-    public class CharData : ICharData
+    public class CharData
     {
+        public GlobalData GlobalCharData { get; private set; } = new GlobalData();
+
         public float AcquisitionRange { get; private set; } = 475;
         public bool AllyCanUse { get; private set; } = false;
         public bool AlwaysVisible { get; private set; } = false;
@@ -79,7 +80,7 @@ namespace LeagueSandbox.GameServer.Content
         public float[] AttackProbabilities { get; private set; } = new float[18];
 
         // TODO: Verify if we want this to be an array.
-        public IPassiveData PassiveData { get; private set; } = new PassiveData();
+        public PassiveData PassiveData { get; private set; } = new PassiveData();
 
         public CharData Load(ContentFile file)
         {
@@ -157,6 +158,7 @@ namespace LeagueSandbox.GameServer.Content
             PassiveData.PassiveLuaName = file.GetString("Data", "Passive1LuaName", "");
 
             MaxLevels = file.GetIntArray("Data", "MaxLevels", MaxLevels);
+
             for (var i = 0; i < 18; i++)
             {
                 if (i < 9)
@@ -173,14 +175,14 @@ namespace LeagueSandbox.GameServer.Content
                         float attackCastTime = Math.Min(initAttackTotalTime, initAttackCastTime);
                         if (initAttackTotalTime > 0.0f && attackCastTime > 0.0f)
                         {
-                            AttackDelayOffsetPercent[i] = (initAttackTotalTime / GlobalData.GlobalCharacterDataConstants.AttackDelay) - 1.0f;
-                            AttackDelayCastOffsetPercent[i] = (attackCastTime / initAttackTotalTime) - GlobalData.GlobalCharacterDataConstants.AttackDelayCastPercent;
+                            AttackDelayOffsetPercent[i] = (initAttackTotalTime / GlobalCharData.AttackDelay) - 1.0f;
+                            AttackDelayCastOffsetPercent[i] = (attackCastTime / initAttackTotalTime) - GlobalCharData.AttackDelayCastPercent;
                             AttackDelayCastOffsetPercentAttackSpeedRatio[i] = 1.0f;
                         }
                         else
                         {
                             AttackDelayOffsetPercent[i] = initAttackDelayOffsetPercent;
-                            AttackDelayCastOffsetPercent[i] = Math.Max(initAttackDelayCastOffsetPercent, -GlobalData.GlobalCharacterDataConstants.AttackDelayCastPercent);
+                            AttackDelayCastOffsetPercent[i] = Math.Max(initAttackDelayCastOffsetPercent, -GlobalCharData.AttackDelayCastPercent);
                             AttackDelayCastOffsetPercentAttackSpeedRatio[i] = initAttackDelayCastOffsetPercentAttackSpeedRatio;
                         }
                         continue;
@@ -197,14 +199,14 @@ namespace LeagueSandbox.GameServer.Content
                         float attackCastTime = Math.Min(extraAttackTotalTime, extraAttackCastTime);
                         if (extraAttackTotalTime > 0.0f && attackCastTime > 0.0f)
                         {
-                            AttackDelayOffsetPercent[i] = (extraAttackTotalTime / GlobalData.GlobalCharacterDataConstants.AttackDelay) - 1.0f;
-                            AttackDelayCastOffsetPercent[i] = (attackCastTime / extraAttackTotalTime) - GlobalData.GlobalCharacterDataConstants.AttackDelayCastPercent;
+                            AttackDelayOffsetPercent[i] = (extraAttackTotalTime / GlobalCharData.AttackDelay) - 1.0f;
+                            AttackDelayCastOffsetPercent[i] = (attackCastTime / extraAttackTotalTime) - GlobalCharData.AttackDelayCastPercent;
                             AttackDelayCastOffsetPercentAttackSpeedRatio[i] = 1.0f;
                         }
                         else
                         {
                             AttackDelayOffsetPercent[i] = extraAttackDelayOffsetPercent;
-                            AttackDelayCastOffsetPercent[i] = Math.Max(extraAttackDelayCastOffsetPercent, -GlobalData.GlobalCharacterDataConstants.AttackDelayCastPercent);
+                            AttackDelayCastOffsetPercent[i] = Math.Max(extraAttackDelayCastOffsetPercent, -GlobalCharData.AttackDelayCastPercent);
                             AttackDelayCastOffsetPercentAttackSpeedRatio[i] = extraAttackDelayCastOffsetPercentAttackSpeedRatio;
                         }
                     }
@@ -221,14 +223,14 @@ namespace LeagueSandbox.GameServer.Content
                     float attackCastTime = Math.Min(initAttackTotalTime, initAttackCastTime);
                     if (initAttackTotalTime > 0.0f && attackCastTime > 0.0f)
                     {
-                        AttackDelayOffsetPercent[i] = (initAttackTotalTime / GlobalData.GlobalCharacterDataConstants.AttackDelay) - 1.0f;
-                        AttackDelayCastOffsetPercent[i] = (attackCastTime / initAttackTotalTime) - GlobalData.GlobalCharacterDataConstants.AttackDelayCastPercent;
+                        AttackDelayOffsetPercent[i] = (initAttackTotalTime / GlobalCharData.AttackDelay) - 1.0f;
+                        AttackDelayCastOffsetPercent[i] = (attackCastTime / initAttackTotalTime) - GlobalCharData.AttackDelayCastPercent;
                         AttackDelayCastOffsetPercentAttackSpeedRatio[i] = 1.0f;
                     }
                     else
                     {
                         AttackDelayOffsetPercent[i] = initAttackDelayOffsetPercent;
-                        AttackDelayCastOffsetPercent[i] = Math.Max(initAttackDelayCastOffsetPercent, -GlobalData.GlobalCharacterDataConstants.AttackDelayCastPercent);
+                        AttackDelayCastOffsetPercent[i] = Math.Max(initAttackDelayCastOffsetPercent, -GlobalCharData.AttackDelayCastPercent);
                         AttackDelayCastOffsetPercentAttackSpeedRatio[i] = initAttackDelayCastOffsetPercentAttackSpeedRatio;
                     }
                     continue;
@@ -245,14 +247,14 @@ namespace LeagueSandbox.GameServer.Content
                     float attackCastTime = Math.Min(extraAttackTotalTime, extraAttackCastTime);
                     if (extraAttackTotalTime > 0.0f && attackCastTime > 0.0f)
                     {
-                        AttackDelayOffsetPercent[i] = (extraAttackTotalTime / GlobalData.GlobalCharacterDataConstants.AttackDelay) - 1.0f;
-                        AttackDelayCastOffsetPercent[i] = (attackCastTime / extraAttackTotalTime) - GlobalData.GlobalCharacterDataConstants.AttackDelayCastPercent;
+                        AttackDelayOffsetPercent[i] = (extraAttackTotalTime / GlobalCharData.AttackDelay) - 1.0f;
+                        AttackDelayCastOffsetPercent[i] = (attackCastTime / extraAttackTotalTime) - GlobalCharData.AttackDelayCastPercent;
                         AttackDelayCastOffsetPercentAttackSpeedRatio[i] = 1.0f;
                     }
                     else
                     {
                         AttackDelayOffsetPercent[i] = extraAttackDelayOffsetPercent;
-                        AttackDelayCastOffsetPercent[i] = Math.Max(extraAttackDelayCastOffsetPercent, -GlobalData.GlobalCharacterDataConstants.AttackDelayCastPercent);
+                        AttackDelayCastOffsetPercent[i] = Math.Max(extraAttackDelayCastOffsetPercent, -GlobalCharData.AttackDelayCastPercent);
                         AttackDelayCastOffsetPercentAttackSpeedRatio[i] = extraAttackDelayCastOffsetPercentAttackSpeedRatio;
                     }
                 }

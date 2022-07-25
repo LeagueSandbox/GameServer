@@ -1,19 +1,14 @@
-﻿using GameServerCore.Domain.GameObjects;
-using GameServerCore.Domain.GameObjects.Spell;
-using GameServerCore.Enums;
+﻿using GameServerCore.Enums;
 using GameServerCore.Scripting.CSharp;
-using System;
-using System.Collections.Generic;
-using System.Numerics;
-using System.Text;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
-
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
+using LeagueSandbox.GameServer.GameObjects.SpellNS;
 
 namespace CharScripts
 {
     internal class CharScriptOdinCenterRelic : ICharScript
     {
-        public void OnActivate(IObjAIBase owner, ISpell spell = null)
+        public void OnActivate(ObjAIBase owner, Spell spell = null)
         {
             SetStatus(owner, StatusFlags.MagicImmune, true);
             SetStatus(owner, StatusFlags.PhysicalImmune, true);
@@ -21,14 +16,6 @@ namespace CharScripts
             SetStatus(owner, StatusFlags.CanMove, false);
 
             AddBuff("OdinBombBuff", 25000.0f, 1, null, owner, owner, false);
-        }
-
-        public void OnDeactivate(IObjAIBase owner, ISpell spell = null)
-        {
-        }
-
-        public void OnUpdate(float diff)
-        {
         }
     }
 }

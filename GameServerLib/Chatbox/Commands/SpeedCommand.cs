@@ -1,12 +1,11 @@
-﻿using GameServerCore;
-using GameServerCore.Domain.GameObjects;
-using LeagueSandbox.GameServer.GameObjects.Stats;
+﻿using LeagueSandbox.GameServer.Players;
+using LeagueSandbox.GameServer.GameObjects.StatsNS;
 
 namespace LeagueSandbox.GameServer.Chatbox.Commands
 {
     public class SpeedCommand : ChatCommandBase
     {
-        private readonly IPlayerManager _playerManager;
+        private readonly PlayerManager _playerManager;
 
         public override string Command => "speed";
         public override string Syntax => $"{Command} [flat speed] [percent speed]";
@@ -28,7 +27,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
 
             try
             {
-                IStatsModifier stat = new StatsModifier();
+                StatsModifier stat = new StatsModifier();
 
                 if (split.Length == 3)
                 {

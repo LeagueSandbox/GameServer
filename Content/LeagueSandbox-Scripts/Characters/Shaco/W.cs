@@ -1,19 +1,19 @@
 using GameServerCore;
-using GameServerCore.Domain;
-using GameServerCore.Domain.GameObjects;
-using GameServerCore.Domain.GameObjects.Spell;
-using GameServerCore.Domain.GameObjects.Spell.Missile;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 using GameServerCore.Enums;
 using System.Numerics;
 using GameServerCore.Scripting.CSharp;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits.Buildings.AnimatedBuildings;
+using LeagueSandbox.GameServer.GameObjects.SpellNS;
 
 namespace Spells
 {
     public class JackInTheBox : ISpellScript
     {
-        public ISpellScriptMetadata ScriptMetadata { get; private set; } = new SpellScriptMetadata()
+        public SpellScriptMetadata ScriptMetadata { get; private set; } = new SpellScriptMetadata()
         {
             TriggersSpellCasts = true
             // TODO
@@ -21,23 +21,7 @@ namespace Spells
 
         public float petTimeAlive = 0.00f;
 
-        public void OnActivate(IObjAIBase owner, ISpell spell)
-        {
-        }
-
-        public void OnDeactivate(IObjAIBase owner, ISpell spell)
-        {
-        }
-
-        public void OnSpellPreCast(IObjAIBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
-        {
-        }
-
-        public void OnSpellCast(ISpell spell)
-        {
-        }
-
-        public void OnSpellPostCast(ISpell spell)
+        public void OnSpellPostCast(Spell spell)
         {
             var owner = spell.CastInfo.Owner;
             var castrange = spell.GetCurrentCastRange();
@@ -53,7 +37,7 @@ namespace Spells
 
             if (Extensions.IsVectorWithinRange(ownerPos, spellPos, castrange))
             {
-                IMinion m = AddMinion((IChampion)owner, "ShacoBox", "ShacoBox", spellPos, owner.Team);
+                Minion m = AddMinion((Champion)owner, "ShacoBox", "ShacoBox", spellPos, owner.Team);
                 AddParticle(owner, null, "JackintheboxPoof", spellPos);
 
                 var attackrange = m.Stats.Range.Total;
@@ -65,7 +49,7 @@ namespace Spells
                         var units = GetUnitsInRange(m.Position, attackrange, true);
                         foreach (var value in units)
                         {
-                            if (owner.Team != value.Team && value is IAttackableUnit && !(value is IBaseTurret) && !(value is IObjAnimatedBuilding))
+                            if (owner.Team != value.Team && value is AttackableUnit && !(value is BaseTurret) && !(value is ObjAnimatedBuilding))
                             {
                                 //TODO: Change TakeDamage to activate on Jack AutoAttackHit, not use CreateTimer, and make Pets use owner spell stats
                                 m.SetTargetUnit(value);
@@ -91,22 +75,6 @@ namespace Spells
                     }
                 }
             }
-        }
-
-        public void OnSpellChannel(ISpell spell)
-        {
-        }
-
-        public void OnSpellChannelCancel(ISpell spell, ChannelingStopSource reason)
-        {
-        }
-
-        public void OnSpellPostChannel(ISpell spell)
-        {
-        }
-
-        public void OnUpdate(float diff)
-        {
         }
     }
 }

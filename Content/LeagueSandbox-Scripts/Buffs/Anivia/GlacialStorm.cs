@@ -1,10 +1,11 @@
 ﻿using System.Numerics;
-using GameServerCore.Domain.GameObjects;
-using GameServerCore.Domain.GameObjects.Spell;
 using GameServerCore.Enums;
 using GameServerCore.Scripting.CSharp;
-using LeagueSandbox.GameServer.API;
-using LeagueSandbox.GameServer.GameObjects.Stats;
+using LeagueSandbox.GameServer.GameObjects;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
+using LeagueSandbox.GameServer.GameObjects.SpellNS;
+using LeagueSandbox.GameServer.GameObjects.StatsNS;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 
@@ -12,24 +13,24 @@ namespace Buffs
 {
     class GlacialStorm : IBuffGameScript
     {
-        public IBuffScriptMetaData BuffMetaData { get; set; } = new BuffScriptMetaData
+        public BuffScriptMetaData BuffMetaData { get; set; } = new BuffScriptMetaData
         {
             BuffType = BuffType.COMBAT_ENCHANCER,
             BuffAddType = BuffAddType.REPLACE_EXISTING
         };
 
-        public IStatsModifier StatsModifier { get; private set; } = new StatsModifier();
+        public StatsModifier StatsModifier { get; private set; } = new StatsModifier();
 
-        IAttackableUnit owner;
-        ISpell originSpell;
-        IBuff thisBuff;
-        IParticle red;
-        IParticle green;
+        AttackableUnit owner;
+        Spell originSpell;
+        Buff thisBuff;
+        Particle red;
+        Particle green;
         float DamageManaTimer;
         float SlowTimer;
         float[] manaCost = { 40.0f, 50.0f, 60.0f };
 
-        public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
+        public void OnActivate(AttackableUnit unit, Buff buff, Spell ownerSpell)
         {
             owner = unit;
             originSpell = ownerSpell;
@@ -39,7 +40,7 @@ namespace Buffs
 
             originSpell.SetCooldown(1.0f, true);
 
-            SetTargetingType((IObjAIBase)unit, SpellSlotType.SpellSlots, 3, TargetingType.Self);
+            SetTargetingType((ObjAIBase)unit, SpellSlotType.SpellSlots, 3, TargetingType.Self);
 
             if (owner.Team == TeamId.TEAM_BLUE)
             {
@@ -53,11 +54,11 @@ namespace Buffs
             }
         }
 
-        public void OnDeactivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
+        public void OnDeactivate(AttackableUnit unit, Buff buff, Spell ownerSpell)
         {
             ownerSpell.SetCooldown(6.0f);
 
-            SetTargetingType((IObjAIBase)unit, SpellSlotType.SpellSlots, 3, TargetingType.Area);
+            SetTargetingType((ObjAIBase)unit, SpellSlotType.SpellSlots, 3, TargetingType.Area);
 
             RemoveParticle(red);
             RemoveParticle(green);
@@ -96,7 +97,7 @@ namespace Buffs
                 if (SlowTimer >= 250f)
                 {
                     var spellPos = new Vector2(originSpell.CastInfo.TargetPositionEnd.X, originSpell.CastInfo.TargetPositionEnd.Z);
-                    if ((owner is IObjAIBase ai && !ai.CanCast(originSpell)) || !GameServerCore.Extensions.IsVectorWithinRange(owner.Position, spellPos, 1200f))
+                    if ((owner is ObjAIBase ai && !ai.CanCast(originSpell)) || !GameServerCore.Extensions.IsVectorWithinRange(owner.Position, spellPos, 1200f))
                     {
                         RemoveBuff(thisBuff);
                     }

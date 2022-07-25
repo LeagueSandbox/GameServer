@@ -1,13 +1,8 @@
-﻿using GameServerCore.Domain.GameObjects;
-using GameServerCore.Domain.GameObjects.Spell.Missile;
-using GameServerCore.Domain.GameObjects.Spell.Sector;
-using GameServerCore.Enums;
-using GameServerCore.Scripting.CSharp;
-using System.Numerics;
+﻿using GameServerCore.Enums;
 
 namespace LeagueSandbox.GameServer.Scripting.CSharp
 {
-    public class BuffScriptMetaData : IBuffScriptMetaData
+    public class BuffScriptMetaData
     {
         public BuffType BuffType { get; set; } = BuffType.INTERNAL;
         public BuffAddType BuffAddType { get; set; } = BuffAddType.RENEW_EXISTING;

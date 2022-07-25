@@ -1,18 +1,16 @@
-using System;
 using System.Linq;
-using GameServerCore.Domain;
-using GameServerCore.Domain.GameObjects;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
 
 namespace LeagueSandbox.GameServer.Inventory
 {
-    public class Shop : IShop
+    public class Shop
     {
-        private readonly IChampion _owner;
+        private readonly Champion _owner;
         private readonly Game _game;
 
         public const byte ITEM_ACTIVE_OFFSET = 6;
 
-        private Shop(IChampion owner, Game game)
+        private Shop(Champion owner, Game game)
         {
             _owner = owner;
             _game = game;
@@ -70,7 +68,7 @@ namespace LeagueSandbox.GameServer.Inventory
             return true;
         }
 
-        public static Shop CreateShop(IChampion owner, Game game)
+        public static Shop CreateShop(Champion owner, Game game)
         {
             return new Shop(owner, game);
         }

@@ -1,5 +1,5 @@
-﻿using GameServerCore.Domain.GameObjects;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using LeagueSandbox.GameServer.GameObjects;
 
 namespace MapScripts.Map10
 {
@@ -101,7 +101,7 @@ namespace MapScripts.Map10
             2.6f
         };
 
-        public static void UpdateStats(IMonster monster)
+        public static void UpdateStats(Monster monster)
         {
             var level = monster.Stats.Level;
             if(level > 19)

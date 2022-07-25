@@ -1,21 +1,21 @@
 ﻿using System.Collections.Generic;
 using System.Numerics;
 using GameServerCore.Domain;
-using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
 using LeagueSandbox.GameServer.Content;
 using LeagueSandbox.GameServer.Scripting.CSharp;
-using GameServerCore.Scripting.CSharp;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 using static LeagueSandbox.GameServer.API.ApiMapFunctionManager;
 using static LeagueSandbox.GameServer.API.ApiGameEvents;
 using LeagueSandbox.GameServer.API;
+using            GameServerLib.GameObjects.AttackableUnits;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
 
 namespace MapScripts.Map8
 {
     public class ASCENSION : IMapScript
     {
-        public IMapScriptMetadata MapScriptMetadata { get; set; } = new MapScriptMetadata
+        public MapScriptMetadata MapScriptMetadata { get; set; } = new MapScriptMetadata
         {
             MinionSpawnEnabled = false,
             OverrideSpawnPoints = true,
@@ -32,6 +32,7 @@ namespace MapScripts.Map8
             ExpCurveOverride = "ExpCurveASCENSION"
         };
 
+        public virtual GlobalData GlobalData { get; set; } = new GlobalData();
         public bool HasFirstBloodHappened { get; set; } = false;
         public long NextSpawnTime { get; set; } = 90 * 1000;
         public string LaneMinionAI { get; set; } = "LaneMinionAI";
@@ -84,13 +85,13 @@ namespace MapScripts.Map8
             }}
         };
 
-        public void Init(IMapScriptData mapData)
+        public void Init(Dictionary<GameObjectTypes, List<MapObject>> mapObjects)
         {
             //TODO: Implement Dynamic Minion spawn mechanics for Map8
             //SpawnEnabled = map.IsMinionSpawnEnabled();
             AddSurrender(1200000.0f, 300000.0f, 30.0f);
             CreateLevelProps.CreateProps();
-            LevelScriptObjectsAscension.LoadObjects(mapData.MapObjects);
+            LevelScriptObjectsAscension.LoadObjects(mapObjects);
         }
 
         Dictionary<TeamId, float> TeamScores = new Dictionary<TeamId, float> { { TeamId.TEAM_BLUE, 0.0f }, { TeamId.TEAM_PURPLE, 0.0f } };
@@ -136,7 +137,7 @@ namespace MapScripts.Map8
             }
         }
 
-        void OnIncrementPoints(IScoreData scoreData)
+        void OnIncrementPoints(ScoreData scoreData)
         {
             var owner = scoreData.Owner;
             var team = owner.Team;
@@ -160,9 +161,9 @@ namespace MapScripts.Map8
             }
         }
 
-        public void OnChampionKill(IDeathData data)
+        public void OnChampionKill(DeathData data)
         {
-            var killer = data.Killer as IChampion;
+            var killer = data.Killer as Champion;
 
             killer.IncrementScore(1.0f, ScoreCategory.Combat, ScoreEvent.ChampKill, true);
         }

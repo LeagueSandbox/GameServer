@@ -1,12 +1,11 @@
-﻿using GameServerCore;
-using LeagueSandbox.GameServer.GameObjects;
+﻿using LeagueSandbox.GameServer.Players;
 using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
 
 namespace LeagueSandbox.GameServer.Chatbox.Commands
 {
     public class InhibCommand : ChatCommandBase
     {
-        private readonly IPlayerManager _playerManager;
+        private readonly PlayerManager _playerManager;
 
         public override string Command => "inhib";
         public override string Syntax => $"{Command}";

@@ -1,21 +1,21 @@
 using System;
 using GameServerCore;
-using GameServerCore.Domain.GameObjects;
-using GameServerCore.Domain.GameObjects.Spell;
 using GameServerCore.Enums;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using LeagueSandbox.GameServer.GameObjects.Other;
 using LeagueSandbox.GameServer.API;
 using GameServerCore.Scripting.CSharp;
-using GameServerCore.Domain;
-using LeagueSandbox.GameServer.GameObjects.Stats;
+using LeagueSandbox.GameServer.GameObjects.StatsNS;
 using static GameServerCore.Content.HashFunctions;
 using LeagueSandbox.GameServer.Logging;
 using log4net;
+using LeagueSandbox.GameServer.GameObjects.SpellNS;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits;
 
 namespace LeagueSandbox.GameServer.GameObjects
 {
-    public class Buff : Stackable, IBuff
+    public class Buff : Stackable, IEventSource
     {
         // Crucial Vars.
         private readonly Game _game;
@@ -30,10 +30,10 @@ namespace LeagueSandbox.GameServer.GameObjects
         public float Duration { get; }
         public bool IsHidden { get; }
         public string Name { get; }
-        public ISpell OriginSpell { get; }
+        public Spell OriginSpell { get; }
         public byte Slot { get; private set; }
-        public IObjAIBase SourceUnit { get; }
-        public IAttackableUnit TargetUnit { get; }
+        public ObjAIBase SourceUnit { get; }
+        public AttackableUnit TargetUnit { get; }
         public float TimeElapsed { get; private set; }
         /// <summary>
         /// Script instance for this buff. Casting to a specific buff class gives access its functions and variables.
@@ -47,9 +47,9 @@ namespace LeagueSandbox.GameServer.GameObjects
         /// <summary>
         /// Used to update player buff tool tip values.
         /// </summary>
-        public IToolTipData ToolTipData { get; protected set; }
+        public ToolTipData ToolTipData { get; protected set; }
 
-        public Buff(Game game, string buffName, float duration, int stacks, ISpell originSpell, IAttackableUnit onto, IObjAIBase from, bool infiniteDuration = false, IEventSource parent = null)
+        public Buff(Game game, string buffName, float duration, int stacks, Spell originSpell, AttackableUnit onto, ObjAIBase from, bool infiniteDuration = false, IEventSource parent = null)
         {
             if (duration < 0)
             {
@@ -154,7 +154,7 @@ namespace LeagueSandbox.GameServer.GameObjects
             return _remove;
         }
 
-        public IStatsModifier GetStatsModifier()
+        public StatsModifier GetStatsModifier()
         {
             return BuffScript.StatsModifier;
         }
@@ -177,7 +177,7 @@ namespace LeagueSandbox.GameServer.GameObjects
         {
             ToolTipData.Update(tipIndex, value);
 
-            if (TargetUnit is IChampion champ)
+            if (TargetUnit is Champion champ)
             {
                 champ.AddToolTipChange(ToolTipData);
             }

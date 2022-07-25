@@ -1,14 +1,14 @@
 ﻿using GameServerCore.Packets.PacketDefinitions.Requests;
-using GameServerCore;
 using GameServerCore.Packets.Handlers;
 using LeagueSandbox.GameServer.Logging;
 using log4net;
+using LeagueSandbox.GameServer.Players;
 
 namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 {
     public class HandleScoreboard : PacketHandlerBase<ScoreboardRequest>
     {
-        private readonly IPlayerManager _playerManager;
+        private readonly PlayerManager _playerManager;
         private static ILog _logger = LoggerProvider.GetLogger();
         private readonly Game _game;
 

@@ -1,17 +1,16 @@
-using GameServerCore.Domain.GameObjects;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
-using GameServerCore.Domain.GameObjects.Spell;
-using GameServerCore.Domain.GameObjects.Spell.Missile;
-using System.Numerics;
 using GameServerCore.Scripting.CSharp;
 using GameServerCore.Enums;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
+using LeagueSandbox.GameServer.GameObjects.SpellNS;
+using LeagueSandbox.GameServer.GameObjects;
 
 namespace Spells
 {
     public class OdinRecall : ISpellScript
     {
-        public ISpellScriptMetadata ScriptMetadata { get; private set; } = new SpellScriptMetadata()
+        public SpellScriptMetadata ScriptMetadata { get; private set; } = new SpellScriptMetadata()
         {
             CastingBreaksStealth = true,
             ChannelDuration = 4.5f,
@@ -19,33 +18,9 @@ namespace Spells
             NotSingleTargetSpell = true
         };
 
-        IParticle recallParticle;
+        Particle recallParticle;
 
-        public void OnActivate(IObjAIBase owner, ISpell spell)
-        {
-        }
-
-        public void OnTakeDamage(IAttackableUnit unit, IAttackableUnit attacker)
-        {
-        }
-
-        public void OnDeactivate(IObjAIBase owner, ISpell spell)
-        {
-        }
-
-        public void OnSpellPreCast(IObjAIBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
-        {
-        }
-
-        public void OnSpellCast(ISpell spell)
-        {
-        }
-
-        public void OnSpellPostCast(ISpell spell)
-        {
-        }
-
-        public void OnSpellChannel(ISpell spell)
+        public void OnSpellChannel(Spell spell)
         {
             var owner = spell.CastInfo.Owner;
             recallParticle = AddParticleTarget(owner, owner, "teleporthome_shortimproved", owner, 4.5f, flags: 0);
@@ -53,23 +28,19 @@ namespace Spells
             AddBuff("RecallHome", 4.4f, 1, spell, owner, owner);
         }
 
-        public void OnSpellChannelCancel(ISpell spell, ChannelingStopSource reason)
+        public void OnSpellChannelCancel(Spell spell, ChannelingStopSource reason)
         {
             recallParticle.SetToRemove();
             RemoveBuff(spell.CastInfo.Owner, "RecallHome");
         }
 
-        public void OnSpellPostChannel(ISpell spell)
+        public void OnSpellPostChannel(Spell spell)
         {
-            var owner = spell.CastInfo.Owner as IChampion;
+            var owner = spell.CastInfo.Owner as Champion;
 
             owner.Recall();
 
             AddParticleTarget(owner, owner, "TeleportArrive", owner, flags: 0);
-        }
-
-        public void OnUpdate(float diff)
-        {
         }
     }
 }

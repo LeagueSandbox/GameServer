@@ -1,34 +1,31 @@
 ﻿using System;
 using System.Collections.Generic;
-using GameServerCore.Domain;
-using GameServerCore.Domain.GameObjects;
 using LeaguePackets.Game.Common;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits;
 
-namespace LeagueSandbox.GameServer.GameObjects.Stats
+namespace LeagueSandbox.GameServer.GameObjects.StatsNS
 {
-    public abstract class Replication : IReplication
+    public abstract class Replication
     {
-        public class Replicate : IReplicate
+        public class Replicate
         {
             public uint Value { get; set; }
             public bool IsFloat { get; set; }
             public bool Changed { get; set; }
         }
 
-        protected Replication(IAttackableUnit owner)
+        protected Replication(AttackableUnit owner)
         {
             Owner = owner;
             Update();
         }
 
-        protected readonly IAttackableUnit Owner;
-        protected IStats Stats => Owner.Stats;
+        protected readonly AttackableUnit Owner;
+        protected Stats Stats => Owner.Stats;
 
         public uint NetID => Owner.NetId;
         public Replicate[,] Values { get; private set; } = new Replicate[6, 32];
         public bool Changed { get; private set; }
-
-        IReplicate[,] IReplication.Values => Values;
 
         private void DoUpdate(uint value, int primary, int secondary, bool isFloat)
         {

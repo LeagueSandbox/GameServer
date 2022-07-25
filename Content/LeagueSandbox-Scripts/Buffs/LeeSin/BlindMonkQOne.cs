@@ -1,29 +1,31 @@
 ﻿using GameServerCore.Enums;
-using GameServerCore.Domain.GameObjects;
-using GameServerCore.Domain.GameObjects.Spell;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 using GameServerCore.Scripting.CSharp;
 using LeagueSandbox.GameServer.Scripting.CSharp;
+using LeagueSandbox.GameServer.GameObjects;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits;
+using LeagueSandbox.GameServer.GameObjects.SpellNS;
+using LeagueSandbox.GameServer.GameObjects.StatsNS;
 
 namespace Buffs
 {
     internal class BlindMonkQOne : IBuffGameScript
     {
-        public IBuffScriptMetaData BuffMetaData { get; set; } = new BuffScriptMetaData
+        public BuffScriptMetaData BuffMetaData { get; set; } = new BuffScriptMetaData
         {
             BuffType = BuffType.COMBAT_DEHANCER,
             BuffAddType = BuffAddType.REPLACE_EXISTING
         };
 
-        public IStatsModifier StatsModifier { get; private set; }
+        public StatsModifier StatsModifier { get; private set; }
 
-        ISpell originSpell;
-        IBuff thisBuff;
-        IRegion bubble1;
-        IRegion bubble2;
-        IParticle slow;
+        Spell originSpell;
+        Buff thisBuff;
+        Region bubble1;
+        Region bubble2;
+        Particle slow;
 
-        public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
+        public void OnActivate(AttackableUnit unit, Buff buff, Spell ownerSpell)
         {
             originSpell = ownerSpell;
             thisBuff = buff;
@@ -42,7 +44,7 @@ namespace Buffs
             }
         }
 
-        public void OnDeactivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
+        public void OnDeactivate(AttackableUnit unit, Buff buff, Spell ownerSpell)
         {
             bubble1.SetToRemove();
             bubble2.SetToRemove();
@@ -54,10 +56,6 @@ namespace Buffs
             {
                 RemoveBuff(manager);
             }
-        }
-
-        public void OnUpdate(float diff)
-        {
         }
     }
 }

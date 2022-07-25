@@ -1,15 +1,15 @@
 ﻿using GameServerCore.Packets.PacketDefinitions.Requests;
-using GameServerCore;
-using GameServerCore.Domain.GameObjects;
 using GameServerCore.Packets.Handlers;
 using System.Timers;
+using LeagueSandbox.GameServer.Players;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
 
 namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 {
     public class HandleUnpauseReq : PacketHandlerBase<UnpauseRequest>
     {
         private readonly Game _game;
-        private readonly IPlayerManager _playerManager;
+        private readonly PlayerManager _playerManager;
 
         public HandleUnpauseReq(Game game)
         {
@@ -24,7 +24,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                 return false;
             }
 
-            IChampion unpauser = null;
+            Champion unpauser = null;
 
             unpauser = _playerManager.GetPeerInfo(userId).Champion;
             foreach (var player in _playerManager.GetPlayers(false))

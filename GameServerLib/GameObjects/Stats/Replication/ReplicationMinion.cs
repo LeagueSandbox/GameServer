@@ -1,6 +1,6 @@
 ﻿using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
 
-namespace LeagueSandbox.GameServer.GameObjects.Stats
+namespace LeagueSandbox.GameServer.GameObjects.StatsNS
 {
     public class ReplicationMinion : Replication
     {
