@@ -505,7 +505,7 @@ namespace LeagueSandbox.GameServer.GameObjects.SpellNS
                     index = 0;
                 }
 
-                float autoAttackTotalTime = CastInfo.Owner.CharData.GlobalCharData.AttackDelay * (1.0f + CastInfo.Owner.CharData.BasicAttacks[index].AttackDelayOffsetPercent);
+                float autoAttackTotalTime = CastInfo.Owner.CharData.GlobalCharData.AttackDelay * (1.0f + CastInfo.Owner.CharData.BasicAttacks[0].AttackDelayOffsetPercent);
                 CastInfo.DesignerCastTime = autoAttackTotalTime * (CastInfo.Owner.CharData.GlobalCharData.AttackDelayCastPercent + CastInfo.Owner.CharData.BasicAttacks[index].AttackDelayCastOffsetPercent);
 
                 if (CastInfo.IsAutoAttack)
