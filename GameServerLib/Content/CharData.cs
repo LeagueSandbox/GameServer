@@ -181,13 +181,10 @@ namespace LeagueSandbox.GameServer.Content
             MaxLevels = file.GetIntArray("Data", "MaxLevels", MaxLevels);
 
             //Main AutoAttack
-            BasicAttacks[0] = new BasicAttackInfo()
+            BasicAttacks[0] = new BasicAttackInfo(AttackDelayOffsetPercent, AttackDelayCastOffsetPercent, AttackDelayCastOffsetPercentAttackSpeedRatio)
             {
                 Name = name + "BasicAttack",
                 AttackCastTime = AttackCastTime,
-                AttackDelayCastOffsetPercent = AttackDelayCastOffsetPercent,
-                AttackDelayCastOffsetPercentAttackSpeedRatio = AttackDelayCastOffsetPercentAttackSpeedRatio,
-                AttackDelayOffsetPercent = AttackDelayOffsetPercent,
                 AttackTotalTime = AttackTotalTime,
                 Probability = BaseAttackProbability
             };
@@ -209,14 +206,12 @@ namespace LeagueSandbox.GameServer.Content
                     nameIndex++;
                     continue;
                 }
+                float offsetPercent = AttackDelayCastOffsetPercent = file.GetFloat("Data", $"ExtraAttack{i}_AttackDelayCastOffsetPercent", AttackDelayCastOffsetPercent);
 
-                BasicAttacks[i] = new BasicAttackInfo()
+                BasicAttacks[i] = new BasicAttackInfo(AttackDelayOffsetPercent, offsetPercent, AttackDelayCastOffsetPercentAttackSpeedRatio)
                 {
                     Name = attackName,
                     AttackCastTime = file.GetFloat("Data", $"ExtraAttack{i}_AttackCastTime", AttackCastTime),
-                    AttackDelayCastOffsetPercent = file.GetFloat("Data", $"ExtraAttack{i}_AttackDelayCastOffsetPercent", AttackDelayCastOffsetPercent),
-                    AttackDelayCastOffsetPercentAttackSpeedRatio = AttackDelayCastOffsetPercentAttackSpeedRatio,
-                    AttackDelayOffsetPercent = AttackDelayOffsetPercent,
                     AttackTotalTime = file.GetFloat("Data", $"ExtraAttack{i}_AttackTotalTime", AttackTotalTime),
                     Probability = file.GetFloat("Data", $"ExtraAttack{i}_Probability", BaseAttackProbability)
                 };
@@ -224,13 +219,10 @@ namespace LeagueSandbox.GameServer.Content
             }
 
             //Main Crit AutoAttack
-            BasicAttacks[9] = new BasicAttackInfo()
+            BasicAttacks[9] = new BasicAttackInfo(CritAttackDelayOffsetPercent, CritAttackDelayCastOffsetPercent, CritAttackDelayCastOffsetPercentAttackSpeedRatio)
             {
                 Name = file.GetString("Data", $"CritAttack", ""),
                 AttackCastTime = AttackCastTime,
-                AttackDelayCastOffsetPercent = CritAttackDelayCastOffsetPercent,
-                AttackDelayCastOffsetPercentAttackSpeedRatio = CritAttackDelayCastOffsetPercentAttackSpeedRatio,
-                AttackDelayOffsetPercent = CritAttackDelayOffsetPercent,
                 AttackTotalTime = AttackTotalTime,
                 Probability = CritAttackProbability
             };
@@ -240,13 +232,13 @@ namespace LeagueSandbox.GameServer.Content
             {
                 var index = i + 9;
                 var attackName = file.GetString("Data", $"ExtraCritAttack{i}", "");
-                BasicAttacks[index] = new BasicAttackInfo()
+                float delayOffset = file.GetFloat("Data", $"{attackName}_AttackDelayOffsetPercent", AttackDelayOffsetPercent);
+                float delayCastOffsetPercent = file.GetFloat("Data", $"{attackName}_AttackDelayCastOffsetPercent", CritAttackDelayCastOffsetPercent);
+
+                BasicAttacks[index] = new BasicAttackInfo(delayOffset, delayCastOffsetPercent, CritAttackDelayCastOffsetPercentAttackSpeedRatio)
                 {
                     Name = attackName,
                     AttackCastTime = AttackCastTime,
-                    AttackDelayCastOffsetPercent = file.GetFloat("Data", $"{attackName}_AttackDelayCastOffsetPercent", CritAttackDelayCastOffsetPercent),
-                    AttackDelayCastOffsetPercentAttackSpeedRatio = CritAttackDelayCastOffsetPercentAttackSpeedRatio,
-                    AttackDelayOffsetPercent = file.GetFloat("Data", $"{attackName}_AttackDelayOffsetPercent", AttackDelayOffsetPercent),
                     AttackTotalTime = AttackTotalTime,
                     Probability = CritAttackProbability
                 };
