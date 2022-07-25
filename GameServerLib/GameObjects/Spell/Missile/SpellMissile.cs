@@ -127,7 +127,8 @@ namespace LeagueSandbox.GameServer.GameObjects.SpellNS.Missile
 
             var next = GetTargetPosition();
 
-            var goingTo = new Vector3(next.X, _game.Map.NavigationGrid.GetHeightAtLocation(next.X, next.Y), next.Y) - new Vector3(cur.X, _game.Map.NavigationGrid.GetHeightAtLocation(cur.X, cur.Y), cur.Y);
+            var goingTo = new Vector3(next.X, _game.Map.NavigationGrid.GetHeightAtLocation(next), next.Y)
+                        - new Vector3(cur.X, _game.Map.NavigationGrid.GetHeightAtLocation(cur), cur.Y);
             var dirTemp = Vector3.Normalize(goingTo);
 
             // usually doesn't happen

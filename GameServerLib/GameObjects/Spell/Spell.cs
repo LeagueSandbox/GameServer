@@ -311,8 +311,8 @@ namespace LeagueSandbox.GameServer.GameObjects.SpellNS
 
             CastInfo.MissileNetID = _networkIdManager.GetNewNetId();
 
-            CastInfo.TargetPosition = new Vector3(start.X, _game.Map.NavigationGrid.GetHeightAtLocation(start.X, start.Y), start.Y);
-            CastInfo.TargetPositionEnd = new Vector3(end.X, _game.Map.NavigationGrid.GetHeightAtLocation(end.X, end.Y), end.Y);
+            CastInfo.TargetPosition = new Vector3(start.X, _game.Map.NavigationGrid.GetHeightAtLocation(start), start.Y);
+            CastInfo.TargetPositionEnd = new Vector3(end.X, _game.Map.NavigationGrid.GetHeightAtLocation(end), end.Y);
 
             CastInfo.Targets.Clear();
 
@@ -478,7 +478,7 @@ namespace LeagueSandbox.GameServer.GameObjects.SpellNS
             if (Script.ScriptMetadata.MissileParameters != null && Script.ScriptMetadata.MissileParameters.Type == MissileType.Circle)
             {
                 var targetPos = ApiFunctionManager.GetPointFromUnit(CastInfo.Owner, GetCurrentCastRange());
-                CastInfo.TargetPosition = new Vector3(targetPos.X, _game.Map.NavigationGrid.GetHeightAtLocation(targetPos.X, targetPos.Y), targetPos.Y);
+                CastInfo.TargetPosition = new Vector3(targetPos.X, _game.Map.NavigationGrid.GetHeightAtLocation(targetPos), targetPos.Y);
                 // TODO: Verify if we should also override TargetPositionEnd (probably not due to things like Viktor E).
             }
 
