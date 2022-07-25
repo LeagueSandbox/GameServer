@@ -172,7 +172,7 @@ namespace LeagueSandbox.GameServer
             foreach (var p in Config.Players)
             {
                 _logger.Info("Player " + p.Name + " Added: " + p.Champion);
-                ((PlayerManager)PlayerManager).AddPlayer(p);
+                PlayerManager.AddPlayer(p);
             }
 
             _logger.Info("Game is ready.");
@@ -297,7 +297,7 @@ namespace LeagueSandbox.GameServer
             Console.WriteLine($"The number of disconnected players {count}/{players.Count}");
             if(count == players.Count)
             {
-                _logger.Info("It's lonely here. All players have left the server");
+                _logger.Info("All players have left the server. It's lonely here :(");
                 SetToExit = true;
                 return true;
             }

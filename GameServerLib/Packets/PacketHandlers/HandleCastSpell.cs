@@ -29,7 +29,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                 return false;
             }
 
-            var s = owner.GetSpell(req.Slot);
+            var s = owner.Spells[req.Slot];
             var ownerCastingSpell = owner.GetCastSpell();
 
             // Instant cast spells can be cast during other spell casts.
