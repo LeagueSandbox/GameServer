@@ -169,11 +169,6 @@ namespace LeagueSandbox.GameServer.Content.Navigation
                 this.MapWidth = this.MaxGridPosition.X + this.MinGridPosition.X;
                 this.MapHeight = this.MaxGridPosition.Z + this.MinGridPosition.Z;
                 this.MiddleOfMap = new Vector2(this.MapWidth / 2, this.MapHeight / 2);
-                this.TranslationMaxGridPosition = new Vector3
-                {
-                    X = this.CellCountX / (this.MaxGridPosition.X - this.MinGridPosition.X),
-                    Z = this.CellCountY / (this.MaxGridPosition.Z - this.MinGridPosition.Z)
-                };
             }
         }
 
@@ -327,9 +322,11 @@ namespace LeagueSandbox.GameServer.Content.Navigation
         /// <returns>Cell formatted Vector2.</returns>
         public Vector2 TranslateToNavGrid(Vector2 vector)
         {
-            vector.X = (vector.X - this.MinGridPosition.X) * this.TranslationMaxGridPosition.X;
-            vector.Y = (vector.Y - this.MinGridPosition.Z) * this.TranslationMaxGridPosition.Z;
-            return vector;
+            return new Vector2
+            (
+                (vector.X - this.MinGridPosition.X) / this.CellSize,
+                (vector.Y - this.MinGridPosition.Z) / this.CellSize
+            );
         }
 
         /// <summary>
@@ -349,13 +346,11 @@ namespace LeagueSandbox.GameServer.Content.Navigation
         /// <returns>Normal coordinate space Vector2.</returns>
         public Vector2 TranslateFrmNavigationGrid(Vector2 vector)
         {
-            Vector2 ret = new Vector2
-            {
-                X = vector.X / this.TranslationMaxGridPosition.X + this.MinGridPosition.X,
-                Y = vector.Y / this.TranslationMaxGridPosition.Z + this.MinGridPosition.Z
-            };
-
-            return ret;
+            return new Vector2
+            (
+                vector.X * this.CellSize + this.MinGridPosition.X,
+                vector.Y * this.CellSize + this.MinGridPosition.Z
+            );
         }
 
         /// <summary>
@@ -437,7 +432,12 @@ namespace LeagueSandbox.GameServer.Content.Navigation
         {
             Vector3 minGridPos = MinGridPosition;
             // Because indices are from 0, we subtract a single cell's size from the maximums to prevent getting -1 cell index.
-            Vector3 maxGridPos = new Vector3(MaxGridPosition.X - (1 / TranslationMaxGridPosition.X), MaxGridPosition.Y, MaxGridPosition.Z - (1 / TranslationMaxGridPosition.Z));
+            Vector3 maxGridPos = new Vector3
+            (
+                (CellCountX - 1) * CellSize,
+                MaxGridPosition.Y,
+                (CellCountY - 1) * CellSize
+            );
 
             if (!translate)
             {
@@ -512,8 +512,8 @@ namespace LeagueSandbox.GameServer.Content.Navigation
             Vector2 trueOrigin = origin;
             if(!translate)
             {
-                stepX *= this.TranslationMaxGridPosition.X;
-                stepY *= this.TranslationMaxGridPosition.Z;
+                stepX /= CellSize;
+                stepY /= CellSize;
                 trueOrigin = TranslateFrmNavigationGrid(origin);
             }
 
@@ -543,7 +543,12 @@ namespace LeagueSandbox.GameServer.Content.Navigation
 
                 NavigationGridCell cell = Cells[i];
 
-                if (Extensions.DistanceSquaredToRectangle(TranslateFrmNavigationGrid(cell.Locator), 1.0f / this.TranslationMaxGridPosition.X, 1.0f / this.TranslationMaxGridPosition.Z, trueOrigin) <= radius * radius)
+                if (
+                    Extensions.DistanceSquaredToRectangle(
+                        TranslateFrmNavigationGrid(cell.Locator),
+                        CellSize, CellSize, trueOrigin
+                    ) <= radius * radius
+                )
                 {
                     cells.Add(cell);
                 }
