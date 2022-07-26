@@ -14,7 +14,6 @@ namespace MapScripts.Map11
     public class CLASSIC : IMapScript
     {
         public virtual MapScriptMetadata MapScriptMetadata { get; set; } = new MapScriptMetadata();
-        public virtual GlobalData GlobalData { get; set; } = new GlobalData();
         public bool HasFirstBloodHappened { get; set; } = false;
         public long NextSpawnTime { get; set; } = 90 * 1000;
         public string LaneMinionAI { get; set; } = "LaneMinionAI";

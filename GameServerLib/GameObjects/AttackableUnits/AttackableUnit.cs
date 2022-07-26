@@ -651,7 +651,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             {
                 if (!(obj is Monster))
                 {
-                    var champs = _game.ObjectManager.GetChampionsInRangeFromTeam(Position, _game.Map.MapScript.MapScriptMetadata.AIVars.EXPRadius, CustomConvert.GetEnemyTeam(Team), true);
+                    var champs = _game.ObjectManager.GetChampionsInRangeFromTeam(Position, GlobalData.ObjAIBaseVariables.ExpRadius2, CustomConvert.GetEnemyTeam(Team), true);
                     if (champs.Count > 0)
                     {
                         var expPerChamp = obj.Stats.ExpGivenOnDeath.Total / champs.Count;
@@ -1239,7 +1239,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// <returns>True/False.</returns>
         public bool HasBuff(string buffName)
         {
-            return BuffList != null && BuffList.Find(b => b.IsBuffSame(buffName)) != null;
+            return BuffList.Find(b => b.IsBuffSame(buffName)) != null;
         }
 
         /// <summary>

@@ -2,7 +2,7 @@
 
 namespace LeagueSandbox.GameServer.Content
 {
-    public static class GlobalData// : IGlobalData
+    public static class GlobalData
     {
         private static Dictionary<string, float> _constants;
         public static DefaultStatValues DefaultStatValues { get; private set; } = new DefaultStatValues();
@@ -56,7 +56,7 @@ namespace LeagueSandbox.GameServer.Content
             ObjAIBaseVariables.GoldRadius2 = GetFloat("ai_GoldRadius2", ObjAIBaseVariables.GoldRadius2);
             ObjAIBaseVariables.StartingGold = GetFloat("ai_StartingGold", ObjAIBaseVariables.StartingGold);
             ObjAIBaseVariables.DefaultPetReturnRadius = GetFloat("ai_DefaultPetReturnRadius", ObjAIBaseVariables.DefaultPetReturnRadius);
-            ObjAIBaseVariables.AmbientGoldDelay = GetFloat("ai_AmbientGoldDelay", ObjAIBaseVariables.AmbientGoldDelay);
+            ObjAIBaseVariables.AmbientGoldDelay = GetFloat("ai_AmbientGoldDelay", ObjAIBaseVariables.AmbientGoldDelay) * 1000.0f;
             ObjAIBaseVariables.AmbientGoldDelayFirstBlood = GetFloat("ai_AmbientGoldDelayFirstBlood", ObjAIBaseVariables.AmbientGoldDelayFirstBlood);
 
             AttackRangeVariables.ClosingAttackRangeModifier = GetFloat("ar_ClosingAttackRangeModifier", AttackRangeVariables.ClosingAttackRangeModifier);
@@ -90,11 +90,12 @@ namespace LeagueSandbox.GameServer.Content
             MinionEXPMods.BonusExpLaneLevelStart = GetInt("aiExp_bonusExpLaneLevelStart", MinionEXPMods.BonusExpLaneLevelStart);
             MinionEXPMods.BonusExpLaneLevelDeltaMin = GetInt("aiExp_bonusExpLaneLevelDeltaMin", MinionEXPMods.BonusExpLaneLevelDeltaMin);
 
-            ChampionVariables.AmbientGoldAmount = GetFloat("ai_AmbientGoldAmount", ChampionVariables.AmbientGoldAmount);
             ChampionVariables.AmbientGoldInterval = GetFloat("ai_AmbientGoldInterval", ChampionVariables.AmbientGoldInterval);
+            ChampionVariables.AmbientGoldAmount = GetFloat("ai_AmbientGoldAmount", ChampionVariables.AmbientGoldAmount) / (10 / ChampionVariables.AmbientGoldInterval) / 5;
+            ChampionVariables.AmbientGoldInterval *= 100.0f;
             ChampionVariables.DisableAmbientGoldWhileDead = GetBool("ai_DisableAmbientGoldWhileDead", ChampionVariables.DisableAmbientGoldWhileDead);
-            ChampionVariables.AmbientXPDelay = GetFloat("ai_AmbientXPDelay", ChampionVariables.AmbientXPDelay);
-            ChampionVariables.AmbientXPInterval = GetFloat("ai_AmbientXPInterval", ChampionVariables.AmbientXPInterval);
+            ChampionVariables.AmbientXPDelay = GetFloat("ai_AmbientXPDelay", ChampionVariables.AmbientXPDelay) * 1000.0f;
+            ChampionVariables.AmbientXPInterval = GetFloat("ai_AmbientXPInterval", ChampionVariables.AmbientXPInterval) * 1000.0f;
             ChampionVariables.AmbientXPAmount = GetFloat("ai_AmbientXPAmount", ChampionVariables.AmbientXPAmount);
             ChampionVariables.AmbientXPAmountTutorial = GetFloat("ai_AmbientXPAmountTutorial", ChampionVariables.AmbientXPAmountTutorial);
             ChampionVariables.DisableAmbientXPWhileDead = GetBool("ai_DisableAmbientXPWhileDead", ChampionVariables.DisableAmbientXPWhileDead);

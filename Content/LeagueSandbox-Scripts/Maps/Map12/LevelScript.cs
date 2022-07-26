@@ -17,17 +17,10 @@ namespace MapScripts.Map12
     {
         public MapScriptMetadata MapScriptMetadata { get; set; } = new MapScriptMetadata
         {
-            BaseGoldPerGoldTick = 1.7f,
             RecallSpellItemId = 2007,
             InitialLevel = 3,
-            AIVars = new AIVars
-            {
-                GoldRadius = 0.0f,
-                StartingGold = 1375.0f
-            }
         };
 
-        public virtual GlobalData GlobalData { get; set; } = new GlobalData();
         public bool HasFirstBloodHappened { get; set; } = false;
         public long NextSpawnTime { get; set; } = 60 * 1000;
         public string LaneMinionAI { get; set; } = "LaneMinionAI";

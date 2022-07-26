@@ -379,7 +379,7 @@ namespace LeagueSandbox.GameServer.Content
             string navgridName = "AIPath";
             if (!string.IsNullOrEmpty(map.MapScript.MapScriptMetadata.NavGridOverride))
             {
-                navgridName = _game.Map.MapScript.MapScriptMetadata.NavGridOverride;
+                navgridName = map.MapScript.MapScriptMetadata.NavGridOverride;
             }
 
             string navigationGridPath = $"{this.PackagePath}/AIMesh/Map{map.Id}/{navgridName}.aimesh_ngrid";

@@ -14,6 +14,7 @@ using LeagueSandbox.GameServer.Logging;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using log4net;
 using LeagueSandbox.GameServer.GameObjects.StatsNS;
+using LeagueSandbox.GameServer.Content;
 
 namespace LeagueSandbox.GameServer.API
 {
@@ -1157,19 +1158,32 @@ namespace LeagueSandbox.GameServer.API
             return new Pet(_game, owner, spell, cloned, position, buffName, lifeTime, stats, cloneInventory, showMinimapIfClone, disallowPlayerControl, doFade, AIScript);
         }
 
-        public static float GetPetReturnRadius()
+        public static float GetPetReturnRadius(Minion minion = null)
         {
-            return _game.Map.MapScript.MapScriptMetadata.AIVars.DefaultPetReturnRadius;
-        }
-
-        public static float GetPetReturnRadius(Minion minion)
-        {
-            if (minion is Pet pet)
+            if (minion != null && minion is Pet pet)
             {
                 return pet.GetReturnRadius();
             }
 
-            return GetPetReturnRadius();
+            return GlobalData.ObjAIBaseVariables.DefaultPetReturnRadius;
+        }
+
+        public static void IncreaseHealth(AttackableUnit unit, float ammount)
+        {
+            StatsModifier modifier = new StatsModifier();
+            modifier.HealthPoints.FlatBonus += ammount;
+            unit.AddStatModifier(modifier);
+            Heal(unit, ammount, false);
+        }
+
+        public static void Heal(AttackableUnit unit, float ammount, bool affectedByGW = true)
+        {
+            if(affectedByGW && unit.HasBuff("GrievousWound"))
+            {
+                ammount *= 0.5f;
+            }
+
+            unit.Stats.CurrentHealth += ammount;
         }
     }
 }

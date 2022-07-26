@@ -26,7 +26,7 @@ namespace LeagueSandbox.GameServer.Inventory
             }
 
             var sellPrice = i.TotalPrice * i.ItemData.SellBackModifier;
-            _owner.Stats.Gold += sellPrice;
+            _owner.AddGold(null, sellPrice, false);
 
             _owner.Inventory.RemoveItem(inventory.GetItemSlot(i), _owner);
             return true;

@@ -25,7 +25,8 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
             }
             else if (float.TryParse(split[1], out var gold))
             {
-                _playerManager.GetPeerInfo(userId).Champion.Stats.Gold += gold;
+                var ch = _playerManager.GetPeerInfo(userId).Champion;
+                ch.AddGold(ch, gold);
             }
         }
     }

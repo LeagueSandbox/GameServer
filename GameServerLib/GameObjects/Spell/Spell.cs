@@ -505,8 +505,8 @@ namespace LeagueSandbox.GameServer.GameObjects.SpellNS
                     index = 0;
                 }
 
-                float autoAttackTotalTime = CastInfo.Owner.CharData.GlobalCharData.AttackDelay * (1.0f + CastInfo.Owner.CharData.BasicAttacks[0].AttackDelayOffsetPercent);
-                CastInfo.DesignerCastTime = autoAttackTotalTime * (CastInfo.Owner.CharData.GlobalCharData.AttackDelayCastPercent + CastInfo.Owner.CharData.BasicAttacks[index].AttackDelayCastOffsetPercent);
+                float autoAttackTotalTime = GlobalData.GlobalCharacterDataConstants.AttackDelay * (1.0f + CastInfo.Owner.CharData.BasicAttacks[0].AttackDelayOffsetPercent);
+                CastInfo.DesignerCastTime = autoAttackTotalTime * (GlobalData.GlobalCharacterDataConstants.AttackDelayCastPercent + CastInfo.Owner.CharData.BasicAttacks[index].AttackDelayCastOffsetPercent);
 
                 if (CastInfo.IsAutoAttack)
                 {
@@ -725,8 +725,8 @@ namespace LeagueSandbox.GameServer.GameObjects.SpellNS
                     index = 0;
                 }
 
-                float autoAttackTotalTime = CastInfo.Owner.CharData.GlobalCharData.AttackDelay * (1.0f + CastInfo.Owner.CharData.BasicAttacks[0].AttackDelayOffsetPercent);
-                CastInfo.DesignerCastTime = autoAttackTotalTime * (CastInfo.Owner.CharData.GlobalCharData.AttackDelayCastPercent + CastInfo.Owner.CharData.BasicAttacks[index].AttackDelayCastOffsetPercent);
+                float autoAttackTotalTime = GlobalData.GlobalCharacterDataConstants.AttackDelay * (1.0f + CastInfo.Owner.CharData.BasicAttacks[0].AttackDelayOffsetPercent);
+                CastInfo.DesignerCastTime = autoAttackTotalTime * (GlobalData.GlobalCharacterDataConstants.AttackDelayCastPercent + CastInfo.Owner.CharData.BasicAttacks[index].AttackDelayCastOffsetPercent);
 
                 // TODO: Verify if this should be affected by cast variable.
                 if (CastInfo.IsAutoAttack)
@@ -1286,7 +1286,7 @@ namespace LeagueSandbox.GameServer.GameObjects.SpellNS
                 var cd = SpellData.Cooldown[CastInfo.SpellLevel];
                 if (Script.ScriptMetadata.CooldownIsAffectedByCDR)
                 {
-                    cd *= 1 - CastInfo.Owner.Stats.CooldownReduction.Total;
+                    cd *= 1 + CastInfo.Owner.Stats.CooldownReduction.Total;
                 }
                 return cd;
             }
@@ -1300,7 +1300,7 @@ namespace LeagueSandbox.GameServer.GameObjects.SpellNS
 
             if (Script.ScriptMetadata.CooldownIsAffectedByCDR)
             {
-                cd *= 1 - CastInfo.Owner.Stats.CooldownReduction.Total;
+                cd *= 1 + CastInfo.Owner.Stats.CooldownReduction.Total;
             }
 
             return cd;
@@ -1512,7 +1512,7 @@ namespace LeagueSandbox.GameServer.GameObjects.SpellNS
             {
                 if (!ignoreCDR)
                 {
-                    newCd *= (1 - CastInfo.Owner.Stats.CooldownReduction.Total);
+                    newCd *= 1 + CastInfo.Owner.Stats.CooldownReduction.Total;
                 }
 
                 _game.PacketNotifier.NotifyCHAR_SetCooldown(CastInfo.Owner, CastInfo.SpellSlot, newCd, GetCooldown());

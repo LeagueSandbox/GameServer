@@ -7,9 +7,10 @@ using GameServerCore.Domain;
 using System.Numerics;
 using System.Linq;
 using LeagueSandbox.GameServer.GameObjects;
-using            GameServerLib.GameObjects.AttackableUnits;
+using GameServerLib.GameObjects.AttackableUnits;
 using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
 using LeagueSandbox.GameServer.GameObjects.AttackableUnits.Buildings.AnimatedBuildings;
+using LeagueSandbox.GameServer.Content;
 
 namespace MapScripts.Map1
 {
@@ -110,7 +111,7 @@ namespace MapScripts.Map1
             LoadSpawnBarracks();
             LoadFountains();
         }
- 
+
         public static void OnMatchStart()
         {
             LoadShops();
@@ -313,7 +314,8 @@ namespace MapScripts.Map1
                 var lane = inhibitorObj.GetLaneID();
                 var position = new Vector2(inhibitorObj.CentralPoint.X, inhibitorObj.CentralPoint.Z);
                 var inhibitorStats = new Stats();
-                inhibitorStats.HealthPoints.BaseValue = 4000.0f;
+                inhibitorStats.HealthPoints.BaseValue = GlobalData.BarrackVariables.MaxHP;
+                inhibitorStats.Armor.BaseValue = GlobalData.BarrackVariables.Armor;
                 inhibitorStats.CurrentHealth = inhibitorStats.HealthPoints.BaseValue;
 
                 var inhibitor = CreateInhibitor(inhibitorObj.Name, InhibitorModels[teamId], position, teamId, lane, 214, 0, inhibitorStats);

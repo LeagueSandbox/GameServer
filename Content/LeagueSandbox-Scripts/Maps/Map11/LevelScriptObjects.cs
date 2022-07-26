@@ -11,6 +11,7 @@ using LeagueSandbox.GameServer.GameObjects;
 using            GameServerLib.GameObjects.AttackableUnits;
 using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
 using LeagueSandbox.GameServer.GameObjects.AttackableUnits.Buildings.AnimatedBuildings;
+using LeagueSandbox.GameServer.Content;
 
 namespace MapScripts.Map11
 {
@@ -382,7 +383,8 @@ namespace MapScripts.Map11
         public static void CreateInhib(string name, string model, Vector2 position, TeamId team, LaneID laneID)
         {
             var inhibitorStats = new Stats();
-            inhibitorStats.HealthPoints.BaseValue = 4000.0f;
+            inhibitorStats.HealthPoints.BaseValue = GlobalData.BarrackVariables.MaxHP;
+            inhibitorStats.Armor.BaseValue = GlobalData.BarrackVariables.Armor;
             inhibitorStats.CurrentHealth = inhibitorStats.HealthPoints.BaseValue;
             InhibitorList[team][laneID] = CreateInhibitor(name, model, position, team, laneID, 214, 0, inhibitorStats);
         }
