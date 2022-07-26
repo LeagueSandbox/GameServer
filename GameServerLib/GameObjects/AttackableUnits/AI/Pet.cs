@@ -1,4 +1,5 @@
 ﻿using System.Numerics;
+using LeagueSandbox.GameServer.Content;
 using LeagueSandbox.GameServer.GameObjects.SpellNS;
 using LeagueSandbox.GameServer.GameObjects.StatsNS;
 
@@ -48,7 +49,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             string AIScript = "Pet"
             ) : base(game, owner, position, model, name, 0, owner.Team, owner.SkinID, stats: stats, AIScript: AIScript)
         {
-            _returnRadius = _game.Map.MapScript.MapScriptMetadata.AIVars.DefaultPetReturnRadius;
+            _returnRadius = GlobalData.ObjAIBaseVariables.DefaultPetReturnRadius;
 
             SourceSpell = spell;
             LifeTime = lifeTime;

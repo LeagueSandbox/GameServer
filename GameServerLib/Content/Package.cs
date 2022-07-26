@@ -123,8 +123,9 @@ namespace LeagueSandbox.GameServer.Content
             // MapObjects
 
             // Define the full path to the room file which houses references to all objects.
-            var sceneDirectory = $"{GetContentTypePath(contentType)}/{mapName}/Scene";
-            var roomFilePath = $"{sceneDirectory}/room.dsc.json";
+            string mapFolder = $"{GetContentTypePath(contentType)}/{mapName}";
+            string sceneDirectory = $"{mapFolder}/Scene";
+            string roomFilePath = $"{sceneDirectory}/room.dsc.json";
 
             // Declare empty room variable.
             JArray mapObjects;
@@ -178,10 +179,9 @@ namespace LeagueSandbox.GameServer.Content
             }
 
             // EXPCurve, DeathTimes, and StatsProgression.
-
-            var expFile = new ContentFile();
-            var deathTimefile = new ContentFile();
-            var statProgressionFile = new ContentFile();
+            ContentFile expFile;
+            ContentFile deathTimefile;
+            ContentFile statProgressionFile;
             try
             {
                 var expFileName = "ExpCurve";
@@ -189,9 +189,9 @@ namespace LeagueSandbox.GameServer.Content
                 {
                     expFileName = _game.Map.MapScript.MapScriptMetadata.ExpCurveOverride;
                 }
-                expFile = (ContentFile)GetContentFileFromJson("Maps", expFileName, mapName);
-                deathTimefile = (ContentFile)GetContentFileFromJson("Maps", "DeathTimes", mapName);
-                statProgressionFile = (ContentFile)GetContentFileFromJson("Maps", "StatsProgression", mapName);
+                expFile = GetContentFileFromJson("Maps", expFileName, mapName);
+                deathTimefile = GetContentFileFromJson("Maps", "DeathTimes", mapName);
+                statProgressionFile = GetContentFileFromJson("Maps", "StatsProgression", mapName);
             }
             catch (ContentNotFoundException exception)
             {
@@ -239,8 +239,24 @@ namespace LeagueSandbox.GameServer.Content
                 }
             }
 
-            // SpawnBarracks (lane minion spawn positions)
+            //Map Constants
+            if (File.Exists($"{mapFolder}/Constants.json"))
+            {
+                string constantsText = File.ReadAllText($"{mapFolder}/Constants.json");
+                JObject serializedConstants = JsonConvert.DeserializeObject<JObject>(constantsText);
 
+                foreach (JProperty childToken in serializedConstants.Children())
+                {
+                    //TODO: Investigate if the strings in the file could be usefull for us (I doubt it)
+                    if (childToken.Value.Type == JTokenType.Float || childToken.Value.Type == JTokenType.Integer)
+                    {
+                        float asdhua = childToken.Value.Value<float>();
+                        toReturnMapData.MapConstants.Add(childToken.Name, asdhua);
+                    }
+                }
+            }
+
+            // SpawnBarracks (lane minion spawn positions)
             JObject spawnBarracks = new JObject();
             foreach (var file in Directory.GetFiles(sceneDirectory))
             {
@@ -363,7 +379,7 @@ namespace LeagueSandbox.GameServer.Content
             string navgridName = "AIPath";
             if (!string.IsNullOrEmpty(map.MapScript.MapScriptMetadata.NavGridOverride))
             {
-                navgridName = _game.Map.MapScript.MapScriptMetadata.NavGridOverride;
+                navgridName = map.MapScript.MapScriptMetadata.NavGridOverride;
             }
 
             string navigationGridPath = $"{this.PackagePath}/AIMesh/Map{map.Id}/{navgridName}.aimesh_ngrid";

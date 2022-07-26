@@ -13,16 +13,8 @@ namespace MapScripts.Map10
 {
     public class CLASSIC : IMapScript
     {
-        public MapScriptMetadata MapScriptMetadata { get; set; } = new MapScriptMetadata
-        {
-            BaseGoldPerGoldTick = 0.95f,
-            AIVars = new AIVars
-            {
-                StartingGold = 825.0f
-            }
-        };
+        public MapScriptMetadata MapScriptMetadata { get; set; } = new MapScriptMetadata();
 
-        public virtual GlobalData GlobalData { get; set; } = new GlobalData();
         public bool HasFirstBloodHappened { get; set; } = false;
         public long NextSpawnTime { get; set; } = 45 * 1000;
         public string LaneMinionAI { get; set; } = "LaneMinionAI";

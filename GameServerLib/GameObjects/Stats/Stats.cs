@@ -127,7 +127,7 @@ namespace LeagueSandbox.GameServer.GameObjects.StatsNS
             ArmorPerLevel = charData.ArmorPerLevel;
             AttackDamage.BaseValue = charData.BaseDamage;
             // AttackSpeedFlat = GlobalAttackSpeed / CharAttackDelay
-            AttackSpeedFlat = 1.0f / charData.GlobalCharData.AttackDelay / (1.0f + charData.AttackDelayOffsetPercent);
+            AttackSpeedFlat = 1.0f / GlobalData.GlobalCharacterDataConstants.AttackDelay / (1.0f + charData.AttackDelayOffsetPercent);
             CriticalDamage.BaseValue = charData.CritDamageBonus;
             ExpGivenOnDeath.BaseValue = charData.ExpGivenOnDeath;
             GoldGivenOnDeath.BaseValue = charData.GoldGivenOnDeath;

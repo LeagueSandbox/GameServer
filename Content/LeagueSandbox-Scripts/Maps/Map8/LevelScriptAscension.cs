@@ -8,7 +8,7 @@ using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 using static LeagueSandbox.GameServer.API.ApiMapFunctionManager;
 using static LeagueSandbox.GameServer.API.ApiGameEvents;
 using LeagueSandbox.GameServer.API;
-using            GameServerLib.GameObjects.AttackableUnits;
+using GameServerLib.GameObjects.AttackableUnits;
 using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
 
 namespace MapScripts.Map8
@@ -20,19 +20,11 @@ namespace MapScripts.Map8
             MinionSpawnEnabled = false,
             OverrideSpawnPoints = true,
             RecallSpellItemId = 2007,
-            BaseGoldPerGoldTick = 5.0f,
             InitialLevel = 3,
-            AIVars = new AIVars
-            {
-                GoldRadius = 0.0f,
-                StartingGold = 1300.0f,
-                AmbientGoldDelay = 45.0f
-            },
             NavGridOverride = "AIPathASCENSION",
             ExpCurveOverride = "ExpCurveASCENSION"
         };
 
-        public virtual GlobalData GlobalData { get; set; } = new GlobalData();
         public bool HasFirstBloodHappened { get; set; } = false;
         public long NextSpawnTime { get; set; } = 90 * 1000;
         public string LaneMinionAI { get; set; } = "LaneMinionAI";
@@ -87,11 +79,14 @@ namespace MapScripts.Map8
 
         public void Init(Dictionary<GameObjectTypes, List<MapObject>> mapObjects)
         {
-            //TODO: Implement Dynamic Minion spawn mechanics for Map8
-            //SpawnEnabled = map.IsMinionSpawnEnabled();
             AddSurrender(1200000.0f, 300000.0f, 30.0f);
             CreateLevelProps.CreateProps();
             LevelScriptObjectsAscension.LoadObjects(mapObjects);
+            GlobalData.ObjAIBaseVariables.StartingGold = 1300.0f;
+            GlobalData.ObjAIBaseVariables.AmbientGoldDelay = 45000.0f;
+            GlobalData.ObjAIBaseVariables.GoldRadius2 = 0.0f;
+            GlobalData.ChampionVariables.AmbientGoldAmount = 5.0f;
+            GlobalData.ChampionVariables.AmbientXPAmount = 10.0f;
         }
 
         Dictionary<TeamId, float> TeamScores = new Dictionary<TeamId, float> { { TeamId.TEAM_BLUE, 0.0f }, { TeamId.TEAM_PURPLE, 0.0f } };

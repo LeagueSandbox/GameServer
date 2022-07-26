@@ -17,8 +17,6 @@ namespace LeagueSandbox.GameServer.Content
 
     public class CharData
     {
-        public GlobalData GlobalCharData { get; private set; } = new GlobalData();
-
         public float AcquisitionRange { get; private set; } = 475;
         public bool AllyCanUse { get; private set; } = false;
         public bool AlwaysVisible { get; private set; } = false;

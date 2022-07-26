@@ -179,9 +179,11 @@ namespace LeagueSandbox.GameServer
         }
     }
 }
+
 public class MapData
 {
     public int Id { get; private set; }
+    public Dictionary<string, float> MapConstants { get; private set; }
     /// <summary>
     /// Collection of MapObjects present within a map's room file, with the key being the name present in the room file. Refer to <see cref="MapObject"/>.
     /// </summary>
@@ -211,6 +213,7 @@ public class MapData
     public MapData(int mapId)
     {
         Id = mapId;
+        MapConstants = new Dictionary<string, float>();
         MapObjects = new Dictionary<string, MapObject>();
         SpawnBarracks = new Dictionary<string, MapObject>();
         ExpCurve = new List<float>();
