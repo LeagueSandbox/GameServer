@@ -2,6 +2,7 @@
 using LeagueSandbox.GameServer.GameObjects;
 using System.Collections.Generic;
 using System.IO;
+using System.Numerics;
 
 namespace LeagueSandbox.GameServer.Content.Navigation
 {
@@ -154,6 +155,11 @@ namespace LeagueSandbox.GameServer.Content.Navigation
         public static int Distance(NavigationGridCell a, NavigationGridCell b)
         {
             return NavigationGridLocator.Distance(a.Locator, b.Locator);
+        }
+
+        public Vector2 GetCenter()
+        {
+            return new Vector2(Locator.X + 0.5f, Locator.Y + 0.5f);
         }
     }
 }

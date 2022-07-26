@@ -179,13 +179,8 @@ namespace LeagueSandbox.GameServer.Content.Navigation
         /// <param name="to">Point that the path ends at.</param>
         /// <param name="distanceThreshold">Amount of distance away from terrain that the path should be.</param>
         /// <returns>List of points forming a path in order: from -> to</returns>
-        public List<Vector2> GetPath(Vector2 from, Vector2 to, float distanceThreshold = 0, bool track = false)
+        public List<Vector2> GetPath(Vector2 from, Vector2 to, float distanceThreshold = 0)
         {
-            if(track)
-            {
-
-            }
-
             NavigationGridCell cellFrom = GetCell(from, true);
             NavigationGridCell goal = GetClosestWalkableCell(to, distanceThreshold, true);
 
@@ -233,7 +228,7 @@ namespace LeagueSandbox.GameServer.Content.Navigation
                     }
 
                     // not walkable - skip
-                    Vector2 cellCenter = new Vector2(neighborCell.Locator.X + 0.5f, neighborCell.Locator.Y + 0.5f);
+                    Vector2 cellCenter = neighborCell.GetCenter();
                     if (!IsWalkable(cellCenter, distanceThreshold, false))
                     {
                         closedList.Add(neighborCell.ID);
@@ -484,7 +479,7 @@ namespace LeagueSandbox.GameServer.Content.Navigation
 
         bool IsWalkable(NavigationGridCell cell, float checkRadius)
         {
-            Vector2 cellCenter = new Vector2(cell.Locator.X + 0.5f, cell.Locator.Y + 0.5f);
+            Vector2 cellCenter = cell.GetCenter();
             return IsWalkable(cellCenter, checkRadius, false);
         }
 
@@ -824,7 +819,7 @@ namespace LeagueSandbox.GameServer.Content.Navigation
         /// <param name="location">Vector2 position to start the check at.</param>
         /// <param name="distanceThreshold">Amount of distance away from terrain the exit should be.</param>
         /// <returns>Vector2 position which can be pathed on.</returns>
-        public Vector2 GetClosestTerrainExit(Vector2 location, float distanceThreshold = 0, bool track = false)
+        public Vector2 GetClosestTerrainExit(Vector2 location, float distanceThreshold = 0)
         {
             double angle = Math.PI / 4;
 
@@ -854,10 +849,7 @@ namespace LeagueSandbox.GameServer.Content.Navigation
             {
                 if(IsWalkable(cell, distanceThreshold))
                 {
-                    float dist = Vector2.DistanceSquared(
-                        new Vector2(cell.Locator.X, cell.Locator.Y),
-                        coords
-                    );
+                    float dist = Vector2.DistanceSquared(cell.GetCenter(), coords);
                     if(closestCell == null || dist < closestDist)
                     {
                         closestCell = cell;
