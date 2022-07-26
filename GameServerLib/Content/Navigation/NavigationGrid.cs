@@ -724,6 +724,19 @@ namespace LeagueSandbox.GameServer.Content.Navigation
         }
 
         /// <summary>
+        /// Whether or not there is anything blocking pathing or vision from the starting position to the ending position. (depending on checkVision).
+        /// </summary>
+        /// <param name="startPos">Position to start the check from.</param>
+        /// <param name="endPos">Position to end the check at.</param>
+        /// <param name="checkVision">True = Check if vision is blocked. False = Check if pathing is blocked.</param>
+        /// <returns>True/False.</returns>
+        public KeyValuePair<bool, Vector2> IsAnythingBetween(Vector2 startPos, Vector2 endPos, bool checkVision = false)
+        {
+            KeyValuePair<bool, Vector2> result = CastRay(startPos, endPos, !checkVision, checkVision);
+            return new KeyValuePair<bool, Vector2>(!result.Key, result.Value);
+        }
+
+        /// <summary>
         /// Whether or not there is anything blocking the two given GameObjects from either seeing eachother or pathing straight towards eachother (depending on checkVision).
         /// </summary>
         /// <param name="a">GameObject to start the check from.</param>
