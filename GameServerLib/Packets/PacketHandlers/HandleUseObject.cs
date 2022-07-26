@@ -27,7 +27,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 
             champion.SetSpell(target.CharData.HeroUseSpell, (byte)SpellSlotType.UseSpellSlot, true);
 
-            var s = champion.GetSpell((byte)SpellSlotType.UseSpellSlot);
+            var s = champion.Spells[(short)SpellSlotType.UseSpellSlot];
             var ownerCastingSpell = champion.GetCastSpell();
 
             // Instant cast spells can be cast during other spell casts.

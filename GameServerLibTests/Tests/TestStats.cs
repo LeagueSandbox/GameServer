@@ -33,11 +33,11 @@ namespace LeagueSandbox.GameServerTests.Tests
         {
             var stats = new Stats();
 
-            Assert.AreEqual(0, stats.Level);
+            Assert.AreEqual(1, stats.Level);
 
             stats.LevelUp();
 
-            Assert.AreEqual(1, stats.Level);
+            Assert.AreEqual(2, stats.Level);
 
             Assert.AreEqual(0, stats.AttackDamage.BaseValue);
             Assert.AreEqual(0, stats.Armor.BaseValue);
@@ -57,15 +57,15 @@ namespace LeagueSandbox.GameServerTests.Tests
 
             stats.LevelUp();
 
-            Assert.AreEqual(2, stats.Level);
+            Assert.AreEqual(3, stats.Level);
 
-            Assert.AreEqual(1, stats.AttackDamage.BaseValue);
-            Assert.AreEqual(2, stats.Armor.BaseValue);
-            Assert.AreEqual(3, stats.HealthPoints.BaseValue);
-            Assert.AreEqual(4, stats.HealthRegeneration.BaseValue);
-            Assert.AreEqual(5, stats.MagicResist.BaseValue);
-            Assert.AreEqual(6, stats.ManaPoints.BaseValue);
-            Assert.AreEqual(7, stats.ManaRegeneration.BaseValue);
+            Assert.AreEqual(stats.GetLevelUpStatValue(1), stats.AttackDamage.BaseValue);
+            Assert.AreEqual(stats.GetLevelUpStatValue(2), stats.Armor.BaseValue);
+            Assert.AreEqual(stats.GetLevelUpStatValue(3), stats.HealthPoints.BaseValue);
+            Assert.AreEqual(stats.GetLevelUpStatValue(4), stats.HealthRegeneration.BaseValue);
+            Assert.AreEqual(stats.GetLevelUpStatValue(5), stats.MagicResist.BaseValue);
+            Assert.AreEqual(stats.GetLevelUpStatValue(6), stats.ManaPoints.BaseValue);
+            Assert.AreEqual(stats.GetLevelUpStatValue(7), stats.ManaRegeneration.BaseValue);
         }
 
         [TestMethod]

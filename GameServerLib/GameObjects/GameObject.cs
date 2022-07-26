@@ -164,7 +164,7 @@ namespace LeagueSandbox.GameServer.GameObjects
         /// </summary>
         public virtual float GetHeight()
         {
-            return _game.Map.NavigationGrid.GetHeightAtLocation(Position.X, Position.Y);
+            return _game.Map.NavigationGrid.GetHeightAtLocation(Position);
         }
 
         /// <summary>

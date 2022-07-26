@@ -85,6 +85,7 @@ namespace LeagueSandbox.GameServer.GameObjects.StatsNS
 
         public Stats()
         {
+            Level = 1;
             SpellCostReduction = 0;
             ManaCost = new float[64];
             ActionState = ActionState.CAN_ATTACK | ActionState.CAN_CAST | ActionState.CAN_MOVE | ActionState.TARGETABLE;
@@ -126,7 +127,7 @@ namespace LeagueSandbox.GameServer.GameObjects.StatsNS
             ArmorPerLevel = charData.ArmorPerLevel;
             AttackDamage.BaseValue = charData.BaseDamage;
             // AttackSpeedFlat = GlobalAttackSpeed / CharAttackDelay
-            AttackSpeedFlat = (1.0f / charData.GlobalCharData.AttackDelay) / (1.0f + charData.AttackDelayOffsetPercent[0]);
+            AttackSpeedFlat = 1.0f / charData.GlobalCharData.AttackDelay / (1.0f + charData.AttackDelayOffsetPercent);
             CriticalDamage.BaseValue = charData.CritDamageBonus;
             ExpGivenOnDeath.BaseValue = charData.ExpGivenOnDeath;
             GoldGivenOnDeath.BaseValue = charData.GoldGivenOnDeath;
@@ -166,7 +167,7 @@ namespace LeagueSandbox.GameServer.GameObjects.StatsNS
             MagicPenetration.ApplyStatModifier(modifier.MagicPenetration);
             ManaPoints.ApplyStatModifier(modifier.ManaPoints);
             ManaRegeneration.ApplyStatModifier(modifier.ManaRegeneration);
-            
+
             if (modifier.MoveSpeed.PercentBonus < 0)
             {
                 _slows.Add(modifier.MoveSpeed.PercentBonus);
@@ -203,7 +204,7 @@ namespace LeagueSandbox.GameServer.GameObjects.StatsNS
             MagicPenetration.RemoveStatModifier(modifier.MagicPenetration);
             ManaPoints.RemoveStatModifier(modifier.ManaPoints);
             ManaRegeneration.RemoveStatModifier(modifier.ManaRegeneration);
-            
+
             if (modifier.MoveSpeed.PercentBonus < 0)
             {
                 _slows.Remove(modifier.MoveSpeed.PercentBonus);
@@ -263,27 +264,25 @@ namespace LeagueSandbox.GameServer.GameObjects.StatsNS
         public void LevelUp()
         {
             Level++;
-            if(Level > 1)
-            {
-                StatsModifier statsLevelUp = new StatsModifier();
-                statsLevelUp.HealthPoints.BaseValue = HealthPerLevel;
-                statsLevelUp.ManaPoints.BaseValue = ManaPerLevel;
-                statsLevelUp.AttackDamage.BaseValue = AttackDamagePerLevel.BaseValue;
-                statsLevelUp.AttackDamage.FlatBonus= AttackDamagePerLevel.FlatBonus;
-                statsLevelUp.Armor.BaseValue = ArmorPerLevel;
-                statsLevelUp.MagicResist.BaseValue = MagicResistPerLevel;
-                statsLevelUp.HealthRegeneration.BaseValue = HealthRegenerationPerLevel;
-                statsLevelUp.ManaRegeneration.BaseValue = ManaRegenerationPerLevel;
-                if (Level > 1)
-                {
-                    statsLevelUp.AttackSpeed.PercentBaseBonus = GrowthAttackSpeed / 100.0f;
-                }
-                AddModifier(statsLevelUp);
+            StatsModifier statsLevelUp = new StatsModifier();
+            statsLevelUp.HealthPoints.BaseValue = GetLevelUpStatValue(HealthPerLevel);
+            statsLevelUp.ManaPoints.BaseValue = GetLevelUpStatValue(ManaPerLevel);
+            statsLevelUp.AttackDamage.BaseValue = GetLevelUpStatValue(AttackDamagePerLevel.BaseValue);
+            statsLevelUp.AttackDamage.FlatBonus = GetLevelUpStatValue(AttackDamagePerLevel.FlatBonus);
+            statsLevelUp.Armor.BaseValue = GetLevelUpStatValue(ArmorPerLevel);
+            statsLevelUp.MagicResist.BaseValue = GetLevelUpStatValue(MagicResistPerLevel);
+            statsLevelUp.HealthRegeneration.BaseValue = GetLevelUpStatValue(HealthRegenerationPerLevel);
+            statsLevelUp.ManaRegeneration.BaseValue = GetLevelUpStatValue(ManaRegenerationPerLevel);
+            statsLevelUp.AttackSpeed.PercentBaseBonus = GetLevelUpStatValue(GrowthAttackSpeed / 100.0f);
+            AddModifier(statsLevelUp);
 
-                //Check if these are correct
-                CurrentHealth = HealthPoints.Total / (HealthPoints.Total - HealthPerLevel) * CurrentHealth;
-                CurrentMana = ManaPoints.Total / (ManaPoints.Total - ManaPerLevel) * CurrentMana;
-            }
+            CurrentHealth += statsLevelUp.HealthPoints.BaseValue;
+            CurrentMana += statsLevelUp.ManaPoints.BaseValue;
+        }
+
+        public float GetLevelUpStatValue(float value)
+        {
+            return value * (0.65f + 0.035f * Level);
         }
 
         public bool GetSpellEnabled(byte id)
@@ -348,7 +347,7 @@ namespace LeagueSandbox.GameServer.GameObjects.StatsNS
             }
 
             float mitigationPercent = 100 / (100 + stat);
-            
+
             if (stat < 0)
             {
                 mitigationPercent = 2 - mitigationPercent;

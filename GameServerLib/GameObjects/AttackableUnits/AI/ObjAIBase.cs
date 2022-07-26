@@ -27,6 +27,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         private float _autoAttackCurrentCooldown;
         private bool _skipNextAutoAttack;
         private Spell _castingSpell;
+        private Spell _lastAutoAttack;
         private Random _random = new Random();
         protected ItemManager _itemManager;
         protected AIState _aiState = AIState.AI_IDLE;
@@ -206,12 +207,12 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
                 // BasicAttackNormalSlots & BasicAttackCriticalSlots
                 // 64 - 72 & 73 - 81
-                for (short i = 0; i < CharData.AttackNames.Length; i++)
+                for (short i = 0; i < CharData.BasicAttacks.Count; i++)
                 {
-                    if (!string.IsNullOrEmpty(CharData.AttackNames[i]))
+                    if (!string.IsNullOrEmpty(CharData.BasicAttacks[i].Name))
                     {
                         int slot = i + (int)SpellSlotType.BasicAttackNormalSlots;
-                        Spells[(byte)slot] = new Spell(game, this, CharData.AttackNames[i], (byte)slot);
+                        Spells[(byte)slot] = new Spell(game, this, CharData.BasicAttacks[i].Name, (byte)slot);
                     }
                 }
 
@@ -227,7 +228,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             {
                 AIScript.OnActivate(this);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 _logger.Error(null, e);
             }
@@ -244,7 +245,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                     )
                 );
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 _logger.Error(null, e);
             }
@@ -673,40 +674,47 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         /// <returns>Random auto attack spell.</returns>
         public Spell GetNewAutoAttack()
         {
+            List<Spell> autoAttackSpells = new List<Spell>();
+            Spell toCast;
             if (IsNextAutoCrit)
             {
-                // TODO: Verify if we want these explicitly defined instead of taken via iteration of all spells.
-                var critAttackSpells = Spells.Where(s =>
+                for (short i = (short)BasicAttackTypes.BASICATTACK_CRITICAL_SLOT1; i <= (short)BasicAttackTypes.BASICATTACK_CRITICAL_LAST_SLOT; i++)
                 {
-                    if (s.Key - 64 >= 9 && s.Key - 64 < 18)
+                    if (CharData.BasicAttacks[i - 64].Probability > 0.0f && Spells.TryGetValue(i, out toCast))
                     {
-                        if (CharData.AttackProbabilities[s.Key - 64] > 0.0f)
-                        {
-                            return true;
-                        }
-                    }
-                    return false;
-                });
-                return critAttackSpells.ElementAt(_random.Next(0, Math.Max(0, critAttackSpells.Count() - 1))).Value;
-            }
-            // TODO: Verify if we want these explicitly defined instead of taken via iteration of all spells.
-            var basicAttackSpells = Spells.Where(s =>
-            {
-                if (s.Key - 64 >= 0 && s.Key - 64 <= 9)
-                {
-                    if (CharData.AttackProbabilities[s.Key - 64] > 0.0f)
-                    {
-                        return true;
+                        autoAttackSpells.Add(toCast);
                     }
                 }
-                return false;
-            });
-            return basicAttackSpells.ElementAt(_random.Next(0, Math.Max(0, basicAttackSpells.Count() - 1))).Value;
-        }
+            }
+            else
+            {
+                for (short i = (short)BasicAttackTypes.BASIC_ATTACK_TYPES_FIRST_SLOT; i <= (short)BasicAttackTypes.BASICATTACK_NORMAL_LAST_SLOT; i++)
+                {
+                    if (CharData.BasicAttacks[i - 64].Probability > 0.0f && Spells.TryGetValue(i, out toCast))
+                    {
+                        autoAttackSpells.Add(toCast);
+                    }
+                }
+            }
 
-        public Spell GetSpell(byte slot)
-        {
-            return Spells[slot];
+            autoAttackSpells.Remove(_lastAutoAttack);
+
+            if (autoAttackSpells.Count == 0)
+            {
+                BasicAttackTypes type = BasicAttackTypes.BASIC_ATTACK_TYPES_FIRST_SLOT;
+                if (IsNextAutoCrit)
+                {
+                    type = BasicAttackTypes.BASICATTACK_CRITICAL_SLOT1;
+                }
+                toCast = Spells[(short)type];
+            }
+            else
+            {
+                toCast = autoAttackSpells[_random.Next(0, autoAttackSpells.Count)];
+            }
+            _lastAutoAttack = toCast;
+
+            return toCast;
         }
 
         public Spell GetSpell(string name)
@@ -1058,7 +1066,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             {
                 CharScript.OnUpdate(diff);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 _logger.Error(null, e);
             }
@@ -1069,7 +1077,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 {
                     AIScript.OnUpdate(diff);
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
                     _logger.Error(null, e);
                 }
@@ -1098,7 +1106,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 SetPet(null);
             }
         }
-        
+
         public override void LateUpdate(float diff)
         {
             // Stop targeting an untargetable unit.
@@ -1115,7 +1123,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         public override void TakeDamage(DamageData damageData, DamageResultType damageText, IEventSource sourceScript = null)
         {
             base.TakeDamage(damageData, damageText, sourceScript);
-            
+
             var attacker = damageData.Attacker;
             var objects = _game.ObjectManager.GetObjects();
             foreach (var it in objects)
@@ -1137,7 +1145,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                         {
                             u.AIScript.OnCallForHelp(attacker, this);
                         }
-                        catch(Exception e)
+                        catch (Exception e)
                         {
                             _logger.Error(null, e);
                         }
