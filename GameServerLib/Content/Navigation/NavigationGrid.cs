@@ -798,7 +798,7 @@ namespace LeagueSandbox.GameServer.Content.Navigation
                     if (checkDistance > 0f)
                     {
                         // if none are walkable, then the path is blocked.
-                        if (!IsWalkable(GetCell(new Vector2(x1, y1), false), checkDistance))
+                        if (!IsWalkable(new Vector2(x1, y1), checkDistance, false))
                         {
                             return true;
                         }
