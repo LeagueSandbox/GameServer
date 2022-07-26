@@ -2,8 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using GameServerCore;
-using GameServerCore.Content;
-using Priority_Queue;
 using Vector2 = System.Numerics.Vector2;
 using System.Numerics;
 using GameServerLib.Extensions;
@@ -248,7 +246,7 @@ namespace LeagueSandbox.GameServer.Content.Navigation
                     if(neighborCell.ID != goal.ID)
                     {
                         // not walkable - skip
-                        cellCoord = new Vector2(neighborCell.Locator.X + 0.5f, neighborCell.Locator.Y + 0.5f);;
+                        cellCoord = new Vector2(neighborCell.Locator.X + 0.5f, neighborCell.Locator.Y + 0.5f);
                         if (!IsWalkable(cellCoord, distanceThreshold, false))
                         {
                             closedList.Add(neighborCell.ID);

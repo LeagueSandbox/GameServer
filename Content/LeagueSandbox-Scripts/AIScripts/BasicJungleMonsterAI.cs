@@ -60,7 +60,7 @@ namespace AIScripts
                 if (campMonster.AIScript is BasicJungleMonsterAI basicJungleScript && basicJungleScript.isInCombat)
                 {
                     campMonster.SetTargetUnit(null);
-                    campMonster.SetMovementTarget(basicJungleScript.initialPosition);
+                    campMonster.SetPathTrueEnd(basicJungleScript.initialPosition);
                     campMonster.Stats.CurrentHealth = campMonster.Stats.HealthPoints.Total;
                     basicJungleScript.isInCombat = false;
                 }

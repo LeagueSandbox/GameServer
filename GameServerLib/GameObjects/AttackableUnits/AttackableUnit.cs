@@ -93,8 +93,8 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         {
             get { return Waypoints[CurrentWaypointKey]; }
         }
-        public bool HasMovementTarget { get; private set; } = false;
-        public Vector2 MovementTargetPosition { get; private set; }
+        public bool PathHasTrueEnd { get; private set; } = false;
+        public Vector2 PathTrueEnd { get; private set; }
 
         /// <summary>
         /// Status effects enabled on this unit. Refer to StatusFlags enum.
@@ -969,20 +969,20 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             return false;
         }
 
-        public bool MovementTargetIs(Vector2 location)
+        public bool PathTrueEndIs(Vector2 location)
         {
-            return HasMovementTarget && MovementTargetPosition == location;
+            return PathHasTrueEnd && PathTrueEnd == location;
         }
 
-        public bool SetMovementTarget(Vector2 location)
+        public bool SetPathTrueEnd(Vector2 location)
         {
-            if(MovementTargetIs(location))
+            if(PathTrueEndIs(location))
             {
                 return true;
             }
 
-            HasMovementTarget = true;
-            MovementTargetPosition = location;
+            PathHasTrueEnd = true;
+            PathTrueEnd = location;
 
             if(CanChangeWaypoints())
             {
@@ -990,8 +990,8 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                 var path = nav.GetPath(Position, location, PathfindingRadius);
                 if(path != null)
                 {
-                    SetWaypoints(path); // resets `HasMovementTarget`
-                    HasMovementTarget = true;
+                    SetWaypoints(path); // resets `PathHasTrueEnd`
+                    PathHasTrueEnd = true;
                     return true;
                 }
             }
@@ -1006,7 +1006,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             Waypoints = new List<Vector2> { Position };
             CurrentWaypointKey = 1;
 
-            HasMovementTarget = false;
+            PathHasTrueEnd = false;
         }
 
         /// <summary>
@@ -1037,7 +1037,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             Waypoints = newWaypoints;
             CurrentWaypointKey = 1;
 
-            HasMovementTarget = false;
+            PathHasTrueEnd = false;
 
             return true;
         }
