@@ -18,16 +18,9 @@ namespace MapScripts.Map8
             MinionSpawnEnabled = false,
             OverrideSpawnPoints = true,
             RecallSpellItemId = 2005,
-            BaseGoldPerGoldTick = 2.8f,
             InitialLevel = 3,
-            AIVars = new AIVars
-            {
-                GoldRadius = 0.0f,
-                StartingGold = 1375.0f
-            }
         };
 
-        public virtual GlobalData GlobalData { get; set; } = new GlobalData();
         public bool HasFirstBloodHappened { get; set; } = false;
         public long NextSpawnTime { get; set; } = 90 * 1000;
         public string LaneMinionAI { get; set; } = "LaneMinionAI";

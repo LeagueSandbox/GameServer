@@ -22,7 +22,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
         public override bool HandlePacket(int userId, MovementRequest req)
         {
             var peerInfo = _playerManager.GetPeerInfo(userId);
-            if (peerInfo == null)
+            if (peerInfo == null || req == null)
             {
                 return true;
             }

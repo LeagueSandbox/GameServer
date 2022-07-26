@@ -63,28 +63,38 @@ namespace LeagueSandbox.GameServer.Inventory
             RecipeItem2 = file.GetInt("Data", "RecipeItem2", -1);
             RecipeItem3 = file.GetInt("Data", "RecipeItem3", -1);
             RecipeItem4 = file.GetInt("Data", "RecipeItem4", -1);
-            Armor.FlatBonus = file.GetFloat("Data", "FlatArmorMod");
-            Armor.PercentBonus = file.GetFloat("Data", "PercentArmorMod");
-            CriticalChance.FlatBonus = file.GetFloat("Data", "FlatCritChanceMod");
-            HealthPoints.FlatBonus = file.GetFloat("Data", "FlatHPPoolMod");
-            HealthPoints.PercentBonus = file.GetFloat("Data", "PercentHPPoolMod");
-            ManaPoints.FlatBonus = file.GetFloat("Data", "FlatMPPoolMod");
-            ManaPoints.PercentBonus = file.GetFloat("Data", "PercentMPPoolMod");
+
             AbilityPower.FlatBonus = file.GetFloat("Data", "FlatMagicDamageMod");
             AbilityPower.PercentBonus = file.GetFloat("Data", "PercentMagicDamageMod");
-            MagicPenetration.FlatBonus = file.GetFloat("Data", "FlatMagicPenetrationMod");
-            MoveSpeed.FlatBonus = file.GetFloat("Data", "FlatMovementSpeedMod");
-            MoveSpeed.PercentBonus = file.GetFloat("Data", "PercentMovementSpeedMod");
+            
+            Armor.FlatBonus = file.GetFloat("Data", "FlatArmorMod");
+            Armor.PercentBonus = file.GetFloat("Data", "PercentArmorMod");
+            
             AttackDamage.FlatBonus = file.GetFloat("Data", "FlatPhysicalDamageMod");
             AttackDamage.PercentBonus = file.GetFloat("Data", "PercentPhysicalDamageMod");
-            MagicResist.FlatBonus = file.GetFloat("Data", "FlatSpellBlockMod");
-            MagicResist.PercentBonus = file.GetFloat("Data", "PercentSpellBlockMod");
             AttackSpeed.FlatBonus = file.GetFloat("Data", "PercentAttackSpeedMod");
-            HealthRegeneration.PercentBonus = file.GetFloat("Data", "PercentBaseHPRegenMod");
-            ManaRegeneration.PercentBonus = file.GetFloat("Data", "PercentBaseMPRegenMod");
+
+            CriticalChance.FlatBonus = file.GetFloat("Data", "FlatCritChanceMod");
             CriticalDamage.FlatBonus = file.GetFloat("Data", "FlatCritDamageMod");
             CriticalDamage.PercentBonus = file.GetFloat("Data", "PercentCritDamageMod");
+
+            HealthPoints.FlatBonus = file.GetFloat("Data", "FlatHPPoolMod");
+            HealthPoints.PercentBonus = file.GetFloat("Data", "PercentHPPoolMod");
+            HealthRegeneration.PercentBonus = file.GetFloat("Data", "PercentBaseHPRegenMod");
+            
             LifeSteal.FlatBonus = file.GetFloat("Data", "PercentLifeStealMod");
+            
+            ManaPoints.FlatBonus = file.GetFloat("Data", "FlatMPPoolMod");
+            ManaPoints.PercentBonus = file.GetFloat("Data", "PercentMPPoolMod");
+            ManaRegeneration.PercentBonus = file.GetFloat("Data", "PercentBaseMPRegenMod");
+            
+            MagicPenetration.FlatBonus = file.GetFloat("Data", "FlatMagicPenetrationMod");
+            MagicResist.FlatBonus = file.GetFloat("Data", "FlatSpellBlockMod");
+            MagicResist.PercentBonus = file.GetFloat("Data", "PercentSpellBlockMod");
+            
+            MoveSpeed.FlatBonus = file.GetFloat("Data", "FlatMovementSpeedMod");
+            MoveSpeed.PercentBonus = file.GetFloat("Data", "PercentMovementSpeedMod");
+            
 
             //itemInfo.SafeGetFloat("Data", "PercentEXPBonus"); // TODO
 

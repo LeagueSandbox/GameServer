@@ -47,7 +47,7 @@ namespace LeagueSandbox.GameServer.GameObjects.StatsNS
             UpdateFloat(Stats.AttackSpeedMultiplier.Total, 1, 19); //mAttackSpeedMod
             UpdateFloat(Stats.Range.FlatBonus, 1, 20); //mFlatCastRangeMod
             // TODO: Find out why a negative value is required for ability cooldowns to display properly.
-            UpdateFloat(-Stats.CooldownReduction.Total, 1, 21); //mPercentCooldownMod
+            UpdateFloat(Stats.CooldownReduction.Total, 1, 21); //mPercentCooldownMod
             // UpdateFloat(Stats.PassiveCooldownEndTime, 1, 22); //mPassiveCooldownEndTime
             // UpdateFloat(Stats.PassiveCooldownTotalTime, 1, 23); //mPassiveCooldownTotalTime
             UpdateFloat(Stats.ArmorPenetration.FlatBonus, 1, 24); //mFlatArmorPenetration

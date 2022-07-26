@@ -12,7 +12,6 @@ namespace MapScripts
     {
         public MapScriptMetadata MapScriptMetadata { get; set; } = new MapScriptMetadata();
 
-        public virtual GlobalData GlobalData { get; set; } = new GlobalData();
         public bool HasFirstBloodHappened { get; set; } = false;
         public string LaneMinionAI { get; set; } = "LaneMinionAI";
 

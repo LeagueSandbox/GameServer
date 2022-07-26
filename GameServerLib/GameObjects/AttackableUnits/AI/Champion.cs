@@ -12,6 +12,7 @@ using GameServerLib.GameObjects.AttackableUnits;
 using GameServerCore.Scripting.CSharp;
 using LeagueSandbox.GameServer.Logging;
 using log4net;
+using LeagueSandbox.GameServer.Content;
 
 namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 {
@@ -55,10 +56,10 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             RuneList = runeList;
 
             TalentInventory = talentInventory;
-            Shop = GameServer.Inventory.Shop.CreateShop(this, game);
+            Shop = Shop.CreateShop(this, game);
 
-            Stats.Gold = _game.Map.MapScript.MapScriptMetadata.AIVars.StartingGold;
-            Stats.GoldPerGoldTick.BaseValue = _game.Map.MapScript.MapScriptMetadata.BaseGoldPerGoldTick;
+            AddGold(null, GlobalData.ObjAIBaseVariables.StartingGold, false);
+            Stats.GoldPerGoldTick.BaseValue = GlobalData.ChampionVariables.AmbientGoldAmount;
             Stats.IsGeneratingGold = false;
 
             //TODO: automaticaly rise spell levels with CharData.SpellLevelsUp
@@ -71,6 +72,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             Spells[(int)SpellSlotType.BluePillSlot] = new Spell(game, this,
             _game.ItemManager.GetItemType(_game.Map.MapScript.MapScriptMetadata.RecallSpellItemId).SpellName, (int)SpellSlotType.BluePillSlot);
             Stats.SetSpellEnabled((byte)SpellSlotType.BluePillSlot, true);
+            SkillPoints++;
 
             Replication = new ReplicationHero(this);
 
@@ -85,7 +87,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         public void AddGold(AttackableUnit source, float gold, bool notify = true)
         {
             Stats.Gold += gold;
-            if (notify)
+            if (notify && source != null)
             {
                 _game.PacketNotifier.NotifyUnitAddGold(this, source, gold);
             }
@@ -219,26 +221,39 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             _tipsChanged.Clear();
         }
 
-        float goldTimer;
+        float _goldTimer;
+        float _EXPTimer;
         public override void Update(float diff)
         {
             base.Update(diff);
 
             if (Stats.IsGeneratingGold && Stats.GoldPerGoldTick.Total > 0)
             {
-                goldTimer -= diff;
+                _goldTimer -= diff;
 
-                if (goldTimer <= 0)
+                if (_goldTimer <= 0)
                 {
-                    Stats.Gold += Stats.GoldPerGoldTick.Total;
-                    goldTimer = _game.Map.MapScript.MapScriptMetadata.GoldTickSpeed;
+                    AddGold(null, Stats.GoldPerGoldTick.Total, false);
+                    _goldTimer = GlobalData.ChampionVariables.AmbientGoldInterval;
                 }
             }
-            else if (!Stats.IsGeneratingGold && _game.GameTime >= _game.Map.MapScript.MapScriptMetadata.AIVars.AmbientGoldDelay * 1000f)
+            else if (!Stats.IsGeneratingGold && _game.GameTime >= GlobalData.ObjAIBaseVariables.AmbientGoldDelay)
             {
                 Stats.IsGeneratingGold = true;
                 _logger.Debug("Generating Gold!");
             }
+
+            if (_game.GameTime >= GlobalData.ChampionVariables.AmbientXPDelay)
+            {
+                _EXPTimer -= diff;
+                if (_EXPTimer <= 0)
+                {
+                    AddExperience(GlobalData.ChampionVariables.AmbientXPAmount, false);
+                    _EXPTimer = GlobalData.ChampionVariables.AmbientXPInterval;
+                }
+            }
+
+
 
             if (RespawnTimer > 0)
             {

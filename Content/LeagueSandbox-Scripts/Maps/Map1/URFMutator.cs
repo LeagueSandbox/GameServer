@@ -14,11 +14,11 @@ namespace MapScripts.Map1
         {
             MaxLevel = 30
         };
-        public override GlobalData GlobalData { get; set; } = new GlobalData { PercentCooldownModMinimun = 0.8f};
         public override void Init(Dictionary<GameObjectTypes, List<MapObject>> mapObjects)
         {
             base.Init(mapObjects);
             SetGameFeatures(FeatureFlags.EnableManaCosts, false);
+            GlobalData.GlobalCharacterDataConstants.PercentCooldownModMinimum = -0.8f;
         }
 
         public override void OnMatchStart()
