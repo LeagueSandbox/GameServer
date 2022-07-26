@@ -51,7 +51,7 @@ namespace Spells
                 {
                     Pet.SetTargetUnit(null, true);
                     Pet.UpdateMoveOrder(OrderType.PetHardMove);
-                    Pet.SetWaypoints(GetPath(Pet.Position, end));
+                    Pet.SetWaypoints(GetPath(Pet.Position, end, Pet.PathfindingRadius));
                 }
             }
         }

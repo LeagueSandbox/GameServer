@@ -30,34 +30,14 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             var champion = peerInfo.Champion;
             if (champion.MovementParameters == null)
             {
-                // Last waypoint position
-                List<Vector2> translatedWaypoints = req.Waypoints.ConvertAll(TranslateFromCenteredCoordinates);
-                var lastindex = 0;
-                if (!(translatedWaypoints.Count - 1 < 0))
-                {
-                    lastindex = translatedWaypoints.Count - 1;
-                }
-
                 var nav = _game.Map.NavigationGrid;
 
-                foreach (Vector2 wp in translatedWaypoints)
+                Vector2 lastWaypoint = TranslateFromCenteredCoordinates(req.Waypoints[req.Waypoints.Count - 1]);
+                List<Vector2> translatedWaypoints = nav.GetPath(champion.Position, lastWaypoint, champion.PathfindingRadius);
+                if (translatedWaypoints == null)
                 {
-                    if (!_game.Map.PathingHandler.IsWalkable(wp))
-                    {
-                        Vector2 exit = nav.GetClosestTerrainExit(translatedWaypoints[lastindex]);
-
-                        // prevent player pathing within their pathing radius
-                        if (Vector2.DistanceSquared(champion.Position, exit) < (champion.PathfindingRadius * champion.PathfindingRadius))
-                        {
-                            return true;
-                        }
-
-                        if (_game.Map.PathingHandler.IsWalkable(champion.Position))
-                        {
-                            translatedWaypoints = _game.Map.PathingHandler.GetPath(champion.Position, exit);
-                        }
-                        break;
-                    }
+                    nav.GetPath(champion.Position, lastWaypoint, champion.PathfindingRadius, true);
+                    return false;
                 }
 
                 var u = _game.ObjectManager.GetObjectById(req.TargetNetID) as AttackableUnit;
@@ -80,7 +60,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                     case OrderType.PetHardAttack:
                         if (pet != null)
                         {
-                            List<Vector2> waypoints = _game.Map.PathingHandler.GetPath(pet.Position, nav.GetClosestTerrainExit(req.Position));
+                            List<Vector2> waypoints = _game.Map.PathingHandler.GetPath(pet.Position, nav.GetClosestTerrainExit(req.Position), pet.PathfindingRadius);
                             pet.UpdateMoveOrder(OrderType.PetHardAttack, true);
                             pet.SetWaypoints(waypoints);
                             pet.SetTargetUnit(u, true);
@@ -89,7 +69,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                     case OrderType.PetHardMove:
                         if (pet != null)
                         {
-                            List<Vector2> waypoints = _game.Map.PathingHandler.GetPath(pet.Position, nav.GetClosestTerrainExit(req.Position));
+                            List<Vector2> waypoints = _game.Map.PathingHandler.GetPath(pet.Position, nav.GetClosestTerrainExit(req.Position), pet.PathfindingRadius);
                             pet.UpdateMoveOrder(OrderType.PetHardMove, true);
                             pet.SetWaypoints(waypoints);
                             pet.SetTargetUnit(u, true);
@@ -107,7 +87,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                     case OrderType.PetHardReturn:
                         if (pet != null)
                         {
-                            List<Vector2> waypoints = _game.Map.PathingHandler.GetPath(pet.Position, nav.GetClosestTerrainExit(req.Position));
+                            List<Vector2> waypoints = _game.Map.PathingHandler.GetPath(pet.Position, nav.GetClosestTerrainExit(req.Position), pet.PathfindingRadius);
                             pet.UpdateMoveOrder(OrderType.PetHardReturn, true);
                             pet.SetWaypoints(waypoints);
                             pet.SetTargetUnit(u, true);
@@ -128,11 +108,6 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                         champion.SetWaypoints(translatedWaypoints);
                         champion.SetTargetUnit(u);
                         break;
-                }
-
-                if (translatedWaypoints == null)
-                {
-                    return false;
                 }
             }
 

@@ -67,7 +67,7 @@ namespace AIScripts
             foreach (var campMonster in monster.Camp.Monsters)
             {
                 campMonster.SetTargetUnit(null);
-                var waypoints = GetPath(monster.Position, initialPosition);
+                var waypoints = GetPath(monster.Position, initialPosition, monster.PathfindingRadius);
                 if (waypoints != null)
                 {
                     monster.SetWaypoints(waypoints);

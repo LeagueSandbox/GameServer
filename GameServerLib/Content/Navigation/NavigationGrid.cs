@@ -179,12 +179,15 @@ namespace LeagueSandbox.GameServer.Content.Navigation
         /// <param name="to">Point that the path ends at.</param>
         /// <param name="distanceThreshold">Amount of distance away from terrain that the path should be.</param>
         /// <returns>List of points forming a path in order: from -> to</returns>
-        public List<Vector2> GetPath(Vector2 from, Vector2 to, float distanceThreshold = 0)
+        public List<Vector2> GetPath(Vector2 from, Vector2 to, float distanceThreshold = 0, bool track = false)
         {
-            NavigationGridCell cellFrom = GetCell(from, true);
+            if(track)
+            {
 
-            to = GetClosestTerrainExit(to, distanceThreshold);
-            NavigationGridCell goal = GetCell(to, true);
+            }
+
+            NavigationGridCell cellFrom = GetCell(from, true);
+            NavigationGridCell goal = GetClosestWalkableCell(to, distanceThreshold, true);
 
             if (cellFrom == null || goal == null || cellFrom == goal)
             {
@@ -197,8 +200,8 @@ namespace LeagueSandbox.GameServer.Content.Navigation
             start.Add(cellFrom);
             priorityQueue.Enqueue(start, NavigationGridCell.Distance(cellFrom, goal));
 
-            var closedList = new Dictionary<int, NavigationGridCell>();
-            closedList.Add(cellFrom.ID, cellFrom);
+            var closedList = new HashSet<int>();
+            closedList.Add(cellFrom.ID);
 
             List<NavigationGridCell> path = null;
 
@@ -221,19 +224,19 @@ namespace LeagueSandbox.GameServer.Content.Navigation
                     break;
                 }
 
-                NavigationGridCell tempCell = null;
                 foreach (NavigationGridCell neighborCell in GetCellNeighbors(cell))
                 {
                     // if the neighbor is in the closed list - skip
-                    if (closedList.TryGetValue(neighborCell.ID, out tempCell))
+                    if (closedList.Contains(neighborCell.ID))
                     {
                         continue;
                     }
 
                     // not walkable - skip
-                    if (!IsWalkable(neighborCell))
+                    Vector2 cellCenter = new Vector2(neighborCell.Locator.X + 0.5f, neighborCell.Locator.Y + 0.5f);
+                    if (!IsWalkable(cellCenter, distanceThreshold, false))
                     {
-                        closedList.Add(neighborCell.ID, neighborCell);
+                        closedList.Add(neighborCell.ID);
                         continue;
                     }
 
@@ -255,7 +258,7 @@ namespace LeagueSandbox.GameServer.Content.Navigation
                         + NavigationGridCell.Distance(neighborCell, goal)
                     );
 
-                    closedList.Add(neighborCell.ID, neighborCell);
+                    closedList.Add(neighborCell.ID);
                 }
             }
 
@@ -335,7 +338,7 @@ namespace LeagueSandbox.GameServer.Content.Navigation
         /// <returns>Normal coordinate space Vector2.</returns>
         public Vector2 TranslateFromNavGrid(NavigationGridLocator locator)
         {
-            return TranslateFrmNavigationGrid(new Vector2(locator.X, locator.Y)) + Vector2.One * 0.5f * CellSize;
+            return TranslateFromNavGrid(new Vector2(locator.X, locator.Y)) + Vector2.One * 0.5f * CellSize;
         }
 
         /// <summary>
@@ -343,7 +346,7 @@ namespace LeagueSandbox.GameServer.Content.Navigation
         /// </summary>
         /// <param name="vector">Vector2 to translate.</param>
         /// <returns>Normal coordinate space Vector2.</returns>
-        public Vector2 TranslateFrmNavigationGrid(Vector2 vector)
+        public Vector2 TranslateFromNavGrid(Vector2 vector)
         {
             return new Vector2
             (
@@ -439,7 +442,7 @@ namespace LeagueSandbox.GameServer.Content.Navigation
         private List<NavigationGridCell> GetAllCellsInRange(Vector2 origin, float radius, bool translate = true)
         {
             List<NavigationGridCell> cells = new List<NavigationGridCell>();
-            
+
             radius /= CellSize;
             if(translate)
             {
@@ -455,11 +458,10 @@ namespace LeagueSandbox.GameServer.Content.Navigation
             {
                 for(short y = fy; y <= ly; y++)
                 {
-                    Vector2 toClosestVert = new Vector2(
-                        Math.Min(Math.Abs(x - origin.X), Math.Abs(x + 1 - origin.X)),
-                        Math.Min(Math.Abs(y - origin.Y), Math.Abs(y + 1 - origin.Y))
+                    float distSquared = Extensions.DistanceSquaredToRectangle(
+                        new Vector2(x + 0.5f, y + 0.5f), 1f, 1f, origin
                     );
-                    if(toClosestVert.LengthSquared() <= radius*radius)
+                    if(distSquared <= radius*radius)
                     {
                         var cell = GetCell(x, y);
                         if(cell != null)
@@ -480,6 +482,12 @@ namespace LeagueSandbox.GameServer.Content.Navigation
                 && !cell.HasFlag(NavigationGridCellFlags.SEE_THROUGH);
         }
 
+        bool IsWalkable(NavigationGridCell cell, float checkRadius)
+        {
+            Vector2 cellCenter = new Vector2(cell.Locator.X + 0.5f, cell.Locator.Y + 0.5f);
+            return IsWalkable(cellCenter, checkRadius, false);
+        }
+
         /// <summary>
         /// Whether or not the cell at the given position can be pathed on.
         /// </summary>
@@ -495,13 +503,7 @@ namespace LeagueSandbox.GameServer.Content.Navigation
                 return IsWalkable(cell);
             }
 
-            List<NavigationGridCell> cells = GetAllCellsInRange(coords, checkRadius, translate);
-
-            if (cells.Count == 0)
-            {
-                return false;
-            }
-
+            var cells = GetAllCellsInRange(coords, checkRadius, translate);            
             foreach (NavigationGridCell c in cells)
             {
                 if (!IsWalkable(c))
@@ -702,7 +704,7 @@ namespace LeagueSandbox.GameServer.Content.Navigation
             }
 
             return new KeyValuePair<bool, Vector2>(
-                i == il, TranslateFrmNavigationGrid(origin)
+                i == il, TranslateFromNavGrid(origin)
             );
         }
 
@@ -822,7 +824,7 @@ namespace LeagueSandbox.GameServer.Content.Navigation
         /// <param name="location">Vector2 position to start the check at.</param>
         /// <param name="distanceThreshold">Amount of distance away from terrain the exit should be.</param>
         /// <returns>Vector2 position which can be pathed on.</returns>
-        public Vector2 GetClosestTerrainExit(Vector2 location, float distanceThreshold = 0)
+        public Vector2 GetClosestTerrainExit(Vector2 location, float distanceThreshold = 0, bool track = false)
         {
             double angle = Math.PI / 4;
 
@@ -838,6 +840,32 @@ namespace LeagueSandbox.GameServer.Content.Navigation
             }
 
             return location;
+        }
+
+        public NavigationGridCell GetClosestWalkableCell(Vector2 coords, float distanceThreshold = 0, bool translate = true)
+        {
+            if(translate)
+            {
+                coords = TranslateToNavGrid(coords);
+            }
+            float closestDist = 0;
+            NavigationGridCell closestCell = null;
+            foreach(var cell in Cells)
+            {
+                if(IsWalkable(cell, distanceThreshold))
+                {
+                    float dist = Vector2.DistanceSquared(
+                        new Vector2(cell.Locator.X, cell.Locator.Y),
+                        coords
+                    );
+                    if(closestCell == null || dist < closestDist)
+                    {
+                        closestCell = cell;
+                        closestDist = dist;
+                    }
+                }
+            }
+            return closestCell;
         }
     }
 }
