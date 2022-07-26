@@ -283,7 +283,7 @@ namespace LeagueSandbox.GameServer.Content.Navigation
                 return null;
             }
 
-            SmoothPath(path);
+            SmoothPath(path, distanceThreshold);
 
             var returnList = new List<Vector2>(path.Count);
             
@@ -302,7 +302,7 @@ namespace LeagueSandbox.GameServer.Content.Navigation
         /// Remove waypoints (cells) that have LOS from one to the other from path.
         /// </summary>
         /// <param name="path"></param>
-        private void SmoothPath(List<NavigationGridCell> path)
+        private void SmoothPath(List<NavigationGridCell> path, float checkDistance = 0f)
         {
             if(path.Count <= 2)
             {
@@ -311,7 +311,7 @@ namespace LeagueSandbox.GameServer.Content.Navigation
             int j = 0;
             for(int i = 1; i < path.Count; i++)
             {
-                if(i == path.Count - 1 || IsAnythingBetween(path[j], path[i]))
+                if(i == path.Count - 1 || IsAnythingBetween(path[j], path[i], checkDistance))
                 {
                     path[++j] = path[i];
                 }
@@ -724,19 +724,6 @@ namespace LeagueSandbox.GameServer.Content.Navigation
         }
 
         /// <summary>
-        /// Whether or not there is anything blocking pathing or vision from the starting position to the ending position. (depending on checkVision).
-        /// </summary>
-        /// <param name="startPos">Position to start the check from.</param>
-        /// <param name="endPos">Position to end the check at.</param>
-        /// <param name="checkVision">True = Check if vision is blocked. False = Check if pathing is blocked.</param>
-        /// <returns>True/False.</returns>
-        public KeyValuePair<bool, Vector2> IsAnythingBetween(Vector2 startPos, Vector2 endPos, bool checkVision = false)
-        {
-            KeyValuePair<bool, Vector2> result = CastRay(startPos, endPos, !checkVision, checkVision);
-            return new KeyValuePair<bool, Vector2>(!result.Key, result.Value);
-        }
-
-        /// <summary>
         /// Whether or not there is anything blocking the two given GameObjects from either seeing eachother or pathing straight towards eachother (depending on checkVision).
         /// </summary>
         /// <param name="a">GameObject to start the check from.</param>
@@ -767,7 +754,7 @@ namespace LeagueSandbox.GameServer.Content.Navigation
         /// <param name="destination">Cell to end the check at.</param>
         /// <param name="ignoreTerrain">Whether or not to ignore terrain when checking for pathability between cells.</param>
         /// <returns>True/False.</returns>
-        public bool IsAnythingBetween(NavigationGridCell origin, NavigationGridCell destination, bool ignoreTerrain = false)
+        public bool IsAnythingBetween(NavigationGridCell origin, NavigationGridCell destination, float checkDistance = 0f, bool ignoreTerrain = false)
         {
             float x1 = origin.Locator.X;
             float y1 = origin.Locator.Y;
@@ -795,19 +782,30 @@ namespace LeagueSandbox.GameServer.Content.Navigation
             {
                 if (!ignoreTerrain)
                 {
-                    // 4 corners
-                    List<Vector2> vertices = new List<Vector2>()
+                    if (checkDistance > 0f)
                     {
-                        new Vector2((short)Math.Ceiling(x1), (short)Math.Ceiling(y1)),
-                        new Vector2((short)Math.Floor(x1), (short)Math.Ceiling(y1)),
-                        new Vector2((short)Math.Ceiling(x1), (short)Math.Floor(y1)),
-                        new Vector2((short)Math.Floor(x1), (short)Math.Floor(y1)),
-                    };
+                        // if none are walkable, then the path is blocked.
+                        if (!IsWalkable(GetCell(new Vector2(x1, y1), false), checkDistance))
+                        {
+                            return true;
+                        }
+                    }
+                    else
+                    {
+                        // 4 corners
+                        List<Vector2> vertices = new List<Vector2>()
+                        {
+                            new Vector2((short)Math.Ceiling(x1), (short)Math.Ceiling(y1)),
+                            new Vector2((short)Math.Floor(x1), (short)Math.Ceiling(y1)),
+                            new Vector2((short)Math.Ceiling(x1), (short)Math.Floor(y1)),
+                            new Vector2((short)Math.Floor(x1), (short)Math.Floor(y1)),
+                        };
 
-                    // if none are walkable, then the path is blocked.
-                    if (!vertices.Exists(v => IsWalkable(v, 0, false)))
-                    {
-                        return true;
+                        // if none are walkable, then the path is blocked.
+                        if (!vertices.Exists(v => IsWalkable(v, 0, false)))
+                        {
+                            return true;
+                        }
                     }
                 }
 
