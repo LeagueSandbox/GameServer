@@ -91,6 +91,7 @@ namespace LeagueSandbox.GameServer.Content
             MinionEXPMods.BonusExpLaneLevelDeltaMin = GetInt("aiExp_bonusExpLaneLevelDeltaMin", MinionEXPMods.BonusExpLaneLevelDeltaMin);
 
             ChampionVariables.AmbientGoldInterval = GetFloat("ai_AmbientGoldInterval", ChampionVariables.AmbientGoldInterval);
+            //Division by 5 is due to the stat itself being "gold per 5 seconds"
             ChampionVariables.AmbientGoldAmount = GetFloat("ai_AmbientGoldAmount", ChampionVariables.AmbientGoldAmount) / (10 / ChampionVariables.AmbientGoldInterval) / 5;
             ChampionVariables.AmbientGoldInterval *= 100.0f;
             ChampionVariables.DisableAmbientGoldWhileDead = GetBool("ai_DisableAmbientGoldWhileDead", ChampionVariables.DisableAmbientGoldWhileDead);
