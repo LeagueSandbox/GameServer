@@ -1167,23 +1167,5 @@ namespace LeagueSandbox.GameServer.API
 
             return GlobalData.ObjAIBaseVariables.DefaultPetReturnRadius;
         }
-
-        public static void IncreaseHealth(AttackableUnit unit, float ammount)
-        {
-            StatsModifier modifier = new StatsModifier();
-            modifier.HealthPoints.FlatBonus += ammount;
-            unit.AddStatModifier(modifier);
-            Heal(unit, ammount, false);
-        }
-
-        public static void Heal(AttackableUnit unit, float ammount, bool affectedByGW = true)
-        {
-            if(affectedByGW && unit.HasBuff("GrievousWound"))
-            {
-                ammount *= 0.5f;
-            }
-
-            unit.Stats.CurrentHealth += ammount;
-        }
     }
 }
