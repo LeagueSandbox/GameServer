@@ -64,7 +64,7 @@ namespace LeagueSandbox.GameServer.Inventory
                 return false;
             }
 
-            stats.Gold -= price;
+            _owner.AddGold(null, -price, false);
             return true;
         }
 

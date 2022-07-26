@@ -58,7 +58,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             TalentInventory = talentInventory;
             Shop = Shop.CreateShop(this, game);
 
-            Stats.Gold = GlobalData.ObjAIBaseVariables.StartingGold;
+            AddGold(null, GlobalData.ObjAIBaseVariables.StartingGold, false);
             Stats.GoldPerGoldTick.BaseValue = GlobalData.ChampionVariables.AmbientGoldAmount;
             Stats.IsGeneratingGold = false;
 
