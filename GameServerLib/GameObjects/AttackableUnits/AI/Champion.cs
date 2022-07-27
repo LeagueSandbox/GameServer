@@ -304,7 +304,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         public bool OnDisconnect()
         {
             this.StopMovement();
-            this.SetWaypoints(_game.Map.PathingHandler.GetPath(Position, GetRespawnPosition()));
+            this.SetWaypoints(_game.Map.PathingHandler.GetPath(Position, GetRespawnPosition(), PathfindingRadius));
             this.UpdateMoveOrder(OrderType.MoveTo, true);
 
             return true;

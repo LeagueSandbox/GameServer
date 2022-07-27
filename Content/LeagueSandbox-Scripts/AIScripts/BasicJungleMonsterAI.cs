@@ -47,18 +47,9 @@ namespace AIScripts
                         ResetCamp();
                     }
                 }
-                else
+                else if (monster.IsPathEnded() && monster.Direction != initialFacingDirection)
                 {
-                    if (monster.Position != initialPosition)
-                    {
-                        //This causes EXTREME lag when monsters spawn
-                        //TODO: Find a better way to do this
-                        ResetCamp();
-                    }
-                    else if (monster.Direction != initialFacingDirection)
-                    {
-                        monster.FaceDirection(initialFacingDirection);
-                    }
+                    monster.FaceDirection(initialFacingDirection);
                 }
             }
         }
@@ -66,21 +57,11 @@ namespace AIScripts
         {
             foreach (var campMonster in monster.Camp.Monsters)
             {
-                campMonster.SetTargetUnit(null);
-                var waypoints = GetPath(monster.Position, initialPosition);
-                if (waypoints != null)
+                if (campMonster.AIScript is BasicJungleMonsterAI basicJungleScript && basicJungleScript.isInCombat)
                 {
-                    monster.SetWaypoints(waypoints);
-                }
-                else
-                {
-                    //One of the Red-side wolves in summoners rift actually spawn somewhat inside the wall, so it really can't
-                    //Path back to it's spawn position. So this is just to solve that issue.
-                    initialPosition = monster.Position;
-                }
-                monster.Stats.CurrentHealth = monster.Stats.HealthPoints.Total;
-                if (campMonster.AIScript is BasicJungleMonsterAI basicJungleScript)
-                {
+                    campMonster.SetTargetUnit(null);
+                    campMonster.SetPathTrueEnd(basicJungleScript.initialPosition);
+                    campMonster.Stats.CurrentHealth = campMonster.Stats.HealthPoints.Total;
                     basicJungleScript.isInCombat = false;
                 }
             }

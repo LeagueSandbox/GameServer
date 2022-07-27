@@ -80,6 +80,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// </summary>
         /// TODO: Verify if we can remove this in favor of BuffSlots while keeping the functions which allow for easy accessing of individual buff instances.
         private List<Buff> BuffList { get; }
+
         /// <summary>
         /// Waypoints that make up the path a game object is walking in.
         /// </summary>
@@ -92,6 +93,8 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         {
             get { return Waypoints[CurrentWaypointKey]; }
         }
+        public bool PathHasTrueEnd { get; private set; } = false;
+        public Vector2 PathTrueEnd { get; private set; }
 
         /// <summary>
         /// Status effects enabled on this unit. Refer to StatusFlags enum.
@@ -209,7 +212,8 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                 // Reevaluate our current path to account for the starting position being changed.
                 if (repath)
                 {
-                    List<Vector2> safePath = _game.Map.PathingHandler.GetPath(Position, _game.Map.NavigationGrid.GetClosestTerrainExit(Waypoints.Last(), PathfindingRadius));
+                    Vector2 safeExit = _game.Map.NavigationGrid.GetClosestTerrainExit(Waypoints.Last(), PathfindingRadius);
+                    List<Vector2> safePath = _game.Map.PathingHandler.GetPath(Position, safeExit, PathfindingRadius);
 
                     // TODO: When using this safePath, sometimes we collide with the terrain again, so we use an unsafe path the next collision, however,
                     // sometimes we collide again before we can finish the unsafe path, so we end up looping collisions between safe and unsafe paths, never actually escaping (ex: sharp corners).
@@ -965,6 +969,35 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             return false;
         }
 
+        public bool PathTrueEndIs(Vector2 location)
+        {
+            return PathHasTrueEnd && PathTrueEnd == location;
+        }
+
+        public bool SetPathTrueEnd(Vector2 location)
+        {
+            if(PathTrueEndIs(location))
+            {
+                return true;
+            }
+
+            PathHasTrueEnd = true;
+            PathTrueEnd = location;
+
+            if(CanChangeWaypoints())
+            {
+                var nav = _game.Map.NavigationGrid;
+                var path = nav.GetPath(Position, location, PathfindingRadius);
+                if(path != null)
+                {
+                    SetWaypoints(path); // resets `PathHasTrueEnd`
+                    PathHasTrueEnd = true;
+                    return true;
+                }
+            }
+            return false;
+        }
+
         /// <summary>
         /// Resets this unit's waypoints.
         /// </summary>
@@ -972,6 +1005,8 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         {
             Waypoints = new List<Vector2> { Position };
             CurrentWaypointKey = 1;
+
+            PathHasTrueEnd = false;
         }
 
         /// <summary>
@@ -1001,6 +1036,9 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             _movementUpdated = true;
             Waypoints = newWaypoints;
             CurrentWaypointKey = 1;
+
+            PathHasTrueEnd = false;
+
             return true;
         }
 

@@ -119,13 +119,12 @@ namespace LeagueSandbox.GameServer.Handlers
         /// <summary>
         /// Returns a path to the given target position from the given unit's position.
         /// </summary>
-        public List<Vector2> GetPath(AttackableUnit obj, Vector2 target, bool usePathingRadius = false)
+        public List<Vector2> GetPath(AttackableUnit obj, Vector2 target, bool usePathingRadius = true)
         {
             if (usePathingRadius)
             {
                 return GetPath(obj.Position, target, obj.PathfindingRadius);
             }
-
             return GetPath(obj.Position, target, 0);
         }
 
