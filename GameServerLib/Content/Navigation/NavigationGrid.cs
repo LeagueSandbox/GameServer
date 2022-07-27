@@ -245,9 +245,15 @@ namespace LeagueSandbox.GameServer.Content.Navigation
                     // we made sure of this at the beginning of the function
                     if(neighborCell.ID != goal.ID)
                     {
-                        // not walkable - skip
-                        cellCoord = new Vector2(neighborCell.Locator.X + 0.5f, neighborCell.Locator.Y + 0.5f);
-                        if (!IsWalkable(cellCoord, distanceThreshold, false))
+                        cellCoord = neighborCell.GetCenter();
+
+                        // close cell if not walkable or circle LOS check fails (start cell skipped as it always fails)
+                        if
+                        (
+                            !IsWalkable(cellCoord, distanceThreshold, false)
+                            || (IsAnythingBetween(cell, neighborCell, distanceThreshold)
+                                && cell != cellFrom)
+                        )
                         {
                             closedList.Add(neighborCell.ID);
                             continue;
@@ -769,10 +775,10 @@ namespace LeagueSandbox.GameServer.Content.Navigation
         /// <returns>True/False.</returns>
         public bool IsAnythingBetween(NavigationGridCell origin, NavigationGridCell destination, float checkDistance = 0f, bool ignoreTerrain = false)
         {
-            float x1 = origin.Locator.X;
-            float y1 = origin.Locator.Y;
-            float x2 = destination.Locator.X;
-            float y2 = destination.Locator.Y;
+            float x1 = origin.Locator.X + 0.5f;
+            float y1 = origin.Locator.Y + 0.5f;
+            float x2 = destination.Locator.X + 0.5f;
+            float y2 = destination.Locator.Y + 0.5f;
 
             if (x1 < 0 || y1 < 0 || x1 >= CellCountX || y1 >= CellCountY)
             {
@@ -795,30 +801,9 @@ namespace LeagueSandbox.GameServer.Content.Navigation
             {
                 if (!ignoreTerrain)
                 {
-                    if (checkDistance > 0f)
+                    if (!IsWalkable(new Vector2(x1, y1), checkDistance, false))
                     {
-                        // if none are walkable, then the path is blocked.
-                        if (!IsWalkable(GetCell(new Vector2(x1, y1), false), checkDistance))
-                        {
-                            return true;
-                        }
-                    }
-                    else
-                    {
-                        // 4 corners
-                        List<Vector2> vertices = new List<Vector2>()
-                        {
-                            new Vector2((short)Math.Ceiling(x1), (short)Math.Ceiling(y1)),
-                            new Vector2((short)Math.Floor(x1), (short)Math.Ceiling(y1)),
-                            new Vector2((short)Math.Ceiling(x1), (short)Math.Floor(y1)),
-                            new Vector2((short)Math.Floor(x1), (short)Math.Floor(y1)),
-                        };
-
-                        // if none are walkable, then the path is blocked.
-                        if (!vertices.Exists(v => IsWalkable(v, 0, false)))
-                        {
-                            return true;
-                        }
+                        return true;
                     }
                 }
 
