@@ -29,9 +29,9 @@ jobs:
     - name: Test
       run: dotnet test --no-build --verbosity normal
     - name: Try list folders
-      run: ls ${{ github.workspace }}/GameServerConsole/bin/x86/Debug/net6.0
+      run: ls ${{ github.workspace }}/GameServerConsole/bin/x86/Debug
     - name: Pre-upload Steps
-      run: mv ${{ github.workspace }}/Content/ ${{ github.workspace }}/GameServerConsole/bin/x86/Debug
+      run: mv ${{ github.workspace }}/Content/ ${{ github.workspace }}/GameServerConsole/bin/x86/Debug/net6.0
     - name: Upload build Artifact
       uses: actions/upload-artifact@v3.1.0
       with:
