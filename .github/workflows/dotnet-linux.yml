@@ -28,8 +28,6 @@ jobs:
       run: dotnet build --no-restore
     - name: Test
       run: dotnet test --no-build --verbosity normal
-    - name: Try list folders
-      run: ls ${{ github.workspace }}/GameServerConsole/bin/Debug/net6.0
     - name: Pre-upload Steps
       run: mv ${{ github.workspace }}/Content/ ${{ github.workspace }}/GameServerConsole/bin/Debug/net6.0
     - name: Upload Linux Artifact
