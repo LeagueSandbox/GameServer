@@ -1,38 +1,35 @@
-﻿namespace LeagueSandbox.GameServer.Content
+﻿using GameServerCore.Enums;
+using System.Collections.Generic;
+
+namespace LeagueSandbox.GameServer.Content
 {
     public class SpellVampVariables
     {
-        /// <summary>
-        /// Spell Vamp ratio for DAMAGESOURCE_SPELL
-        /// </summary>
-        public float SpellRatio { get; set; } = 1.0f;
-        /// <summary>
-        /// Spell Vamp ratio for DAMAGESOURCE_SPELLAOE
-        /// </summary>
-        public float SpellAoERatio { get; set; } = 0.334f;
-        /// <summary>
-        /// Spell Vamp ratio for DAMAGESOURCE_SPELLPERSIST
-        /// </summary>
-        public float SpellPersistRatio { get; set; } = 1.0f;
-        /// <summary>
-        /// Spell Vamp ratio for DAMAGESOURCE_PERIODIC
-        /// </summary>
-        public float PeriodicRatio { get; set; } = 0.0f;
-        /// <summary>
-        /// Spell Vamp ratio for DAMAGESOURCE_PROC
-        /// </summary>
-        public float ProcRatio { get; set; } = 0.0f;
-        /// <summary>
-        /// Spell Vamp ratio for DAMAGESOURCE_REACTIVE
-        /// </summary>
-        public float ReactiveRatio { get; set; } = 0.0f;
-        /// <summary>
-        /// Spell Vamp ratio for DAMAGESOURCE_ONDEATH
-        /// </summary>
-        public float OnDeathRatio { get; set; } = 0.0f;
-        /// <summary>
-        /// Spell Vamp ratio for DAMAGESOURCE_PET
-        /// </summary>
-        public float PetRatio { get; set; } = 0.0f;
+        public Dictionary<DamageSource, float> SpellVampRatios = new Dictionary<DamageSource, float>
+        {
+            // Spell Vamp ratio for DAMAGESOURCE_SPELL
+            {DamageSource.DAMAGE_SOURCE_SPELL, 1.0f },
+
+            // Spell Vamp ratio for DAMAGESOURCE_SPELLAOE
+            {DamageSource.DAMAGE_SOURCE_SPELLAOE, 0.334f },
+
+            // Spell Vamp ratio for DAMAGESOURCE_SPELLPERSIST
+            {DamageSource.DAMAGE_SOURCE_SPELLPERSIST, 1.0f },
+
+            // Spell Vamp ratio for DAMAGESOURCE_PERIODIC
+            {DamageSource.DAMAGE_SOURCE_PERIODIC, 0.0f },
+
+            // Spell Vamp ratio for DAMAGESOURCE_PROC
+            {DamageSource.DAMAGE_SOURCE_PROC, 0.0f },
+
+            // Spell Vamp ratio for DAMAGESOURCE_REACTIVE
+            {DamageSource.DAMAGE_SOURCE_REACTIVE, 0.0f },
+
+            // Spell Vamp ratio for DAMAGESOURCE_ONDEATH
+            {DamageSource.DAMAGE_SOURCE_ONDEATH, 0.0f },
+
+            // Spell Vamp ratio for DAMAGESOURCE_PET
+            {DamageSource.DAMAGE_SOURCE_PET, 0.0f },
+        };
     }
 }

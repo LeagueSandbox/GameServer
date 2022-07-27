@@ -80,6 +80,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// </summary>
         /// TODO: Verify if we can remove this in favor of BuffSlots while keeping the functions which allow for easy accessing of individual buff instances.
         private List<Buff> BuffList { get; }
+
         /// <summary>
         /// Waypoints that make up the path a game object is walking in.
         /// </summary>
@@ -92,6 +93,8 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         {
             get { return Waypoints[CurrentWaypointKey]; }
         }
+        public bool PathHasTrueEnd { get; private set; } = false;
+        public Vector2 PathTrueEnd { get; private set; }
 
         /// <summary>
         /// Status effects enabled on this unit. Refer to StatusFlags enum.
@@ -193,7 +196,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         {
             Position = vec;
             _movementUpdated = true;
-            
+
             // TODO: Verify how dashes are affected by teleports.
             //       Typically follow dashes are unaffected, but there may be edge cases e.g. LeeSin
             if (MovementParameters != null)
@@ -209,7 +212,8 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                 // Reevaluate our current path to account for the starting position being changed.
                 if (repath)
                 {
-                    List<Vector2> safePath = _game.Map.PathingHandler.GetPath(Position, _game.Map.NavigationGrid.GetClosestTerrainExit(Waypoints.Last(), PathfindingRadius));
+                    Vector2 safeExit = _game.Map.NavigationGrid.GetClosestTerrainExit(Waypoints.Last(), PathfindingRadius);
+                    List<Vector2> safePath = _game.Map.PathingHandler.GetPath(Position, safeExit, PathfindingRadius);
 
                     // TODO: When using this safePath, sometimes we collide with the terrain again, so we use an unsafe path the next collision, however,
                     // sometimes we collide again before we can finish the unsafe path, so we end up looping collisions between safe and unsafe paths, never actually escaping (ex: sharp corners).
@@ -425,29 +429,29 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             switch (type)
             {
                 case DamageType.DAMAGE_TYPE_PHYSICAL:
-                {
-                    if (Status.HasFlag(StatusFlags.PhysicalImmune))
                     {
-                        return false;
+                        if (Status.HasFlag(StatusFlags.PhysicalImmune))
+                        {
+                            return false;
+                        }
+                        break;
                     }
-                    break;
-                }
                 case DamageType.DAMAGE_TYPE_MAGICAL:
-                {
-                    if (Status.HasFlag(StatusFlags.MagicImmune))
                     {
-                        return false;
+                        if (Status.HasFlag(StatusFlags.MagicImmune))
+                        {
+                            return false;
+                        }
+                        break;
                     }
-                    break;
-                }
                 case DamageType.DAMAGE_TYPE_MIXED:
-                {
-                    if (Status.HasFlag(StatusFlags.MagicImmune) || Status.HasFlag(StatusFlags.PhysicalImmune))
                     {
-                        return false;
+                        if (Status.HasFlag(StatusFlags.MagicImmune) || Status.HasFlag(StatusFlags.PhysicalImmune))
+                        {
+                            return false;
+                        }
+                        break;
                     }
-                    break;
-                }
             }
 
             return true;
@@ -539,46 +543,33 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// <param name="damageText">Type of damage the damage text should be.</param>
         public virtual void TakeDamage(DamageData damageData, DamageResultType damageText, IEventSource sourceScript = null)
         {
-            float regain = 0;
+            float healRatio = 0.0f;
             var attacker = damageData.Attacker;
             var attackerStats = damageData.Attacker.Stats;
             var type = damageData.DamageType;
             var source = damageData.DamageSource;
             var postMitigationDamage = damageData.PostMitigationDamage;
 
-
             ApiEventManager.OnPreTakeDamage.Publish(damageData.Target, damageData);
 
-            switch (source)
+            if (GlobalData.SpellVampVariables.SpellVampRatios.TryGetValue(source, out float ratio) || source == DamageSource.DAMAGE_SOURCE_ATTACK)
             {
-                case DamageSource.DAMAGE_SOURCE_RAW:
-                    break;
-                case DamageSource.DAMAGE_SOURCE_INTERNALRAW:
-                    break;
-                case DamageSource.DAMAGE_SOURCE_PERIODIC:
-                    break;
-                case DamageSource.DAMAGE_SOURCE_PROC:
-                    break;
-                case DamageSource.DAMAGE_SOURCE_REACTIVE:
-                    break;
-                case DamageSource.DAMAGE_SOURCE_ONDEATH:
-                    break;
-                case DamageSource.DAMAGE_SOURCE_SPELL:
-                    regain = attackerStats.SpellVamp.Total;
-                    break;
-                case DamageSource.DAMAGE_SOURCE_ATTACK:
-                    regain = attackerStats.LifeSteal.Total;
-                    break;
-                case DamageSource.DAMAGE_SOURCE_DEFAULT:
-                    break;
-                case DamageSource.DAMAGE_SOURCE_SPELLAOE:
-                    break;
-                case DamageSource.DAMAGE_SOURCE_SPELLPERSIST:
-                    break;
-                case DamageSource.DAMAGE_SOURCE_PET:
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(source), source, null);
+                switch (source)
+                {
+                    case DamageSource.DAMAGE_SOURCE_SPELL:
+                    case DamageSource.DAMAGE_SOURCE_SPELLAOE:
+                    case DamageSource.DAMAGE_SOURCE_SPELLPERSIST:
+                    case DamageSource.DAMAGE_SOURCE_PERIODIC:
+                    case DamageSource.DAMAGE_SOURCE_PROC:
+                    case DamageSource.DAMAGE_SOURCE_REACTIVE:
+                    case DamageSource.DAMAGE_SOURCE_ONDEATH:
+                    case DamageSource.DAMAGE_SOURCE_PET:
+                        healRatio = attackerStats.SpellVamp.Total * ratio;
+                        break;
+                    case DamageSource.DAMAGE_SOURCE_ATTACK:
+                        healRatio = attackerStats.LifeSteal.Total;
+                        break;
+                }
             }
 
             if (!CanTakeDamage(type))
@@ -611,12 +602,12 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             }
 
             // Get health from lifesteal/spellvamp
-            if (regain > 0)
+            if (healRatio > 0)
             {
                 attackerStats.CurrentHealth = Math.Min
                 (
                     attackerStats.HealthPoints.Total,
-                    attackerStats.CurrentHealth + regain * postMitigationDamage
+                    attackerStats.CurrentHealth + healRatio * postMitigationDamage
                 );
             }
         }
@@ -965,6 +956,35 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             return false;
         }
 
+        public bool PathTrueEndIs(Vector2 location)
+        {
+            return PathHasTrueEnd && PathTrueEnd == location;
+        }
+
+        public bool SetPathTrueEnd(Vector2 location)
+        {
+            if (PathTrueEndIs(location))
+            {
+                return true;
+            }
+
+            PathHasTrueEnd = true;
+            PathTrueEnd = location;
+
+            if (CanChangeWaypoints())
+            {
+                var nav = _game.Map.NavigationGrid;
+                var path = nav.GetPath(Position, location, PathfindingRadius);
+                if (path != null)
+                {
+                    SetWaypoints(path); // resets `PathHasTrueEnd`
+                    PathHasTrueEnd = true;
+                    return true;
+                }
+            }
+            return false;
+        }
+
         /// <summary>
         /// Resets this unit's waypoints.
         /// </summary>
@@ -972,6 +992,8 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         {
             Waypoints = new List<Vector2> { Position };
             CurrentWaypointKey = 1;
+
+            PathHasTrueEnd = false;
         }
 
         /// <summary>
@@ -1001,6 +1023,9 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             _movementUpdated = true;
             Waypoints = newWaypoints;
             CurrentWaypointKey = 1;
+
+            PathHasTrueEnd = false;
+
             return true;
         }
 

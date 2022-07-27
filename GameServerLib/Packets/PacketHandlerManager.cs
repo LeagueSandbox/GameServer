@@ -304,6 +304,7 @@ namespace PacketDefinitions420
             // every packet that is not blowfish go here
             if (data.Length >= 8)
             {
+                // An unhandled exception of type 'System.NullReferenceException' occurred
                 int clientId = ((int)peer.UserData) - 1;
                 data = _blowfishes[clientId].Decrypt(data);
             }

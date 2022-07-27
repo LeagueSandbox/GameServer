@@ -183,7 +183,7 @@ namespace GameServerCore
             float dx = MathF.Max(MathF.Abs(origin.X - rect.X) - width / 2, 0);
             float dy = MathF.Max(MathF.Abs(origin.Y - rect.Y) - height / 2, 0);
 
-            return dx * dy + dy * dy;
+            return dx * dx + dy * dy;
         }
 
         /// <summary>
