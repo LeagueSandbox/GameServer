@@ -42,10 +42,24 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                     case OrderType.AttackTo:
                     case OrderType.AttackMove:
                     case OrderType.Use:
-                        waypoints = nav.GetPath(champion.Position, req.Position, champion.PathfindingRadius);
-                        if (waypoints == null)
+                        if (req.Waypoints == null || req.Waypoints.Count == 0)
                         {
                             return false;
+                        }
+                        waypoints = req.Waypoints.ConvertAll(TranslateFromCenteredCoordinates);
+                        //TODO: Find the nearest point on the path and discard everything before it
+                        waypoints[0] = champion.Position;
+                        for(int i = 0; i < waypoints.Count - 1; i++)
+                        {
+                            if(IsAnythingBetween(waypoints[i], waypoints[i + 1], champion.PathfindingRadius))
+                            {
+                                var ithWaypoint = waypoints[i];
+                                var lastWaypoint = waypoints[waypoints.Count - 1];
+                                var path = nav.GetPath(ithWaypoint, lastWaypoint, champion.PathfindingRadius);
+                                waypoints = waypoints.GetRange(0, i);
+                                waypoints.AddRange(path);
+                                break;
+                            }
                         }
                         champion.UpdateMoveOrder(req.OrderType, true);
                         champion.SetWaypoints(waypoints);
@@ -88,6 +102,12 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             }
 
             return true;
+        }
+
+        private bool IsAnythingBetween(Vector2 a, Vector2 b, float checkDistance)
+        {
+            var nav = _game.Map.NavigationGrid;
+            return nav.IsAnythingBetween(nav.GetCell(a, true), nav.GetCell(b, true), checkDistance);
         }
 
         private Vector2 TranslateFromCenteredCoordinates(Vector2 vector)
