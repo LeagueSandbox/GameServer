@@ -27,14 +27,6 @@ namespace LeagueSandbox.GameServer.Content
         private readonly Game _game;
         private static ILog _logger = LoggerProvider.GetLogger();
 
-        private static readonly string[] ContentTypes = {
-            "Items",
-            "Maps",
-            "Spells",
-            "Stats",
-            "Talents"
-        };
-
         private bool _hasScripts = false;
 
         public Package(string packagePath, Game game)
@@ -306,7 +298,7 @@ namespace LeagueSandbox.GameServer.Content
             }
         }
 
-        public  TalentCollectionEntry GetTalentEntry(string name)
+        public TalentCollectionEntry GetTalentEntry(string name)
         {
             string path = $"{GetContentTypePath("Talents")}/{name}/{name}.json";
             if (File.Exists(path))
