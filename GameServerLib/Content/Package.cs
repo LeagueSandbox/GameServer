@@ -351,6 +351,7 @@ namespace LeagueSandbox.GameServer.Content
 
         private void LoadPackage()
         {
+            //Items should be loaded based on the Map being played, refer to "Levels/MapX/Items.inibin"
             string path = GetContentTypePath("Items");
             if (Directory.Exists(path))
             {
