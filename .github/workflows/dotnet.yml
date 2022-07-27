@@ -28,9 +28,11 @@ jobs:
       run: dotnet build --no-restore
     - name: Test
       run: dotnet test --no-build --verbosity normal
+    - name: Pre-upload Steps
+      run: mv ${{ github.workspace }}/**/Content ${{ github.workspace }}/**/GameServerConsole/bin/x86/Debug/net6.0
     - name: Upload build Artifact
       uses: actions/upload-artifact@v3.1.0
       with:
-        path: ${{ github.workspace }}/**/**/bin
+        path: ${{ github.workspace }}/**/GameServerConsole/bin/x86/Debug/net6.0
         if-no-files-found: warn
-        retention-days: 30
+        retention-days: 1
