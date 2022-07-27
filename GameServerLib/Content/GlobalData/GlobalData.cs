@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using GameServerCore.Enums;
+using System.Collections.Generic;
 
 namespace LeagueSandbox.GameServer.Content
 {
@@ -70,14 +71,14 @@ namespace LeagueSandbox.GameServer.Content
             AIAttackTargetSelectionVariables.MinionTargetingHeroBoost = GetFloat("ai_MinionTargetingHeroBoost", AIAttackTargetSelectionVariables.MinionTargetingHeroBoost);
             AIAttackTargetSelectionVariables.TargetMaxNumAttackers = GetInt("ai_TargetMaxNumAttackers", AIAttackTargetSelectionVariables.TargetMaxNumAttackers);
 
-            SpellVampVariables.SpellRatio = GetFloat("sv_SpellRatio", SpellVampVariables.SpellRatio);
-            SpellVampVariables.SpellAoERatio = GetFloat("sv_SpellAoERatio", SpellVampVariables.SpellAoERatio);
-            SpellVampVariables.SpellPersistRatio = GetFloat("sv_SpellPersistRatio", SpellVampVariables.SpellPersistRatio);
-            SpellVampVariables.PeriodicRatio = GetFloat("sv_PeriodicRatio", SpellVampVariables.PeriodicRatio);
-            SpellVampVariables.ProcRatio = GetFloat("sv_ProcRatio", SpellVampVariables.ProcRatio);
-            SpellVampVariables.ReactiveRatio = GetFloat("sv_ReactiveRatio", SpellVampVariables.ReactiveRatio);
-            SpellVampVariables.OnDeathRatio = GetFloat("sv_OnDeathRatio", SpellVampVariables.OnDeathRatio);
-            SpellVampVariables.PetRatio = GetFloat("sv_PetRatio", SpellVampVariables.PetRatio);
+            SpellVampVariables.SpellVampRatios[DamageSource.DAMAGE_SOURCE_SPELL] = GetFloat("sv_SpellRatio", SpellVampVariables.SpellVampRatios[DamageSource.DAMAGE_SOURCE_SPELL]);
+            SpellVampVariables.SpellVampRatios[DamageSource.DAMAGE_SOURCE_SPELLAOE] = GetFloat("sv_SpellAoERatio", SpellVampVariables.SpellVampRatios[DamageSource.DAMAGE_SOURCE_SPELLAOE]);
+            SpellVampVariables.SpellVampRatios[DamageSource.DAMAGE_SOURCE_SPELLPERSIST] = GetFloat("sv_SpellPersistRatio", SpellVampVariables.SpellVampRatios[DamageSource.DAMAGE_SOURCE_SPELLPERSIST]);
+            SpellVampVariables.SpellVampRatios[DamageSource.DAMAGE_SOURCE_PERIODIC] = GetFloat("sv_PeriodicRatio", SpellVampVariables.SpellVampRatios[DamageSource.DAMAGE_SOURCE_PERIODIC]);
+            SpellVampVariables.SpellVampRatios[DamageSource.DAMAGE_SOURCE_PROC] = GetFloat("sv_ProcRatio", SpellVampVariables.SpellVampRatios[DamageSource.DAMAGE_SOURCE_PROC]);
+            SpellVampVariables.SpellVampRatios[DamageSource.DAMAGE_SOURCE_REACTIVE] = GetFloat("sv_ReactiveRatio", SpellVampVariables.SpellVampRatios[DamageSource.DAMAGE_SOURCE_REACTIVE]);
+            SpellVampVariables.SpellVampRatios[DamageSource.DAMAGE_SOURCE_ONDEATH] = GetFloat("sv_OnDeathRatio", SpellVampVariables.SpellVampRatios[DamageSource.DAMAGE_SOURCE_ONDEATH]);
+            SpellVampVariables.SpellVampRatios[DamageSource.DAMAGE_SOURCE_PET] = GetFloat("sv_PetRatio", SpellVampVariables.SpellVampRatios[DamageSource.DAMAGE_SOURCE_PET]);
 
             AttackFlags.RevealAttackerRange = GetFloat("ca_RevealAttackerRange", AttackFlags.RevealAttackerRange);
             AttackFlags.RevealAttackerTimeOut = GetFloat("ca_RevealAttackerTimeOut", AttackFlags.RevealAttackerTimeOut);
