@@ -1,0 +1,39 @@
+name: .NET (Linux)
+
+on:
+  push:
+    branches:
+      - '**'
+  pull_request:
+    branches:
+      - '**'
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository and submodules
+      uses: actions/checkout@v3
+      with:
+        submodules: recursive
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v2
+      with:
+        dotnet-version: 6.0.x
+    - name: Restore dependencies
+      run: dotnet restore
+    - name: Build
+      run: dotnet build --no-restore
+    - name: Test
+      run: dotnet test --no-build --verbosity normal
+    - name: Pre-upload Steps
+      run: mv ${{ github.workspace }}/Content/ ${{ github.workspace }}/GameServerConsole/bin/Debug/net6.0
+    - name: Upload Linux Artifact
+      uses: actions/upload-artifact@v3.1.0
+      with:
+        name: Linux Artifact
+        path: ${{ github.workspace }}/GameServerConsole/bin/Debug/net6.0
+        if-no-files-found: warn
+        retention-days: 1

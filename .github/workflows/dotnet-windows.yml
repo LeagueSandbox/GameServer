@@ -1,4 +1,4 @@
-name: .NET
+name: .NET (Windows)
 
 on:
   push:
@@ -11,7 +11,7 @@ on:
 jobs:
   build:
 
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
 
     steps:
     - name: Checkout repository and submodules
@@ -28,3 +28,12 @@ jobs:
       run: dotnet build --no-restore
     - name: Test
       run: dotnet test --no-build --verbosity normal
+    - name: Pre-upload Steps
+      run: move ${{ github.workspace }}/Content/ ${{ github.workspace }}/GameServerConsole/bin/Debug/net6.0
+    - name: Upload Windows Artifact
+      uses: actions/upload-artifact@v3.1.0
+      with:
+        name: Windows Artifact
+        path: ${{ github.workspace }}/GameServerConsole/bin/Debug/net6.0
+        if-no-files-found: warn
+        retention-days: 1
