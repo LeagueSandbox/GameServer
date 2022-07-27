@@ -35,6 +35,6 @@ jobs:
     - name: Upload build Artifact
       uses: actions/upload-artifact@v3.1.0
       with:
-        path: ${{ github.workspace }}/GameServerConsole/bin/x86/Debug/net6.0
+        path: ${{ github.workspace }}/GameServerConsole/bin/Debug/net6.0
         if-no-files-found: warn
         retention-days: 1
