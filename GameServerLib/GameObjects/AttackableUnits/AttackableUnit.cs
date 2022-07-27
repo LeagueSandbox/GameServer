@@ -196,7 +196,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         {
             Position = vec;
             _movementUpdated = true;
-            
+
             // TODO: Verify how dashes are affected by teleports.
             //       Typically follow dashes are unaffected, but there may be edge cases e.g. LeeSin
             if (MovementParameters != null)
@@ -429,29 +429,29 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             switch (type)
             {
                 case DamageType.DAMAGE_TYPE_PHYSICAL:
-                {
-                    if (Status.HasFlag(StatusFlags.PhysicalImmune))
                     {
-                        return false;
+                        if (Status.HasFlag(StatusFlags.PhysicalImmune))
+                        {
+                            return false;
+                        }
+                        break;
                     }
-                    break;
-                }
                 case DamageType.DAMAGE_TYPE_MAGICAL:
-                {
-                    if (Status.HasFlag(StatusFlags.MagicImmune))
                     {
-                        return false;
+                        if (Status.HasFlag(StatusFlags.MagicImmune))
+                        {
+                            return false;
+                        }
+                        break;
                     }
-                    break;
-                }
                 case DamageType.DAMAGE_TYPE_MIXED:
-                {
-                    if (Status.HasFlag(StatusFlags.MagicImmune) || Status.HasFlag(StatusFlags.PhysicalImmune))
                     {
-                        return false;
+                        if (Status.HasFlag(StatusFlags.MagicImmune) || Status.HasFlag(StatusFlags.PhysicalImmune))
+                        {
+                            return false;
+                        }
+                        break;
                     }
-                    break;
-                }
             }
 
             return true;
@@ -543,46 +543,33 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// <param name="damageText">Type of damage the damage text should be.</param>
         public virtual void TakeDamage(DamageData damageData, DamageResultType damageText, IEventSource sourceScript = null)
         {
-            float regain = 0;
+            float healRatio = 0.0f;
             var attacker = damageData.Attacker;
             var attackerStats = damageData.Attacker.Stats;
             var type = damageData.DamageType;
             var source = damageData.DamageSource;
             var postMitigationDamage = damageData.PostMitigationDamage;
 
-
             ApiEventManager.OnPreTakeDamage.Publish(damageData.Target, damageData);
 
-            switch (source)
+            if (GlobalData.SpellVampVariables.SpellVampRatios.TryGetValue(source, out float ratio) || source == DamageSource.DAMAGE_SOURCE_ATTACK)
             {
-                case DamageSource.DAMAGE_SOURCE_RAW:
-                    break;
-                case DamageSource.DAMAGE_SOURCE_INTERNALRAW:
-                    break;
-                case DamageSource.DAMAGE_SOURCE_PERIODIC:
-                    break;
-                case DamageSource.DAMAGE_SOURCE_PROC:
-                    break;
-                case DamageSource.DAMAGE_SOURCE_REACTIVE:
-                    break;
-                case DamageSource.DAMAGE_SOURCE_ONDEATH:
-                    break;
-                case DamageSource.DAMAGE_SOURCE_SPELL:
-                    regain = attackerStats.SpellVamp.Total;
-                    break;
-                case DamageSource.DAMAGE_SOURCE_ATTACK:
-                    regain = attackerStats.LifeSteal.Total;
-                    break;
-                case DamageSource.DAMAGE_SOURCE_DEFAULT:
-                    break;
-                case DamageSource.DAMAGE_SOURCE_SPELLAOE:
-                    break;
-                case DamageSource.DAMAGE_SOURCE_SPELLPERSIST:
-                    break;
-                case DamageSource.DAMAGE_SOURCE_PET:
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(source), source, null);
+                switch (source)
+                {
+                    case DamageSource.DAMAGE_SOURCE_SPELL:
+                    case DamageSource.DAMAGE_SOURCE_SPELLAOE:
+                    case DamageSource.DAMAGE_SOURCE_SPELLPERSIST:
+                    case DamageSource.DAMAGE_SOURCE_PERIODIC:
+                    case DamageSource.DAMAGE_SOURCE_PROC:
+                    case DamageSource.DAMAGE_SOURCE_REACTIVE:
+                    case DamageSource.DAMAGE_SOURCE_ONDEATH:
+                    case DamageSource.DAMAGE_SOURCE_PET:
+                        healRatio = attackerStats.SpellVamp.Total * ratio;
+                        break;
+                    case DamageSource.DAMAGE_SOURCE_ATTACK:
+                        healRatio = attackerStats.LifeSteal.Total;
+                        break;
+                }
             }
 
             if (!CanTakeDamage(type))
@@ -615,12 +602,12 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             }
 
             // Get health from lifesteal/spellvamp
-            if (regain > 0)
+            if (healRatio > 0)
             {
                 attackerStats.CurrentHealth = Math.Min
                 (
                     attackerStats.HealthPoints.Total,
-                    attackerStats.CurrentHealth + regain * postMitigationDamage
+                    attackerStats.CurrentHealth + healRatio * postMitigationDamage
                 );
             }
         }
@@ -976,7 +963,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
 
         public bool SetPathTrueEnd(Vector2 location)
         {
-            if(PathTrueEndIs(location))
+            if (PathTrueEndIs(location))
             {
                 return true;
             }
@@ -984,11 +971,11 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             PathHasTrueEnd = true;
             PathTrueEnd = location;
 
-            if(CanChangeWaypoints())
+            if (CanChangeWaypoints())
             {
                 var nav = _game.Map.NavigationGrid;
                 var path = nav.GetPath(Position, location, PathfindingRadius);
-                if(path != null)
+                if (path != null)
                 {
                     SetWaypoints(path); // resets `PathHasTrueEnd`
                     PathHasTrueEnd = true;
