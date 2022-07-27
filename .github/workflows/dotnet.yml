@@ -28,14 +28,12 @@ jobs:
       run: dotnet build --no-restore
     - name: Test
       run: dotnet test --no-build --verbosity normal
-    - name: Try list folders
-      run: ls ${{ github.workspace }}/GameServerConsole/bin/Debug/net6.0
     - name: Pre-upload Steps
-      run: mv ${{ github.workspace }}/Content/ ${{ github.workspace }}/GameServerConsole/bin/Debug/net6.0
-    - name: Upload Linux Artifact
+      run: move ${{ github.workspace }}/Content/ ${{ github.workspace }}/GameServerConsole/bin/Debug/net6.0
+    - name: Upload Windows Artifact
       uses: actions/upload-artifact@v3.1.0
       with:
-        name: Linux Artifact
+        name: Windows Artifact
         path: ${{ github.workspace }}/GameServerConsole/bin/Debug/net6.0
         if-no-files-found: warn
         retention-days: 1
