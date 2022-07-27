@@ -25,7 +25,7 @@ using LeagueSandbox.GameServer.GameObjects.SpellNS;
 using LeagueSandbox.GameServer.GameObjects;
 using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
 using LeagueSandbox.GameServer.GameObjects.AttackableUnits;
-using            GameServerLib.GameObjects.AttackableUnits;
+using GameServerLib.GameObjects.AttackableUnits;
 using LeagueSandbox.GameServer.GameObjects.SpellNS.Missile;
 using LeagueSandbox.GameServer.Inventory;
 using LeagueSandbox.GameServer.GameObjects.AttackableUnits.Buildings.AnimatedBuildings;
@@ -91,7 +91,7 @@ namespace PacketDefinitions420
                 regionPacket.UnitNetID = region.CollisionUnit.NetId;
             }
 
-            if(region.VisionTarget != null)
+            if (region.VisionTarget != null)
             {
                 regionPacket.VisionTargetNetID = region.VisionTarget.NetId;
             }
@@ -757,10 +757,11 @@ namespace PacketDefinitions420
 
             for (int i = 0; i < client.Champion.TalentInventory.Talents.Count; i++)
             {
+                var talent = client.Champion.TalentInventory.Talents.ElementAt(i).Value;
                 avatar.Talents[i] = new LeaguePackets.Game.Common.Talent
                 {
-                    Hash = HashString(client.Champion.TalentInventory.Talents[i].Name),
-                    Level = client.Champion.TalentInventory.Talents[i].Rank
+                    Hash = HashString(talent.Name),
+                    Level = talent.Rank
                 };
             }
 
@@ -2155,7 +2156,7 @@ namespace PacketDefinitions420
             history.SenderNetID = ch.NetId;
             history.KillerNetID = killerNetID;
             history.Duration = 0;
-            if(ch.EventHistory.Count > 0)
+            if (ch.EventHistory.Count > 0)
             {
                 float firstTimestamp = ch.EventHistory[0].Timestamp;
                 float lastTimestamp = ch.EventHistory[ch.EventHistory.Count - 1].Timestamp;
@@ -2163,7 +2164,7 @@ namespace PacketDefinitions420
             }
             history.EventSourceType = 0; //TODO: Confirm that it is always zero
             history.Entries = ch.EventHistory;
-            
+
             _packetHandlerManager.SendPacket(ch.ClientId, history.GetBytes(), Channel.CHL_S2C);
         }
         /// <summary>
@@ -2903,7 +2904,7 @@ namespace PacketDefinitions420
                 }
             };
 
-            if(data.Killer != null)
+            if (data.Killer != null)
             {
                 dieMapView.DeathData.KillerNetID = data.Killer.NetId;
             }
@@ -2955,7 +2956,7 @@ namespace PacketDefinitions420
                 Event = gameEvent
             };
 
-            if(sender != null)
+            if (sender != null)
             {
                 packet.SenderNetID = sender.NetId;
             }
@@ -2982,7 +2983,7 @@ namespace PacketDefinitions420
                 }
             };
 
-            if(source != null)
+            if (source != null)
             {
                 packet.EventWorld.Source = source.NetId;
             }
@@ -3463,11 +3464,11 @@ namespace PacketDefinitions420
                 BorderCategory = "",
                 BorderScriptName = ""
             };
-            if(changeIcon)
+            if (changeIcon)
             {
                 packet.IconCategory = unit.IconInfo.IconCategory;
             }
-            if(changeBorder)
+            if (changeBorder)
             {
                 packet.BorderCategory = unit.IconInfo.BorderCategory;
                 packet.BorderScriptName = unit.IconInfo.BorderScriptName;
