@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using Newtonsoft.Json;
 
 namespace LeagueSandbox.GameServer.Content
 {
-
-    public class TalentContentCollection
+    public static class TalentContentCollection
     {
         public class TalentCollectionEntry : ContentFile
         {
@@ -14,22 +11,38 @@ namespace LeagueSandbox.GameServer.Content
             public object Id => MetaData["Id"];
         }
 
-        public static Dictionary<string, TalentCollectionEntry> _talents { get; private set; } = new Dictionary<string, TalentCollectionEntry>();
+        private static Dictionary<string, TalentCollectionEntry> _talents = new Dictionary<string, TalentCollectionEntry>();
+        private static ContentManager _contentManager;
 
-        public static void LoadMasteriesFrom(string directoryPath)
+        public static void Init(ContentManager contentManager)
         {
-            var files = Directory.GetFiles(directoryPath, "*.json", SearchOption.AllDirectories);
-            foreach (var file in files)
-            {
-                string data = File.ReadAllText(file);
-                var collectionEntry = JsonConvert.DeserializeObject<TalentCollectionEntry>(data);
-                _talents.Add(collectionEntry.Name, collectionEntry);
-            }
+            _contentManager = contentManager;
         }
 
-        public static bool TalentIsValid(string talent)
+        public static bool TalentIsValid(string talentName)
         {
-            return _talents.ContainsKey(talent);
+            //Checks if it was already loaded
+            if (_talents.ContainsKey(talentName))
+            {
+                return true;
+            }
+            //Tries to load
+            else
+            {
+                TalentCollectionEntry talent;
+                talent = _contentManager.GetTalentEntry(talentName);
+                //If got loaded, it is valid
+                if (talent != null)
+                {
+                    _talents.Add(talentName, talent);
+                    return true;
+                }
+                //Not valid
+                else
+                {
+                    return false;
+                }
+            }
         }
 
         public static byte GetTalentMaxRank(string mastery)

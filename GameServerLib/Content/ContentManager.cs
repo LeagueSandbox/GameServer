@@ -6,6 +6,7 @@ using LeagueSandbox.GameServer.Handlers;
 using LeagueSandbox.GameServer.Logging;
 using log4net;
 using Newtonsoft.Json.Linq;
+using static LeagueSandbox.GameServer.Content.TalentContentCollection;
 
 namespace LeagueSandbox.GameServer.Content
 {
@@ -155,23 +156,6 @@ namespace LeagueSandbox.GameServer.Content
             throw new ContentNotFoundException($"No map spawns found for map with id: {mapId}");
         }
 
-        public ContentFile GetContentFileFromJson(string contentType, string itemName, string subPath = null)
-        {
-            foreach (var dataPackage in _loadedPackages)
-            {
-                var toReturnContentFile = dataPackage.GetContentFileFromJson(contentType, itemName, subPath);
-
-                if (toReturnContentFile == null)
-                {
-                    continue;
-                }
-
-                return (ContentFile)toReturnContentFile;
-            }
-
-            throw new ContentNotFoundException($"No {contentType} found with name: {itemName} in any package.");
-        }
-
         public NavigationGrid GetNavigationGrid(MapScriptHandler map)
         {
             foreach (var dataPackage in _loadedPackages)
@@ -215,6 +199,20 @@ namespace LeagueSandbox.GameServer.Content
             }
 
             throw new ContentNotFoundException($"No Character found with name: {characterName}");
+        }
+
+        public TalentCollectionEntry GetTalentEntry(string talentName)
+        {
+            foreach (var dataPackage in _loadedPackages)
+            {
+                TalentCollectionEntry toReturn = dataPackage.GetTalentEntry(talentName);
+                if (toReturn != null)
+                {
+                    return toReturn;
+                }
+            }
+
+            return null;
         }
 
         private void GetDependenciesRecursively(List<string> resultList, string packageName, string contentPath)

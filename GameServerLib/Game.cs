@@ -142,7 +142,7 @@ namespace LeagueSandbox.GameServer
         {
             _logger.Info("Loading Config.");
             Config = config;
-
+            Config.LoadContent(this);
             _gameScriptTimers = new List<GameScriptTimer>();
 
             ChatCommandManager.LoadCommands();

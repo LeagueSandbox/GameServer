@@ -12,10 +12,6 @@ namespace LeagueSandbox.GameServer.Content
         public float AttackTotalTime { get; init; }
         public float Probability { get; init; }
 
-        //Hardcoding a few values here temporarily until i get the GlobalConstants update through
-        const float _attackDelay = 1.6f;
-        const float _attackDelayCastPercent = 0.3f;
-
         public BasicAttackInfo(float delayCastOffset = 0, float delayCastOffsetPercent = 0, float delayCastOffsetPercentAttackSpeedRatio = 0)
         {
             AttackDelayOffsetPercent = delayCastOffset;
@@ -29,13 +25,13 @@ namespace LeagueSandbox.GameServer.Content
             float atkDelayCastOffsetPercent = AttackDelayCastOffsetPercent;
             if (AttackTotalTime > 0.0f && atkCastTime > 0.0f)
             {
-                AttackDelayOffsetPercent = (AttackTotalTime / _attackDelay) - 1.0f;
-                AttackDelayCastOffsetPercent = (atkCastTime / AttackTotalTime) - _attackDelayCastPercent;
+                AttackDelayOffsetPercent = (AttackTotalTime / GlobalData.GlobalCharacterDataConstants.AttackDelay) - 1.0f;
+                AttackDelayCastOffsetPercent = (atkCastTime / AttackTotalTime) - GlobalData.GlobalCharacterDataConstants.AttackDelayCastPercent;
                 AttackDelayCastOffsetPercentAttackSpeedRatio = 1.0f;
             }
             else
             {
-                AttackDelayCastOffsetPercent = Math.Max(atkDelayCastOffsetPercent, -_attackDelayCastPercent);
+                AttackDelayCastOffsetPercent = Math.Max(atkDelayCastOffsetPercent, -GlobalData.GlobalCharacterDataConstants.AttackDelayCastPercent);
             }
         }
     }
