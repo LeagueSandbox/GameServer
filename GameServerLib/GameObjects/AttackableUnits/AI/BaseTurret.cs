@@ -19,7 +19,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         /// <summary>
         /// Current lane this turret belongs to.
         /// </summary>
-        public LaneID Lane { get; private set; }
+        public Lane Lane { get; private set; }
         /// <summary>
         /// MapObject that this turret was created from.
         /// </summary>
@@ -42,7 +42,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             Vector2 position,
             TeamId team = TeamId.TEAM_BLUE,
             uint netId = 0,
-            LaneID lane = LaneID.NONE,
+            Lane lane = Lane.LANE_Unknown,
             MapObject mapObject = default,
             int skinId = 0,
             Stats stats = null,
@@ -110,12 +110,12 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         }
 
         /// <summary>
-        /// Sets this turret's LaneID to the specified LaneID.
-        /// Only sets if its current LaneID is NONE.
+        /// Sets this turret's Lane to the specified Lane.
+        /// Only sets if its current Lane is NONE.
         /// Used for ObjectManager.
         /// </summary>
         /// <param name="newId"></param>
-        public void SetLaneID(LaneID newId)
+        public void SetLaneID(Lane newId)
         {
             Lane = newId;
         }

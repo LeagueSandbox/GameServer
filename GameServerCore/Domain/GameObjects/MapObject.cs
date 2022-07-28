@@ -214,42 +214,42 @@ namespace GameServerCore.Domain
             return teamName;
         }
 
-        public LaneID GetLaneID()
+        public Lane GetLaneID()
         {
-            var laneId = LaneID.NONE;
+            var laneId = Lane.LANE_Unknown;
 
             if (Name.Contains("_L"))
             {
-                laneId = LaneID.TOP;
+                laneId = Lane.LANE_L;
             }
             //Using just _C would cause files with "_Chaos" to be mistakenly assigned as MidLane
             else if (Name.Contains("_C0") || Name.Contains("_C1") || Name.Contains("_C_"))
             {
-                laneId = LaneID.MIDDLE;
+                laneId = Lane.LANE_C;
             }
             else if (Name.Contains("_R"))
             {
-                laneId = LaneID.BOTTOM;
+                laneId = Lane.LANE_R;
             }
 
             return laneId;
         }
 
-        public LaneID GetSpawnBarrackLaneID()
+        public Lane GetSpawnBarrackLaneID()
         {
-            var laneId = LaneID.NONE;
+            var laneId = Lane.LANE_Unknown;
 
             if (Name.Contains("__L"))
             {
-                laneId = LaneID.TOP;
+                laneId = Lane.LANE_L;
             }
             else if (Name.Contains("__C"))
             {
-                laneId = LaneID.MIDDLE;
+                laneId = Lane.LANE_C;
             }
             else if (Name.Contains("__R"))
             {
-                laneId = LaneID.BOTTOM;
+                laneId = Lane.LANE_R;
             }
 
             return laneId;

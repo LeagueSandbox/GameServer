@@ -5,9 +5,6 @@
     {
         NotCancelled,
         TimeCompleted,
-        /// <summary>
-        /// Unknown
-        /// </summary>
         Animation,
         LostTarget,
         StunnedOrSilencedOrTaunted,

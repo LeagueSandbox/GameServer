@@ -1,5 +1,4 @@
-﻿using System;
-namespace GameServerCore.Enums
+﻿namespace GameServerCore.Enums
 {
     public enum StatEvent : byte
     {

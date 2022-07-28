@@ -481,7 +481,7 @@ namespace LeagueSandbox.GameServer
         /// <param name="lane">Lane to check.</param>
         /// <returns>Number of turrets in the lane destroyed.</returns>
         /// TODO: Implement AzirTurrets so this can be used.
-        public int GetTurretsDestroyedForTeam(TeamId team, LaneID lane)
+        public int GetTurretsDestroyedForTeam(TeamId team, Lane lane)
         {
             int destroyed = 0;
             foreach (var turret in _turrets.Values)
@@ -537,7 +537,7 @@ namespace LeagueSandbox.GameServer
         {
             foreach (var inhibitor in _inhibitors.Values)
             {
-                if (inhibitor.Team == team && inhibitor.InhibitorState == InhibitorState.ALIVE)
+                if (inhibitor.Team == team && inhibitor.InhibitorState == DampenerState.RespawningState)
                 {
                     return false;
                 }

@@ -82,7 +82,7 @@ namespace MapScripts.Map8
         };
 
         //List of every path minions will take, separated by team and lane
-        public Dictionary<LaneID, List<Vector2>> MinionPaths { get; set; }
+        public Dictionary<Lane, List<Vector2>> MinionPaths { get; set; }
 
         //List of every wave type
         public Dictionary<string, List<MinionSpawnType>> MinionWaveTypes = new Dictionary<string, List<MinionSpawnType>>

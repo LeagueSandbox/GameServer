@@ -19,9 +19,9 @@ namespace MapScripts.Map10
         private static Dictionary<GameObjectTypes, List<MapObject>> _mapObjects;
 
         public static Dictionary<TeamId, Fountain> FountainList = new Dictionary<TeamId, Fountain>();
-        public static Dictionary<TeamId, Dictionary<LaneID, MapObject>> SpawnBarracks = new Dictionary<TeamId, Dictionary<LaneID, MapObject>>();
+        public static Dictionary<TeamId, Dictionary<Lane, MapObject>> SpawnBarracks = new Dictionary<TeamId, Dictionary<Lane, MapObject>>();
         public static Dictionary<TeamId, bool> AllInhibitorsAreDead = new Dictionary<TeamId, bool> { { TeamId.TEAM_BLUE, false }, { TeamId.TEAM_PURPLE, false } };
-        public static Dictionary<LaneID, List<Vector2>> MinionPaths = new Dictionary<LaneID, List<Vector2>> { { LaneID.TOP, new List<Vector2>() }, { LaneID.BOTTOM, new List<Vector2>() } };
+        public static Dictionary<Lane, List<Vector2>> MinionPaths = new Dictionary<Lane, List<Vector2>> { { Lane.LANE_L, new List<Vector2>() }, { Lane.LANE_R, new List<Vector2>() } };
         static List<Nexus> NexusList = new List<Nexus>();
         static string LaneTurretAI = "TurretAI";
 
@@ -31,31 +31,31 @@ namespace MapScripts.Map10
             { TeamId.TEAM_PURPLE, new Dictionary<Inhibitor, float>() } 
         };
 
-        static Dictionary<TeamId, Dictionary<LaneID, List<LaneTurret>>> TurretList = new Dictionary<TeamId, Dictionary<LaneID, List<LaneTurret>>>
+        static Dictionary<TeamId, Dictionary<Lane, List<LaneTurret>>> TurretList = new Dictionary<TeamId, Dictionary<Lane, List<LaneTurret>>>
         {
-            {TeamId.TEAM_BLUE, new Dictionary<LaneID, List<LaneTurret>>{
-                { LaneID.NONE, new List<LaneTurret>()},
-                { LaneID.TOP, new List<LaneTurret>()},
-                { LaneID.MIDDLE, new List<LaneTurret>()},
-                { LaneID.BOTTOM, new List<LaneTurret>()}}
+            {TeamId.TEAM_BLUE, new Dictionary<Lane, List<LaneTurret>>{
+                { Lane.LANE_Unknown, new List<LaneTurret>()},
+                { Lane.LANE_L, new List<LaneTurret>()},
+                { Lane.LANE_C, new List<LaneTurret>()},
+                { Lane.LANE_R, new List<LaneTurret>()}}
             },
-            {TeamId.TEAM_PURPLE, new Dictionary<LaneID, List<LaneTurret>>{
-                { LaneID.NONE, new List<LaneTurret>()},
-                { LaneID.TOP, new List<LaneTurret>()},
-                { LaneID.MIDDLE, new List<LaneTurret>()},
-                { LaneID.BOTTOM, new List<LaneTurret>()}}
+            {TeamId.TEAM_PURPLE, new Dictionary<Lane, List<LaneTurret>>{
+                { Lane.LANE_Unknown, new List<LaneTurret>()},
+                { Lane.LANE_L, new List<LaneTurret>()},
+                { Lane.LANE_C, new List<LaneTurret>()},
+                { Lane.LANE_R, new List<LaneTurret>()}}
             }
         };
 
-        public static Dictionary<TeamId, Dictionary<LaneID, Inhibitor>> InhibitorList = new Dictionary<TeamId, Dictionary<LaneID, Inhibitor>>
+        public static Dictionary<TeamId, Dictionary<Lane, Inhibitor>> InhibitorList = new Dictionary<TeamId, Dictionary<Lane, Inhibitor>>
         {
-            {TeamId.TEAM_BLUE, new Dictionary<LaneID, Inhibitor>{
-                { LaneID.TOP, null },
-                { LaneID.BOTTOM, null }}
+            {TeamId.TEAM_BLUE, new Dictionary<Lane, Inhibitor>{
+                { Lane.LANE_L, null },
+                { Lane.LANE_R, null }}
             },
-            {TeamId.TEAM_PURPLE, new Dictionary<LaneID, Inhibitor>{
-                { LaneID.TOP, null },
-                { LaneID.BOTTOM, null }}
+            {TeamId.TEAM_PURPLE, new Dictionary<Lane, Inhibitor>{
+                { Lane.LANE_L, null },
+                { Lane.LANE_R, null }}
             }
         };
 
@@ -195,7 +195,7 @@ namespace MapScripts.Map10
                     }
                     else if (DeadInhibitors[team][inhibitor] <= 15.0f * 1000)
                     {
-                        inhibitor.SetState(InhibitorState.ALIVE);
+                        inhibitor.SetState(DampenerState.RespawningState);
                     }
                 }
             }
@@ -267,7 +267,7 @@ namespace MapScripts.Map10
                 var team = spawnBarrack.GetTeamID();
                 if (!SpawnBarracks.ContainsKey(team))
                 {
-                    SpawnBarracks.Add(team, new Dictionary<LaneID, MapObject>());
+                    SpawnBarracks.Add(team, new Dictionary<Lane, MapObject>());
                 }
                 SpawnBarracks[team].Add(spawnBarrack.GetLaneID(), spawnBarrack);
             }
@@ -314,7 +314,7 @@ namespace MapScripts.Map10
 
                 if (turretObj.Name.Contains("Shrine"))
                 {
-                    var fountainTurret = CreateLaneTurret(turretObj.Name + "_A", TowerModels[teamId][TurretType.FOUNTAIN_TURRET], position, teamId, TurretType.FOUNTAIN_TURRET, LaneID.NONE, LaneTurretAI, turretObj);
+                    var fountainTurret = CreateLaneTurret(turretObj.Name + "_A", TowerModels[teamId][TurretType.FOUNTAIN_TURRET], position, teamId, TurretType.FOUNTAIN_TURRET, Lane.LANE_Unknown, LaneTurretAI, turretObj);
                     TurretList[teamId][lane].Add(fountainTurret);
                     AddObject(fountainTurret);
                     continue;
@@ -323,10 +323,10 @@ namespace MapScripts.Map10
                 switch (turretObj.Name)
                 {
                     case "Turret_T1_C_07":
-                        lane = LaneID.BOTTOM;
+                        lane = Lane.LANE_R;
                         break;
                     case "Turret_T1_C_06":
-                        lane = LaneID.TOP;
+                        lane = Lane.LANE_L;
                         break;
                 }
 
@@ -338,7 +338,7 @@ namespace MapScripts.Map10
             }
         }
 
-        static TurretType GetTurretType(int trueIndex, LaneID lane, TeamId teamId)
+        static TurretType GetTurretType(int trueIndex, Lane lane, TeamId teamId)
         {
             TurretType returnType = TurretType.NEXUS_TURRET;
             switch (trueIndex)
@@ -353,7 +353,7 @@ namespace MapScripts.Map10
                     break;
             }
 
-            if (trueIndex == 1 && lane == LaneID.MIDDLE)
+            if (trueIndex == 1 && lane == Lane.LANE_C)
             {
                 returnType = TurretType.NEXUS_TURRET;
             }
@@ -376,7 +376,7 @@ namespace MapScripts.Map10
             foreach (var nexus in NexusList)
             {
                 // Adds Protection to Nexus
-                AddProtection(nexus, TurretList[nexus.Team][LaneID.MIDDLE].FindAll(turret => turret.Type == TurretType.NEXUS_TURRET).ToArray(), TeamInhibitors[nexus.Team].ToArray());
+                AddProtection(nexus, TurretList[nexus.Team][Lane.LANE_C].FindAll(turret => turret.Type == TurretType.NEXUS_TURRET).ToArray(), TeamInhibitors[nexus.Team].ToArray());
             }
 
             foreach (var InhibTeam in TeamInhibitors.Keys)
@@ -398,7 +398,7 @@ namespace MapScripts.Map10
                         AddProtection(turret, false, TurretList[inhibitor.Team][inhibitor.Lane].First(dependTurret => dependTurret.Type == TurretType.INNER_TURRET));
                     }
                 }
-                foreach (var turret in TurretList[InhibTeam][LaneID.MIDDLE])
+                foreach (var turret in TurretList[InhibTeam][Lane.LANE_C])
                 {
                     AddProtection(turret, false, TeamInhibitors[InhibTeam].ToArray());
                 }
