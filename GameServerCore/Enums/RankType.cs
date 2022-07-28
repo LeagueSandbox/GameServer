@@ -1,7 +1,7 @@
 ﻿using System;
 namespace GameServerCore.Enums
 {
-    public enum RankType : int
+    public enum RankType : uint
     {
         SOLDIER = 0x0,
         LIEUTENANT = 0x1,
