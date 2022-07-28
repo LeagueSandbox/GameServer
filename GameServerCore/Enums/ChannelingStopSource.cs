@@ -14,7 +14,6 @@
         Move,
         Attack,
         Casting,
-        Unknown,
-        Count_1 = 0xC
+        Unknown
     }
 }
