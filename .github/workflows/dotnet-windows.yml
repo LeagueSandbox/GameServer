@@ -36,4 +36,4 @@ jobs:
         name: Windows Artifact
         path: ${{ github.workspace }}/GameServerConsole/bin/Debug/net6.0
         if-no-files-found: warn
-        retention-days: 1
+        retention-days: 90
