@@ -15,7 +15,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             Vector2 position,
             TeamId team = TeamId.TEAM_BLUE,
             uint netId = 0,
-            LaneID lane = LaneID.NONE
+            Lane lane = Lane.LANE_Unknown
         ) : base(game, name, model, position, team, netId, lane)
         {
             Owner = owner;

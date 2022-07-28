@@ -75,7 +75,7 @@ namespace MapScripts.Map8
             {
                 var teamId = turretObj.GetTeamID();
                 var position = new Vector2(turretObj.CentralPoint.X, turretObj.CentralPoint.Z);
-                var fountainTurret = CreateLaneTurret(turretObj.Name + "_A", TowerModels[teamId], position, teamId, TurretType.FOUNTAIN_TURRET, LaneID.NONE, "TurretAI", turretObj);
+                var fountainTurret = CreateLaneTurret(turretObj.Name + "_A", TowerModels[teamId], position, teamId, TurretType.FOUNTAIN_TURRET, Lane.LANE_Unknown, "TurretAI", turretObj);
                 TurretList[teamId].Add(fountainTurret);
 
                 if (!fountainTurret.Name.Contains('1'))

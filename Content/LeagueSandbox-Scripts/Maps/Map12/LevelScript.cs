@@ -43,7 +43,7 @@ namespace MapScripts.Map12
             }}
         };
 
-        public Dictionary<LaneID, List<Vector2>> MinionPaths { get; set; }
+        public Dictionary<Lane, List<Vector2>> MinionPaths { get; set; }
 
         //List of every wave type
         public Dictionary<string, List<MinionSpawnType>> MinionWaveTypes = new Dictionary<string, List<MinionSpawnType>>
@@ -233,11 +233,11 @@ namespace MapScripts.Map12
                 foreach (var barrack in LevelScriptObjects.SpawnBarracks[team].Values)
                 {
                     TeamId opposed_team = barrack.GetOpposingTeamID();
-                    LaneID lane = barrack.GetSpawnBarrackLaneID();
+                    Lane lane = barrack.GetSpawnBarrackLaneID();
                     MapObject opposedBarrack = LevelScriptObjects.SpawnBarracks[opposed_team][lane];
                     Inhibitor inhibitor = LevelScriptObjects.InhibitorList[opposed_team];
                     Vector2 position = new Vector2(barrack.CentralPoint.X, barrack.CentralPoint.Z);
-                    bool isInhibitorDead = inhibitor.InhibitorState == InhibitorState.DEAD;
+                    bool isInhibitorDead = inhibitor.InhibitorState == DampenerState.RegenerationState;
                     Tuple<int, List<MinionSpawnType>> spawnWave = MinionWaveToSpawn(GameTime(), _cannonMinionCount, isInhibitorDead);
                     cannonMinionCap = spawnWave.Item1;
 

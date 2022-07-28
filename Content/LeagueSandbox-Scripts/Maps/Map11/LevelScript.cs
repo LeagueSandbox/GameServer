@@ -35,10 +35,10 @@ namespace MapScripts.Map11
         };
 
         //List of every path minions will take, separated by lane (These values are for team blue, team red will just reverse this table
-        public Dictionary<LaneID, List<Vector2>> MinionPaths { get; set; } = new Dictionary<LaneID, List<Vector2>>
+        public Dictionary<Lane, List<Vector2>> MinionPaths { get; set; } = new Dictionary<Lane, List<Vector2>>
         {
             //Pathing coordinates for Top lane
-            {LaneID.TOP, new List<Vector2> {
+            {Lane.LANE_L, new List<Vector2> {
                 new Vector2(1341f, 2274f),
                 new Vector2(1544f, 3567f),
                 new Vector2(1410f, 4262f),
@@ -55,7 +55,7 @@ namespace MapScripts.Map11
             }},
 
             //Pathing coordinates for Mid lane
-            {LaneID.MIDDLE, new List<Vector2> {
+            {Lane.LANE_C, new List<Vector2> {
                 new Vector2(2126f, 2172f),
                 new Vector2(2850f, 2926f),
                 new Vector2(3318.8f, 2859f),
@@ -70,7 +70,7 @@ namespace MapScripts.Map11
             }},
 
             //Pathing coordinates for Bot lane
-            {LaneID.BOTTOM, new List<Vector2> {
+            {Lane.LANE_R, new List<Vector2> {
                 new Vector2(2271f, 1352f),
                 new Vector2(2943f, 1251f),
                 new Vector2(3453f, 1569f),
@@ -267,10 +267,10 @@ namespace MapScripts.Map11
             {
                 TeamId opposed_team = barrack.Value.GetOpposingTeamID();
                 TeamId barrackTeam = barrack.Value.GetTeamID();
-                LaneID lane = barrack.Value.GetSpawnBarrackLaneID();
+                Lane lane = barrack.Value.GetSpawnBarrackLaneID();
                 Inhibitor inhibitor = LevelScriptObjects.InhibitorList[opposed_team][lane];
                 Vector2 position = new Vector2(barrack.Value.CentralPoint.X, barrack.Value.CentralPoint.Z);
-                bool isInhibitorDead = inhibitor.InhibitorState == InhibitorState.DEAD;
+                bool isInhibitorDead = inhibitor.InhibitorState == DampenerState.RegenerationState;
                 Tuple<int, List<MinionSpawnType>> spawnWave = MinionWaveToSpawn(GameTime(), _cannonMinionCount, isInhibitorDead, LevelScriptObjects.AllInhibitorsAreDead[opposed_team]);
                 cannonMinionCap = spawnWave.Item1;
 

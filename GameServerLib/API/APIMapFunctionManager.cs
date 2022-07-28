@@ -81,7 +81,7 @@ namespace LeagueSandbox.GameServer.API
         /// <param name="inhibRadius"></param>
         /// <param name="sightRange"></param>
         /// <returns></returns>
-        public static Inhibitor CreateInhibitor(string name, string model, Vector2 position, TeamId team, LaneID lane, int inhibRadius, int sightRange, Stats stats = null)
+        public static Inhibitor CreateInhibitor(string name, string model, Vector2 position, TeamId team, Lane lane, int inhibRadius, int sightRange, Stats stats = null)
         {
             return new Inhibitor(_game, model, lane, team, inhibRadius, position, sightRange, stats, Crc32Algorithm.Compute(Encoding.UTF8.GetBytes(name)) | 0xFF000000);
         }
@@ -105,7 +105,7 @@ namespace LeagueSandbox.GameServer.API
         /// <param name="mapObject"></param>
         /// <param name="netId"></param>
         /// <returns></returns>
-        public static LaneTurret CreateLaneTurret(string name, string model, Vector2 position, TeamId team, TurretType turretType, LaneID lane, string aiScript, MapObject mapObject = default, uint netId = 0)
+        public static LaneTurret CreateLaneTurret(string name, string model, Vector2 position, TeamId team, TurretType turretType, Lane lane, string aiScript, MapObject mapObject = default, uint netId = 0)
         {
             return new LaneTurret(_game, name, model, position, team, turretType, netId, lane, mapObject, null, aiScript);
         }

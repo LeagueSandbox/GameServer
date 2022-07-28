@@ -3,8 +3,8 @@ namespace GameServerCore.Enums
 {
     public enum MinionRoamState : uint
     {
-        Inactive = 0,
-        Hostile = 1,
-        Running = 2,
+        Inactive = 0x0,
+        Hostile = 0x1,
+        RunInFear = 0x2,
     }
 }

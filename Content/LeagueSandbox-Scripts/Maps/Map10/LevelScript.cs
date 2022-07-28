@@ -220,11 +220,11 @@ namespace MapScripts.Map10
                 foreach (var barrack in LevelScriptObjects.SpawnBarracks[team].Values)
                 {
                     TeamId opposed_team = barrack.GetOpposingTeamID();
-                    LaneID lane = barrack.GetSpawnBarrackLaneID();
+                    Lane lane = barrack.GetSpawnBarrackLaneID();
                     MapObject opposedBarrack = LevelScriptObjects.SpawnBarracks[opposed_team][lane];
                     Inhibitor inhibitor = LevelScriptObjects.InhibitorList[opposed_team][lane];
                     Vector2 position = new Vector2(barrack.CentralPoint.X, barrack.CentralPoint.Z);
-                    bool isInhibitorDead = inhibitor.InhibitorState == InhibitorState.DEAD;
+                    bool isInhibitorDead = inhibitor.InhibitorState == DampenerState.RegenerationState;
                     Tuple<int, List<MinionSpawnType>> spawnWave = MinionWaveToSpawn(GameTime(), _cannonMinionCount, isInhibitorDead, LevelScriptObjects.AllInhibitorsAreDead[opposed_team]);
                     cannonMinionCap = spawnWave.Item1;
 

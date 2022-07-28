@@ -5,9 +5,6 @@
     {
         NotCancelled,
         TimeCompleted,
-        /// <summary>
-        /// Unknown
-        /// </summary>
         Animation,
         LostTarget,
         StunnedOrSilencedOrTaunted,
@@ -17,6 +14,7 @@
         Move,
         Attack,
         Casting,
-        Unknown
+        Unknown,
+        Count_1 = 0xC
     }
 }

@@ -5,6 +5,7 @@
     {
         NotCancelled,
         Success,
-        Cancel
+        Cancel,
+        Count_0
     }
 }

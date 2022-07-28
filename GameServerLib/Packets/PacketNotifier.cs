@@ -1426,7 +1426,7 @@ namespace PacketDefinitions420
         {
             switch (inhibitor.InhibitorState)
             {
-                case InhibitorState.DEAD:
+                case DampenerState.RegenerationState:
                     var annoucementDeath = new OnDampenerDie
                     {
                         //All mentions i found were 0, investigate further if we'd want to unhardcode this
@@ -1440,7 +1440,7 @@ namespace PacketDefinitions420
                     NotifyBuilding_Die(deathData);
 
                     break;
-                case InhibitorState.ALIVE:
+                case DampenerState.RespawningState:
                     var annoucementRespawn = new OnDampenerRespawn
                     {
                         OtherNetID = inhibitor.NetId

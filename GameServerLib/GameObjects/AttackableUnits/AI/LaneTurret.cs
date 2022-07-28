@@ -18,7 +18,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             TeamId team = TeamId.TEAM_BLUE,
             TurretType type = TurretType.OUTER_TURRET,
             uint netId = 0,
-            LaneID lane = LaneID.NONE,
+            Lane lane = Lane.LANE_Unknown,
             MapObject mapObject = default,
             Stats stats = null,
             string aiScript = ""
