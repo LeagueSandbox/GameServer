@@ -1,5 +1,6 @@
 ﻿namespace GameServerCore.Enums
 {
+    //TeamType is different from TeamID, this is to be used on EventSourceInfo when it gets eventually introduced
     public enum TeamType : uint
     {
         ALL = 0xFFFFFFFE,
