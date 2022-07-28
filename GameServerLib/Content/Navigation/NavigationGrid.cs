@@ -189,13 +189,13 @@ namespace LeagueSandbox.GameServer.Content.Navigation
             //var goal = GetClosestWalkableCell(to, distanceThreshold, true);
             to = GetClosestTerrainExit(to, distanceThreshold);
             var toNav = TranslateToNavGrid(to);
-            var goal = GetCell(toNav, false);
+            var cellTo = GetCell(toNav, false);
             
-            if (cellFrom == null || goal == null)
+            if (cellFrom == null || cellTo == null)
             {
                 return null;
             }
-            if(cellFrom.ID == goal.ID)
+            if(cellFrom.ID == cellTo.ID)
             {
                 return new List<Vector2>(2){ from, to };
             }
@@ -227,7 +227,7 @@ namespace LeagueSandbox.GameServer.Content.Navigation
                 NavigationGridCell cell = path[path.Count - 1];
 
                 // found the min solution and return it (path)
-                if (cell.ID == goal.ID)
+                if (cell.ID == cellTo.ID)
                 {
                     break;
                 }
@@ -240,19 +240,26 @@ namespace LeagueSandbox.GameServer.Content.Navigation
                         continue;
                     }
 
-                    Vector2 cellCoord = toNav;
+                    Vector2 neighborCellCoord = toNav;
                     // The target point is always walkable,
                     // we made sure of this at the beginning of the function
-                    if(neighborCell.ID != goal.ID)
+                    if(neighborCell.ID != cellTo.ID)
                     {
-                        cellCoord = neighborCell.GetCenter();
+                        neighborCellCoord = neighborCell.GetCenter();
+                        
+                        Vector2 cellCoord = fromNav;
+                        if(cell.ID != cellFrom.ID)
+                        {
+                            cellCoord = cell.GetCenter();
+                        }
+
+                        Vector2 inBetween = 0.5f * (cellCoord + neighborCellCoord);
 
                         // close cell if not walkable or circle LOS check fails (start cell skipped as it always fails)
                         if
                         (
-                            !IsWalkable(cellCoord, distanceThreshold, false)
-                            || (IsAnythingBetween(cell, neighborCell, distanceThreshold)
-                                && cell != cellFrom)
+                            !IsWalkable(neighborCellCoord, distanceThreshold, false)
+                            || !IsWalkable(inBetween, distanceThreshold, false)
                         )
                         {
                             closedList.Add(neighborCell.ID);
@@ -276,7 +283,7 @@ namespace LeagueSandbox.GameServer.Content.Navigation
                     priorityQueue.Enqueue(
                         (npath, cost), cost
                         + neighborCell.Heuristic
-                        + Vector2.Distance(cellCoord, toNav)
+                        + Vector2.Distance(neighborCellCoord, toNav)
                     );
 
                     closedList.Add(neighborCell.ID);
@@ -639,37 +646,31 @@ namespace LeagueSandbox.GameServer.Content.Navigation
         /// <param name="checkWalkable">Whether or not the ray stops when hitting a position which blocks pathing.</param>
         /// <param name="checkVisible">Whether or not the ray stops when hitting a position which blocks vision.</param>
         /// <returns>True = Reached destination with destination. False = Failed, with stopping position.</returns>
-        public KeyValuePair<bool, Vector2> CastRay(Vector2 origin, Vector2 destination, bool checkWalkable = false, bool checkVisible = false)
+        public bool CastRay(Vector2 origin, Vector2 destination, bool checkWalkable = false, bool checkVisible = false)
         {
             // Out of bounds
             if (origin.X < MinGridPosition.X || origin.X >= MaxGridPosition.X || origin.Y < MinGridPosition.Z || origin.Y >= MaxGridPosition.Z)
             {
-                return new KeyValuePair<bool, Vector2>(false, new Vector2(float.NaN, float.NaN));
+                return false;
             }
 
             origin = TranslateToNavGrid(origin);
             destination = TranslateToNavGrid(destination);
 
-            Vector2 dist = destination - origin;
-            float greatestdist = Math.Max(
-                Math.Abs(dist.X),
-                Math.Abs(dist.Y)
-            );
-
-            int i;
-            int il = (int)greatestdist;
-            Vector2 d = dist / greatestdist;
+            var cells = RayCast(origin, destination);
 
             bool prevPosHadBush = HasFlag(origin, NavigationGridCellFlags.HAS_GRASS, false);
             bool destinationHasGrass = HasFlag(destination, NavigationGridCellFlags.HAS_GRASS, false);
 
-            for (i = 0; i < il; i++)
+            bool hasNext;
+            while (hasNext = cells.MoveNext())
             {
+                var cell = cells.Current;
 
                 //TODO: Implement methods for maps whose NavGrids don't use SEE_THROUGH flags for buildings
                 if (checkWalkable)
                 {
-                    if(!IsWalkable(origin, translate: false))
+                    if(!IsWalkable(cell))
                     {
                         break;
                     }
@@ -677,8 +678,6 @@ namespace LeagueSandbox.GameServer.Content.Navigation
 
                 if (checkVisible)
                 {
-                    var cell = GetCell(origin, false);
-
                     if (!IsVisible(cell))
                     {
                         break;
@@ -687,32 +686,96 @@ namespace LeagueSandbox.GameServer.Content.Navigation
                     bool isGrass = cell.HasFlag(NavigationGridCellFlags.HAS_GRASS);
 
                     // If you are outside of a bush
-                    if (!prevPosHadBush)
+                    if (!prevPosHadBush && isGrass)
                     {
-                        if (isGrass)
-                        {
-                            break;
-                        }
+                        break;
                     }
 
                     // If you are in a different bush
-                    if (prevPosHadBush && destinationHasGrass)
+                    if (prevPosHadBush && destinationHasGrass && !isGrass)
                     {
-                        if (!isGrass)
-                        {
-                            break;
-                        }
+                        break;
                     }
                 }
+            }
+            
+            return !hasNext;
+        }
 
-                // if checkWalkable == true, stop incrementing when (x1, x2) is a see-able position
-                // if checkWalkable == false, stop incrementing when (x1, x2) is a non-see-able position
-                origin += d;
+        // https://playtechs.blogspot.com/2007/03/raytracing-on-grid.html
+        private IEnumerator<NavigationGridCell> RayCast(Vector2 v0, Vector2 v1)
+        {
+            double dx = Math.Abs(v1.X - v0.X);
+            double dy = Math.Abs(v1.Y - v0.Y);
+
+            short x = (short)(Math.Floor(v0.X));
+            short y = (short)(Math.Floor(v0.Y));
+
+            int n = 1;
+            short x_inc, y_inc;
+            double error;
+
+            if (dx == 0)
+            {
+                x_inc = 0;
+                error = float.PositiveInfinity;
+            }
+            else if (v1.X > v0.X)
+            {
+                x_inc = 1;
+                n += (int)(Math.Floor(v1.X)) - x;
+                error = (Math.Floor(v0.X) + 1 - v0.X) * dy;
+            }
+            else
+            {
+                x_inc = -1;
+                n += x - (int)(Math.Floor(v1.X));
+                error = (v0.X - Math.Floor(v0.X)) * dy;
             }
 
-            return new KeyValuePair<bool, Vector2>(
-                i == il, TranslateFromNavGrid(origin)
-            );
+            if (dy == 0)
+            {
+                y_inc = 0;
+                error = float.NegativeInfinity;
+            }
+            else if (v1.Y > v0.Y)
+            {
+                y_inc = 1;
+                n += (int)(Math.Floor(v1.Y)) - y;
+                error -= (Math.Floor(v0.Y) + 1 - v0.Y) * dx;
+            }
+            else
+            {
+                y_inc = -1;
+                n += y - (int)(Math.Floor(v1.Y));
+                error -= (v0.Y - Math.Floor(v0.Y)) * dx;
+            }
+
+            for (; n > 0; --n)
+            {
+                yield return GetCell(x, y);
+
+                if (error > 0)
+                {
+                    y += y_inc;
+                    error -= dx;
+                }
+                else if(error < 0)
+                {
+                    x += x_inc;
+                    error += dy;
+                }
+                else //if (error == 0)
+                {
+                    yield return GetCell((short)(x + x_inc), y);
+                    yield return GetCell(x, (short)(y + y_inc));
+                    
+                    x += x_inc;
+                    y += y_inc;
+                    error += dy - dx;
+                    n--;
+                }
+            }
         }
 
         /// <summary>
@@ -724,7 +787,7 @@ namespace LeagueSandbox.GameServer.Content.Navigation
         /// <param name="checkWalkable">Whether or not the ray stops when hitting a position which blocks pathing.</param>
         /// <param name="checkVisible">Whether or not the ray stops when hitting a position which blocks vision. *NOTE*: Does not apply if checkWalkable is also true.</param>
         /// <returns>True = Reached destination with destination. False = Failed, with stopping position.</returns>
-        public KeyValuePair<bool, Vector2> CastInfiniteRay(Vector2 origin, Vector2 direction, bool checkWalkable = true, bool checkVisible = false)
+        public bool CastInfiniteRay(Vector2 origin, Vector2 direction, bool checkWalkable = true, bool checkVisible = false)
         {
             return CastRay(origin, origin + direction * 1024, checkWalkable, checkVisible);
         }
@@ -736,10 +799,9 @@ namespace LeagueSandbox.GameServer.Content.Navigation
         /// <param name="endPos">Position to end the check at.</param>
         /// <param name="checkVision">True = Check if vision is blocked. False = Check if pathing is blocked.</param>
         /// <returns>True/False.</returns>
-        public KeyValuePair<bool, Vector2> IsAnythingBetween(Vector2 startPos, Vector2 endPos, bool checkVision = false)
+        public bool IsAnythingBetween(Vector2 startPos, Vector2 endPos, bool checkVision = false)
         {
-            KeyValuePair<bool, Vector2> result = CastRay(startPos, endPos, !checkVision, checkVision);
-            return new KeyValuePair<bool, Vector2>(!result.Key, result.Value);
+            return !CastRay(startPos, endPos, !checkVision, checkVision);
         }
 
         /// <summary>
@@ -751,19 +813,12 @@ namespace LeagueSandbox.GameServer.Content.Navigation
         /// <returns>True/False.</returns>
         public bool IsAnythingBetween(GameObject a, GameObject b, bool checkVision = false)
         {
-            if (a is ObjBuilding)
-            {
-                double rayDist = Math.Sqrt((CastRay(b.Position, a.Position, !checkVision, checkVision).Value - b.Position).SqrLength());
-                rayDist += a.PathfindingRadius;
-                return (rayDist * rayDist) < (b.Position - a.Position).SqrLength();
-            }
-            if (b is ObjBuilding)
-            {
-                double rayDist = Math.Sqrt((CastRay(a.Position, b.Position, !checkVision, checkVision).Value - a.Position).SqrLength());
-                rayDist += b.PathfindingRadius;
-                return (rayDist * rayDist) < (b.Position - a.Position).SqrLength();
-            }
-            return !CastRay(a.Position, b.Position, !checkVision, checkVision).Key;
+            var d = Vector2.Normalize(b.Position - a.Position);
+
+            Vector2 origin = a.Position + d * a.PathfindingRadius;
+            Vector2 destination = b.Position - d * b.PathfindingRadius;
+
+            return !CastRay(origin, destination, !checkVision, checkVision);
         }
 
         /// <summary>
@@ -773,43 +828,22 @@ namespace LeagueSandbox.GameServer.Content.Navigation
         /// <param name="destination">Cell to end the check at.</param>
         /// <param name="ignoreTerrain">Whether or not to ignore terrain when checking for pathability between cells.</param>
         /// <returns>True/False.</returns>
-        public bool IsAnythingBetween(NavigationGridCell origin, NavigationGridCell destination, float checkDistance = 0f, bool ignoreTerrain = false)
+        public bool IsAnythingBetween(NavigationGridCell origin, NavigationGridCell destination, float checkDistance = 0f)
         {
-            float x1 = origin.Locator.X + 0.5f;
-            float y1 = origin.Locator.Y + 0.5f;
-            float x2 = destination.Locator.X + 0.5f;
-            float y2 = destination.Locator.Y + 0.5f;
+            Vector2 v1 = origin.GetCenter();
+            Vector2 v2 = destination.GetCenter();
 
-            if (x1 < 0 || y1 < 0 || x1 >= CellCountX || y1 >= CellCountY)
-            {
-                return false;
-            }
+            Vector2 dist = v2 - v1;
+            float greatestdist = Math.Max(Math.Abs(dist.X), Math.Abs(dist.Y)) * 2;
 
-            float distx = x2 - x1;
-            float disty = y2 - y1;
-            float greatestdist = Math.Abs(distx);
-            if (Math.Abs(disty) > greatestdist)
+            Vector2 d = dist / greatestdist;
+            for (int i = 0; i <= (int)greatestdist; i++)
             {
-                greatestdist = Math.Abs(disty);
-            }
-
-            int il = (int)greatestdist;
-            float dx = distx / greatestdist;
-            float dy = disty / greatestdist;
-            int i;
-            for (i = 0; i <= il; i++)
-            {
-                if (!ignoreTerrain)
+                if (!IsWalkable(new Vector2(v1.X, v1.Y), checkDistance, false))
                 {
-                    if (!IsWalkable(new Vector2(x1, y1), checkDistance, false))
-                    {
-                        return true;
-                    }
+                    return true;
                 }
-
-                // report on terrain
-                x1 += dx;
-                y1 += dy;
+                v1 += d;
             }
 
             return false;
