@@ -9,6 +9,5 @@
         ARAM = 0x3,
         FIRSTBLOOD = 0x4,
         ASCENSION = 0x5,
-        AMOUNT = 0x6
     }
 }

@@ -106,11 +106,11 @@ namespace Spells
             //IEventSource source = new EventSource(spell.ScriptNameHash, HashString("EzrealMysticShot"));
             if (owner.SkinID == 5)
             {
-                source = new EventSource(266740993, HashString("EzrealMysticShot"));
+                source = new AbilityInfo(266740993, HashString("EzrealMysticShot"));
             }
             else
             {
-                source = new EventSource(3693728257, HashString("EzrealMysticShot"));
+                source = new AbilityInfo(3693728257, HashString("EzrealMysticShot"));
             }
             target.TakeDamage(owner, damage, DamageType.DAMAGE_TYPE_PHYSICAL, DamageSource.DAMAGE_SOURCE_ATTACK, false, source);
 
