@@ -663,7 +663,7 @@ namespace LeagueSandbox.GameServer.Content.Navigation
                 destination = TranslateToNavGrid(destination);
             }
 
-            var cells = RayCast(origin, destination).GetEnumerator();
+            var cells = GetAllCellsInLine(origin, destination).GetEnumerator();
 
             bool prevPosHadBush = HasFlag(origin, NavigationGridCellFlags.HAS_GRASS, false);
             bool destinationHasGrass = HasFlag(destination, NavigationGridCellFlags.HAS_GRASS, false);
@@ -709,7 +709,7 @@ namespace LeagueSandbox.GameServer.Content.Navigation
         }
 
         // https://playtechs.blogspot.com/2007/03/raytracing-on-grid.html
-        private IEnumerable<NavigationGridCell> RayCast(Vector2 v0, Vector2 v1)
+        private IEnumerable<NavigationGridCell> GetAllCellsInLine(Vector2 v0, Vector2 v1)
         {
             double dx = Math.Abs(v1.X - v0.X);
             double dy = Math.Abs(v1.Y - v0.Y);
@@ -797,8 +797,8 @@ namespace LeagueSandbox.GameServer.Content.Navigation
 
             var cells = GetAllCellsInRange(orig, radius, false)
             .Concat(GetAllCellsInRange(dest, radius, false))
-            .Concat(RayCast(orig + p, dest + p))
-            .Concat(RayCast(orig - p, dest - p));
+            .Concat(GetAllCellsInLine(orig + p, dest + p))
+            .Concat(GetAllCellsInLine(orig - p, dest - p));
 
             int minY = (int)(Math.Min(orig.Y, dest.Y) - tradius) - 1;
             int maxY = (int)(Math.Max(orig.Y, dest.Y) + tradius) + 1;
@@ -854,18 +854,6 @@ namespace LeagueSandbox.GameServer.Content.Navigation
         }
 
         /// <summary>
-        /// Whether or not there is anything blocking pathing or vision from the starting position to the ending position. (depending on checkVision).
-        /// </summary>
-        /// <param name="startPos">Position to start the check from.</param>
-        /// <param name="endPos">Position to end the check at.</param>
-        /// <param name="checkVision">True = Check if vision is blocked. False = Check if pathing is blocked.</param>
-        /// <returns>True/False.</returns>
-        public bool IsAnythingBetween(Vector2 startPos, Vector2 endPos, bool checkVision = false)
-        {
-            return CastRay(startPos, endPos, !checkVision, checkVision);
-        }
-
-        /// <summary>
         /// Whether or not there is anything blocking the two given GameObjects from either seeing eachother or pathing straight towards eachother (depending on checkVision).
         /// </summary>
         /// <param name="a">GameObject to start the check from.</param>
@@ -880,34 +868,6 @@ namespace LeagueSandbox.GameServer.Content.Navigation
             Vector2 destination = b.Position - d * b.PathfindingRadius;
 
             return CastRay(origin, destination, !checkVision, checkVision);
-        }
-
-        /// <summary>
-        /// Whether or not there is anything blocking pathing from the first given cell to the next.
-        /// </summary>
-        /// <param name="origin">Cell to start the check from.</param>
-        /// <param name="destination">Cell to end the check at.</param>
-        /// <param name="ignoreTerrain">Whether or not to ignore terrain when checking for pathability between cells.</param>
-        /// <returns>True/False.</returns>
-        public bool IsAnythingBetween(NavigationGridCell origin, NavigationGridCell destination, float checkDistance = 0f)
-        {
-            Vector2 v1 = origin.GetCenter();
-            Vector2 v2 = destination.GetCenter();
-
-            Vector2 dist = v2 - v1;
-            float greatestdist = Math.Max(Math.Abs(dist.X), Math.Abs(dist.Y)) * 2;
-
-            Vector2 d = dist / greatestdist;
-            for (int i = 0; i <= (int)greatestdist; i++)
-            {
-                if (!IsWalkable(new Vector2(v1.X, v1.Y), checkDistance, false))
-                {
-                    return true;
-                }
-                v1 += d;
-            }
-
-            return false;
         }
 
         /// <summary>
