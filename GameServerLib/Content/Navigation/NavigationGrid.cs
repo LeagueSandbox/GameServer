@@ -7,7 +7,8 @@ using System.Numerics;
 using GameServerLib.Extensions;
 using GameServerCore.Enums;
 using LeagueSandbox.GameServer.GameObjects;
-using LeagueSandbox.GameServer.GameObjects.AttackableUnits.Buildings;
+using System.Linq;
+using GameMaths;
 
 namespace LeagueSandbox.GameServer.Content.Navigation
 {
@@ -177,8 +178,13 @@ namespace LeagueSandbox.GameServer.Content.Navigation
         /// <param name="to">Point that the path ends at.</param>
         /// <param name="distanceThreshold">Amount of distance away from terrain that the path should be.</param>
         /// <returns>List of points forming a path in order: from -> to</returns>
-        public List<Vector2> GetPath(Vector2 from, Vector2 to, float distanceThreshold = 0)
+        public List<Vector2> GetPath(Vector2 from, Vector2 to, float distanceThreshold = 0, bool trace = false)
         {
+            if(trace)
+            {
+                
+            }
+
             if(from == to)
             {
                 return null;
@@ -253,13 +259,10 @@ namespace LeagueSandbox.GameServer.Content.Navigation
                             cellCoord = cell.GetCenter();
                         }
 
-                        Vector2 inBetween = 0.5f * (cellCoord + neighborCellCoord);
-
                         // close cell if not walkable or circle LOS check fails (start cell skipped as it always fails)
                         if
                         (
-                            !IsWalkable(neighborCellCoord, distanceThreshold, false)
-                            || !IsWalkable(inBetween, distanceThreshold, false)
+                            CastCircle(cellCoord, neighborCellCoord, distanceThreshold, false)
                         )
                         {
                             closedList.Add(neighborCell.ID);
@@ -296,7 +299,12 @@ namespace LeagueSandbox.GameServer.Content.Navigation
                 return null;
             }
 
-            SmoothPath(path, distanceThreshold);
+            //SmoothPath(path, distanceThreshold);
+            path = SmoothPath2(path, distanceThreshold);
+            if(path.Count > 0x7F)
+            {
+                path.RemoveRange(0x7F - 1, path.Count - 1 - 0x7F - 1);
+            }
 
             var returnList = new List<Vector2>(path.Count);
             
@@ -322,15 +330,45 @@ namespace LeagueSandbox.GameServer.Content.Navigation
                 return;
             }
             int j = 0;
-            for(int i = 1; i < path.Count; i++)
+            for(int i = 2; i < path.Count; i++)
             {
-                if(i == path.Count - 1 || IsAnythingBetween(path[j], path[i], checkDistance))
+                if(CastCircle(path[j].GetCenter(), path[i].GetCenter(), checkDistance, false))
                 {
-                    path[++j] = path[i];
+                    path[++j] = path[i - 1];
                 }
             }
+            path[++j] = path[path.Count - 1];
             j++;
             path.RemoveRange(j, path.Count - j);
+        }
+
+        private List<NavigationGridCell> SmoothPath2(List<NavigationGridCell> path, float radius)
+        {
+            if(path.Count < 3)
+            {
+                return path;
+            }
+
+            var lastAdded = path[0];
+            var ret = new List<NavigationGridCell>(){ path[0] };
+            Vector2 prevDir = path[1].GetCenter() - path[0].GetCenter();
+            
+            for(int i = 2; i < path.Count; i++)
+            {
+                var cell = path[i];
+                var prevCell = path[i - 1];
+                Vector2 dir = cell.GetCenter() - prevCell.GetCenter();
+                //if(dir != prevDir)
+                if(CastCircle(lastAdded.GetCenter(), cell.GetCenter(), radius, false))
+                //if(!CastRay(lastAdded.GetCenter(), cell.GetCenter(), true, false, false))
+                {
+                    ret.Add(prevCell);
+                    lastAdded = prevCell;
+                    prevDir = dir;
+                }
+            }
+            ret.Add(path[path.Count - 1]);
+            return ret;
         }
 
         /// <summary>
@@ -646,7 +684,7 @@ namespace LeagueSandbox.GameServer.Content.Navigation
         /// <param name="checkWalkable">Whether or not the ray stops when hitting a position which blocks pathing.</param>
         /// <param name="checkVisible">Whether or not the ray stops when hitting a position which blocks vision.</param>
         /// <returns>True = Reached destination with destination. False = Failed, with stopping position.</returns>
-        public bool CastRay(Vector2 origin, Vector2 destination, bool checkWalkable = false, bool checkVisible = false)
+        public bool CastRay(Vector2 origin, Vector2 destination, bool checkWalkable = false, bool checkVisible = false, bool translate = true)
         {
             // Out of bounds
             if (origin.X < MinGridPosition.X || origin.X >= MaxGridPosition.X || origin.Y < MinGridPosition.Z || origin.Y >= MaxGridPosition.Z)
@@ -654,10 +692,13 @@ namespace LeagueSandbox.GameServer.Content.Navigation
                 return false;
             }
 
-            origin = TranslateToNavGrid(origin);
-            destination = TranslateToNavGrid(destination);
+            if(translate)
+            {
+                origin = TranslateToNavGrid(origin);
+                destination = TranslateToNavGrid(destination);
+            }
 
-            var cells = RayCast(origin, destination);
+            var cells = RayCast(origin, destination).GetEnumerator();
 
             bool prevPosHadBush = HasFlag(origin, NavigationGridCellFlags.HAS_GRASS, false);
             bool destinationHasGrass = HasFlag(destination, NavigationGridCellFlags.HAS_GRASS, false);
@@ -703,7 +744,7 @@ namespace LeagueSandbox.GameServer.Content.Navigation
         }
 
         // https://playtechs.blogspot.com/2007/03/raytracing-on-grid.html
-        private IEnumerator<NavigationGridCell> RayCast(Vector2 v0, Vector2 v1)
+        private IEnumerable<NavigationGridCell> RayCast(Vector2 v0, Vector2 v1)
         {
             double dx = Math.Abs(v1.X - v0.X);
             double dy = Math.Abs(v1.Y - v0.Y);
@@ -769,13 +810,73 @@ namespace LeagueSandbox.GameServer.Content.Navigation
                 {
                     yield return GetCell((short)(x + x_inc), y);
                     yield return GetCell(x, (short)(y + y_inc));
-                    
+
                     x += x_inc;
                     y += y_inc;
                     error += dy - dx;
                     n--;
                 }
             }
+        }
+
+        private bool CastCircle(Vector2 orig, Vector2 dest, float radius, bool translate = true)
+        {
+            if(translate)
+            {
+                orig = TranslateToNavGrid(orig);
+                dest = TranslateToNavGrid(dest);
+            }
+            
+            float tradius = radius / CellSize;
+            Vector2 p = (dest - orig).Normalized().Perpendicular() * tradius;
+
+            var cells = GetAllCellsInRange(orig, radius, false)
+            .Concat(GetAllCellsInRange(dest, radius, false))
+            .Concat(RayCast(orig + p, dest + p))
+            .Concat(RayCast(orig - p, dest - p));
+            
+            //int minY = 0;
+            //int maxY = (int)CellCountY - 1;
+
+            int minY = (int)(Math.Min(orig.Y, dest.Y) - tradius) - 1;
+            int maxY = (int)(Math.Max(orig.Y, dest.Y) + tradius) + 1;
+
+            int countY = maxY - minY + 1;
+            var xRanges = new short[countY, 3];
+            foreach(var cell in cells)
+            {
+                if(!IsWalkable(cell))
+                {
+                    return true;
+                }
+                int y = cell.Locator.Y - minY;
+                if(xRanges[y, 2] == 0)
+                {
+                    xRanges[y, 0] = cell.Locator.X;
+                    xRanges[y, 1] = cell.Locator.X;
+                    xRanges[y, 2] = 1;
+                }
+                else
+                {
+                    xRanges[y, 0] = Math.Min(xRanges[y, 0], cell.Locator.X);
+                    xRanges[y, 1] = Math.Max(xRanges[y, 1], cell.Locator.X);
+                }
+            }
+
+            ///*
+            for(int y = 0; y < countY; y++)
+            {
+                for(int x = xRanges[y, 0] + 1; x < xRanges[y, 1]; x++)
+                {
+                    if(!IsWalkable(GetCell((short)x, (short)(minY + y))))
+                    {
+                        return true;
+                    }
+                }
+            }
+            //*/
+            
+            return false;
         }
 
         /// <summary>

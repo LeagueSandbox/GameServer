@@ -46,6 +46,14 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                         {
                             return false;
                         }
+                        waypoints = nav.GetPath(champion.Position, req.Position, champion.PathfindingRadius);
+                        if(waypoints == null)
+                        {
+                            System.Console.WriteLine($"NO PATH FROM {champion.Position} TO {req.Position} WITH RADIUS {champion.PathfindingRadius}");
+                            waypoints = nav.GetPath(champion.Position, req.Position, champion.PathfindingRadius, true);
+                            return false;
+                        }
+                        /*
                         waypoints = req.Waypoints.ConvertAll(TranslateFromCenteredCoordinates);
                         //TODO: Find the nearest point on the path and discard everything before it
                         waypoints[0] = champion.Position;
@@ -61,6 +69,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                                 break;
                             }
                         }
+                        */
                         champion.UpdateMoveOrder(req.OrderType, true);
                         champion.SetWaypoints(waypoints);
                         champion.SetTargetUnit(u);

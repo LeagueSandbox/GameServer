@@ -63,19 +63,17 @@ namespace GameMaths
         {
             return Math.Abs(a) < 1e-6f;
         }
-        public static void Normalize(this Vector2 vector2)
+        public static Vector2 Normalized(this Vector2 vector2)
         {
-            float length = vector2.Length();
-            if (!length.IsZero())
+            if(vector2 != Vector2.Zero)
             {
+                float length = vector2.Length();
                 float inv = 1.0f / length;
+                
+                // Operates on a copy of the vector.
                 vector2.X *= inv;
                 vector2.Y *= inv;
             }
-        }
-        public static Vector2 Normalized(this Vector2 vector2)
-        {
-            vector2.Normalize();
             return vector2;
         }
         public static Vector2 Perpendicular(this Vector2 vector2, int offset = 0)
