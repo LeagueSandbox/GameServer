@@ -178,13 +178,8 @@ namespace LeagueSandbox.GameServer.Content.Navigation
         /// <param name="to">Point that the path ends at.</param>
         /// <param name="distanceThreshold">Amount of distance away from terrain that the path should be.</param>
         /// <returns>List of points forming a path in order: from -> to</returns>
-        public List<Vector2> GetPath(Vector2 from, Vector2 to, float distanceThreshold = 0, bool trace = false)
+        public List<Vector2> GetPath(Vector2 from, Vector2 to, float distanceThreshold = 0)
         {
-            if(trace)
-            {
-                
-            }
-
             if(from == to)
             {
                 return null;
@@ -299,12 +294,7 @@ namespace LeagueSandbox.GameServer.Content.Navigation
                 return null;
             }
 
-            //SmoothPath(path, distanceThreshold);
-            path = SmoothPath2(path, distanceThreshold);
-            if(path.Count > 0x7F)
-            {
-                path.RemoveRange(0x7F - 1, path.Count - 1 - 0x7F - 1);
-            }
+            SmoothPath(path, distanceThreshold);
 
             var returnList = new List<Vector2>(path.Count);
             
@@ -325,50 +315,25 @@ namespace LeagueSandbox.GameServer.Content.Navigation
         /// <param name="path"></param>
         private void SmoothPath(List<NavigationGridCell> path, float checkDistance = 0f)
         {
-            if(path.Count <= 2)
+            if(path.Count < 3)
             {
                 return;
             }
             int j = 0;
+            // The first point remains untouched.
             for(int i = 2; i < path.Count; i++)
             {
+                // If there is something between the last added point and the current one
                 if(CastCircle(path[j].GetCenter(), path[i].GetCenter(), checkDistance, false))
                 {
+                    // add previous.
                     path[++j] = path[i - 1];
                 }
             }
+            // Add last.
             path[++j] = path[path.Count - 1];
-            j++;
+            j++; // Remove everything after.
             path.RemoveRange(j, path.Count - j);
-        }
-
-        private List<NavigationGridCell> SmoothPath2(List<NavigationGridCell> path, float radius)
-        {
-            if(path.Count < 3)
-            {
-                return path;
-            }
-
-            var lastAdded = path[0];
-            var ret = new List<NavigationGridCell>(){ path[0] };
-            Vector2 prevDir = path[1].GetCenter() - path[0].GetCenter();
-            
-            for(int i = 2; i < path.Count; i++)
-            {
-                var cell = path[i];
-                var prevCell = path[i - 1];
-                Vector2 dir = cell.GetCenter() - prevCell.GetCenter();
-                //if(dir != prevDir)
-                if(CastCircle(lastAdded.GetCenter(), cell.GetCenter(), radius, false))
-                //if(!CastRay(lastAdded.GetCenter(), cell.GetCenter(), true, false, false))
-                {
-                    ret.Add(prevCell);
-                    lastAdded = prevCell;
-                    prevDir = dir;
-                }
-            }
-            ret.Add(path[path.Count - 1]);
-            return ret;
         }
 
         /// <summary>
@@ -683,13 +648,13 @@ namespace LeagueSandbox.GameServer.Content.Navigation
         /// <param name="destination">Vector2 position to end the ray cast at.</param>
         /// <param name="checkWalkable">Whether or not the ray stops when hitting a position which blocks pathing.</param>
         /// <param name="checkVisible">Whether or not the ray stops when hitting a position which blocks vision.</param>
-        /// <returns>True = Reached destination with destination. False = Failed, with stopping position.</returns>
+        /// <returns>True = Reached destination. True = Failed.</returns>
         public bool CastRay(Vector2 origin, Vector2 destination, bool checkWalkable = false, bool checkVisible = false, bool translate = true)
         {
             // Out of bounds
             if (origin.X < MinGridPosition.X || origin.X >= MaxGridPosition.X || origin.Y < MinGridPosition.Z || origin.Y >= MaxGridPosition.Z)
             {
-                return false;
+                return true;
             }
 
             if(translate)
@@ -740,7 +705,7 @@ namespace LeagueSandbox.GameServer.Content.Navigation
                 }
             }
             
-            return !hasNext;
+            return hasNext;
         }
 
         // https://playtechs.blogspot.com/2007/03/raytracing-on-grid.html
@@ -819,7 +784,7 @@ namespace LeagueSandbox.GameServer.Content.Navigation
             }
         }
 
-        private bool CastCircle(Vector2 orig, Vector2 dest, float radius, bool translate = true)
+        public bool CastCircle(Vector2 orig, Vector2 dest, float radius, bool translate = true)
         {
             if(translate)
             {
@@ -834,9 +799,6 @@ namespace LeagueSandbox.GameServer.Content.Navigation
             .Concat(GetAllCellsInRange(dest, radius, false))
             .Concat(RayCast(orig + p, dest + p))
             .Concat(RayCast(orig - p, dest - p));
-            
-            //int minY = 0;
-            //int maxY = (int)CellCountY - 1;
 
             int minY = (int)(Math.Min(orig.Y, dest.Y) - tradius) - 1;
             int maxY = (int)(Math.Max(orig.Y, dest.Y) + tradius) + 1;
@@ -863,7 +825,6 @@ namespace LeagueSandbox.GameServer.Content.Navigation
                 }
             }
 
-            ///*
             for(int y = 0; y < countY; y++)
             {
                 for(int x = xRanges[y, 0] + 1; x < xRanges[y, 1]; x++)
@@ -874,7 +835,6 @@ namespace LeagueSandbox.GameServer.Content.Navigation
                     }
                 }
             }
-            //*/
             
             return false;
         }
@@ -887,7 +847,7 @@ namespace LeagueSandbox.GameServer.Content.Navigation
         /// <param name="direction">Ray cast direction.</param>
         /// <param name="checkWalkable">Whether or not the ray stops when hitting a position which blocks pathing.</param>
         /// <param name="checkVisible">Whether or not the ray stops when hitting a position which blocks vision. *NOTE*: Does not apply if checkWalkable is also true.</param>
-        /// <returns>True = Reached destination with destination. False = Failed, with stopping position.</returns>
+        /// <returns>False = Reached destination. True = Failed.</returns>
         public bool CastInfiniteRay(Vector2 origin, Vector2 direction, bool checkWalkable = true, bool checkVisible = false)
         {
             return CastRay(origin, origin + direction * 1024, checkWalkable, checkVisible);
@@ -902,7 +862,7 @@ namespace LeagueSandbox.GameServer.Content.Navigation
         /// <returns>True/False.</returns>
         public bool IsAnythingBetween(Vector2 startPos, Vector2 endPos, bool checkVision = false)
         {
-            return !CastRay(startPos, endPos, !checkVision, checkVision);
+            return CastRay(startPos, endPos, !checkVision, checkVision);
         }
 
         /// <summary>
@@ -919,7 +879,7 @@ namespace LeagueSandbox.GameServer.Content.Navigation
             Vector2 origin = a.Position + d * a.PathfindingRadius;
             Vector2 destination = b.Position - d * b.PathfindingRadius;
 
-            return !CastRay(origin, destination, !checkVision, checkVision);
+            return CastRay(origin, destination, !checkVision, checkVision);
         }
 
         /// <summary>

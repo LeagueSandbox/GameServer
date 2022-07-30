@@ -46,30 +46,28 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                         {
                             return false;
                         }
-                        waypoints = nav.GetPath(champion.Position, req.Position, champion.PathfindingRadius);
-                        if(waypoints == null)
-                        {
-                            System.Console.WriteLine($"NO PATH FROM {champion.Position} TO {req.Position} WITH RADIUS {champion.PathfindingRadius}");
-                            waypoints = nav.GetPath(champion.Position, req.Position, champion.PathfindingRadius, true);
-                            return false;
-                        }
-                        /*
                         waypoints = req.Waypoints.ConvertAll(TranslateFromCenteredCoordinates);
                         //TODO: Find the nearest point on the path and discard everything before it
                         waypoints[0] = champion.Position;
                         for(int i = 0; i < waypoints.Count - 1; i++)
                         {
-                            if(IsAnythingBetween(waypoints[i], waypoints[i + 1], champion.PathfindingRadius))
+                            if(nav.CastCircle(waypoints[i], waypoints[i + 1], champion.PathfindingRadius, true))
                             {
                                 var ithWaypoint = waypoints[i];
                                 var lastWaypoint = waypoints[waypoints.Count - 1];
                                 var path = nav.GetPath(ithWaypoint, lastWaypoint, champion.PathfindingRadius);
-                                waypoints = waypoints.GetRange(0, i);
-                                waypoints.AddRange(path);
+                                waypoints.RemoveRange(i, waypoints.Count - i);
+                                if(path != null)
+                                {
+                                    waypoints.AddRange(path);
+                                }
+                                else
+                                {
+                                    waypoints.Add(ithWaypoint);
+                                }
                                 break;
                             }
                         }
-                        */
                         champion.UpdateMoveOrder(req.OrderType, true);
                         champion.SetWaypoints(waypoints);
                         champion.SetTargetUnit(u);
@@ -111,12 +109,6 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             }
 
             return true;
-        }
-
-        private bool IsAnythingBetween(Vector2 a, Vector2 b, float checkDistance)
-        {
-            var nav = _game.Map.NavigationGrid;
-            return nav.IsAnythingBetween(nav.GetCell(a, true), nav.GetCell(b, true), checkDistance);
         }
 
         private Vector2 TranslateFromCenteredCoordinates(Vector2 vector)
