@@ -6,7 +6,19 @@ namespace LeagueSandbox.GameServer.GameObjects.Other
     public class Stackable
     {
         public int MaxStacks { get; protected set; }
-        public int StackCount { get; protected set; }
+        public int StackCount
+        {
+            get => stackCount; protected set
+            {
+                if (stackCount != value)
+                {
+                    OnStackCountChanged(stackCount, value);
+                    stackCount = value;
+                }
+            }
+        }
+
+        private int stackCount;
 
         public virtual bool IncrementStackCount()
         {
@@ -36,6 +48,10 @@ namespace LeagueSandbox.GameServer.GameObjects.Other
                 throw new System.Exception($"Cannot set stack size out of bounds (max is {MaxStacks})");
             }
             StackCount = newStacks;
+        }
+
+        protected virtual void OnStackCountChanged(int oldStackCount, int newStackCount)
+        {
         }
     }
 }
