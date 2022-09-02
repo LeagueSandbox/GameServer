@@ -2,7 +2,7 @@
 
 **This repository is now closed to further contributions**
 
-Message from @MythicManiac
+Message from [@MythicManiac](https://github.com/MythicManiac)
 
 [(You can find the old readme here)](README-old.md)
 
