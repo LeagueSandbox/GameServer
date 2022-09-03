@@ -5,6 +5,8 @@ using System.Numerics;
 using System.Collections.Generic;
 using LeagueSandbox.GameServer.Players;
 using LeagueSandbox.GameServer.GameObjects.AttackableUnits;
+using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
+using LeagueSandbox.GameServer.Content.Navigation;
 
 namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 {
@@ -17,6 +19,29 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
         {
             _game = game;
             _playerManager = game.PlayerManager;
+        }
+
+        public void CastCircleWaypoints(List<Vector2> waypoints, NavigationGrid nav, Champion champion)
+        {
+            for (int i = 0; i < waypoints.Count - 1; i++)
+            {
+                if (nav.CastCircle(waypoints[i], waypoints[i + 1], champion.PathfindingRadius, true))
+                {
+                    var ithWaypoint = waypoints[i];
+                    var lastWaypoint = waypoints[waypoints.Count - 1];
+                    var path = nav.GetPath(ithWaypoint, lastWaypoint, champion.PathfindingRadius);
+                    waypoints.RemoveRange(i, waypoints.Count - i);
+                    if (path != null)
+                    {
+                        waypoints.AddRange(path);
+                    }
+                    else
+                    {
+                        waypoints.Add(ithWaypoint);
+                    }
+                    break;
+                }
+            }
         }
 
         public override bool HandlePacket(int userId, MovementRequest req)
@@ -39,6 +64,21 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                 switch (req.OrderType)
                 {
                     case OrderType.MoveTo:
+                        if (champion.ChannelSpell != null)
+                        {
+                            if (req.Waypoints == null || req.Waypoints.Count == 0)
+                            {
+                                return false;
+                            }
+                            waypoints = req.Waypoints.ConvertAll(TranslateFromCenteredCoordinates);
+                            //TODO: Find the nearest point on the path and discard everything before it
+                            waypoints[0] = champion.Position;
+                            CastCircleWaypoints(waypoints, nav, champion);
+                            champion.ChannelSpell.SetBufferedWaypoints(waypoints, req.OrderType);
+                            break;
+                        }
+                        // TODO: verify if falling through to "OrderType.Use" is okay to use.
+                        goto case OrderType.Use;
                     case OrderType.AttackTo:
                     case OrderType.AttackMove:
                     case OrderType.Use:
@@ -49,25 +89,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                         waypoints = req.Waypoints.ConvertAll(TranslateFromCenteredCoordinates);
                         //TODO: Find the nearest point on the path and discard everything before it
                         waypoints[0] = champion.Position;
-                        for(int i = 0; i < waypoints.Count - 1; i++)
-                        {
-                            if(nav.CastCircle(waypoints[i], waypoints[i + 1], champion.PathfindingRadius, true))
-                            {
-                                var ithWaypoint = waypoints[i];
-                                var lastWaypoint = waypoints[waypoints.Count - 1];
-                                var path = nav.GetPath(ithWaypoint, lastWaypoint, champion.PathfindingRadius);
-                                waypoints.RemoveRange(i, waypoints.Count - i);
-                                if(path != null)
-                                {
-                                    waypoints.AddRange(path);
-                                }
-                                else
-                                {
-                                    waypoints.Add(ithWaypoint);
-                                }
-                                break;
-                            }
-                        }
+                        CastCircleWaypoints(waypoints, nav, champion);
                         champion.UpdateMoveOrder(req.OrderType, true);
                         champion.SetWaypoints(waypoints);
                         champion.SetTargetUnit(u);

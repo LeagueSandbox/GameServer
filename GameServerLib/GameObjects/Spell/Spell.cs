@@ -81,6 +81,10 @@ namespace LeagueSandbox.GameServer.GameObjects.SpellNS
         /// Used to update player ability tool tip values.
         /// </summary>
         public ToolTipData ToolTipData { get; protected set; }
+        /// <summary>
+        /// Buffered movement, for after a spell finishes casting.
+        /// </summary>
+        public Tuple<List<Vector2>, OrderType> BufferedMovement { get; protected set; }
 
         public Spell(Game game, ObjAIBase owner, string spellName, byte slot)
         {
@@ -1566,6 +1570,12 @@ namespace LeagueSandbox.GameServer.GameObjects.SpellNS
             }
         }
 
+        public void SetBufferedWaypoints(List<Vector2> waypoints, OrderType requestType)
+        {
+            // TODO: unsure if this leaks memory anywhere.
+            BufferedMovement = new Tuple<List<Vector2>, OrderType>(waypoints, requestType);
+        }
+
         /// <summary>
         /// Called every diff milliseconds to update the spell
         /// </summary>
@@ -1595,15 +1605,24 @@ namespace LeagueSandbox.GameServer.GameObjects.SpellNS
                         {
                             break;
                         }
+                        // TODO: verify if setting "ChannelSpell" is okay to use, or should we use another variable for it. maybe like CastingSpell?
+                        // e.g Ezreal Q has a "base cast/channeling time" of 0.25s, so we can chuck it into the "ChannelSpell" variable for while it is being "casted"
                         if (!CastInfo.IsAutoAttack && !CastInfo.UseAttackCastTime)
                         {
+                            CastInfo.Owner.SetChannelSpell(this);
                             CurrentCastTime -= diff / 1000.0f;
                             if (CurrentCastTime <= 0)
                             {
+                                CastInfo.Owner.SetChannelSpell(null);
                                 FinishCasting();
                                 if (SpellData.ChannelDuration[CastInfo.SpellLevel] > 0 || Script.ScriptMetadata.ChannelDuration > 0)
                                 {
                                     Channel();
+                                }
+                                else
+                                {
+                                    CastInfo.Owner.UpdateMoveOrder(BufferedMovement.Item2, true);
+                                    CastInfo.Owner.SetWaypoints(BufferedMovement.Item1);
                                 }
                             }
                         }
